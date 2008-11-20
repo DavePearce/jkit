@@ -5,7 +5,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.io.*;
 
-import jkit.io.ClassFileReader;
+import jkit.bytecode.ClassFileReader;
 import jkit.util.Pair;
 import jkit.util.Triple;
 import jkit.util.bytecode.Types;

@@ -24,6 +24,7 @@ package jkit;
 import java.io.*;
 import java.util.*;
 
+import jkit.bytecode.ClassFileWriter;
 import jkit.core.*;
 import jkit.core.ClassCompiler.Pipeline;
 import jkit.io.*;

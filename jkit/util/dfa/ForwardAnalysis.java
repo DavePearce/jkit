@@ -9,10 +9,10 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
+import jkit.bytecode.ClassFileWriter;
 import jkit.core.FlowGraph;
 import jkit.core.FlowGraph.Expr;
 import jkit.core.FlowGraph.Point;
-import jkit.io.ClassFileWriter;
 import jkit.util.Triple;
 import jkit.util.graph.Graph;
 

@@ -19,7 +19,7 @@
 //
 // (C) David James Pearce, 2007. 
 
-package jkit.io;
+package jkit.bytecode;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,6 +32,7 @@ import java.util.*;
 import jkit.core.*;
 import jkit.core.Type.Reference;
 import jkit.core.Type.Variable;
+import jkit.io.ClassReader;
 import jkit.util.*;
 
 @SuppressWarnings("unused")

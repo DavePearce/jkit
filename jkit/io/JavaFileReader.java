@@ -35,6 +35,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
+import jkit.bytecode.ClassFileReader;
 import jkit.core.*;
 import jkit.core.FlowGraph.*;
 import jkit.core.Type.Reference;

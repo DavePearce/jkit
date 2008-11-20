@@ -1,7 +1,6 @@
 package jkit.io;
 
 import java.util.List;
-
 import jkit.core.Clazz;
 
 public interface ClassReader {

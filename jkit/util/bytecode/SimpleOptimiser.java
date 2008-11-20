@@ -2,8 +2,8 @@ package jkit.util.bytecode;
 
 import java.util.List;
 
+import jkit.bytecode.ClassFileWriter;
 import jkit.core.Type;
-import jkit.io.ClassFileWriter;
 import jkit.util.bytecode.Bytecode.*;
 
 /**

@@ -18,10 +18,10 @@ import mocha.core.Inferrer.InferForEachTrans;
 import mocha.io.MochaFileReader;
 
 import jkit.Main.Pipeline;
+import jkit.bytecode.ClassFileWriter;
 import jkit.core.ClassTable;
 import jkit.core.Clazz;
 import jkit.core.SyntaxError;
-import jkit.io.ClassFileWriter;
 import jkit.io.ClassReader;
 import jkit.io.JavaFileReader;
 import jkit.io.JavaFileWriter;

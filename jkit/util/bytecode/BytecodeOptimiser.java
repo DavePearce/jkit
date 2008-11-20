@@ -1,8 +1,9 @@
 package jkit.util.bytecode;
 
 import java.util.*;
+
+import jkit.bytecode.ClassFileWriter;
 import jkit.core.*;
-import jkit.io.ClassFileWriter;
 
 /**
  * A bytecode optimiser is essentially a peep hole optimiser. The aim is to
