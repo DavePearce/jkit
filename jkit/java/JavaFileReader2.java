@@ -7,7 +7,7 @@ import org.antlr.runtime.tree.*;
 
 public class JavaFileReader2 {
 	
-	private Tree ast;
+	private JavaFile ast;
 	
 	/**
      * Create a JavaFileReader from a file.
@@ -28,7 +28,7 @@ public class JavaFileReader2 {
 		JavaParser parser = new JavaParser(tokenStream);
 		
 		try {
-			ast = (Tree) parser.compilationUnit().getTree();
+			ast = (JavaFile) parser.compilationUnit().getTree();
 		} catch (RecognitionException e) {
 		}
 	}

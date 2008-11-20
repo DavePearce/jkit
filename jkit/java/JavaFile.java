@@ -2,7 +2,7 @@ package jkit.java;
 
 import java.util.*;
 
-public class Tree {
+public class JavaFile {
 
 	/**
      * Represents the class of imperative statements allowed.
@@ -23,6 +23,8 @@ public class Tree {
 	// ====================================================
 	// DECLARATIONS
 	// ====================================================
+	
+	
 	
 	// ====================================================
 	// STATEMENTS
