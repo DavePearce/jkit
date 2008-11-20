@@ -4,6 +4,8 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
+import jkit.ClassReader;
+import jkit.ClassWriter;
 import jkit.io.*;
 import jkit.stages.Stage;
 import jkit.util.Pair;

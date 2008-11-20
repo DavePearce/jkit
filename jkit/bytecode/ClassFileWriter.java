@@ -24,9 +24,9 @@ package jkit.bytecode;
 import java.io.*;
 import java.util.*;
 
+import jkit.ClassWriter;
 import jkit.core.*;
 import jkit.core.FlowGraph.*;
-import jkit.io.ClassWriter;
 import jkit.util.*;
 import jkit.util.bytecode.*;
 import jkit.util.graph.*;

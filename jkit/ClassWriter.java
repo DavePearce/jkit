@@ -1,4 +1,4 @@
-package jkit.io;
+package jkit;
 
 import java.io.IOException;
 import jkit.core.Clazz;

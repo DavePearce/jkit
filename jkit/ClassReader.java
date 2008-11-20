@@ -1,4 +1,4 @@
-package jkit.io;
+package jkit;
 
 import java.util.List;
 import jkit.core.Clazz;

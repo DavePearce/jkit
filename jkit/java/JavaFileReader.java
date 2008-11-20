@@ -35,11 +35,11 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
+import jkit.ClassReader;
 import jkit.bytecode.ClassFileReader;
 import jkit.core.*;
 import jkit.core.FlowGraph.*;
 import jkit.core.Type.Reference;
-import jkit.io.ClassReader;
 import jkit.parser.JavaLexer;
 import jkit.parser.JavaParser;
 import jkit.util.Pair;

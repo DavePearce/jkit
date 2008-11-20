@@ -29,10 +29,10 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
+import jkit.ClassReader;
 import jkit.core.*;
 import jkit.core.Type.Reference;
 import jkit.core.Type.Variable;
-import jkit.io.ClassReader;
 import jkit.util.*;
 
 @SuppressWarnings("unused")
