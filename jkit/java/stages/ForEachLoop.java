@@ -1,10 +1,11 @@
-package jkit.stages.codegen;
+package jkit.java.stages;
 
 import java.util.*;
 
 import jkit.compiler.ClassTable;
 import jkit.compiler.InternalException;
 import jkit.compiler.MethodNotFoundException;
+import jkit.compiler.Translator;
 import jkit.jkil.Clazz;
 import jkit.jkil.FlowGraph;
 import jkit.jkil.Method;

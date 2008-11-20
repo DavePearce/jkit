@@ -1,8 +1,9 @@
-package jkit.stages.checks;
+package jkit.java.stages;
 
 import java.util.Map;
 
 import jkit.compiler.InternalException;
+import jkit.compiler.Stage;
 import jkit.jkil.Clazz;
 import jkit.jkil.FlowGraph;
 import jkit.jkil.Method;

@@ -1,4 +1,4 @@
-package jkit.stages;
+package jkit.compiler;
 
 import jkit.jkil.Clazz;
 

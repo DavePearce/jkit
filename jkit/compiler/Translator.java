@@ -1,4 +1,4 @@
-package jkit.stages;
+package jkit.compiler;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import jkit.compiler.InternalException;
 import jkit.jkil.Clazz;
 import jkit.jkil.FlowGraph;
 import jkit.jkil.Method;

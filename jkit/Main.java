@@ -28,6 +28,7 @@ import jkit.bytecode.ClassFileWriter;
 import jkit.compiler.ClassCompiler;
 import jkit.compiler.ClassTable;
 import jkit.compiler.InternalException;
+import jkit.compiler.Stage;
 import jkit.compiler.SyntaxError;
 import jkit.compiler.ClassCompiler.Pipeline;
 import jkit.java.JavaFileReader;
@@ -68,15 +69,15 @@ public class Main {
 		pipelines.put("java", new Pipeline(JavaFileReader.class,
 				ClassFileWriter.class,
 				"class",
-				new jkit.stages.codegen.FieldInitialisation(),
-				new jkit.stages.codegen.AnonClass(),
-				new jkit.stages.codegen.BypassMethods(),
-				new jkit.stages.codegen.Typing(),
-				new jkit.stages.codegen.SwitchConstants(),
-				new jkit.stages.codegen.ForEachLoop(),
-				new jkit.stages.codegen.Exceptions(),
-				new jkit.stages.checks.Subtyping(),
-				new jkit.stages.checks.VariableDefinitions()));
+				new jkit.java.stages.FieldInitialisation(),
+				new jkit.java.stages.AnonClass(),
+				new jkit.jkil.stages.BypassMethods(),
+				new jkit.java.stages.Typing(),
+				new jkit.java.stages.SwitchConstants(),
+				new jkit.java.stages.ForEachLoop(),
+				new jkit.java.stages.Exceptions(),
+				new jkit.java.stages.Subtyping(),
+				new jkit.jkil.stages.VariableDefinitions()));
 	}
 
 	/**

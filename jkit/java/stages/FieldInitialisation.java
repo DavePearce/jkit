@@ -1,4 +1,4 @@
-package jkit.stages.codegen;
+package jkit.java.stages;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -14,13 +14,13 @@ import java.util.Set;
 import jkit.compiler.ClassTable;
 import jkit.compiler.FieldNotFoundException;
 import jkit.compiler.InternalException;
+import jkit.compiler.Stage;
 import jkit.jkil.Clazz;
 import jkit.jkil.Field;
 import jkit.jkil.FlowGraph;
 import jkit.jkil.Method;
 import jkit.jkil.Type;
 import jkit.jkil.Type.Reference;
-import jkit.stages.Stage;
 import jkit.util.Pair;
 import jkit.util.Triple;
 import jkit.util.graph.Graphs;

@@ -6,6 +6,8 @@ import java.util.Map;
 import mocha.util.Utils;
 
 import jkit.compiler.InternalException;
+import jkit.java.stages.Subtyping;
+import jkit.java.stages.Typing;
 import jkit.jkil.Clazz;
 import jkit.jkil.FlowGraph;
 import jkit.jkil.Method;
@@ -16,8 +18,6 @@ import jkit.jkil.FlowGraph.Expr;
 import jkit.jkil.FlowGraph.LocalVar;
 import jkit.jkil.FlowGraph.Point;
 import jkit.jkil.FlowGraph.Stmt;
-import jkit.stages.checks.Subtyping;
-import jkit.stages.codegen.Typing;
 import jkit.util.Triple;
 
 public class MochaTyping extends Typing {

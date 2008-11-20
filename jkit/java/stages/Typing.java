@@ -1,4 +1,4 @@
-package jkit.stages.codegen;
+package jkit.java.stages;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -12,13 +12,13 @@ import jkit.compiler.ClassTable;
 import jkit.compiler.FieldNotFoundException;
 import jkit.compiler.InternalException;
 import jkit.compiler.MethodNotFoundException;
+import jkit.compiler.Translator;
 import jkit.jkil.Clazz;
 import jkit.jkil.Field;
 import jkit.jkil.FlowGraph;
 import jkit.jkil.Method;
 import jkit.jkil.Type;
 import jkit.jkil.FlowGraph.*;
-import jkit.stages.Translator;
 import jkit.util.Pair;
 import jkit.util.Triple;
 import jkit.util.graph.Graph;

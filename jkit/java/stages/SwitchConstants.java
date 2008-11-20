@@ -1,4 +1,4 @@
-package jkit.stages.codegen;
+package jkit.java.stages;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -7,6 +7,7 @@ import java.util.Set;
 import jkit.compiler.ClassTable;
 import jkit.compiler.FieldNotFoundException;
 import jkit.compiler.InternalException;
+import jkit.compiler.Translator;
 import jkit.jkil.Clazz;
 import jkit.jkil.Field;
 import jkit.jkil.FlowGraph;
@@ -19,7 +20,6 @@ import jkit.jkil.FlowGraph.Expr;
 import jkit.jkil.FlowGraph.LocalVar;
 import jkit.jkil.FlowGraph.Point;
 import jkit.jkil.FlowGraph.Value;
-import jkit.stages.Translator;
 import jkit.util.Triple;
 
 public class SwitchConstants extends Translator {

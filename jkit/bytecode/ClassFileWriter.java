@@ -29,6 +29,7 @@ import jkit.compiler.ClassWriter;
 import jkit.compiler.FieldNotFoundException;
 import jkit.compiler.InternalException;
 import jkit.compiler.MethodNotFoundException;
+import jkit.java.stages.Typing;
 import jkit.jkil.Clazz;
 import jkit.jkil.Field;
 import jkit.jkil.FlowGraph;
@@ -38,7 +39,6 @@ import jkit.jkil.FlowGraph.*;
 import jkit.util.*;
 import jkit.bytecode.*;
 import jkit.util.graph.*;
-import jkit.stages.codegen.Typing;
 
 public class ClassFileWriter implements ClassWriter {
 	protected final OutputStream output;

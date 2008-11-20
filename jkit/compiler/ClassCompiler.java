@@ -5,7 +5,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import jkit.jkil.Clazz;
-import jkit.stages.Stage;
 import jkit.util.Pair;
 
 /**
