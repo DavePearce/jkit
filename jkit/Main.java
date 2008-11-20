@@ -27,7 +27,6 @@ import java.util.*;
 import jkit.bytecode.ClassFileWriter;
 import jkit.core.*;
 import jkit.core.ClassCompiler.Pipeline;
-import jkit.io.*;
 import jkit.java.JavaFileReader;
 import jkit.jkil.JKilWriter;
 import jkit.stages.*;

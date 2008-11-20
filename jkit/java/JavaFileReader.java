@@ -40,8 +40,6 @@ import jkit.bytecode.ClassFileReader;
 import jkit.core.*;
 import jkit.core.FlowGraph.*;
 import jkit.core.Type.Reference;
-import jkit.parser.JavaLexer;
-import jkit.parser.JavaParser;
 import jkit.util.Pair;
 import jkit.util.Triple;
 
