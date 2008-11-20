@@ -6,7 +6,11 @@ import java.util.Map;
 import java.util.Set;
 
 import jkit.core.*;
-import jkit.core.FlowGraph.*;
+import jkit.jkil.Clazz;
+import jkit.jkil.FlowGraph;
+import jkit.jkil.Method;
+import jkit.jkil.Type;
+import jkit.jkil.FlowGraph.*;
 import jkit.stages.Stage;
 import jkit.util.Triple;
 

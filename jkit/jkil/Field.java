@@ -19,9 +19,12 @@
 //
 // (C) David James Pearce, 2007. 
 
-package jkit.core;
+package jkit.jkil;
 
 import java.lang.reflect.Modifier;
+
+import jkit.jkil.FlowGraph.Expr;
+import jkit.jkil.FlowGraph.Point;
 
 /**
  * This class stores all known information about a class field, including it's

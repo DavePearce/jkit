@@ -5,17 +5,17 @@ import java.util.Map;
 
 import mocha.util.Utils;
 
-import jkit.core.Clazz;
-import jkit.core.FlowGraph;
 import jkit.core.InternalException;
-import jkit.core.Method;
-import jkit.core.Type;
-import jkit.core.FlowGraph.Assign;
-import jkit.core.FlowGraph.Cast;
-import jkit.core.FlowGraph.Expr;
-import jkit.core.FlowGraph.LocalVar;
-import jkit.core.FlowGraph.Point;
-import jkit.core.FlowGraph.Stmt;
+import jkit.jkil.Clazz;
+import jkit.jkil.FlowGraph;
+import jkit.jkil.Method;
+import jkit.jkil.Type;
+import jkit.jkil.FlowGraph.Assign;
+import jkit.jkil.FlowGraph.Cast;
+import jkit.jkil.FlowGraph.Expr;
+import jkit.jkil.FlowGraph.LocalVar;
+import jkit.jkil.FlowGraph.Point;
+import jkit.jkil.FlowGraph.Stmt;
 import jkit.stages.checks.Subtyping;
 import jkit.stages.codegen.Typing;
 import jkit.util.Triple;

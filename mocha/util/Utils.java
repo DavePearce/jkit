@@ -1,7 +1,7 @@
 package mocha.util;
 
-import jkit.core.Method;
-import jkit.core.FlowGraph.LocalVarDef;
+import jkit.jkil.Method;
+import jkit.jkil.FlowGraph.LocalVarDef;
 
 public class Utils {
 	

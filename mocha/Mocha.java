@@ -20,10 +20,10 @@ import mocha.io.MochaFileReader;
 import jkit.Main.Pipeline;
 import jkit.bytecode.ClassFileWriter;
 import jkit.core.ClassTable;
-import jkit.core.Clazz;
 import jkit.core.SyntaxError;
 import jkit.io.JavaFileWriter;
 import jkit.java.JavaFileReader;
+import jkit.jkil.Clazz;
 
 import jkit.ClassReader;
 import jkit.Main;

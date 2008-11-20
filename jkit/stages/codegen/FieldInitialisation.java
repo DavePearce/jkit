@@ -12,14 +12,14 @@ import java.util.Map;
 import java.util.Set;
 
 import jkit.core.ClassTable;
-import jkit.core.Clazz;
-import jkit.core.Field;
 import jkit.core.FieldNotFoundException;
-import jkit.core.FlowGraph;
 import jkit.core.InternalException;
-import jkit.core.Method;
-import jkit.core.Type;
-import jkit.core.Type.Reference;
+import jkit.jkil.Clazz;
+import jkit.jkil.Field;
+import jkit.jkil.FlowGraph;
+import jkit.jkil.Method;
+import jkit.jkil.Type;
+import jkit.jkil.Type.Reference;
 import jkit.stages.Stage;
 import jkit.util.Pair;
 import jkit.util.Triple;
@@ -71,7 +71,7 @@ public class FieldInitialisation implements Stage {
 		if (!points.isEmpty()) {
 			Collections.sort(points);
 			Method statc = new Method(Modifier.STATIC,
-					new jkit.core.Type.Function(Type.voidType(), new Type[0],
+					new jkit.jkil.Type.Function(Type.voidType(), new Type[0],
 							new Type.Variable[0]), "<clinit>",
 					new LinkedList<Reference>());
 			

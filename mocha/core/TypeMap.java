@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import jkit.core.Type;
+import jkit.jkil.Type;
 import jkit.util.dfa.*;
 
 public class TypeMap implements FlowSet {

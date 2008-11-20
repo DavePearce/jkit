@@ -25,12 +25,12 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import jkit.core.ClassTable;
-import jkit.core.Clazz;
-import jkit.core.Field;
 import jkit.core.FieldNotFoundException;
-import jkit.core.FlowGraph;
 import jkit.core.MethodNotFoundException;
-import jkit.core.Type;
+import jkit.jkil.Clazz;
+import jkit.jkil.Field;
+import jkit.jkil.FlowGraph;
+import jkit.jkil.Type;
 import jkit.util.Pair;
 import jkit.util.Triple;
 

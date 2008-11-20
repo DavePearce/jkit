@@ -26,7 +26,12 @@ import java.util.*;
 
 import jkit.ClassWriter;
 import jkit.core.*;
-import jkit.core.FlowGraph.*;
+import jkit.jkil.Clazz;
+import jkit.jkil.Field;
+import jkit.jkil.FlowGraph;
+import jkit.jkil.Method;
+import jkit.jkil.Type;
+import jkit.jkil.FlowGraph.*;
 import jkit.util.*;
 import jkit.bytecode.*;
 import jkit.util.graph.*;

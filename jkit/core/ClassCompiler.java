@@ -6,6 +6,7 @@ import java.util.*;
 
 import jkit.ClassReader;
 import jkit.ClassWriter;
+import jkit.jkil.Clazz;
 import jkit.stages.Stage;
 import jkit.util.Pair;
 
@@ -239,7 +240,7 @@ public class ClassCompiler {
 									
 				if(!outfile.equals("")) { outfile += File.separatorChar; }
 				boolean firstTime = true;
-				for (Pair<String, jkit.core.Type[]> p : c.type().classes()) {
+				for (Pair<String, jkit.jkil.Type[]> p : c.type().classes()) {
 					if (!firstTime) {
 						outfile += "$";
 					}

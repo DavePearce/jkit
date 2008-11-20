@@ -6,8 +6,8 @@ import java.io.Reader;
 
 import org.antlr.runtime.tree.Tree;
 
-import jkit.core.Type;
 import jkit.java.JavaFileReader;
+import jkit.jkil.Type;
 
 public class MochaFileReader extends JavaFileReader {
 	

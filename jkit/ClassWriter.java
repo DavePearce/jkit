@@ -1,7 +1,8 @@
 package jkit;
 
 import java.io.IOException;
-import jkit.core.Clazz;
+
+import jkit.jkil.Clazz;
 
 public interface ClassWriter {
 	

@@ -38,8 +38,14 @@ import java.util.StringTokenizer;
 import jkit.ClassReader;
 import jkit.bytecode.ClassFileReader;
 import jkit.core.*;
-import jkit.core.FlowGraph.*;
-import jkit.core.Type.Reference;
+import jkit.jkil.Clazz;
+import jkit.jkil.Field;
+import jkit.jkil.FlowGraph;
+import jkit.jkil.Method;
+import jkit.jkil.Type;
+import jkit.jkil.TypeElement;
+import jkit.jkil.FlowGraph.*;
+import jkit.jkil.Type.Reference;
 import jkit.util.Pair;
 import jkit.util.Triple;
 
@@ -541,7 +547,7 @@ public class JavaFileReader implements ClassReader {
 				}
 				case BLOCK :
 					Method m = new Method(Modifier.STATIC,
-							new jkit.core.Type.Function(Type.voidType(),
+							new jkit.jkil.Type.Function(Type.voidType(),
 									new Type[0], new Type.Variable[0]),
 							"<clinit>", new LinkedList<Reference>());
 

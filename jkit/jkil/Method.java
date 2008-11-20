@@ -19,10 +19,11 @@
 //
 // (C) David James Pearce, 2007. 
 
-package jkit.core;
+package jkit.jkil;
 
 import java.lang.reflect.Modifier;
 import java.util.*;
+
 
 /**
  * This class stores all known information about a method, including it's

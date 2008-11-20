@@ -32,9 +32,9 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import jkit.bytecode.ClassFileWriter;
-import jkit.core.FlowGraph;
-import jkit.core.FlowGraph.Expr;
-import jkit.core.FlowGraph.Point;
+import jkit.jkil.FlowGraph;
+import jkit.jkil.FlowGraph.Expr;
+import jkit.jkil.FlowGraph.Point;
 import jkit.util.Triple;
 import jkit.util.graph.Graph;
 

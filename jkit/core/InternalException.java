@@ -1,5 +1,9 @@
 package jkit.core;
 
+import jkit.jkil.Clazz;
+import jkit.jkil.FlowGraph;
+import jkit.jkil.Method;
+
 /**
  * This method is thrown when some kind of error happens. This will typically
  * reflect a syntax error or other similar problem with the source file being

@@ -19,7 +19,7 @@
 //
 // (C) David James Pearce, 2007. 
 
-package jkit.core;
+package jkit.jkil;
 
 /**
  * A Type Element represents a point in a lattice. Operations are provided for

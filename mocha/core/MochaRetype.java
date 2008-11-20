@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 
-import jkit.core.Clazz;
-import jkit.core.FlowGraph;
-import jkit.core.Method;
-import jkit.core.Type;
-import jkit.core.FlowGraph.Expr;
-import jkit.core.FlowGraph.Point;
+import jkit.jkil.Clazz;
+import jkit.jkil.FlowGraph;
+import jkit.jkil.Method;
+import jkit.jkil.Type;
+import jkit.jkil.FlowGraph.Expr;
+import jkit.jkil.FlowGraph.Point;
 import jkit.stages.Stage;
 import jkit.util.Pair;
 import jkit.util.Triple;

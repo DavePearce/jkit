@@ -7,6 +7,8 @@ import java.io.*;
 
 import jkit.bytecode.ClassFileReader;
 import jkit.bytecode.Types;
+import jkit.jkil.Clazz;
+import jkit.jkil.Type;
 import jkit.util.Pair;
 import jkit.util.Triple;
 

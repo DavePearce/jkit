@@ -19,7 +19,7 @@
 //
 // (C) David James Pearce, 2007. 
 
-package jkit.core;
+package jkit.jkil;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import jkit.core.ClassTable;
 import jkit.util.Pair;
 
 /**

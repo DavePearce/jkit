@@ -31,8 +31,12 @@ import java.util.*;
 
 import jkit.ClassReader;
 import jkit.core.*;
-import jkit.core.Type.Reference;
-import jkit.core.Type.Variable;
+import jkit.jkil.Clazz;
+import jkit.jkil.Field;
+import jkit.jkil.Method;
+import jkit.jkil.Type;
+import jkit.jkil.Type.Reference;
+import jkit.jkil.Type.Variable;
 import jkit.util.*;
 
 @SuppressWarnings("unused")

@@ -3,7 +3,7 @@ package jkit.bytecode;
 import java.util.List;
 
 import jkit.bytecode.Bytecode.*;
-import jkit.core.Type;
+import jkit.jkil.Type;
 
 /**
  * The simple optimiser provides a very simple implementation which does nothing

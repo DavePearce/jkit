@@ -27,6 +27,11 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import jkit.bytecode.Types;
+import jkit.jkil.Clazz;
+import jkit.jkil.Field;
+import jkit.jkil.Method;
+import jkit.jkil.Type;
+import jkit.jkil.TypeElement;
 import jkit.util.*;
 
 /**

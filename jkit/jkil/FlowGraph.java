@@ -23,10 +23,13 @@
  * This class represents the code of a Java method.
  */
 
-package jkit.core;
+package jkit.jkil;
 
 import java.util.*;
 
+import jkit.core.ClassTable;
+import jkit.core.FieldNotFoundException;
+import jkit.core.MethodNotFoundException;
 import jkit.util.*;
 import jkit.util.graph.DirectedAdjacencyList;
 
