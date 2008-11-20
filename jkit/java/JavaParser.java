@@ -1,6 +1,6 @@
-// $ANTLR 3.1 jkit/parser/Java.g 2008-11-20 13:40:21
+// $ANTLR 3.1 jkit/java/Java.g 2008-11-21 12:08:56
 
-package jkit.parser;
+package jkit.java;
 import jkit.core.SyntaxError;
 
 
@@ -315,7 +315,7 @@ public class JavaParser extends Parser {
     }
 
     public String[] getTokenNames() { return JavaParser.tokenNames; }
-    public String getGrammarFileName() { return "jkit/parser/Java.g"; }
+    public String getGrammarFileName() { return "jkit/java/Java.g"; }
 
 
     public static class compilationUnit_return extends ParserRuleReturnScope {
@@ -324,7 +324,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "compilationUnit"
-    // jkit/parser/Java.g:200:1: compilationUnit : ( annotations )? ( packageDeclaration )? ( importDeclaration )* ( typeDeclaration )+ -> ^( UNIT ( packageDeclaration )? ( importDeclaration )* ( typeDeclaration )+ ) ;
+    // jkit/java/Java.g:200:1: compilationUnit : ( annotations )? ( packageDeclaration )? ( importDeclaration )* ( typeDeclaration )+ -> ^( UNIT ( packageDeclaration )? ( importDeclaration )* ( typeDeclaration )+ ) ;
     public final JavaParser.compilationUnit_return compilationUnit() throws RecognitionException {
         JavaParser.compilationUnit_return retval = new JavaParser.compilationUnit_return();
         retval.start = input.LT(1);
@@ -346,15 +346,15 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_typeDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule typeDeclaration");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 1) ) { return retval; }
-            // jkit/parser/Java.g:201:2: ( ( annotations )? ( packageDeclaration )? ( importDeclaration )* ( typeDeclaration )+ -> ^( UNIT ( packageDeclaration )? ( importDeclaration )* ( typeDeclaration )+ ) )
-            // jkit/parser/Java.g:201:4: ( annotations )? ( packageDeclaration )? ( importDeclaration )* ( typeDeclaration )+
+            // jkit/java/Java.g:201:2: ( ( annotations )? ( packageDeclaration )? ( importDeclaration )* ( typeDeclaration )+ -> ^( UNIT ( packageDeclaration )? ( importDeclaration )* ( typeDeclaration )+ ) )
+            // jkit/java/Java.g:201:4: ( annotations )? ( packageDeclaration )? ( importDeclaration )* ( typeDeclaration )+
             {
-            // jkit/parser/Java.g:201:4: ( annotations )?
+            // jkit/java/Java.g:201:4: ( annotations )?
             int alt1=2;
             alt1 = dfa1.predict(input);
             switch (alt1) {
                 case 1 :
-                    // jkit/parser/Java.g:0:0: annotations
+                    // jkit/java/Java.g:0:0: annotations
                     {
                     pushFollow(FOLLOW_annotations_in_compilationUnit440);
                     annotations1=annotations();
@@ -368,12 +368,12 @@ public class JavaParser extends Parser {
 
             }
 
-            // jkit/parser/Java.g:201:17: ( packageDeclaration )?
+            // jkit/java/Java.g:201:17: ( packageDeclaration )?
             int alt2=2;
             alt2 = dfa2.predict(input);
             switch (alt2) {
                 case 1 :
-                    // jkit/parser/Java.g:0:0: packageDeclaration
+                    // jkit/java/Java.g:0:0: packageDeclaration
                     {
                     pushFollow(FOLLOW_packageDeclaration_in_compilationUnit443);
                     packageDeclaration2=packageDeclaration();
@@ -387,14 +387,14 @@ public class JavaParser extends Parser {
 
             }
 
-            // jkit/parser/Java.g:201:37: ( importDeclaration )*
+            // jkit/java/Java.g:201:37: ( importDeclaration )*
             loop3:
             do {
                 int alt3=2;
                 alt3 = dfa3.predict(input);
                 switch (alt3) {
             	case 1 :
-            	    // jkit/parser/Java.g:0:0: importDeclaration
+            	    // jkit/java/Java.g:0:0: importDeclaration
             	    {
             	    pushFollow(FOLLOW_importDeclaration_in_compilationUnit446);
             	    importDeclaration3=importDeclaration();
@@ -411,7 +411,7 @@ public class JavaParser extends Parser {
                 }
             } while (true);
 
-            // jkit/parser/Java.g:201:56: ( typeDeclaration )+
+            // jkit/java/Java.g:201:56: ( typeDeclaration )+
             int cnt4=0;
             loop4:
             do {
@@ -419,7 +419,7 @@ public class JavaParser extends Parser {
                 alt4 = dfa4.predict(input);
                 switch (alt4) {
             	case 1 :
-            	    // jkit/parser/Java.g:0:0: typeDeclaration
+            	    // jkit/java/Java.g:0:0: typeDeclaration
             	    {
             	    pushFollow(FOLLOW_typeDeclaration_in_compilationUnit449);
             	    typeDeclaration4=typeDeclaration();
@@ -456,18 +456,18 @@ public class JavaParser extends Parser {
             root_0 = (Object)adaptor.nil();
             // 202:3: -> ^( UNIT ( packageDeclaration )? ( importDeclaration )* ( typeDeclaration )+ )
             {
-                // jkit/parser/Java.g:202:6: ^( UNIT ( packageDeclaration )? ( importDeclaration )* ( typeDeclaration )+ )
+                // jkit/java/Java.g:202:6: ^( UNIT ( packageDeclaration )? ( importDeclaration )* ( typeDeclaration )+ )
                 {
                 Object root_1 = (Object)adaptor.nil();
                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(UNIT, "UNIT"), root_1);
 
-                // jkit/parser/Java.g:202:13: ( packageDeclaration )?
+                // jkit/java/Java.g:202:13: ( packageDeclaration )?
                 if ( stream_packageDeclaration.hasNext() ) {
                     adaptor.addChild(root_1, stream_packageDeclaration.nextTree());
 
                 }
                 stream_packageDeclaration.reset();
-                // jkit/parser/Java.g:202:33: ( importDeclaration )*
+                // jkit/java/Java.g:202:33: ( importDeclaration )*
                 while ( stream_importDeclaration.hasNext() ) {
                     adaptor.addChild(root_1, stream_importDeclaration.nextTree());
 
@@ -515,7 +515,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "packageDeclaration"
-    // jkit/parser/Java.g:205:1: packageDeclaration : 'package' qualifiedName ';' -> ^( PACKAGE qualifiedName ) ;
+    // jkit/java/Java.g:205:1: packageDeclaration : 'package' qualifiedName ';' -> ^( PACKAGE qualifiedName ) ;
     public final JavaParser.packageDeclaration_return packageDeclaration() throws RecognitionException {
         JavaParser.packageDeclaration_return retval = new JavaParser.packageDeclaration_return();
         retval.start = input.LT(1);
@@ -534,8 +534,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_qualifiedName=new RewriteRuleSubtreeStream(adaptor,"rule qualifiedName");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 2) ) { return retval; }
-            // jkit/parser/Java.g:206:2: ( 'package' qualifiedName ';' -> ^( PACKAGE qualifiedName ) )
-            // jkit/parser/Java.g:206:4: 'package' qualifiedName ';'
+            // jkit/java/Java.g:206:2: ( 'package' qualifiedName ';' -> ^( PACKAGE qualifiedName ) )
+            // jkit/java/Java.g:206:4: 'package' qualifiedName ';'
             {
             string_literal5=(Token)match(input,113,FOLLOW_113_in_packageDeclaration483); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_113.add(string_literal5);
@@ -564,7 +564,7 @@ public class JavaParser extends Parser {
             root_0 = (Object)adaptor.nil();
             // 206:32: -> ^( PACKAGE qualifiedName )
             {
-                // jkit/parser/Java.g:206:35: ^( PACKAGE qualifiedName )
+                // jkit/java/Java.g:206:35: ^( PACKAGE qualifiedName )
                 {
                 Object root_1 = (Object)adaptor.nil();
                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(PACKAGE, "PACKAGE"), root_1);
@@ -604,7 +604,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "importDeclaration"
-    // jkit/parser/Java.g:209:1: importDeclaration : 'import' ( 'static' )? i+= Identifier ( '.' i+= Identifier )* ( '.' i+= '*' )? ';' -> ^( IMPORT ( $i)+ ) ;
+    // jkit/java/Java.g:209:1: importDeclaration : 'import' ( 'static' )? i+= Identifier ( '.' i+= Identifier )* ( '.' i+= '*' )? ';' -> ^( IMPORT ( $i)+ ) ;
     public final JavaParser.importDeclaration_return importDeclaration() throws RecognitionException {
         JavaParser.importDeclaration_return retval = new JavaParser.importDeclaration_return();
         retval.start = input.LT(1);
@@ -634,13 +634,13 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 3) ) { return retval; }
-            // jkit/parser/Java.g:210:2: ( 'import' ( 'static' )? i+= Identifier ( '.' i+= Identifier )* ( '.' i+= '*' )? ';' -> ^( IMPORT ( $i)+ ) )
-            // jkit/parser/Java.g:210:4: 'import' ( 'static' )? i+= Identifier ( '.' i+= Identifier )* ( '.' i+= '*' )? ';'
+            // jkit/java/Java.g:210:2: ( 'import' ( 'static' )? i+= Identifier ( '.' i+= Identifier )* ( '.' i+= '*' )? ';' -> ^( IMPORT ( $i)+ ) )
+            // jkit/java/Java.g:210:4: 'import' ( 'static' )? i+= Identifier ( '.' i+= Identifier )* ( '.' i+= '*' )? ';'
             {
             string_literal8=(Token)match(input,115,FOLLOW_115_in_importDeclaration507); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_115.add(string_literal8);
 
-            // jkit/parser/Java.g:210:13: ( 'static' )?
+            // jkit/java/Java.g:210:13: ( 'static' )?
             int alt5=2;
             int LA5_0 = input.LA(1);
 
@@ -649,7 +649,7 @@ public class JavaParser extends Parser {
             }
             switch (alt5) {
                 case 1 :
-                    // jkit/parser/Java.g:0:0: 'static'
+                    // jkit/java/Java.g:0:0: 'static'
                     {
                     string_literal9=(Token)match(input,116,FOLLOW_116_in_importDeclaration509); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_116.add(string_literal9);
@@ -666,7 +666,7 @@ public class JavaParser extends Parser {
             if (list_i==null) list_i=new ArrayList();
             list_i.add(i);
 
-            // jkit/parser/Java.g:210:37: ( '.' i+= Identifier )*
+            // jkit/java/Java.g:210:37: ( '.' i+= Identifier )*
             loop6:
             do {
                 int alt6=2;
@@ -685,7 +685,7 @@ public class JavaParser extends Parser {
 
                 switch (alt6) {
             	case 1 :
-            	    // jkit/parser/Java.g:210:38: '.' i+= Identifier
+            	    // jkit/java/Java.g:210:38: '.' i+= Identifier
             	    {
             	    char_literal10=(Token)match(input,117,FOLLOW_117_in_importDeclaration517); if (state.failed) return retval; 
             	    if ( state.backtracking==0 ) stream_117.add(char_literal10);
@@ -705,7 +705,7 @@ public class JavaParser extends Parser {
                 }
             } while (true);
 
-            // jkit/parser/Java.g:210:58: ( '.' i+= '*' )?
+            // jkit/java/Java.g:210:58: ( '.' i+= '*' )?
             int alt7=2;
             int LA7_0 = input.LA(1);
 
@@ -714,7 +714,7 @@ public class JavaParser extends Parser {
             }
             switch (alt7) {
                 case 1 :
-                    // jkit/parser/Java.g:210:59: '.' i+= '*'
+                    // jkit/java/Java.g:210:59: '.' i+= '*'
                     {
                     char_literal11=(Token)match(input,117,FOLLOW_117_in_importDeclaration526); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_117.add(char_literal11);
@@ -750,7 +750,7 @@ public class JavaParser extends Parser {
             root_0 = (Object)adaptor.nil();
             // 210:76: -> ^( IMPORT ( $i)+ )
             {
-                // jkit/parser/Java.g:210:79: ^( IMPORT ( $i)+ )
+                // jkit/java/Java.g:210:79: ^( IMPORT ( $i)+ )
                 {
                 Object root_1 = (Object)adaptor.nil();
                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(IMPORT, "IMPORT"), root_1);
@@ -797,7 +797,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "typeDeclaration"
-    // jkit/parser/Java.g:213:1: typeDeclaration : ( classOrInterfaceDeclaration | ';' );
+    // jkit/java/Java.g:213:1: typeDeclaration : ( classOrInterfaceDeclaration | ';' );
     public final JavaParser.typeDeclaration_return typeDeclaration() throws RecognitionException {
         JavaParser.typeDeclaration_return retval = new JavaParser.typeDeclaration_return();
         retval.start = input.LT(1);
@@ -812,12 +812,12 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 4) ) { return retval; }
-            // jkit/parser/Java.g:214:2: ( classOrInterfaceDeclaration | ';' )
+            // jkit/java/Java.g:214:2: ( classOrInterfaceDeclaration | ';' )
             int alt8=2;
             alt8 = dfa8.predict(input);
             switch (alt8) {
                 case 1 :
-                    // jkit/parser/Java.g:214:4: classOrInterfaceDeclaration
+                    // jkit/java/Java.g:214:4: classOrInterfaceDeclaration
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -831,7 +831,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:215:9: ';'
+                    // jkit/java/Java.g:215:9: ';'
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -870,7 +870,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "classOrInterfaceDeclaration"
-    // jkit/parser/Java.g:218:1: classOrInterfaceDeclaration : ( modifier )* ( classDeclaration -> ^( CLASS ( ^( MODIFIERS ( modifier )* ) )? classDeclaration ) | enumDeclaration -> ^( ENUM ( ^( MODIFIERS ( modifier )* ) )? enumDeclaration ) | interfaceDeclaration -> ^( INTERFACE ( ^( MODIFIERS ( modifier )* ) )? interfaceDeclaration ) ) ;
+    // jkit/java/Java.g:218:1: classOrInterfaceDeclaration : ( modifier )* ( classDeclaration -> ^( CLASS ( ^( MODIFIERS ( modifier )* ) )? classDeclaration ) | enumDeclaration -> ^( ENUM ( ^( MODIFIERS ( modifier )* ) )? enumDeclaration ) | interfaceDeclaration -> ^( INTERFACE ( ^( MODIFIERS ( modifier )* ) )? interfaceDeclaration ) ) ;
     public final JavaParser.classOrInterfaceDeclaration_return classOrInterfaceDeclaration() throws RecognitionException {
         JavaParser.classOrInterfaceDeclaration_return retval = new JavaParser.classOrInterfaceDeclaration_return();
         retval.start = input.LT(1);
@@ -892,17 +892,17 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_interfaceDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule interfaceDeclaration");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 5) ) { return retval; }
-            // jkit/parser/Java.g:219:2: ( ( modifier )* ( classDeclaration -> ^( CLASS ( ^( MODIFIERS ( modifier )* ) )? classDeclaration ) | enumDeclaration -> ^( ENUM ( ^( MODIFIERS ( modifier )* ) )? enumDeclaration ) | interfaceDeclaration -> ^( INTERFACE ( ^( MODIFIERS ( modifier )* ) )? interfaceDeclaration ) ) )
-            // jkit/parser/Java.g:219:4: ( modifier )* ( classDeclaration -> ^( CLASS ( ^( MODIFIERS ( modifier )* ) )? classDeclaration ) | enumDeclaration -> ^( ENUM ( ^( MODIFIERS ( modifier )* ) )? enumDeclaration ) | interfaceDeclaration -> ^( INTERFACE ( ^( MODIFIERS ( modifier )* ) )? interfaceDeclaration ) )
+            // jkit/java/Java.g:219:2: ( ( modifier )* ( classDeclaration -> ^( CLASS ( ^( MODIFIERS ( modifier )* ) )? classDeclaration ) | enumDeclaration -> ^( ENUM ( ^( MODIFIERS ( modifier )* ) )? enumDeclaration ) | interfaceDeclaration -> ^( INTERFACE ( ^( MODIFIERS ( modifier )* ) )? interfaceDeclaration ) ) )
+            // jkit/java/Java.g:219:4: ( modifier )* ( classDeclaration -> ^( CLASS ( ^( MODIFIERS ( modifier )* ) )? classDeclaration ) | enumDeclaration -> ^( ENUM ( ^( MODIFIERS ( modifier )* ) )? enumDeclaration ) | interfaceDeclaration -> ^( INTERFACE ( ^( MODIFIERS ( modifier )* ) )? interfaceDeclaration ) )
             {
-            // jkit/parser/Java.g:219:4: ( modifier )*
+            // jkit/java/Java.g:219:4: ( modifier )*
             loop9:
             do {
                 int alt9=2;
                 alt9 = dfa9.predict(input);
                 switch (alt9) {
             	case 1 :
-            	    // jkit/parser/Java.g:0:0: modifier
+            	    // jkit/java/Java.g:0:0: modifier
             	    {
             	    pushFollow(FOLLOW_modifier_in_classOrInterfaceDeclaration578);
             	    modifier15=modifier();
@@ -919,7 +919,7 @@ public class JavaParser extends Parser {
                 }
             } while (true);
 
-            // jkit/parser/Java.g:219:14: ( classDeclaration -> ^( CLASS ( ^( MODIFIERS ( modifier )* ) )? classDeclaration ) | enumDeclaration -> ^( ENUM ( ^( MODIFIERS ( modifier )* ) )? enumDeclaration ) | interfaceDeclaration -> ^( INTERFACE ( ^( MODIFIERS ( modifier )* ) )? interfaceDeclaration ) )
+            // jkit/java/Java.g:219:14: ( classDeclaration -> ^( CLASS ( ^( MODIFIERS ( modifier )* ) )? classDeclaration ) | enumDeclaration -> ^( ENUM ( ^( MODIFIERS ( modifier )* ) )? enumDeclaration ) | interfaceDeclaration -> ^( INTERFACE ( ^( MODIFIERS ( modifier )* ) )? interfaceDeclaration ) )
             int alt10=3;
             switch ( input.LA(1) ) {
             case 119:
@@ -948,7 +948,7 @@ public class JavaParser extends Parser {
 
             switch (alt10) {
                 case 1 :
-                    // jkit/parser/Java.g:220:3: classDeclaration
+                    // jkit/java/Java.g:220:3: classDeclaration
                     {
                     pushFollow(FOLLOW_classDeclaration_in_classOrInterfaceDeclaration585);
                     classDeclaration16=classDeclaration();
@@ -971,19 +971,19 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 220:20: -> ^( CLASS ( ^( MODIFIERS ( modifier )* ) )? classDeclaration )
                     {
-                        // jkit/parser/Java.g:220:23: ^( CLASS ( ^( MODIFIERS ( modifier )* ) )? classDeclaration )
+                        // jkit/java/Java.g:220:23: ^( CLASS ( ^( MODIFIERS ( modifier )* ) )? classDeclaration )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(CLASS, "CLASS"), root_1);
 
-                        // jkit/parser/Java.g:220:31: ( ^( MODIFIERS ( modifier )* ) )?
+                        // jkit/java/Java.g:220:31: ( ^( MODIFIERS ( modifier )* ) )?
                         if ( stream_modifier.hasNext() ) {
-                            // jkit/parser/Java.g:220:31: ^( MODIFIERS ( modifier )* )
+                            // jkit/java/Java.g:220:31: ^( MODIFIERS ( modifier )* )
                             {
                             Object root_2 = (Object)adaptor.nil();
                             root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(MODIFIERS, "MODIFIERS"), root_2);
 
-                            // jkit/parser/Java.g:220:43: ( modifier )*
+                            // jkit/java/Java.g:220:43: ( modifier )*
                             while ( stream_modifier.hasNext() ) {
                                 adaptor.addChild(root_2, stream_modifier.nextTree());
 
@@ -1006,7 +1006,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:221:5: enumDeclaration
+                    // jkit/java/Java.g:221:5: enumDeclaration
                     {
                     pushFollow(FOLLOW_enumDeclaration_in_classOrInterfaceDeclaration607);
                     enumDeclaration17=enumDeclaration();
@@ -1029,19 +1029,19 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 221:21: -> ^( ENUM ( ^( MODIFIERS ( modifier )* ) )? enumDeclaration )
                     {
-                        // jkit/parser/Java.g:221:24: ^( ENUM ( ^( MODIFIERS ( modifier )* ) )? enumDeclaration )
+                        // jkit/java/Java.g:221:24: ^( ENUM ( ^( MODIFIERS ( modifier )* ) )? enumDeclaration )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ENUM, "ENUM"), root_1);
 
-                        // jkit/parser/Java.g:221:31: ( ^( MODIFIERS ( modifier )* ) )?
+                        // jkit/java/Java.g:221:31: ( ^( MODIFIERS ( modifier )* ) )?
                         if ( stream_modifier.hasNext() ) {
-                            // jkit/parser/Java.g:221:31: ^( MODIFIERS ( modifier )* )
+                            // jkit/java/Java.g:221:31: ^( MODIFIERS ( modifier )* )
                             {
                             Object root_2 = (Object)adaptor.nil();
                             root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(MODIFIERS, "MODIFIERS"), root_2);
 
-                            // jkit/parser/Java.g:221:43: ( modifier )*
+                            // jkit/java/Java.g:221:43: ( modifier )*
                             while ( stream_modifier.hasNext() ) {
                                 adaptor.addChild(root_2, stream_modifier.nextTree());
 
@@ -1064,7 +1064,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // jkit/parser/Java.g:222:5: interfaceDeclaration
+                    // jkit/java/Java.g:222:5: interfaceDeclaration
                     {
                     pushFollow(FOLLOW_interfaceDeclaration_in_classOrInterfaceDeclaration629);
                     interfaceDeclaration18=interfaceDeclaration();
@@ -1087,19 +1087,19 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 222:26: -> ^( INTERFACE ( ^( MODIFIERS ( modifier )* ) )? interfaceDeclaration )
                     {
-                        // jkit/parser/Java.g:222:29: ^( INTERFACE ( ^( MODIFIERS ( modifier )* ) )? interfaceDeclaration )
+                        // jkit/java/Java.g:222:29: ^( INTERFACE ( ^( MODIFIERS ( modifier )* ) )? interfaceDeclaration )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(INTERFACE, "INTERFACE"), root_1);
 
-                        // jkit/parser/Java.g:222:41: ( ^( MODIFIERS ( modifier )* ) )?
+                        // jkit/java/Java.g:222:41: ( ^( MODIFIERS ( modifier )* ) )?
                         if ( stream_modifier.hasNext() ) {
-                            // jkit/parser/Java.g:222:41: ^( MODIFIERS ( modifier )* )
+                            // jkit/java/Java.g:222:41: ^( MODIFIERS ( modifier )* )
                             {
                             Object root_2 = (Object)adaptor.nil();
                             root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(MODIFIERS, "MODIFIERS"), root_2);
 
-                            // jkit/parser/Java.g:222:53: ( modifier )*
+                            // jkit/java/Java.g:222:53: ( modifier )*
                             while ( stream_modifier.hasNext() ) {
                                 adaptor.addChild(root_2, stream_modifier.nextTree());
 
@@ -1152,7 +1152,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "classDeclaration"
-    // jkit/parser/Java.g:226:1: classDeclaration : 'class' Identifier ( typeParameters )? ( 'extends' type )? ( 'implements' typeList )? classBody -> ^( Identifier ( typeParameters )? ) ( ^( EXTENDS type ) )? ( ^( IMPLEMENTS typeList ) )? ( classBody )? ;
+    // jkit/java/Java.g:226:1: classDeclaration : 'class' Identifier ( typeParameters )? ( 'extends' type )? ( 'implements' typeList )? classBody -> ^( Identifier ( typeParameters )? ) ( ^( EXTENDS type ) )? ( ^( IMPLEMENTS typeList ) )? ( classBody )? ;
     public final JavaParser.classDeclaration_return classDeclaration() throws RecognitionException {
         JavaParser.classDeclaration_return retval = new JavaParser.classDeclaration_return();
         retval.start = input.LT(1);
@@ -1186,8 +1186,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_typeList=new RewriteRuleSubtreeStream(adaptor,"rule typeList");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 6) ) { return retval; }
-            // jkit/parser/Java.g:227:2: ( 'class' Identifier ( typeParameters )? ( 'extends' type )? ( 'implements' typeList )? classBody -> ^( Identifier ( typeParameters )? ) ( ^( EXTENDS type ) )? ( ^( IMPLEMENTS typeList ) )? ( classBody )? )
-            // jkit/parser/Java.g:227:4: 'class' Identifier ( typeParameters )? ( 'extends' type )? ( 'implements' typeList )? classBody
+            // jkit/java/Java.g:227:2: ( 'class' Identifier ( typeParameters )? ( 'extends' type )? ( 'implements' typeList )? classBody -> ^( Identifier ( typeParameters )? ) ( ^( EXTENDS type ) )? ( ^( IMPLEMENTS typeList ) )? ( classBody )? )
+            // jkit/java/Java.g:227:4: 'class' Identifier ( typeParameters )? ( 'extends' type )? ( 'implements' typeList )? classBody
             {
             string_literal19=(Token)match(input,119,FOLLOW_119_in_classDeclaration662); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_119.add(string_literal19);
@@ -1195,7 +1195,7 @@ public class JavaParser extends Parser {
             Identifier20=(Token)match(input,Identifier,FOLLOW_Identifier_in_classDeclaration664); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_Identifier.add(Identifier20);
 
-            // jkit/parser/Java.g:227:23: ( typeParameters )?
+            // jkit/java/Java.g:227:23: ( typeParameters )?
             int alt11=2;
             int LA11_0 = input.LA(1);
 
@@ -1204,7 +1204,7 @@ public class JavaParser extends Parser {
             }
             switch (alt11) {
                 case 1 :
-                    // jkit/parser/Java.g:227:24: typeParameters
+                    // jkit/java/Java.g:227:24: typeParameters
                     {
                     pushFollow(FOLLOW_typeParameters_in_classDeclaration667);
                     typeParameters21=typeParameters();
@@ -1218,7 +1218,7 @@ public class JavaParser extends Parser {
 
             }
 
-            // jkit/parser/Java.g:228:9: ( 'extends' type )?
+            // jkit/java/Java.g:228:9: ( 'extends' type )?
             int alt12=2;
             int LA12_0 = input.LA(1);
 
@@ -1227,7 +1227,7 @@ public class JavaParser extends Parser {
             }
             switch (alt12) {
                 case 1 :
-                    // jkit/parser/Java.g:228:10: 'extends' type
+                    // jkit/java/Java.g:228:10: 'extends' type
                     {
                     string_literal22=(Token)match(input,120,FOLLOW_120_in_classDeclaration680); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_120.add(string_literal22);
@@ -1244,7 +1244,7 @@ public class JavaParser extends Parser {
 
             }
 
-            // jkit/parser/Java.g:229:9: ( 'implements' typeList )?
+            // jkit/java/Java.g:229:9: ( 'implements' typeList )?
             int alt13=2;
             int LA13_0 = input.LA(1);
 
@@ -1253,7 +1253,7 @@ public class JavaParser extends Parser {
             }
             switch (alt13) {
                 case 1 :
-                    // jkit/parser/Java.g:229:10: 'implements' typeList
+                    // jkit/java/Java.g:229:10: 'implements' typeList
                     {
                     string_literal24=(Token)match(input,121,FOLLOW_121_in_classDeclaration696); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_121.add(string_literal24);
@@ -1291,12 +1291,12 @@ public class JavaParser extends Parser {
             root_0 = (Object)adaptor.nil();
             // 230:19: -> ^( Identifier ( typeParameters )? ) ( ^( EXTENDS type ) )? ( ^( IMPLEMENTS typeList ) )? ( classBody )?
             {
-                // jkit/parser/Java.g:230:22: ^( Identifier ( typeParameters )? )
+                // jkit/java/Java.g:230:22: ^( Identifier ( typeParameters )? )
                 {
                 Object root_1 = (Object)adaptor.nil();
                 root_1 = (Object)adaptor.becomeRoot(stream_Identifier.nextNode(), root_1);
 
-                // jkit/parser/Java.g:230:35: ( typeParameters )?
+                // jkit/java/Java.g:230:35: ( typeParameters )?
                 if ( stream_typeParameters.hasNext() ) {
                     adaptor.addChild(root_1, stream_typeParameters.nextTree());
 
@@ -1305,9 +1305,9 @@ public class JavaParser extends Parser {
 
                 adaptor.addChild(root_0, root_1);
                 }
-                // jkit/parser/Java.g:230:52: ( ^( EXTENDS type ) )?
+                // jkit/java/Java.g:230:52: ( ^( EXTENDS type ) )?
                 if ( stream_type.hasNext() ) {
-                    // jkit/parser/Java.g:230:52: ^( EXTENDS type )
+                    // jkit/java/Java.g:230:52: ^( EXTENDS type )
                     {
                     Object root_1 = (Object)adaptor.nil();
                     root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(EXTENDS, "EXTENDS"), root_1);
@@ -1319,9 +1319,9 @@ public class JavaParser extends Parser {
 
                 }
                 stream_type.reset();
-                // jkit/parser/Java.g:230:69: ( ^( IMPLEMENTS typeList ) )?
+                // jkit/java/Java.g:230:69: ( ^( IMPLEMENTS typeList ) )?
                 if ( stream_typeList.hasNext() ) {
-                    // jkit/parser/Java.g:230:69: ^( IMPLEMENTS typeList )
+                    // jkit/java/Java.g:230:69: ^( IMPLEMENTS typeList )
                     {
                     Object root_1 = (Object)adaptor.nil();
                     root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(IMPLEMENTS, "IMPLEMENTS"), root_1);
@@ -1333,7 +1333,7 @@ public class JavaParser extends Parser {
 
                 }
                 stream_typeList.reset();
-                // jkit/parser/Java.g:230:93: ( classBody )?
+                // jkit/java/Java.g:230:93: ( classBody )?
                 if ( stream_classBody.hasNext() ) {
                     adaptor.addChild(root_0, stream_classBody.nextTree());
 
@@ -1370,7 +1370,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "typeParameters"
-    // jkit/parser/Java.g:233:1: typeParameters : '<' t+= typeParameter ( ',' t+= typeParameter )* '>' -> ( $t)* ;
+    // jkit/java/Java.g:233:1: typeParameters : '<' t+= typeParameter ( ',' t+= typeParameter )* '>' -> ( $t)* ;
     public final JavaParser.typeParameters_return typeParameters() throws RecognitionException {
         JavaParser.typeParameters_return retval = new JavaParser.typeParameters_return();
         retval.start = input.LT(1);
@@ -1391,8 +1391,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_typeParameter=new RewriteRuleSubtreeStream(adaptor,"rule typeParameter");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 7) ) { return retval; }
-            // jkit/parser/Java.g:234:2: ( '<' t+= typeParameter ( ',' t+= typeParameter )* '>' -> ( $t)* )
-            // jkit/parser/Java.g:234:4: '<' t+= typeParameter ( ',' t+= typeParameter )* '>'
+            // jkit/java/Java.g:234:2: ( '<' t+= typeParameter ( ',' t+= typeParameter )* '>' -> ( $t)* )
+            // jkit/java/Java.g:234:4: '<' t+= typeParameter ( ',' t+= typeParameter )* '>'
             {
             char_literal27=(Token)match(input,122,FOLLOW_122_in_typeParameters747); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_122.add(char_literal27);
@@ -1406,7 +1406,7 @@ public class JavaParser extends Parser {
             if (list_t==null) list_t=new ArrayList();
             list_t.add(t.getTree());
 
-            // jkit/parser/Java.g:234:25: ( ',' t+= typeParameter )*
+            // jkit/java/Java.g:234:25: ( ',' t+= typeParameter )*
             loop14:
             do {
                 int alt14=2;
@@ -1419,7 +1419,7 @@ public class JavaParser extends Parser {
 
                 switch (alt14) {
             	case 1 :
-            	    // jkit/parser/Java.g:234:26: ',' t+= typeParameter
+            	    // jkit/java/Java.g:234:26: ',' t+= typeParameter
             	    {
             	    char_literal28=(Token)match(input,123,FOLLOW_123_in_typeParameters754); if (state.failed) return retval; 
             	    if ( state.backtracking==0 ) stream_123.add(char_literal28);
@@ -1460,7 +1460,7 @@ public class JavaParser extends Parser {
             root_0 = (Object)adaptor.nil();
             // 234:53: -> ( $t)*
             {
-                // jkit/parser/Java.g:234:56: ( $t)*
+                // jkit/java/Java.g:234:56: ( $t)*
                 while ( stream_t.hasNext() ) {
                     adaptor.addChild(root_0, stream_t.nextTree());
 
@@ -1497,7 +1497,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "typeParameter"
-    // jkit/parser/Java.g:237:1: typeParameter : Identifier ( 'extends' bound )? -> ^( TYPE_PARAMETER Identifier ( ^( EXTENDS bound ) )? ) ;
+    // jkit/java/Java.g:237:1: typeParameter : Identifier ( 'extends' bound )? -> ^( TYPE_PARAMETER Identifier ( ^( EXTENDS bound ) )? ) ;
     public final JavaParser.typeParameter_return typeParameter() throws RecognitionException {
         JavaParser.typeParameter_return retval = new JavaParser.typeParameter_return();
         retval.start = input.LT(1);
@@ -1516,13 +1516,13 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_bound=new RewriteRuleSubtreeStream(adaptor,"rule bound");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 8) ) { return retval; }
-            // jkit/parser/Java.g:238:2: ( Identifier ( 'extends' bound )? -> ^( TYPE_PARAMETER Identifier ( ^( EXTENDS bound ) )? ) )
-            // jkit/parser/Java.g:238:4: Identifier ( 'extends' bound )?
+            // jkit/java/Java.g:238:2: ( Identifier ( 'extends' bound )? -> ^( TYPE_PARAMETER Identifier ( ^( EXTENDS bound ) )? ) )
+            // jkit/java/Java.g:238:4: Identifier ( 'extends' bound )?
             {
             Identifier30=(Token)match(input,Identifier,FOLLOW_Identifier_in_typeParameter779); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_Identifier.add(Identifier30);
 
-            // jkit/parser/Java.g:238:15: ( 'extends' bound )?
+            // jkit/java/Java.g:238:15: ( 'extends' bound )?
             int alt15=2;
             int LA15_0 = input.LA(1);
 
@@ -1531,7 +1531,7 @@ public class JavaParser extends Parser {
             }
             switch (alt15) {
                 case 1 :
-                    // jkit/parser/Java.g:238:16: 'extends' bound
+                    // jkit/java/Java.g:238:16: 'extends' bound
                     {
                     string_literal31=(Token)match(input,120,FOLLOW_120_in_typeParameter782); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_120.add(string_literal31);
@@ -1563,15 +1563,15 @@ public class JavaParser extends Parser {
             root_0 = (Object)adaptor.nil();
             // 238:34: -> ^( TYPE_PARAMETER Identifier ( ^( EXTENDS bound ) )? )
             {
-                // jkit/parser/Java.g:238:37: ^( TYPE_PARAMETER Identifier ( ^( EXTENDS bound ) )? )
+                // jkit/java/Java.g:238:37: ^( TYPE_PARAMETER Identifier ( ^( EXTENDS bound ) )? )
                 {
                 Object root_1 = (Object)adaptor.nil();
                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(TYPE_PARAMETER, "TYPE_PARAMETER"), root_1);
 
                 adaptor.addChild(root_1, stream_Identifier.nextNode());
-                // jkit/parser/Java.g:238:65: ( ^( EXTENDS bound ) )?
+                // jkit/java/Java.g:238:65: ( ^( EXTENDS bound ) )?
                 if ( stream_bound.hasNext() ) {
-                    // jkit/parser/Java.g:238:65: ^( EXTENDS bound )
+                    // jkit/java/Java.g:238:65: ^( EXTENDS bound )
                     {
                     Object root_2 = (Object)adaptor.nil();
                     root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(EXTENDS, "EXTENDS"), root_2);
@@ -1617,7 +1617,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "bound"
-    // jkit/parser/Java.g:241:1: bound : t+= type ( '&' t+= type )* -> ( $t)* ;
+    // jkit/java/Java.g:241:1: bound : t+= type ( '&' t+= type )* -> ( $t)* ;
     public final JavaParser.bound_return bound() throws RecognitionException {
         JavaParser.bound_return retval = new JavaParser.bound_return();
         retval.start = input.LT(1);
@@ -1632,8 +1632,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_type=new RewriteRuleSubtreeStream(adaptor,"rule type");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 9) ) { return retval; }
-            // jkit/parser/Java.g:242:2: (t+= type ( '&' t+= type )* -> ( $t)* )
-            // jkit/parser/Java.g:242:4: t+= type ( '&' t+= type )*
+            // jkit/java/Java.g:242:2: (t+= type ( '&' t+= type )* -> ( $t)* )
+            // jkit/java/Java.g:242:4: t+= type ( '&' t+= type )*
             {
             pushFollow(FOLLOW_type_in_bound816);
             t=type();
@@ -1644,7 +1644,7 @@ public class JavaParser extends Parser {
             if (list_t==null) list_t=new ArrayList();
             list_t.add(t.getTree());
 
-            // jkit/parser/Java.g:242:12: ( '&' t+= type )*
+            // jkit/java/Java.g:242:12: ( '&' t+= type )*
             loop16:
             do {
                 int alt16=2;
@@ -1657,7 +1657,7 @@ public class JavaParser extends Parser {
 
                 switch (alt16) {
             	case 1 :
-            	    // jkit/parser/Java.g:242:13: '&' t+= type
+            	    // jkit/java/Java.g:242:13: '&' t+= type
             	    {
             	    char_literal33=(Token)match(input,125,FOLLOW_125_in_bound819); if (state.failed) return retval; 
             	    if ( state.backtracking==0 ) stream_125.add(char_literal33);
@@ -1695,7 +1695,7 @@ public class JavaParser extends Parser {
             root_0 = (Object)adaptor.nil();
             // 242:27: -> ( $t)*
             {
-                // jkit/parser/Java.g:242:30: ( $t)*
+                // jkit/java/Java.g:242:30: ( $t)*
                 while ( stream_t.hasNext() ) {
                     adaptor.addChild(root_0, stream_t.nextTree());
 
@@ -1732,7 +1732,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "enumDeclaration"
-    // jkit/parser/Java.g:245:1: enumDeclaration : ENUM Identifier ( 'implements' typeList )? enumBody ;
+    // jkit/java/Java.g:245:1: enumDeclaration : ENUM Identifier ( 'implements' typeList )? enumBody ;
     public final JavaParser.enumDeclaration_return enumDeclaration() throws RecognitionException {
         JavaParser.enumDeclaration_return retval = new JavaParser.enumDeclaration_return();
         retval.start = input.LT(1);
@@ -1753,8 +1753,8 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 10) ) { return retval; }
-            // jkit/parser/Java.g:246:2: ( ENUM Identifier ( 'implements' typeList )? enumBody )
-            // jkit/parser/Java.g:246:4: ENUM Identifier ( 'implements' typeList )? enumBody
+            // jkit/java/Java.g:246:2: ( ENUM Identifier ( 'implements' typeList )? enumBody )
+            // jkit/java/Java.g:246:4: ENUM Identifier ( 'implements' typeList )? enumBody
             {
             root_0 = (Object)adaptor.nil();
 
@@ -1768,7 +1768,7 @@ public class JavaParser extends Parser {
             Identifier35_tree = (Object)adaptor.create(Identifier35);
             adaptor.addChild(root_0, Identifier35_tree);
             }
-            // jkit/parser/Java.g:246:20: ( 'implements' typeList )?
+            // jkit/java/Java.g:246:20: ( 'implements' typeList )?
             int alt17=2;
             int LA17_0 = input.LA(1);
 
@@ -1777,7 +1777,7 @@ public class JavaParser extends Parser {
             }
             switch (alt17) {
                 case 1 :
-                    // jkit/parser/Java.g:246:21: 'implements' typeList
+                    // jkit/java/Java.g:246:21: 'implements' typeList
                     {
                     string_literal36=(Token)match(input,121,FOLLOW_121_in_enumDeclaration847); if (state.failed) return retval;
                     if ( state.backtracking==0 ) {
@@ -1830,7 +1830,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "enumBody"
-    // jkit/parser/Java.g:249:1: enumBody : '{' ( enumConstants )? ( ',' )? ( enumBodyDeclarations )? '}' ;
+    // jkit/java/Java.g:249:1: enumBody : '{' ( enumConstants )? ( ',' )? ( enumBodyDeclarations )? '}' ;
     public final JavaParser.enumBody_return enumBody() throws RecognitionException {
         JavaParser.enumBody_return retval = new JavaParser.enumBody_return();
         retval.start = input.LT(1);
@@ -1851,8 +1851,8 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 11) ) { return retval; }
-            // jkit/parser/Java.g:250:2: ( '{' ( enumConstants )? ( ',' )? ( enumBodyDeclarations )? '}' )
-            // jkit/parser/Java.g:250:4: '{' ( enumConstants )? ( ',' )? ( enumBodyDeclarations )? '}'
+            // jkit/java/Java.g:250:2: ( '{' ( enumConstants )? ( ',' )? ( enumBodyDeclarations )? '}' )
+            // jkit/java/Java.g:250:4: '{' ( enumConstants )? ( ',' )? ( enumBodyDeclarations )? '}'
             {
             root_0 = (Object)adaptor.nil();
 
@@ -1861,7 +1861,7 @@ public class JavaParser extends Parser {
             char_literal39_tree = (Object)adaptor.create(char_literal39);
             adaptor.addChild(root_0, char_literal39_tree);
             }
-            // jkit/parser/Java.g:250:8: ( enumConstants )?
+            // jkit/java/Java.g:250:8: ( enumConstants )?
             int alt18=2;
             int LA18_0 = input.LA(1);
 
@@ -1870,7 +1870,7 @@ public class JavaParser extends Parser {
             }
             switch (alt18) {
                 case 1 :
-                    // jkit/parser/Java.g:0:0: enumConstants
+                    // jkit/java/Java.g:0:0: enumConstants
                     {
                     pushFollow(FOLLOW_enumConstants_in_enumBody867);
                     enumConstants40=enumConstants();
@@ -1884,7 +1884,7 @@ public class JavaParser extends Parser {
 
             }
 
-            // jkit/parser/Java.g:250:23: ( ',' )?
+            // jkit/java/Java.g:250:23: ( ',' )?
             int alt19=2;
             int LA19_0 = input.LA(1);
 
@@ -1893,7 +1893,7 @@ public class JavaParser extends Parser {
             }
             switch (alt19) {
                 case 1 :
-                    // jkit/parser/Java.g:0:0: ','
+                    // jkit/java/Java.g:0:0: ','
                     {
                     char_literal41=(Token)match(input,123,FOLLOW_123_in_enumBody870); if (state.failed) return retval;
                     if ( state.backtracking==0 ) {
@@ -1906,7 +1906,7 @@ public class JavaParser extends Parser {
 
             }
 
-            // jkit/parser/Java.g:250:28: ( enumBodyDeclarations )?
+            // jkit/java/Java.g:250:28: ( enumBodyDeclarations )?
             int alt20=2;
             int LA20_0 = input.LA(1);
 
@@ -1915,7 +1915,7 @@ public class JavaParser extends Parser {
             }
             switch (alt20) {
                 case 1 :
-                    // jkit/parser/Java.g:0:0: enumBodyDeclarations
+                    // jkit/java/Java.g:0:0: enumBodyDeclarations
                     {
                     pushFollow(FOLLOW_enumBodyDeclarations_in_enumBody873);
                     enumBodyDeclarations42=enumBodyDeclarations();
@@ -1962,7 +1962,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "enumConstants"
-    // jkit/parser/Java.g:253:1: enumConstants : enumConstant ( ',' enumConstant )* ;
+    // jkit/java/Java.g:253:1: enumConstants : enumConstant ( ',' enumConstant )* ;
     public final JavaParser.enumConstants_return enumConstants() throws RecognitionException {
         JavaParser.enumConstants_return retval = new JavaParser.enumConstants_return();
         retval.start = input.LT(1);
@@ -1979,8 +1979,8 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 12) ) { return retval; }
-            // jkit/parser/Java.g:254:2: ( enumConstant ( ',' enumConstant )* )
-            // jkit/parser/Java.g:254:4: enumConstant ( ',' enumConstant )*
+            // jkit/java/Java.g:254:2: ( enumConstant ( ',' enumConstant )* )
+            // jkit/java/Java.g:254:4: enumConstant ( ',' enumConstant )*
             {
             root_0 = (Object)adaptor.nil();
 
@@ -1990,7 +1990,7 @@ public class JavaParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) adaptor.addChild(root_0, enumConstant44.getTree());
-            // jkit/parser/Java.g:254:17: ( ',' enumConstant )*
+            // jkit/java/Java.g:254:17: ( ',' enumConstant )*
             loop21:
             do {
                 int alt21=2;
@@ -2009,7 +2009,7 @@ public class JavaParser extends Parser {
 
                 switch (alt21) {
             	case 1 :
-            	    // jkit/parser/Java.g:254:18: ',' enumConstant
+            	    // jkit/java/Java.g:254:18: ',' enumConstant
             	    {
             	    char_literal45=(Token)match(input,123,FOLLOW_123_in_enumConstants890); if (state.failed) return retval;
             	    if ( state.backtracking==0 ) {
@@ -2059,7 +2059,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "enumConstant"
-    // jkit/parser/Java.g:257:1: enumConstant : ( annotations )? Identifier ( arguments )? ( classBody )? -> ( annotations )? Identifier ( ( arguments )? )? ( ( classBody )? )? ;
+    // jkit/java/Java.g:257:1: enumConstant : ( annotations )? Identifier ( arguments )? ( classBody )? -> ( annotations )? Identifier ( ( arguments )? )? ( ( classBody )? )? ;
     public final JavaParser.enumConstant_return enumConstant() throws RecognitionException {
         JavaParser.enumConstant_return retval = new JavaParser.enumConstant_return();
         retval.start = input.LT(1);
@@ -2081,10 +2081,10 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_annotations=new RewriteRuleSubtreeStream(adaptor,"rule annotations");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 13) ) { return retval; }
-            // jkit/parser/Java.g:258:2: ( ( annotations )? Identifier ( arguments )? ( classBody )? -> ( annotations )? Identifier ( ( arguments )? )? ( ( classBody )? )? )
-            // jkit/parser/Java.g:258:4: ( annotations )? Identifier ( arguments )? ( classBody )?
+            // jkit/java/Java.g:258:2: ( ( annotations )? Identifier ( arguments )? ( classBody )? -> ( annotations )? Identifier ( ( arguments )? )? ( ( classBody )? )? )
+            // jkit/java/Java.g:258:4: ( annotations )? Identifier ( arguments )? ( classBody )?
             {
-            // jkit/parser/Java.g:258:4: ( annotations )?
+            // jkit/java/Java.g:258:4: ( annotations )?
             int alt22=2;
             int LA22_0 = input.LA(1);
 
@@ -2093,7 +2093,7 @@ public class JavaParser extends Parser {
             }
             switch (alt22) {
                 case 1 :
-                    // jkit/parser/Java.g:0:0: annotations
+                    // jkit/java/Java.g:0:0: annotations
                     {
                     pushFollow(FOLLOW_annotations_in_enumConstant906);
                     annotations47=annotations();
@@ -2110,7 +2110,7 @@ public class JavaParser extends Parser {
             Identifier48=(Token)match(input,Identifier,FOLLOW_Identifier_in_enumConstant909); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_Identifier.add(Identifier48);
 
-            // jkit/parser/Java.g:258:28: ( arguments )?
+            // jkit/java/Java.g:258:28: ( arguments )?
             int alt23=2;
             int LA23_0 = input.LA(1);
 
@@ -2119,7 +2119,7 @@ public class JavaParser extends Parser {
             }
             switch (alt23) {
                 case 1 :
-                    // jkit/parser/Java.g:258:29: arguments
+                    // jkit/java/Java.g:258:29: arguments
                     {
                     pushFollow(FOLLOW_arguments_in_enumConstant912);
                     arguments49=arguments();
@@ -2133,7 +2133,7 @@ public class JavaParser extends Parser {
 
             }
 
-            // jkit/parser/Java.g:258:41: ( classBody )?
+            // jkit/java/Java.g:258:41: ( classBody )?
             int alt24=2;
             int LA24_0 = input.LA(1);
 
@@ -2142,7 +2142,7 @@ public class JavaParser extends Parser {
             }
             switch (alt24) {
                 case 1 :
-                    // jkit/parser/Java.g:258:42: classBody
+                    // jkit/java/Java.g:258:42: classBody
                     {
                     pushFollow(FOLLOW_classBody_in_enumConstant917);
                     classBody50=classBody();
@@ -2171,16 +2171,16 @@ public class JavaParser extends Parser {
             root_0 = (Object)adaptor.nil();
             // 258:54: -> ( annotations )? Identifier ( ( arguments )? )? ( ( classBody )? )?
             {
-                // jkit/parser/Java.g:258:56: ( annotations )?
+                // jkit/java/Java.g:258:56: ( annotations )?
                 if ( stream_annotations.hasNext() ) {
                     adaptor.addChild(root_0, stream_annotations.nextTree());
 
                 }
                 stream_annotations.reset();
                 adaptor.addChild(root_0, stream_Identifier.nextNode());
-                // jkit/parser/Java.g:258:80: ( ( arguments )? )?
+                // jkit/java/Java.g:258:80: ( ( arguments )? )?
                 if ( stream_arguments.hasNext() ) {
-                    // jkit/parser/Java.g:258:81: ( arguments )?
+                    // jkit/java/Java.g:258:81: ( arguments )?
                     if ( stream_arguments.hasNext() ) {
                         adaptor.addChild(root_0, stream_arguments.nextTree());
 
@@ -2189,9 +2189,9 @@ public class JavaParser extends Parser {
 
                 }
                 stream_arguments.reset();
-                // jkit/parser/Java.g:258:94: ( ( classBody )? )?
+                // jkit/java/Java.g:258:94: ( ( classBody )? )?
                 if ( stream_classBody.hasNext() ) {
-                    // jkit/parser/Java.g:258:95: ( classBody )?
+                    // jkit/java/Java.g:258:95: ( classBody )?
                     if ( stream_classBody.hasNext() ) {
                         adaptor.addChild(root_0, stream_classBody.nextTree());
 
@@ -2231,7 +2231,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "enumBodyDeclarations"
-    // jkit/parser/Java.g:261:1: enumBodyDeclarations : ';' ( classBodyDeclaration )* ;
+    // jkit/java/Java.g:261:1: enumBodyDeclarations : ';' ( classBodyDeclaration )* ;
     public final JavaParser.enumBodyDeclarations_return enumBodyDeclarations() throws RecognitionException {
         JavaParser.enumBodyDeclarations_return retval = new JavaParser.enumBodyDeclarations_return();
         retval.start = input.LT(1);
@@ -2246,8 +2246,8 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 14) ) { return retval; }
-            // jkit/parser/Java.g:262:2: ( ';' ( classBodyDeclaration )* )
-            // jkit/parser/Java.g:262:4: ';' ( classBodyDeclaration )*
+            // jkit/java/Java.g:262:2: ( ';' ( classBodyDeclaration )* )
+            // jkit/java/Java.g:262:4: ';' ( classBodyDeclaration )*
             {
             root_0 = (Object)adaptor.nil();
 
@@ -2256,14 +2256,14 @@ public class JavaParser extends Parser {
             char_literal51_tree = (Object)adaptor.create(char_literal51);
             adaptor.addChild(root_0, char_literal51_tree);
             }
-            // jkit/parser/Java.g:262:8: ( classBodyDeclaration )*
+            // jkit/java/Java.g:262:8: ( classBodyDeclaration )*
             loop25:
             do {
                 int alt25=2;
                 alt25 = dfa25.predict(input);
                 switch (alt25) {
             	case 1 :
-            	    // jkit/parser/Java.g:262:9: classBodyDeclaration
+            	    // jkit/java/Java.g:262:9: classBodyDeclaration
             	    {
             	    pushFollow(FOLLOW_classBodyDeclaration_in_enumBodyDeclarations952);
             	    classBodyDeclaration52=classBodyDeclaration();
@@ -2308,7 +2308,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "interfaceDeclaration"
-    // jkit/parser/Java.g:265:1: interfaceDeclaration : ( normalInterfaceDeclaration | annotationTypeDeclaration );
+    // jkit/java/Java.g:265:1: interfaceDeclaration : ( normalInterfaceDeclaration | annotationTypeDeclaration );
     public final JavaParser.interfaceDeclaration_return interfaceDeclaration() throws RecognitionException {
         JavaParser.interfaceDeclaration_return retval = new JavaParser.interfaceDeclaration_return();
         retval.start = input.LT(1);
@@ -2323,7 +2323,7 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 15) ) { return retval; }
-            // jkit/parser/Java.g:266:2: ( normalInterfaceDeclaration | annotationTypeDeclaration )
+            // jkit/java/Java.g:266:2: ( normalInterfaceDeclaration | annotationTypeDeclaration )
             int alt26=2;
             int LA26_0 = input.LA(1);
 
@@ -2342,7 +2342,7 @@ public class JavaParser extends Parser {
             }
             switch (alt26) {
                 case 1 :
-                    // jkit/parser/Java.g:266:4: normalInterfaceDeclaration
+                    // jkit/java/Java.g:266:4: normalInterfaceDeclaration
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -2356,7 +2356,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:267:4: annotationTypeDeclaration
+                    // jkit/java/Java.g:267:4: annotationTypeDeclaration
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -2396,7 +2396,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "normalInterfaceDeclaration"
-    // jkit/parser/Java.g:270:1: normalInterfaceDeclaration : 'interface' Identifier ( typeParameters )? ( 'extends' typeList )? interfaceBody -> ^( Identifier ( typeParameters )? ) ( ^( IMPLEMENTS typeList ) )? ( interfaceBody )? ;
+    // jkit/java/Java.g:270:1: normalInterfaceDeclaration : 'interface' Identifier ( typeParameters )? ( 'extends' typeList )? interfaceBody -> ^( Identifier ( typeParameters )? ) ( ^( IMPLEMENTS typeList ) )? ( interfaceBody )? ;
     public final JavaParser.normalInterfaceDeclaration_return normalInterfaceDeclaration() throws RecognitionException {
         JavaParser.normalInterfaceDeclaration_return retval = new JavaParser.normalInterfaceDeclaration_return();
         retval.start = input.LT(1);
@@ -2424,8 +2424,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_typeList=new RewriteRuleSubtreeStream(adaptor,"rule typeList");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 16) ) { return retval; }
-            // jkit/parser/Java.g:271:2: ( 'interface' Identifier ( typeParameters )? ( 'extends' typeList )? interfaceBody -> ^( Identifier ( typeParameters )? ) ( ^( IMPLEMENTS typeList ) )? ( interfaceBody )? )
-            // jkit/parser/Java.g:271:4: 'interface' Identifier ( typeParameters )? ( 'extends' typeList )? interfaceBody
+            // jkit/java/Java.g:271:2: ( 'interface' Identifier ( typeParameters )? ( 'extends' typeList )? interfaceBody -> ^( Identifier ( typeParameters )? ) ( ^( IMPLEMENTS typeList ) )? ( interfaceBody )? )
+            // jkit/java/Java.g:271:4: 'interface' Identifier ( typeParameters )? ( 'extends' typeList )? interfaceBody
             {
             string_literal55=(Token)match(input,128,FOLLOW_128_in_normalInterfaceDeclaration983); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_128.add(string_literal55);
@@ -2433,7 +2433,7 @@ public class JavaParser extends Parser {
             Identifier56=(Token)match(input,Identifier,FOLLOW_Identifier_in_normalInterfaceDeclaration985); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_Identifier.add(Identifier56);
 
-            // jkit/parser/Java.g:271:27: ( typeParameters )?
+            // jkit/java/Java.g:271:27: ( typeParameters )?
             int alt27=2;
             int LA27_0 = input.LA(1);
 
@@ -2442,7 +2442,7 @@ public class JavaParser extends Parser {
             }
             switch (alt27) {
                 case 1 :
-                    // jkit/parser/Java.g:0:0: typeParameters
+                    // jkit/java/Java.g:0:0: typeParameters
                     {
                     pushFollow(FOLLOW_typeParameters_in_normalInterfaceDeclaration987);
                     typeParameters57=typeParameters();
@@ -2456,7 +2456,7 @@ public class JavaParser extends Parser {
 
             }
 
-            // jkit/parser/Java.g:271:43: ( 'extends' typeList )?
+            // jkit/java/Java.g:271:43: ( 'extends' typeList )?
             int alt28=2;
             int LA28_0 = input.LA(1);
 
@@ -2465,7 +2465,7 @@ public class JavaParser extends Parser {
             }
             switch (alt28) {
                 case 1 :
-                    // jkit/parser/Java.g:271:44: 'extends' typeList
+                    // jkit/java/Java.g:271:44: 'extends' typeList
                     {
                     string_literal58=(Token)match(input,120,FOLLOW_120_in_normalInterfaceDeclaration991); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_120.add(string_literal58);
@@ -2503,12 +2503,12 @@ public class JavaParser extends Parser {
             root_0 = (Object)adaptor.nil();
             // 271:79: -> ^( Identifier ( typeParameters )? ) ( ^( IMPLEMENTS typeList ) )? ( interfaceBody )?
             {
-                // jkit/parser/Java.g:271:82: ^( Identifier ( typeParameters )? )
+                // jkit/java/Java.g:271:82: ^( Identifier ( typeParameters )? )
                 {
                 Object root_1 = (Object)adaptor.nil();
                 root_1 = (Object)adaptor.becomeRoot(stream_Identifier.nextNode(), root_1);
 
-                // jkit/parser/Java.g:271:95: ( typeParameters )?
+                // jkit/java/Java.g:271:95: ( typeParameters )?
                 if ( stream_typeParameters.hasNext() ) {
                     adaptor.addChild(root_1, stream_typeParameters.nextTree());
 
@@ -2517,9 +2517,9 @@ public class JavaParser extends Parser {
 
                 adaptor.addChild(root_0, root_1);
                 }
-                // jkit/parser/Java.g:271:112: ( ^( IMPLEMENTS typeList ) )?
+                // jkit/java/Java.g:271:112: ( ^( IMPLEMENTS typeList ) )?
                 if ( stream_typeList.hasNext() ) {
-                    // jkit/parser/Java.g:271:112: ^( IMPLEMENTS typeList )
+                    // jkit/java/Java.g:271:112: ^( IMPLEMENTS typeList )
                     {
                     Object root_1 = (Object)adaptor.nil();
                     root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(IMPLEMENTS, "IMPLEMENTS"), root_1);
@@ -2531,7 +2531,7 @@ public class JavaParser extends Parser {
 
                 }
                 stream_typeList.reset();
-                // jkit/parser/Java.g:271:136: ( interfaceBody )?
+                // jkit/java/Java.g:271:136: ( interfaceBody )?
                 if ( stream_interfaceBody.hasNext() ) {
                     adaptor.addChild(root_0, stream_interfaceBody.nextTree());
 
@@ -2568,7 +2568,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "typeList"
-    // jkit/parser/Java.g:274:1: typeList : type ( ',' type )* ;
+    // jkit/java/Java.g:274:1: typeList : type ( ',' type )* ;
     public final JavaParser.typeList_return typeList() throws RecognitionException {
         JavaParser.typeList_return retval = new JavaParser.typeList_return();
         retval.start = input.LT(1);
@@ -2585,8 +2585,8 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 17) ) { return retval; }
-            // jkit/parser/Java.g:275:2: ( type ( ',' type )* )
-            // jkit/parser/Java.g:275:4: type ( ',' type )*
+            // jkit/java/Java.g:275:2: ( type ( ',' type )* )
+            // jkit/java/Java.g:275:4: type ( ',' type )*
             {
             root_0 = (Object)adaptor.nil();
 
@@ -2596,7 +2596,7 @@ public class JavaParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) adaptor.addChild(root_0, type61.getTree());
-            // jkit/parser/Java.g:275:9: ( ',' type )*
+            // jkit/java/Java.g:275:9: ( ',' type )*
             loop29:
             do {
                 int alt29=2;
@@ -2609,7 +2609,7 @@ public class JavaParser extends Parser {
 
                 switch (alt29) {
             	case 1 :
-            	    // jkit/parser/Java.g:275:10: ',' type
+            	    // jkit/java/Java.g:275:10: ',' type
             	    {
             	    char_literal62=(Token)match(input,123,FOLLOW_123_in_typeList1031); if (state.failed) return retval;
             	    pushFollow(FOLLOW_type_in_typeList1034);
@@ -2655,7 +2655,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "classBody"
-    // jkit/parser/Java.g:278:1: classBody : '{' ( classBodyDeclaration )* '}' ;
+    // jkit/java/Java.g:278:1: classBody : '{' ( classBodyDeclaration )* '}' ;
     public final JavaParser.classBody_return classBody() throws RecognitionException {
         JavaParser.classBody_return retval = new JavaParser.classBody_return();
         retval.start = input.LT(1);
@@ -2672,20 +2672,20 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 18) ) { return retval; }
-            // jkit/parser/Java.g:279:2: ( '{' ( classBodyDeclaration )* '}' )
-            // jkit/parser/Java.g:279:4: '{' ( classBodyDeclaration )* '}'
+            // jkit/java/Java.g:279:2: ( '{' ( classBodyDeclaration )* '}' )
+            // jkit/java/Java.g:279:4: '{' ( classBodyDeclaration )* '}'
             {
             root_0 = (Object)adaptor.nil();
 
             char_literal64=(Token)match(input,126,FOLLOW_126_in_classBody1048); if (state.failed) return retval;
-            // jkit/parser/Java.g:279:9: ( classBodyDeclaration )*
+            // jkit/java/Java.g:279:9: ( classBodyDeclaration )*
             loop30:
             do {
                 int alt30=2;
                 alt30 = dfa30.predict(input);
                 switch (alt30) {
             	case 1 :
-            	    // jkit/parser/Java.g:0:0: classBodyDeclaration
+            	    // jkit/java/Java.g:0:0: classBodyDeclaration
             	    {
             	    pushFollow(FOLLOW_classBodyDeclaration_in_classBody1051);
             	    classBodyDeclaration65=classBodyDeclaration();
@@ -2731,7 +2731,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "interfaceBody"
-    // jkit/parser/Java.g:282:1: interfaceBody : '{' ( interfaceBodyDeclaration )* '}' ;
+    // jkit/java/Java.g:282:1: interfaceBody : '{' ( interfaceBodyDeclaration )* '}' ;
     public final JavaParser.interfaceBody_return interfaceBody() throws RecognitionException {
         JavaParser.interfaceBody_return retval = new JavaParser.interfaceBody_return();
         retval.start = input.LT(1);
@@ -2748,20 +2748,20 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 19) ) { return retval; }
-            // jkit/parser/Java.g:283:2: ( '{' ( interfaceBodyDeclaration )* '}' )
-            // jkit/parser/Java.g:283:4: '{' ( interfaceBodyDeclaration )* '}'
+            // jkit/java/Java.g:283:2: ( '{' ( interfaceBodyDeclaration )* '}' )
+            // jkit/java/Java.g:283:4: '{' ( interfaceBodyDeclaration )* '}'
             {
             root_0 = (Object)adaptor.nil();
 
             char_literal67=(Token)match(input,126,FOLLOW_126_in_interfaceBody1067); if (state.failed) return retval;
-            // jkit/parser/Java.g:283:9: ( interfaceBodyDeclaration )*
+            // jkit/java/Java.g:283:9: ( interfaceBodyDeclaration )*
             loop31:
             do {
                 int alt31=2;
                 alt31 = dfa31.predict(input);
                 switch (alt31) {
             	case 1 :
-            	    // jkit/parser/Java.g:0:0: interfaceBodyDeclaration
+            	    // jkit/java/Java.g:0:0: interfaceBodyDeclaration
             	    {
             	    pushFollow(FOLLOW_interfaceBodyDeclaration_in_interfaceBody1070);
             	    interfaceBodyDeclaration68=interfaceBodyDeclaration();
@@ -2807,7 +2807,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "classBodyDeclaration"
-    // jkit/parser/Java.g:286:1: classBodyDeclaration : ( ';' | ( 'static' )? block | ( modifier )* ( genericMethodOrConstructorDecl -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? genericMethodOrConstructorDecl ) | methodDeclaration -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? methodDeclaration ) | fieldDeclaration -> ^( FIELD ( ^( MODIFIERS ( modifier )* ) )? fieldDeclaration ) | 'void' Identifier voidMethodDeclaratorRest -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier ^( TYPE VOID ) ( voidMethodDeclaratorRest )? ) | Identifier constructorDeclaratorRest -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier ^( TYPE VOID ) constructorDeclaratorRest ) | interfaceDeclaration -> ^( INTERFACE ( ^( MODIFIERS ( modifier )* ) )? interfaceDeclaration ) | classDeclaration -> ^( CLASS ( ^( MODIFIERS ( modifier )* ) )? classDeclaration ) ) );
+    // jkit/java/Java.g:286:1: classBodyDeclaration : ( ';' | ( 'static' )? block | ( modifier )* ( genericMethodOrConstructorDecl -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? genericMethodOrConstructorDecl ) | methodDeclaration -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? methodDeclaration ) | fieldDeclaration -> ^( FIELD ( ^( MODIFIERS ( modifier )* ) )? fieldDeclaration ) | 'void' Identifier voidMethodDeclaratorRest -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier ^( TYPE VOID ) ( voidMethodDeclaratorRest )? ) | Identifier constructorDeclaratorRest -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier ^( TYPE VOID ) constructorDeclaratorRest ) | interfaceDeclaration -> ^( INTERFACE ( ^( MODIFIERS ( modifier )* ) )? interfaceDeclaration ) | classDeclaration -> ^( CLASS ( ^( MODIFIERS ( modifier )* ) )? classDeclaration ) ) );
     public final JavaParser.classBodyDeclaration_return classBodyDeclaration() throws RecognitionException {
         JavaParser.classBodyDeclaration_return retval = new JavaParser.classBodyDeclaration_return();
         retval.start = input.LT(1);
@@ -2855,12 +2855,12 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_interfaceDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule interfaceDeclaration");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 20) ) { return retval; }
-            // jkit/parser/Java.g:287:2: ( ';' | ( 'static' )? block | ( modifier )* ( genericMethodOrConstructorDecl -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? genericMethodOrConstructorDecl ) | methodDeclaration -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? methodDeclaration ) | fieldDeclaration -> ^( FIELD ( ^( MODIFIERS ( modifier )* ) )? fieldDeclaration ) | 'void' Identifier voidMethodDeclaratorRest -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier ^( TYPE VOID ) ( voidMethodDeclaratorRest )? ) | Identifier constructorDeclaratorRest -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier ^( TYPE VOID ) constructorDeclaratorRest ) | interfaceDeclaration -> ^( INTERFACE ( ^( MODIFIERS ( modifier )* ) )? interfaceDeclaration ) | classDeclaration -> ^( CLASS ( ^( MODIFIERS ( modifier )* ) )? classDeclaration ) ) )
+            // jkit/java/Java.g:287:2: ( ';' | ( 'static' )? block | ( modifier )* ( genericMethodOrConstructorDecl -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? genericMethodOrConstructorDecl ) | methodDeclaration -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? methodDeclaration ) | fieldDeclaration -> ^( FIELD ( ^( MODIFIERS ( modifier )* ) )? fieldDeclaration ) | 'void' Identifier voidMethodDeclaratorRest -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier ^( TYPE VOID ) ( voidMethodDeclaratorRest )? ) | Identifier constructorDeclaratorRest -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier ^( TYPE VOID ) constructorDeclaratorRest ) | interfaceDeclaration -> ^( INTERFACE ( ^( MODIFIERS ( modifier )* ) )? interfaceDeclaration ) | classDeclaration -> ^( CLASS ( ^( MODIFIERS ( modifier )* ) )? classDeclaration ) ) )
             int alt35=3;
             alt35 = dfa35.predict(input);
             switch (alt35) {
                 case 1 :
-                    // jkit/parser/Java.g:287:4: ';'
+                    // jkit/java/Java.g:287:4: ';'
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -2869,11 +2869,11 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:288:4: ( 'static' )? block
+                    // jkit/java/Java.g:288:4: ( 'static' )? block
                     {
                     root_0 = (Object)adaptor.nil();
 
-                    // jkit/parser/Java.g:288:4: ( 'static' )?
+                    // jkit/java/Java.g:288:4: ( 'static' )?
                     int alt32=2;
                     int LA32_0 = input.LA(1);
 
@@ -2882,7 +2882,7 @@ public class JavaParser extends Parser {
                     }
                     switch (alt32) {
                         case 1 :
-                            // jkit/parser/Java.g:0:0: 'static'
+                            // jkit/java/Java.g:0:0: 'static'
                             {
                             string_literal71=(Token)match(input,116,FOLLOW_116_in_classBodyDeclaration1091); if (state.failed) return retval;
                             if ( state.backtracking==0 ) {
@@ -2905,16 +2905,16 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // jkit/parser/Java.g:289:4: ( modifier )* ( genericMethodOrConstructorDecl -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? genericMethodOrConstructorDecl ) | methodDeclaration -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? methodDeclaration ) | fieldDeclaration -> ^( FIELD ( ^( MODIFIERS ( modifier )* ) )? fieldDeclaration ) | 'void' Identifier voidMethodDeclaratorRest -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier ^( TYPE VOID ) ( voidMethodDeclaratorRest )? ) | Identifier constructorDeclaratorRest -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier ^( TYPE VOID ) constructorDeclaratorRest ) | interfaceDeclaration -> ^( INTERFACE ( ^( MODIFIERS ( modifier )* ) )? interfaceDeclaration ) | classDeclaration -> ^( CLASS ( ^( MODIFIERS ( modifier )* ) )? classDeclaration ) )
+                    // jkit/java/Java.g:289:4: ( modifier )* ( genericMethodOrConstructorDecl -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? genericMethodOrConstructorDecl ) | methodDeclaration -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? methodDeclaration ) | fieldDeclaration -> ^( FIELD ( ^( MODIFIERS ( modifier )* ) )? fieldDeclaration ) | 'void' Identifier voidMethodDeclaratorRest -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier ^( TYPE VOID ) ( voidMethodDeclaratorRest )? ) | Identifier constructorDeclaratorRest -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier ^( TYPE VOID ) constructorDeclaratorRest ) | interfaceDeclaration -> ^( INTERFACE ( ^( MODIFIERS ( modifier )* ) )? interfaceDeclaration ) | classDeclaration -> ^( CLASS ( ^( MODIFIERS ( modifier )* ) )? classDeclaration ) )
                     {
-                    // jkit/parser/Java.g:289:4: ( modifier )*
+                    // jkit/java/Java.g:289:4: ( modifier )*
                     loop33:
                     do {
                         int alt33=2;
                         alt33 = dfa33.predict(input);
                         switch (alt33) {
                     	case 1 :
-                    	    // jkit/parser/Java.g:0:0: modifier
+                    	    // jkit/java/Java.g:0:0: modifier
                     	    {
                     	    pushFollow(FOLLOW_modifier_in_classBodyDeclaration1099);
                     	    modifier73=modifier();
@@ -2931,12 +2931,12 @@ public class JavaParser extends Parser {
                         }
                     } while (true);
 
-                    // jkit/parser/Java.g:289:14: ( genericMethodOrConstructorDecl -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? genericMethodOrConstructorDecl ) | methodDeclaration -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? methodDeclaration ) | fieldDeclaration -> ^( FIELD ( ^( MODIFIERS ( modifier )* ) )? fieldDeclaration ) | 'void' Identifier voidMethodDeclaratorRest -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier ^( TYPE VOID ) ( voidMethodDeclaratorRest )? ) | Identifier constructorDeclaratorRest -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier ^( TYPE VOID ) constructorDeclaratorRest ) | interfaceDeclaration -> ^( INTERFACE ( ^( MODIFIERS ( modifier )* ) )? interfaceDeclaration ) | classDeclaration -> ^( CLASS ( ^( MODIFIERS ( modifier )* ) )? classDeclaration ) )
+                    // jkit/java/Java.g:289:14: ( genericMethodOrConstructorDecl -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? genericMethodOrConstructorDecl ) | methodDeclaration -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? methodDeclaration ) | fieldDeclaration -> ^( FIELD ( ^( MODIFIERS ( modifier )* ) )? fieldDeclaration ) | 'void' Identifier voidMethodDeclaratorRest -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier ^( TYPE VOID ) ( voidMethodDeclaratorRest )? ) | Identifier constructorDeclaratorRest -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier ^( TYPE VOID ) constructorDeclaratorRest ) | interfaceDeclaration -> ^( INTERFACE ( ^( MODIFIERS ( modifier )* ) )? interfaceDeclaration ) | classDeclaration -> ^( CLASS ( ^( MODIFIERS ( modifier )* ) )? classDeclaration ) )
                     int alt34=7;
                     alt34 = dfa34.predict(input);
                     switch (alt34) {
                         case 1 :
-                            // jkit/parser/Java.g:290:6: genericMethodOrConstructorDecl
+                            // jkit/java/Java.g:290:6: genericMethodOrConstructorDecl
                             {
                             pushFollow(FOLLOW_genericMethodOrConstructorDecl_in_classBodyDeclaration1109);
                             genericMethodOrConstructorDecl74=genericMethodOrConstructorDecl();
@@ -2959,19 +2959,19 @@ public class JavaParser extends Parser {
                             root_0 = (Object)adaptor.nil();
                             // 290:37: -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? genericMethodOrConstructorDecl )
                             {
-                                // jkit/parser/Java.g:290:40: ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? genericMethodOrConstructorDecl )
+                                // jkit/java/Java.g:290:40: ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? genericMethodOrConstructorDecl )
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(METHOD, "METHOD"), root_1);
 
-                                // jkit/parser/Java.g:290:49: ( ^( MODIFIERS ( modifier )* ) )?
+                                // jkit/java/Java.g:290:49: ( ^( MODIFIERS ( modifier )* ) )?
                                 if ( stream_modifier.hasNext() ) {
-                                    // jkit/parser/Java.g:290:49: ^( MODIFIERS ( modifier )* )
+                                    // jkit/java/Java.g:290:49: ^( MODIFIERS ( modifier )* )
                                     {
                                     Object root_2 = (Object)adaptor.nil();
                                     root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(MODIFIERS, "MODIFIERS"), root_2);
 
-                                    // jkit/parser/Java.g:290:61: ( modifier )*
+                                    // jkit/java/Java.g:290:61: ( modifier )*
                                     while ( stream_modifier.hasNext() ) {
                                         adaptor.addChild(root_2, stream_modifier.nextTree());
 
@@ -2994,7 +2994,7 @@ public class JavaParser extends Parser {
                             }
                             break;
                         case 2 :
-                            // jkit/parser/Java.g:291:9: methodDeclaration
+                            // jkit/java/Java.g:291:9: methodDeclaration
                             {
                             pushFollow(FOLLOW_methodDeclaration_in_classBodyDeclaration1135);
                             methodDeclaration75=methodDeclaration();
@@ -3017,19 +3017,19 @@ public class JavaParser extends Parser {
                             root_0 = (Object)adaptor.nil();
                             // 291:27: -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? methodDeclaration )
                             {
-                                // jkit/parser/Java.g:291:30: ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? methodDeclaration )
+                                // jkit/java/Java.g:291:30: ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? methodDeclaration )
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(METHOD, "METHOD"), root_1);
 
-                                // jkit/parser/Java.g:291:39: ( ^( MODIFIERS ( modifier )* ) )?
+                                // jkit/java/Java.g:291:39: ( ^( MODIFIERS ( modifier )* ) )?
                                 if ( stream_modifier.hasNext() ) {
-                                    // jkit/parser/Java.g:291:39: ^( MODIFIERS ( modifier )* )
+                                    // jkit/java/Java.g:291:39: ^( MODIFIERS ( modifier )* )
                                     {
                                     Object root_2 = (Object)adaptor.nil();
                                     root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(MODIFIERS, "MODIFIERS"), root_2);
 
-                                    // jkit/parser/Java.g:291:51: ( modifier )*
+                                    // jkit/java/Java.g:291:51: ( modifier )*
                                     while ( stream_modifier.hasNext() ) {
                                         adaptor.addChild(root_2, stream_modifier.nextTree());
 
@@ -3052,7 +3052,7 @@ public class JavaParser extends Parser {
                             }
                             break;
                         case 3 :
-                            // jkit/parser/Java.g:292:9: fieldDeclaration
+                            // jkit/java/Java.g:292:9: fieldDeclaration
                             {
                             pushFollow(FOLLOW_fieldDeclaration_in_classBodyDeclaration1161);
                             fieldDeclaration76=fieldDeclaration();
@@ -3075,19 +3075,19 @@ public class JavaParser extends Parser {
                             root_0 = (Object)adaptor.nil();
                             // 292:26: -> ^( FIELD ( ^( MODIFIERS ( modifier )* ) )? fieldDeclaration )
                             {
-                                // jkit/parser/Java.g:292:29: ^( FIELD ( ^( MODIFIERS ( modifier )* ) )? fieldDeclaration )
+                                // jkit/java/Java.g:292:29: ^( FIELD ( ^( MODIFIERS ( modifier )* ) )? fieldDeclaration )
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(FIELD, "FIELD"), root_1);
 
-                                // jkit/parser/Java.g:292:37: ( ^( MODIFIERS ( modifier )* ) )?
+                                // jkit/java/Java.g:292:37: ( ^( MODIFIERS ( modifier )* ) )?
                                 if ( stream_modifier.hasNext() ) {
-                                    // jkit/parser/Java.g:292:37: ^( MODIFIERS ( modifier )* )
+                                    // jkit/java/Java.g:292:37: ^( MODIFIERS ( modifier )* )
                                     {
                                     Object root_2 = (Object)adaptor.nil();
                                     root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(MODIFIERS, "MODIFIERS"), root_2);
 
-                                    // jkit/parser/Java.g:292:49: ( modifier )*
+                                    // jkit/java/Java.g:292:49: ( modifier )*
                                     while ( stream_modifier.hasNext() ) {
                                         adaptor.addChild(root_2, stream_modifier.nextTree());
 
@@ -3110,7 +3110,7 @@ public class JavaParser extends Parser {
                             }
                             break;
                         case 4 :
-                            // jkit/parser/Java.g:293:8: 'void' Identifier voidMethodDeclaratorRest
+                            // jkit/java/Java.g:293:8: 'void' Identifier voidMethodDeclaratorRest
                             {
                             string_literal77=(Token)match(input,129,FOLLOW_129_in_classBodyDeclaration1186); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_129.add(string_literal77);
@@ -3139,19 +3139,19 @@ public class JavaParser extends Parser {
                             root_0 = (Object)adaptor.nil();
                             // 293:51: -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier ^( TYPE VOID ) ( voidMethodDeclaratorRest )? )
                             {
-                                // jkit/parser/Java.g:293:54: ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier ^( TYPE VOID ) ( voidMethodDeclaratorRest )? )
+                                // jkit/java/Java.g:293:54: ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier ^( TYPE VOID ) ( voidMethodDeclaratorRest )? )
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(METHOD, "METHOD"), root_1);
 
-                                // jkit/parser/Java.g:293:63: ( ^( MODIFIERS ( modifier )* ) )?
+                                // jkit/java/Java.g:293:63: ( ^( MODIFIERS ( modifier )* ) )?
                                 if ( stream_modifier.hasNext() ) {
-                                    // jkit/parser/Java.g:293:63: ^( MODIFIERS ( modifier )* )
+                                    // jkit/java/Java.g:293:63: ^( MODIFIERS ( modifier )* )
                                     {
                                     Object root_2 = (Object)adaptor.nil();
                                     root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(MODIFIERS, "MODIFIERS"), root_2);
 
-                                    // jkit/parser/Java.g:293:75: ( modifier )*
+                                    // jkit/java/Java.g:293:75: ( modifier )*
                                     while ( stream_modifier.hasNext() ) {
                                         adaptor.addChild(root_2, stream_modifier.nextTree());
 
@@ -3164,7 +3164,7 @@ public class JavaParser extends Parser {
                                 }
                                 stream_modifier.reset();
                                 adaptor.addChild(root_1, stream_Identifier.nextNode());
-                                // jkit/parser/Java.g:293:98: ^( TYPE VOID )
+                                // jkit/java/Java.g:293:98: ^( TYPE VOID )
                                 {
                                 Object root_2 = (Object)adaptor.nil();
                                 root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(TYPE, "TYPE"), root_2);
@@ -3173,7 +3173,7 @@ public class JavaParser extends Parser {
 
                                 adaptor.addChild(root_1, root_2);
                                 }
-                                // jkit/parser/Java.g:293:111: ( voidMethodDeclaratorRest )?
+                                // jkit/java/Java.g:293:111: ( voidMethodDeclaratorRest )?
                                 if ( stream_voidMethodDeclaratorRest.hasNext() ) {
                                     adaptor.addChild(root_1, stream_voidMethodDeclaratorRest.nextTree());
 
@@ -3189,7 +3189,7 @@ public class JavaParser extends Parser {
                             }
                             break;
                         case 5 :
-                            // jkit/parser/Java.g:294:8: Identifier constructorDeclaratorRest
+                            // jkit/java/Java.g:294:8: Identifier constructorDeclaratorRest
                             {
                             Identifier80=(Token)match(input,Identifier,FOLLOW_Identifier_in_classBodyDeclaration1224); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_Identifier.add(Identifier80);
@@ -3215,19 +3215,19 @@ public class JavaParser extends Parser {
                             root_0 = (Object)adaptor.nil();
                             // 294:45: -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier ^( TYPE VOID ) constructorDeclaratorRest )
                             {
-                                // jkit/parser/Java.g:294:48: ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier ^( TYPE VOID ) constructorDeclaratorRest )
+                                // jkit/java/Java.g:294:48: ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier ^( TYPE VOID ) constructorDeclaratorRest )
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(METHOD, "METHOD"), root_1);
 
-                                // jkit/parser/Java.g:294:57: ( ^( MODIFIERS ( modifier )* ) )?
+                                // jkit/java/Java.g:294:57: ( ^( MODIFIERS ( modifier )* ) )?
                                 if ( stream_modifier.hasNext() ) {
-                                    // jkit/parser/Java.g:294:57: ^( MODIFIERS ( modifier )* )
+                                    // jkit/java/Java.g:294:57: ^( MODIFIERS ( modifier )* )
                                     {
                                     Object root_2 = (Object)adaptor.nil();
                                     root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(MODIFIERS, "MODIFIERS"), root_2);
 
-                                    // jkit/parser/Java.g:294:69: ( modifier )*
+                                    // jkit/java/Java.g:294:69: ( modifier )*
                                     while ( stream_modifier.hasNext() ) {
                                         adaptor.addChild(root_2, stream_modifier.nextTree());
 
@@ -3240,7 +3240,7 @@ public class JavaParser extends Parser {
                                 }
                                 stream_modifier.reset();
                                 adaptor.addChild(root_1, stream_Identifier.nextNode());
-                                // jkit/parser/Java.g:294:92: ^( TYPE VOID )
+                                // jkit/java/Java.g:294:92: ^( TYPE VOID )
                                 {
                                 Object root_2 = (Object)adaptor.nil();
                                 root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(TYPE, "TYPE"), root_2);
@@ -3260,7 +3260,7 @@ public class JavaParser extends Parser {
                             }
                             break;
                         case 6 :
-                            // jkit/parser/Java.g:295:8: interfaceDeclaration
+                            // jkit/java/Java.g:295:8: interfaceDeclaration
                             {
                             pushFollow(FOLLOW_interfaceDeclaration_in_classBodyDeclaration1259);
                             interfaceDeclaration82=interfaceDeclaration();
@@ -3283,19 +3283,19 @@ public class JavaParser extends Parser {
                             root_0 = (Object)adaptor.nil();
                             // 295:29: -> ^( INTERFACE ( ^( MODIFIERS ( modifier )* ) )? interfaceDeclaration )
                             {
-                                // jkit/parser/Java.g:295:32: ^( INTERFACE ( ^( MODIFIERS ( modifier )* ) )? interfaceDeclaration )
+                                // jkit/java/Java.g:295:32: ^( INTERFACE ( ^( MODIFIERS ( modifier )* ) )? interfaceDeclaration )
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(INTERFACE, "INTERFACE"), root_1);
 
-                                // jkit/parser/Java.g:295:44: ( ^( MODIFIERS ( modifier )* ) )?
+                                // jkit/java/Java.g:295:44: ( ^( MODIFIERS ( modifier )* ) )?
                                 if ( stream_modifier.hasNext() ) {
-                                    // jkit/parser/Java.g:295:44: ^( MODIFIERS ( modifier )* )
+                                    // jkit/java/Java.g:295:44: ^( MODIFIERS ( modifier )* )
                                     {
                                     Object root_2 = (Object)adaptor.nil();
                                     root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(MODIFIERS, "MODIFIERS"), root_2);
 
-                                    // jkit/parser/Java.g:295:56: ( modifier )*
+                                    // jkit/java/Java.g:295:56: ( modifier )*
                                     while ( stream_modifier.hasNext() ) {
                                         adaptor.addChild(root_2, stream_modifier.nextTree());
 
@@ -3318,7 +3318,7 @@ public class JavaParser extends Parser {
                             }
                             break;
                         case 7 :
-                            // jkit/parser/Java.g:296:8: classDeclaration
+                            // jkit/java/Java.g:296:8: classDeclaration
                             {
                             pushFollow(FOLLOW_classDeclaration_in_classBodyDeclaration1284);
                             classDeclaration83=classDeclaration();
@@ -3341,19 +3341,19 @@ public class JavaParser extends Parser {
                             root_0 = (Object)adaptor.nil();
                             // 296:25: -> ^( CLASS ( ^( MODIFIERS ( modifier )* ) )? classDeclaration )
                             {
-                                // jkit/parser/Java.g:296:28: ^( CLASS ( ^( MODIFIERS ( modifier )* ) )? classDeclaration )
+                                // jkit/java/Java.g:296:28: ^( CLASS ( ^( MODIFIERS ( modifier )* ) )? classDeclaration )
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(CLASS, "CLASS"), root_1);
 
-                                // jkit/parser/Java.g:296:36: ( ^( MODIFIERS ( modifier )* ) )?
+                                // jkit/java/Java.g:296:36: ( ^( MODIFIERS ( modifier )* ) )?
                                 if ( stream_modifier.hasNext() ) {
-                                    // jkit/parser/Java.g:296:36: ^( MODIFIERS ( modifier )* )
+                                    // jkit/java/Java.g:296:36: ^( MODIFIERS ( modifier )* )
                                     {
                                     Object root_2 = (Object)adaptor.nil();
                                     root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(MODIFIERS, "MODIFIERS"), root_2);
 
-                                    // jkit/parser/Java.g:296:48: ( modifier )*
+                                    // jkit/java/Java.g:296:48: ( modifier )*
                                     while ( stream_modifier.hasNext() ) {
                                         adaptor.addChild(root_2, stream_modifier.nextTree());
 
@@ -3408,7 +3408,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "genericMethodOrConstructorDecl"
-    // jkit/parser/Java.g:300:1: genericMethodOrConstructorDecl : typeParameters genericMethodOrConstructorRest ;
+    // jkit/java/Java.g:300:1: genericMethodOrConstructorDecl : typeParameters genericMethodOrConstructorRest ;
     public final JavaParser.genericMethodOrConstructorDecl_return genericMethodOrConstructorDecl() throws RecognitionException {
         JavaParser.genericMethodOrConstructorDecl_return retval = new JavaParser.genericMethodOrConstructorDecl_return();
         retval.start = input.LT(1);
@@ -3423,8 +3423,8 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 21) ) { return retval; }
-            // jkit/parser/Java.g:301:2: ( typeParameters genericMethodOrConstructorRest )
-            // jkit/parser/Java.g:301:4: typeParameters genericMethodOrConstructorRest
+            // jkit/java/Java.g:301:2: ( typeParameters genericMethodOrConstructorRest )
+            // jkit/java/Java.g:301:4: typeParameters genericMethodOrConstructorRest
             {
             root_0 = (Object)adaptor.nil();
 
@@ -3468,7 +3468,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "genericMethodOrConstructorRest"
-    // jkit/parser/Java.g:304:1: genericMethodOrConstructorRest : ( type Identifier methodDeclaratorRest -> Identifier type ( methodDeclaratorRest )? | 'void' Identifier methodDeclaratorRest -> Identifier ^( TYPE VOID ) ( methodDeclaratorRest )? | Identifier constructorDeclaratorRest -> Identifier ^( TYPE VOID ) constructorDeclaratorRest );
+    // jkit/java/Java.g:304:1: genericMethodOrConstructorRest : ( type Identifier methodDeclaratorRest -> Identifier type ( methodDeclaratorRest )? | 'void' Identifier methodDeclaratorRest -> Identifier ^( TYPE VOID ) ( methodDeclaratorRest )? | Identifier constructorDeclaratorRest -> Identifier ^( TYPE VOID ) constructorDeclaratorRest );
     public final JavaParser.genericMethodOrConstructorRest_return genericMethodOrConstructorRest() throws RecognitionException {
         JavaParser.genericMethodOrConstructorRest_return retval = new JavaParser.genericMethodOrConstructorRest_return();
         retval.start = input.LT(1);
@@ -3499,7 +3499,7 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_methodDeclaratorRest=new RewriteRuleSubtreeStream(adaptor,"rule methodDeclaratorRest");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 22) ) { return retval; }
-            // jkit/parser/Java.g:305:2: ( type Identifier methodDeclaratorRest -> Identifier type ( methodDeclaratorRest )? | 'void' Identifier methodDeclaratorRest -> Identifier ^( TYPE VOID ) ( methodDeclaratorRest )? | Identifier constructorDeclaratorRest -> Identifier ^( TYPE VOID ) constructorDeclaratorRest )
+            // jkit/java/Java.g:305:2: ( type Identifier methodDeclaratorRest -> Identifier type ( methodDeclaratorRest )? | 'void' Identifier methodDeclaratorRest -> Identifier ^( TYPE VOID ) ( methodDeclaratorRest )? | Identifier constructorDeclaratorRest -> Identifier ^( TYPE VOID ) constructorDeclaratorRest )
             int alt36=3;
             switch ( input.LA(1) ) {
             case Identifier:
@@ -3548,7 +3548,7 @@ public class JavaParser extends Parser {
 
             switch (alt36) {
                 case 1 :
-                    // jkit/parser/Java.g:305:4: type Identifier methodDeclaratorRest
+                    // jkit/java/Java.g:305:4: type Identifier methodDeclaratorRest
                     {
                     pushFollow(FOLLOW_type_in_genericMethodOrConstructorRest1332);
                     type86=type();
@@ -3582,7 +3582,7 @@ public class JavaParser extends Parser {
                     {
                         adaptor.addChild(root_0, stream_Identifier.nextNode());
                         adaptor.addChild(root_0, stream_type.nextTree());
-                        // jkit/parser/Java.g:305:60: ( methodDeclaratorRest )?
+                        // jkit/java/Java.g:305:60: ( methodDeclaratorRest )?
                         if ( stream_methodDeclaratorRest.hasNext() ) {
                             adaptor.addChild(root_0, stream_methodDeclaratorRest.nextTree());
 
@@ -3595,7 +3595,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:306:4: 'void' Identifier methodDeclaratorRest
+                    // jkit/java/Java.g:306:4: 'void' Identifier methodDeclaratorRest
                     {
                     string_literal89=(Token)match(input,129,FOLLOW_129_in_genericMethodOrConstructorRest1350); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_129.add(string_literal89);
@@ -3625,7 +3625,7 @@ public class JavaParser extends Parser {
                     // 306:43: -> Identifier ^( TYPE VOID ) ( methodDeclaratorRest )?
                     {
                         adaptor.addChild(root_0, stream_Identifier.nextNode());
-                        // jkit/parser/Java.g:306:57: ^( TYPE VOID )
+                        // jkit/java/Java.g:306:57: ^( TYPE VOID )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(TYPE, "TYPE"), root_1);
@@ -3634,7 +3634,7 @@ public class JavaParser extends Parser {
 
                         adaptor.addChild(root_0, root_1);
                         }
-                        // jkit/parser/Java.g:306:70: ( methodDeclaratorRest )?
+                        // jkit/java/Java.g:306:70: ( methodDeclaratorRest )?
                         if ( stream_methodDeclaratorRest.hasNext() ) {
                             adaptor.addChild(root_0, stream_methodDeclaratorRest.nextTree());
 
@@ -3647,7 +3647,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // jkit/parser/Java.g:307:4: Identifier constructorDeclaratorRest
+                    // jkit/java/Java.g:307:4: Identifier constructorDeclaratorRest
                     {
                     Identifier92=(Token)match(input,Identifier,FOLLOW_Identifier_in_genericMethodOrConstructorRest1372); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_Identifier.add(Identifier92);
@@ -3674,7 +3674,7 @@ public class JavaParser extends Parser {
                     // 307:41: -> Identifier ^( TYPE VOID ) constructorDeclaratorRest
                     {
                         adaptor.addChild(root_0, stream_Identifier.nextNode());
-                        // jkit/parser/Java.g:307:55: ^( TYPE VOID )
+                        // jkit/java/Java.g:307:55: ^( TYPE VOID )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(TYPE, "TYPE"), root_1);
@@ -3717,7 +3717,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "methodDeclaration"
-    // jkit/parser/Java.g:310:1: methodDeclaration : type Identifier methodDeclaratorRest -> Identifier type ( methodDeclaratorRest )? ;
+    // jkit/java/Java.g:310:1: methodDeclaration : type Identifier methodDeclaratorRest -> Identifier type ( methodDeclaratorRest )? ;
     public final JavaParser.methodDeclaration_return methodDeclaration() throws RecognitionException {
         JavaParser.methodDeclaration_return retval = new JavaParser.methodDeclaration_return();
         retval.start = input.LT(1);
@@ -3736,8 +3736,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_methodDeclaratorRest=new RewriteRuleSubtreeStream(adaptor,"rule methodDeclaratorRest");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 23) ) { return retval; }
-            // jkit/parser/Java.g:311:2: ( type Identifier methodDeclaratorRest -> Identifier type ( methodDeclaratorRest )? )
-            // jkit/parser/Java.g:311:4: type Identifier methodDeclaratorRest
+            // jkit/java/Java.g:311:2: ( type Identifier methodDeclaratorRest -> Identifier type ( methodDeclaratorRest )? )
+            // jkit/java/Java.g:311:4: type Identifier methodDeclaratorRest
             {
             pushFollow(FOLLOW_type_in_methodDeclaration1397);
             type94=type();
@@ -3771,7 +3771,7 @@ public class JavaParser extends Parser {
             {
                 adaptor.addChild(root_0, stream_Identifier.nextNode());
                 adaptor.addChild(root_0, stream_type.nextTree());
-                // jkit/parser/Java.g:311:60: ( methodDeclaratorRest )?
+                // jkit/java/Java.g:311:60: ( methodDeclaratorRest )?
                 if ( stream_methodDeclaratorRest.hasNext() ) {
                     adaptor.addChild(root_0, stream_methodDeclaratorRest.nextTree());
 
@@ -3808,7 +3808,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "fieldDeclaration"
-    // jkit/parser/Java.g:314:1: fieldDeclaration : type variableDeclarators ';' -> type variableDeclarators ;
+    // jkit/java/Java.g:314:1: fieldDeclaration : type variableDeclarators ';' -> type variableDeclarators ;
     public final JavaParser.fieldDeclaration_return fieldDeclaration() throws RecognitionException {
         JavaParser.fieldDeclaration_return retval = new JavaParser.fieldDeclaration_return();
         retval.start = input.LT(1);
@@ -3827,8 +3827,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_variableDeclarators=new RewriteRuleSubtreeStream(adaptor,"rule variableDeclarators");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 24) ) { return retval; }
-            // jkit/parser/Java.g:315:2: ( type variableDeclarators ';' -> type variableDeclarators )
-            // jkit/parser/Java.g:315:4: type variableDeclarators ';'
+            // jkit/java/Java.g:315:2: ( type variableDeclarators ';' -> type variableDeclarators )
+            // jkit/java/Java.g:315:4: type variableDeclarators ';'
             {
             pushFollow(FOLLOW_type_in_fieldDeclaration1421);
             type97=type();
@@ -3893,7 +3893,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "interfaceBodyDeclaration"
-    // jkit/parser/Java.g:318:1: interfaceBodyDeclaration : ( ( modifier )* ( constantDeclaration -> ^( FIELD ( ^( MODIFIERS ( modifier )* ) )? constantDeclaration ) | type Identifier interfaceMethodDeclaratorRest -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier type ( interfaceMethodDeclaratorRest )? ) | interfaceGenericMethodDecl -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? interfaceGenericMethodDecl ) | 'void' Identifier voidInterfaceMethodDeclaratorRest -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier ^( TYPE VOID ) ( voidInterfaceMethodDeclaratorRest )? ) | interfaceDeclaration -> ^( INTERFACE ( ^( MODIFIERS ( modifier )* ) )? interfaceDeclaration ) | classDeclaration -> ^( CLASS ( ^( MODIFIERS ( modifier )* ) )? classDeclaration ) ) | ';' );
+    // jkit/java/Java.g:318:1: interfaceBodyDeclaration : ( ( modifier )* ( constantDeclaration -> ^( FIELD ( ^( MODIFIERS ( modifier )* ) )? constantDeclaration ) | type Identifier interfaceMethodDeclaratorRest -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier type ( interfaceMethodDeclaratorRest )? ) | interfaceGenericMethodDecl -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? interfaceGenericMethodDecl ) | 'void' Identifier voidInterfaceMethodDeclaratorRest -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier ^( TYPE VOID ) ( voidInterfaceMethodDeclaratorRest )? ) | interfaceDeclaration -> ^( INTERFACE ( ^( MODIFIERS ( modifier )* ) )? interfaceDeclaration ) | classDeclaration -> ^( CLASS ( ^( MODIFIERS ( modifier )* ) )? classDeclaration ) ) | ';' );
     public final JavaParser.interfaceBodyDeclaration_return interfaceBodyDeclaration() throws RecognitionException {
         JavaParser.interfaceBodyDeclaration_return retval = new JavaParser.interfaceBodyDeclaration_return();
         retval.start = input.LT(1);
@@ -3937,21 +3937,21 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_interfaceDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule interfaceDeclaration");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 25) ) { return retval; }
-            // jkit/parser/Java.g:319:2: ( ( modifier )* ( constantDeclaration -> ^( FIELD ( ^( MODIFIERS ( modifier )* ) )? constantDeclaration ) | type Identifier interfaceMethodDeclaratorRest -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier type ( interfaceMethodDeclaratorRest )? ) | interfaceGenericMethodDecl -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? interfaceGenericMethodDecl ) | 'void' Identifier voidInterfaceMethodDeclaratorRest -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier ^( TYPE VOID ) ( voidInterfaceMethodDeclaratorRest )? ) | interfaceDeclaration -> ^( INTERFACE ( ^( MODIFIERS ( modifier )* ) )? interfaceDeclaration ) | classDeclaration -> ^( CLASS ( ^( MODIFIERS ( modifier )* ) )? classDeclaration ) ) | ';' )
+            // jkit/java/Java.g:319:2: ( ( modifier )* ( constantDeclaration -> ^( FIELD ( ^( MODIFIERS ( modifier )* ) )? constantDeclaration ) | type Identifier interfaceMethodDeclaratorRest -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier type ( interfaceMethodDeclaratorRest )? ) | interfaceGenericMethodDecl -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? interfaceGenericMethodDecl ) | 'void' Identifier voidInterfaceMethodDeclaratorRest -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier ^( TYPE VOID ) ( voidInterfaceMethodDeclaratorRest )? ) | interfaceDeclaration -> ^( INTERFACE ( ^( MODIFIERS ( modifier )* ) )? interfaceDeclaration ) | classDeclaration -> ^( CLASS ( ^( MODIFIERS ( modifier )* ) )? classDeclaration ) ) | ';' )
             int alt39=2;
             alt39 = dfa39.predict(input);
             switch (alt39) {
                 case 1 :
-                    // jkit/parser/Java.g:319:4: ( modifier )* ( constantDeclaration -> ^( FIELD ( ^( MODIFIERS ( modifier )* ) )? constantDeclaration ) | type Identifier interfaceMethodDeclaratorRest -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier type ( interfaceMethodDeclaratorRest )? ) | interfaceGenericMethodDecl -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? interfaceGenericMethodDecl ) | 'void' Identifier voidInterfaceMethodDeclaratorRest -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier ^( TYPE VOID ) ( voidInterfaceMethodDeclaratorRest )? ) | interfaceDeclaration -> ^( INTERFACE ( ^( MODIFIERS ( modifier )* ) )? interfaceDeclaration ) | classDeclaration -> ^( CLASS ( ^( MODIFIERS ( modifier )* ) )? classDeclaration ) )
+                    // jkit/java/Java.g:319:4: ( modifier )* ( constantDeclaration -> ^( FIELD ( ^( MODIFIERS ( modifier )* ) )? constantDeclaration ) | type Identifier interfaceMethodDeclaratorRest -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier type ( interfaceMethodDeclaratorRest )? ) | interfaceGenericMethodDecl -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? interfaceGenericMethodDecl ) | 'void' Identifier voidInterfaceMethodDeclaratorRest -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier ^( TYPE VOID ) ( voidInterfaceMethodDeclaratorRest )? ) | interfaceDeclaration -> ^( INTERFACE ( ^( MODIFIERS ( modifier )* ) )? interfaceDeclaration ) | classDeclaration -> ^( CLASS ( ^( MODIFIERS ( modifier )* ) )? classDeclaration ) )
                     {
-                    // jkit/parser/Java.g:319:4: ( modifier )*
+                    // jkit/java/Java.g:319:4: ( modifier )*
                     loop37:
                     do {
                         int alt37=2;
                         alt37 = dfa37.predict(input);
                         switch (alt37) {
                     	case 1 :
-                    	    // jkit/parser/Java.g:0:0: modifier
+                    	    // jkit/java/Java.g:0:0: modifier
                     	    {
                     	    pushFollow(FOLLOW_modifier_in_interfaceBodyDeclaration1444);
                     	    modifier100=modifier();
@@ -3968,12 +3968,12 @@ public class JavaParser extends Parser {
                         }
                     } while (true);
 
-                    // jkit/parser/Java.g:319:14: ( constantDeclaration -> ^( FIELD ( ^( MODIFIERS ( modifier )* ) )? constantDeclaration ) | type Identifier interfaceMethodDeclaratorRest -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier type ( interfaceMethodDeclaratorRest )? ) | interfaceGenericMethodDecl -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? interfaceGenericMethodDecl ) | 'void' Identifier voidInterfaceMethodDeclaratorRest -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier ^( TYPE VOID ) ( voidInterfaceMethodDeclaratorRest )? ) | interfaceDeclaration -> ^( INTERFACE ( ^( MODIFIERS ( modifier )* ) )? interfaceDeclaration ) | classDeclaration -> ^( CLASS ( ^( MODIFIERS ( modifier )* ) )? classDeclaration ) )
+                    // jkit/java/Java.g:319:14: ( constantDeclaration -> ^( FIELD ( ^( MODIFIERS ( modifier )* ) )? constantDeclaration ) | type Identifier interfaceMethodDeclaratorRest -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier type ( interfaceMethodDeclaratorRest )? ) | interfaceGenericMethodDecl -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? interfaceGenericMethodDecl ) | 'void' Identifier voidInterfaceMethodDeclaratorRest -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier ^( TYPE VOID ) ( voidInterfaceMethodDeclaratorRest )? ) | interfaceDeclaration -> ^( INTERFACE ( ^( MODIFIERS ( modifier )* ) )? interfaceDeclaration ) | classDeclaration -> ^( CLASS ( ^( MODIFIERS ( modifier )* ) )? classDeclaration ) )
                     int alt38=6;
                     alt38 = dfa38.predict(input);
                     switch (alt38) {
                         case 1 :
-                            // jkit/parser/Java.g:320:3: constantDeclaration
+                            // jkit/java/Java.g:320:3: constantDeclaration
                             {
                             pushFollow(FOLLOW_constantDeclaration_in_interfaceBodyDeclaration1451);
                             constantDeclaration101=constantDeclaration();
@@ -3996,19 +3996,19 @@ public class JavaParser extends Parser {
                             root_0 = (Object)adaptor.nil();
                             // 320:23: -> ^( FIELD ( ^( MODIFIERS ( modifier )* ) )? constantDeclaration )
                             {
-                                // jkit/parser/Java.g:320:26: ^( FIELD ( ^( MODIFIERS ( modifier )* ) )? constantDeclaration )
+                                // jkit/java/Java.g:320:26: ^( FIELD ( ^( MODIFIERS ( modifier )* ) )? constantDeclaration )
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(FIELD, "FIELD"), root_1);
 
-                                // jkit/parser/Java.g:320:34: ( ^( MODIFIERS ( modifier )* ) )?
+                                // jkit/java/Java.g:320:34: ( ^( MODIFIERS ( modifier )* ) )?
                                 if ( stream_modifier.hasNext() ) {
-                                    // jkit/parser/Java.g:320:34: ^( MODIFIERS ( modifier )* )
+                                    // jkit/java/Java.g:320:34: ^( MODIFIERS ( modifier )* )
                                     {
                                     Object root_2 = (Object)adaptor.nil();
                                     root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(MODIFIERS, "MODIFIERS"), root_2);
 
-                                    // jkit/parser/Java.g:320:46: ( modifier )*
+                                    // jkit/java/Java.g:320:46: ( modifier )*
                                     while ( stream_modifier.hasNext() ) {
                                         adaptor.addChild(root_2, stream_modifier.nextTree());
 
@@ -4031,7 +4031,7 @@ public class JavaParser extends Parser {
                             }
                             break;
                         case 2 :
-                            // jkit/parser/Java.g:321:5: type Identifier interfaceMethodDeclaratorRest
+                            // jkit/java/Java.g:321:5: type Identifier interfaceMethodDeclaratorRest
                             {
                             pushFollow(FOLLOW_type_in_interfaceBodyDeclaration1473);
                             type102=type();
@@ -4063,19 +4063,19 @@ public class JavaParser extends Parser {
                             root_0 = (Object)adaptor.nil();
                             // 321:51: -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier type ( interfaceMethodDeclaratorRest )? )
                             {
-                                // jkit/parser/Java.g:321:54: ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier type ( interfaceMethodDeclaratorRest )? )
+                                // jkit/java/Java.g:321:54: ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier type ( interfaceMethodDeclaratorRest )? )
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(METHOD, "METHOD"), root_1);
 
-                                // jkit/parser/Java.g:321:63: ( ^( MODIFIERS ( modifier )* ) )?
+                                // jkit/java/Java.g:321:63: ( ^( MODIFIERS ( modifier )* ) )?
                                 if ( stream_modifier.hasNext() ) {
-                                    // jkit/parser/Java.g:321:63: ^( MODIFIERS ( modifier )* )
+                                    // jkit/java/Java.g:321:63: ^( MODIFIERS ( modifier )* )
                                     {
                                     Object root_2 = (Object)adaptor.nil();
                                     root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(MODIFIERS, "MODIFIERS"), root_2);
 
-                                    // jkit/parser/Java.g:321:75: ( modifier )*
+                                    // jkit/java/Java.g:321:75: ( modifier )*
                                     while ( stream_modifier.hasNext() ) {
                                         adaptor.addChild(root_2, stream_modifier.nextTree());
 
@@ -4089,7 +4089,7 @@ public class JavaParser extends Parser {
                                 stream_modifier.reset();
                                 adaptor.addChild(root_1, stream_Identifier.nextNode());
                                 adaptor.addChild(root_1, stream_type.nextTree());
-                                // jkit/parser/Java.g:321:103: ( interfaceMethodDeclaratorRest )?
+                                // jkit/java/Java.g:321:103: ( interfaceMethodDeclaratorRest )?
                                 if ( stream_interfaceMethodDeclaratorRest.hasNext() ) {
                                     adaptor.addChild(root_1, stream_interfaceMethodDeclaratorRest.nextTree());
 
@@ -4105,7 +4105,7 @@ public class JavaParser extends Parser {
                             }
                             break;
                         case 3 :
-                            // jkit/parser/Java.g:322:5: interfaceGenericMethodDecl
+                            // jkit/java/Java.g:322:5: interfaceGenericMethodDecl
                             {
                             pushFollow(FOLLOW_interfaceGenericMethodDecl_in_interfaceBodyDeclaration1504);
                             interfaceGenericMethodDecl105=interfaceGenericMethodDecl();
@@ -4128,19 +4128,19 @@ public class JavaParser extends Parser {
                             root_0 = (Object)adaptor.nil();
                             // 322:32: -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? interfaceGenericMethodDecl )
                             {
-                                // jkit/parser/Java.g:322:35: ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? interfaceGenericMethodDecl )
+                                // jkit/java/Java.g:322:35: ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? interfaceGenericMethodDecl )
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(METHOD, "METHOD"), root_1);
 
-                                // jkit/parser/Java.g:322:44: ( ^( MODIFIERS ( modifier )* ) )?
+                                // jkit/java/Java.g:322:44: ( ^( MODIFIERS ( modifier )* ) )?
                                 if ( stream_modifier.hasNext() ) {
-                                    // jkit/parser/Java.g:322:44: ^( MODIFIERS ( modifier )* )
+                                    // jkit/java/Java.g:322:44: ^( MODIFIERS ( modifier )* )
                                     {
                                     Object root_2 = (Object)adaptor.nil();
                                     root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(MODIFIERS, "MODIFIERS"), root_2);
 
-                                    // jkit/parser/Java.g:322:56: ( modifier )*
+                                    // jkit/java/Java.g:322:56: ( modifier )*
                                     while ( stream_modifier.hasNext() ) {
                                         adaptor.addChild(root_2, stream_modifier.nextTree());
 
@@ -4163,7 +4163,7 @@ public class JavaParser extends Parser {
                             }
                             break;
                         case 4 :
-                            // jkit/parser/Java.g:323:5: 'void' Identifier voidInterfaceMethodDeclaratorRest
+                            // jkit/java/Java.g:323:5: 'void' Identifier voidInterfaceMethodDeclaratorRest
                             {
                             string_literal106=(Token)match(input,129,FOLLOW_129_in_interfaceBodyDeclaration1526); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_129.add(string_literal106);
@@ -4192,19 +4192,19 @@ public class JavaParser extends Parser {
                             root_0 = (Object)adaptor.nil();
                             // 323:57: -> ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier ^( TYPE VOID ) ( voidInterfaceMethodDeclaratorRest )? )
                             {
-                                // jkit/parser/Java.g:323:60: ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier ^( TYPE VOID ) ( voidInterfaceMethodDeclaratorRest )? )
+                                // jkit/java/Java.g:323:60: ^( METHOD ( ^( MODIFIERS ( modifier )* ) )? Identifier ^( TYPE VOID ) ( voidInterfaceMethodDeclaratorRest )? )
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(METHOD, "METHOD"), root_1);
 
-                                // jkit/parser/Java.g:323:69: ( ^( MODIFIERS ( modifier )* ) )?
+                                // jkit/java/Java.g:323:69: ( ^( MODIFIERS ( modifier )* ) )?
                                 if ( stream_modifier.hasNext() ) {
-                                    // jkit/parser/Java.g:323:69: ^( MODIFIERS ( modifier )* )
+                                    // jkit/java/Java.g:323:69: ^( MODIFIERS ( modifier )* )
                                     {
                                     Object root_2 = (Object)adaptor.nil();
                                     root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(MODIFIERS, "MODIFIERS"), root_2);
 
-                                    // jkit/parser/Java.g:323:81: ( modifier )*
+                                    // jkit/java/Java.g:323:81: ( modifier )*
                                     while ( stream_modifier.hasNext() ) {
                                         adaptor.addChild(root_2, stream_modifier.nextTree());
 
@@ -4217,7 +4217,7 @@ public class JavaParser extends Parser {
                                 }
                                 stream_modifier.reset();
                                 adaptor.addChild(root_1, stream_Identifier.nextNode());
-                                // jkit/parser/Java.g:323:104: ^( TYPE VOID )
+                                // jkit/java/Java.g:323:104: ^( TYPE VOID )
                                 {
                                 Object root_2 = (Object)adaptor.nil();
                                 root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(TYPE, "TYPE"), root_2);
@@ -4226,7 +4226,7 @@ public class JavaParser extends Parser {
 
                                 adaptor.addChild(root_1, root_2);
                                 }
-                                // jkit/parser/Java.g:323:117: ( voidInterfaceMethodDeclaratorRest )?
+                                // jkit/java/Java.g:323:117: ( voidInterfaceMethodDeclaratorRest )?
                                 if ( stream_voidInterfaceMethodDeclaratorRest.hasNext() ) {
                                     adaptor.addChild(root_1, stream_voidInterfaceMethodDeclaratorRest.nextTree());
 
@@ -4242,7 +4242,7 @@ public class JavaParser extends Parser {
                             }
                             break;
                         case 5 :
-                            // jkit/parser/Java.g:324:5: interfaceDeclaration
+                            // jkit/java/Java.g:324:5: interfaceDeclaration
                             {
                             pushFollow(FOLLOW_interfaceDeclaration_in_interfaceBodyDeclaration1561);
                             interfaceDeclaration109=interfaceDeclaration();
@@ -4265,19 +4265,19 @@ public class JavaParser extends Parser {
                             root_0 = (Object)adaptor.nil();
                             // 324:26: -> ^( INTERFACE ( ^( MODIFIERS ( modifier )* ) )? interfaceDeclaration )
                             {
-                                // jkit/parser/Java.g:324:29: ^( INTERFACE ( ^( MODIFIERS ( modifier )* ) )? interfaceDeclaration )
+                                // jkit/java/Java.g:324:29: ^( INTERFACE ( ^( MODIFIERS ( modifier )* ) )? interfaceDeclaration )
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(INTERFACE, "INTERFACE"), root_1);
 
-                                // jkit/parser/Java.g:324:41: ( ^( MODIFIERS ( modifier )* ) )?
+                                // jkit/java/Java.g:324:41: ( ^( MODIFIERS ( modifier )* ) )?
                                 if ( stream_modifier.hasNext() ) {
-                                    // jkit/parser/Java.g:324:41: ^( MODIFIERS ( modifier )* )
+                                    // jkit/java/Java.g:324:41: ^( MODIFIERS ( modifier )* )
                                     {
                                     Object root_2 = (Object)adaptor.nil();
                                     root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(MODIFIERS, "MODIFIERS"), root_2);
 
-                                    // jkit/parser/Java.g:324:53: ( modifier )*
+                                    // jkit/java/Java.g:324:53: ( modifier )*
                                     while ( stream_modifier.hasNext() ) {
                                         adaptor.addChild(root_2, stream_modifier.nextTree());
 
@@ -4300,7 +4300,7 @@ public class JavaParser extends Parser {
                             }
                             break;
                         case 6 :
-                            // jkit/parser/Java.g:325:5: classDeclaration
+                            // jkit/java/Java.g:325:5: classDeclaration
                             {
                             pushFollow(FOLLOW_classDeclaration_in_interfaceBodyDeclaration1584);
                             classDeclaration110=classDeclaration();
@@ -4323,19 +4323,19 @@ public class JavaParser extends Parser {
                             root_0 = (Object)adaptor.nil();
                             // 325:22: -> ^( CLASS ( ^( MODIFIERS ( modifier )* ) )? classDeclaration )
                             {
-                                // jkit/parser/Java.g:325:25: ^( CLASS ( ^( MODIFIERS ( modifier )* ) )? classDeclaration )
+                                // jkit/java/Java.g:325:25: ^( CLASS ( ^( MODIFIERS ( modifier )* ) )? classDeclaration )
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(CLASS, "CLASS"), root_1);
 
-                                // jkit/parser/Java.g:325:33: ( ^( MODIFIERS ( modifier )* ) )?
+                                // jkit/java/Java.g:325:33: ( ^( MODIFIERS ( modifier )* ) )?
                                 if ( stream_modifier.hasNext() ) {
-                                    // jkit/parser/Java.g:325:33: ^( MODIFIERS ( modifier )* )
+                                    // jkit/java/Java.g:325:33: ^( MODIFIERS ( modifier )* )
                                     {
                                     Object root_2 = (Object)adaptor.nil();
                                     root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(MODIFIERS, "MODIFIERS"), root_2);
 
-                                    // jkit/parser/Java.g:325:45: ( modifier )*
+                                    // jkit/java/Java.g:325:45: ( modifier )*
                                     while ( stream_modifier.hasNext() ) {
                                         adaptor.addChild(root_2, stream_modifier.nextTree());
 
@@ -4364,7 +4364,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:327:4: ';'
+                    // jkit/java/Java.g:327:4: ';'
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -4399,7 +4399,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "methodDeclaratorRest"
-    // jkit/parser/Java.g:330:1: methodDeclaratorRest : formalParameters ( 'throws' typeList )? ( methodBody -> ( formalParameters )? ( ^( THROWS typeList ) )? methodBody | ';' -> ( formalParameters )? ( ^( THROWS typeList ) )? ) ;
+    // jkit/java/Java.g:330:1: methodDeclaratorRest : formalParameters ( 'throws' typeList )? ( methodBody -> ( formalParameters )? ( ^( THROWS typeList ) )? methodBody | ';' -> ( formalParameters )? ( ^( THROWS typeList ) )? ) ;
     public final JavaParser.methodDeclaratorRest_return methodDeclaratorRest() throws RecognitionException {
         JavaParser.methodDeclaratorRest_return retval = new JavaParser.methodDeclaratorRest_return();
         retval.start = input.LT(1);
@@ -4424,8 +4424,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_typeList=new RewriteRuleSubtreeStream(adaptor,"rule typeList");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 26) ) { return retval; }
-            // jkit/parser/Java.g:331:2: ( formalParameters ( 'throws' typeList )? ( methodBody -> ( formalParameters )? ( ^( THROWS typeList ) )? methodBody | ';' -> ( formalParameters )? ( ^( THROWS typeList ) )? ) )
-            // jkit/parser/Java.g:331:4: formalParameters ( 'throws' typeList )? ( methodBody -> ( formalParameters )? ( ^( THROWS typeList ) )? methodBody | ';' -> ( formalParameters )? ( ^( THROWS typeList ) )? )
+            // jkit/java/Java.g:331:2: ( formalParameters ( 'throws' typeList )? ( methodBody -> ( formalParameters )? ( ^( THROWS typeList ) )? methodBody | ';' -> ( formalParameters )? ( ^( THROWS typeList ) )? ) )
+            // jkit/java/Java.g:331:4: formalParameters ( 'throws' typeList )? ( methodBody -> ( formalParameters )? ( ^( THROWS typeList ) )? methodBody | ';' -> ( formalParameters )? ( ^( THROWS typeList ) )? )
             {
             pushFollow(FOLLOW_formalParameters_in_methodDeclaratorRest1623);
             formalParameters112=formalParameters();
@@ -4433,7 +4433,7 @@ public class JavaParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_formalParameters.add(formalParameters112.getTree());
-            // jkit/parser/Java.g:332:9: ( 'throws' typeList )?
+            // jkit/java/Java.g:332:9: ( 'throws' typeList )?
             int alt40=2;
             int LA40_0 = input.LA(1);
 
@@ -4442,7 +4442,7 @@ public class JavaParser extends Parser {
             }
             switch (alt40) {
                 case 1 :
-                    // jkit/parser/Java.g:332:10: 'throws' typeList
+                    // jkit/java/Java.g:332:10: 'throws' typeList
                     {
                     string_literal113=(Token)match(input,130,FOLLOW_130_in_methodDeclaratorRest1635); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_130.add(string_literal113);
@@ -4459,7 +4459,7 @@ public class JavaParser extends Parser {
 
             }
 
-            // jkit/parser/Java.g:333:9: ( methodBody -> ( formalParameters )? ( ^( THROWS typeList ) )? methodBody | ';' -> ( formalParameters )? ( ^( THROWS typeList ) )? )
+            // jkit/java/Java.g:333:9: ( methodBody -> ( formalParameters )? ( ^( THROWS typeList ) )? methodBody | ';' -> ( formalParameters )? ( ^( THROWS typeList ) )? )
             int alt41=2;
             int LA41_0 = input.LA(1);
 
@@ -4478,7 +4478,7 @@ public class JavaParser extends Parser {
             }
             switch (alt41) {
                 case 1 :
-                    // jkit/parser/Java.g:333:13: methodBody
+                    // jkit/java/Java.g:333:13: methodBody
                     {
                     pushFollow(FOLLOW_methodBody_in_methodDeclaratorRest1653);
                     methodBody115=methodBody();
@@ -4501,15 +4501,15 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 333:24: -> ( formalParameters )? ( ^( THROWS typeList ) )? methodBody
                     {
-                        // jkit/parser/Java.g:333:27: ( formalParameters )?
+                        // jkit/java/Java.g:333:27: ( formalParameters )?
                         if ( stream_formalParameters.hasNext() ) {
                             adaptor.addChild(root_0, stream_formalParameters.nextTree());
 
                         }
                         stream_formalParameters.reset();
-                        // jkit/parser/Java.g:333:45: ( ^( THROWS typeList ) )?
+                        // jkit/java/Java.g:333:45: ( ^( THROWS typeList ) )?
                         if ( stream_typeList.hasNext() ) {
-                            // jkit/parser/Java.g:333:45: ^( THROWS typeList )
+                            // jkit/java/Java.g:333:45: ^( THROWS typeList )
                             {
                             Object root_1 = (Object)adaptor.nil();
                             root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(THROWS, "THROWS"), root_1);
@@ -4529,7 +4529,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:334:13: ';'
+                    // jkit/java/Java.g:334:13: ';'
                     {
                     char_literal116=(Token)match(input,114,FOLLOW_114_in_methodDeclaratorRest1681); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_114.add(char_literal116);
@@ -4549,15 +4549,15 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 334:17: -> ( formalParameters )? ( ^( THROWS typeList ) )?
                     {
-                        // jkit/parser/Java.g:334:20: ( formalParameters )?
+                        // jkit/java/Java.g:334:20: ( formalParameters )?
                         if ( stream_formalParameters.hasNext() ) {
                             adaptor.addChild(root_0, stream_formalParameters.nextTree());
 
                         }
                         stream_formalParameters.reset();
-                        // jkit/parser/Java.g:334:38: ( ^( THROWS typeList ) )?
+                        // jkit/java/Java.g:334:38: ( ^( THROWS typeList ) )?
                         if ( stream_typeList.hasNext() ) {
-                            // jkit/parser/Java.g:334:38: ^( THROWS typeList )
+                            // jkit/java/Java.g:334:38: ^( THROWS typeList )
                             {
                             Object root_1 = (Object)adaptor.nil();
                             root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(THROWS, "THROWS"), root_1);
@@ -4606,7 +4606,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "voidMethodDeclaratorRest"
-    // jkit/parser/Java.g:338:1: voidMethodDeclaratorRest : formalParameters ( 'throws' typeList )? ( methodBody -> ( formalParameters )? ( ^( THROWS typeList ) )? methodBody | ';' -> ( formalParameters )? ( ^( THROWS typeList ) )? ) ;
+    // jkit/java/Java.g:338:1: voidMethodDeclaratorRest : formalParameters ( 'throws' typeList )? ( methodBody -> ( formalParameters )? ( ^( THROWS typeList ) )? methodBody | ';' -> ( formalParameters )? ( ^( THROWS typeList ) )? ) ;
     public final JavaParser.voidMethodDeclaratorRest_return voidMethodDeclaratorRest() throws RecognitionException {
         JavaParser.voidMethodDeclaratorRest_return retval = new JavaParser.voidMethodDeclaratorRest_return();
         retval.start = input.LT(1);
@@ -4631,8 +4631,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_typeList=new RewriteRuleSubtreeStream(adaptor,"rule typeList");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 27) ) { return retval; }
-            // jkit/parser/Java.g:339:2: ( formalParameters ( 'throws' typeList )? ( methodBody -> ( formalParameters )? ( ^( THROWS typeList ) )? methodBody | ';' -> ( formalParameters )? ( ^( THROWS typeList ) )? ) )
-            // jkit/parser/Java.g:339:4: formalParameters ( 'throws' typeList )? ( methodBody -> ( formalParameters )? ( ^( THROWS typeList ) )? methodBody | ';' -> ( formalParameters )? ( ^( THROWS typeList ) )? )
+            // jkit/java/Java.g:339:2: ( formalParameters ( 'throws' typeList )? ( methodBody -> ( formalParameters )? ( ^( THROWS typeList ) )? methodBody | ';' -> ( formalParameters )? ( ^( THROWS typeList ) )? ) )
+            // jkit/java/Java.g:339:4: formalParameters ( 'throws' typeList )? ( methodBody -> ( formalParameters )? ( ^( THROWS typeList ) )? methodBody | ';' -> ( formalParameters )? ( ^( THROWS typeList ) )? )
             {
             pushFollow(FOLLOW_formalParameters_in_voidMethodDeclaratorRest1715);
             formalParameters117=formalParameters();
@@ -4640,7 +4640,7 @@ public class JavaParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_formalParameters.add(formalParameters117.getTree());
-            // jkit/parser/Java.g:339:21: ( 'throws' typeList )?
+            // jkit/java/Java.g:339:21: ( 'throws' typeList )?
             int alt42=2;
             int LA42_0 = input.LA(1);
 
@@ -4649,7 +4649,7 @@ public class JavaParser extends Parser {
             }
             switch (alt42) {
                 case 1 :
-                    // jkit/parser/Java.g:339:22: 'throws' typeList
+                    // jkit/java/Java.g:339:22: 'throws' typeList
                     {
                     string_literal118=(Token)match(input,130,FOLLOW_130_in_voidMethodDeclaratorRest1718); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_130.add(string_literal118);
@@ -4666,7 +4666,7 @@ public class JavaParser extends Parser {
 
             }
 
-            // jkit/parser/Java.g:340:9: ( methodBody -> ( formalParameters )? ( ^( THROWS typeList ) )? methodBody | ';' -> ( formalParameters )? ( ^( THROWS typeList ) )? )
+            // jkit/java/Java.g:340:9: ( methodBody -> ( formalParameters )? ( ^( THROWS typeList ) )? methodBody | ';' -> ( formalParameters )? ( ^( THROWS typeList ) )? )
             int alt43=2;
             int LA43_0 = input.LA(1);
 
@@ -4685,7 +4685,7 @@ public class JavaParser extends Parser {
             }
             switch (alt43) {
                 case 1 :
-                    // jkit/parser/Java.g:340:13: methodBody
+                    // jkit/java/Java.g:340:13: methodBody
                     {
                     pushFollow(FOLLOW_methodBody_in_voidMethodDeclaratorRest1736);
                     methodBody120=methodBody();
@@ -4708,15 +4708,15 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 340:24: -> ( formalParameters )? ( ^( THROWS typeList ) )? methodBody
                     {
-                        // jkit/parser/Java.g:340:27: ( formalParameters )?
+                        // jkit/java/Java.g:340:27: ( formalParameters )?
                         if ( stream_formalParameters.hasNext() ) {
                             adaptor.addChild(root_0, stream_formalParameters.nextTree());
 
                         }
                         stream_formalParameters.reset();
-                        // jkit/parser/Java.g:340:45: ( ^( THROWS typeList ) )?
+                        // jkit/java/Java.g:340:45: ( ^( THROWS typeList ) )?
                         if ( stream_typeList.hasNext() ) {
-                            // jkit/parser/Java.g:340:45: ^( THROWS typeList )
+                            // jkit/java/Java.g:340:45: ^( THROWS typeList )
                             {
                             Object root_1 = (Object)adaptor.nil();
                             root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(THROWS, "THROWS"), root_1);
@@ -4736,7 +4736,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:341:13: ';'
+                    // jkit/java/Java.g:341:13: ';'
                     {
                     char_literal121=(Token)match(input,114,FOLLOW_114_in_voidMethodDeclaratorRest1764); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_114.add(char_literal121);
@@ -4756,15 +4756,15 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 341:17: -> ( formalParameters )? ( ^( THROWS typeList ) )?
                     {
-                        // jkit/parser/Java.g:341:20: ( formalParameters )?
+                        // jkit/java/Java.g:341:20: ( formalParameters )?
                         if ( stream_formalParameters.hasNext() ) {
                             adaptor.addChild(root_0, stream_formalParameters.nextTree());
 
                         }
                         stream_formalParameters.reset();
-                        // jkit/parser/Java.g:341:38: ( ^( THROWS typeList ) )?
+                        // jkit/java/Java.g:341:38: ( ^( THROWS typeList ) )?
                         if ( stream_typeList.hasNext() ) {
-                            // jkit/parser/Java.g:341:38: ^( THROWS typeList )
+                            // jkit/java/Java.g:341:38: ^( THROWS typeList )
                             {
                             Object root_1 = (Object)adaptor.nil();
                             root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(THROWS, "THROWS"), root_1);
@@ -4813,7 +4813,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "interfaceMethodDeclaratorRest"
-    // jkit/parser/Java.g:345:1: interfaceMethodDeclaratorRest : formalParameters ( 'throws' typeList )? ';' -> ( formalParameters )? ( ^( THROWS typeList ) )? ;
+    // jkit/java/Java.g:345:1: interfaceMethodDeclaratorRest : formalParameters ( 'throws' typeList )? ';' -> ( formalParameters )? ( ^( THROWS typeList ) )? ;
     public final JavaParser.interfaceMethodDeclaratorRest_return interfaceMethodDeclaratorRest() throws RecognitionException {
         JavaParser.interfaceMethodDeclaratorRest_return retval = new JavaParser.interfaceMethodDeclaratorRest_return();
         retval.start = input.LT(1);
@@ -4835,8 +4835,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_typeList=new RewriteRuleSubtreeStream(adaptor,"rule typeList");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 28) ) { return retval; }
-            // jkit/parser/Java.g:346:2: ( formalParameters ( 'throws' typeList )? ';' -> ( formalParameters )? ( ^( THROWS typeList ) )? )
-            // jkit/parser/Java.g:346:4: formalParameters ( 'throws' typeList )? ';'
+            // jkit/java/Java.g:346:2: ( formalParameters ( 'throws' typeList )? ';' -> ( formalParameters )? ( ^( THROWS typeList ) )? )
+            // jkit/java/Java.g:346:4: formalParameters ( 'throws' typeList )? ';'
             {
             pushFollow(FOLLOW_formalParameters_in_interfaceMethodDeclaratorRest1798);
             formalParameters122=formalParameters();
@@ -4844,7 +4844,7 @@ public class JavaParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_formalParameters.add(formalParameters122.getTree());
-            // jkit/parser/Java.g:346:21: ( 'throws' typeList )?
+            // jkit/java/Java.g:346:21: ( 'throws' typeList )?
             int alt44=2;
             int LA44_0 = input.LA(1);
 
@@ -4853,7 +4853,7 @@ public class JavaParser extends Parser {
             }
             switch (alt44) {
                 case 1 :
-                    // jkit/parser/Java.g:346:22: 'throws' typeList
+                    // jkit/java/Java.g:346:22: 'throws' typeList
                     {
                     string_literal123=(Token)match(input,130,FOLLOW_130_in_interfaceMethodDeclaratorRest1801); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_130.add(string_literal123);
@@ -4888,15 +4888,15 @@ public class JavaParser extends Parser {
             root_0 = (Object)adaptor.nil();
             // 346:46: -> ( formalParameters )? ( ^( THROWS typeList ) )?
             {
-                // jkit/parser/Java.g:346:49: ( formalParameters )?
+                // jkit/java/Java.g:346:49: ( formalParameters )?
                 if ( stream_formalParameters.hasNext() ) {
                     adaptor.addChild(root_0, stream_formalParameters.nextTree());
 
                 }
                 stream_formalParameters.reset();
-                // jkit/parser/Java.g:346:67: ( ^( THROWS typeList ) )?
+                // jkit/java/Java.g:346:67: ( ^( THROWS typeList ) )?
                 if ( stream_typeList.hasNext() ) {
-                    // jkit/parser/Java.g:346:67: ^( THROWS typeList )
+                    // jkit/java/Java.g:346:67: ^( THROWS typeList )
                     {
                     Object root_1 = (Object)adaptor.nil();
                     root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(THROWS, "THROWS"), root_1);
@@ -4939,7 +4939,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "interfaceGenericMethodDecl"
-    // jkit/parser/Java.g:349:1: interfaceGenericMethodDecl : typeParameters ( type Identifier interfaceMethodDeclaratorRest -> typeParameters Identifier type interfaceMethodDeclaratorRest | 'void' Identifier interfaceMethodDeclaratorRest -> typeParameters Identifier ^( TYPE VOID ) interfaceMethodDeclaratorRest ) ;
+    // jkit/java/Java.g:349:1: interfaceGenericMethodDecl : typeParameters ( type Identifier interfaceMethodDeclaratorRest -> typeParameters Identifier type interfaceMethodDeclaratorRest | 'void' Identifier interfaceMethodDeclaratorRest -> typeParameters Identifier ^( TYPE VOID ) interfaceMethodDeclaratorRest ) ;
     public final JavaParser.interfaceGenericMethodDecl_return interfaceGenericMethodDecl() throws RecognitionException {
         JavaParser.interfaceGenericMethodDecl_return retval = new JavaParser.interfaceGenericMethodDecl_return();
         retval.start = input.LT(1);
@@ -4968,8 +4968,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_type=new RewriteRuleSubtreeStream(adaptor,"rule type");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 29) ) { return retval; }
-            // jkit/parser/Java.g:350:2: ( typeParameters ( type Identifier interfaceMethodDeclaratorRest -> typeParameters Identifier type interfaceMethodDeclaratorRest | 'void' Identifier interfaceMethodDeclaratorRest -> typeParameters Identifier ^( TYPE VOID ) interfaceMethodDeclaratorRest ) )
-            // jkit/parser/Java.g:350:4: typeParameters ( type Identifier interfaceMethodDeclaratorRest -> typeParameters Identifier type interfaceMethodDeclaratorRest | 'void' Identifier interfaceMethodDeclaratorRest -> typeParameters Identifier ^( TYPE VOID ) interfaceMethodDeclaratorRest )
+            // jkit/java/Java.g:350:2: ( typeParameters ( type Identifier interfaceMethodDeclaratorRest -> typeParameters Identifier type interfaceMethodDeclaratorRest | 'void' Identifier interfaceMethodDeclaratorRest -> typeParameters Identifier ^( TYPE VOID ) interfaceMethodDeclaratorRest ) )
+            // jkit/java/Java.g:350:4: typeParameters ( type Identifier interfaceMethodDeclaratorRest -> typeParameters Identifier type interfaceMethodDeclaratorRest | 'void' Identifier interfaceMethodDeclaratorRest -> typeParameters Identifier ^( TYPE VOID ) interfaceMethodDeclaratorRest )
             {
             pushFollow(FOLLOW_typeParameters_in_interfaceGenericMethodDecl1831);
             typeParameters126=typeParameters();
@@ -4977,7 +4977,7 @@ public class JavaParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_typeParameters.add(typeParameters126.getTree());
-            // jkit/parser/Java.g:351:3: ( type Identifier interfaceMethodDeclaratorRest -> typeParameters Identifier type interfaceMethodDeclaratorRest | 'void' Identifier interfaceMethodDeclaratorRest -> typeParameters Identifier ^( TYPE VOID ) interfaceMethodDeclaratorRest )
+            // jkit/java/Java.g:351:3: ( type Identifier interfaceMethodDeclaratorRest -> typeParameters Identifier type interfaceMethodDeclaratorRest | 'void' Identifier interfaceMethodDeclaratorRest -> typeParameters Identifier ^( TYPE VOID ) interfaceMethodDeclaratorRest )
             int alt45=2;
             int LA45_0 = input.LA(1);
 
@@ -4996,7 +4996,7 @@ public class JavaParser extends Parser {
             }
             switch (alt45) {
                 case 1 :
-                    // jkit/parser/Java.g:351:4: type Identifier interfaceMethodDeclaratorRest
+                    // jkit/java/Java.g:351:4: type Identifier interfaceMethodDeclaratorRest
                     {
                     pushFollow(FOLLOW_type_in_interfaceGenericMethodDecl1837);
                     type127=type();
@@ -5039,7 +5039,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:352:5: 'void' Identifier interfaceMethodDeclaratorRest
+                    // jkit/java/Java.g:352:5: 'void' Identifier interfaceMethodDeclaratorRest
                     {
                     string_literal130=(Token)match(input,129,FOLLOW_129_in_interfaceGenericMethodDecl1857); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_129.add(string_literal130);
@@ -5070,7 +5070,7 @@ public class JavaParser extends Parser {
                     {
                         adaptor.addChild(root_0, stream_typeParameters.nextTree());
                         adaptor.addChild(root_0, stream_Identifier.nextNode());
-                        // jkit/parser/Java.g:352:82: ^( TYPE VOID )
+                        // jkit/java/Java.g:352:82: ^( TYPE VOID )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(TYPE, "TYPE"), root_1);
@@ -5117,7 +5117,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "voidInterfaceMethodDeclaratorRest"
-    // jkit/parser/Java.g:356:1: voidInterfaceMethodDeclaratorRest : formalParameters ( 'throws' typeList )? ';' -> ( formalParameters )? ( ^( THROWS typeList ) )? ;
+    // jkit/java/Java.g:356:1: voidInterfaceMethodDeclaratorRest : formalParameters ( 'throws' typeList )? ';' -> ( formalParameters )? ( ^( THROWS typeList ) )? ;
     public final JavaParser.voidInterfaceMethodDeclaratorRest_return voidInterfaceMethodDeclaratorRest() throws RecognitionException {
         JavaParser.voidInterfaceMethodDeclaratorRest_return retval = new JavaParser.voidInterfaceMethodDeclaratorRest_return();
         retval.start = input.LT(1);
@@ -5139,8 +5139,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_typeList=new RewriteRuleSubtreeStream(adaptor,"rule typeList");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 30) ) { return retval; }
-            // jkit/parser/Java.g:357:2: ( formalParameters ( 'throws' typeList )? ';' -> ( formalParameters )? ( ^( THROWS typeList ) )? )
-            // jkit/parser/Java.g:357:4: formalParameters ( 'throws' typeList )? ';'
+            // jkit/java/Java.g:357:2: ( formalParameters ( 'throws' typeList )? ';' -> ( formalParameters )? ( ^( THROWS typeList ) )? )
+            // jkit/java/Java.g:357:4: formalParameters ( 'throws' typeList )? ';'
             {
             pushFollow(FOLLOW_formalParameters_in_voidInterfaceMethodDeclaratorRest1891);
             formalParameters133=formalParameters();
@@ -5148,7 +5148,7 @@ public class JavaParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_formalParameters.add(formalParameters133.getTree());
-            // jkit/parser/Java.g:357:21: ( 'throws' typeList )?
+            // jkit/java/Java.g:357:21: ( 'throws' typeList )?
             int alt46=2;
             int LA46_0 = input.LA(1);
 
@@ -5157,7 +5157,7 @@ public class JavaParser extends Parser {
             }
             switch (alt46) {
                 case 1 :
-                    // jkit/parser/Java.g:357:22: 'throws' typeList
+                    // jkit/java/Java.g:357:22: 'throws' typeList
                     {
                     string_literal134=(Token)match(input,130,FOLLOW_130_in_voidInterfaceMethodDeclaratorRest1894); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_130.add(string_literal134);
@@ -5192,15 +5192,15 @@ public class JavaParser extends Parser {
             root_0 = (Object)adaptor.nil();
             // 357:46: -> ( formalParameters )? ( ^( THROWS typeList ) )?
             {
-                // jkit/parser/Java.g:357:49: ( formalParameters )?
+                // jkit/java/Java.g:357:49: ( formalParameters )?
                 if ( stream_formalParameters.hasNext() ) {
                     adaptor.addChild(root_0, stream_formalParameters.nextTree());
 
                 }
                 stream_formalParameters.reset();
-                // jkit/parser/Java.g:357:67: ( ^( THROWS typeList ) )?
+                // jkit/java/Java.g:357:67: ( ^( THROWS typeList ) )?
                 if ( stream_typeList.hasNext() ) {
-                    // jkit/parser/Java.g:357:67: ^( THROWS typeList )
+                    // jkit/java/Java.g:357:67: ^( THROWS typeList )
                     {
                     Object root_1 = (Object)adaptor.nil();
                     root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(THROWS, "THROWS"), root_1);
@@ -5243,7 +5243,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "constructorDeclaratorRest"
-    // jkit/parser/Java.g:360:1: constructorDeclaratorRest : formalParameters ( 'throws' typeList )? methodBody -> ( formalParameters )? ( ^( THROWS typeList ) )? methodBody ;
+    // jkit/java/Java.g:360:1: constructorDeclaratorRest : formalParameters ( 'throws' typeList )? methodBody -> ( formalParameters )? ( ^( THROWS typeList ) )? methodBody ;
     public final JavaParser.constructorDeclaratorRest_return constructorDeclaratorRest() throws RecognitionException {
         JavaParser.constructorDeclaratorRest_return retval = new JavaParser.constructorDeclaratorRest_return();
         retval.start = input.LT(1);
@@ -5265,8 +5265,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_typeList=new RewriteRuleSubtreeStream(adaptor,"rule typeList");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 31) ) { return retval; }
-            // jkit/parser/Java.g:361:2: ( formalParameters ( 'throws' typeList )? methodBody -> ( formalParameters )? ( ^( THROWS typeList ) )? methodBody )
-            // jkit/parser/Java.g:361:4: formalParameters ( 'throws' typeList )? methodBody
+            // jkit/java/Java.g:361:2: ( formalParameters ( 'throws' typeList )? methodBody -> ( formalParameters )? ( ^( THROWS typeList ) )? methodBody )
+            // jkit/java/Java.g:361:4: formalParameters ( 'throws' typeList )? methodBody
             {
             pushFollow(FOLLOW_formalParameters_in_constructorDeclaratorRest1924);
             formalParameters137=formalParameters();
@@ -5274,7 +5274,7 @@ public class JavaParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_formalParameters.add(formalParameters137.getTree());
-            // jkit/parser/Java.g:361:21: ( 'throws' typeList )?
+            // jkit/java/Java.g:361:21: ( 'throws' typeList )?
             int alt47=2;
             int LA47_0 = input.LA(1);
 
@@ -5283,7 +5283,7 @@ public class JavaParser extends Parser {
             }
             switch (alt47) {
                 case 1 :
-                    // jkit/parser/Java.g:361:22: 'throws' typeList
+                    // jkit/java/Java.g:361:22: 'throws' typeList
                     {
                     string_literal138=(Token)match(input,130,FOLLOW_130_in_constructorDeclaratorRest1927); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_130.add(string_literal138);
@@ -5321,15 +5321,15 @@ public class JavaParser extends Parser {
             root_0 = (Object)adaptor.nil();
             // 361:53: -> ( formalParameters )? ( ^( THROWS typeList ) )? methodBody
             {
-                // jkit/parser/Java.g:361:56: ( formalParameters )?
+                // jkit/java/Java.g:361:56: ( formalParameters )?
                 if ( stream_formalParameters.hasNext() ) {
                     adaptor.addChild(root_0, stream_formalParameters.nextTree());
 
                 }
                 stream_formalParameters.reset();
-                // jkit/parser/Java.g:361:74: ( ^( THROWS typeList ) )?
+                // jkit/java/Java.g:361:74: ( ^( THROWS typeList ) )?
                 if ( stream_typeList.hasNext() ) {
-                    // jkit/parser/Java.g:361:74: ^( THROWS typeList )
+                    // jkit/java/Java.g:361:74: ^( THROWS typeList )
                     {
                     Object root_1 = (Object)adaptor.nil();
                     root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(THROWS, "THROWS"), root_1);
@@ -5373,7 +5373,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "variableDeclarators"
-    // jkit/parser/Java.g:365:1: variableDeclarators : i+= variableDeclarator ( ',' i+= variableDeclarator )* -> ( $i)+ ;
+    // jkit/java/Java.g:365:1: variableDeclarators : i+= variableDeclarator ( ',' i+= variableDeclarator )* -> ( $i)+ ;
     public final JavaParser.variableDeclarators_return variableDeclarators() throws RecognitionException {
         JavaParser.variableDeclarators_return retval = new JavaParser.variableDeclarators_return();
         retval.start = input.LT(1);
@@ -5388,8 +5388,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_variableDeclarator=new RewriteRuleSubtreeStream(adaptor,"rule variableDeclarator");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 32) ) { return retval; }
-            // jkit/parser/Java.g:366:2: (i+= variableDeclarator ( ',' i+= variableDeclarator )* -> ( $i)+ )
-            // jkit/parser/Java.g:366:4: i+= variableDeclarator ( ',' i+= variableDeclarator )*
+            // jkit/java/Java.g:366:2: (i+= variableDeclarator ( ',' i+= variableDeclarator )* -> ( $i)+ )
+            // jkit/java/Java.g:366:4: i+= variableDeclarator ( ',' i+= variableDeclarator )*
             {
             pushFollow(FOLLOW_variableDeclarator_in_variableDeclarators1962);
             i=variableDeclarator();
@@ -5400,7 +5400,7 @@ public class JavaParser extends Parser {
             if (list_i==null) list_i=new ArrayList();
             list_i.add(i.getTree());
 
-            // jkit/parser/Java.g:366:26: ( ',' i+= variableDeclarator )*
+            // jkit/java/Java.g:366:26: ( ',' i+= variableDeclarator )*
             loop48:
             do {
                 int alt48=2;
@@ -5413,7 +5413,7 @@ public class JavaParser extends Parser {
 
                 switch (alt48) {
             	case 1 :
-            	    // jkit/parser/Java.g:366:27: ',' i+= variableDeclarator
+            	    // jkit/java/Java.g:366:27: ',' i+= variableDeclarator
             	    {
             	    char_literal141=(Token)match(input,123,FOLLOW_123_in_variableDeclarators1965); if (state.failed) return retval; 
             	    if ( state.backtracking==0 ) stream_123.add(char_literal141);
@@ -5490,7 +5490,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "variableDeclarator"
-    // jkit/parser/Java.g:369:1: variableDeclarator : Identifier variableDeclaratorRest -> ^( Identifier ( variableDeclaratorRest )? ) ;
+    // jkit/java/Java.g:369:1: variableDeclarator : Identifier variableDeclaratorRest -> ^( Identifier ( variableDeclaratorRest )? ) ;
     public final JavaParser.variableDeclarator_return variableDeclarator() throws RecognitionException {
         JavaParser.variableDeclarator_return retval = new JavaParser.variableDeclarator_return();
         retval.start = input.LT(1);
@@ -5506,8 +5506,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_variableDeclaratorRest=new RewriteRuleSubtreeStream(adaptor,"rule variableDeclaratorRest");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 33) ) { return retval; }
-            // jkit/parser/Java.g:370:2: ( Identifier variableDeclaratorRest -> ^( Identifier ( variableDeclaratorRest )? ) )
-            // jkit/parser/Java.g:370:4: Identifier variableDeclaratorRest
+            // jkit/java/Java.g:370:2: ( Identifier variableDeclaratorRest -> ^( Identifier ( variableDeclaratorRest )? ) )
+            // jkit/java/Java.g:370:4: Identifier variableDeclaratorRest
             {
             Identifier142=(Token)match(input,Identifier,FOLLOW_Identifier_in_variableDeclarator1988); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_Identifier.add(Identifier142);
@@ -5533,12 +5533,12 @@ public class JavaParser extends Parser {
             root_0 = (Object)adaptor.nil();
             // 370:38: -> ^( Identifier ( variableDeclaratorRest )? )
             {
-                // jkit/parser/Java.g:370:41: ^( Identifier ( variableDeclaratorRest )? )
+                // jkit/java/Java.g:370:41: ^( Identifier ( variableDeclaratorRest )? )
                 {
                 Object root_1 = (Object)adaptor.nil();
                 root_1 = (Object)adaptor.becomeRoot(stream_Identifier.nextNode(), root_1);
 
-                // jkit/parser/Java.g:370:54: ( variableDeclaratorRest )?
+                // jkit/java/Java.g:370:54: ( variableDeclaratorRest )?
                 if ( stream_variableDeclaratorRest.hasNext() ) {
                     adaptor.addChild(root_1, stream_variableDeclaratorRest.nextTree());
 
@@ -5578,7 +5578,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "variableDeclaratorRest"
-    // jkit/parser/Java.g:373:1: variableDeclaratorRest : ( ( '[' ']' )+ ( '=' variableInitializer )? -> ( '[' )+ ( variableInitializer )? | '=' variableInitializer -> variableInitializer | );
+    // jkit/java/Java.g:373:1: variableDeclaratorRest : ( ( '[' ']' )+ ( '=' variableInitializer )? -> ( '[' )+ ( variableInitializer )? | '=' variableInitializer -> variableInitializer | );
     public final JavaParser.variableDeclaratorRest_return variableDeclaratorRest() throws RecognitionException {
         JavaParser.variableDeclaratorRest_return retval = new JavaParser.variableDeclaratorRest_return();
         retval.start = input.LT(1);
@@ -5604,7 +5604,7 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_variableInitializer=new RewriteRuleSubtreeStream(adaptor,"rule variableInitializer");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 34) ) { return retval; }
-            // jkit/parser/Java.g:374:2: ( ( '[' ']' )+ ( '=' variableInitializer )? -> ( '[' )+ ( variableInitializer )? | '=' variableInitializer -> variableInitializer | )
+            // jkit/java/Java.g:374:2: ( ( '[' ']' )+ ( '=' variableInitializer )? -> ( '[' )+ ( variableInitializer )? | '=' variableInitializer -> variableInitializer | )
             int alt51=3;
             switch ( input.LA(1) ) {
             case 131:
@@ -5634,9 +5634,9 @@ public class JavaParser extends Parser {
 
             switch (alt51) {
                 case 1 :
-                    // jkit/parser/Java.g:374:4: ( '[' ']' )+ ( '=' variableInitializer )?
+                    // jkit/java/Java.g:374:4: ( '[' ']' )+ ( '=' variableInitializer )?
                     {
-                    // jkit/parser/Java.g:374:4: ( '[' ']' )+
+                    // jkit/java/Java.g:374:4: ( '[' ']' )+
                     int cnt49=0;
                     loop49:
                     do {
@@ -5650,7 +5650,7 @@ public class JavaParser extends Parser {
 
                         switch (alt49) {
                     	case 1 :
-                    	    // jkit/parser/Java.g:374:5: '[' ']'
+                    	    // jkit/java/Java.g:374:5: '[' ']'
                     	    {
                     	    char_literal144=(Token)match(input,131,FOLLOW_131_in_variableDeclaratorRest2012); if (state.failed) return retval; 
                     	    if ( state.backtracking==0 ) stream_131.add(char_literal144);
@@ -5672,7 +5672,7 @@ public class JavaParser extends Parser {
                         cnt49++;
                     } while (true);
 
-                    // jkit/parser/Java.g:374:15: ( '=' variableInitializer )?
+                    // jkit/java/Java.g:374:15: ( '=' variableInitializer )?
                     int alt50=2;
                     int LA50_0 = input.LA(1);
 
@@ -5681,7 +5681,7 @@ public class JavaParser extends Parser {
                     }
                     switch (alt50) {
                         case 1 :
-                            // jkit/parser/Java.g:374:16: '=' variableInitializer
+                            // jkit/java/Java.g:374:16: '=' variableInitializer
                             {
                             char_literal146=(Token)match(input,133,FOLLOW_133_in_variableDeclaratorRest2019); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_133.add(char_literal146);
@@ -5721,7 +5721,7 @@ public class JavaParser extends Parser {
 
                         }
                         stream_131.reset();
-                        // jkit/parser/Java.g:374:50: ( variableInitializer )?
+                        // jkit/java/Java.g:374:50: ( variableInitializer )?
                         if ( stream_variableInitializer.hasNext() ) {
                             adaptor.addChild(root_0, stream_variableInitializer.nextTree());
 
@@ -5734,7 +5734,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:375:4: '=' variableInitializer
+                    // jkit/java/Java.g:375:4: '=' variableInitializer
                     {
                     char_literal148=(Token)match(input,133,FOLLOW_133_in_variableDeclaratorRest2036); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_133.add(char_literal148);
@@ -5768,7 +5768,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // jkit/parser/Java.g:377:2: 
+                    // jkit/java/Java.g:377:2: 
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -5801,7 +5801,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "constantDeclaration"
-    // jkit/parser/Java.g:379:1: constantDeclaration : type constantDeclarators ';' -> type constantDeclarators ;
+    // jkit/java/Java.g:379:1: constantDeclaration : type constantDeclarators ';' -> type constantDeclarators ;
     public final JavaParser.constantDeclaration_return constantDeclaration() throws RecognitionException {
         JavaParser.constantDeclaration_return retval = new JavaParser.constantDeclaration_return();
         retval.start = input.LT(1);
@@ -5820,8 +5820,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_constantDeclarators=new RewriteRuleSubtreeStream(adaptor,"rule constantDeclarators");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 35) ) { return retval; }
-            // jkit/parser/Java.g:380:2: ( type constantDeclarators ';' -> type constantDeclarators )
-            // jkit/parser/Java.g:380:4: type constantDeclarators ';'
+            // jkit/java/Java.g:380:2: ( type constantDeclarators ';' -> type constantDeclarators )
+            // jkit/java/Java.g:380:4: type constantDeclarators ';'
             {
             pushFollow(FOLLOW_type_in_constantDeclaration2056);
             type150=type();
@@ -5886,7 +5886,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "constantDeclarator"
-    // jkit/parser/Java.g:383:1: constantDeclarator : Identifier constantDeclaratorRest -> ^( Identifier constantDeclaratorRest ) ;
+    // jkit/java/Java.g:383:1: constantDeclarator : Identifier constantDeclaratorRest -> ^( Identifier constantDeclaratorRest ) ;
     public final JavaParser.constantDeclarator_return constantDeclarator() throws RecognitionException {
         JavaParser.constantDeclarator_return retval = new JavaParser.constantDeclarator_return();
         retval.start = input.LT(1);
@@ -5902,8 +5902,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_constantDeclaratorRest=new RewriteRuleSubtreeStream(adaptor,"rule constantDeclaratorRest");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 36) ) { return retval; }
-            // jkit/parser/Java.g:384:2: ( Identifier constantDeclaratorRest -> ^( Identifier constantDeclaratorRest ) )
-            // jkit/parser/Java.g:384:4: Identifier constantDeclaratorRest
+            // jkit/java/Java.g:384:2: ( Identifier constantDeclaratorRest -> ^( Identifier constantDeclaratorRest ) )
+            // jkit/java/Java.g:384:4: Identifier constantDeclaratorRest
             {
             Identifier153=(Token)match(input,Identifier,FOLLOW_Identifier_in_constantDeclarator2077); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_Identifier.add(Identifier153);
@@ -5929,7 +5929,7 @@ public class JavaParser extends Parser {
             root_0 = (Object)adaptor.nil();
             // 384:38: -> ^( Identifier constantDeclaratorRest )
             {
-                // jkit/parser/Java.g:384:41: ^( Identifier constantDeclaratorRest )
+                // jkit/java/Java.g:384:41: ^( Identifier constantDeclaratorRest )
                 {
                 Object root_1 = (Object)adaptor.nil();
                 root_1 = (Object)adaptor.becomeRoot(stream_Identifier.nextNode(), root_1);
@@ -5969,7 +5969,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "constantDeclarators"
-    // jkit/parser/Java.g:387:1: constantDeclarators : i+= constantDeclarator ( ',' i+= constantDeclarator )* -> ( $i)+ ;
+    // jkit/java/Java.g:387:1: constantDeclarators : i+= constantDeclarator ( ',' i+= constantDeclarator )* -> ( $i)+ ;
     public final JavaParser.constantDeclarators_return constantDeclarators() throws RecognitionException {
         JavaParser.constantDeclarators_return retval = new JavaParser.constantDeclarators_return();
         retval.start = input.LT(1);
@@ -5984,8 +5984,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_constantDeclarator=new RewriteRuleSubtreeStream(adaptor,"rule constantDeclarator");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 37) ) { return retval; }
-            // jkit/parser/Java.g:388:2: (i+= constantDeclarator ( ',' i+= constantDeclarator )* -> ( $i)+ )
-            // jkit/parser/Java.g:388:4: i+= constantDeclarator ( ',' i+= constantDeclarator )*
+            // jkit/java/Java.g:388:2: (i+= constantDeclarator ( ',' i+= constantDeclarator )* -> ( $i)+ )
+            // jkit/java/Java.g:388:4: i+= constantDeclarator ( ',' i+= constantDeclarator )*
             {
             pushFollow(FOLLOW_constantDeclarator_in_constantDeclarators2102);
             i=constantDeclarator();
@@ -5996,7 +5996,7 @@ public class JavaParser extends Parser {
             if (list_i==null) list_i=new ArrayList();
             list_i.add(i.getTree());
 
-            // jkit/parser/Java.g:388:26: ( ',' i+= constantDeclarator )*
+            // jkit/java/Java.g:388:26: ( ',' i+= constantDeclarator )*
             loop52:
             do {
                 int alt52=2;
@@ -6009,7 +6009,7 @@ public class JavaParser extends Parser {
 
                 switch (alt52) {
             	case 1 :
-            	    // jkit/parser/Java.g:388:27: ',' i+= constantDeclarator
+            	    // jkit/java/Java.g:388:27: ',' i+= constantDeclarator
             	    {
             	    char_literal155=(Token)match(input,123,FOLLOW_123_in_constantDeclarators2105); if (state.failed) return retval; 
             	    if ( state.backtracking==0 ) stream_123.add(char_literal155);
@@ -6086,7 +6086,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "constantDeclaratorRest"
-    // jkit/parser/Java.g:391:1: constantDeclaratorRest : ( '[' ']' )* '=' variableInitializer -> ( '[' )* variableInitializer ;
+    // jkit/java/Java.g:391:1: constantDeclaratorRest : ( '[' ']' )* '=' variableInitializer -> ( '[' )* variableInitializer ;
     public final JavaParser.constantDeclaratorRest_return constantDeclaratorRest() throws RecognitionException {
         JavaParser.constantDeclaratorRest_return retval = new JavaParser.constantDeclaratorRest_return();
         retval.start = input.LT(1);
@@ -6108,10 +6108,10 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_variableInitializer=new RewriteRuleSubtreeStream(adaptor,"rule variableInitializer");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 38) ) { return retval; }
-            // jkit/parser/Java.g:392:2: ( ( '[' ']' )* '=' variableInitializer -> ( '[' )* variableInitializer )
-            // jkit/parser/Java.g:392:4: ( '[' ']' )* '=' variableInitializer
+            // jkit/java/Java.g:392:2: ( ( '[' ']' )* '=' variableInitializer -> ( '[' )* variableInitializer )
+            // jkit/java/Java.g:392:4: ( '[' ']' )* '=' variableInitializer
             {
-            // jkit/parser/Java.g:392:4: ( '[' ']' )*
+            // jkit/java/Java.g:392:4: ( '[' ']' )*
             loop53:
             do {
                 int alt53=2;
@@ -6124,7 +6124,7 @@ public class JavaParser extends Parser {
 
                 switch (alt53) {
             	case 1 :
-            	    // jkit/parser/Java.g:392:5: '[' ']'
+            	    // jkit/java/Java.g:392:5: '[' ']'
             	    {
             	    char_literal156=(Token)match(input,131,FOLLOW_131_in_constantDeclaratorRest2130); if (state.failed) return retval; 
             	    if ( state.backtracking==0 ) stream_131.add(char_literal156);
@@ -6165,7 +6165,7 @@ public class JavaParser extends Parser {
             root_0 = (Object)adaptor.nil();
             // 392:39: -> ( '[' )* variableInitializer
             {
-                // jkit/parser/Java.g:392:42: ( '[' )*
+                // jkit/java/Java.g:392:42: ( '[' )*
                 while ( stream_131.hasNext() ) {
                     adaptor.addChild(root_0, stream_131.nextNode());
 
@@ -6203,7 +6203,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "variableDeclaratorId"
-    // jkit/parser/Java.g:395:1: variableDeclaratorId : Identifier ( '[' ']' )* ;
+    // jkit/java/Java.g:395:1: variableDeclaratorId : Identifier ( '[' ']' )* ;
     public final JavaParser.variableDeclaratorId_return variableDeclaratorId() throws RecognitionException {
         JavaParser.variableDeclaratorId_return retval = new JavaParser.variableDeclaratorId_return();
         retval.start = input.LT(1);
@@ -6220,8 +6220,8 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 39) ) { return retval; }
-            // jkit/parser/Java.g:396:2: ( Identifier ( '[' ']' )* )
-            // jkit/parser/Java.g:396:4: Identifier ( '[' ']' )*
+            // jkit/java/Java.g:396:2: ( Identifier ( '[' ']' )* )
+            // jkit/java/Java.g:396:4: Identifier ( '[' ']' )*
             {
             root_0 = (Object)adaptor.nil();
 
@@ -6230,7 +6230,7 @@ public class JavaParser extends Parser {
             Identifier160_tree = (Object)adaptor.create(Identifier160);
             adaptor.addChild(root_0, Identifier160_tree);
             }
-            // jkit/parser/Java.g:396:15: ( '[' ']' )*
+            // jkit/java/Java.g:396:15: ( '[' ']' )*
             loop54:
             do {
                 int alt54=2;
@@ -6243,7 +6243,7 @@ public class JavaParser extends Parser {
 
                 switch (alt54) {
             	case 1 :
-            	    // jkit/parser/Java.g:396:16: '[' ']'
+            	    // jkit/java/Java.g:396:16: '[' ']'
             	    {
             	    char_literal161=(Token)match(input,131,FOLLOW_131_in_variableDeclaratorId2160); if (state.failed) return retval;
             	    if ( state.backtracking==0 ) {
@@ -6292,7 +6292,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "variableInitializer"
-    // jkit/parser/Java.g:399:1: variableInitializer : ( arrayInitializer | expression );
+    // jkit/java/Java.g:399:1: variableInitializer : ( arrayInitializer | expression );
     public final JavaParser.variableInitializer_return variableInitializer() throws RecognitionException {
         JavaParser.variableInitializer_return retval = new JavaParser.variableInitializer_return();
         retval.start = input.LT(1);
@@ -6307,12 +6307,12 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 40) ) { return retval; }
-            // jkit/parser/Java.g:400:2: ( arrayInitializer | expression )
+            // jkit/java/Java.g:400:2: ( arrayInitializer | expression )
             int alt55=2;
             alt55 = dfa55.predict(input);
             switch (alt55) {
                 case 1 :
-                    // jkit/parser/Java.g:400:4: arrayInitializer
+                    // jkit/java/Java.g:400:4: arrayInitializer
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -6326,7 +6326,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:401:9: expression
+                    // jkit/java/Java.g:401:9: expression
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -6366,7 +6366,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "arrayInitializer"
-    // jkit/parser/Java.g:404:1: arrayInitializer : '{' ( variableInitializer ( ',' variableInitializer )* ( ',' )? )? '}' -> ^( ARRAYVAL ( variableInitializer )* ) ;
+    // jkit/java/Java.g:404:1: arrayInitializer : '{' ( variableInitializer ( ',' variableInitializer )* ( ',' )? )? '}' -> ^( ARRAYVAL ( variableInitializer )* ) ;
     public final JavaParser.arrayInitializer_return arrayInitializer() throws RecognitionException {
         JavaParser.arrayInitializer_return retval = new JavaParser.arrayInitializer_return();
         retval.start = input.LT(1);
@@ -6392,18 +6392,18 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_variableInitializer=new RewriteRuleSubtreeStream(adaptor,"rule variableInitializer");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 41) ) { return retval; }
-            // jkit/parser/Java.g:405:2: ( '{' ( variableInitializer ( ',' variableInitializer )* ( ',' )? )? '}' -> ^( ARRAYVAL ( variableInitializer )* ) )
-            // jkit/parser/Java.g:405:4: '{' ( variableInitializer ( ',' variableInitializer )* ( ',' )? )? '}'
+            // jkit/java/Java.g:405:2: ( '{' ( variableInitializer ( ',' variableInitializer )* ( ',' )? )? '}' -> ^( ARRAYVAL ( variableInitializer )* ) )
+            // jkit/java/Java.g:405:4: '{' ( variableInitializer ( ',' variableInitializer )* ( ',' )? )? '}'
             {
             char_literal165=(Token)match(input,126,FOLLOW_126_in_arrayInitializer2197); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_126.add(char_literal165);
 
-            // jkit/parser/Java.g:405:8: ( variableInitializer ( ',' variableInitializer )* ( ',' )? )?
+            // jkit/java/Java.g:405:8: ( variableInitializer ( ',' variableInitializer )* ( ',' )? )?
             int alt58=2;
             alt58 = dfa58.predict(input);
             switch (alt58) {
                 case 1 :
-                    // jkit/parser/Java.g:405:9: variableInitializer ( ',' variableInitializer )* ( ',' )?
+                    // jkit/java/Java.g:405:9: variableInitializer ( ',' variableInitializer )* ( ',' )?
                     {
                     pushFollow(FOLLOW_variableInitializer_in_arrayInitializer2200);
                     variableInitializer166=variableInitializer();
@@ -6411,14 +6411,14 @@ public class JavaParser extends Parser {
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_variableInitializer.add(variableInitializer166.getTree());
-                    // jkit/parser/Java.g:405:29: ( ',' variableInitializer )*
+                    // jkit/java/Java.g:405:29: ( ',' variableInitializer )*
                     loop56:
                     do {
                         int alt56=2;
                         alt56 = dfa56.predict(input);
                         switch (alt56) {
                     	case 1 :
-                    	    // jkit/parser/Java.g:405:30: ',' variableInitializer
+                    	    // jkit/java/Java.g:405:30: ',' variableInitializer
                     	    {
                     	    char_literal167=(Token)match(input,123,FOLLOW_123_in_arrayInitializer2203); if (state.failed) return retval; 
                     	    if ( state.backtracking==0 ) stream_123.add(char_literal167);
@@ -6438,7 +6438,7 @@ public class JavaParser extends Parser {
                         }
                     } while (true);
 
-                    // jkit/parser/Java.g:405:56: ( ',' )?
+                    // jkit/java/Java.g:405:56: ( ',' )?
                     int alt57=2;
                     int LA57_0 = input.LA(1);
 
@@ -6447,7 +6447,7 @@ public class JavaParser extends Parser {
                     }
                     switch (alt57) {
                         case 1 :
-                            // jkit/parser/Java.g:405:57: ','
+                            // jkit/java/Java.g:405:57: ','
                             {
                             char_literal169=(Token)match(input,123,FOLLOW_123_in_arrayInitializer2210); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_123.add(char_literal169);
@@ -6482,12 +6482,12 @@ public class JavaParser extends Parser {
             root_0 = (Object)adaptor.nil();
             // 405:70: -> ^( ARRAYVAL ( variableInitializer )* )
             {
-                // jkit/parser/Java.g:405:73: ^( ARRAYVAL ( variableInitializer )* )
+                // jkit/java/Java.g:405:73: ^( ARRAYVAL ( variableInitializer )* )
                 {
                 Object root_1 = (Object)adaptor.nil();
                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ARRAYVAL, "ARRAYVAL"), root_1);
 
-                // jkit/parser/Java.g:405:84: ( variableInitializer )*
+                // jkit/java/Java.g:405:84: ( variableInitializer )*
                 while ( stream_variableInitializer.hasNext() ) {
                     adaptor.addChild(root_1, stream_variableInitializer.nextTree());
 
@@ -6527,7 +6527,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "modifier"
-    // jkit/parser/Java.g:408:1: modifier : ( annotation | 'public' | 'protected' | 'private' | 'static' | 'abstract' | 'final' | 'native' | 'synchronized' | 'transient' | 'volatile' | 'strictfp' );
+    // jkit/java/Java.g:408:1: modifier : ( annotation | 'public' | 'protected' | 'private' | 'static' | 'abstract' | 'final' | 'native' | 'synchronized' | 'transient' | 'volatile' | 'strictfp' );
     public final JavaParser.modifier_return modifier() throws RecognitionException {
         JavaParser.modifier_return retval = new JavaParser.modifier_return();
         retval.start = input.LT(1);
@@ -6562,12 +6562,12 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 42) ) { return retval; }
-            // jkit/parser/Java.g:409:5: ( annotation | 'public' | 'protected' | 'private' | 'static' | 'abstract' | 'final' | 'native' | 'synchronized' | 'transient' | 'volatile' | 'strictfp' )
+            // jkit/java/Java.g:409:5: ( annotation | 'public' | 'protected' | 'private' | 'static' | 'abstract' | 'final' | 'native' | 'synchronized' | 'transient' | 'volatile' | 'strictfp' )
             int alt59=12;
             alt59 = dfa59.predict(input);
             switch (alt59) {
                 case 1 :
-                    // jkit/parser/Java.g:409:9: annotation
+                    // jkit/java/Java.g:409:9: annotation
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -6581,7 +6581,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:410:9: 'public'
+                    // jkit/java/Java.g:410:9: 'public'
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -6594,7 +6594,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // jkit/parser/Java.g:411:9: 'protected'
+                    // jkit/java/Java.g:411:9: 'protected'
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -6607,7 +6607,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // jkit/parser/Java.g:412:9: 'private'
+                    // jkit/java/Java.g:412:9: 'private'
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -6620,7 +6620,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 5 :
-                    // jkit/parser/Java.g:413:9: 'static'
+                    // jkit/java/Java.g:413:9: 'static'
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -6633,7 +6633,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 6 :
-                    // jkit/parser/Java.g:414:9: 'abstract'
+                    // jkit/java/Java.g:414:9: 'abstract'
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -6646,7 +6646,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 7 :
-                    // jkit/parser/Java.g:415:9: 'final'
+                    // jkit/java/Java.g:415:9: 'final'
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -6659,7 +6659,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 8 :
-                    // jkit/parser/Java.g:416:9: 'native'
+                    // jkit/java/Java.g:416:9: 'native'
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -6672,7 +6672,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 9 :
-                    // jkit/parser/Java.g:417:9: 'synchronized'
+                    // jkit/java/Java.g:417:9: 'synchronized'
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -6685,7 +6685,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 10 :
-                    // jkit/parser/Java.g:418:9: 'transient'
+                    // jkit/java/Java.g:418:9: 'transient'
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -6698,7 +6698,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 11 :
-                    // jkit/parser/Java.g:419:9: 'volatile'
+                    // jkit/java/Java.g:419:9: 'volatile'
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -6711,7 +6711,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 12 :
-                    // jkit/parser/Java.g:420:9: 'strictfp'
+                    // jkit/java/Java.g:420:9: 'strictfp'
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -6750,7 +6750,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "packageOrTypeName"
-    // jkit/parser/Java.g:423:1: packageOrTypeName : Identifier ( '.' Identifier )* ;
+    // jkit/java/Java.g:423:1: packageOrTypeName : Identifier ( '.' Identifier )* ;
     public final JavaParser.packageOrTypeName_return packageOrTypeName() throws RecognitionException {
         JavaParser.packageOrTypeName_return retval = new JavaParser.packageOrTypeName_return();
         retval.start = input.LT(1);
@@ -6767,8 +6767,8 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 43) ) { return retval; }
-            // jkit/parser/Java.g:424:2: ( Identifier ( '.' Identifier )* )
-            // jkit/parser/Java.g:424:4: Identifier ( '.' Identifier )*
+            // jkit/java/Java.g:424:2: ( Identifier ( '.' Identifier )* )
+            // jkit/java/Java.g:424:4: Identifier ( '.' Identifier )*
             {
             root_0 = (Object)adaptor.nil();
 
@@ -6777,7 +6777,7 @@ public class JavaParser extends Parser {
             Identifier183_tree = (Object)adaptor.create(Identifier183);
             adaptor.addChild(root_0, Identifier183_tree);
             }
-            // jkit/parser/Java.g:424:15: ( '.' Identifier )*
+            // jkit/java/Java.g:424:15: ( '.' Identifier )*
             loop60:
             do {
                 int alt60=2;
@@ -6802,7 +6802,7 @@ public class JavaParser extends Parser {
 
                 switch (alt60) {
             	case 1 :
-            	    // jkit/parser/Java.g:424:16: '.' Identifier
+            	    // jkit/java/Java.g:424:16: '.' Identifier
             	    {
             	    char_literal184=(Token)match(input,117,FOLLOW_117_in_packageOrTypeName2369); if (state.failed) return retval;
             	    if ( state.backtracking==0 ) {
@@ -6851,7 +6851,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "enumConstantName"
-    // jkit/parser/Java.g:427:1: enumConstantName : Identifier ;
+    // jkit/java/Java.g:427:1: enumConstantName : Identifier ;
     public final JavaParser.enumConstantName_return enumConstantName() throws RecognitionException {
         JavaParser.enumConstantName_return retval = new JavaParser.enumConstantName_return();
         retval.start = input.LT(1);
@@ -6864,8 +6864,8 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 44) ) { return retval; }
-            // jkit/parser/Java.g:428:5: ( Identifier )
-            // jkit/parser/Java.g:428:9: Identifier
+            // jkit/java/Java.g:428:5: ( Identifier )
+            // jkit/java/Java.g:428:9: Identifier
             {
             root_0 = (Object)adaptor.nil();
 
@@ -6902,7 +6902,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "typeName"
-    // jkit/parser/Java.g:431:1: typeName : ( Identifier | packageOrTypeName '.' Identifier );
+    // jkit/java/Java.g:431:1: typeName : ( Identifier | packageOrTypeName '.' Identifier );
     public final JavaParser.typeName_return typeName() throws RecognitionException {
         JavaParser.typeName_return retval = new JavaParser.typeName_return();
         retval.start = input.LT(1);
@@ -6921,7 +6921,7 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 45) ) { return retval; }
-            // jkit/parser/Java.g:432:2: ( Identifier | packageOrTypeName '.' Identifier )
+            // jkit/java/Java.g:432:2: ( Identifier | packageOrTypeName '.' Identifier )
             int alt61=2;
             int LA61_0 = input.LA(1);
 
@@ -6951,7 +6951,7 @@ public class JavaParser extends Parser {
             }
             switch (alt61) {
                 case 1 :
-                    // jkit/parser/Java.g:432:6: Identifier
+                    // jkit/java/Java.g:432:6: Identifier
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -6964,7 +6964,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:433:9: packageOrTypeName '.' Identifier
+                    // jkit/java/Java.g:433:9: packageOrTypeName '.' Identifier
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -7014,7 +7014,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "type"
-    // jkit/parser/Java.g:436:1: type : (i+= refComponent ( '.' i+= refComponent )* ( '[' ']' )* -> ^( TYPE ( $i)+ ( '[' )* ) | primitiveType ( '[' ']' )* -> ^( TYPE primitiveType ( '[' )* ) );
+    // jkit/java/Java.g:436:1: type : (i+= refComponent ( '.' i+= refComponent )* ( '[' ']' )* -> ^( TYPE ( $i)+ ( '[' )* ) | primitiveType ( '[' ']' )* -> ^( TYPE primitiveType ( '[' )* ) );
     public final JavaParser.type_return type() throws RecognitionException {
         JavaParser.type_return retval = new JavaParser.type_return();
         retval.start = input.LT(1);
@@ -7042,7 +7042,7 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_primitiveType=new RewriteRuleSubtreeStream(adaptor,"rule primitiveType");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 46) ) { return retval; }
-            // jkit/parser/Java.g:437:2: (i+= refComponent ( '.' i+= refComponent )* ( '[' ']' )* -> ^( TYPE ( $i)+ ( '[' )* ) | primitiveType ( '[' ']' )* -> ^( TYPE primitiveType ( '[' )* ) )
+            // jkit/java/Java.g:437:2: (i+= refComponent ( '.' i+= refComponent )* ( '[' ']' )* -> ^( TYPE ( $i)+ ( '[' )* ) | primitiveType ( '[' ']' )* -> ^( TYPE primitiveType ( '[' )* ) )
             int alt65=2;
             int LA65_0 = input.LA(1);
 
@@ -7061,7 +7061,7 @@ public class JavaParser extends Parser {
             }
             switch (alt65) {
                 case 1 :
-                    // jkit/parser/Java.g:437:4: i+= refComponent ( '.' i+= refComponent )* ( '[' ']' )*
+                    // jkit/java/Java.g:437:4: i+= refComponent ( '.' i+= refComponent )* ( '[' ']' )*
                     {
                     pushFollow(FOLLOW_refComponent_in_type2432);
                     i=refComponent();
@@ -7072,14 +7072,14 @@ public class JavaParser extends Parser {
                     if (list_i==null) list_i=new ArrayList();
                     list_i.add(i.getTree());
 
-                    // jkit/parser/Java.g:437:20: ( '.' i+= refComponent )*
+                    // jkit/java/Java.g:437:20: ( '.' i+= refComponent )*
                     loop62:
                     do {
                         int alt62=2;
                         alt62 = dfa62.predict(input);
                         switch (alt62) {
                     	case 1 :
-                    	    // jkit/parser/Java.g:437:21: '.' i+= refComponent
+                    	    // jkit/java/Java.g:437:21: '.' i+= refComponent
                     	    {
                     	    char_literal191=(Token)match(input,117,FOLLOW_117_in_type2435); if (state.failed) return retval; 
                     	    if ( state.backtracking==0 ) stream_117.add(char_literal191);
@@ -7102,14 +7102,14 @@ public class JavaParser extends Parser {
                         }
                     } while (true);
 
-                    // jkit/parser/Java.g:437:43: ( '[' ']' )*
+                    // jkit/java/Java.g:437:43: ( '[' ']' )*
                     loop63:
                     do {
                         int alt63=2;
                         alt63 = dfa63.predict(input);
                         switch (alt63) {
                     	case 1 :
-                    	    // jkit/parser/Java.g:437:44: '[' ']'
+                    	    // jkit/java/Java.g:437:44: '[' ']'
                     	    {
                     	    char_literal192=(Token)match(input,131,FOLLOW_131_in_type2444); if (state.failed) return retval; 
                     	    if ( state.backtracking==0 ) stream_131.add(char_literal192);
@@ -7141,7 +7141,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 437:54: -> ^( TYPE ( $i)+ ( '[' )* )
                     {
-                        // jkit/parser/Java.g:437:57: ^( TYPE ( $i)+ ( '[' )* )
+                        // jkit/java/Java.g:437:57: ^( TYPE ( $i)+ ( '[' )* )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(TYPE, "TYPE"), root_1);
@@ -7154,7 +7154,7 @@ public class JavaParser extends Parser {
 
                         }
                         stream_i.reset();
-                        // jkit/parser/Java.g:437:68: ( '[' )*
+                        // jkit/java/Java.g:437:68: ( '[' )*
                         while ( stream_131.hasNext() ) {
                             adaptor.addChild(root_1, stream_131.nextNode());
 
@@ -7170,7 +7170,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:438:4: primitiveType ( '[' ']' )*
+                    // jkit/java/Java.g:438:4: primitiveType ( '[' ']' )*
                     {
                     pushFollow(FOLLOW_primitiveType_in_type2468);
                     primitiveType194=primitiveType();
@@ -7178,14 +7178,14 @@ public class JavaParser extends Parser {
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_primitiveType.add(primitiveType194.getTree());
-                    // jkit/parser/Java.g:438:18: ( '[' ']' )*
+                    // jkit/java/Java.g:438:18: ( '[' ']' )*
                     loop64:
                     do {
                         int alt64=2;
                         alt64 = dfa64.predict(input);
                         switch (alt64) {
                     	case 1 :
-                    	    // jkit/parser/Java.g:438:19: '[' ']'
+                    	    // jkit/java/Java.g:438:19: '[' ']'
                     	    {
                     	    char_literal195=(Token)match(input,131,FOLLOW_131_in_type2471); if (state.failed) return retval; 
                     	    if ( state.backtracking==0 ) stream_131.add(char_literal195);
@@ -7217,13 +7217,13 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 438:29: -> ^( TYPE primitiveType ( '[' )* )
                     {
-                        // jkit/parser/Java.g:438:32: ^( TYPE primitiveType ( '[' )* )
+                        // jkit/java/Java.g:438:32: ^( TYPE primitiveType ( '[' )* )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(TYPE, "TYPE"), root_1);
 
                         adaptor.addChild(root_1, stream_primitiveType.nextTree());
-                        // jkit/parser/Java.g:438:53: ( '[' )*
+                        // jkit/java/Java.g:438:53: ( '[' )*
                         while ( stream_131.hasNext() ) {
                             adaptor.addChild(root_1, stream_131.nextNode());
 
@@ -7265,7 +7265,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "refComponent"
-    // jkit/parser/Java.g:441:1: refComponent : Identifier ( typeArguments )? -> ^( Identifier ( typeArguments )? ) ;
+    // jkit/java/Java.g:441:1: refComponent : Identifier ( typeArguments )? -> ^( Identifier ( typeArguments )? ) ;
     public final JavaParser.refComponent_return refComponent() throws RecognitionException {
         JavaParser.refComponent_return retval = new JavaParser.refComponent_return();
         retval.start = input.LT(1);
@@ -7281,18 +7281,18 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_typeArguments=new RewriteRuleSubtreeStream(adaptor,"rule typeArguments");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 47) ) { return retval; }
-            // jkit/parser/Java.g:442:5: ( Identifier ( typeArguments )? -> ^( Identifier ( typeArguments )? ) )
-            // jkit/parser/Java.g:442:7: Identifier ( typeArguments )?
+            // jkit/java/Java.g:442:5: ( Identifier ( typeArguments )? -> ^( Identifier ( typeArguments )? ) )
+            // jkit/java/Java.g:442:7: Identifier ( typeArguments )?
             {
             Identifier197=(Token)match(input,Identifier,FOLLOW_Identifier_in_refComponent2502); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_Identifier.add(Identifier197);
 
-            // jkit/parser/Java.g:442:18: ( typeArguments )?
+            // jkit/java/Java.g:442:18: ( typeArguments )?
             int alt66=2;
             alt66 = dfa66.predict(input);
             switch (alt66) {
                 case 1 :
-                    // jkit/parser/Java.g:442:19: typeArguments
+                    // jkit/java/Java.g:442:19: typeArguments
                     {
                     pushFollow(FOLLOW_typeArguments_in_refComponent2505);
                     typeArguments198=typeArguments();
@@ -7321,12 +7321,12 @@ public class JavaParser extends Parser {
             root_0 = (Object)adaptor.nil();
             // 442:35: -> ^( Identifier ( typeArguments )? )
             {
-                // jkit/parser/Java.g:442:38: ^( Identifier ( typeArguments )? )
+                // jkit/java/Java.g:442:38: ^( Identifier ( typeArguments )? )
                 {
                 Object root_1 = (Object)adaptor.nil();
                 root_1 = (Object)adaptor.becomeRoot(stream_Identifier.nextNode(), root_1);
 
-                // jkit/parser/Java.g:442:51: ( typeArguments )?
+                // jkit/java/Java.g:442:51: ( typeArguments )?
                 if ( stream_typeArguments.hasNext() ) {
                     adaptor.addChild(root_1, stream_typeArguments.nextTree());
 
@@ -7366,7 +7366,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "primitiveType"
-    // jkit/parser/Java.g:445:1: primitiveType : ( 'boolean' | 'char' | 'byte' | 'short' | 'int' | 'long' | 'float' | 'double' );
+    // jkit/java/Java.g:445:1: primitiveType : ( 'boolean' | 'char' | 'byte' | 'short' | 'int' | 'long' | 'float' | 'double' );
     public final JavaParser.primitiveType_return primitiveType() throws RecognitionException {
         JavaParser.primitiveType_return retval = new JavaParser.primitiveType_return();
         retval.start = input.LT(1);
@@ -7379,8 +7379,8 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 48) ) { return retval; }
-            // jkit/parser/Java.g:446:5: ( 'boolean' | 'char' | 'byte' | 'short' | 'int' | 'long' | 'float' | 'double' )
-            // jkit/parser/Java.g:
+            // jkit/java/Java.g:446:5: ( 'boolean' | 'char' | 'byte' | 'short' | 'int' | 'long' | 'float' | 'double' )
+            // jkit/java/Java.g:
             {
             root_0 = (Object)adaptor.nil();
 
@@ -7424,7 +7424,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "variableModifier"
-    // jkit/parser/Java.g:456:1: variableModifier : ( 'final' | annotation );
+    // jkit/java/Java.g:456:1: variableModifier : ( 'final' | annotation );
     public final JavaParser.variableModifier_return variableModifier() throws RecognitionException {
         JavaParser.variableModifier_return retval = new JavaParser.variableModifier_return();
         retval.start = input.LT(1);
@@ -7439,7 +7439,7 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 49) ) { return retval; }
-            // jkit/parser/Java.g:457:2: ( 'final' | annotation )
+            // jkit/java/Java.g:457:2: ( 'final' | annotation )
             int alt67=2;
             int LA67_0 = input.LA(1);
 
@@ -7458,7 +7458,7 @@ public class JavaParser extends Parser {
             }
             switch (alt67) {
                 case 1 :
-                    // jkit/parser/Java.g:457:4: 'final'
+                    // jkit/java/Java.g:457:4: 'final'
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -7471,7 +7471,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:458:9: annotation
+                    // jkit/java/Java.g:458:9: annotation
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -7511,7 +7511,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "typeArguments"
-    // jkit/parser/Java.g:461:1: typeArguments : '<' t+= typeArgument ( ',' t+= typeArgument )* '>' -> ( $t)+ ;
+    // jkit/java/Java.g:461:1: typeArguments : '<' t+= typeArgument ( ',' t+= typeArgument )* '>' -> ( $t)+ ;
     public final JavaParser.typeArguments_return typeArguments() throws RecognitionException {
         JavaParser.typeArguments_return retval = new JavaParser.typeArguments_return();
         retval.start = input.LT(1);
@@ -7532,8 +7532,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_typeArgument=new RewriteRuleSubtreeStream(adaptor,"rule typeArgument");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 50) ) { return retval; }
-            // jkit/parser/Java.g:462:2: ( '<' t+= typeArgument ( ',' t+= typeArgument )* '>' -> ( $t)+ )
-            // jkit/parser/Java.g:462:4: '<' t+= typeArgument ( ',' t+= typeArgument )* '>'
+            // jkit/java/Java.g:462:2: ( '<' t+= typeArgument ( ',' t+= typeArgument )* '>' -> ( $t)+ )
+            // jkit/java/Java.g:462:4: '<' t+= typeArgument ( ',' t+= typeArgument )* '>'
             {
             char_literal202=(Token)match(input,122,FOLLOW_122_in_typeArguments2626); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_122.add(char_literal202);
@@ -7547,7 +7547,7 @@ public class JavaParser extends Parser {
             if (list_t==null) list_t=new ArrayList();
             list_t.add(t.getTree());
 
-            // jkit/parser/Java.g:462:24: ( ',' t+= typeArgument )*
+            // jkit/java/Java.g:462:24: ( ',' t+= typeArgument )*
             loop68:
             do {
                 int alt68=2;
@@ -7560,7 +7560,7 @@ public class JavaParser extends Parser {
 
                 switch (alt68) {
             	case 1 :
-            	    // jkit/parser/Java.g:462:25: ',' t+= typeArgument
+            	    // jkit/java/Java.g:462:25: ',' t+= typeArgument
             	    {
             	    char_literal203=(Token)match(input,123,FOLLOW_123_in_typeArguments2633); if (state.failed) return retval; 
             	    if ( state.backtracking==0 ) stream_123.add(char_literal203);
@@ -7640,7 +7640,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "typeArgument"
-    // jkit/parser/Java.g:465:1: typeArgument : ( type | '?' ( ( 'extends' type )? -> ^( TYPE '?' ( ^( EXTENDS type ) )? ) | ( 'super' type )? -> ^( TYPE '?' ( ^( SUPER type ) )? ) ) );
+    // jkit/java/Java.g:465:1: typeArgument : ( type | '?' ( ( 'extends' type )? -> ^( TYPE '?' ( ^( EXTENDS type ) )? ) | ( 'super' type )? -> ^( TYPE '?' ( ^( SUPER type ) )? ) ) );
     public final JavaParser.typeArgument_return typeArgument() throws RecognitionException {
         JavaParser.typeArgument_return retval = new JavaParser.typeArgument_return();
         retval.start = input.LT(1);
@@ -7666,7 +7666,7 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_type=new RewriteRuleSubtreeStream(adaptor,"rule type");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 51) ) { return retval; }
-            // jkit/parser/Java.g:466:2: ( type | '?' ( ( 'extends' type )? -> ^( TYPE '?' ( ^( EXTENDS type ) )? ) | ( 'super' type )? -> ^( TYPE '?' ( ^( SUPER type ) )? ) ) )
+            // jkit/java/Java.g:466:2: ( type | '?' ( ( 'extends' type )? -> ^( TYPE '?' ( ^( EXTENDS type ) )? ) | ( 'super' type )? -> ^( TYPE '?' ( ^( SUPER type ) )? ) ) )
             int alt72=2;
             int LA72_0 = input.LA(1);
 
@@ -7685,7 +7685,7 @@ public class JavaParser extends Parser {
             }
             switch (alt72) {
                 case 1 :
-                    // jkit/parser/Java.g:466:4: type
+                    // jkit/java/Java.g:466:4: type
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -7699,19 +7699,19 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:467:4: '?' ( ( 'extends' type )? -> ^( TYPE '?' ( ^( EXTENDS type ) )? ) | ( 'super' type )? -> ^( TYPE '?' ( ^( SUPER type ) )? ) )
+                    // jkit/java/Java.g:467:4: '?' ( ( 'extends' type )? -> ^( TYPE '?' ( ^( EXTENDS type ) )? ) | ( 'super' type )? -> ^( TYPE '?' ( ^( SUPER type ) )? ) )
                     {
                     char_literal206=(Token)match(input,152,FOLLOW_152_in_typeArgument2664); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_152.add(char_literal206);
 
-                    // jkit/parser/Java.g:467:8: ( ( 'extends' type )? -> ^( TYPE '?' ( ^( EXTENDS type ) )? ) | ( 'super' type )? -> ^( TYPE '?' ( ^( SUPER type ) )? ) )
+                    // jkit/java/Java.g:467:8: ( ( 'extends' type )? -> ^( TYPE '?' ( ^( EXTENDS type ) )? ) | ( 'super' type )? -> ^( TYPE '?' ( ^( SUPER type ) )? ) )
                     int alt71=2;
                     alt71 = dfa71.predict(input);
                     switch (alt71) {
                         case 1 :
-                            // jkit/parser/Java.g:468:4: ( 'extends' type )?
+                            // jkit/java/Java.g:468:4: ( 'extends' type )?
                             {
-                            // jkit/parser/Java.g:468:4: ( 'extends' type )?
+                            // jkit/java/Java.g:468:4: ( 'extends' type )?
                             int alt69=2;
                             int LA69_0 = input.LA(1);
 
@@ -7720,7 +7720,7 @@ public class JavaParser extends Parser {
                             }
                             switch (alt69) {
                                 case 1 :
-                                    // jkit/parser/Java.g:468:5: 'extends' type
+                                    // jkit/java/Java.g:468:5: 'extends' type
                                     {
                                     string_literal207=(Token)match(input,120,FOLLOW_120_in_typeArgument2673); if (state.failed) return retval; 
                                     if ( state.backtracking==0 ) stream_120.add(string_literal207);
@@ -7752,15 +7752,15 @@ public class JavaParser extends Parser {
                             root_0 = (Object)adaptor.nil();
                             // 468:22: -> ^( TYPE '?' ( ^( EXTENDS type ) )? )
                             {
-                                // jkit/parser/Java.g:468:25: ^( TYPE '?' ( ^( EXTENDS type ) )? )
+                                // jkit/java/Java.g:468:25: ^( TYPE '?' ( ^( EXTENDS type ) )? )
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(TYPE, "TYPE"), root_1);
 
                                 adaptor.addChild(root_1, stream_152.nextNode());
-                                // jkit/parser/Java.g:468:36: ( ^( EXTENDS type ) )?
+                                // jkit/java/Java.g:468:36: ( ^( EXTENDS type ) )?
                                 if ( stream_type.hasNext() ) {
-                                    // jkit/parser/Java.g:468:36: ^( EXTENDS type )
+                                    // jkit/java/Java.g:468:36: ^( EXTENDS type )
                                     {
                                     Object root_2 = (Object)adaptor.nil();
                                     root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(EXTENDS, "EXTENDS"), root_2);
@@ -7782,9 +7782,9 @@ public class JavaParser extends Parser {
                             }
                             break;
                         case 2 :
-                            // jkit/parser/Java.g:469:12: ( 'super' type )?
+                            // jkit/java/Java.g:469:12: ( 'super' type )?
                             {
-                            // jkit/parser/Java.g:469:12: ( 'super' type )?
+                            // jkit/java/Java.g:469:12: ( 'super' type )?
                             int alt70=2;
                             int LA70_0 = input.LA(1);
 
@@ -7793,7 +7793,7 @@ public class JavaParser extends Parser {
                             }
                             switch (alt70) {
                                 case 1 :
-                                    // jkit/parser/Java.g:469:13: 'super' type
+                                    // jkit/java/Java.g:469:13: 'super' type
                                     {
                                     string_literal209=(Token)match(input,153,FOLLOW_153_in_typeArgument2706); if (state.failed) return retval; 
                                     if ( state.backtracking==0 ) stream_153.add(string_literal209);
@@ -7825,15 +7825,15 @@ public class JavaParser extends Parser {
                             root_0 = (Object)adaptor.nil();
                             // 469:28: -> ^( TYPE '?' ( ^( SUPER type ) )? )
                             {
-                                // jkit/parser/Java.g:469:31: ^( TYPE '?' ( ^( SUPER type ) )? )
+                                // jkit/java/Java.g:469:31: ^( TYPE '?' ( ^( SUPER type ) )? )
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(TYPE, "TYPE"), root_1);
 
                                 adaptor.addChild(root_1, stream_152.nextNode());
-                                // jkit/parser/Java.g:469:42: ( ^( SUPER type ) )?
+                                // jkit/java/Java.g:469:42: ( ^( SUPER type ) )?
                                 if ( stream_type.hasNext() ) {
-                                    // jkit/parser/Java.g:469:42: ^( SUPER type )
+                                    // jkit/java/Java.g:469:42: ^( SUPER type )
                                     {
                                     Object root_2 = (Object)adaptor.nil();
                                     root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(SUPER, "SUPER"), root_2);
@@ -7887,7 +7887,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "qualifiedNameList"
-    // jkit/parser/Java.g:473:1: qualifiedNameList : qualifiedName ( ',' qualifiedName )* ;
+    // jkit/java/Java.g:473:1: qualifiedNameList : qualifiedName ( ',' qualifiedName )* ;
     public final JavaParser.qualifiedNameList_return qualifiedNameList() throws RecognitionException {
         JavaParser.qualifiedNameList_return retval = new JavaParser.qualifiedNameList_return();
         retval.start = input.LT(1);
@@ -7904,8 +7904,8 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 52) ) { return retval; }
-            // jkit/parser/Java.g:474:2: ( qualifiedName ( ',' qualifiedName )* )
-            // jkit/parser/Java.g:474:4: qualifiedName ( ',' qualifiedName )*
+            // jkit/java/Java.g:474:2: ( qualifiedName ( ',' qualifiedName )* )
+            // jkit/java/Java.g:474:4: qualifiedName ( ',' qualifiedName )*
             {
             root_0 = (Object)adaptor.nil();
 
@@ -7915,7 +7915,7 @@ public class JavaParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) adaptor.addChild(root_0, qualifiedName211.getTree());
-            // jkit/parser/Java.g:474:18: ( ',' qualifiedName )*
+            // jkit/java/Java.g:474:18: ( ',' qualifiedName )*
             loop73:
             do {
                 int alt73=2;
@@ -7928,7 +7928,7 @@ public class JavaParser extends Parser {
 
                 switch (alt73) {
             	case 1 :
-            	    // jkit/parser/Java.g:474:19: ',' qualifiedName
+            	    // jkit/java/Java.g:474:19: ',' qualifiedName
             	    {
             	    char_literal212=(Token)match(input,123,FOLLOW_123_in_qualifiedNameList2751); if (state.failed) return retval;
             	    pushFollow(FOLLOW_qualifiedName_in_qualifiedNameList2754);
@@ -7974,7 +7974,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "formalParameters"
-    // jkit/parser/Java.g:477:1: formalParameters : '(' ( formalParameterDecls )? ')' -> ( formalParameterDecls )? ;
+    // jkit/java/Java.g:477:1: formalParameters : '(' ( formalParameterDecls )? ')' -> ( formalParameterDecls )? ;
     public final JavaParser.formalParameters_return formalParameters() throws RecognitionException {
         JavaParser.formalParameters_return retval = new JavaParser.formalParameters_return();
         retval.start = input.LT(1);
@@ -7993,13 +7993,13 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_formalParameterDecls=new RewriteRuleSubtreeStream(adaptor,"rule formalParameterDecls");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 53) ) { return retval; }
-            // jkit/parser/Java.g:478:2: ( '(' ( formalParameterDecls )? ')' -> ( formalParameterDecls )? )
-            // jkit/parser/Java.g:478:4: '(' ( formalParameterDecls )? ')'
+            // jkit/java/Java.g:478:2: ( '(' ( formalParameterDecls )? ')' -> ( formalParameterDecls )? )
+            // jkit/java/Java.g:478:4: '(' ( formalParameterDecls )? ')'
             {
             char_literal214=(Token)match(input,154,FOLLOW_154_in_formalParameters2768); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_154.add(char_literal214);
 
-            // jkit/parser/Java.g:478:8: ( formalParameterDecls )?
+            // jkit/java/Java.g:478:8: ( formalParameterDecls )?
             int alt74=2;
             int LA74_0 = input.LA(1);
 
@@ -8008,7 +8008,7 @@ public class JavaParser extends Parser {
             }
             switch (alt74) {
                 case 1 :
-                    // jkit/parser/Java.g:0:0: formalParameterDecls
+                    // jkit/java/Java.g:0:0: formalParameterDecls
                     {
                     pushFollow(FOLLOW_formalParameterDecls_in_formalParameters2770);
                     formalParameterDecls215=formalParameterDecls();
@@ -8040,7 +8040,7 @@ public class JavaParser extends Parser {
             root_0 = (Object)adaptor.nil();
             // 478:34: -> ( formalParameterDecls )?
             {
-                // jkit/parser/Java.g:478:37: ( formalParameterDecls )?
+                // jkit/java/Java.g:478:37: ( formalParameterDecls )?
                 if ( stream_formalParameterDecls.hasNext() ) {
                     adaptor.addChild(root_0, stream_formalParameterDecls.nextTree());
 
@@ -8077,7 +8077,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "formalParameterDecls"
-    // jkit/parser/Java.g:481:1: formalParameterDecls : ( variableModifier )* type ( variableDeclaratorId ( ',' formalParameterDecls )? -> ^( PARAMETER type variableDeclaratorId ) ( formalParameterDecls )? | '...' variableDeclaratorId -> ^( VARARGS type variableDeclaratorId ) ) ;
+    // jkit/java/Java.g:481:1: formalParameterDecls : ( variableModifier )* type ( variableDeclaratorId ( ',' formalParameterDecls )? -> ^( PARAMETER type variableDeclaratorId ) ( formalParameterDecls )? | '...' variableDeclaratorId -> ^( VARARGS type variableDeclaratorId ) ) ;
     public final JavaParser.formalParameterDecls_return formalParameterDecls() throws RecognitionException {
         JavaParser.formalParameterDecls_return retval = new JavaParser.formalParameterDecls_return();
         retval.start = input.LT(1);
@@ -8107,10 +8107,10 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_type=new RewriteRuleSubtreeStream(adaptor,"rule type");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 54) ) { return retval; }
-            // jkit/parser/Java.g:482:2: ( ( variableModifier )* type ( variableDeclaratorId ( ',' formalParameterDecls )? -> ^( PARAMETER type variableDeclaratorId ) ( formalParameterDecls )? | '...' variableDeclaratorId -> ^( VARARGS type variableDeclaratorId ) ) )
-            // jkit/parser/Java.g:482:4: ( variableModifier )* type ( variableDeclaratorId ( ',' formalParameterDecls )? -> ^( PARAMETER type variableDeclaratorId ) ( formalParameterDecls )? | '...' variableDeclaratorId -> ^( VARARGS type variableDeclaratorId ) )
+            // jkit/java/Java.g:482:2: ( ( variableModifier )* type ( variableDeclaratorId ( ',' formalParameterDecls )? -> ^( PARAMETER type variableDeclaratorId ) ( formalParameterDecls )? | '...' variableDeclaratorId -> ^( VARARGS type variableDeclaratorId ) ) )
+            // jkit/java/Java.g:482:4: ( variableModifier )* type ( variableDeclaratorId ( ',' formalParameterDecls )? -> ^( PARAMETER type variableDeclaratorId ) ( formalParameterDecls )? | '...' variableDeclaratorId -> ^( VARARGS type variableDeclaratorId ) )
             {
-            // jkit/parser/Java.g:482:4: ( variableModifier )*
+            // jkit/java/Java.g:482:4: ( variableModifier )*
             loop75:
             do {
                 int alt75=2;
@@ -8123,7 +8123,7 @@ public class JavaParser extends Parser {
 
                 switch (alt75) {
             	case 1 :
-            	    // jkit/parser/Java.g:0:0: variableModifier
+            	    // jkit/java/Java.g:0:0: variableModifier
             	    {
             	    pushFollow(FOLLOW_variableModifier_in_formalParameterDecls2790);
             	    variableModifier217=variableModifier();
@@ -8146,7 +8146,7 @@ public class JavaParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_type.add(type218.getTree());
-            // jkit/parser/Java.g:482:27: ( variableDeclaratorId ( ',' formalParameterDecls )? -> ^( PARAMETER type variableDeclaratorId ) ( formalParameterDecls )? | '...' variableDeclaratorId -> ^( VARARGS type variableDeclaratorId ) )
+            // jkit/java/Java.g:482:27: ( variableDeclaratorId ( ',' formalParameterDecls )? -> ^( PARAMETER type variableDeclaratorId ) ( formalParameterDecls )? | '...' variableDeclaratorId -> ^( VARARGS type variableDeclaratorId ) )
             int alt77=2;
             int LA77_0 = input.LA(1);
 
@@ -8165,7 +8165,7 @@ public class JavaParser extends Parser {
             }
             switch (alt77) {
                 case 1 :
-                    // jkit/parser/Java.g:483:9: variableDeclaratorId ( ',' formalParameterDecls )?
+                    // jkit/java/Java.g:483:9: variableDeclaratorId ( ',' formalParameterDecls )?
                     {
                     pushFollow(FOLLOW_variableDeclaratorId_in_formalParameterDecls2805);
                     variableDeclaratorId219=variableDeclaratorId();
@@ -8173,7 +8173,7 @@ public class JavaParser extends Parser {
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_variableDeclaratorId.add(variableDeclaratorId219.getTree());
-                    // jkit/parser/Java.g:483:30: ( ',' formalParameterDecls )?
+                    // jkit/java/Java.g:483:30: ( ',' formalParameterDecls )?
                     int alt76=2;
                     int LA76_0 = input.LA(1);
 
@@ -8182,7 +8182,7 @@ public class JavaParser extends Parser {
                     }
                     switch (alt76) {
                         case 1 :
-                            // jkit/parser/Java.g:483:31: ',' formalParameterDecls
+                            // jkit/java/Java.g:483:31: ',' formalParameterDecls
                             {
                             char_literal220=(Token)match(input,123,FOLLOW_123_in_formalParameterDecls2808); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_123.add(char_literal220);
@@ -8214,7 +8214,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 483:58: -> ^( PARAMETER type variableDeclaratorId ) ( formalParameterDecls )?
                     {
-                        // jkit/parser/Java.g:483:61: ^( PARAMETER type variableDeclaratorId )
+                        // jkit/java/Java.g:483:61: ^( PARAMETER type variableDeclaratorId )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(PARAMETER, "PARAMETER"), root_1);
@@ -8224,7 +8224,7 @@ public class JavaParser extends Parser {
 
                         adaptor.addChild(root_0, root_1);
                         }
-                        // jkit/parser/Java.g:483:100: ( formalParameterDecls )?
+                        // jkit/java/Java.g:483:100: ( formalParameterDecls )?
                         if ( stream_formalParameterDecls.hasNext() ) {
                             adaptor.addChild(root_0, stream_formalParameterDecls.nextTree());
 
@@ -8237,7 +8237,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:484:11: '...' variableDeclaratorId
+                    // jkit/java/Java.g:484:11: '...' variableDeclaratorId
                     {
                     string_literal222=(Token)match(input,156,FOLLOW_156_in_formalParameterDecls2837); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_156.add(string_literal222);
@@ -8263,7 +8263,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 484:38: -> ^( VARARGS type variableDeclaratorId )
                     {
-                        // jkit/parser/Java.g:484:41: ^( VARARGS type variableDeclaratorId )
+                        // jkit/java/Java.g:484:41: ^( VARARGS type variableDeclaratorId )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(VARARGS, "VARARGS"), root_1);
@@ -8310,7 +8310,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "methodBody"
-    // jkit/parser/Java.g:489:1: methodBody : block -> block ;
+    // jkit/java/Java.g:489:1: methodBody : block -> block ;
     public final JavaParser.methodBody_return methodBody() throws RecognitionException {
         JavaParser.methodBody_return retval = new JavaParser.methodBody_return();
         retval.start = input.LT(1);
@@ -8323,8 +8323,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_block=new RewriteRuleSubtreeStream(adaptor,"rule block");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 55) ) { return retval; }
-            // jkit/parser/Java.g:490:2: ( block -> block )
-            // jkit/parser/Java.g:490:4: block
+            // jkit/java/Java.g:490:2: ( block -> block )
+            // jkit/java/Java.g:490:4: block
             {
             pushFollow(FOLLOW_block_in_methodBody2875);
             block224=block();
@@ -8379,7 +8379,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "qualifiedName"
-    // jkit/parser/Java.g:493:1: qualifiedName : i+= Identifier ( '.' i+= Identifier )* -> ( $i)+ ;
+    // jkit/java/Java.g:493:1: qualifiedName : i+= Identifier ( '.' i+= Identifier )* -> ( $i)+ ;
     public final JavaParser.qualifiedName_return qualifiedName() throws RecognitionException {
         JavaParser.qualifiedName_return retval = new JavaParser.qualifiedName_return();
         retval.start = input.LT(1);
@@ -8397,8 +8397,8 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 56) ) { return retval; }
-            // jkit/parser/Java.g:494:2: (i+= Identifier ( '.' i+= Identifier )* -> ( $i)+ )
-            // jkit/parser/Java.g:494:4: i+= Identifier ( '.' i+= Identifier )*
+            // jkit/java/Java.g:494:2: (i+= Identifier ( '.' i+= Identifier )* -> ( $i)+ )
+            // jkit/java/Java.g:494:4: i+= Identifier ( '.' i+= Identifier )*
             {
             i=(Token)match(input,Identifier,FOLLOW_Identifier_in_qualifiedName2893); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_Identifier.add(i);
@@ -8406,7 +8406,7 @@ public class JavaParser extends Parser {
             if (list_i==null) list_i=new ArrayList();
             list_i.add(i);
 
-            // jkit/parser/Java.g:494:18: ( '.' i+= Identifier )*
+            // jkit/java/Java.g:494:18: ( '.' i+= Identifier )*
             loop78:
             do {
                 int alt78=2;
@@ -8419,7 +8419,7 @@ public class JavaParser extends Parser {
 
                 switch (alt78) {
             	case 1 :
-            	    // jkit/parser/Java.g:494:19: '.' i+= Identifier
+            	    // jkit/java/Java.g:494:19: '.' i+= Identifier
             	    {
             	    char_literal225=(Token)match(input,117,FOLLOW_117_in_qualifiedName2896); if (state.failed) return retval; 
             	    if ( state.backtracking==0 ) stream_117.add(char_literal225);
@@ -8494,7 +8494,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "literal"
-    // jkit/parser/Java.g:497:1: literal : ( integerLiteral -> ^( INTVAL integerLiteral ) | FloatingPointLiteral -> ^( FLOATVAL FloatingPointLiteral ) | CharacterLiteral -> ^( CHARVAL CharacterLiteral ) | StringLiteral -> ^( STRINGVAL StringLiteral ) | booleanLiteral -> ^( BOOLVAL booleanLiteral ) | 'null' -> ^( NULLVAL ) );
+    // jkit/java/Java.g:497:1: literal : ( integerLiteral -> ^( INTVAL integerLiteral ) | FloatingPointLiteral -> ^( FLOATVAL FloatingPointLiteral ) | CharacterLiteral -> ^( CHARVAL CharacterLiteral ) | StringLiteral -> ^( STRINGVAL StringLiteral ) | booleanLiteral -> ^( BOOLVAL booleanLiteral ) | 'null' -> ^( NULLVAL ) );
     public final JavaParser.literal_return literal() throws RecognitionException {
         JavaParser.literal_return retval = new JavaParser.literal_return();
         retval.start = input.LT(1);
@@ -8522,7 +8522,7 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_integerLiteral=new RewriteRuleSubtreeStream(adaptor,"rule integerLiteral");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 57) ) { return retval; }
-            // jkit/parser/Java.g:498:2: ( integerLiteral -> ^( INTVAL integerLiteral ) | FloatingPointLiteral -> ^( FLOATVAL FloatingPointLiteral ) | CharacterLiteral -> ^( CHARVAL CharacterLiteral ) | StringLiteral -> ^( STRINGVAL StringLiteral ) | booleanLiteral -> ^( BOOLVAL booleanLiteral ) | 'null' -> ^( NULLVAL ) )
+            // jkit/java/Java.g:498:2: ( integerLiteral -> ^( INTVAL integerLiteral ) | FloatingPointLiteral -> ^( FLOATVAL FloatingPointLiteral ) | CharacterLiteral -> ^( CHARVAL CharacterLiteral ) | StringLiteral -> ^( STRINGVAL StringLiteral ) | booleanLiteral -> ^( BOOLVAL booleanLiteral ) | 'null' -> ^( NULLVAL ) )
             int alt79=6;
             switch ( input.LA(1) ) {
             case HexLiteral:
@@ -8568,7 +8568,7 @@ public class JavaParser extends Parser {
 
             switch (alt79) {
                 case 1 :
-                    // jkit/parser/Java.g:498:6: integerLiteral
+                    // jkit/java/Java.g:498:6: integerLiteral
                     {
                     pushFollow(FOLLOW_integerLiteral_in_literal2923);
                     integerLiteral226=integerLiteral();
@@ -8591,7 +8591,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 498:21: -> ^( INTVAL integerLiteral )
                     {
-                        // jkit/parser/Java.g:498:24: ^( INTVAL integerLiteral )
+                        // jkit/java/Java.g:498:24: ^( INTVAL integerLiteral )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(INTVAL, "INTVAL"), root_1);
@@ -8607,7 +8607,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:499:9: FloatingPointLiteral
+                    // jkit/java/Java.g:499:9: FloatingPointLiteral
                     {
                     FloatingPointLiteral227=(Token)match(input,FloatingPointLiteral,FOLLOW_FloatingPointLiteral_in_literal2941); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_FloatingPointLiteral.add(FloatingPointLiteral227);
@@ -8627,7 +8627,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 499:30: -> ^( FLOATVAL FloatingPointLiteral )
                     {
-                        // jkit/parser/Java.g:499:33: ^( FLOATVAL FloatingPointLiteral )
+                        // jkit/java/Java.g:499:33: ^( FLOATVAL FloatingPointLiteral )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(FLOATVAL, "FLOATVAL"), root_1);
@@ -8643,7 +8643,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // jkit/parser/Java.g:500:9: CharacterLiteral
+                    // jkit/java/Java.g:500:9: CharacterLiteral
                     {
                     CharacterLiteral228=(Token)match(input,CharacterLiteral,FOLLOW_CharacterLiteral_in_literal2959); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_CharacterLiteral.add(CharacterLiteral228);
@@ -8663,7 +8663,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 500:26: -> ^( CHARVAL CharacterLiteral )
                     {
-                        // jkit/parser/Java.g:500:29: ^( CHARVAL CharacterLiteral )
+                        // jkit/java/Java.g:500:29: ^( CHARVAL CharacterLiteral )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(CHARVAL, "CHARVAL"), root_1);
@@ -8679,7 +8679,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // jkit/parser/Java.g:501:9: StringLiteral
+                    // jkit/java/Java.g:501:9: StringLiteral
                     {
                     StringLiteral229=(Token)match(input,StringLiteral,FOLLOW_StringLiteral_in_literal2977); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_StringLiteral.add(StringLiteral229);
@@ -8699,7 +8699,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 501:23: -> ^( STRINGVAL StringLiteral )
                     {
-                        // jkit/parser/Java.g:501:26: ^( STRINGVAL StringLiteral )
+                        // jkit/java/Java.g:501:26: ^( STRINGVAL StringLiteral )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(STRINGVAL, "STRINGVAL"), root_1);
@@ -8715,7 +8715,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 5 :
-                    // jkit/parser/Java.g:502:9: booleanLiteral
+                    // jkit/java/Java.g:502:9: booleanLiteral
                     {
                     pushFollow(FOLLOW_booleanLiteral_in_literal2995);
                     booleanLiteral230=booleanLiteral();
@@ -8738,7 +8738,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 502:24: -> ^( BOOLVAL booleanLiteral )
                     {
-                        // jkit/parser/Java.g:502:27: ^( BOOLVAL booleanLiteral )
+                        // jkit/java/Java.g:502:27: ^( BOOLVAL booleanLiteral )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(BOOLVAL, "BOOLVAL"), root_1);
@@ -8754,7 +8754,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 6 :
-                    // jkit/parser/Java.g:503:9: 'null'
+                    // jkit/java/Java.g:503:9: 'null'
                     {
                     string_literal231=(Token)match(input,157,FOLLOW_157_in_literal3013); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_157.add(string_literal231);
@@ -8774,7 +8774,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 503:16: -> ^( NULLVAL )
                     {
-                        // jkit/parser/Java.g:503:19: ^( NULLVAL )
+                        // jkit/java/Java.g:503:19: ^( NULLVAL )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(NULLVAL, "NULLVAL"), root_1);
@@ -8814,7 +8814,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "integerLiteral"
-    // jkit/parser/Java.g:506:1: integerLiteral : ( HexLiteral | OctalLiteral | DecimalLiteral );
+    // jkit/java/Java.g:506:1: integerLiteral : ( HexLiteral | OctalLiteral | DecimalLiteral );
     public final JavaParser.integerLiteral_return integerLiteral() throws RecognitionException {
         JavaParser.integerLiteral_return retval = new JavaParser.integerLiteral_return();
         retval.start = input.LT(1);
@@ -8827,8 +8827,8 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 58) ) { return retval; }
-            // jkit/parser/Java.g:507:5: ( HexLiteral | OctalLiteral | DecimalLiteral )
-            // jkit/parser/Java.g:
+            // jkit/java/Java.g:507:5: ( HexLiteral | OctalLiteral | DecimalLiteral )
+            // jkit/java/Java.g:
             {
             root_0 = (Object)adaptor.nil();
 
@@ -8872,7 +8872,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "booleanLiteral"
-    // jkit/parser/Java.g:512:1: booleanLiteral : ( 'true' | 'false' );
+    // jkit/java/Java.g:512:1: booleanLiteral : ( 'true' | 'false' );
     public final JavaParser.booleanLiteral_return booleanLiteral() throws RecognitionException {
         JavaParser.booleanLiteral_return retval = new JavaParser.booleanLiteral_return();
         retval.start = input.LT(1);
@@ -8885,8 +8885,8 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 59) ) { return retval; }
-            // jkit/parser/Java.g:513:5: ( 'true' | 'false' )
-            // jkit/parser/Java.g:
+            // jkit/java/Java.g:513:5: ( 'true' | 'false' )
+            // jkit/java/Java.g:
             {
             root_0 = (Object)adaptor.nil();
 
@@ -8930,7 +8930,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "annotations"
-    // jkit/parser/Java.g:519:1: annotations : ( annotation )+ ;
+    // jkit/java/Java.g:519:1: annotations : ( annotation )+ ;
     public final JavaParser.annotations_return annotations() throws RecognitionException {
         JavaParser.annotations_return retval = new JavaParser.annotations_return();
         retval.start = input.LT(1);
@@ -8943,12 +8943,12 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 60) ) { return retval; }
-            // jkit/parser/Java.g:520:2: ( ( annotation )+ )
-            // jkit/parser/Java.g:520:4: ( annotation )+
+            // jkit/java/Java.g:520:2: ( ( annotation )+ )
+            // jkit/java/Java.g:520:4: ( annotation )+
             {
             root_0 = (Object)adaptor.nil();
 
-            // jkit/parser/Java.g:520:4: ( annotation )+
+            // jkit/java/Java.g:520:4: ( annotation )+
             int cnt80=0;
             loop80:
             do {
@@ -8956,7 +8956,7 @@ public class JavaParser extends Parser {
                 alt80 = dfa80.predict(input);
                 switch (alt80) {
             	case 1 :
-            	    // jkit/parser/Java.g:0:0: annotation
+            	    // jkit/java/Java.g:0:0: annotation
             	    {
             	    pushFollow(FOLLOW_annotation_in_annotations3101);
             	    annotation234=annotation();
@@ -9006,7 +9006,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "annotation"
-    // jkit/parser/Java.g:523:1: annotation : '@' annotationName ( '(' ( elementValuePairs )? ')' )? -> ^( ANNOTATION annotationName ) ;
+    // jkit/java/Java.g:523:1: annotation : '@' annotationName ( '(' ( elementValuePairs )? ')' )? -> ^( ANNOTATION annotationName ) ;
     public final JavaParser.annotation_return annotation() throws RecognitionException {
         JavaParser.annotation_return retval = new JavaParser.annotation_return();
         retval.start = input.LT(1);
@@ -9031,8 +9031,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_elementValuePairs=new RewriteRuleSubtreeStream(adaptor,"rule elementValuePairs");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 61) ) { return retval; }
-            // jkit/parser/Java.g:524:2: ( '@' annotationName ( '(' ( elementValuePairs )? ')' )? -> ^( ANNOTATION annotationName ) )
-            // jkit/parser/Java.g:524:4: '@' annotationName ( '(' ( elementValuePairs )? ')' )?
+            // jkit/java/Java.g:524:2: ( '@' annotationName ( '(' ( elementValuePairs )? ')' )? -> ^( ANNOTATION annotationName ) )
+            // jkit/java/Java.g:524:4: '@' annotationName ( '(' ( elementValuePairs )? ')' )?
             {
             char_literal235=(Token)match(input,160,FOLLOW_160_in_annotation3113); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_160.add(char_literal235);
@@ -9043,22 +9043,22 @@ public class JavaParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_annotationName.add(annotationName236.getTree());
-            // jkit/parser/Java.g:524:23: ( '(' ( elementValuePairs )? ')' )?
+            // jkit/java/Java.g:524:23: ( '(' ( elementValuePairs )? ')' )?
             int alt82=2;
             alt82 = dfa82.predict(input);
             switch (alt82) {
                 case 1 :
-                    // jkit/parser/Java.g:524:24: '(' ( elementValuePairs )? ')'
+                    // jkit/java/Java.g:524:24: '(' ( elementValuePairs )? ')'
                     {
                     char_literal237=(Token)match(input,154,FOLLOW_154_in_annotation3118); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_154.add(char_literal237);
 
-                    // jkit/parser/Java.g:524:28: ( elementValuePairs )?
+                    // jkit/java/Java.g:524:28: ( elementValuePairs )?
                     int alt81=2;
                     alt81 = dfa81.predict(input);
                     switch (alt81) {
                         case 1 :
-                            // jkit/parser/Java.g:0:0: elementValuePairs
+                            // jkit/java/Java.g:0:0: elementValuePairs
                             {
                             pushFollow(FOLLOW_elementValuePairs_in_annotation3120);
                             elementValuePairs238=elementValuePairs();
@@ -9096,7 +9096,7 @@ public class JavaParser extends Parser {
             root_0 = (Object)adaptor.nil();
             // 524:53: -> ^( ANNOTATION annotationName )
             {
-                // jkit/parser/Java.g:524:56: ^( ANNOTATION annotationName )
+                // jkit/java/Java.g:524:56: ^( ANNOTATION annotationName )
                 {
                 Object root_1 = (Object)adaptor.nil();
                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ANNOTATION, "ANNOTATION"), root_1);
@@ -9136,7 +9136,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "annotationName"
-    // jkit/parser/Java.g:527:1: annotationName : Identifier ( '.' Identifier )* ;
+    // jkit/java/Java.g:527:1: annotationName : Identifier ( '.' Identifier )* ;
     public final JavaParser.annotationName_return annotationName() throws RecognitionException {
         JavaParser.annotationName_return retval = new JavaParser.annotationName_return();
         retval.start = input.LT(1);
@@ -9153,8 +9153,8 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 62) ) { return retval; }
-            // jkit/parser/Java.g:528:2: ( Identifier ( '.' Identifier )* )
-            // jkit/parser/Java.g:528:4: Identifier ( '.' Identifier )*
+            // jkit/java/Java.g:528:2: ( Identifier ( '.' Identifier )* )
+            // jkit/java/Java.g:528:4: Identifier ( '.' Identifier )*
             {
             root_0 = (Object)adaptor.nil();
 
@@ -9163,14 +9163,14 @@ public class JavaParser extends Parser {
             Identifier240_tree = (Object)adaptor.create(Identifier240);
             adaptor.addChild(root_0, Identifier240_tree);
             }
-            // jkit/parser/Java.g:528:15: ( '.' Identifier )*
+            // jkit/java/Java.g:528:15: ( '.' Identifier )*
             loop83:
             do {
                 int alt83=2;
                 alt83 = dfa83.predict(input);
                 switch (alt83) {
             	case 1 :
-            	    // jkit/parser/Java.g:528:16: '.' Identifier
+            	    // jkit/java/Java.g:528:16: '.' Identifier
             	    {
             	    char_literal241=(Token)match(input,117,FOLLOW_117_in_annotationName3148); if (state.failed) return retval;
             	    if ( state.backtracking==0 ) {
@@ -9219,7 +9219,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "elementValuePairs"
-    // jkit/parser/Java.g:531:1: elementValuePairs : elementValuePair ( ',' elementValuePair )* ;
+    // jkit/java/Java.g:531:1: elementValuePairs : elementValuePair ( ',' elementValuePair )* ;
     public final JavaParser.elementValuePairs_return elementValuePairs() throws RecognitionException {
         JavaParser.elementValuePairs_return retval = new JavaParser.elementValuePairs_return();
         retval.start = input.LT(1);
@@ -9236,8 +9236,8 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 63) ) { return retval; }
-            // jkit/parser/Java.g:532:2: ( elementValuePair ( ',' elementValuePair )* )
-            // jkit/parser/Java.g:532:4: elementValuePair ( ',' elementValuePair )*
+            // jkit/java/Java.g:532:2: ( elementValuePair ( ',' elementValuePair )* )
+            // jkit/java/Java.g:532:4: elementValuePair ( ',' elementValuePair )*
             {
             root_0 = (Object)adaptor.nil();
 
@@ -9247,7 +9247,7 @@ public class JavaParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) adaptor.addChild(root_0, elementValuePair243.getTree());
-            // jkit/parser/Java.g:532:21: ( ',' elementValuePair )*
+            // jkit/java/Java.g:532:21: ( ',' elementValuePair )*
             loop84:
             do {
                 int alt84=2;
@@ -9260,7 +9260,7 @@ public class JavaParser extends Parser {
 
                 switch (alt84) {
             	case 1 :
-            	    // jkit/parser/Java.g:532:22: ',' elementValuePair
+            	    // jkit/java/Java.g:532:22: ',' elementValuePair
             	    {
             	    char_literal244=(Token)match(input,123,FOLLOW_123_in_elementValuePairs3167); if (state.failed) return retval;
             	    if ( state.backtracking==0 ) {
@@ -9310,7 +9310,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "elementValuePair"
-    // jkit/parser/Java.g:535:1: elementValuePair : ( Identifier '=' )? elementValue ;
+    // jkit/java/Java.g:535:1: elementValuePair : ( Identifier '=' )? elementValue ;
     public final JavaParser.elementValuePair_return elementValuePair() throws RecognitionException {
         JavaParser.elementValuePair_return retval = new JavaParser.elementValuePair_return();
         retval.start = input.LT(1);
@@ -9327,17 +9327,17 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 64) ) { return retval; }
-            // jkit/parser/Java.g:536:2: ( ( Identifier '=' )? elementValue )
-            // jkit/parser/Java.g:536:4: ( Identifier '=' )? elementValue
+            // jkit/java/Java.g:536:2: ( ( Identifier '=' )? elementValue )
+            // jkit/java/Java.g:536:4: ( Identifier '=' )? elementValue
             {
             root_0 = (Object)adaptor.nil();
 
-            // jkit/parser/Java.g:536:4: ( Identifier '=' )?
+            // jkit/java/Java.g:536:4: ( Identifier '=' )?
             int alt85=2;
             alt85 = dfa85.predict(input);
             switch (alt85) {
                 case 1 :
-                    // jkit/parser/Java.g:536:5: Identifier '='
+                    // jkit/java/Java.g:536:5: Identifier '='
                     {
                     Identifier246=(Token)match(input,Identifier,FOLLOW_Identifier_in_elementValuePair3184); if (state.failed) return retval;
                     if ( state.backtracking==0 ) {
@@ -9389,7 +9389,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "elementValue"
-    // jkit/parser/Java.g:539:1: elementValue : ( conditionalExpression | annotation | elementValueArrayInitializer );
+    // jkit/java/Java.g:539:1: elementValue : ( conditionalExpression | annotation | elementValueArrayInitializer );
     public final JavaParser.elementValue_return elementValue() throws RecognitionException {
         JavaParser.elementValue_return retval = new JavaParser.elementValue_return();
         retval.start = input.LT(1);
@@ -9406,12 +9406,12 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 65) ) { return retval; }
-            // jkit/parser/Java.g:540:2: ( conditionalExpression | annotation | elementValueArrayInitializer )
+            // jkit/java/Java.g:540:2: ( conditionalExpression | annotation | elementValueArrayInitializer )
             int alt86=3;
             alt86 = dfa86.predict(input);
             switch (alt86) {
                 case 1 :
-                    // jkit/parser/Java.g:540:4: conditionalExpression
+                    // jkit/java/Java.g:540:4: conditionalExpression
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -9425,7 +9425,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:541:6: annotation
+                    // jkit/java/Java.g:541:6: annotation
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -9439,7 +9439,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // jkit/parser/Java.g:542:6: elementValueArrayInitializer
+                    // jkit/java/Java.g:542:6: elementValueArrayInitializer
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -9479,7 +9479,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "elementValueArrayInitializer"
-    // jkit/parser/Java.g:545:1: elementValueArrayInitializer : '{' ( elementValue ( ',' elementValue )* )? '}' ;
+    // jkit/java/Java.g:545:1: elementValueArrayInitializer : '{' ( elementValue ( ',' elementValue )* )? '}' ;
     public final JavaParser.elementValueArrayInitializer_return elementValueArrayInitializer() throws RecognitionException {
         JavaParser.elementValueArrayInitializer_return retval = new JavaParser.elementValueArrayInitializer_return();
         retval.start = input.LT(1);
@@ -9500,8 +9500,8 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 66) ) { return retval; }
-            // jkit/parser/Java.g:546:2: ( '{' ( elementValue ( ',' elementValue )* )? '}' )
-            // jkit/parser/Java.g:546:4: '{' ( elementValue ( ',' elementValue )* )? '}'
+            // jkit/java/Java.g:546:2: ( '{' ( elementValue ( ',' elementValue )* )? '}' )
+            // jkit/java/Java.g:546:4: '{' ( elementValue ( ',' elementValue )* )? '}'
             {
             root_0 = (Object)adaptor.nil();
 
@@ -9510,12 +9510,12 @@ public class JavaParser extends Parser {
             char_literal252_tree = (Object)adaptor.create(char_literal252);
             adaptor.addChild(root_0, char_literal252_tree);
             }
-            // jkit/parser/Java.g:546:8: ( elementValue ( ',' elementValue )* )?
+            // jkit/java/Java.g:546:8: ( elementValue ( ',' elementValue )* )?
             int alt88=2;
             alt88 = dfa88.predict(input);
             switch (alt88) {
                 case 1 :
-                    // jkit/parser/Java.g:546:9: elementValue ( ',' elementValue )*
+                    // jkit/java/Java.g:546:9: elementValue ( ',' elementValue )*
                     {
                     pushFollow(FOLLOW_elementValue_in_elementValueArrayInitializer3231);
                     elementValue253=elementValue();
@@ -9523,7 +9523,7 @@ public class JavaParser extends Parser {
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) adaptor.addChild(root_0, elementValue253.getTree());
-                    // jkit/parser/Java.g:546:22: ( ',' elementValue )*
+                    // jkit/java/Java.g:546:22: ( ',' elementValue )*
                     loop87:
                     do {
                         int alt87=2;
@@ -9536,7 +9536,7 @@ public class JavaParser extends Parser {
 
                         switch (alt87) {
                     	case 1 :
-                    	    // jkit/parser/Java.g:546:23: ',' elementValue
+                    	    // jkit/java/Java.g:546:23: ',' elementValue
                     	    {
                     	    char_literal254=(Token)match(input,123,FOLLOW_123_in_elementValueArrayInitializer3234); if (state.failed) return retval;
                     	    if ( state.backtracking==0 ) {
@@ -9597,7 +9597,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "annotationTypeDeclaration"
-    // jkit/parser/Java.g:549:1: annotationTypeDeclaration : '@' 'interface' Identifier annotationTypeBody ;
+    // jkit/java/Java.g:549:1: annotationTypeDeclaration : '@' 'interface' Identifier annotationTypeBody ;
     public final JavaParser.annotationTypeDeclaration_return annotationTypeDeclaration() throws RecognitionException {
         JavaParser.annotationTypeDeclaration_return retval = new JavaParser.annotationTypeDeclaration_return();
         retval.start = input.LT(1);
@@ -9616,8 +9616,8 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 67) ) { return retval; }
-            // jkit/parser/Java.g:550:2: ( '@' 'interface' Identifier annotationTypeBody )
-            // jkit/parser/Java.g:550:4: '@' 'interface' Identifier annotationTypeBody
+            // jkit/java/Java.g:550:2: ( '@' 'interface' Identifier annotationTypeBody )
+            // jkit/java/Java.g:550:4: '@' 'interface' Identifier annotationTypeBody
             {
             root_0 = (Object)adaptor.nil();
 
@@ -9670,7 +9670,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "annotationTypeBody"
-    // jkit/parser/Java.g:553:1: annotationTypeBody : '{' ( annotationTypeElementDeclarations )? '}' ;
+    // jkit/java/Java.g:553:1: annotationTypeBody : '{' ( annotationTypeElementDeclarations )? '}' ;
     public final JavaParser.annotationTypeBody_return annotationTypeBody() throws RecognitionException {
         JavaParser.annotationTypeBody_return retval = new JavaParser.annotationTypeBody_return();
         retval.start = input.LT(1);
@@ -9687,8 +9687,8 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 68) ) { return retval; }
-            // jkit/parser/Java.g:554:2: ( '{' ( annotationTypeElementDeclarations )? '}' )
-            // jkit/parser/Java.g:554:4: '{' ( annotationTypeElementDeclarations )? '}'
+            // jkit/java/Java.g:554:2: ( '{' ( annotationTypeElementDeclarations )? '}' )
+            // jkit/java/Java.g:554:4: '{' ( annotationTypeElementDeclarations )? '}'
             {
             root_0 = (Object)adaptor.nil();
 
@@ -9697,12 +9697,12 @@ public class JavaParser extends Parser {
             char_literal261_tree = (Object)adaptor.create(char_literal261);
             adaptor.addChild(root_0, char_literal261_tree);
             }
-            // jkit/parser/Java.g:554:8: ( annotationTypeElementDeclarations )?
+            // jkit/java/Java.g:554:8: ( annotationTypeElementDeclarations )?
             int alt89=2;
             alt89 = dfa89.predict(input);
             switch (alt89) {
                 case 1 :
-                    // jkit/parser/Java.g:554:9: annotationTypeElementDeclarations
+                    // jkit/java/Java.g:554:9: annotationTypeElementDeclarations
                     {
                     pushFollow(FOLLOW_annotationTypeElementDeclarations_in_annotationTypeBody3276);
                     annotationTypeElementDeclarations262=annotationTypeElementDeclarations();
@@ -9749,7 +9749,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "annotationTypeElementDeclarations"
-    // jkit/parser/Java.g:557:1: annotationTypeElementDeclarations : ( annotationTypeElementDeclaration ) ( annotationTypeElementDeclaration )* ;
+    // jkit/java/Java.g:557:1: annotationTypeElementDeclarations : ( annotationTypeElementDeclaration ) ( annotationTypeElementDeclaration )* ;
     public final JavaParser.annotationTypeElementDeclarations_return annotationTypeElementDeclarations() throws RecognitionException {
         JavaParser.annotationTypeElementDeclarations_return retval = new JavaParser.annotationTypeElementDeclarations_return();
         retval.start = input.LT(1);
@@ -9764,13 +9764,13 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 69) ) { return retval; }
-            // jkit/parser/Java.g:558:2: ( ( annotationTypeElementDeclaration ) ( annotationTypeElementDeclaration )* )
-            // jkit/parser/Java.g:558:4: ( annotationTypeElementDeclaration ) ( annotationTypeElementDeclaration )*
+            // jkit/java/Java.g:558:2: ( ( annotationTypeElementDeclaration ) ( annotationTypeElementDeclaration )* )
+            // jkit/java/Java.g:558:4: ( annotationTypeElementDeclaration ) ( annotationTypeElementDeclaration )*
             {
             root_0 = (Object)adaptor.nil();
 
-            // jkit/parser/Java.g:558:4: ( annotationTypeElementDeclaration )
-            // jkit/parser/Java.g:558:5: annotationTypeElementDeclaration
+            // jkit/java/Java.g:558:4: ( annotationTypeElementDeclaration )
+            // jkit/java/Java.g:558:5: annotationTypeElementDeclaration
             {
             pushFollow(FOLLOW_annotationTypeElementDeclaration_in_annotationTypeElementDeclarations3293);
             annotationTypeElementDeclaration264=annotationTypeElementDeclaration();
@@ -9781,14 +9781,14 @@ public class JavaParser extends Parser {
 
             }
 
-            // jkit/parser/Java.g:558:39: ( annotationTypeElementDeclaration )*
+            // jkit/java/Java.g:558:39: ( annotationTypeElementDeclaration )*
             loop90:
             do {
                 int alt90=2;
                 alt90 = dfa90.predict(input);
                 switch (alt90) {
             	case 1 :
-            	    // jkit/parser/Java.g:558:40: annotationTypeElementDeclaration
+            	    // jkit/java/Java.g:558:40: annotationTypeElementDeclaration
             	    {
             	    pushFollow(FOLLOW_annotationTypeElementDeclaration_in_annotationTypeElementDeclarations3297);
             	    annotationTypeElementDeclaration265=annotationTypeElementDeclaration();
@@ -9833,7 +9833,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "annotationTypeElementDeclaration"
-    // jkit/parser/Java.g:561:1: annotationTypeElementDeclaration : ( modifier )* annotationTypeElementRest ;
+    // jkit/java/Java.g:561:1: annotationTypeElementDeclaration : ( modifier )* annotationTypeElementRest ;
     public final JavaParser.annotationTypeElementDeclaration_return annotationTypeElementDeclaration() throws RecognitionException {
         JavaParser.annotationTypeElementDeclaration_return retval = new JavaParser.annotationTypeElementDeclaration_return();
         retval.start = input.LT(1);
@@ -9848,19 +9848,19 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 70) ) { return retval; }
-            // jkit/parser/Java.g:562:2: ( ( modifier )* annotationTypeElementRest )
-            // jkit/parser/Java.g:562:4: ( modifier )* annotationTypeElementRest
+            // jkit/java/Java.g:562:2: ( ( modifier )* annotationTypeElementRest )
+            // jkit/java/Java.g:562:4: ( modifier )* annotationTypeElementRest
             {
             root_0 = (Object)adaptor.nil();
 
-            // jkit/parser/Java.g:562:4: ( modifier )*
+            // jkit/java/Java.g:562:4: ( modifier )*
             loop91:
             do {
                 int alt91=2;
                 alt91 = dfa91.predict(input);
                 switch (alt91) {
             	case 1 :
-            	    // jkit/parser/Java.g:562:5: modifier
+            	    // jkit/java/Java.g:562:5: modifier
             	    {
             	    pushFollow(FOLLOW_modifier_in_annotationTypeElementDeclaration3312);
             	    modifier266=modifier();
@@ -9911,7 +9911,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "annotationTypeElementRest"
-    // jkit/parser/Java.g:565:1: annotationTypeElementRest : ( type annotationMethodOrConstantRest ';' | classDeclaration ( ';' )? | interfaceDeclaration ( ';' )? | enumDeclaration ( ';' )? | annotationTypeDeclaration ( ';' )? );
+    // jkit/java/Java.g:565:1: annotationTypeElementRest : ( type annotationMethodOrConstantRest ';' | classDeclaration ( ';' )? | interfaceDeclaration ( ';' )? | enumDeclaration ( ';' )? | annotationTypeDeclaration ( ';' )? );
     public final JavaParser.annotationTypeElementRest_return annotationTypeElementRest() throws RecognitionException {
         JavaParser.annotationTypeElementRest_return retval = new JavaParser.annotationTypeElementRest_return();
         retval.start = input.LT(1);
@@ -9944,7 +9944,7 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 71) ) { return retval; }
-            // jkit/parser/Java.g:566:2: ( type annotationMethodOrConstantRest ';' | classDeclaration ( ';' )? | interfaceDeclaration ( ';' )? | enumDeclaration ( ';' )? | annotationTypeDeclaration ( ';' )? )
+            // jkit/java/Java.g:566:2: ( type annotationMethodOrConstantRest ';' | classDeclaration ( ';' )? | interfaceDeclaration ( ';' )? | enumDeclaration ( ';' )? | annotationTypeDeclaration ( ';' )? )
             int alt96=5;
             switch ( input.LA(1) ) {
             case Identifier:
@@ -10015,7 +10015,7 @@ public class JavaParser extends Parser {
 
             switch (alt96) {
                 case 1 :
-                    // jkit/parser/Java.g:566:4: type annotationMethodOrConstantRest ';'
+                    // jkit/java/Java.g:566:4: type annotationMethodOrConstantRest ';'
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -10040,7 +10040,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:567:6: classDeclaration ( ';' )?
+                    // jkit/java/Java.g:567:6: classDeclaration ( ';' )?
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -10050,12 +10050,12 @@ public class JavaParser extends Parser {
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) adaptor.addChild(root_0, classDeclaration271.getTree());
-                    // jkit/parser/Java.g:567:23: ( ';' )?
+                    // jkit/java/Java.g:567:23: ( ';' )?
                     int alt92=2;
                     alt92 = dfa92.predict(input);
                     switch (alt92) {
                         case 1 :
-                            // jkit/parser/Java.g:0:0: ';'
+                            // jkit/java/Java.g:0:0: ';'
                             {
                             char_literal272=(Token)match(input,114,FOLLOW_114_in_annotationTypeElementRest3341); if (state.failed) return retval;
                             if ( state.backtracking==0 ) {
@@ -10072,7 +10072,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // jkit/parser/Java.g:568:6: interfaceDeclaration ( ';' )?
+                    // jkit/java/Java.g:568:6: interfaceDeclaration ( ';' )?
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -10082,12 +10082,12 @@ public class JavaParser extends Parser {
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) adaptor.addChild(root_0, interfaceDeclaration273.getTree());
-                    // jkit/parser/Java.g:568:27: ( ';' )?
+                    // jkit/java/Java.g:568:27: ( ';' )?
                     int alt93=2;
                     alt93 = dfa93.predict(input);
                     switch (alt93) {
                         case 1 :
-                            // jkit/parser/Java.g:0:0: ';'
+                            // jkit/java/Java.g:0:0: ';'
                             {
                             char_literal274=(Token)match(input,114,FOLLOW_114_in_annotationTypeElementRest3351); if (state.failed) return retval;
                             if ( state.backtracking==0 ) {
@@ -10104,7 +10104,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // jkit/parser/Java.g:569:6: enumDeclaration ( ';' )?
+                    // jkit/java/Java.g:569:6: enumDeclaration ( ';' )?
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -10114,12 +10114,12 @@ public class JavaParser extends Parser {
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) adaptor.addChild(root_0, enumDeclaration275.getTree());
-                    // jkit/parser/Java.g:569:22: ( ';' )?
+                    // jkit/java/Java.g:569:22: ( ';' )?
                     int alt94=2;
                     alt94 = dfa94.predict(input);
                     switch (alt94) {
                         case 1 :
-                            // jkit/parser/Java.g:0:0: ';'
+                            // jkit/java/Java.g:0:0: ';'
                             {
                             char_literal276=(Token)match(input,114,FOLLOW_114_in_annotationTypeElementRest3361); if (state.failed) return retval;
                             if ( state.backtracking==0 ) {
@@ -10136,7 +10136,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 5 :
-                    // jkit/parser/Java.g:570:6: annotationTypeDeclaration ( ';' )?
+                    // jkit/java/Java.g:570:6: annotationTypeDeclaration ( ';' )?
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -10146,12 +10146,12 @@ public class JavaParser extends Parser {
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) adaptor.addChild(root_0, annotationTypeDeclaration277.getTree());
-                    // jkit/parser/Java.g:570:32: ( ';' )?
+                    // jkit/java/Java.g:570:32: ( ';' )?
                     int alt95=2;
                     alt95 = dfa95.predict(input);
                     switch (alt95) {
                         case 1 :
-                            // jkit/parser/Java.g:0:0: ';'
+                            // jkit/java/Java.g:0:0: ';'
                             {
                             char_literal278=(Token)match(input,114,FOLLOW_114_in_annotationTypeElementRest3371); if (state.failed) return retval;
                             if ( state.backtracking==0 ) {
@@ -10194,7 +10194,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "annotationMethodOrConstantRest"
-    // jkit/parser/Java.g:573:1: annotationMethodOrConstantRest : ( annotationMethodRest | annotationConstantRest );
+    // jkit/java/Java.g:573:1: annotationMethodOrConstantRest : ( annotationMethodRest | annotationConstantRest );
     public final JavaParser.annotationMethodOrConstantRest_return annotationMethodOrConstantRest() throws RecognitionException {
         JavaParser.annotationMethodOrConstantRest_return retval = new JavaParser.annotationMethodOrConstantRest_return();
         retval.start = input.LT(1);
@@ -10209,7 +10209,7 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 72) ) { return retval; }
-            // jkit/parser/Java.g:574:2: ( annotationMethodRest | annotationConstantRest )
+            // jkit/java/Java.g:574:2: ( annotationMethodRest | annotationConstantRest )
             int alt97=2;
             int LA97_0 = input.LA(1);
 
@@ -10239,7 +10239,7 @@ public class JavaParser extends Parser {
             }
             switch (alt97) {
                 case 1 :
-                    // jkit/parser/Java.g:574:4: annotationMethodRest
+                    // jkit/java/Java.g:574:4: annotationMethodRest
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -10253,7 +10253,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:575:6: annotationConstantRest
+                    // jkit/java/Java.g:575:6: annotationConstantRest
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -10293,7 +10293,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "annotationMethodRest"
-    // jkit/parser/Java.g:578:1: annotationMethodRest : Identifier '(' ')' ( defaultValue )? ;
+    // jkit/java/Java.g:578:1: annotationMethodRest : Identifier '(' ')' ( defaultValue )? ;
     public final JavaParser.annotationMethodRest_return annotationMethodRest() throws RecognitionException {
         JavaParser.annotationMethodRest_return retval = new JavaParser.annotationMethodRest_return();
         retval.start = input.LT(1);
@@ -10312,8 +10312,8 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 73) ) { return retval; }
-            // jkit/parser/Java.g:579:3: ( Identifier '(' ')' ( defaultValue )? )
-            // jkit/parser/Java.g:579:5: Identifier '(' ')' ( defaultValue )?
+            // jkit/java/Java.g:579:3: ( Identifier '(' ')' ( defaultValue )? )
+            // jkit/java/Java.g:579:5: Identifier '(' ')' ( defaultValue )?
             {
             root_0 = (Object)adaptor.nil();
 
@@ -10332,7 +10332,7 @@ public class JavaParser extends Parser {
             char_literal283_tree = (Object)adaptor.create(char_literal283);
             adaptor.addChild(root_0, char_literal283_tree);
             }
-            // jkit/parser/Java.g:579:24: ( defaultValue )?
+            // jkit/java/Java.g:579:24: ( defaultValue )?
             int alt98=2;
             int LA98_0 = input.LA(1);
 
@@ -10341,7 +10341,7 @@ public class JavaParser extends Parser {
             }
             switch (alt98) {
                 case 1 :
-                    // jkit/parser/Java.g:579:25: defaultValue
+                    // jkit/java/Java.g:579:25: defaultValue
                     {
                     pushFollow(FOLLOW_defaultValue_in_annotationMethodRest3411);
                     defaultValue284=defaultValue();
@@ -10383,7 +10383,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "annotationConstantRest"
-    // jkit/parser/Java.g:582:1: annotationConstantRest : variableDeclarators ;
+    // jkit/java/Java.g:582:1: annotationConstantRest : variableDeclarators ;
     public final JavaParser.annotationConstantRest_return annotationConstantRest() throws RecognitionException {
         JavaParser.annotationConstantRest_return retval = new JavaParser.annotationConstantRest_return();
         retval.start = input.LT(1);
@@ -10396,8 +10396,8 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 74) ) { return retval; }
-            // jkit/parser/Java.g:583:3: ( variableDeclarators )
-            // jkit/parser/Java.g:583:5: variableDeclarators
+            // jkit/java/Java.g:583:3: ( variableDeclarators )
+            // jkit/java/Java.g:583:5: variableDeclarators
             {
             root_0 = (Object)adaptor.nil();
 
@@ -10435,7 +10435,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "defaultValue"
-    // jkit/parser/Java.g:586:1: defaultValue : 'default' elementValue ;
+    // jkit/java/Java.g:586:1: defaultValue : 'default' elementValue ;
     public final JavaParser.defaultValue_return defaultValue() throws RecognitionException {
         JavaParser.defaultValue_return retval = new JavaParser.defaultValue_return();
         retval.start = input.LT(1);
@@ -10450,8 +10450,8 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 75) ) { return retval; }
-            // jkit/parser/Java.g:587:3: ( 'default' elementValue )
-            // jkit/parser/Java.g:587:5: 'default' elementValue
+            // jkit/java/Java.g:587:3: ( 'default' elementValue )
+            // jkit/java/Java.g:587:5: 'default' elementValue
             {
             root_0 = (Object)adaptor.nil();
 
@@ -10494,7 +10494,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "block"
-    // jkit/parser/Java.g:592:1: block : '{' ( blockStatement )* '}' -> ^( BLOCK ( blockStatement )* ) ;
+    // jkit/java/Java.g:592:1: block : '{' ( blockStatement )* '}' -> ^( BLOCK ( blockStatement )* ) ;
     public final JavaParser.block_return block() throws RecognitionException {
         JavaParser.block_return retval = new JavaParser.block_return();
         retval.start = input.LT(1);
@@ -10513,20 +10513,20 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_blockStatement=new RewriteRuleSubtreeStream(adaptor,"rule blockStatement");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 76) ) { return retval; }
-            // jkit/parser/Java.g:593:2: ( '{' ( blockStatement )* '}' -> ^( BLOCK ( blockStatement )* ) )
-            // jkit/parser/Java.g:593:4: '{' ( blockStatement )* '}'
+            // jkit/java/Java.g:593:2: ( '{' ( blockStatement )* '}' -> ^( BLOCK ( blockStatement )* ) )
+            // jkit/java/Java.g:593:4: '{' ( blockStatement )* '}'
             {
             char_literal288=(Token)match(input,126,FOLLOW_126_in_block3459); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_126.add(char_literal288);
 
-            // jkit/parser/Java.g:593:8: ( blockStatement )*
+            // jkit/java/Java.g:593:8: ( blockStatement )*
             loop99:
             do {
                 int alt99=2;
                 alt99 = dfa99.predict(input);
                 switch (alt99) {
             	case 1 :
-            	    // jkit/parser/Java.g:0:0: blockStatement
+            	    // jkit/java/Java.g:0:0: blockStatement
             	    {
             	    pushFollow(FOLLOW_blockStatement_in_block3461);
             	    blockStatement289=blockStatement();
@@ -10561,12 +10561,12 @@ public class JavaParser extends Parser {
             root_0 = (Object)adaptor.nil();
             // 593:28: -> ^( BLOCK ( blockStatement )* )
             {
-                // jkit/parser/Java.g:593:31: ^( BLOCK ( blockStatement )* )
+                // jkit/java/Java.g:593:31: ^( BLOCK ( blockStatement )* )
                 {
                 Object root_1 = (Object)adaptor.nil();
                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(BLOCK, "BLOCK"), root_1);
 
-                // jkit/parser/Java.g:593:39: ( blockStatement )*
+                // jkit/java/Java.g:593:39: ( blockStatement )*
                 while ( stream_blockStatement.hasNext() ) {
                     adaptor.addChild(root_1, stream_blockStatement.nextTree());
 
@@ -10606,7 +10606,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "blockStatement"
-    // jkit/parser/Java.g:596:1: blockStatement : ( localVariableDeclaration | classOrInterfaceDeclaration | statement );
+    // jkit/java/Java.g:596:1: blockStatement : ( localVariableDeclaration | classOrInterfaceDeclaration | statement );
     public final JavaParser.blockStatement_return blockStatement() throws RecognitionException {
         JavaParser.blockStatement_return retval = new JavaParser.blockStatement_return();
         retval.start = input.LT(1);
@@ -10623,12 +10623,12 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 77) ) { return retval; }
-            // jkit/parser/Java.g:597:2: ( localVariableDeclaration | classOrInterfaceDeclaration | statement )
+            // jkit/java/Java.g:597:2: ( localVariableDeclaration | classOrInterfaceDeclaration | statement )
             int alt100=3;
             alt100 = dfa100.predict(input);
             switch (alt100) {
                 case 1 :
-                    // jkit/parser/Java.g:597:4: localVariableDeclaration
+                    // jkit/java/Java.g:597:4: localVariableDeclaration
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -10642,7 +10642,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:598:4: classOrInterfaceDeclaration
+                    // jkit/java/Java.g:598:4: classOrInterfaceDeclaration
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -10656,7 +10656,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // jkit/parser/Java.g:599:7: statement
+                    // jkit/java/Java.g:599:7: statement
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -10696,7 +10696,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "localVariableDeclaration"
-    // jkit/parser/Java.g:602:1: localVariableDeclaration : ( variableModifier )* type variableDeclarators ';' -> ^( VARDEF ^( MODIFIERS ( variableModifier )* ) type variableDeclarators ) ;
+    // jkit/java/Java.g:602:1: localVariableDeclaration : ( variableModifier )* type variableDeclarators ';' -> ^( VARDEF ^( MODIFIERS ( variableModifier )* ) type variableDeclarators ) ;
     public final JavaParser.localVariableDeclaration_return localVariableDeclaration() throws RecognitionException {
         JavaParser.localVariableDeclaration_return retval = new JavaParser.localVariableDeclaration_return();
         retval.start = input.LT(1);
@@ -10718,10 +10718,10 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_variableDeclarators=new RewriteRuleSubtreeStream(adaptor,"rule variableDeclarators");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 78) ) { return retval; }
-            // jkit/parser/Java.g:603:2: ( ( variableModifier )* type variableDeclarators ';' -> ^( VARDEF ^( MODIFIERS ( variableModifier )* ) type variableDeclarators ) )
-            // jkit/parser/Java.g:603:4: ( variableModifier )* type variableDeclarators ';'
+            // jkit/java/Java.g:603:2: ( ( variableModifier )* type variableDeclarators ';' -> ^( VARDEF ^( MODIFIERS ( variableModifier )* ) type variableDeclarators ) )
+            // jkit/java/Java.g:603:4: ( variableModifier )* type variableDeclarators ';'
             {
-            // jkit/parser/Java.g:603:4: ( variableModifier )*
+            // jkit/java/Java.g:603:4: ( variableModifier )*
             loop101:
             do {
                 int alt101=2;
@@ -10734,7 +10734,7 @@ public class JavaParser extends Parser {
 
                 switch (alt101) {
             	case 1 :
-            	    // jkit/parser/Java.g:0:0: variableModifier
+            	    // jkit/java/Java.g:0:0: variableModifier
             	    {
             	    pushFollow(FOLLOW_variableModifier_in_localVariableDeclaration3510);
             	    variableModifier294=variableModifier();
@@ -10781,17 +10781,17 @@ public class JavaParser extends Parser {
             root_0 = (Object)adaptor.nil();
             // 603:51: -> ^( VARDEF ^( MODIFIERS ( variableModifier )* ) type variableDeclarators )
             {
-                // jkit/parser/Java.g:603:54: ^( VARDEF ^( MODIFIERS ( variableModifier )* ) type variableDeclarators )
+                // jkit/java/Java.g:603:54: ^( VARDEF ^( MODIFIERS ( variableModifier )* ) type variableDeclarators )
                 {
                 Object root_1 = (Object)adaptor.nil();
                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(VARDEF, "VARDEF"), root_1);
 
-                // jkit/parser/Java.g:603:63: ^( MODIFIERS ( variableModifier )* )
+                // jkit/java/Java.g:603:63: ^( MODIFIERS ( variableModifier )* )
                 {
                 Object root_2 = (Object)adaptor.nil();
                 root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(MODIFIERS, "MODIFIERS"), root_2);
 
-                // jkit/parser/Java.g:603:75: ( variableModifier )*
+                // jkit/java/Java.g:603:75: ( variableModifier )*
                 while ( stream_variableModifier.hasNext() ) {
                     adaptor.addChild(root_2, stream_variableModifier.nextTree());
 
@@ -10836,7 +10836,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "statement"
-    // jkit/parser/Java.g:606:1: statement : ( block | lc= 'assert' expression ( ':' expression )? ';' -> ^( ASSERT[$lc] expression ( expression )? ) | lc= 'if' parExpression statement ( options {k=1; } : 'else' statement )? -> ^( IF[$lc] parExpression statement ( statement )? ) | lc= 'for' '(' forControl ')' statement -> ^( FOR[$lc] forControl statement ) | lc= 'while' parExpression statement -> ^( WHILE[$lc] ^( TEST parExpression ) statement ) | lc= 'do' statement 'while' parExpression ';' -> ^( DOWHILE[$lc] ^( TEST parExpression ) statement ) | lc= 'try' block ( catches fc= 'finally' block -> ^( TRY[$lc] block catches ^( FINALLY[$fc] block ) ) | catches -> ^( TRY[$lc] block catches ) | fc= 'finally' block -> ^( TRY[$lc] block ^( FINALLY[$fc] block ) ) ) | lc= 'switch' parExpression '{' switchBlockStatementGroups '}' -> ^( SWITCH[$lc] parExpression switchBlockStatementGroups ) | lc= 'synchronized' parExpression block -> ^( SYNCHRONIZED[$lc] parExpression block ) | lc= 'return' ( expression )? ';' -> ^( RETURN[$lc] ( expression )? ) | lc= 'throw' expression ';' -> ^( THROW[$lc] expression ) | lc= 'break' ( Identifier )? ';' -> ^( BREAK[$lc] ( Identifier )? ) | lc= 'continue' ( Identifier )? ';' -> ^( CONTINUE[$lc] ( Identifier )? ) | ';' -> ^( BLOCK ) | statementExpression ';' -> statementExpression | lc= Identifier ':' statement -> ^( LABEL[$lc] Identifier statement ) );
+    // jkit/java/Java.g:606:1: statement : ( block | lc= 'assert' expression ( ':' expression )? ';' -> ^( ASSERT[$lc] expression ( expression )? ) | lc= 'if' parExpression statement ( options {k=1; } : 'else' statement )? -> ^( IF[$lc] parExpression statement ( statement )? ) | lc= 'for' '(' forControl ')' statement -> ^( FOR[$lc] forControl statement ) | lc= 'while' parExpression statement -> ^( WHILE[$lc] ^( TEST parExpression ) statement ) | lc= 'do' statement 'while' parExpression ';' -> ^( DOWHILE[$lc] ^( TEST parExpression ) statement ) | lc= 'try' block ( catches fc= 'finally' block -> ^( TRY[$lc] block catches ^( FINALLY[$fc] block ) ) | catches -> ^( TRY[$lc] block catches ) | fc= 'finally' block -> ^( TRY[$lc] block ^( FINALLY[$fc] block ) ) ) | lc= 'switch' parExpression '{' switchBlockStatementGroups '}' -> ^( SWITCH[$lc] parExpression switchBlockStatementGroups ) | lc= 'synchronized' parExpression block -> ^( SYNCHRONIZED[$lc] parExpression block ) | lc= 'return' ( expression )? ';' -> ^( RETURN[$lc] ( expression )? ) | lc= 'throw' expression ';' -> ^( THROW[$lc] expression ) | lc= 'break' ( Identifier )? ';' -> ^( BREAK[$lc] ( Identifier )? ) | lc= 'continue' ( Identifier )? ';' -> ^( CONTINUE[$lc] ( Identifier )? ) | ';' -> ^( BLOCK ) | statementExpression ';' -> statementExpression | lc= Identifier ':' statement -> ^( LABEL[$lc] Identifier statement ) );
     public final JavaParser.statement_return statement() throws RecognitionException {
         JavaParser.statement_return retval = new JavaParser.statement_return();
         retval.start = input.LT(1);
@@ -10965,12 +10965,12 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_forControl=new RewriteRuleSubtreeStream(adaptor,"rule forControl");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 79) ) { return retval; }
-            // jkit/parser/Java.g:607:2: ( block | lc= 'assert' expression ( ':' expression )? ';' -> ^( ASSERT[$lc] expression ( expression )? ) | lc= 'if' parExpression statement ( options {k=1; } : 'else' statement )? -> ^( IF[$lc] parExpression statement ( statement )? ) | lc= 'for' '(' forControl ')' statement -> ^( FOR[$lc] forControl statement ) | lc= 'while' parExpression statement -> ^( WHILE[$lc] ^( TEST parExpression ) statement ) | lc= 'do' statement 'while' parExpression ';' -> ^( DOWHILE[$lc] ^( TEST parExpression ) statement ) | lc= 'try' block ( catches fc= 'finally' block -> ^( TRY[$lc] block catches ^( FINALLY[$fc] block ) ) | catches -> ^( TRY[$lc] block catches ) | fc= 'finally' block -> ^( TRY[$lc] block ^( FINALLY[$fc] block ) ) ) | lc= 'switch' parExpression '{' switchBlockStatementGroups '}' -> ^( SWITCH[$lc] parExpression switchBlockStatementGroups ) | lc= 'synchronized' parExpression block -> ^( SYNCHRONIZED[$lc] parExpression block ) | lc= 'return' ( expression )? ';' -> ^( RETURN[$lc] ( expression )? ) | lc= 'throw' expression ';' -> ^( THROW[$lc] expression ) | lc= 'break' ( Identifier )? ';' -> ^( BREAK[$lc] ( Identifier )? ) | lc= 'continue' ( Identifier )? ';' -> ^( CONTINUE[$lc] ( Identifier )? ) | ';' -> ^( BLOCK ) | statementExpression ';' -> statementExpression | lc= Identifier ':' statement -> ^( LABEL[$lc] Identifier statement ) )
+            // jkit/java/Java.g:607:2: ( block | lc= 'assert' expression ( ':' expression )? ';' -> ^( ASSERT[$lc] expression ( expression )? ) | lc= 'if' parExpression statement ( options {k=1; } : 'else' statement )? -> ^( IF[$lc] parExpression statement ( statement )? ) | lc= 'for' '(' forControl ')' statement -> ^( FOR[$lc] forControl statement ) | lc= 'while' parExpression statement -> ^( WHILE[$lc] ^( TEST parExpression ) statement ) | lc= 'do' statement 'while' parExpression ';' -> ^( DOWHILE[$lc] ^( TEST parExpression ) statement ) | lc= 'try' block ( catches fc= 'finally' block -> ^( TRY[$lc] block catches ^( FINALLY[$fc] block ) ) | catches -> ^( TRY[$lc] block catches ) | fc= 'finally' block -> ^( TRY[$lc] block ^( FINALLY[$fc] block ) ) ) | lc= 'switch' parExpression '{' switchBlockStatementGroups '}' -> ^( SWITCH[$lc] parExpression switchBlockStatementGroups ) | lc= 'synchronized' parExpression block -> ^( SYNCHRONIZED[$lc] parExpression block ) | lc= 'return' ( expression )? ';' -> ^( RETURN[$lc] ( expression )? ) | lc= 'throw' expression ';' -> ^( THROW[$lc] expression ) | lc= 'break' ( Identifier )? ';' -> ^( BREAK[$lc] ( Identifier )? ) | lc= 'continue' ( Identifier )? ';' -> ^( CONTINUE[$lc] ( Identifier )? ) | ';' -> ^( BLOCK ) | statementExpression ';' -> statementExpression | lc= Identifier ':' statement -> ^( LABEL[$lc] Identifier statement ) )
             int alt108=16;
             alt108 = dfa108.predict(input);
             switch (alt108) {
                 case 1 :
-                    // jkit/parser/Java.g:607:4: block
+                    // jkit/java/Java.g:607:4: block
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -10984,7 +10984,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:608:7: lc= 'assert' expression ( ':' expression )? ';'
+                    // jkit/java/Java.g:608:7: lc= 'assert' expression ( ':' expression )? ';'
                     {
                     lc=(Token)match(input,162,FOLLOW_162_in_statement3556); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_162.add(lc);
@@ -10995,7 +10995,7 @@ public class JavaParser extends Parser {
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_expression.add(expression299.getTree());
-                    // jkit/parser/Java.g:608:30: ( ':' expression )?
+                    // jkit/java/Java.g:608:30: ( ':' expression )?
                     int alt102=2;
                     int LA102_0 = input.LA(1);
 
@@ -11004,7 +11004,7 @@ public class JavaParser extends Parser {
                     }
                     switch (alt102) {
                         case 1 :
-                            // jkit/parser/Java.g:608:31: ':' expression
+                            // jkit/java/Java.g:608:31: ':' expression
                             {
                             char_literal300=(Token)match(input,163,FOLLOW_163_in_statement3561); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_163.add(char_literal300);
@@ -11039,13 +11039,13 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 608:52: -> ^( ASSERT[$lc] expression ( expression )? )
                     {
-                        // jkit/parser/Java.g:608:55: ^( ASSERT[$lc] expression ( expression )? )
+                        // jkit/java/Java.g:608:55: ^( ASSERT[$lc] expression ( expression )? )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSERT, lc), root_1);
 
                         adaptor.addChild(root_1, stream_expression.nextTree());
-                        // jkit/parser/Java.g:608:80: ( expression )?
+                        // jkit/java/Java.g:608:80: ( expression )?
                         if ( stream_expression.hasNext() ) {
                             adaptor.addChild(root_1, stream_expression.nextTree());
 
@@ -11061,7 +11061,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // jkit/parser/Java.g:609:7: lc= 'if' parExpression statement ( options {k=1; } : 'else' statement )?
+                    // jkit/java/Java.g:609:7: lc= 'if' parExpression statement ( options {k=1; } : 'else' statement )?
                     {
                     lc=(Token)match(input,164,FOLLOW_164_in_statement3589); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_164.add(lc);
@@ -11078,7 +11078,7 @@ public class JavaParser extends Parser {
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_statement.add(statement304.getTree());
-                    // jkit/parser/Java.g:609:39: ( options {k=1; } : 'else' statement )?
+                    // jkit/java/Java.g:609:39: ( options {k=1; } : 'else' statement )?
                     int alt103=2;
                     int LA103_0 = input.LA(1);
 
@@ -11091,7 +11091,7 @@ public class JavaParser extends Parser {
                     }
                     switch (alt103) {
                         case 1 :
-                            // jkit/parser/Java.g:609:55: 'else' statement
+                            // jkit/java/Java.g:609:55: 'else' statement
                             {
                             string_literal305=(Token)match(input,165,FOLLOW_165_in_statement3603); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_165.add(string_literal305);
@@ -11123,14 +11123,14 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 609:74: -> ^( IF[$lc] parExpression statement ( statement )? )
                     {
-                        // jkit/parser/Java.g:609:77: ^( IF[$lc] parExpression statement ( statement )? )
+                        // jkit/java/Java.g:609:77: ^( IF[$lc] parExpression statement ( statement )? )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(IF, lc), root_1);
 
                         adaptor.addChild(root_1, stream_parExpression.nextTree());
                         adaptor.addChild(root_1, stream_statement.nextTree());
-                        // jkit/parser/Java.g:609:111: ( statement )?
+                        // jkit/java/Java.g:609:111: ( statement )?
                         if ( stream_statement.hasNext() ) {
                             adaptor.addChild(root_1, stream_statement.nextTree());
 
@@ -11146,7 +11146,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // jkit/parser/Java.g:610:7: lc= 'for' '(' forControl ')' statement
+                    // jkit/java/Java.g:610:7: lc= 'for' '(' forControl ')' statement
                     {
                     lc=(Token)match(input,166,FOLLOW_166_in_statement3631); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_166.add(lc);
@@ -11184,7 +11184,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 610:45: -> ^( FOR[$lc] forControl statement )
                     {
-                        // jkit/parser/Java.g:610:48: ^( FOR[$lc] forControl statement )
+                        // jkit/java/Java.g:610:48: ^( FOR[$lc] forControl statement )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(FOR, lc), root_1);
@@ -11201,7 +11201,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 5 :
-                    // jkit/parser/Java.g:611:7: lc= 'while' parExpression statement
+                    // jkit/java/Java.g:611:7: lc= 'while' parExpression statement
                     {
                     lc=(Token)match(input,167,FOLLOW_167_in_statement3660); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_167.add(lc);
@@ -11233,12 +11233,12 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 611:42: -> ^( WHILE[$lc] ^( TEST parExpression ) statement )
                     {
-                        // jkit/parser/Java.g:611:45: ^( WHILE[$lc] ^( TEST parExpression ) statement )
+                        // jkit/java/Java.g:611:45: ^( WHILE[$lc] ^( TEST parExpression ) statement )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(WHILE, lc), root_1);
 
-                        // jkit/parser/Java.g:611:58: ^( TEST parExpression )
+                        // jkit/java/Java.g:611:58: ^( TEST parExpression )
                         {
                         Object root_2 = (Object)adaptor.nil();
                         root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(TEST, "TEST"), root_2);
@@ -11258,7 +11258,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 6 :
-                    // jkit/parser/Java.g:612:7: lc= 'do' statement 'while' parExpression ';'
+                    // jkit/java/Java.g:612:7: lc= 'do' statement 'while' parExpression ';'
                     {
                     lc=(Token)match(input,168,FOLLOW_168_in_statement3689); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_168.add(lc);
@@ -11296,12 +11296,12 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 612:51: -> ^( DOWHILE[$lc] ^( TEST parExpression ) statement )
                     {
-                        // jkit/parser/Java.g:612:54: ^( DOWHILE[$lc] ^( TEST parExpression ) statement )
+                        // jkit/java/Java.g:612:54: ^( DOWHILE[$lc] ^( TEST parExpression ) statement )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(DOWHILE, lc), root_1);
 
-                        // jkit/parser/Java.g:612:69: ^( TEST parExpression )
+                        // jkit/java/Java.g:612:69: ^( TEST parExpression )
                         {
                         Object root_2 = (Object)adaptor.nil();
                         root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(TEST, "TEST"), root_2);
@@ -11321,7 +11321,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 7 :
-                    // jkit/parser/Java.g:613:7: lc= 'try' block ( catches fc= 'finally' block -> ^( TRY[$lc] block catches ^( FINALLY[$fc] block ) ) | catches -> ^( TRY[$lc] block catches ) | fc= 'finally' block -> ^( TRY[$lc] block ^( FINALLY[$fc] block ) ) )
+                    // jkit/java/Java.g:613:7: lc= 'try' block ( catches fc= 'finally' block -> ^( TRY[$lc] block catches ^( FINALLY[$fc] block ) ) | catches -> ^( TRY[$lc] block catches ) | fc= 'finally' block -> ^( TRY[$lc] block ^( FINALLY[$fc] block ) ) )
                     {
                     lc=(Token)match(input,169,FOLLOW_169_in_statement3722); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_169.add(lc);
@@ -11332,7 +11332,7 @@ public class JavaParser extends Parser {
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_block.add(block317.getTree());
-                    // jkit/parser/Java.g:614:7: ( catches fc= 'finally' block -> ^( TRY[$lc] block catches ^( FINALLY[$fc] block ) ) | catches -> ^( TRY[$lc] block catches ) | fc= 'finally' block -> ^( TRY[$lc] block ^( FINALLY[$fc] block ) ) )
+                    // jkit/java/Java.g:614:7: ( catches fc= 'finally' block -> ^( TRY[$lc] block catches ^( FINALLY[$fc] block ) ) | catches -> ^( TRY[$lc] block catches ) | fc= 'finally' block -> ^( TRY[$lc] block ^( FINALLY[$fc] block ) ) )
                     int alt104=3;
                     int LA104_0 = input.LA(1);
 
@@ -11376,7 +11376,7 @@ public class JavaParser extends Parser {
                     }
                     switch (alt104) {
                         case 1 :
-                            // jkit/parser/Java.g:614:9: catches fc= 'finally' block
+                            // jkit/java/Java.g:614:9: catches fc= 'finally' block
                             {
                             pushFollow(FOLLOW_catches_in_statement3734);
                             catches318=catches();
@@ -11408,14 +11408,14 @@ public class JavaParser extends Parser {
                             root_0 = (Object)adaptor.nil();
                             // 614:36: -> ^( TRY[$lc] block catches ^( FINALLY[$fc] block ) )
                             {
-                                // jkit/parser/Java.g:614:39: ^( TRY[$lc] block catches ^( FINALLY[$fc] block ) )
+                                // jkit/java/Java.g:614:39: ^( TRY[$lc] block catches ^( FINALLY[$fc] block ) )
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(TRY, lc), root_1);
 
                                 adaptor.addChild(root_1, stream_block.nextTree());
                                 adaptor.addChild(root_1, stream_catches.nextTree());
-                                // jkit/parser/Java.g:614:64: ^( FINALLY[$fc] block )
+                                // jkit/java/Java.g:614:64: ^( FINALLY[$fc] block )
                                 {
                                 Object root_2 = (Object)adaptor.nil();
                                 root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(FINALLY, fc), root_2);
@@ -11434,7 +11434,7 @@ public class JavaParser extends Parser {
                             }
                             break;
                         case 2 :
-                            // jkit/parser/Java.g:615:9: catches
+                            // jkit/java/Java.g:615:9: catches
                             {
                             pushFollow(FOLLOW_catches_in_statement3768);
                             catches320=catches();
@@ -11457,7 +11457,7 @@ public class JavaParser extends Parser {
                             root_0 = (Object)adaptor.nil();
                             // 615:17: -> ^( TRY[$lc] block catches )
                             {
-                                // jkit/parser/Java.g:615:20: ^( TRY[$lc] block catches )
+                                // jkit/java/Java.g:615:20: ^( TRY[$lc] block catches )
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(TRY, lc), root_1);
@@ -11474,7 +11474,7 @@ public class JavaParser extends Parser {
                             }
                             break;
                         case 3 :
-                            // jkit/parser/Java.g:616:9: fc= 'finally' block
+                            // jkit/java/Java.g:616:9: fc= 'finally' block
                             {
                             fc=(Token)match(input,170,FOLLOW_170_in_statement3791); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_170.add(fc);
@@ -11500,13 +11500,13 @@ public class JavaParser extends Parser {
                             root_0 = (Object)adaptor.nil();
                             // 616:28: -> ^( TRY[$lc] block ^( FINALLY[$fc] block ) )
                             {
-                                // jkit/parser/Java.g:616:31: ^( TRY[$lc] block ^( FINALLY[$fc] block ) )
+                                // jkit/java/Java.g:616:31: ^( TRY[$lc] block ^( FINALLY[$fc] block ) )
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(TRY, lc), root_1);
 
                                 adaptor.addChild(root_1, stream_block.nextTree());
-                                // jkit/parser/Java.g:616:48: ^( FINALLY[$fc] block )
+                                // jkit/java/Java.g:616:48: ^( FINALLY[$fc] block )
                                 {
                                 Object root_2 = (Object)adaptor.nil();
                                 root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(FINALLY, fc), root_2);
@@ -11531,7 +11531,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 8 :
-                    // jkit/parser/Java.g:618:7: lc= 'switch' parExpression '{' switchBlockStatementGroups '}'
+                    // jkit/java/Java.g:618:7: lc= 'switch' parExpression '{' switchBlockStatementGroups '}'
                     {
                     lc=(Token)match(input,171,FOLLOW_171_in_statement3827); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_171.add(lc);
@@ -11569,7 +11569,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 618:68: -> ^( SWITCH[$lc] parExpression switchBlockStatementGroups )
                     {
-                        // jkit/parser/Java.g:618:71: ^( SWITCH[$lc] parExpression switchBlockStatementGroups )
+                        // jkit/java/Java.g:618:71: ^( SWITCH[$lc] parExpression switchBlockStatementGroups )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(SWITCH, lc), root_1);
@@ -11586,7 +11586,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 9 :
-                    // jkit/parser/Java.g:619:7: lc= 'synchronized' parExpression block
+                    // jkit/java/Java.g:619:7: lc= 'synchronized' parExpression block
                     {
                     lc=(Token)match(input,140,FOLLOW_140_in_statement3856); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_140.add(lc);
@@ -11618,7 +11618,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 619:45: -> ^( SYNCHRONIZED[$lc] parExpression block )
                     {
-                        // jkit/parser/Java.g:619:48: ^( SYNCHRONIZED[$lc] parExpression block )
+                        // jkit/java/Java.g:619:48: ^( SYNCHRONIZED[$lc] parExpression block )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(SYNCHRONIZED, lc), root_1);
@@ -11635,17 +11635,17 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 10 :
-                    // jkit/parser/Java.g:620:7: lc= 'return' ( expression )? ';'
+                    // jkit/java/Java.g:620:7: lc= 'return' ( expression )? ';'
                     {
                     lc=(Token)match(input,172,FOLLOW_172_in_statement3881); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_172.add(lc);
 
-                    // jkit/parser/Java.g:620:19: ( expression )?
+                    // jkit/java/Java.g:620:19: ( expression )?
                     int alt105=2;
                     alt105 = dfa105.predict(input);
                     switch (alt105) {
                         case 1 :
-                            // jkit/parser/Java.g:0:0: expression
+                            // jkit/java/Java.g:0:0: expression
                             {
                             pushFollow(FOLLOW_expression_in_statement3883);
                             expression328=expression();
@@ -11677,12 +11677,12 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 620:35: -> ^( RETURN[$lc] ( expression )? )
                     {
-                        // jkit/parser/Java.g:620:38: ^( RETURN[$lc] ( expression )? )
+                        // jkit/java/Java.g:620:38: ^( RETURN[$lc] ( expression )? )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(RETURN, lc), root_1);
 
-                        // jkit/parser/Java.g:620:52: ( expression )?
+                        // jkit/java/Java.g:620:52: ( expression )?
                         if ( stream_expression.hasNext() ) {
                             adaptor.addChild(root_1, stream_expression.nextTree());
 
@@ -11698,7 +11698,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 11 :
-                    // jkit/parser/Java.g:621:7: lc= 'throw' expression ';'
+                    // jkit/java/Java.g:621:7: lc= 'throw' expression ';'
                     {
                     lc=(Token)match(input,173,FOLLOW_173_in_statement3906); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_173.add(lc);
@@ -11727,7 +11727,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 621:33: -> ^( THROW[$lc] expression )
                     {
-                        // jkit/parser/Java.g:621:36: ^( THROW[$lc] expression )
+                        // jkit/java/Java.g:621:36: ^( THROW[$lc] expression )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(THROW, lc), root_1);
@@ -11743,12 +11743,12 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 12 :
-                    // jkit/parser/Java.g:622:7: lc= 'break' ( Identifier )? ';'
+                    // jkit/java/Java.g:622:7: lc= 'break' ( Identifier )? ';'
                     {
                     lc=(Token)match(input,174,FOLLOW_174_in_statement3929); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_174.add(lc);
 
-                    // jkit/parser/Java.g:622:18: ( Identifier )?
+                    // jkit/java/Java.g:622:18: ( Identifier )?
                     int alt106=2;
                     int LA106_0 = input.LA(1);
 
@@ -11757,7 +11757,7 @@ public class JavaParser extends Parser {
                     }
                     switch (alt106) {
                         case 1 :
-                            // jkit/parser/Java.g:0:0: Identifier
+                            // jkit/java/Java.g:0:0: Identifier
                             {
                             Identifier332=(Token)match(input,Identifier,FOLLOW_Identifier_in_statement3931); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_Identifier.add(Identifier332);
@@ -11786,12 +11786,12 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 622:34: -> ^( BREAK[$lc] ( Identifier )? )
                     {
-                        // jkit/parser/Java.g:622:37: ^( BREAK[$lc] ( Identifier )? )
+                        // jkit/java/Java.g:622:37: ^( BREAK[$lc] ( Identifier )? )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(BREAK, lc), root_1);
 
-                        // jkit/parser/Java.g:622:50: ( Identifier )?
+                        // jkit/java/Java.g:622:50: ( Identifier )?
                         if ( stream_Identifier.hasNext() ) {
                             adaptor.addChild(root_1, stream_Identifier.nextNode());
 
@@ -11807,12 +11807,12 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 13 :
-                    // jkit/parser/Java.g:623:7: lc= 'continue' ( Identifier )? ';'
+                    // jkit/java/Java.g:623:7: lc= 'continue' ( Identifier )? ';'
                     {
                     lc=(Token)match(input,175,FOLLOW_175_in_statement3954); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_175.add(lc);
 
-                    // jkit/parser/Java.g:623:21: ( Identifier )?
+                    // jkit/java/Java.g:623:21: ( Identifier )?
                     int alt107=2;
                     int LA107_0 = input.LA(1);
 
@@ -11821,7 +11821,7 @@ public class JavaParser extends Parser {
                     }
                     switch (alt107) {
                         case 1 :
-                            // jkit/parser/Java.g:0:0: Identifier
+                            // jkit/java/Java.g:0:0: Identifier
                             {
                             Identifier334=(Token)match(input,Identifier,FOLLOW_Identifier_in_statement3956); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_Identifier.add(Identifier334);
@@ -11850,12 +11850,12 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 623:37: -> ^( CONTINUE[$lc] ( Identifier )? )
                     {
-                        // jkit/parser/Java.g:623:40: ^( CONTINUE[$lc] ( Identifier )? )
+                        // jkit/java/Java.g:623:40: ^( CONTINUE[$lc] ( Identifier )? )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(CONTINUE, lc), root_1);
 
-                        // jkit/parser/Java.g:623:56: ( Identifier )?
+                        // jkit/java/Java.g:623:56: ( Identifier )?
                         if ( stream_Identifier.hasNext() ) {
                             adaptor.addChild(root_1, stream_Identifier.nextNode());
 
@@ -11871,7 +11871,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 14 :
-                    // jkit/parser/Java.g:624:7: ';'
+                    // jkit/java/Java.g:624:7: ';'
                     {
                     char_literal336=(Token)match(input,114,FOLLOW_114_in_statement3977); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_114.add(char_literal336);
@@ -11891,7 +11891,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 624:11: -> ^( BLOCK )
                     {
-                        // jkit/parser/Java.g:624:14: ^( BLOCK )
+                        // jkit/java/Java.g:624:14: ^( BLOCK )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(BLOCK, "BLOCK"), root_1);
@@ -11905,7 +11905,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 15 :
-                    // jkit/parser/Java.g:625:7: statementExpression ';'
+                    // jkit/java/Java.g:625:7: statementExpression ';'
                     {
                     pushFollow(FOLLOW_statementExpression_in_statement3992);
                     statementExpression337=statementExpression();
@@ -11939,7 +11939,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 16 :
-                    // jkit/parser/Java.g:626:7: lc= Identifier ':' statement
+                    // jkit/java/Java.g:626:7: lc= Identifier ':' statement
                     {
                     lc=(Token)match(input,Identifier,FOLLOW_Identifier_in_statement4008); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_Identifier.add(lc);
@@ -11968,7 +11968,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 626:35: -> ^( LABEL[$lc] Identifier statement )
                     {
-                        // jkit/parser/Java.g:626:38: ^( LABEL[$lc] Identifier statement )
+                        // jkit/java/Java.g:626:38: ^( LABEL[$lc] Identifier statement )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(LABEL, lc), root_1);
@@ -12011,7 +12011,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "catches"
-    // jkit/parser/Java.g:629:1: catches : catchClause ( catchClause )* ;
+    // jkit/java/Java.g:629:1: catches : catchClause ( catchClause )* ;
     public final JavaParser.catches_return catches() throws RecognitionException {
         JavaParser.catches_return retval = new JavaParser.catches_return();
         retval.start = input.LT(1);
@@ -12026,8 +12026,8 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 80) ) { return retval; }
-            // jkit/parser/Java.g:630:2: ( catchClause ( catchClause )* )
-            // jkit/parser/Java.g:630:4: catchClause ( catchClause )*
+            // jkit/java/Java.g:630:2: ( catchClause ( catchClause )* )
+            // jkit/java/Java.g:630:4: catchClause ( catchClause )*
             {
             root_0 = (Object)adaptor.nil();
 
@@ -12037,14 +12037,14 @@ public class JavaParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) adaptor.addChild(root_0, catchClause341.getTree());
-            // jkit/parser/Java.g:630:16: ( catchClause )*
+            // jkit/java/Java.g:630:16: ( catchClause )*
             loop109:
             do {
                 int alt109=2;
                 alt109 = dfa109.predict(input);
                 switch (alt109) {
             	case 1 :
-            	    // jkit/parser/Java.g:630:17: catchClause
+            	    // jkit/java/Java.g:630:17: catchClause
             	    {
             	    pushFollow(FOLLOW_catchClause_in_catches4037);
             	    catchClause342=catchClause();
@@ -12089,7 +12089,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "catchClause"
-    // jkit/parser/Java.g:633:1: catchClause : lc= 'catch' '(' formalParameter ')' block -> ^( CATCH[$lc] ^( PARAMETER formalParameter ) block ) ;
+    // jkit/java/Java.g:633:1: catchClause : lc= 'catch' '(' formalParameter ')' block -> ^( CATCH[$lc] ^( PARAMETER formalParameter ) block ) ;
     public final JavaParser.catchClause_return catchClause() throws RecognitionException {
         JavaParser.catchClause_return retval = new JavaParser.catchClause_return();
         retval.start = input.LT(1);
@@ -12114,8 +12114,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_block=new RewriteRuleSubtreeStream(adaptor,"rule block");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 81) ) { return retval; }
-            // jkit/parser/Java.g:634:2: (lc= 'catch' '(' formalParameter ')' block -> ^( CATCH[$lc] ^( PARAMETER formalParameter ) block ) )
-            // jkit/parser/Java.g:634:4: lc= 'catch' '(' formalParameter ')' block
+            // jkit/java/Java.g:634:2: (lc= 'catch' '(' formalParameter ')' block -> ^( CATCH[$lc] ^( PARAMETER formalParameter ) block ) )
+            // jkit/java/Java.g:634:4: lc= 'catch' '(' formalParameter ')' block
             {
             lc=(Token)match(input,176,FOLLOW_176_in_catchClause4053); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_176.add(lc);
@@ -12153,12 +12153,12 @@ public class JavaParser extends Parser {
             root_0 = (Object)adaptor.nil();
             // 634:45: -> ^( CATCH[$lc] ^( PARAMETER formalParameter ) block )
             {
-                // jkit/parser/Java.g:634:48: ^( CATCH[$lc] ^( PARAMETER formalParameter ) block )
+                // jkit/java/Java.g:634:48: ^( CATCH[$lc] ^( PARAMETER formalParameter ) block )
                 {
                 Object root_1 = (Object)adaptor.nil();
                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(CATCH, lc), root_1);
 
-                // jkit/parser/Java.g:634:61: ^( PARAMETER formalParameter )
+                // jkit/java/Java.g:634:61: ^( PARAMETER formalParameter )
                 {
                 Object root_2 = (Object)adaptor.nil();
                 root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(PARAMETER, "PARAMETER"), root_2);
@@ -12202,7 +12202,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "formalParameter"
-    // jkit/parser/Java.g:637:1: formalParameter : ( variableModifier )* type variableDeclaratorId ;
+    // jkit/java/Java.g:637:1: formalParameter : ( variableModifier )* type variableDeclaratorId ;
     public final JavaParser.formalParameter_return formalParameter() throws RecognitionException {
         JavaParser.formalParameter_return retval = new JavaParser.formalParameter_return();
         retval.start = input.LT(1);
@@ -12219,12 +12219,12 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 82) ) { return retval; }
-            // jkit/parser/Java.g:638:2: ( ( variableModifier )* type variableDeclaratorId )
-            // jkit/parser/Java.g:638:4: ( variableModifier )* type variableDeclaratorId
+            // jkit/java/Java.g:638:2: ( ( variableModifier )* type variableDeclaratorId )
+            // jkit/java/Java.g:638:4: ( variableModifier )* type variableDeclaratorId
             {
             root_0 = (Object)adaptor.nil();
 
-            // jkit/parser/Java.g:638:4: ( variableModifier )*
+            // jkit/java/Java.g:638:4: ( variableModifier )*
             loop110:
             do {
                 int alt110=2;
@@ -12237,7 +12237,7 @@ public class JavaParser extends Parser {
 
                 switch (alt110) {
             	case 1 :
-            	    // jkit/parser/Java.g:0:0: variableModifier
+            	    // jkit/java/Java.g:0:0: variableModifier
             	    {
             	    pushFollow(FOLLOW_variableModifier_in_formalParameter4087);
             	    variableModifier347=variableModifier();
@@ -12294,7 +12294,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "switchBlockStatementGroups"
-    // jkit/parser/Java.g:641:1: switchBlockStatementGroups : ( switchBlockStatementGroup )* ;
+    // jkit/java/Java.g:641:1: switchBlockStatementGroups : ( switchBlockStatementGroup )* ;
     public final JavaParser.switchBlockStatementGroups_return switchBlockStatementGroups() throws RecognitionException {
         JavaParser.switchBlockStatementGroups_return retval = new JavaParser.switchBlockStatementGroups_return();
         retval.start = input.LT(1);
@@ -12307,12 +12307,12 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 83) ) { return retval; }
-            // jkit/parser/Java.g:642:2: ( ( switchBlockStatementGroup )* )
-            // jkit/parser/Java.g:642:4: ( switchBlockStatementGroup )*
+            // jkit/java/Java.g:642:2: ( ( switchBlockStatementGroup )* )
+            // jkit/java/Java.g:642:4: ( switchBlockStatementGroup )*
             {
             root_0 = (Object)adaptor.nil();
 
-            // jkit/parser/Java.g:642:4: ( switchBlockStatementGroup )*
+            // jkit/java/Java.g:642:4: ( switchBlockStatementGroup )*
             loop111:
             do {
                 int alt111=2;
@@ -12325,7 +12325,7 @@ public class JavaParser extends Parser {
 
                 switch (alt111) {
             	case 1 :
-            	    // jkit/parser/Java.g:642:5: switchBlockStatementGroup
+            	    // jkit/java/Java.g:642:5: switchBlockStatementGroup
             	    {
             	    pushFollow(FOLLOW_switchBlockStatementGroup_in_switchBlockStatementGroups4106);
             	    switchBlockStatementGroup350=switchBlockStatementGroup();
@@ -12370,7 +12370,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "switchBlockStatementGroup"
-    // jkit/parser/Java.g:645:1: switchBlockStatementGroup : switchLabel ( blockStatement )* -> ^( switchLabel ^( BLOCK ( blockStatement )* ) ) ;
+    // jkit/java/Java.g:645:1: switchBlockStatementGroup : switchLabel ( blockStatement )* -> ^( switchLabel ^( BLOCK ( blockStatement )* ) ) ;
     public final JavaParser.switchBlockStatementGroup_return switchBlockStatementGroup() throws RecognitionException {
         JavaParser.switchBlockStatementGroup_return retval = new JavaParser.switchBlockStatementGroup_return();
         retval.start = input.LT(1);
@@ -12386,8 +12386,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_switchLabel=new RewriteRuleSubtreeStream(adaptor,"rule switchLabel");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 84) ) { return retval; }
-            // jkit/parser/Java.g:646:2: ( switchLabel ( blockStatement )* -> ^( switchLabel ^( BLOCK ( blockStatement )* ) ) )
-            // jkit/parser/Java.g:646:4: switchLabel ( blockStatement )*
+            // jkit/java/Java.g:646:2: ( switchLabel ( blockStatement )* -> ^( switchLabel ^( BLOCK ( blockStatement )* ) ) )
+            // jkit/java/Java.g:646:4: switchLabel ( blockStatement )*
             {
             pushFollow(FOLLOW_switchLabel_in_switchBlockStatementGroup4120);
             switchLabel351=switchLabel();
@@ -12395,14 +12395,14 @@ public class JavaParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_switchLabel.add(switchLabel351.getTree());
-            // jkit/parser/Java.g:646:16: ( blockStatement )*
+            // jkit/java/Java.g:646:16: ( blockStatement )*
             loop112:
             do {
                 int alt112=2;
                 alt112 = dfa112.predict(input);
                 switch (alt112) {
             	case 1 :
-            	    // jkit/parser/Java.g:0:0: blockStatement
+            	    // jkit/java/Java.g:0:0: blockStatement
             	    {
             	    pushFollow(FOLLOW_blockStatement_in_switchBlockStatementGroup4122);
             	    blockStatement352=blockStatement();
@@ -12434,17 +12434,17 @@ public class JavaParser extends Parser {
             root_0 = (Object)adaptor.nil();
             // 646:32: -> ^( switchLabel ^( BLOCK ( blockStatement )* ) )
             {
-                // jkit/parser/Java.g:646:35: ^( switchLabel ^( BLOCK ( blockStatement )* ) )
+                // jkit/java/Java.g:646:35: ^( switchLabel ^( BLOCK ( blockStatement )* ) )
                 {
                 Object root_1 = (Object)adaptor.nil();
                 root_1 = (Object)adaptor.becomeRoot(stream_switchLabel.nextNode(), root_1);
 
-                // jkit/parser/Java.g:646:49: ^( BLOCK ( blockStatement )* )
+                // jkit/java/Java.g:646:49: ^( BLOCK ( blockStatement )* )
                 {
                 Object root_2 = (Object)adaptor.nil();
                 root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(BLOCK, "BLOCK"), root_2);
 
-                // jkit/parser/Java.g:646:57: ( blockStatement )*
+                // jkit/java/Java.g:646:57: ( blockStatement )*
                 while ( stream_blockStatement.hasNext() ) {
                     adaptor.addChild(root_2, stream_blockStatement.nextTree());
 
@@ -12487,7 +12487,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "switchLabel"
-    // jkit/parser/Java.g:649:1: switchLabel : (lc= 'case' constantExpression ':' -> ^( CASE[$lc] constantExpression ) | lc= 'case' enumConstantName ':' -> ^( CASE[$lc] enumConstantName ) | lc= 'default' ':' -> ^( DEFAULT ) );
+    // jkit/java/Java.g:649:1: switchLabel : (lc= 'case' constantExpression ':' -> ^( CASE[$lc] constantExpression ) | lc= 'case' enumConstantName ':' -> ^( CASE[$lc] enumConstantName ) | lc= 'default' ':' -> ^( DEFAULT ) );
     public final JavaParser.switchLabel_return switchLabel() throws RecognitionException {
         JavaParser.switchLabel_return retval = new JavaParser.switchLabel_return();
         retval.start = input.LT(1);
@@ -12514,12 +12514,12 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_constantExpression=new RewriteRuleSubtreeStream(adaptor,"rule constantExpression");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 85) ) { return retval; }
-            // jkit/parser/Java.g:650:2: (lc= 'case' constantExpression ':' -> ^( CASE[$lc] constantExpression ) | lc= 'case' enumConstantName ':' -> ^( CASE[$lc] enumConstantName ) | lc= 'default' ':' -> ^( DEFAULT ) )
+            // jkit/java/Java.g:650:2: (lc= 'case' constantExpression ':' -> ^( CASE[$lc] constantExpression ) | lc= 'case' enumConstantName ':' -> ^( CASE[$lc] enumConstantName ) | lc= 'default' ':' -> ^( DEFAULT ) )
             int alt113=3;
             alt113 = dfa113.predict(input);
             switch (alt113) {
                 case 1 :
-                    // jkit/parser/Java.g:650:4: lc= 'case' constantExpression ':'
+                    // jkit/java/Java.g:650:4: lc= 'case' constantExpression ':'
                     {
                     lc=(Token)match(input,177,FOLLOW_177_in_switchLabel4150); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_177.add(lc);
@@ -12548,7 +12548,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 650:37: -> ^( CASE[$lc] constantExpression )
                     {
-                        // jkit/parser/Java.g:650:40: ^( CASE[$lc] constantExpression )
+                        // jkit/java/Java.g:650:40: ^( CASE[$lc] constantExpression )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(CASE, lc), root_1);
@@ -12564,7 +12564,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:651:4: lc= 'case' enumConstantName ':'
+                    // jkit/java/Java.g:651:4: lc= 'case' enumConstantName ':'
                     {
                     lc=(Token)match(input,177,FOLLOW_177_in_switchLabel4170); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_177.add(lc);
@@ -12593,7 +12593,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 651:35: -> ^( CASE[$lc] enumConstantName )
                     {
-                        // jkit/parser/Java.g:651:38: ^( CASE[$lc] enumConstantName )
+                        // jkit/java/Java.g:651:38: ^( CASE[$lc] enumConstantName )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(CASE, lc), root_1);
@@ -12609,7 +12609,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // jkit/parser/Java.g:652:4: lc= 'default' ':'
+                    // jkit/java/Java.g:652:4: lc= 'default' ':'
                     {
                     lc=(Token)match(input,161,FOLLOW_161_in_switchLabel4190); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_161.add(lc);
@@ -12632,7 +12632,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 652:21: -> ^( DEFAULT )
                     {
-                        // jkit/parser/Java.g:652:24: ^( DEFAULT )
+                        // jkit/java/Java.g:652:24: ^( DEFAULT )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(DEFAULT, "DEFAULT"), root_1);
@@ -12672,7 +12672,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "moreStatementExpressions"
-    // jkit/parser/Java.g:655:1: moreStatementExpressions : ( ',' statementExpression )* ;
+    // jkit/java/Java.g:655:1: moreStatementExpressions : ( ',' statementExpression )* ;
     public final JavaParser.moreStatementExpressions_return moreStatementExpressions() throws RecognitionException {
         JavaParser.moreStatementExpressions_return retval = new JavaParser.moreStatementExpressions_return();
         retval.start = input.LT(1);
@@ -12687,12 +12687,12 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 86) ) { return retval; }
-            // jkit/parser/Java.g:656:2: ( ( ',' statementExpression )* )
-            // jkit/parser/Java.g:656:4: ( ',' statementExpression )*
+            // jkit/java/Java.g:656:2: ( ( ',' statementExpression )* )
+            // jkit/java/Java.g:656:4: ( ',' statementExpression )*
             {
             root_0 = (Object)adaptor.nil();
 
-            // jkit/parser/Java.g:656:4: ( ',' statementExpression )*
+            // jkit/java/Java.g:656:4: ( ',' statementExpression )*
             loop114:
             do {
                 int alt114=2;
@@ -12705,7 +12705,7 @@ public class JavaParser extends Parser {
 
                 switch (alt114) {
             	case 1 :
-            	    // jkit/parser/Java.g:656:5: ',' statementExpression
+            	    // jkit/java/Java.g:656:5: ',' statementExpression
             	    {
             	    char_literal358=(Token)match(input,123,FOLLOW_123_in_moreStatementExpressions4211); if (state.failed) return retval;
             	    if ( state.backtracking==0 ) {
@@ -12755,7 +12755,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "forControl"
-    // jkit/parser/Java.g:659:1: forControl options {k=3; } : ( forVarControl -> ^( FOREACH forVarControl ) | ( forInit )? ';' (fc= expression )? ';' (fu= forUpdate )? -> ^( INIT ( forInit )? ) ^( TEST ( expression )? ) ^( STEP ( forUpdate )? ) );
+    // jkit/java/Java.g:659:1: forControl options {k=3; } : ( forVarControl -> ^( FOREACH forVarControl ) | ( forInit )? ';' (fc= expression )? ';' (fu= forUpdate )? -> ^( INIT ( forInit )? ) ^( TEST ( expression )? ) ^( STEP ( forUpdate )? ) );
     public final JavaParser.forControl_return forControl() throws RecognitionException {
         JavaParser.forControl_return retval = new JavaParser.forControl_return();
         retval.start = input.LT(1);
@@ -12782,12 +12782,12 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_expression=new RewriteRuleSubtreeStream(adaptor,"rule expression");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 87) ) { return retval; }
-            // jkit/parser/Java.g:661:2: ( forVarControl -> ^( FOREACH forVarControl ) | ( forInit )? ';' (fc= expression )? ';' (fu= forUpdate )? -> ^( INIT ( forInit )? ) ^( TEST ( expression )? ) ^( STEP ( forUpdate )? ) )
+            // jkit/java/Java.g:661:2: ( forVarControl -> ^( FOREACH forVarControl ) | ( forInit )? ';' (fc= expression )? ';' (fu= forUpdate )? -> ^( INIT ( forInit )? ) ^( TEST ( expression )? ) ^( STEP ( forUpdate )? ) )
             int alt118=2;
             alt118 = dfa118.predict(input);
             switch (alt118) {
                 case 1 :
-                    // jkit/parser/Java.g:661:4: forVarControl
+                    // jkit/java/Java.g:661:4: forVarControl
                     {
                     pushFollow(FOLLOW_forVarControl_in_forControl4234);
                     forVarControl360=forVarControl();
@@ -12810,7 +12810,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 661:18: -> ^( FOREACH forVarControl )
                     {
-                        // jkit/parser/Java.g:661:21: ^( FOREACH forVarControl )
+                        // jkit/java/Java.g:661:21: ^( FOREACH forVarControl )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(FOREACH, "FOREACH"), root_1);
@@ -12826,14 +12826,14 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:662:4: ( forInit )? ';' (fc= expression )? ';' (fu= forUpdate )?
+                    // jkit/java/Java.g:662:4: ( forInit )? ';' (fc= expression )? ';' (fu= forUpdate )?
                     {
-                    // jkit/parser/Java.g:662:4: ( forInit )?
+                    // jkit/java/Java.g:662:4: ( forInit )?
                     int alt115=2;
                     alt115 = dfa115.predict(input);
                     switch (alt115) {
                         case 1 :
-                            // jkit/parser/Java.g:0:0: forInit
+                            // jkit/java/Java.g:0:0: forInit
                             {
                             pushFollow(FOLLOW_forInit_in_forControl4247);
                             forInit361=forInit();
@@ -12850,12 +12850,12 @@ public class JavaParser extends Parser {
                     char_literal362=(Token)match(input,114,FOLLOW_114_in_forControl4250); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_114.add(char_literal362);
 
-                    // jkit/parser/Java.g:662:19: (fc= expression )?
+                    // jkit/java/Java.g:662:19: (fc= expression )?
                     int alt116=2;
                     alt116 = dfa116.predict(input);
                     switch (alt116) {
                         case 1 :
-                            // jkit/parser/Java.g:0:0: fc= expression
+                            // jkit/java/Java.g:0:0: fc= expression
                             {
                             pushFollow(FOLLOW_expression_in_forControl4254);
                             fc=expression();
@@ -12872,12 +12872,12 @@ public class JavaParser extends Parser {
                     char_literal363=(Token)match(input,114,FOLLOW_114_in_forControl4257); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_114.add(char_literal363);
 
-                    // jkit/parser/Java.g:662:38: (fu= forUpdate )?
+                    // jkit/java/Java.g:662:38: (fu= forUpdate )?
                     int alt117=2;
                     alt117 = dfa117.predict(input);
                     switch (alt117) {
                         case 1 :
-                            // jkit/parser/Java.g:0:0: fu= forUpdate
+                            // jkit/java/Java.g:0:0: fu= forUpdate
                             {
                             pushFollow(FOLLOW_forUpdate_in_forControl4261);
                             fu=forUpdate();
@@ -12906,12 +12906,12 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 662:50: -> ^( INIT ( forInit )? ) ^( TEST ( expression )? ) ^( STEP ( forUpdate )? )
                     {
-                        // jkit/parser/Java.g:662:53: ^( INIT ( forInit )? )
+                        // jkit/java/Java.g:662:53: ^( INIT ( forInit )? )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(INIT, "INIT"), root_1);
 
-                        // jkit/parser/Java.g:662:60: ( forInit )?
+                        // jkit/java/Java.g:662:60: ( forInit )?
                         if ( stream_forInit.hasNext() ) {
                             adaptor.addChild(root_1, stream_forInit.nextTree());
 
@@ -12920,12 +12920,12 @@ public class JavaParser extends Parser {
 
                         adaptor.addChild(root_0, root_1);
                         }
-                        // jkit/parser/Java.g:662:70: ^( TEST ( expression )? )
+                        // jkit/java/Java.g:662:70: ^( TEST ( expression )? )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(TEST, "TEST"), root_1);
 
-                        // jkit/parser/Java.g:662:77: ( expression )?
+                        // jkit/java/Java.g:662:77: ( expression )?
                         if ( stream_expression.hasNext() ) {
                             adaptor.addChild(root_1, stream_expression.nextTree());
 
@@ -12934,12 +12934,12 @@ public class JavaParser extends Parser {
 
                         adaptor.addChild(root_0, root_1);
                         }
-                        // jkit/parser/Java.g:662:90: ^( STEP ( forUpdate )? )
+                        // jkit/java/Java.g:662:90: ^( STEP ( forUpdate )? )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(STEP, "STEP"), root_1);
 
-                        // jkit/parser/Java.g:662:97: ( forUpdate )?
+                        // jkit/java/Java.g:662:97: ( forUpdate )?
                         if ( stream_forUpdate.hasNext() ) {
                             adaptor.addChild(root_1, stream_forUpdate.nextTree());
 
@@ -12981,7 +12981,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "forInit"
-    // jkit/parser/Java.g:665:1: forInit : ( ( variableModifier )* type variableDeclarators -> ^( VARDEF ^( MODIFIERS ( variableModifier )* ) type variableDeclarators ) | expressionList );
+    // jkit/java/Java.g:665:1: forInit : ( ( variableModifier )* type variableDeclarators -> ^( VARDEF ^( MODIFIERS ( variableModifier )* ) type variableDeclarators ) | expressionList );
     public final JavaParser.forInit_return forInit() throws RecognitionException {
         JavaParser.forInit_return retval = new JavaParser.forInit_return();
         retval.start = input.LT(1);
@@ -13002,14 +13002,14 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_variableDeclarators=new RewriteRuleSubtreeStream(adaptor,"rule variableDeclarators");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 88) ) { return retval; }
-            // jkit/parser/Java.g:666:2: ( ( variableModifier )* type variableDeclarators -> ^( VARDEF ^( MODIFIERS ( variableModifier )* ) type variableDeclarators ) | expressionList )
+            // jkit/java/Java.g:666:2: ( ( variableModifier )* type variableDeclarators -> ^( VARDEF ^( MODIFIERS ( variableModifier )* ) type variableDeclarators ) | expressionList )
             int alt120=2;
             alt120 = dfa120.predict(input);
             switch (alt120) {
                 case 1 :
-                    // jkit/parser/Java.g:666:4: ( variableModifier )* type variableDeclarators
+                    // jkit/java/Java.g:666:4: ( variableModifier )* type variableDeclarators
                     {
-                    // jkit/parser/Java.g:666:4: ( variableModifier )*
+                    // jkit/java/Java.g:666:4: ( variableModifier )*
                     loop119:
                     do {
                         int alt119=2;
@@ -13022,7 +13022,7 @@ public class JavaParser extends Parser {
 
                         switch (alt119) {
                     	case 1 :
-                    	    // jkit/parser/Java.g:0:0: variableModifier
+                    	    // jkit/java/Java.g:0:0: variableModifier
                     	    {
                     	    pushFollow(FOLLOW_variableModifier_in_forInit4296);
                     	    variableModifier364=variableModifier();
@@ -13066,17 +13066,17 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 666:47: -> ^( VARDEF ^( MODIFIERS ( variableModifier )* ) type variableDeclarators )
                     {
-                        // jkit/parser/Java.g:666:50: ^( VARDEF ^( MODIFIERS ( variableModifier )* ) type variableDeclarators )
+                        // jkit/java/Java.g:666:50: ^( VARDEF ^( MODIFIERS ( variableModifier )* ) type variableDeclarators )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(VARDEF, "VARDEF"), root_1);
 
-                        // jkit/parser/Java.g:666:59: ^( MODIFIERS ( variableModifier )* )
+                        // jkit/java/Java.g:666:59: ^( MODIFIERS ( variableModifier )* )
                         {
                         Object root_2 = (Object)adaptor.nil();
                         root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(MODIFIERS, "MODIFIERS"), root_2);
 
-                        // jkit/parser/Java.g:666:71: ( variableModifier )*
+                        // jkit/java/Java.g:666:71: ( variableModifier )*
                         while ( stream_variableModifier.hasNext() ) {
                             adaptor.addChild(root_2, stream_variableModifier.nextTree());
 
@@ -13097,7 +13097,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:667:4: expressionList
+                    // jkit/java/Java.g:667:4: expressionList
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -13137,7 +13137,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "forVarControl"
-    // jkit/parser/Java.g:670:1: forVarControl : ( variableModifier )* type Identifier ':' expression -> ^( VARDEF ^( MODIFIERS ( variableModifier )* ) type Identifier ) expression ;
+    // jkit/java/Java.g:670:1: forVarControl : ( variableModifier )* type Identifier ':' expression -> ^( VARDEF ^( MODIFIERS ( variableModifier )* ) type Identifier ) expression ;
     public final JavaParser.forVarControl_return forVarControl() throws RecognitionException {
         JavaParser.forVarControl_return retval = new JavaParser.forVarControl_return();
         retval.start = input.LT(1);
@@ -13162,10 +13162,10 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_expression=new RewriteRuleSubtreeStream(adaptor,"rule expression");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 89) ) { return retval; }
-            // jkit/parser/Java.g:671:2: ( ( variableModifier )* type Identifier ':' expression -> ^( VARDEF ^( MODIFIERS ( variableModifier )* ) type Identifier ) expression )
-            // jkit/parser/Java.g:671:4: ( variableModifier )* type Identifier ':' expression
+            // jkit/java/Java.g:671:2: ( ( variableModifier )* type Identifier ':' expression -> ^( VARDEF ^( MODIFIERS ( variableModifier )* ) type Identifier ) expression )
+            // jkit/java/Java.g:671:4: ( variableModifier )* type Identifier ':' expression
             {
-            // jkit/parser/Java.g:671:4: ( variableModifier )*
+            // jkit/java/Java.g:671:4: ( variableModifier )*
             loop121:
             do {
                 int alt121=2;
@@ -13178,7 +13178,7 @@ public class JavaParser extends Parser {
 
                 switch (alt121) {
             	case 1 :
-            	    // jkit/parser/Java.g:0:0: variableModifier
+            	    // jkit/java/Java.g:0:0: variableModifier
             	    {
             	    pushFollow(FOLLOW_variableModifier_in_forVarControl4335);
             	    variableModifier368=variableModifier();
@@ -13228,17 +13228,17 @@ public class JavaParser extends Parser {
             root_0 = (Object)adaptor.nil();
             // 671:53: -> ^( VARDEF ^( MODIFIERS ( variableModifier )* ) type Identifier ) expression
             {
-                // jkit/parser/Java.g:671:56: ^( VARDEF ^( MODIFIERS ( variableModifier )* ) type Identifier )
+                // jkit/java/Java.g:671:56: ^( VARDEF ^( MODIFIERS ( variableModifier )* ) type Identifier )
                 {
                 Object root_1 = (Object)adaptor.nil();
                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(VARDEF, "VARDEF"), root_1);
 
-                // jkit/parser/Java.g:671:65: ^( MODIFIERS ( variableModifier )* )
+                // jkit/java/Java.g:671:65: ^( MODIFIERS ( variableModifier )* )
                 {
                 Object root_2 = (Object)adaptor.nil();
                 root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(MODIFIERS, "MODIFIERS"), root_2);
 
-                // jkit/parser/Java.g:671:77: ( variableModifier )*
+                // jkit/java/Java.g:671:77: ( variableModifier )*
                 while ( stream_variableModifier.hasNext() ) {
                     adaptor.addChild(root_2, stream_variableModifier.nextTree());
 
@@ -13284,7 +13284,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "forUpdate"
-    // jkit/parser/Java.g:674:1: forUpdate : expressionList ;
+    // jkit/java/Java.g:674:1: forUpdate : expressionList ;
     public final JavaParser.forUpdate_return forUpdate() throws RecognitionException {
         JavaParser.forUpdate_return retval = new JavaParser.forUpdate_return();
         retval.start = input.LT(1);
@@ -13297,8 +13297,8 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 90) ) { return retval; }
-            // jkit/parser/Java.g:675:2: ( expressionList )
-            // jkit/parser/Java.g:675:4: expressionList
+            // jkit/java/Java.g:675:2: ( expressionList )
+            // jkit/java/Java.g:675:4: expressionList
             {
             root_0 = (Object)adaptor.nil();
 
@@ -13336,7 +13336,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "parExpression"
-    // jkit/parser/Java.g:680:1: parExpression : '(' expression ')' ;
+    // jkit/java/Java.g:680:1: parExpression : '(' expression ')' ;
     public final JavaParser.parExpression_return parExpression() throws RecognitionException {
         JavaParser.parExpression_return retval = new JavaParser.parExpression_return();
         retval.start = input.LT(1);
@@ -13353,8 +13353,8 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 91) ) { return retval; }
-            // jkit/parser/Java.g:681:2: ( '(' expression ')' )
-            // jkit/parser/Java.g:681:4: '(' expression ')'
+            // jkit/java/Java.g:681:2: ( '(' expression ')' )
+            // jkit/java/Java.g:681:4: '(' expression ')'
             {
             root_0 = (Object)adaptor.nil();
 
@@ -13394,7 +13394,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "expressionList"
-    // jkit/parser/Java.g:684:1: expressionList : expression ( ',' expression )* ;
+    // jkit/java/Java.g:684:1: expressionList : expression ( ',' expression )* ;
     public final JavaParser.expressionList_return expressionList() throws RecognitionException {
         JavaParser.expressionList_return retval = new JavaParser.expressionList_return();
         retval.start = input.LT(1);
@@ -13411,8 +13411,8 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 92) ) { return retval; }
-            // jkit/parser/Java.g:685:5: ( expression ( ',' expression )* )
-            // jkit/parser/Java.g:685:9: expression ( ',' expression )*
+            // jkit/java/Java.g:685:5: ( expression ( ',' expression )* )
+            // jkit/java/Java.g:685:9: expression ( ',' expression )*
             {
             root_0 = (Object)adaptor.nil();
 
@@ -13422,7 +13422,7 @@ public class JavaParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) adaptor.addChild(root_0, expression377.getTree());
-            // jkit/parser/Java.g:685:20: ( ',' expression )*
+            // jkit/java/Java.g:685:20: ( ',' expression )*
             loop122:
             do {
                 int alt122=2;
@@ -13435,7 +13435,7 @@ public class JavaParser extends Parser {
 
                 switch (alt122) {
             	case 1 :
-            	    // jkit/parser/Java.g:685:21: ',' expression
+            	    // jkit/java/Java.g:685:21: ',' expression
             	    {
             	    char_literal378=(Token)match(input,123,FOLLOW_123_in_expressionList4413); if (state.failed) return retval;
             	    pushFollow(FOLLOW_expression_in_expressionList4416);
@@ -13481,7 +13481,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "statementExpression"
-    // jkit/parser/Java.g:688:1: statementExpression : expression ;
+    // jkit/java/Java.g:688:1: statementExpression : expression ;
     public final JavaParser.statementExpression_return statementExpression() throws RecognitionException {
         JavaParser.statementExpression_return retval = new JavaParser.statementExpression_return();
         retval.start = input.LT(1);
@@ -13494,8 +13494,8 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 93) ) { return retval; }
-            // jkit/parser/Java.g:689:2: ( expression )
-            // jkit/parser/Java.g:689:4: expression
+            // jkit/java/Java.g:689:2: ( expression )
+            // jkit/java/Java.g:689:4: expression
             {
             root_0 = (Object)adaptor.nil();
 
@@ -13533,7 +13533,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "constantExpression"
-    // jkit/parser/Java.g:692:1: constantExpression : expression ;
+    // jkit/java/Java.g:692:1: constantExpression : expression ;
     public final JavaParser.constantExpression_return constantExpression() throws RecognitionException {
         JavaParser.constantExpression_return retval = new JavaParser.constantExpression_return();
         retval.start = input.LT(1);
@@ -13546,8 +13546,8 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 94) ) { return retval; }
-            // jkit/parser/Java.g:693:2: ( expression )
-            // jkit/parser/Java.g:693:4: expression
+            // jkit/java/Java.g:693:2: ( expression )
+            // jkit/java/Java.g:693:4: expression
             {
             root_0 = (Object)adaptor.nil();
 
@@ -13585,7 +13585,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "expression"
-    // jkit/parser/Java.g:696:1: expression : conditionalExpression ( '=' expression -> ^( ASSIGN conditionalExpression expression ) | i+= '+' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '-' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '*' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '/' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | '&=' expression -> ^( ASSIGN conditionalExpression ^( AND conditionalExpression expression ) ) | '|=' expression -> ^( ASSIGN conditionalExpression ^( OR conditionalExpression expression ) ) | '^=' expression -> ^( ASSIGN conditionalExpression ^( XOR conditionalExpression expression ) ) | i+= '%' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '<' '<' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '>' '>' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | '>' '>' '>' '=' expression -> ^( ASSIGN conditionalExpression ^( USHR conditionalExpression expression ) ) | -> conditionalExpression ) ;
+    // jkit/java/Java.g:696:1: expression : conditionalExpression ( '=' expression -> ^( ASSIGN conditionalExpression expression ) | i+= '+' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '-' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '*' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '/' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | '&=' expression -> ^( ASSIGN conditionalExpression ^( AND conditionalExpression expression ) ) | '|=' expression -> ^( ASSIGN conditionalExpression ^( OR conditionalExpression expression ) ) | '^=' expression -> ^( ASSIGN conditionalExpression ^( XOR conditionalExpression expression ) ) | i+= '%' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '<' '<' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '>' '>' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | '>' '>' '>' '=' expression -> ^( ASSIGN conditionalExpression ^( USHR conditionalExpression expression ) ) | -> conditionalExpression ) ;
     public final JavaParser.expression_return expression() throws RecognitionException {
         JavaParser.expression_return retval = new JavaParser.expression_return();
         retval.start = input.LT(1);
@@ -13671,8 +13671,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_conditionalExpression=new RewriteRuleSubtreeStream(adaptor,"rule conditionalExpression");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 95) ) { return retval; }
-            // jkit/parser/Java.g:697:2: ( conditionalExpression ( '=' expression -> ^( ASSIGN conditionalExpression expression ) | i+= '+' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '-' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '*' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '/' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | '&=' expression -> ^( ASSIGN conditionalExpression ^( AND conditionalExpression expression ) ) | '|=' expression -> ^( ASSIGN conditionalExpression ^( OR conditionalExpression expression ) ) | '^=' expression -> ^( ASSIGN conditionalExpression ^( XOR conditionalExpression expression ) ) | i+= '%' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '<' '<' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '>' '>' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | '>' '>' '>' '=' expression -> ^( ASSIGN conditionalExpression ^( USHR conditionalExpression expression ) ) | -> conditionalExpression ) )
-            // jkit/parser/Java.g:697:4: conditionalExpression ( '=' expression -> ^( ASSIGN conditionalExpression expression ) | i+= '+' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '-' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '*' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '/' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | '&=' expression -> ^( ASSIGN conditionalExpression ^( AND conditionalExpression expression ) ) | '|=' expression -> ^( ASSIGN conditionalExpression ^( OR conditionalExpression expression ) ) | '^=' expression -> ^( ASSIGN conditionalExpression ^( XOR conditionalExpression expression ) ) | i+= '%' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '<' '<' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '>' '>' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | '>' '>' '>' '=' expression -> ^( ASSIGN conditionalExpression ^( USHR conditionalExpression expression ) ) | -> conditionalExpression )
+            // jkit/java/Java.g:697:2: ( conditionalExpression ( '=' expression -> ^( ASSIGN conditionalExpression expression ) | i+= '+' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '-' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '*' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '/' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | '&=' expression -> ^( ASSIGN conditionalExpression ^( AND conditionalExpression expression ) ) | '|=' expression -> ^( ASSIGN conditionalExpression ^( OR conditionalExpression expression ) ) | '^=' expression -> ^( ASSIGN conditionalExpression ^( XOR conditionalExpression expression ) ) | i+= '%' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '<' '<' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '>' '>' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | '>' '>' '>' '=' expression -> ^( ASSIGN conditionalExpression ^( USHR conditionalExpression expression ) ) | -> conditionalExpression ) )
+            // jkit/java/Java.g:697:4: conditionalExpression ( '=' expression -> ^( ASSIGN conditionalExpression expression ) | i+= '+' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '-' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '*' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '/' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | '&=' expression -> ^( ASSIGN conditionalExpression ^( AND conditionalExpression expression ) ) | '|=' expression -> ^( ASSIGN conditionalExpression ^( OR conditionalExpression expression ) ) | '^=' expression -> ^( ASSIGN conditionalExpression ^( XOR conditionalExpression expression ) ) | i+= '%' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '<' '<' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '>' '>' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | '>' '>' '>' '=' expression -> ^( ASSIGN conditionalExpression ^( USHR conditionalExpression expression ) ) | -> conditionalExpression )
             {
             pushFollow(FOLLOW_conditionalExpression_in_expression4456);
             conditionalExpression382=conditionalExpression();
@@ -13680,12 +13680,12 @@ public class JavaParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_conditionalExpression.add(conditionalExpression382.getTree());
-            // jkit/parser/Java.g:698:3: ( '=' expression -> ^( ASSIGN conditionalExpression expression ) | i+= '+' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '-' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '*' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '/' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | '&=' expression -> ^( ASSIGN conditionalExpression ^( AND conditionalExpression expression ) ) | '|=' expression -> ^( ASSIGN conditionalExpression ^( OR conditionalExpression expression ) ) | '^=' expression -> ^( ASSIGN conditionalExpression ^( XOR conditionalExpression expression ) ) | i+= '%' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '<' '<' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '>' '>' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | '>' '>' '>' '=' expression -> ^( ASSIGN conditionalExpression ^( USHR conditionalExpression expression ) ) | -> conditionalExpression )
+            // jkit/java/Java.g:698:3: ( '=' expression -> ^( ASSIGN conditionalExpression expression ) | i+= '+' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '-' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '*' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '/' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | '&=' expression -> ^( ASSIGN conditionalExpression ^( AND conditionalExpression expression ) ) | '|=' expression -> ^( ASSIGN conditionalExpression ^( OR conditionalExpression expression ) ) | '^=' expression -> ^( ASSIGN conditionalExpression ^( XOR conditionalExpression expression ) ) | i+= '%' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '<' '<' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '>' '>' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | '>' '>' '>' '=' expression -> ^( ASSIGN conditionalExpression ^( USHR conditionalExpression expression ) ) | -> conditionalExpression )
             int alt123=13;
             alt123 = dfa123.predict(input);
             switch (alt123) {
                 case 1 :
-                    // jkit/parser/Java.g:699:4: '=' expression
+                    // jkit/java/Java.g:699:4: '=' expression
                     {
                     char_literal383=(Token)match(input,133,FOLLOW_133_in_expression4466); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_133.add(char_literal383);
@@ -13711,7 +13711,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 699:19: -> ^( ASSIGN conditionalExpression expression )
                     {
-                        // jkit/parser/Java.g:699:22: ^( ASSIGN conditionalExpression expression )
+                        // jkit/java/Java.g:699:22: ^( ASSIGN conditionalExpression expression )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSIGN, "ASSIGN"), root_1);
@@ -13728,7 +13728,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:700:6: i+= '+' '=' expression
+                    // jkit/java/Java.g:700:6: i+= '+' '=' expression
                     {
                     i=(Token)match(input,178,FOLLOW_178_in_expression4487); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_178.add(i);
@@ -13761,13 +13761,13 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 700:28: -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) )
                     {
-                        // jkit/parser/Java.g:700:31: ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) )
+                        // jkit/java/Java.g:700:31: ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSIGN, "ASSIGN"), root_1);
 
                         adaptor.addChild(root_1, stream_conditionalExpression.nextTree());
-                        // jkit/parser/Java.g:700:62: ^( LABINOP conditionalExpression $i expression )
+                        // jkit/java/Java.g:700:62: ^( LABINOP conditionalExpression $i expression )
                         {
                         Object root_2 = (Object)adaptor.nil();
                         root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(LABINOP, "LABINOP"), root_2);
@@ -13788,7 +13788,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // jkit/parser/Java.g:701:6: i+= '-' '=' expression
+                    // jkit/java/Java.g:701:6: i+= '-' '=' expression
                     {
                     i=(Token)match(input,179,FOLLOW_179_in_expression4519); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_179.add(i);
@@ -13821,13 +13821,13 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 701:28: -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) )
                     {
-                        // jkit/parser/Java.g:701:31: ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) )
+                        // jkit/java/Java.g:701:31: ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSIGN, "ASSIGN"), root_1);
 
                         adaptor.addChild(root_1, stream_conditionalExpression.nextTree());
-                        // jkit/parser/Java.g:701:62: ^( LABINOP conditionalExpression $i expression )
+                        // jkit/java/Java.g:701:62: ^( LABINOP conditionalExpression $i expression )
                         {
                         Object root_2 = (Object)adaptor.nil();
                         root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(LABINOP, "LABINOP"), root_2);
@@ -13848,7 +13848,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // jkit/parser/Java.g:702:6: i+= '*' '=' expression
+                    // jkit/java/Java.g:702:6: i+= '*' '=' expression
                     {
                     i=(Token)match(input,118,FOLLOW_118_in_expression4551); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_118.add(i);
@@ -13881,13 +13881,13 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 702:28: -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) )
                     {
-                        // jkit/parser/Java.g:702:31: ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) )
+                        // jkit/java/Java.g:702:31: ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSIGN, "ASSIGN"), root_1);
 
                         adaptor.addChild(root_1, stream_conditionalExpression.nextTree());
-                        // jkit/parser/Java.g:702:62: ^( LABINOP conditionalExpression $i expression )
+                        // jkit/java/Java.g:702:62: ^( LABINOP conditionalExpression $i expression )
                         {
                         Object root_2 = (Object)adaptor.nil();
                         root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(LABINOP, "LABINOP"), root_2);
@@ -13908,7 +13908,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 5 :
-                    // jkit/parser/Java.g:703:6: i+= '/' '=' expression
+                    // jkit/java/Java.g:703:6: i+= '/' '=' expression
                     {
                     i=(Token)match(input,180,FOLLOW_180_in_expression4583); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_180.add(i);
@@ -13941,13 +13941,13 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 703:28: -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) )
                     {
-                        // jkit/parser/Java.g:703:31: ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) )
+                        // jkit/java/Java.g:703:31: ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSIGN, "ASSIGN"), root_1);
 
                         adaptor.addChild(root_1, stream_conditionalExpression.nextTree());
-                        // jkit/parser/Java.g:703:62: ^( LABINOP conditionalExpression $i expression )
+                        // jkit/java/Java.g:703:62: ^( LABINOP conditionalExpression $i expression )
                         {
                         Object root_2 = (Object)adaptor.nil();
                         root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(LABINOP, "LABINOP"), root_2);
@@ -13968,7 +13968,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 6 :
-                    // jkit/parser/Java.g:704:6: '&=' expression
+                    // jkit/java/Java.g:704:6: '&=' expression
                     {
                     string_literal393=(Token)match(input,181,FOLLOW_181_in_expression4616); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_181.add(string_literal393);
@@ -13994,13 +13994,13 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 704:22: -> ^( ASSIGN conditionalExpression ^( AND conditionalExpression expression ) )
                     {
-                        // jkit/parser/Java.g:704:25: ^( ASSIGN conditionalExpression ^( AND conditionalExpression expression ) )
+                        // jkit/java/Java.g:704:25: ^( ASSIGN conditionalExpression ^( AND conditionalExpression expression ) )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSIGN, "ASSIGN"), root_1);
 
                         adaptor.addChild(root_1, stream_conditionalExpression.nextTree());
-                        // jkit/parser/Java.g:704:56: ^( AND conditionalExpression expression )
+                        // jkit/java/Java.g:704:56: ^( AND conditionalExpression expression )
                         {
                         Object root_2 = (Object)adaptor.nil();
                         root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(AND, "AND"), root_2);
@@ -14020,7 +14020,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 7 :
-                    // jkit/parser/Java.g:705:6: '|=' expression
+                    // jkit/java/Java.g:705:6: '|=' expression
                     {
                     string_literal395=(Token)match(input,182,FOLLOW_182_in_expression4641); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_182.add(string_literal395);
@@ -14046,13 +14046,13 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 705:22: -> ^( ASSIGN conditionalExpression ^( OR conditionalExpression expression ) )
                     {
-                        // jkit/parser/Java.g:705:25: ^( ASSIGN conditionalExpression ^( OR conditionalExpression expression ) )
+                        // jkit/java/Java.g:705:25: ^( ASSIGN conditionalExpression ^( OR conditionalExpression expression ) )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSIGN, "ASSIGN"), root_1);
 
                         adaptor.addChild(root_1, stream_conditionalExpression.nextTree());
-                        // jkit/parser/Java.g:705:56: ^( OR conditionalExpression expression )
+                        // jkit/java/Java.g:705:56: ^( OR conditionalExpression expression )
                         {
                         Object root_2 = (Object)adaptor.nil();
                         root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(OR, "OR"), root_2);
@@ -14072,7 +14072,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 8 :
-                    // jkit/parser/Java.g:706:6: '^=' expression
+                    // jkit/java/Java.g:706:6: '^=' expression
                     {
                     string_literal397=(Token)match(input,183,FOLLOW_183_in_expression4666); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_183.add(string_literal397);
@@ -14098,13 +14098,13 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 706:22: -> ^( ASSIGN conditionalExpression ^( XOR conditionalExpression expression ) )
                     {
-                        // jkit/parser/Java.g:706:25: ^( ASSIGN conditionalExpression ^( XOR conditionalExpression expression ) )
+                        // jkit/java/Java.g:706:25: ^( ASSIGN conditionalExpression ^( XOR conditionalExpression expression ) )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSIGN, "ASSIGN"), root_1);
 
                         adaptor.addChild(root_1, stream_conditionalExpression.nextTree());
-                        // jkit/parser/Java.g:706:56: ^( XOR conditionalExpression expression )
+                        // jkit/java/Java.g:706:56: ^( XOR conditionalExpression expression )
                         {
                         Object root_2 = (Object)adaptor.nil();
                         root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(XOR, "XOR"), root_2);
@@ -14124,7 +14124,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 9 :
-                    // jkit/parser/Java.g:707:6: i+= '%' '=' expression
+                    // jkit/java/Java.g:707:6: i+= '%' '=' expression
                     {
                     i=(Token)match(input,184,FOLLOW_184_in_expression4696); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_184.add(i);
@@ -14157,13 +14157,13 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 707:28: -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) )
                     {
-                        // jkit/parser/Java.g:707:31: ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) )
+                        // jkit/java/Java.g:707:31: ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSIGN, "ASSIGN"), root_1);
 
                         adaptor.addChild(root_1, stream_conditionalExpression.nextTree());
-                        // jkit/parser/Java.g:707:62: ^( LABINOP conditionalExpression $i expression )
+                        // jkit/java/Java.g:707:62: ^( LABINOP conditionalExpression $i expression )
                         {
                         Object root_2 = (Object)adaptor.nil();
                         root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(LABINOP, "LABINOP"), root_2);
@@ -14184,7 +14184,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 10 :
-                    // jkit/parser/Java.g:708:6: i+= '<' '<' '=' expression
+                    // jkit/java/Java.g:708:6: i+= '<' '<' '=' expression
                     {
                     i=(Token)match(input,122,FOLLOW_122_in_expression4728); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_122.add(i);
@@ -14220,13 +14220,13 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 708:32: -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) )
                     {
-                        // jkit/parser/Java.g:708:35: ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) )
+                        // jkit/java/Java.g:708:35: ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSIGN, "ASSIGN"), root_1);
 
                         adaptor.addChild(root_1, stream_conditionalExpression.nextTree());
-                        // jkit/parser/Java.g:708:66: ^( LABINOP conditionalExpression $i expression )
+                        // jkit/java/Java.g:708:66: ^( LABINOP conditionalExpression $i expression )
                         {
                         Object root_2 = (Object)adaptor.nil();
                         root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(LABINOP, "LABINOP"), root_2);
@@ -14247,7 +14247,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 11 :
-                    // jkit/parser/Java.g:709:6: i+= '>' '>' '=' expression
+                    // jkit/java/Java.g:709:6: i+= '>' '>' '=' expression
                     {
                     i=(Token)match(input,124,FOLLOW_124_in_expression4762); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_124.add(i);
@@ -14283,13 +14283,13 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 709:32: -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) )
                     {
-                        // jkit/parser/Java.g:709:35: ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) )
+                        // jkit/java/Java.g:709:35: ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSIGN, "ASSIGN"), root_1);
 
                         adaptor.addChild(root_1, stream_conditionalExpression.nextTree());
-                        // jkit/parser/Java.g:709:66: ^( LABINOP conditionalExpression $i expression )
+                        // jkit/java/Java.g:709:66: ^( LABINOP conditionalExpression $i expression )
                         {
                         Object root_2 = (Object)adaptor.nil();
                         root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(LABINOP, "LABINOP"), root_2);
@@ -14310,7 +14310,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 12 :
-                    // jkit/parser/Java.g:710:6: '>' '>' '>' '=' expression
+                    // jkit/java/Java.g:710:6: '>' '>' '>' '=' expression
                     {
                     char_literal407=(Token)match(input,124,FOLLOW_124_in_expression4794); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_124.add(char_literal407);
@@ -14345,13 +14345,13 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 710:33: -> ^( ASSIGN conditionalExpression ^( USHR conditionalExpression expression ) )
                     {
-                        // jkit/parser/Java.g:710:36: ^( ASSIGN conditionalExpression ^( USHR conditionalExpression expression ) )
+                        // jkit/java/Java.g:710:36: ^( ASSIGN conditionalExpression ^( USHR conditionalExpression expression ) )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSIGN, "ASSIGN"), root_1);
 
                         adaptor.addChild(root_1, stream_conditionalExpression.nextTree());
-                        // jkit/parser/Java.g:710:67: ^( USHR conditionalExpression expression )
+                        // jkit/java/Java.g:710:67: ^( USHR conditionalExpression expression )
                         {
                         Object root_2 = (Object)adaptor.nil();
                         root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(USHR, "USHR"), root_2);
@@ -14371,7 +14371,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 13 :
-                    // jkit/parser/Java.g:711:6: 
+                    // jkit/java/Java.g:711:6: 
                     {
 
                     // AST REWRITE
@@ -14425,7 +14425,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "conditionalExpression"
-    // jkit/parser/Java.g:715:1: conditionalExpression : conditionalOrExpression ( '?' expression ':' expression -> ^( CONDEXPR conditionalOrExpression expression expression ) | -> conditionalOrExpression ) ;
+    // jkit/java/Java.g:715:1: conditionalExpression : conditionalOrExpression ( '?' expression ':' expression -> ^( CONDEXPR conditionalOrExpression expression expression ) | -> conditionalOrExpression ) ;
     public final JavaParser.conditionalExpression_return conditionalExpression() throws RecognitionException {
         JavaParser.conditionalExpression_return retval = new JavaParser.conditionalExpression_return();
         retval.start = input.LT(1);
@@ -14449,8 +14449,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_expression=new RewriteRuleSubtreeStream(adaptor,"rule expression");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 96) ) { return retval; }
-            // jkit/parser/Java.g:716:5: ( conditionalOrExpression ( '?' expression ':' expression -> ^( CONDEXPR conditionalOrExpression expression expression ) | -> conditionalOrExpression ) )
-            // jkit/parser/Java.g:716:9: conditionalOrExpression ( '?' expression ':' expression -> ^( CONDEXPR conditionalOrExpression expression expression ) | -> conditionalOrExpression )
+            // jkit/java/Java.g:716:5: ( conditionalOrExpression ( '?' expression ':' expression -> ^( CONDEXPR conditionalOrExpression expression expression ) | -> conditionalOrExpression ) )
+            // jkit/java/Java.g:716:9: conditionalOrExpression ( '?' expression ':' expression -> ^( CONDEXPR conditionalOrExpression expression expression ) | -> conditionalOrExpression )
             {
             pushFollow(FOLLOW_conditionalOrExpression_in_conditionalExpression4849);
             conditionalOrExpression412=conditionalOrExpression();
@@ -14458,12 +14458,12 @@ public class JavaParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_conditionalOrExpression.add(conditionalOrExpression412.getTree());
-            // jkit/parser/Java.g:717:6: ( '?' expression ':' expression -> ^( CONDEXPR conditionalOrExpression expression expression ) | -> conditionalOrExpression )
+            // jkit/java/Java.g:717:6: ( '?' expression ':' expression -> ^( CONDEXPR conditionalOrExpression expression expression ) | -> conditionalOrExpression )
             int alt124=2;
             alt124 = dfa124.predict(input);
             switch (alt124) {
                 case 1 :
-                    // jkit/parser/Java.g:718:7: '?' expression ':' expression
+                    // jkit/java/Java.g:718:7: '?' expression ':' expression
                     {
                     char_literal413=(Token)match(input,152,FOLLOW_152_in_conditionalExpression4866); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_152.add(char_literal413);
@@ -14498,7 +14498,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 718:37: -> ^( CONDEXPR conditionalOrExpression expression expression )
                     {
-                        // jkit/parser/Java.g:718:40: ^( CONDEXPR conditionalOrExpression expression expression )
+                        // jkit/java/Java.g:718:40: ^( CONDEXPR conditionalOrExpression expression expression )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(CONDEXPR, "CONDEXPR"), root_1);
@@ -14516,7 +14516,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:719:9: 
+                    // jkit/java/Java.g:719:9: 
                     {
 
                     // AST REWRITE
@@ -14570,7 +14570,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "conditionalOrExpression"
-    // jkit/parser/Java.g:723:1: conditionalOrExpression : conditionalAndExpression ( ( '||' conditionalOrExpression ) -> ^( LOR conditionalAndExpression conditionalOrExpression ) | -> conditionalAndExpression ) ;
+    // jkit/java/Java.g:723:1: conditionalOrExpression : conditionalAndExpression ( ( '||' conditionalOrExpression ) -> ^( LOR conditionalAndExpression conditionalOrExpression ) | -> conditionalAndExpression ) ;
     public final JavaParser.conditionalOrExpression_return conditionalOrExpression() throws RecognitionException {
         JavaParser.conditionalOrExpression_return retval = new JavaParser.conditionalOrExpression_return();
         retval.start = input.LT(1);
@@ -14589,8 +14589,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_conditionalOrExpression=new RewriteRuleSubtreeStream(adaptor,"rule conditionalOrExpression");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 97) ) { return retval; }
-            // jkit/parser/Java.g:724:5: ( conditionalAndExpression ( ( '||' conditionalOrExpression ) -> ^( LOR conditionalAndExpression conditionalOrExpression ) | -> conditionalAndExpression ) )
-            // jkit/parser/Java.g:724:9: conditionalAndExpression ( ( '||' conditionalOrExpression ) -> ^( LOR conditionalAndExpression conditionalOrExpression ) | -> conditionalAndExpression )
+            // jkit/java/Java.g:724:5: ( conditionalAndExpression ( ( '||' conditionalOrExpression ) -> ^( LOR conditionalAndExpression conditionalOrExpression ) | -> conditionalAndExpression ) )
+            // jkit/java/Java.g:724:9: conditionalAndExpression ( ( '||' conditionalOrExpression ) -> ^( LOR conditionalAndExpression conditionalOrExpression ) | -> conditionalAndExpression )
             {
             pushFollow(FOLLOW_conditionalAndExpression_in_conditionalOrExpression4919);
             conditionalAndExpression417=conditionalAndExpression();
@@ -14598,15 +14598,15 @@ public class JavaParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_conditionalAndExpression.add(conditionalAndExpression417.getTree());
-            // jkit/parser/Java.g:725:6: ( ( '||' conditionalOrExpression ) -> ^( LOR conditionalAndExpression conditionalOrExpression ) | -> conditionalAndExpression )
+            // jkit/java/Java.g:725:6: ( ( '||' conditionalOrExpression ) -> ^( LOR conditionalAndExpression conditionalOrExpression ) | -> conditionalAndExpression )
             int alt125=2;
             alt125 = dfa125.predict(input);
             switch (alt125) {
                 case 1 :
-                    // jkit/parser/Java.g:726:7: ( '||' conditionalOrExpression )
+                    // jkit/java/Java.g:726:7: ( '||' conditionalOrExpression )
                     {
-                    // jkit/parser/Java.g:726:7: ( '||' conditionalOrExpression )
-                    // jkit/parser/Java.g:726:8: '||' conditionalOrExpression
+                    // jkit/java/Java.g:726:7: ( '||' conditionalOrExpression )
+                    // jkit/java/Java.g:726:8: '||' conditionalOrExpression
                     {
                     string_literal418=(Token)match(input,185,FOLLOW_185_in_conditionalOrExpression4937); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_185.add(string_literal418);
@@ -14635,7 +14635,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 726:38: -> ^( LOR conditionalAndExpression conditionalOrExpression )
                     {
-                        // jkit/parser/Java.g:726:41: ^( LOR conditionalAndExpression conditionalOrExpression )
+                        // jkit/java/Java.g:726:41: ^( LOR conditionalAndExpression conditionalOrExpression )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(LOR, "LOR"), root_1);
@@ -14652,7 +14652,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:727:9: 
+                    // jkit/java/Java.g:727:9: 
                     {
 
                     // AST REWRITE
@@ -14706,7 +14706,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "conditionalAndExpression"
-    // jkit/parser/Java.g:731:1: conditionalAndExpression : inclusiveOrExpression ( ( '&&' conditionalAndExpression ) -> ^( LAND inclusiveOrExpression conditionalAndExpression ) | -> inclusiveOrExpression ) ;
+    // jkit/java/Java.g:731:1: conditionalAndExpression : inclusiveOrExpression ( ( '&&' conditionalAndExpression ) -> ^( LAND inclusiveOrExpression conditionalAndExpression ) | -> inclusiveOrExpression ) ;
     public final JavaParser.conditionalAndExpression_return conditionalAndExpression() throws RecognitionException {
         JavaParser.conditionalAndExpression_return retval = new JavaParser.conditionalAndExpression_return();
         retval.start = input.LT(1);
@@ -14725,8 +14725,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_inclusiveOrExpression=new RewriteRuleSubtreeStream(adaptor,"rule inclusiveOrExpression");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 98) ) { return retval; }
-            // jkit/parser/Java.g:732:5: ( inclusiveOrExpression ( ( '&&' conditionalAndExpression ) -> ^( LAND inclusiveOrExpression conditionalAndExpression ) | -> inclusiveOrExpression ) )
-            // jkit/parser/Java.g:732:9: inclusiveOrExpression ( ( '&&' conditionalAndExpression ) -> ^( LAND inclusiveOrExpression conditionalAndExpression ) | -> inclusiveOrExpression )
+            // jkit/java/Java.g:732:5: ( inclusiveOrExpression ( ( '&&' conditionalAndExpression ) -> ^( LAND inclusiveOrExpression conditionalAndExpression ) | -> inclusiveOrExpression ) )
+            // jkit/java/Java.g:732:9: inclusiveOrExpression ( ( '&&' conditionalAndExpression ) -> ^( LAND inclusiveOrExpression conditionalAndExpression ) | -> inclusiveOrExpression )
             {
             pushFollow(FOLLOW_inclusiveOrExpression_in_conditionalAndExpression4985);
             inclusiveOrExpression420=inclusiveOrExpression();
@@ -14734,15 +14734,15 @@ public class JavaParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_inclusiveOrExpression.add(inclusiveOrExpression420.getTree());
-            // jkit/parser/Java.g:733:6: ( ( '&&' conditionalAndExpression ) -> ^( LAND inclusiveOrExpression conditionalAndExpression ) | -> inclusiveOrExpression )
+            // jkit/java/Java.g:733:6: ( ( '&&' conditionalAndExpression ) -> ^( LAND inclusiveOrExpression conditionalAndExpression ) | -> inclusiveOrExpression )
             int alt126=2;
             alt126 = dfa126.predict(input);
             switch (alt126) {
                 case 1 :
-                    // jkit/parser/Java.g:734:7: ( '&&' conditionalAndExpression )
+                    // jkit/java/Java.g:734:7: ( '&&' conditionalAndExpression )
                     {
-                    // jkit/parser/Java.g:734:7: ( '&&' conditionalAndExpression )
-                    // jkit/parser/Java.g:734:8: '&&' conditionalAndExpression
+                    // jkit/java/Java.g:734:7: ( '&&' conditionalAndExpression )
+                    // jkit/java/Java.g:734:8: '&&' conditionalAndExpression
                     {
                     string_literal421=(Token)match(input,186,FOLLOW_186_in_conditionalAndExpression5003); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_186.add(string_literal421);
@@ -14771,7 +14771,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 734:39: -> ^( LAND inclusiveOrExpression conditionalAndExpression )
                     {
-                        // jkit/parser/Java.g:734:42: ^( LAND inclusiveOrExpression conditionalAndExpression )
+                        // jkit/java/Java.g:734:42: ^( LAND inclusiveOrExpression conditionalAndExpression )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(LAND, "LAND"), root_1);
@@ -14788,7 +14788,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:735:9: 
+                    // jkit/java/Java.g:735:9: 
                     {
 
                     // AST REWRITE
@@ -14842,7 +14842,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "inclusiveOrExpression"
-    // jkit/parser/Java.g:739:1: inclusiveOrExpression : exclusiveOrExpression ( ( '|' inclusiveOrExpression ) -> ^( OR exclusiveOrExpression inclusiveOrExpression ) | -> exclusiveOrExpression ) ;
+    // jkit/java/Java.g:739:1: inclusiveOrExpression : exclusiveOrExpression ( ( '|' inclusiveOrExpression ) -> ^( OR exclusiveOrExpression inclusiveOrExpression ) | -> exclusiveOrExpression ) ;
     public final JavaParser.inclusiveOrExpression_return inclusiveOrExpression() throws RecognitionException {
         JavaParser.inclusiveOrExpression_return retval = new JavaParser.inclusiveOrExpression_return();
         retval.start = input.LT(1);
@@ -14861,8 +14861,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_exclusiveOrExpression=new RewriteRuleSubtreeStream(adaptor,"rule exclusiveOrExpression");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 99) ) { return retval; }
-            // jkit/parser/Java.g:740:5: ( exclusiveOrExpression ( ( '|' inclusiveOrExpression ) -> ^( OR exclusiveOrExpression inclusiveOrExpression ) | -> exclusiveOrExpression ) )
-            // jkit/parser/Java.g:740:9: exclusiveOrExpression ( ( '|' inclusiveOrExpression ) -> ^( OR exclusiveOrExpression inclusiveOrExpression ) | -> exclusiveOrExpression )
+            // jkit/java/Java.g:740:5: ( exclusiveOrExpression ( ( '|' inclusiveOrExpression ) -> ^( OR exclusiveOrExpression inclusiveOrExpression ) | -> exclusiveOrExpression ) )
+            // jkit/java/Java.g:740:9: exclusiveOrExpression ( ( '|' inclusiveOrExpression ) -> ^( OR exclusiveOrExpression inclusiveOrExpression ) | -> exclusiveOrExpression )
             {
             pushFollow(FOLLOW_exclusiveOrExpression_in_inclusiveOrExpression5057);
             exclusiveOrExpression423=exclusiveOrExpression();
@@ -14870,15 +14870,15 @@ public class JavaParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_exclusiveOrExpression.add(exclusiveOrExpression423.getTree());
-            // jkit/parser/Java.g:741:9: ( ( '|' inclusiveOrExpression ) -> ^( OR exclusiveOrExpression inclusiveOrExpression ) | -> exclusiveOrExpression )
+            // jkit/java/Java.g:741:9: ( ( '|' inclusiveOrExpression ) -> ^( OR exclusiveOrExpression inclusiveOrExpression ) | -> exclusiveOrExpression )
             int alt127=2;
             alt127 = dfa127.predict(input);
             switch (alt127) {
                 case 1 :
-                    // jkit/parser/Java.g:742:10: ( '|' inclusiveOrExpression )
+                    // jkit/java/Java.g:742:10: ( '|' inclusiveOrExpression )
                     {
-                    // jkit/parser/Java.g:742:10: ( '|' inclusiveOrExpression )
-                    // jkit/parser/Java.g:742:11: '|' inclusiveOrExpression
+                    // jkit/java/Java.g:742:10: ( '|' inclusiveOrExpression )
+                    // jkit/java/Java.g:742:11: '|' inclusiveOrExpression
                     {
                     char_literal424=(Token)match(input,187,FOLLOW_187_in_inclusiveOrExpression5079); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_187.add(char_literal424);
@@ -14907,7 +14907,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 742:38: -> ^( OR exclusiveOrExpression inclusiveOrExpression )
                     {
-                        // jkit/parser/Java.g:742:41: ^( OR exclusiveOrExpression inclusiveOrExpression )
+                        // jkit/java/Java.g:742:41: ^( OR exclusiveOrExpression inclusiveOrExpression )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(OR, "OR"), root_1);
@@ -14924,7 +14924,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:743:6: 
+                    // jkit/java/Java.g:743:6: 
                     {
 
                     // AST REWRITE
@@ -14978,7 +14978,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "exclusiveOrExpression"
-    // jkit/parser/Java.g:747:1: exclusiveOrExpression : andExpression ( ( '^' exclusiveOrExpression ) -> ^( XOR andExpression exclusiveOrExpression ) | -> andExpression ) ;
+    // jkit/java/Java.g:747:1: exclusiveOrExpression : andExpression ( ( '^' exclusiveOrExpression ) -> ^( XOR andExpression exclusiveOrExpression ) | -> andExpression ) ;
     public final JavaParser.exclusiveOrExpression_return exclusiveOrExpression() throws RecognitionException {
         JavaParser.exclusiveOrExpression_return retval = new JavaParser.exclusiveOrExpression_return();
         retval.start = input.LT(1);
@@ -14997,8 +14997,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_exclusiveOrExpression=new RewriteRuleSubtreeStream(adaptor,"rule exclusiveOrExpression");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 100) ) { return retval; }
-            // jkit/parser/Java.g:748:5: ( andExpression ( ( '^' exclusiveOrExpression ) -> ^( XOR andExpression exclusiveOrExpression ) | -> andExpression ) )
-            // jkit/parser/Java.g:748:9: andExpression ( ( '^' exclusiveOrExpression ) -> ^( XOR andExpression exclusiveOrExpression ) | -> andExpression )
+            // jkit/java/Java.g:748:5: ( andExpression ( ( '^' exclusiveOrExpression ) -> ^( XOR andExpression exclusiveOrExpression ) | -> andExpression ) )
+            // jkit/java/Java.g:748:9: andExpression ( ( '^' exclusiveOrExpression ) -> ^( XOR andExpression exclusiveOrExpression ) | -> andExpression )
             {
             pushFollow(FOLLOW_andExpression_in_exclusiveOrExpression5128);
             andExpression426=andExpression();
@@ -15006,15 +15006,15 @@ public class JavaParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_andExpression.add(andExpression426.getTree());
-            // jkit/parser/Java.g:749:5: ( ( '^' exclusiveOrExpression ) -> ^( XOR andExpression exclusiveOrExpression ) | -> andExpression )
+            // jkit/java/Java.g:749:5: ( ( '^' exclusiveOrExpression ) -> ^( XOR andExpression exclusiveOrExpression ) | -> andExpression )
             int alt128=2;
             alt128 = dfa128.predict(input);
             switch (alt128) {
                 case 1 :
-                    // jkit/parser/Java.g:750:6: ( '^' exclusiveOrExpression )
+                    // jkit/java/Java.g:750:6: ( '^' exclusiveOrExpression )
                     {
-                    // jkit/parser/Java.g:750:6: ( '^' exclusiveOrExpression )
-                    // jkit/parser/Java.g:750:7: '^' exclusiveOrExpression
+                    // jkit/java/Java.g:750:6: ( '^' exclusiveOrExpression )
+                    // jkit/java/Java.g:750:7: '^' exclusiveOrExpression
                     {
                     char_literal427=(Token)match(input,188,FOLLOW_188_in_exclusiveOrExpression5144); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_188.add(char_literal427);
@@ -15043,7 +15043,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 750:34: -> ^( XOR andExpression exclusiveOrExpression )
                     {
-                        // jkit/parser/Java.g:750:37: ^( XOR andExpression exclusiveOrExpression )
+                        // jkit/java/Java.g:750:37: ^( XOR andExpression exclusiveOrExpression )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(XOR, "XOR"), root_1);
@@ -15060,7 +15060,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:751:8: 
+                    // jkit/java/Java.g:751:8: 
                     {
 
                     // AST REWRITE
@@ -15114,7 +15114,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "andExpression"
-    // jkit/parser/Java.g:755:1: andExpression : equalityExpression ( ( '&' andExpression ) -> ^( AND equalityExpression andExpression ) | -> equalityExpression ) ;
+    // jkit/java/Java.g:755:1: andExpression : equalityExpression ( ( '&' andExpression ) -> ^( AND equalityExpression andExpression ) | -> equalityExpression ) ;
     public final JavaParser.andExpression_return andExpression() throws RecognitionException {
         JavaParser.andExpression_return retval = new JavaParser.andExpression_return();
         retval.start = input.LT(1);
@@ -15133,8 +15133,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_andExpression=new RewriteRuleSubtreeStream(adaptor,"rule andExpression");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 101) ) { return retval; }
-            // jkit/parser/Java.g:756:5: ( equalityExpression ( ( '&' andExpression ) -> ^( AND equalityExpression andExpression ) | -> equalityExpression ) )
-            // jkit/parser/Java.g:756:9: equalityExpression ( ( '&' andExpression ) -> ^( AND equalityExpression andExpression ) | -> equalityExpression )
+            // jkit/java/Java.g:756:5: ( equalityExpression ( ( '&' andExpression ) -> ^( AND equalityExpression andExpression ) | -> equalityExpression ) )
+            // jkit/java/Java.g:756:9: equalityExpression ( ( '&' andExpression ) -> ^( AND equalityExpression andExpression ) | -> equalityExpression )
             {
             pushFollow(FOLLOW_equalityExpression_in_andExpression5190);
             equalityExpression429=equalityExpression();
@@ -15142,15 +15142,15 @@ public class JavaParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_equalityExpression.add(equalityExpression429.getTree());
-            // jkit/parser/Java.g:757:5: ( ( '&' andExpression ) -> ^( AND equalityExpression andExpression ) | -> equalityExpression )
+            // jkit/java/Java.g:757:5: ( ( '&' andExpression ) -> ^( AND equalityExpression andExpression ) | -> equalityExpression )
             int alt129=2;
             alt129 = dfa129.predict(input);
             switch (alt129) {
                 case 1 :
-                    // jkit/parser/Java.g:758:6: ( '&' andExpression )
+                    // jkit/java/Java.g:758:6: ( '&' andExpression )
                     {
-                    // jkit/parser/Java.g:758:6: ( '&' andExpression )
-                    // jkit/parser/Java.g:758:7: '&' andExpression
+                    // jkit/java/Java.g:758:6: ( '&' andExpression )
+                    // jkit/java/Java.g:758:7: '&' andExpression
                     {
                     char_literal430=(Token)match(input,125,FOLLOW_125_in_andExpression5206); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_125.add(char_literal430);
@@ -15179,7 +15179,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 758:26: -> ^( AND equalityExpression andExpression )
                     {
-                        // jkit/parser/Java.g:758:29: ^( AND equalityExpression andExpression )
+                        // jkit/java/Java.g:758:29: ^( AND equalityExpression andExpression )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(AND, "AND"), root_1);
@@ -15196,7 +15196,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:759:8: 
+                    // jkit/java/Java.g:759:8: 
                     {
 
                     // AST REWRITE
@@ -15250,7 +15250,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "equalityExpression"
-    // jkit/parser/Java.g:763:1: equalityExpression : instanceOfExpression ( ( '==' instanceOfExpression ) -> ^( EQ instanceOfExpression instanceOfExpression ) | ( '!=' instanceOfExpression ) -> ^( NEQ instanceOfExpression instanceOfExpression ) | -> instanceOfExpression ) ;
+    // jkit/java/Java.g:763:1: equalityExpression : instanceOfExpression ( ( '==' instanceOfExpression ) -> ^( EQ instanceOfExpression instanceOfExpression ) | ( '!=' instanceOfExpression ) -> ^( NEQ instanceOfExpression instanceOfExpression ) | -> instanceOfExpression ) ;
     public final JavaParser.equalityExpression_return equalityExpression() throws RecognitionException {
         JavaParser.equalityExpression_return retval = new JavaParser.equalityExpression_return();
         retval.start = input.LT(1);
@@ -15273,8 +15273,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_instanceOfExpression=new RewriteRuleSubtreeStream(adaptor,"rule instanceOfExpression");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 102) ) { return retval; }
-            // jkit/parser/Java.g:764:5: ( instanceOfExpression ( ( '==' instanceOfExpression ) -> ^( EQ instanceOfExpression instanceOfExpression ) | ( '!=' instanceOfExpression ) -> ^( NEQ instanceOfExpression instanceOfExpression ) | -> instanceOfExpression ) )
-            // jkit/parser/Java.g:764:9: instanceOfExpression ( ( '==' instanceOfExpression ) -> ^( EQ instanceOfExpression instanceOfExpression ) | ( '!=' instanceOfExpression ) -> ^( NEQ instanceOfExpression instanceOfExpression ) | -> instanceOfExpression )
+            // jkit/java/Java.g:764:5: ( instanceOfExpression ( ( '==' instanceOfExpression ) -> ^( EQ instanceOfExpression instanceOfExpression ) | ( '!=' instanceOfExpression ) -> ^( NEQ instanceOfExpression instanceOfExpression ) | -> instanceOfExpression ) )
+            // jkit/java/Java.g:764:9: instanceOfExpression ( ( '==' instanceOfExpression ) -> ^( EQ instanceOfExpression instanceOfExpression ) | ( '!=' instanceOfExpression ) -> ^( NEQ instanceOfExpression instanceOfExpression ) | -> instanceOfExpression )
             {
             pushFollow(FOLLOW_instanceOfExpression_in_equalityExpression5252);
             instanceOfExpression432=instanceOfExpression();
@@ -15282,15 +15282,15 @@ public class JavaParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_instanceOfExpression.add(instanceOfExpression432.getTree());
-            // jkit/parser/Java.g:765:5: ( ( '==' instanceOfExpression ) -> ^( EQ instanceOfExpression instanceOfExpression ) | ( '!=' instanceOfExpression ) -> ^( NEQ instanceOfExpression instanceOfExpression ) | -> instanceOfExpression )
+            // jkit/java/Java.g:765:5: ( ( '==' instanceOfExpression ) -> ^( EQ instanceOfExpression instanceOfExpression ) | ( '!=' instanceOfExpression ) -> ^( NEQ instanceOfExpression instanceOfExpression ) | -> instanceOfExpression )
             int alt130=3;
             alt130 = dfa130.predict(input);
             switch (alt130) {
                 case 1 :
-                    // jkit/parser/Java.g:766:6: ( '==' instanceOfExpression )
+                    // jkit/java/Java.g:766:6: ( '==' instanceOfExpression )
                     {
-                    // jkit/parser/Java.g:766:6: ( '==' instanceOfExpression )
-                    // jkit/parser/Java.g:766:7: '==' instanceOfExpression
+                    // jkit/java/Java.g:766:6: ( '==' instanceOfExpression )
+                    // jkit/java/Java.g:766:7: '==' instanceOfExpression
                     {
                     string_literal433=(Token)match(input,189,FOLLOW_189_in_equalityExpression5268); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_189.add(string_literal433);
@@ -15319,7 +15319,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 766:34: -> ^( EQ instanceOfExpression instanceOfExpression )
                     {
-                        // jkit/parser/Java.g:766:37: ^( EQ instanceOfExpression instanceOfExpression )
+                        // jkit/java/Java.g:766:37: ^( EQ instanceOfExpression instanceOfExpression )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(EQ, "EQ"), root_1);
@@ -15336,10 +15336,10 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:767:8: ( '!=' instanceOfExpression )
+                    // jkit/java/Java.g:767:8: ( '!=' instanceOfExpression )
                     {
-                    // jkit/parser/Java.g:767:8: ( '!=' instanceOfExpression )
-                    // jkit/parser/Java.g:767:9: '!=' instanceOfExpression
+                    // jkit/java/Java.g:767:8: ( '!=' instanceOfExpression )
+                    // jkit/java/Java.g:767:9: '!=' instanceOfExpression
                     {
                     string_literal435=(Token)match(input,190,FOLLOW_190_in_equalityExpression5291); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_190.add(string_literal435);
@@ -15368,7 +15368,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 767:36: -> ^( NEQ instanceOfExpression instanceOfExpression )
                     {
-                        // jkit/parser/Java.g:767:39: ^( NEQ instanceOfExpression instanceOfExpression )
+                        // jkit/java/Java.g:767:39: ^( NEQ instanceOfExpression instanceOfExpression )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(NEQ, "NEQ"), root_1);
@@ -15385,7 +15385,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // jkit/parser/Java.g:768:8: 
+                    // jkit/java/Java.g:768:8: 
                     {
 
                     // AST REWRITE
@@ -15439,7 +15439,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "instanceOfExpression"
-    // jkit/parser/Java.g:772:1: instanceOfExpression : relationalExpression ( ( 'instanceof' type ) -> ^( INSTANCEOF relationalExpression type ) | -> relationalExpression ) ;
+    // jkit/java/Java.g:772:1: instanceOfExpression : relationalExpression ( ( 'instanceof' type ) -> ^( INSTANCEOF relationalExpression type ) | -> relationalExpression ) ;
     public final JavaParser.instanceOfExpression_return instanceOfExpression() throws RecognitionException {
         JavaParser.instanceOfExpression_return retval = new JavaParser.instanceOfExpression_return();
         retval.start = input.LT(1);
@@ -15458,8 +15458,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_relationalExpression=new RewriteRuleSubtreeStream(adaptor,"rule relationalExpression");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 103) ) { return retval; }
-            // jkit/parser/Java.g:773:5: ( relationalExpression ( ( 'instanceof' type ) -> ^( INSTANCEOF relationalExpression type ) | -> relationalExpression ) )
-            // jkit/parser/Java.g:773:9: relationalExpression ( ( 'instanceof' type ) -> ^( INSTANCEOF relationalExpression type ) | -> relationalExpression )
+            // jkit/java/Java.g:773:5: ( relationalExpression ( ( 'instanceof' type ) -> ^( INSTANCEOF relationalExpression type ) | -> relationalExpression ) )
+            // jkit/java/Java.g:773:9: relationalExpression ( ( 'instanceof' type ) -> ^( INSTANCEOF relationalExpression type ) | -> relationalExpression )
             {
             pushFollow(FOLLOW_relationalExpression_in_instanceOfExpression5337);
             relationalExpression437=relationalExpression();
@@ -15467,15 +15467,15 @@ public class JavaParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_relationalExpression.add(relationalExpression437.getTree());
-            // jkit/parser/Java.g:774:5: ( ( 'instanceof' type ) -> ^( INSTANCEOF relationalExpression type ) | -> relationalExpression )
+            // jkit/java/Java.g:774:5: ( ( 'instanceof' type ) -> ^( INSTANCEOF relationalExpression type ) | -> relationalExpression )
             int alt131=2;
             alt131 = dfa131.predict(input);
             switch (alt131) {
                 case 1 :
-                    // jkit/parser/Java.g:775:6: ( 'instanceof' type )
+                    // jkit/java/Java.g:775:6: ( 'instanceof' type )
                     {
-                    // jkit/parser/Java.g:775:6: ( 'instanceof' type )
-                    // jkit/parser/Java.g:775:7: 'instanceof' type
+                    // jkit/java/Java.g:775:6: ( 'instanceof' type )
+                    // jkit/java/Java.g:775:7: 'instanceof' type
                     {
                     string_literal438=(Token)match(input,191,FOLLOW_191_in_instanceOfExpression5352); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_191.add(string_literal438);
@@ -15504,7 +15504,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 775:26: -> ^( INSTANCEOF relationalExpression type )
                     {
-                        // jkit/parser/Java.g:775:29: ^( INSTANCEOF relationalExpression type )
+                        // jkit/java/Java.g:775:29: ^( INSTANCEOF relationalExpression type )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(INSTANCEOF, "INSTANCEOF"), root_1);
@@ -15521,7 +15521,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:776:8: 
+                    // jkit/java/Java.g:776:8: 
                     {
 
                     // AST REWRITE
@@ -15575,7 +15575,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "relationalExpression"
-    // jkit/parser/Java.g:780:1: relationalExpression : shiftExpression ( ( '<' '=' shiftExpression ) -> ^( LTEQ shiftExpression shiftExpression ) | ( '<' shiftExpression ) -> ^( LT shiftExpression shiftExpression ) | ( '>' '=' shiftExpression ) -> ^( GTEQ shiftExpression shiftExpression ) | ( '>' shiftExpression ) -> ^( GT shiftExpression shiftExpression ) | -> shiftExpression ) ;
+    // jkit/java/Java.g:780:1: relationalExpression : shiftExpression ( ( '<' '=' shiftExpression ) -> ^( LTEQ shiftExpression shiftExpression ) | ( '<' shiftExpression ) -> ^( LT shiftExpression shiftExpression ) | ( '>' '=' shiftExpression ) -> ^( GTEQ shiftExpression shiftExpression ) | ( '>' shiftExpression ) -> ^( GT shiftExpression shiftExpression ) | -> shiftExpression ) ;
     public final JavaParser.relationalExpression_return relationalExpression() throws RecognitionException {
         JavaParser.relationalExpression_return retval = new JavaParser.relationalExpression_return();
         retval.start = input.LT(1);
@@ -15611,8 +15611,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_shiftExpression=new RewriteRuleSubtreeStream(adaptor,"rule shiftExpression");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 104) ) { return retval; }
-            // jkit/parser/Java.g:781:5: ( shiftExpression ( ( '<' '=' shiftExpression ) -> ^( LTEQ shiftExpression shiftExpression ) | ( '<' shiftExpression ) -> ^( LT shiftExpression shiftExpression ) | ( '>' '=' shiftExpression ) -> ^( GTEQ shiftExpression shiftExpression ) | ( '>' shiftExpression ) -> ^( GT shiftExpression shiftExpression ) | -> shiftExpression ) )
-            // jkit/parser/Java.g:781:9: shiftExpression ( ( '<' '=' shiftExpression ) -> ^( LTEQ shiftExpression shiftExpression ) | ( '<' shiftExpression ) -> ^( LT shiftExpression shiftExpression ) | ( '>' '=' shiftExpression ) -> ^( GTEQ shiftExpression shiftExpression ) | ( '>' shiftExpression ) -> ^( GT shiftExpression shiftExpression ) | -> shiftExpression )
+            // jkit/java/Java.g:781:5: ( shiftExpression ( ( '<' '=' shiftExpression ) -> ^( LTEQ shiftExpression shiftExpression ) | ( '<' shiftExpression ) -> ^( LT shiftExpression shiftExpression ) | ( '>' '=' shiftExpression ) -> ^( GTEQ shiftExpression shiftExpression ) | ( '>' shiftExpression ) -> ^( GT shiftExpression shiftExpression ) | -> shiftExpression ) )
+            // jkit/java/Java.g:781:9: shiftExpression ( ( '<' '=' shiftExpression ) -> ^( LTEQ shiftExpression shiftExpression ) | ( '<' shiftExpression ) -> ^( LT shiftExpression shiftExpression ) | ( '>' '=' shiftExpression ) -> ^( GTEQ shiftExpression shiftExpression ) | ( '>' shiftExpression ) -> ^( GT shiftExpression shiftExpression ) | -> shiftExpression )
             {
             pushFollow(FOLLOW_shiftExpression_in_relationalExpression5398);
             shiftExpression440=shiftExpression();
@@ -15620,15 +15620,15 @@ public class JavaParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_shiftExpression.add(shiftExpression440.getTree());
-            // jkit/parser/Java.g:782:5: ( ( '<' '=' shiftExpression ) -> ^( LTEQ shiftExpression shiftExpression ) | ( '<' shiftExpression ) -> ^( LT shiftExpression shiftExpression ) | ( '>' '=' shiftExpression ) -> ^( GTEQ shiftExpression shiftExpression ) | ( '>' shiftExpression ) -> ^( GT shiftExpression shiftExpression ) | -> shiftExpression )
+            // jkit/java/Java.g:782:5: ( ( '<' '=' shiftExpression ) -> ^( LTEQ shiftExpression shiftExpression ) | ( '<' shiftExpression ) -> ^( LT shiftExpression shiftExpression ) | ( '>' '=' shiftExpression ) -> ^( GTEQ shiftExpression shiftExpression ) | ( '>' shiftExpression ) -> ^( GT shiftExpression shiftExpression ) | -> shiftExpression )
             int alt132=5;
             alt132 = dfa132.predict(input);
             switch (alt132) {
                 case 1 :
-                    // jkit/parser/Java.g:783:6: ( '<' '=' shiftExpression )
+                    // jkit/java/Java.g:783:6: ( '<' '=' shiftExpression )
                     {
-                    // jkit/parser/Java.g:783:6: ( '<' '=' shiftExpression )
-                    // jkit/parser/Java.g:783:7: '<' '=' shiftExpression
+                    // jkit/java/Java.g:783:6: ( '<' '=' shiftExpression )
+                    // jkit/java/Java.g:783:7: '<' '=' shiftExpression
                     {
                     char_literal441=(Token)match(input,122,FOLLOW_122_in_relationalExpression5414); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_122.add(char_literal441);
@@ -15660,7 +15660,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 783:32: -> ^( LTEQ shiftExpression shiftExpression )
                     {
-                        // jkit/parser/Java.g:783:35: ^( LTEQ shiftExpression shiftExpression )
+                        // jkit/java/Java.g:783:35: ^( LTEQ shiftExpression shiftExpression )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(LTEQ, "LTEQ"), root_1);
@@ -15677,10 +15677,10 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:784:8: ( '<' shiftExpression )
+                    // jkit/java/Java.g:784:8: ( '<' shiftExpression )
                     {
-                    // jkit/parser/Java.g:784:8: ( '<' shiftExpression )
-                    // jkit/parser/Java.g:784:9: '<' shiftExpression
+                    // jkit/java/Java.g:784:8: ( '<' shiftExpression )
+                    // jkit/java/Java.g:784:9: '<' shiftExpression
                     {
                     char_literal444=(Token)match(input,122,FOLLOW_122_in_relationalExpression5439); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_122.add(char_literal444);
@@ -15709,7 +15709,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 784:30: -> ^( LT shiftExpression shiftExpression )
                     {
-                        // jkit/parser/Java.g:784:33: ^( LT shiftExpression shiftExpression )
+                        // jkit/java/Java.g:784:33: ^( LT shiftExpression shiftExpression )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(LT, "LT"), root_1);
@@ -15726,10 +15726,10 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // jkit/parser/Java.g:785:8: ( '>' '=' shiftExpression )
+                    // jkit/java/Java.g:785:8: ( '>' '=' shiftExpression )
                     {
-                    // jkit/parser/Java.g:785:8: ( '>' '=' shiftExpression )
-                    // jkit/parser/Java.g:785:9: '>' '=' shiftExpression
+                    // jkit/java/Java.g:785:8: ( '>' '=' shiftExpression )
+                    // jkit/java/Java.g:785:9: '>' '=' shiftExpression
                     {
                     char_literal446=(Token)match(input,124,FOLLOW_124_in_relationalExpression5462); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_124.add(char_literal446);
@@ -15761,7 +15761,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 785:34: -> ^( GTEQ shiftExpression shiftExpression )
                     {
-                        // jkit/parser/Java.g:785:37: ^( GTEQ shiftExpression shiftExpression )
+                        // jkit/java/Java.g:785:37: ^( GTEQ shiftExpression shiftExpression )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(GTEQ, "GTEQ"), root_1);
@@ -15778,10 +15778,10 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // jkit/parser/Java.g:786:8: ( '>' shiftExpression )
+                    // jkit/java/Java.g:786:8: ( '>' shiftExpression )
                     {
-                    // jkit/parser/Java.g:786:8: ( '>' shiftExpression )
-                    // jkit/parser/Java.g:786:9: '>' shiftExpression
+                    // jkit/java/Java.g:786:8: ( '>' shiftExpression )
+                    // jkit/java/Java.g:786:9: '>' shiftExpression
                     {
                     char_literal449=(Token)match(input,124,FOLLOW_124_in_relationalExpression5487); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_124.add(char_literal449);
@@ -15810,7 +15810,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 786:30: -> ^( GT shiftExpression shiftExpression )
                     {
-                        // jkit/parser/Java.g:786:33: ^( GT shiftExpression shiftExpression )
+                        // jkit/java/Java.g:786:33: ^( GT shiftExpression shiftExpression )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(GT, "GT"), root_1);
@@ -15827,7 +15827,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 5 :
-                    // jkit/parser/Java.g:787:8: 
+                    // jkit/java/Java.g:787:8: 
                     {
 
                     // AST REWRITE
@@ -15881,7 +15881,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "shiftExpression"
-    // jkit/parser/Java.g:791:1: shiftExpression : additiveExpression ( ( (i+= '<' '<' | i+= '>' '>' ) additiveExpression )+ -> ^( LABINOP additiveExpression ( $i additiveExpression )+ ) | ( '>' '>' '>' additiveExpression )+ -> ^( USHR additiveExpression ( additiveExpression )+ ) | -> additiveExpression ) ;
+    // jkit/java/Java.g:791:1: shiftExpression : additiveExpression ( ( (i+= '<' '<' | i+= '>' '>' ) additiveExpression )+ -> ^( LABINOP additiveExpression ( $i additiveExpression )+ ) | ( '>' '>' '>' additiveExpression )+ -> ^( USHR additiveExpression ( additiveExpression )+ ) | -> additiveExpression ) ;
     public final JavaParser.shiftExpression_return shiftExpression() throws RecognitionException {
         JavaParser.shiftExpression_return retval = new JavaParser.shiftExpression_return();
         retval.start = input.LT(1);
@@ -15913,8 +15913,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_additiveExpression=new RewriteRuleSubtreeStream(adaptor,"rule additiveExpression");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 105) ) { return retval; }
-            // jkit/parser/Java.g:792:5: ( additiveExpression ( ( (i+= '<' '<' | i+= '>' '>' ) additiveExpression )+ -> ^( LABINOP additiveExpression ( $i additiveExpression )+ ) | ( '>' '>' '>' additiveExpression )+ -> ^( USHR additiveExpression ( additiveExpression )+ ) | -> additiveExpression ) )
-            // jkit/parser/Java.g:792:9: additiveExpression ( ( (i+= '<' '<' | i+= '>' '>' ) additiveExpression )+ -> ^( LABINOP additiveExpression ( $i additiveExpression )+ ) | ( '>' '>' '>' additiveExpression )+ -> ^( USHR additiveExpression ( additiveExpression )+ ) | -> additiveExpression )
+            // jkit/java/Java.g:792:5: ( additiveExpression ( ( (i+= '<' '<' | i+= '>' '>' ) additiveExpression )+ -> ^( LABINOP additiveExpression ( $i additiveExpression )+ ) | ( '>' '>' '>' additiveExpression )+ -> ^( USHR additiveExpression ( additiveExpression )+ ) | -> additiveExpression ) )
+            // jkit/java/Java.g:792:9: additiveExpression ( ( (i+= '<' '<' | i+= '>' '>' ) additiveExpression )+ -> ^( LABINOP additiveExpression ( $i additiveExpression )+ ) | ( '>' '>' '>' additiveExpression )+ -> ^( USHR additiveExpression ( additiveExpression )+ ) | -> additiveExpression )
             {
             pushFollow(FOLLOW_additiveExpression_in_shiftExpression5534);
             additiveExpression451=additiveExpression();
@@ -15922,14 +15922,14 @@ public class JavaParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_additiveExpression.add(additiveExpression451.getTree());
-            // jkit/parser/Java.g:793:5: ( ( (i+= '<' '<' | i+= '>' '>' ) additiveExpression )+ -> ^( LABINOP additiveExpression ( $i additiveExpression )+ ) | ( '>' '>' '>' additiveExpression )+ -> ^( USHR additiveExpression ( additiveExpression )+ ) | -> additiveExpression )
+            // jkit/java/Java.g:793:5: ( ( (i+= '<' '<' | i+= '>' '>' ) additiveExpression )+ -> ^( LABINOP additiveExpression ( $i additiveExpression )+ ) | ( '>' '>' '>' additiveExpression )+ -> ^( USHR additiveExpression ( additiveExpression )+ ) | -> additiveExpression )
             int alt136=3;
             alt136 = dfa136.predict(input);
             switch (alt136) {
                 case 1 :
-                    // jkit/parser/Java.g:794:6: ( (i+= '<' '<' | i+= '>' '>' ) additiveExpression )+
+                    // jkit/java/Java.g:794:6: ( (i+= '<' '<' | i+= '>' '>' ) additiveExpression )+
                     {
-                    // jkit/parser/Java.g:794:6: ( (i+= '<' '<' | i+= '>' '>' ) additiveExpression )+
+                    // jkit/java/Java.g:794:6: ( (i+= '<' '<' | i+= '>' '>' ) additiveExpression )+
                     int cnt134=0;
                     loop134:
                     do {
@@ -15937,9 +15937,9 @@ public class JavaParser extends Parser {
                         alt134 = dfa134.predict(input);
                         switch (alt134) {
                     	case 1 :
-                    	    // jkit/parser/Java.g:794:7: (i+= '<' '<' | i+= '>' '>' ) additiveExpression
+                    	    // jkit/java/Java.g:794:7: (i+= '<' '<' | i+= '>' '>' ) additiveExpression
                     	    {
-                    	    // jkit/parser/Java.g:794:7: (i+= '<' '<' | i+= '>' '>' )
+                    	    // jkit/java/Java.g:794:7: (i+= '<' '<' | i+= '>' '>' )
                     	    int alt133=2;
                     	    int LA133_0 = input.LA(1);
 
@@ -15958,7 +15958,7 @@ public class JavaParser extends Parser {
                     	    }
                     	    switch (alt133) {
                     	        case 1 :
-                    	            // jkit/parser/Java.g:794:8: i+= '<' '<'
+                    	            // jkit/java/Java.g:794:8: i+= '<' '<'
                     	            {
                     	            i=(Token)match(input,122,FOLLOW_122_in_shiftExpression5553); if (state.failed) return retval; 
                     	            if ( state.backtracking==0 ) stream_122.add(i);
@@ -15973,7 +15973,7 @@ public class JavaParser extends Parser {
                     	            }
                     	            break;
                     	        case 2 :
-                    	            // jkit/parser/Java.g:794:19: i+= '>' '>'
+                    	            // jkit/java/Java.g:794:19: i+= '>' '>'
                     	            {
                     	            i=(Token)match(input,124,FOLLOW_124_in_shiftExpression5559); if (state.failed) return retval; 
                     	            if ( state.backtracking==0 ) stream_124.add(i);
@@ -16026,7 +16026,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 794:52: -> ^( LABINOP additiveExpression ( $i additiveExpression )+ )
                     {
-                        // jkit/parser/Java.g:794:55: ^( LABINOP additiveExpression ( $i additiveExpression )+ )
+                        // jkit/java/Java.g:794:55: ^( LABINOP additiveExpression ( $i additiveExpression )+ )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(LABINOP, "LABINOP"), root_1);
@@ -16052,9 +16052,9 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:796:8: ( '>' '>' '>' additiveExpression )+
+                    // jkit/java/Java.g:796:8: ( '>' '>' '>' additiveExpression )+
                     {
-                    // jkit/parser/Java.g:796:8: ( '>' '>' '>' additiveExpression )+
+                    // jkit/java/Java.g:796:8: ( '>' '>' '>' additiveExpression )+
                     int cnt135=0;
                     loop135:
                     do {
@@ -16062,7 +16062,7 @@ public class JavaParser extends Parser {
                         alt135 = dfa135.predict(input);
                         switch (alt135) {
                     	case 1 :
-                    	    // jkit/parser/Java.g:796:9: '>' '>' '>' additiveExpression
+                    	    // jkit/java/Java.g:796:9: '>' '>' '>' additiveExpression
                     	    {
                     	    char_literal455=(Token)match(input,124,FOLLOW_124_in_shiftExpression5598); if (state.failed) return retval; 
                     	    if ( state.backtracking==0 ) stream_124.add(char_literal455);
@@ -16108,7 +16108,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 796:42: -> ^( USHR additiveExpression ( additiveExpression )+ )
                     {
-                        // jkit/parser/Java.g:796:45: ^( USHR additiveExpression ( additiveExpression )+ )
+                        // jkit/java/Java.g:796:45: ^( USHR additiveExpression ( additiveExpression )+ )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(USHR, "USHR"), root_1);
@@ -16132,7 +16132,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // jkit/parser/Java.g:797:8: 
+                    // jkit/java/Java.g:797:8: 
                     {
 
                     // AST REWRITE
@@ -16186,7 +16186,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "additiveExpression"
-    // jkit/parser/Java.g:801:1: additiveExpression : multiplicativeExpression ( ( (i+= '+' | i+= '-' ) multiplicativeExpression )+ -> ^( LABINOP multiplicativeExpression ( $i multiplicativeExpression )+ ) | -> multiplicativeExpression ) ;
+    // jkit/java/Java.g:801:1: additiveExpression : multiplicativeExpression ( ( (i+= '+' | i+= '-' ) multiplicativeExpression )+ -> ^( LABINOP multiplicativeExpression ( $i multiplicativeExpression )+ ) | -> multiplicativeExpression ) ;
     public final JavaParser.additiveExpression_return additiveExpression() throws RecognitionException {
         JavaParser.additiveExpression_return retval = new JavaParser.additiveExpression_return();
         retval.start = input.LT(1);
@@ -16206,8 +16206,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_multiplicativeExpression=new RewriteRuleSubtreeStream(adaptor,"rule multiplicativeExpression");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 106) ) { return retval; }
-            // jkit/parser/Java.g:802:5: ( multiplicativeExpression ( ( (i+= '+' | i+= '-' ) multiplicativeExpression )+ -> ^( LABINOP multiplicativeExpression ( $i multiplicativeExpression )+ ) | -> multiplicativeExpression ) )
-            // jkit/parser/Java.g:802:9: multiplicativeExpression ( ( (i+= '+' | i+= '-' ) multiplicativeExpression )+ -> ^( LABINOP multiplicativeExpression ( $i multiplicativeExpression )+ ) | -> multiplicativeExpression )
+            // jkit/java/Java.g:802:5: ( multiplicativeExpression ( ( (i+= '+' | i+= '-' ) multiplicativeExpression )+ -> ^( LABINOP multiplicativeExpression ( $i multiplicativeExpression )+ ) | -> multiplicativeExpression ) )
+            // jkit/java/Java.g:802:9: multiplicativeExpression ( ( (i+= '+' | i+= '-' ) multiplicativeExpression )+ -> ^( LABINOP multiplicativeExpression ( $i multiplicativeExpression )+ ) | -> multiplicativeExpression )
             {
             pushFollow(FOLLOW_multiplicativeExpression_in_additiveExpression5647);
             multiplicativeExpression459=multiplicativeExpression();
@@ -16215,14 +16215,14 @@ public class JavaParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_multiplicativeExpression.add(multiplicativeExpression459.getTree());
-            // jkit/parser/Java.g:803:5: ( ( (i+= '+' | i+= '-' ) multiplicativeExpression )+ -> ^( LABINOP multiplicativeExpression ( $i multiplicativeExpression )+ ) | -> multiplicativeExpression )
+            // jkit/java/Java.g:803:5: ( ( (i+= '+' | i+= '-' ) multiplicativeExpression )+ -> ^( LABINOP multiplicativeExpression ( $i multiplicativeExpression )+ ) | -> multiplicativeExpression )
             int alt139=2;
             alt139 = dfa139.predict(input);
             switch (alt139) {
                 case 1 :
-                    // jkit/parser/Java.g:804:6: ( (i+= '+' | i+= '-' ) multiplicativeExpression )+
+                    // jkit/java/Java.g:804:6: ( (i+= '+' | i+= '-' ) multiplicativeExpression )+
                     {
-                    // jkit/parser/Java.g:804:6: ( (i+= '+' | i+= '-' ) multiplicativeExpression )+
+                    // jkit/java/Java.g:804:6: ( (i+= '+' | i+= '-' ) multiplicativeExpression )+
                     int cnt138=0;
                     loop138:
                     do {
@@ -16230,9 +16230,9 @@ public class JavaParser extends Parser {
                         alt138 = dfa138.predict(input);
                         switch (alt138) {
                     	case 1 :
-                    	    // jkit/parser/Java.g:804:7: (i+= '+' | i+= '-' ) multiplicativeExpression
+                    	    // jkit/java/Java.g:804:7: (i+= '+' | i+= '-' ) multiplicativeExpression
                     	    {
-                    	    // jkit/parser/Java.g:804:7: (i+= '+' | i+= '-' )
+                    	    // jkit/java/Java.g:804:7: (i+= '+' | i+= '-' )
                     	    int alt137=2;
                     	    int LA137_0 = input.LA(1);
 
@@ -16251,7 +16251,7 @@ public class JavaParser extends Parser {
                     	    }
                     	    switch (alt137) {
                     	        case 1 :
-                    	            // jkit/parser/Java.g:804:8: i+= '+'
+                    	            // jkit/java/Java.g:804:8: i+= '+'
                     	            {
                     	            i=(Token)match(input,178,FOLLOW_178_in_additiveExpression5666); if (state.failed) return retval; 
                     	            if ( state.backtracking==0 ) stream_178.add(i);
@@ -16263,7 +16263,7 @@ public class JavaParser extends Parser {
                     	            }
                     	            break;
                     	        case 2 :
-                    	            // jkit/parser/Java.g:804:15: i+= '-'
+                    	            // jkit/java/Java.g:804:15: i+= '-'
                     	            {
                     	            i=(Token)match(input,179,FOLLOW_179_in_additiveExpression5670); if (state.failed) return retval; 
                     	            if ( state.backtracking==0 ) stream_179.add(i);
@@ -16313,7 +16313,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 804:50: -> ^( LABINOP multiplicativeExpression ( $i multiplicativeExpression )+ )
                     {
-                        // jkit/parser/Java.g:804:53: ^( LABINOP multiplicativeExpression ( $i multiplicativeExpression )+ )
+                        // jkit/java/Java.g:804:53: ^( LABINOP multiplicativeExpression ( $i multiplicativeExpression )+ )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(LABINOP, "LABINOP"), root_1);
@@ -16339,7 +16339,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:805:8: 
+                    // jkit/java/Java.g:805:8: 
                     {
 
                     // AST REWRITE
@@ -16393,7 +16393,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "multiplicativeExpression"
-    // jkit/parser/Java.g:809:1: multiplicativeExpression : unaryExpression ( ( (i+= '*' | i+= '/' | i+= '%' ) unaryExpression )+ -> ^( LABINOP unaryExpression ( $i unaryExpression )+ ) | -> unaryExpression ) ;
+    // jkit/java/Java.g:809:1: multiplicativeExpression : unaryExpression ( ( (i+= '*' | i+= '/' | i+= '%' ) unaryExpression )+ -> ^( LABINOP unaryExpression ( $i unaryExpression )+ ) | -> unaryExpression ) ;
     public final JavaParser.multiplicativeExpression_return multiplicativeExpression() throws RecognitionException {
         JavaParser.multiplicativeExpression_return retval = new JavaParser.multiplicativeExpression_return();
         retval.start = input.LT(1);
@@ -16414,8 +16414,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_unaryExpression=new RewriteRuleSubtreeStream(adaptor,"rule unaryExpression");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 107) ) { return retval; }
-            // jkit/parser/Java.g:810:5: ( unaryExpression ( ( (i+= '*' | i+= '/' | i+= '%' ) unaryExpression )+ -> ^( LABINOP unaryExpression ( $i unaryExpression )+ ) | -> unaryExpression ) )
-            // jkit/parser/Java.g:810:9: unaryExpression ( ( (i+= '*' | i+= '/' | i+= '%' ) unaryExpression )+ -> ^( LABINOP unaryExpression ( $i unaryExpression )+ ) | -> unaryExpression )
+            // jkit/java/Java.g:810:5: ( unaryExpression ( ( (i+= '*' | i+= '/' | i+= '%' ) unaryExpression )+ -> ^( LABINOP unaryExpression ( $i unaryExpression )+ ) | -> unaryExpression ) )
+            // jkit/java/Java.g:810:9: unaryExpression ( ( (i+= '*' | i+= '/' | i+= '%' ) unaryExpression )+ -> ^( LABINOP unaryExpression ( $i unaryExpression )+ ) | -> unaryExpression )
             {
             pushFollow(FOLLOW_unaryExpression_in_multiplicativeExpression5724);
             unaryExpression461=unaryExpression();
@@ -16423,14 +16423,14 @@ public class JavaParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_unaryExpression.add(unaryExpression461.getTree());
-            // jkit/parser/Java.g:811:5: ( ( (i+= '*' | i+= '/' | i+= '%' ) unaryExpression )+ -> ^( LABINOP unaryExpression ( $i unaryExpression )+ ) | -> unaryExpression )
+            // jkit/java/Java.g:811:5: ( ( (i+= '*' | i+= '/' | i+= '%' ) unaryExpression )+ -> ^( LABINOP unaryExpression ( $i unaryExpression )+ ) | -> unaryExpression )
             int alt142=2;
             alt142 = dfa142.predict(input);
             switch (alt142) {
                 case 1 :
-                    // jkit/parser/Java.g:812:6: ( (i+= '*' | i+= '/' | i+= '%' ) unaryExpression )+
+                    // jkit/java/Java.g:812:6: ( (i+= '*' | i+= '/' | i+= '%' ) unaryExpression )+
                     {
-                    // jkit/parser/Java.g:812:6: ( (i+= '*' | i+= '/' | i+= '%' ) unaryExpression )+
+                    // jkit/java/Java.g:812:6: ( (i+= '*' | i+= '/' | i+= '%' ) unaryExpression )+
                     int cnt141=0;
                     loop141:
                     do {
@@ -16438,9 +16438,9 @@ public class JavaParser extends Parser {
                         alt141 = dfa141.predict(input);
                         switch (alt141) {
                     	case 1 :
-                    	    // jkit/parser/Java.g:812:8: (i+= '*' | i+= '/' | i+= '%' ) unaryExpression
+                    	    // jkit/java/Java.g:812:8: (i+= '*' | i+= '/' | i+= '%' ) unaryExpression
                     	    {
-                    	    // jkit/parser/Java.g:812:8: (i+= '*' | i+= '/' | i+= '%' )
+                    	    // jkit/java/Java.g:812:8: (i+= '*' | i+= '/' | i+= '%' )
                     	    int alt140=3;
                     	    switch ( input.LA(1) ) {
                     	    case 118:
@@ -16468,7 +16468,7 @@ public class JavaParser extends Parser {
 
                     	    switch (alt140) {
                     	        case 1 :
-                    	            // jkit/parser/Java.g:812:9: i+= '*'
+                    	            // jkit/java/Java.g:812:9: i+= '*'
                     	            {
                     	            i=(Token)match(input,118,FOLLOW_118_in_multiplicativeExpression5744); if (state.failed) return retval; 
                     	            if ( state.backtracking==0 ) stream_118.add(i);
@@ -16480,7 +16480,7 @@ public class JavaParser extends Parser {
                     	            }
                     	            break;
                     	        case 2 :
-                    	            // jkit/parser/Java.g:812:16: i+= '/'
+                    	            // jkit/java/Java.g:812:16: i+= '/'
                     	            {
                     	            i=(Token)match(input,180,FOLLOW_180_in_multiplicativeExpression5748); if (state.failed) return retval; 
                     	            if ( state.backtracking==0 ) stream_180.add(i);
@@ -16492,7 +16492,7 @@ public class JavaParser extends Parser {
                     	            }
                     	            break;
                     	        case 3 :
-                    	            // jkit/parser/Java.g:812:23: i+= '%'
+                    	            // jkit/java/Java.g:812:23: i+= '%'
                     	            {
                     	            i=(Token)match(input,184,FOLLOW_184_in_multiplicativeExpression5752); if (state.failed) return retval; 
                     	            if ( state.backtracking==0 ) stream_184.add(i);
@@ -16542,7 +16542,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 812:49: -> ^( LABINOP unaryExpression ( $i unaryExpression )+ )
                     {
-                        // jkit/parser/Java.g:812:52: ^( LABINOP unaryExpression ( $i unaryExpression )+ )
+                        // jkit/java/Java.g:812:52: ^( LABINOP unaryExpression ( $i unaryExpression )+ )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(LABINOP, "LABINOP"), root_1);
@@ -16568,7 +16568,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:813:8: 
+                    // jkit/java/Java.g:813:8: 
                     {
 
                     // AST REWRITE
@@ -16622,7 +16622,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "unaryExpression"
-    // jkit/parser/Java.g:817:1: unaryExpression : ( '+' unaryExpression -> unaryExpression | '-' unaryExpression -> ^( NEG unaryExpression ) | '++' unaryExpression -> ^( PREINC unaryExpression ) | '--' unaryExpression -> ^( PREDEC unaryExpression ) | unaryExpressionNotPlusMinus -> unaryExpressionNotPlusMinus );
+    // jkit/java/Java.g:817:1: unaryExpression : ( '+' unaryExpression -> unaryExpression | '-' unaryExpression -> ^( NEG unaryExpression ) | '++' unaryExpression -> ^( PREINC unaryExpression ) | '--' unaryExpression -> ^( PREDEC unaryExpression ) | unaryExpressionNotPlusMinus -> unaryExpressionNotPlusMinus );
     public final JavaParser.unaryExpression_return unaryExpression() throws RecognitionException {
         JavaParser.unaryExpression_return retval = new JavaParser.unaryExpression_return();
         retval.start = input.LT(1);
@@ -16656,12 +16656,12 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_unaryExpressionNotPlusMinus=new RewriteRuleSubtreeStream(adaptor,"rule unaryExpressionNotPlusMinus");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 108) ) { return retval; }
-            // jkit/parser/Java.g:818:5: ( '+' unaryExpression -> unaryExpression | '-' unaryExpression -> ^( NEG unaryExpression ) | '++' unaryExpression -> ^( PREINC unaryExpression ) | '--' unaryExpression -> ^( PREDEC unaryExpression ) | unaryExpressionNotPlusMinus -> unaryExpressionNotPlusMinus )
+            // jkit/java/Java.g:818:5: ( '+' unaryExpression -> unaryExpression | '-' unaryExpression -> ^( NEG unaryExpression ) | '++' unaryExpression -> ^( PREINC unaryExpression ) | '--' unaryExpression -> ^( PREDEC unaryExpression ) | unaryExpressionNotPlusMinus -> unaryExpressionNotPlusMinus )
             int alt143=5;
             alt143 = dfa143.predict(input);
             switch (alt143) {
                 case 1 :
-                    // jkit/parser/Java.g:818:9: '+' unaryExpression
+                    // jkit/java/Java.g:818:9: '+' unaryExpression
                     {
                     char_literal463=(Token)match(input,178,FOLLOW_178_in_unaryExpression5807); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_178.add(char_literal463);
@@ -16695,7 +16695,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:819:7: '-' unaryExpression
+                    // jkit/java/Java.g:819:7: '-' unaryExpression
                     {
                     char_literal465=(Token)match(input,179,FOLLOW_179_in_unaryExpression5821); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_179.add(char_literal465);
@@ -16721,7 +16721,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 819:27: -> ^( NEG unaryExpression )
                     {
-                        // jkit/parser/Java.g:819:30: ^( NEG unaryExpression )
+                        // jkit/java/Java.g:819:30: ^( NEG unaryExpression )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(NEG, "NEG"), root_1);
@@ -16737,7 +16737,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // jkit/parser/Java.g:820:9: '++' unaryExpression
+                    // jkit/java/Java.g:820:9: '++' unaryExpression
                     {
                     string_literal467=(Token)match(input,192,FOLLOW_192_in_unaryExpression5841); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_192.add(string_literal467);
@@ -16763,7 +16763,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 820:30: -> ^( PREINC unaryExpression )
                     {
-                        // jkit/parser/Java.g:820:33: ^( PREINC unaryExpression )
+                        // jkit/java/Java.g:820:33: ^( PREINC unaryExpression )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(PREINC, "PREINC"), root_1);
@@ -16779,7 +16779,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // jkit/parser/Java.g:821:9: '--' unaryExpression
+                    // jkit/java/Java.g:821:9: '--' unaryExpression
                     {
                     string_literal469=(Token)match(input,193,FOLLOW_193_in_unaryExpression5861); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_193.add(string_literal469);
@@ -16805,7 +16805,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 821:30: -> ^( PREDEC unaryExpression )
                     {
-                        // jkit/parser/Java.g:821:33: ^( PREDEC unaryExpression )
+                        // jkit/java/Java.g:821:33: ^( PREDEC unaryExpression )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(PREDEC, "PREDEC"), root_1);
@@ -16821,7 +16821,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 5 :
-                    // jkit/parser/Java.g:822:9: unaryExpressionNotPlusMinus
+                    // jkit/java/Java.g:822:9: unaryExpressionNotPlusMinus
                     {
                     pushFollow(FOLLOW_unaryExpressionNotPlusMinus_in_unaryExpression5881);
                     unaryExpressionNotPlusMinus471=unaryExpressionNotPlusMinus();
@@ -16878,7 +16878,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "unaryExpressionNotPlusMinus"
-    // jkit/parser/Java.g:825:1: unaryExpressionNotPlusMinus : ( '~' unaryExpression -> ^( INV unaryExpression ) | '!' unaryExpression -> ^( NOT unaryExpression ) | castExpression | primary ( ( selector )+ ( '++' -> ^( POSTINC ^( SELECTOR primary ( selector )+ ) ) | '--' -> ^( POSTDEC ^( SELECTOR primary ( selector )+ ) ) | -> ^( SELECTOR primary ( selector )+ ) ) | '++' -> ^( POSTINC primary ) | '--' -> ^( POSTDEC primary ) | -> primary ) );
+    // jkit/java/Java.g:825:1: unaryExpressionNotPlusMinus : ( '~' unaryExpression -> ^( INV unaryExpression ) | '!' unaryExpression -> ^( NOT unaryExpression ) | castExpression | primary ( ( selector )+ ( '++' -> ^( POSTINC ^( SELECTOR primary ( selector )+ ) ) | '--' -> ^( POSTDEC ^( SELECTOR primary ( selector )+ ) ) | -> ^( SELECTOR primary ( selector )+ ) ) | '++' -> ^( POSTINC primary ) | '--' -> ^( POSTDEC primary ) | -> primary ) );
     public final JavaParser.unaryExpressionNotPlusMinus_return unaryExpressionNotPlusMinus() throws RecognitionException {
         JavaParser.unaryExpressionNotPlusMinus_return retval = new JavaParser.unaryExpressionNotPlusMinus_return();
         retval.start = input.LT(1);
@@ -16917,12 +16917,12 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_selector=new RewriteRuleSubtreeStream(adaptor,"rule selector");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 109) ) { return retval; }
-            // jkit/parser/Java.g:826:5: ( '~' unaryExpression -> ^( INV unaryExpression ) | '!' unaryExpression -> ^( NOT unaryExpression ) | castExpression | primary ( ( selector )+ ( '++' -> ^( POSTINC ^( SELECTOR primary ( selector )+ ) ) | '--' -> ^( POSTDEC ^( SELECTOR primary ( selector )+ ) ) | -> ^( SELECTOR primary ( selector )+ ) ) | '++' -> ^( POSTINC primary ) | '--' -> ^( POSTDEC primary ) | -> primary ) )
+            // jkit/java/Java.g:826:5: ( '~' unaryExpression -> ^( INV unaryExpression ) | '!' unaryExpression -> ^( NOT unaryExpression ) | castExpression | primary ( ( selector )+ ( '++' -> ^( POSTINC ^( SELECTOR primary ( selector )+ ) ) | '--' -> ^( POSTDEC ^( SELECTOR primary ( selector )+ ) ) | -> ^( SELECTOR primary ( selector )+ ) ) | '++' -> ^( POSTINC primary ) | '--' -> ^( POSTDEC primary ) | -> primary ) )
             int alt147=4;
             alt147 = dfa147.predict(input);
             switch (alt147) {
                 case 1 :
-                    // jkit/parser/Java.g:826:9: '~' unaryExpression
+                    // jkit/java/Java.g:826:9: '~' unaryExpression
                     {
                     char_literal472=(Token)match(input,194,FOLLOW_194_in_unaryExpressionNotPlusMinus5912); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_194.add(char_literal472);
@@ -16948,7 +16948,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 826:29: -> ^( INV unaryExpression )
                     {
-                        // jkit/parser/Java.g:826:32: ^( INV unaryExpression )
+                        // jkit/java/Java.g:826:32: ^( INV unaryExpression )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(INV, "INV"), root_1);
@@ -16964,7 +16964,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:827:8: '!' unaryExpression
+                    // jkit/java/Java.g:827:8: '!' unaryExpression
                     {
                     char_literal474=(Token)match(input,195,FOLLOW_195_in_unaryExpressionNotPlusMinus5931); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_195.add(char_literal474);
@@ -16990,7 +16990,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 827:28: -> ^( NOT unaryExpression )
                     {
-                        // jkit/parser/Java.g:827:31: ^( NOT unaryExpression )
+                        // jkit/java/Java.g:827:31: ^( NOT unaryExpression )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(NOT, "NOT"), root_1);
@@ -17006,7 +17006,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // jkit/parser/Java.g:828:9: castExpression
+                    // jkit/java/Java.g:828:9: castExpression
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -17020,7 +17020,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // jkit/parser/Java.g:829:6: primary ( ( selector )+ ( '++' -> ^( POSTINC ^( SELECTOR primary ( selector )+ ) ) | '--' -> ^( POSTDEC ^( SELECTOR primary ( selector )+ ) ) | -> ^( SELECTOR primary ( selector )+ ) ) | '++' -> ^( POSTINC primary ) | '--' -> ^( POSTDEC primary ) | -> primary )
+                    // jkit/java/Java.g:829:6: primary ( ( selector )+ ( '++' -> ^( POSTINC ^( SELECTOR primary ( selector )+ ) ) | '--' -> ^( POSTDEC ^( SELECTOR primary ( selector )+ ) ) | -> ^( SELECTOR primary ( selector )+ ) ) | '++' -> ^( POSTINC primary ) | '--' -> ^( POSTDEC primary ) | -> primary )
                     {
                     pushFollow(FOLLOW_primary_in_unaryExpressionNotPlusMinus5958);
                     primary477=primary();
@@ -17028,14 +17028,14 @@ public class JavaParser extends Parser {
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_primary.add(primary477.getTree());
-                    // jkit/parser/Java.g:830:3: ( ( selector )+ ( '++' -> ^( POSTINC ^( SELECTOR primary ( selector )+ ) ) | '--' -> ^( POSTDEC ^( SELECTOR primary ( selector )+ ) ) | -> ^( SELECTOR primary ( selector )+ ) ) | '++' -> ^( POSTINC primary ) | '--' -> ^( POSTDEC primary ) | -> primary )
+                    // jkit/java/Java.g:830:3: ( ( selector )+ ( '++' -> ^( POSTINC ^( SELECTOR primary ( selector )+ ) ) | '--' -> ^( POSTDEC ^( SELECTOR primary ( selector )+ ) ) | -> ^( SELECTOR primary ( selector )+ ) ) | '++' -> ^( POSTINC primary ) | '--' -> ^( POSTDEC primary ) | -> primary )
                     int alt146=4;
                     alt146 = dfa146.predict(input);
                     switch (alt146) {
                         case 1 :
-                            // jkit/parser/Java.g:831:4: ( selector )+ ( '++' -> ^( POSTINC ^( SELECTOR primary ( selector )+ ) ) | '--' -> ^( POSTDEC ^( SELECTOR primary ( selector )+ ) ) | -> ^( SELECTOR primary ( selector )+ ) )
+                            // jkit/java/Java.g:831:4: ( selector )+ ( '++' -> ^( POSTINC ^( SELECTOR primary ( selector )+ ) ) | '--' -> ^( POSTDEC ^( SELECTOR primary ( selector )+ ) ) | -> ^( SELECTOR primary ( selector )+ ) )
                             {
-                            // jkit/parser/Java.g:831:4: ( selector )+
+                            // jkit/java/Java.g:831:4: ( selector )+
                             int cnt144=0;
                             loop144:
                             do {
@@ -17043,7 +17043,7 @@ public class JavaParser extends Parser {
                                 alt144 = dfa144.predict(input);
                                 switch (alt144) {
                             	case 1 :
-                            	    // jkit/parser/Java.g:0:0: selector
+                            	    // jkit/java/Java.g:0:0: selector
                             	    {
                             	    pushFollow(FOLLOW_selector_in_unaryExpressionNotPlusMinus5968);
                             	    selector478=selector();
@@ -17065,12 +17065,12 @@ public class JavaParser extends Parser {
                                 cnt144++;
                             } while (true);
 
-                            // jkit/parser/Java.g:832:4: ( '++' -> ^( POSTINC ^( SELECTOR primary ( selector )+ ) ) | '--' -> ^( POSTDEC ^( SELECTOR primary ( selector )+ ) ) | -> ^( SELECTOR primary ( selector )+ ) )
+                            // jkit/java/Java.g:832:4: ( '++' -> ^( POSTINC ^( SELECTOR primary ( selector )+ ) ) | '--' -> ^( POSTDEC ^( SELECTOR primary ( selector )+ ) ) | -> ^( SELECTOR primary ( selector )+ ) )
                             int alt145=3;
                             alt145 = dfa145.predict(input);
                             switch (alt145) {
                                 case 1 :
-                                    // jkit/parser/Java.g:833:5: '++'
+                                    // jkit/java/Java.g:833:5: '++'
                                     {
                                     string_literal479=(Token)match(input,192,FOLLOW_192_in_unaryExpressionNotPlusMinus5981); if (state.failed) return retval; 
                                     if ( state.backtracking==0 ) stream_192.add(string_literal479);
@@ -17090,12 +17090,12 @@ public class JavaParser extends Parser {
                                     root_0 = (Object)adaptor.nil();
                                     // 833:10: -> ^( POSTINC ^( SELECTOR primary ( selector )+ ) )
                                     {
-                                        // jkit/parser/Java.g:833:13: ^( POSTINC ^( SELECTOR primary ( selector )+ ) )
+                                        // jkit/java/Java.g:833:13: ^( POSTINC ^( SELECTOR primary ( selector )+ ) )
                                         {
                                         Object root_1 = (Object)adaptor.nil();
                                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(POSTINC, "POSTINC"), root_1);
 
-                                        // jkit/parser/Java.g:833:23: ^( SELECTOR primary ( selector )+ )
+                                        // jkit/java/Java.g:833:23: ^( SELECTOR primary ( selector )+ )
                                         {
                                         Object root_2 = (Object)adaptor.nil();
                                         root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(SELECTOR, "SELECTOR"), root_2);
@@ -17122,7 +17122,7 @@ public class JavaParser extends Parser {
                                     }
                                     break;
                                 case 2 :
-                                    // jkit/parser/Java.g:834:6: '--'
+                                    // jkit/java/Java.g:834:6: '--'
                                     {
                                     string_literal480=(Token)match(input,193,FOLLOW_193_in_unaryExpressionNotPlusMinus6003); if (state.failed) return retval; 
                                     if ( state.backtracking==0 ) stream_193.add(string_literal480);
@@ -17142,12 +17142,12 @@ public class JavaParser extends Parser {
                                     root_0 = (Object)adaptor.nil();
                                     // 834:11: -> ^( POSTDEC ^( SELECTOR primary ( selector )+ ) )
                                     {
-                                        // jkit/parser/Java.g:834:14: ^( POSTDEC ^( SELECTOR primary ( selector )+ ) )
+                                        // jkit/java/Java.g:834:14: ^( POSTDEC ^( SELECTOR primary ( selector )+ ) )
                                         {
                                         Object root_1 = (Object)adaptor.nil();
                                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(POSTDEC, "POSTDEC"), root_1);
 
-                                        // jkit/parser/Java.g:834:24: ^( SELECTOR primary ( selector )+ )
+                                        // jkit/java/Java.g:834:24: ^( SELECTOR primary ( selector )+ )
                                         {
                                         Object root_2 = (Object)adaptor.nil();
                                         root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(SELECTOR, "SELECTOR"), root_2);
@@ -17174,7 +17174,7 @@ public class JavaParser extends Parser {
                                     }
                                     break;
                                 case 3 :
-                                    // jkit/parser/Java.g:835:7: 
+                                    // jkit/java/Java.g:835:7: 
                                     {
 
                                     // AST REWRITE
@@ -17190,7 +17190,7 @@ public class JavaParser extends Parser {
                                     root_0 = (Object)adaptor.nil();
                                     // 835:7: -> ^( SELECTOR primary ( selector )+ )
                                     {
-                                        // jkit/parser/Java.g:835:10: ^( SELECTOR primary ( selector )+ )
+                                        // jkit/java/Java.g:835:10: ^( SELECTOR primary ( selector )+ )
                                         {
                                         Object root_1 = (Object)adaptor.nil();
                                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(SELECTOR, "SELECTOR"), root_1);
@@ -17220,7 +17220,7 @@ public class JavaParser extends Parser {
                             }
                             break;
                         case 2 :
-                            // jkit/parser/Java.g:837:6: '++'
+                            // jkit/java/Java.g:837:6: '++'
                             {
                             string_literal481=(Token)match(input,192,FOLLOW_192_in_unaryExpressionNotPlusMinus6047); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_192.add(string_literal481);
@@ -17240,7 +17240,7 @@ public class JavaParser extends Parser {
                             root_0 = (Object)adaptor.nil();
                             // 837:11: -> ^( POSTINC primary )
                             {
-                                // jkit/parser/Java.g:837:14: ^( POSTINC primary )
+                                // jkit/java/Java.g:837:14: ^( POSTINC primary )
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(POSTINC, "POSTINC"), root_1);
@@ -17256,7 +17256,7 @@ public class JavaParser extends Parser {
                             }
                             break;
                         case 3 :
-                            // jkit/parser/Java.g:838:6: '--'
+                            // jkit/java/Java.g:838:6: '--'
                             {
                             string_literal482=(Token)match(input,193,FOLLOW_193_in_unaryExpressionNotPlusMinus6062); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_193.add(string_literal482);
@@ -17276,7 +17276,7 @@ public class JavaParser extends Parser {
                             root_0 = (Object)adaptor.nil();
                             // 838:11: -> ^( POSTDEC primary )
                             {
-                                // jkit/parser/Java.g:838:14: ^( POSTDEC primary )
+                                // jkit/java/Java.g:838:14: ^( POSTDEC primary )
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(POSTDEC, "POSTDEC"), root_1);
@@ -17292,7 +17292,7 @@ public class JavaParser extends Parser {
                             }
                             break;
                         case 4 :
-                            // jkit/parser/Java.g:839:6: 
+                            // jkit/java/Java.g:839:6: 
                             {
 
                             // AST REWRITE
@@ -17348,7 +17348,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "castExpression"
-    // jkit/parser/Java.g:843:1: castExpression : ( '(' primitiveType ')' unaryExpression -> ^( CAST ^( TYPE primitiveType ) unaryExpression ) | '(' type ')' unaryExpressionNotPlusMinus -> ^( CAST type unaryExpressionNotPlusMinus ) | '(' expression ')' unaryExpressionNotPlusMinus ->);
+    // jkit/java/Java.g:843:1: castExpression : ( '(' primitiveType ')' unaryExpression -> ^( CAST ^( TYPE primitiveType ) unaryExpression ) | '(' type ')' unaryExpressionNotPlusMinus -> ^( CAST type unaryExpressionNotPlusMinus ) | '(' expression ')' unaryExpressionNotPlusMinus ->);
     public final JavaParser.castExpression_return castExpression() throws RecognitionException {
         JavaParser.castExpression_return retval = new JavaParser.castExpression_return();
         retval.start = input.LT(1);
@@ -17389,12 +17389,12 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_expression=new RewriteRuleSubtreeStream(adaptor,"rule expression");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 110) ) { return retval; }
-            // jkit/parser/Java.g:844:5: ( '(' primitiveType ')' unaryExpression -> ^( CAST ^( TYPE primitiveType ) unaryExpression ) | '(' type ')' unaryExpressionNotPlusMinus -> ^( CAST type unaryExpressionNotPlusMinus ) | '(' expression ')' unaryExpressionNotPlusMinus ->)
+            // jkit/java/Java.g:844:5: ( '(' primitiveType ')' unaryExpression -> ^( CAST ^( TYPE primitiveType ) unaryExpression ) | '(' type ')' unaryExpressionNotPlusMinus -> ^( CAST type unaryExpressionNotPlusMinus ) | '(' expression ')' unaryExpressionNotPlusMinus ->)
             int alt148=3;
             alt148 = dfa148.predict(input);
             switch (alt148) {
                 case 1 :
-                    // jkit/parser/Java.g:844:8: '(' primitiveType ')' unaryExpression
+                    // jkit/java/Java.g:844:8: '(' primitiveType ')' unaryExpression
                     {
                     char_literal483=(Token)match(input,154,FOLLOW_154_in_castExpression6101); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_154.add(char_literal483);
@@ -17429,12 +17429,12 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 844:46: -> ^( CAST ^( TYPE primitiveType ) unaryExpression )
                     {
-                        // jkit/parser/Java.g:844:49: ^( CAST ^( TYPE primitiveType ) unaryExpression )
+                        // jkit/java/Java.g:844:49: ^( CAST ^( TYPE primitiveType ) unaryExpression )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(CAST, "CAST"), root_1);
 
-                        // jkit/parser/Java.g:844:56: ^( TYPE primitiveType )
+                        // jkit/java/Java.g:844:56: ^( TYPE primitiveType )
                         {
                         Object root_2 = (Object)adaptor.nil();
                         root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(TYPE, "TYPE"), root_2);
@@ -17454,7 +17454,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:845:8: '(' type ')' unaryExpressionNotPlusMinus
+                    // jkit/java/Java.g:845:8: '(' type ')' unaryExpressionNotPlusMinus
                     {
                     char_literal487=(Token)match(input,154,FOLLOW_154_in_castExpression6130); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_154.add(char_literal487);
@@ -17489,7 +17489,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 845:49: -> ^( CAST type unaryExpressionNotPlusMinus )
                     {
-                        // jkit/parser/Java.g:845:52: ^( CAST type unaryExpressionNotPlusMinus )
+                        // jkit/java/Java.g:845:52: ^( CAST type unaryExpressionNotPlusMinus )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(CAST, "CAST"), root_1);
@@ -17506,7 +17506,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // jkit/parser/Java.g:846:8: '(' expression ')' unaryExpressionNotPlusMinus
+                    // jkit/java/Java.g:846:8: '(' expression ')' unaryExpressionNotPlusMinus
                     {
                     char_literal491=(Token)match(input,154,FOLLOW_154_in_castExpression6155); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_154.add(char_literal491);
@@ -17574,7 +17574,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "primary"
-    // jkit/parser/Java.g:849:1: primary : ( parExpression | nonWildcardTypeArguments explicitGenericInvocationSuffix -> ^( INVOKE ^( TYPE_PARAMETER nonWildcardTypeArguments ) explicitGenericInvocationSuffix ) | literal | 'new' ( nonWildcardTypeArguments )? primitiveType ( ( '[' expression ']' )+ ( '[' ']' )* -> ^( NEW ^( TYPE primitiveType ( '[' )* ) ( expression )* ) | ( '[' ']' )+ arrayInitializer -> ^( ARRAYINIT ^( TYPE primitiveType ( '[' )* ) arrayInitializer ) ) | 'new' ( nonWildcardTypeArguments )? (i+= refComponent ( '.' i+= refComponent )* ) ( ( '[' expression ']' )+ ( '[' ']' )* -> ^( NEW ^( TYPE ( $i)+ ( '[' )* ) ( expression )* ) | ( '[' ']' )+ arrayInitializer -> ^( ARRAYINIT ^( TYPE ( $i)+ ( '[' )* ) arrayInitializer ) | classCreatorRest -> ^( NEW ^( TYPE ( $i)+ ) ( classCreatorRest )? ) ) | type '.' 'class' -> ^( GETCLASS type ) | 'void' '.' 'class' -> ^( GETCLASS ^( TYPE VOID ) ) | 'super' ( arguments -> ^( INVOKE 'super' ( arguments )? ) | -> ^( VAR 'super' ) ) | Identifier ( arguments -> ^( INVOKE Identifier ( arguments )? ) | -> ^( VAR Identifier ) ) );
+    // jkit/java/Java.g:849:1: primary : ( parExpression | nonWildcardTypeArguments explicitGenericInvocationSuffix -> ^( INVOKE ^( TYPE_PARAMETER nonWildcardTypeArguments ) explicitGenericInvocationSuffix ) | literal | 'new' ( nonWildcardTypeArguments )? primitiveType ( ( '[' expression ']' )+ ( '[' ']' )* -> ^( NEW ^( TYPE primitiveType ( '[' )* ) ( expression )* ) | ( '[' ']' )+ arrayInitializer -> ^( ARRAYINIT ^( TYPE primitiveType ( '[' )* ) arrayInitializer ) ) | 'new' ( nonWildcardTypeArguments )? (i+= refComponent ( '.' i+= refComponent )* ) ( ( '[' expression ']' )+ ( '[' ']' )* -> ^( NEW ^( TYPE ( $i)+ ( '[' )* ) ( expression )* ) | ( '[' ']' )+ arrayInitializer -> ^( ARRAYINIT ^( TYPE ( $i)+ ( '[' )* ) arrayInitializer ) | classCreatorRest -> ^( NEW ^( TYPE ( $i)+ ) ( classCreatorRest )? ) ) | type '.' 'class' -> ^( GETCLASS type ) | 'void' '.' 'class' -> ^( GETCLASS ^( TYPE VOID ) ) | 'super' ( arguments -> ^( INVOKE 'super' ( arguments )? ) | -> ^( VAR 'super' ) ) | Identifier ( arguments -> ^( INVOKE Identifier ( arguments )? ) | -> ^( VAR Identifier ) ) );
     public final JavaParser.primary_return primary() throws RecognitionException {
         JavaParser.primary_return retval = new JavaParser.primary_return();
         retval.start = input.LT(1);
@@ -17676,12 +17676,12 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_expression=new RewriteRuleSubtreeStream(adaptor,"rule expression");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 111) ) { return retval; }
-            // jkit/parser/Java.g:850:5: ( parExpression | nonWildcardTypeArguments explicitGenericInvocationSuffix -> ^( INVOKE ^( TYPE_PARAMETER nonWildcardTypeArguments ) explicitGenericInvocationSuffix ) | literal | 'new' ( nonWildcardTypeArguments )? primitiveType ( ( '[' expression ']' )+ ( '[' ']' )* -> ^( NEW ^( TYPE primitiveType ( '[' )* ) ( expression )* ) | ( '[' ']' )+ arrayInitializer -> ^( ARRAYINIT ^( TYPE primitiveType ( '[' )* ) arrayInitializer ) ) | 'new' ( nonWildcardTypeArguments )? (i+= refComponent ( '.' i+= refComponent )* ) ( ( '[' expression ']' )+ ( '[' ']' )* -> ^( NEW ^( TYPE ( $i)+ ( '[' )* ) ( expression )* ) | ( '[' ']' )+ arrayInitializer -> ^( ARRAYINIT ^( TYPE ( $i)+ ( '[' )* ) arrayInitializer ) | classCreatorRest -> ^( NEW ^( TYPE ( $i)+ ) ( classCreatorRest )? ) ) | type '.' 'class' -> ^( GETCLASS type ) | 'void' '.' 'class' -> ^( GETCLASS ^( TYPE VOID ) ) | 'super' ( arguments -> ^( INVOKE 'super' ( arguments )? ) | -> ^( VAR 'super' ) ) | Identifier ( arguments -> ^( INVOKE Identifier ( arguments )? ) | -> ^( VAR Identifier ) ) )
+            // jkit/java/Java.g:850:5: ( parExpression | nonWildcardTypeArguments explicitGenericInvocationSuffix -> ^( INVOKE ^( TYPE_PARAMETER nonWildcardTypeArguments ) explicitGenericInvocationSuffix ) | literal | 'new' ( nonWildcardTypeArguments )? primitiveType ( ( '[' expression ']' )+ ( '[' ']' )* -> ^( NEW ^( TYPE primitiveType ( '[' )* ) ( expression )* ) | ( '[' ']' )+ arrayInitializer -> ^( ARRAYINIT ^( TYPE primitiveType ( '[' )* ) arrayInitializer ) ) | 'new' ( nonWildcardTypeArguments )? (i+= refComponent ( '.' i+= refComponent )* ) ( ( '[' expression ']' )+ ( '[' ']' )* -> ^( NEW ^( TYPE ( $i)+ ( '[' )* ) ( expression )* ) | ( '[' ']' )+ arrayInitializer -> ^( ARRAYINIT ^( TYPE ( $i)+ ( '[' )* ) arrayInitializer ) | classCreatorRest -> ^( NEW ^( TYPE ( $i)+ ) ( classCreatorRest )? ) ) | type '.' 'class' -> ^( GETCLASS type ) | 'void' '.' 'class' -> ^( GETCLASS ^( TYPE VOID ) ) | 'super' ( arguments -> ^( INVOKE 'super' ( arguments )? ) | -> ^( VAR 'super' ) ) | Identifier ( arguments -> ^( INVOKE Identifier ( arguments )? ) | -> ^( VAR Identifier ) ) )
             int alt162=9;
             alt162 = dfa162.predict(input);
             switch (alt162) {
                 case 1 :
-                    // jkit/parser/Java.g:850:7: parExpression
+                    // jkit/java/Java.g:850:7: parExpression
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -17695,7 +17695,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:851:6: nonWildcardTypeArguments explicitGenericInvocationSuffix
+                    // jkit/java/Java.g:851:6: nonWildcardTypeArguments explicitGenericInvocationSuffix
                     {
                     pushFollow(FOLLOW_nonWildcardTypeArguments_in_primary6188);
                     nonWildcardTypeArguments496=nonWildcardTypeArguments();
@@ -17724,12 +17724,12 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 851:63: -> ^( INVOKE ^( TYPE_PARAMETER nonWildcardTypeArguments ) explicitGenericInvocationSuffix )
                     {
-                        // jkit/parser/Java.g:851:66: ^( INVOKE ^( TYPE_PARAMETER nonWildcardTypeArguments ) explicitGenericInvocationSuffix )
+                        // jkit/java/Java.g:851:66: ^( INVOKE ^( TYPE_PARAMETER nonWildcardTypeArguments ) explicitGenericInvocationSuffix )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(INVOKE, "INVOKE"), root_1);
 
-                        // jkit/parser/Java.g:851:75: ^( TYPE_PARAMETER nonWildcardTypeArguments )
+                        // jkit/java/Java.g:851:75: ^( TYPE_PARAMETER nonWildcardTypeArguments )
                         {
                         Object root_2 = (Object)adaptor.nil();
                         root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(TYPE_PARAMETER, "TYPE_PARAMETER"), root_2);
@@ -17749,7 +17749,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // jkit/parser/Java.g:852:9: literal
+                    // jkit/java/Java.g:852:9: literal
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -17763,12 +17763,12 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // jkit/parser/Java.g:853:9: 'new' ( nonWildcardTypeArguments )? primitiveType ( ( '[' expression ']' )+ ( '[' ']' )* -> ^( NEW ^( TYPE primitiveType ( '[' )* ) ( expression )* ) | ( '[' ']' )+ arrayInitializer -> ^( ARRAYINIT ^( TYPE primitiveType ( '[' )* ) arrayInitializer ) )
+                    // jkit/java/Java.g:853:9: 'new' ( nonWildcardTypeArguments )? primitiveType ( ( '[' expression ']' )+ ( '[' ']' )* -> ^( NEW ^( TYPE primitiveType ( '[' )* ) ( expression )* ) | ( '[' ']' )+ arrayInitializer -> ^( ARRAYINIT ^( TYPE primitiveType ( '[' )* ) arrayInitializer ) )
                     {
                     string_literal499=(Token)match(input,196,FOLLOW_196_in_primary6224); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_196.add(string_literal499);
 
-                    // jkit/parser/Java.g:853:15: ( nonWildcardTypeArguments )?
+                    // jkit/java/Java.g:853:15: ( nonWildcardTypeArguments )?
                     int alt149=2;
                     int LA149_0 = input.LA(1);
 
@@ -17777,7 +17777,7 @@ public class JavaParser extends Parser {
                     }
                     switch (alt149) {
                         case 1 :
-                            // jkit/parser/Java.g:0:0: nonWildcardTypeArguments
+                            // jkit/java/Java.g:0:0: nonWildcardTypeArguments
                             {
                             pushFollow(FOLLOW_nonWildcardTypeArguments_in_primary6226);
                             nonWildcardTypeArguments500=nonWildcardTypeArguments();
@@ -17797,14 +17797,14 @@ public class JavaParser extends Parser {
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_primitiveType.add(primitiveType501.getTree());
-                    // jkit/parser/Java.g:854:6: ( ( '[' expression ']' )+ ( '[' ']' )* -> ^( NEW ^( TYPE primitiveType ( '[' )* ) ( expression )* ) | ( '[' ']' )+ arrayInitializer -> ^( ARRAYINIT ^( TYPE primitiveType ( '[' )* ) arrayInitializer ) )
+                    // jkit/java/Java.g:854:6: ( ( '[' expression ']' )+ ( '[' ']' )* -> ^( NEW ^( TYPE primitiveType ( '[' )* ) ( expression )* ) | ( '[' ']' )+ arrayInitializer -> ^( ARRAYINIT ^( TYPE primitiveType ( '[' )* ) arrayInitializer ) )
                     int alt153=2;
                     alt153 = dfa153.predict(input);
                     switch (alt153) {
                         case 1 :
-                            // jkit/parser/Java.g:855:7: ( '[' expression ']' )+ ( '[' ']' )*
+                            // jkit/java/Java.g:855:7: ( '[' expression ']' )+ ( '[' ']' )*
                             {
-                            // jkit/parser/Java.g:855:7: ( '[' expression ']' )+
+                            // jkit/java/Java.g:855:7: ( '[' expression ']' )+
                             int cnt150=0;
                             loop150:
                             do {
@@ -17812,7 +17812,7 @@ public class JavaParser extends Parser {
                                 alt150 = dfa150.predict(input);
                                 switch (alt150) {
                             	case 1 :
-                            	    // jkit/parser/Java.g:855:8: '[' expression ']'
+                            	    // jkit/java/Java.g:855:8: '[' expression ']'
                             	    {
                             	    char_literal502=(Token)match(input,131,FOLLOW_131_in_primary6245); if (state.failed) return retval; 
                             	    if ( state.backtracking==0 ) stream_131.add(char_literal502);
@@ -17840,14 +17840,14 @@ public class JavaParser extends Parser {
                                 cnt150++;
                             } while (true);
 
-                            // jkit/parser/Java.g:855:29: ( '[' ']' )*
+                            // jkit/java/Java.g:855:29: ( '[' ']' )*
                             loop151:
                             do {
                                 int alt151=2;
                                 alt151 = dfa151.predict(input);
                                 switch (alt151) {
                             	case 1 :
-                            	    // jkit/parser/Java.g:855:30: '[' ']'
+                            	    // jkit/java/Java.g:855:30: '[' ']'
                             	    {
                             	    char_literal505=(Token)match(input,131,FOLLOW_131_in_primary6254); if (state.failed) return retval; 
                             	    if ( state.backtracking==0 ) stream_131.add(char_literal505);
@@ -17879,18 +17879,18 @@ public class JavaParser extends Parser {
                             root_0 = (Object)adaptor.nil();
                             // 855:40: -> ^( NEW ^( TYPE primitiveType ( '[' )* ) ( expression )* )
                             {
-                                // jkit/parser/Java.g:855:43: ^( NEW ^( TYPE primitiveType ( '[' )* ) ( expression )* )
+                                // jkit/java/Java.g:855:43: ^( NEW ^( TYPE primitiveType ( '[' )* ) ( expression )* )
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(NEW, "NEW"), root_1);
 
-                                // jkit/parser/Java.g:855:49: ^( TYPE primitiveType ( '[' )* )
+                                // jkit/java/Java.g:855:49: ^( TYPE primitiveType ( '[' )* )
                                 {
                                 Object root_2 = (Object)adaptor.nil();
                                 root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(TYPE, "TYPE"), root_2);
 
                                 adaptor.addChild(root_2, stream_primitiveType.nextTree());
-                                // jkit/parser/Java.g:855:70: ( '[' )*
+                                // jkit/java/Java.g:855:70: ( '[' )*
                                 while ( stream_131.hasNext() ) {
                                     adaptor.addChild(root_2, stream_131.nextNode());
 
@@ -17899,7 +17899,7 @@ public class JavaParser extends Parser {
 
                                 adaptor.addChild(root_1, root_2);
                                 }
-                                // jkit/parser/Java.g:855:76: ( expression )*
+                                // jkit/java/Java.g:855:76: ( expression )*
                                 while ( stream_expression.hasNext() ) {
                                     adaptor.addChild(root_1, stream_expression.nextTree());
 
@@ -17915,9 +17915,9 @@ public class JavaParser extends Parser {
                             }
                             break;
                         case 2 :
-                            // jkit/parser/Java.g:856:9: ( '[' ']' )+ arrayInitializer
+                            // jkit/java/Java.g:856:9: ( '[' ']' )+ arrayInitializer
                             {
-                            // jkit/parser/Java.g:856:9: ( '[' ']' )+
+                            // jkit/java/Java.g:856:9: ( '[' ']' )+
                             int cnt152=0;
                             loop152:
                             do {
@@ -17931,7 +17931,7 @@ public class JavaParser extends Parser {
 
                                 switch (alt152) {
                             	case 1 :
-                            	    // jkit/parser/Java.g:856:10: '[' ']'
+                            	    // jkit/java/Java.g:856:10: '[' ']'
                             	    {
                             	    char_literal507=(Token)match(input,131,FOLLOW_131_in_primary6287); if (state.failed) return retval; 
                             	    if ( state.backtracking==0 ) stream_131.add(char_literal507);
@@ -17974,18 +17974,18 @@ public class JavaParser extends Parser {
                             root_0 = (Object)adaptor.nil();
                             // 856:37: -> ^( ARRAYINIT ^( TYPE primitiveType ( '[' )* ) arrayInitializer )
                             {
-                                // jkit/parser/Java.g:856:40: ^( ARRAYINIT ^( TYPE primitiveType ( '[' )* ) arrayInitializer )
+                                // jkit/java/Java.g:856:40: ^( ARRAYINIT ^( TYPE primitiveType ( '[' )* ) arrayInitializer )
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ARRAYINIT, "ARRAYINIT"), root_1);
 
-                                // jkit/parser/Java.g:856:52: ^( TYPE primitiveType ( '[' )* )
+                                // jkit/java/Java.g:856:52: ^( TYPE primitiveType ( '[' )* )
                                 {
                                 Object root_2 = (Object)adaptor.nil();
                                 root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(TYPE, "TYPE"), root_2);
 
                                 adaptor.addChild(root_2, stream_primitiveType.nextTree());
-                                // jkit/parser/Java.g:856:73: ( '[' )*
+                                // jkit/java/Java.g:856:73: ( '[' )*
                                 while ( stream_131.hasNext() ) {
                                     adaptor.addChild(root_2, stream_131.nextNode());
 
@@ -18011,12 +18011,12 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 5 :
-                    // jkit/parser/Java.g:858:9: 'new' ( nonWildcardTypeArguments )? (i+= refComponent ( '.' i+= refComponent )* ) ( ( '[' expression ']' )+ ( '[' ']' )* -> ^( NEW ^( TYPE ( $i)+ ( '[' )* ) ( expression )* ) | ( '[' ']' )+ arrayInitializer -> ^( ARRAYINIT ^( TYPE ( $i)+ ( '[' )* ) arrayInitializer ) | classCreatorRest -> ^( NEW ^( TYPE ( $i)+ ) ( classCreatorRest )? ) )
+                    // jkit/java/Java.g:858:9: 'new' ( nonWildcardTypeArguments )? (i+= refComponent ( '.' i+= refComponent )* ) ( ( '[' expression ']' )+ ( '[' ']' )* -> ^( NEW ^( TYPE ( $i)+ ( '[' )* ) ( expression )* ) | ( '[' ']' )+ arrayInitializer -> ^( ARRAYINIT ^( TYPE ( $i)+ ( '[' )* ) arrayInitializer ) | classCreatorRest -> ^( NEW ^( TYPE ( $i)+ ) ( classCreatorRest )? ) )
                     {
                     string_literal510=(Token)match(input,196,FOLLOW_196_in_primary6325); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_196.add(string_literal510);
 
-                    // jkit/parser/Java.g:858:15: ( nonWildcardTypeArguments )?
+                    // jkit/java/Java.g:858:15: ( nonWildcardTypeArguments )?
                     int alt154=2;
                     int LA154_0 = input.LA(1);
 
@@ -18025,7 +18025,7 @@ public class JavaParser extends Parser {
                     }
                     switch (alt154) {
                         case 1 :
-                            // jkit/parser/Java.g:0:0: nonWildcardTypeArguments
+                            // jkit/java/Java.g:0:0: nonWildcardTypeArguments
                             {
                             pushFollow(FOLLOW_nonWildcardTypeArguments_in_primary6327);
                             nonWildcardTypeArguments511=nonWildcardTypeArguments();
@@ -18039,8 +18039,8 @@ public class JavaParser extends Parser {
 
                     }
 
-                    // jkit/parser/Java.g:858:41: (i+= refComponent ( '.' i+= refComponent )* )
-                    // jkit/parser/Java.g:858:42: i+= refComponent ( '.' i+= refComponent )*
+                    // jkit/java/Java.g:858:41: (i+= refComponent ( '.' i+= refComponent )* )
+                    // jkit/java/Java.g:858:42: i+= refComponent ( '.' i+= refComponent )*
                     {
                     pushFollow(FOLLOW_refComponent_in_primary6333);
                     i=refComponent();
@@ -18051,7 +18051,7 @@ public class JavaParser extends Parser {
                     if (list_i==null) list_i=new ArrayList();
                     list_i.add(i.getTree());
 
-                    // jkit/parser/Java.g:858:58: ( '.' i+= refComponent )*
+                    // jkit/java/Java.g:858:58: ( '.' i+= refComponent )*
                     loop155:
                     do {
                         int alt155=2;
@@ -18064,7 +18064,7 @@ public class JavaParser extends Parser {
 
                         switch (alt155) {
                     	case 1 :
-                    	    // jkit/parser/Java.g:858:59: '.' i+= refComponent
+                    	    // jkit/java/Java.g:858:59: '.' i+= refComponent
                     	    {
                     	    char_literal512=(Token)match(input,117,FOLLOW_117_in_primary6336); if (state.failed) return retval; 
                     	    if ( state.backtracking==0 ) stream_117.add(char_literal512);
@@ -18090,14 +18090,14 @@ public class JavaParser extends Parser {
 
                     }
 
-                    // jkit/parser/Java.g:859:6: ( ( '[' expression ']' )+ ( '[' ']' )* -> ^( NEW ^( TYPE ( $i)+ ( '[' )* ) ( expression )* ) | ( '[' ']' )+ arrayInitializer -> ^( ARRAYINIT ^( TYPE ( $i)+ ( '[' )* ) arrayInitializer ) | classCreatorRest -> ^( NEW ^( TYPE ( $i)+ ) ( classCreatorRest )? ) )
+                    // jkit/java/Java.g:859:6: ( ( '[' expression ']' )+ ( '[' ']' )* -> ^( NEW ^( TYPE ( $i)+ ( '[' )* ) ( expression )* ) | ( '[' ']' )+ arrayInitializer -> ^( ARRAYINIT ^( TYPE ( $i)+ ( '[' )* ) arrayInitializer ) | classCreatorRest -> ^( NEW ^( TYPE ( $i)+ ) ( classCreatorRest )? ) )
                     int alt159=3;
                     alt159 = dfa159.predict(input);
                     switch (alt159) {
                         case 1 :
-                            // jkit/parser/Java.g:860:7: ( '[' expression ']' )+ ( '[' ']' )*
+                            // jkit/java/Java.g:860:7: ( '[' expression ']' )+ ( '[' ']' )*
                             {
-                            // jkit/parser/Java.g:860:7: ( '[' expression ']' )+
+                            // jkit/java/Java.g:860:7: ( '[' expression ']' )+
                             int cnt156=0;
                             loop156:
                             do {
@@ -18105,7 +18105,7 @@ public class JavaParser extends Parser {
                                 alt156 = dfa156.predict(input);
                                 switch (alt156) {
                             	case 1 :
-                            	    // jkit/parser/Java.g:860:8: '[' expression ']'
+                            	    // jkit/java/Java.g:860:8: '[' expression ']'
                             	    {
                             	    char_literal513=(Token)match(input,131,FOLLOW_131_in_primary6359); if (state.failed) return retval; 
                             	    if ( state.backtracking==0 ) stream_131.add(char_literal513);
@@ -18133,14 +18133,14 @@ public class JavaParser extends Parser {
                                 cnt156++;
                             } while (true);
 
-                            // jkit/parser/Java.g:860:29: ( '[' ']' )*
+                            // jkit/java/Java.g:860:29: ( '[' ']' )*
                             loop157:
                             do {
                                 int alt157=2;
                                 alt157 = dfa157.predict(input);
                                 switch (alt157) {
                             	case 1 :
-                            	    // jkit/parser/Java.g:860:30: '[' ']'
+                            	    // jkit/java/Java.g:860:30: '[' ']'
                             	    {
                             	    char_literal516=(Token)match(input,131,FOLLOW_131_in_primary6368); if (state.failed) return retval; 
                             	    if ( state.backtracking==0 ) stream_131.add(char_literal516);
@@ -18172,12 +18172,12 @@ public class JavaParser extends Parser {
                             root_0 = (Object)adaptor.nil();
                             // 860:40: -> ^( NEW ^( TYPE ( $i)+ ( '[' )* ) ( expression )* )
                             {
-                                // jkit/parser/Java.g:860:43: ^( NEW ^( TYPE ( $i)+ ( '[' )* ) ( expression )* )
+                                // jkit/java/Java.g:860:43: ^( NEW ^( TYPE ( $i)+ ( '[' )* ) ( expression )* )
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(NEW, "NEW"), root_1);
 
-                                // jkit/parser/Java.g:860:49: ^( TYPE ( $i)+ ( '[' )* )
+                                // jkit/java/Java.g:860:49: ^( TYPE ( $i)+ ( '[' )* )
                                 {
                                 Object root_2 = (Object)adaptor.nil();
                                 root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(TYPE, "TYPE"), root_2);
@@ -18190,7 +18190,7 @@ public class JavaParser extends Parser {
 
                                 }
                                 stream_i.reset();
-                                // jkit/parser/Java.g:860:60: ( '[' )*
+                                // jkit/java/Java.g:860:60: ( '[' )*
                                 while ( stream_131.hasNext() ) {
                                     adaptor.addChild(root_2, stream_131.nextNode());
 
@@ -18199,7 +18199,7 @@ public class JavaParser extends Parser {
 
                                 adaptor.addChild(root_1, root_2);
                                 }
-                                // jkit/parser/Java.g:860:66: ( expression )*
+                                // jkit/java/Java.g:860:66: ( expression )*
                                 while ( stream_expression.hasNext() ) {
                                     adaptor.addChild(root_1, stream_expression.nextTree());
 
@@ -18215,9 +18215,9 @@ public class JavaParser extends Parser {
                             }
                             break;
                         case 2 :
-                            // jkit/parser/Java.g:861:9: ( '[' ']' )+ arrayInitializer
+                            // jkit/java/Java.g:861:9: ( '[' ']' )+ arrayInitializer
                             {
-                            // jkit/parser/Java.g:861:9: ( '[' ']' )+
+                            // jkit/java/Java.g:861:9: ( '[' ']' )+
                             int cnt158=0;
                             loop158:
                             do {
@@ -18231,7 +18231,7 @@ public class JavaParser extends Parser {
 
                                 switch (alt158) {
                             	case 1 :
-                            	    // jkit/parser/Java.g:861:10: '[' ']'
+                            	    // jkit/java/Java.g:861:10: '[' ']'
                             	    {
                             	    char_literal518=(Token)match(input,131,FOLLOW_131_in_primary6403); if (state.failed) return retval; 
                             	    if ( state.backtracking==0 ) stream_131.add(char_literal518);
@@ -18274,12 +18274,12 @@ public class JavaParser extends Parser {
                             root_0 = (Object)adaptor.nil();
                             // 861:37: -> ^( ARRAYINIT ^( TYPE ( $i)+ ( '[' )* ) arrayInitializer )
                             {
-                                // jkit/parser/Java.g:861:40: ^( ARRAYINIT ^( TYPE ( $i)+ ( '[' )* ) arrayInitializer )
+                                // jkit/java/Java.g:861:40: ^( ARRAYINIT ^( TYPE ( $i)+ ( '[' )* ) arrayInitializer )
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ARRAYINIT, "ARRAYINIT"), root_1);
 
-                                // jkit/parser/Java.g:861:52: ^( TYPE ( $i)+ ( '[' )* )
+                                // jkit/java/Java.g:861:52: ^( TYPE ( $i)+ ( '[' )* )
                                 {
                                 Object root_2 = (Object)adaptor.nil();
                                 root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(TYPE, "TYPE"), root_2);
@@ -18292,7 +18292,7 @@ public class JavaParser extends Parser {
 
                                 }
                                 stream_i.reset();
-                                // jkit/parser/Java.g:861:63: ( '[' )*
+                                // jkit/java/Java.g:861:63: ( '[' )*
                                 while ( stream_131.hasNext() ) {
                                     adaptor.addChild(root_2, stream_131.nextNode());
 
@@ -18312,7 +18312,7 @@ public class JavaParser extends Parser {
                             }
                             break;
                         case 3 :
-                            // jkit/parser/Java.g:862:9: classCreatorRest
+                            // jkit/java/Java.g:862:9: classCreatorRest
                             {
                             pushFollow(FOLLOW_classCreatorRest_in_primary6438);
                             classCreatorRest521=classCreatorRest();
@@ -18335,12 +18335,12 @@ public class JavaParser extends Parser {
                             root_0 = (Object)adaptor.nil();
                             // 862:26: -> ^( NEW ^( TYPE ( $i)+ ) ( classCreatorRest )? )
                             {
-                                // jkit/parser/Java.g:862:29: ^( NEW ^( TYPE ( $i)+ ) ( classCreatorRest )? )
+                                // jkit/java/Java.g:862:29: ^( NEW ^( TYPE ( $i)+ ) ( classCreatorRest )? )
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(NEW, "NEW"), root_1);
 
-                                // jkit/parser/Java.g:862:35: ^( TYPE ( $i)+ )
+                                // jkit/java/Java.g:862:35: ^( TYPE ( $i)+ )
                                 {
                                 Object root_2 = (Object)adaptor.nil();
                                 root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(TYPE, "TYPE"), root_2);
@@ -18356,7 +18356,7 @@ public class JavaParser extends Parser {
 
                                 adaptor.addChild(root_1, root_2);
                                 }
-                                // jkit/parser/Java.g:862:47: ( classCreatorRest )?
+                                // jkit/java/Java.g:862:47: ( classCreatorRest )?
                                 if ( stream_classCreatorRest.hasNext() ) {
                                     adaptor.addChild(root_1, stream_classCreatorRest.nextTree());
 
@@ -18378,7 +18378,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 6 :
-                    // jkit/parser/Java.g:864:9: type '.' 'class'
+                    // jkit/java/Java.g:864:9: type '.' 'class'
                     {
                     pushFollow(FOLLOW_type_in_primary6470);
                     type522=type();
@@ -18407,7 +18407,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 864:26: -> ^( GETCLASS type )
                     {
-                        // jkit/parser/Java.g:864:29: ^( GETCLASS type )
+                        // jkit/java/Java.g:864:29: ^( GETCLASS type )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(GETCLASS, "GETCLASS"), root_1);
@@ -18423,7 +18423,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 7 :
-                    // jkit/parser/Java.g:865:9: 'void' '.' 'class'
+                    // jkit/java/Java.g:865:9: 'void' '.' 'class'
                     {
                     string_literal525=(Token)match(input,129,FOLLOW_129_in_primary6496); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_129.add(string_literal525);
@@ -18449,12 +18449,12 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 865:28: -> ^( GETCLASS ^( TYPE VOID ) )
                     {
-                        // jkit/parser/Java.g:865:31: ^( GETCLASS ^( TYPE VOID ) )
+                        // jkit/java/Java.g:865:31: ^( GETCLASS ^( TYPE VOID ) )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(GETCLASS, "GETCLASS"), root_1);
 
-                        // jkit/parser/Java.g:865:42: ^( TYPE VOID )
+                        // jkit/java/Java.g:865:42: ^( TYPE VOID )
                         {
                         Object root_2 = (Object)adaptor.nil();
                         root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(TYPE, "TYPE"), root_2);
@@ -18473,17 +18473,17 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 8 :
-                    // jkit/parser/Java.g:866:8: 'super' ( arguments -> ^( INVOKE 'super' ( arguments )? ) | -> ^( VAR 'super' ) )
+                    // jkit/java/Java.g:866:8: 'super' ( arguments -> ^( INVOKE 'super' ( arguments )? ) | -> ^( VAR 'super' ) )
                     {
                     string_literal528=(Token)match(input,153,FOLLOW_153_in_primary6521); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_153.add(string_literal528);
 
-                    // jkit/parser/Java.g:867:3: ( arguments -> ^( INVOKE 'super' ( arguments )? ) | -> ^( VAR 'super' ) )
+                    // jkit/java/Java.g:867:3: ( arguments -> ^( INVOKE 'super' ( arguments )? ) | -> ^( VAR 'super' ) )
                     int alt160=2;
                     alt160 = dfa160.predict(input);
                     switch (alt160) {
                         case 1 :
-                            // jkit/parser/Java.g:868:4: arguments
+                            // jkit/java/Java.g:868:4: arguments
                             {
                             pushFollow(FOLLOW_arguments_in_primary6531);
                             arguments529=arguments();
@@ -18506,13 +18506,13 @@ public class JavaParser extends Parser {
                             root_0 = (Object)adaptor.nil();
                             // 868:14: -> ^( INVOKE 'super' ( arguments )? )
                             {
-                                // jkit/parser/Java.g:868:17: ^( INVOKE 'super' ( arguments )? )
+                                // jkit/java/Java.g:868:17: ^( INVOKE 'super' ( arguments )? )
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(INVOKE, "INVOKE"), root_1);
 
                                 adaptor.addChild(root_1, stream_153.nextNode());
-                                // jkit/parser/Java.g:868:34: ( arguments )?
+                                // jkit/java/Java.g:868:34: ( arguments )?
                                 if ( stream_arguments.hasNext() ) {
                                     adaptor.addChild(root_1, stream_arguments.nextTree());
 
@@ -18528,7 +18528,7 @@ public class JavaParser extends Parser {
                             }
                             break;
                         case 2 :
-                            // jkit/parser/Java.g:869:6: 
+                            // jkit/java/Java.g:869:6: 
                             {
 
                             // AST REWRITE
@@ -18544,7 +18544,7 @@ public class JavaParser extends Parser {
                             root_0 = (Object)adaptor.nil();
                             // 869:6: -> ^( VAR 'super' )
                             {
-                                // jkit/parser/Java.g:869:9: ^( VAR 'super' )
+                                // jkit/java/Java.g:869:9: ^( VAR 'super' )
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(VAR, "VAR"), root_1);
@@ -18566,17 +18566,17 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 9 :
-                    // jkit/parser/Java.g:871:9: Identifier ( arguments -> ^( INVOKE Identifier ( arguments )? ) | -> ^( VAR Identifier ) )
+                    // jkit/java/Java.g:871:9: Identifier ( arguments -> ^( INVOKE Identifier ( arguments )? ) | -> ^( VAR Identifier ) )
                     {
                     Identifier530=(Token)match(input,Identifier,FOLLOW_Identifier_in_primary6569); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_Identifier.add(Identifier530);
 
-                    // jkit/parser/Java.g:872:6: ( arguments -> ^( INVOKE Identifier ( arguments )? ) | -> ^( VAR Identifier ) )
+                    // jkit/java/Java.g:872:6: ( arguments -> ^( INVOKE Identifier ( arguments )? ) | -> ^( VAR Identifier ) )
                     int alt161=2;
                     alt161 = dfa161.predict(input);
                     switch (alt161) {
                         case 1 :
-                            // jkit/parser/Java.g:873:7: arguments
+                            // jkit/java/Java.g:873:7: arguments
                             {
                             pushFollow(FOLLOW_arguments_in_primary6585);
                             arguments531=arguments();
@@ -18599,13 +18599,13 @@ public class JavaParser extends Parser {
                             root_0 = (Object)adaptor.nil();
                             // 873:17: -> ^( INVOKE Identifier ( arguments )? )
                             {
-                                // jkit/parser/Java.g:873:20: ^( INVOKE Identifier ( arguments )? )
+                                // jkit/java/Java.g:873:20: ^( INVOKE Identifier ( arguments )? )
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(INVOKE, "INVOKE"), root_1);
 
                                 adaptor.addChild(root_1, stream_Identifier.nextNode());
-                                // jkit/parser/Java.g:873:40: ( arguments )?
+                                // jkit/java/Java.g:873:40: ( arguments )?
                                 if ( stream_arguments.hasNext() ) {
                                     adaptor.addChild(root_1, stream_arguments.nextTree());
 
@@ -18621,7 +18621,7 @@ public class JavaParser extends Parser {
                             }
                             break;
                         case 2 :
-                            // jkit/parser/Java.g:874:9: 
+                            // jkit/java/Java.g:874:9: 
                             {
 
                             // AST REWRITE
@@ -18637,7 +18637,7 @@ public class JavaParser extends Parser {
                             root_0 = (Object)adaptor.nil();
                             // 874:9: -> ^( VAR Identifier )
                             {
-                                // jkit/parser/Java.g:874:12: ^( VAR Identifier )
+                                // jkit/java/Java.g:874:12: ^( VAR Identifier )
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(VAR, "VAR"), root_1);
@@ -18685,7 +18685,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "innerCreator"
-    // jkit/parser/Java.g:878:1: innerCreator : Identifier classCreatorRest -> Identifier ( classCreatorRest )? ;
+    // jkit/java/Java.g:878:1: innerCreator : Identifier classCreatorRest -> Identifier ( classCreatorRest )? ;
     public final JavaParser.innerCreator_return innerCreator() throws RecognitionException {
         JavaParser.innerCreator_return retval = new JavaParser.innerCreator_return();
         retval.start = input.LT(1);
@@ -18701,8 +18701,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_classCreatorRest=new RewriteRuleSubtreeStream(adaptor,"rule classCreatorRest");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 112) ) { return retval; }
-            // jkit/parser/Java.g:879:2: ( Identifier classCreatorRest -> Identifier ( classCreatorRest )? )
-            // jkit/parser/Java.g:879:4: Identifier classCreatorRest
+            // jkit/java/Java.g:879:2: ( Identifier classCreatorRest -> Identifier ( classCreatorRest )? )
+            // jkit/java/Java.g:879:4: Identifier classCreatorRest
             {
             Identifier532=(Token)match(input,Identifier,FOLLOW_Identifier_in_innerCreator6630); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_Identifier.add(Identifier532);
@@ -18729,7 +18729,7 @@ public class JavaParser extends Parser {
             // 879:32: -> Identifier ( classCreatorRest )?
             {
                 adaptor.addChild(root_0, stream_Identifier.nextNode());
-                // jkit/parser/Java.g:879:46: ( classCreatorRest )?
+                // jkit/java/Java.g:879:46: ( classCreatorRest )?
                 if ( stream_classCreatorRest.hasNext() ) {
                     adaptor.addChild(root_0, stream_classCreatorRest.nextTree());
 
@@ -18766,7 +18766,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "classCreatorRest"
-    // jkit/parser/Java.g:882:1: classCreatorRest : arguments ( classBody )? -> ( arguments )? ( classBody )? ;
+    // jkit/java/Java.g:882:1: classCreatorRest : arguments ( classBody )? -> ( arguments )? ( classBody )? ;
     public final JavaParser.classCreatorRest_return classCreatorRest() throws RecognitionException {
         JavaParser.classCreatorRest_return retval = new JavaParser.classCreatorRest_return();
         retval.start = input.LT(1);
@@ -18782,8 +18782,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_classBody=new RewriteRuleSubtreeStream(adaptor,"rule classBody");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 113) ) { return retval; }
-            // jkit/parser/Java.g:883:2: ( arguments ( classBody )? -> ( arguments )? ( classBody )? )
-            // jkit/parser/Java.g:883:4: arguments ( classBody )?
+            // jkit/java/Java.g:883:2: ( arguments ( classBody )? -> ( arguments )? ( classBody )? )
+            // jkit/java/Java.g:883:4: arguments ( classBody )?
             {
             pushFollow(FOLLOW_arguments_in_classCreatorRest6650);
             arguments534=arguments();
@@ -18791,12 +18791,12 @@ public class JavaParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_arguments.add(arguments534.getTree());
-            // jkit/parser/Java.g:883:14: ( classBody )?
+            // jkit/java/Java.g:883:14: ( classBody )?
             int alt163=2;
             alt163 = dfa163.predict(input);
             switch (alt163) {
                 case 1 :
-                    // jkit/parser/Java.g:0:0: classBody
+                    // jkit/java/Java.g:0:0: classBody
                     {
                     pushFollow(FOLLOW_classBody_in_classCreatorRest6652);
                     classBody535=classBody();
@@ -18825,13 +18825,13 @@ public class JavaParser extends Parser {
             root_0 = (Object)adaptor.nil();
             // 883:25: -> ( arguments )? ( classBody )?
             {
-                // jkit/parser/Java.g:883:28: ( arguments )?
+                // jkit/java/Java.g:883:28: ( arguments )?
                 if ( stream_arguments.hasNext() ) {
                     adaptor.addChild(root_0, stream_arguments.nextTree());
 
                 }
                 stream_arguments.reset();
-                // jkit/parser/Java.g:883:39: ( classBody )?
+                // jkit/java/Java.g:883:39: ( classBody )?
                 if ( stream_classBody.hasNext() ) {
                     adaptor.addChild(root_0, stream_classBody.nextTree());
 
@@ -18868,7 +18868,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "explicitGenericInvocation"
-    // jkit/parser/Java.g:886:1: explicitGenericInvocation : nonWildcardTypeArguments explicitGenericInvocationSuffix ;
+    // jkit/java/Java.g:886:1: explicitGenericInvocation : nonWildcardTypeArguments explicitGenericInvocationSuffix ;
     public final JavaParser.explicitGenericInvocation_return explicitGenericInvocation() throws RecognitionException {
         JavaParser.explicitGenericInvocation_return retval = new JavaParser.explicitGenericInvocation_return();
         retval.start = input.LT(1);
@@ -18883,8 +18883,8 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 114) ) { return retval; }
-            // jkit/parser/Java.g:887:2: ( nonWildcardTypeArguments explicitGenericInvocationSuffix )
-            // jkit/parser/Java.g:887:4: nonWildcardTypeArguments explicitGenericInvocationSuffix
+            // jkit/java/Java.g:887:2: ( nonWildcardTypeArguments explicitGenericInvocationSuffix )
+            // jkit/java/Java.g:887:4: nonWildcardTypeArguments explicitGenericInvocationSuffix
             {
             root_0 = (Object)adaptor.nil();
 
@@ -18928,7 +18928,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "nonWildcardTypeArguments"
-    // jkit/parser/Java.g:890:1: nonWildcardTypeArguments : '<' typeList '>' -> typeList ;
+    // jkit/java/Java.g:890:1: nonWildcardTypeArguments : '<' typeList '>' -> typeList ;
     public final JavaParser.nonWildcardTypeArguments_return nonWildcardTypeArguments() throws RecognitionException {
         JavaParser.nonWildcardTypeArguments_return retval = new JavaParser.nonWildcardTypeArguments_return();
         retval.start = input.LT(1);
@@ -18947,8 +18947,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_typeList=new RewriteRuleSubtreeStream(adaptor,"rule typeList");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 115) ) { return retval; }
-            // jkit/parser/Java.g:891:2: ( '<' typeList '>' -> typeList )
-            // jkit/parser/Java.g:891:4: '<' typeList '>'
+            // jkit/java/Java.g:891:2: ( '<' typeList '>' -> typeList )
+            // jkit/java/Java.g:891:4: '<' typeList '>'
             {
             char_literal538=(Token)match(input,122,FOLLOW_122_in_nonWildcardTypeArguments6687); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_122.add(char_literal538);
@@ -19009,7 +19009,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "explicitGenericInvocationSuffix"
-    // jkit/parser/Java.g:894:1: explicitGenericInvocationSuffix : ( 'super' superSuffix -> 'super' ( superSuffix )? | Identifier arguments -> Identifier ( arguments )? );
+    // jkit/java/Java.g:894:1: explicitGenericInvocationSuffix : ( 'super' superSuffix -> 'super' ( superSuffix )? | Identifier arguments -> Identifier ( arguments )? );
     public final JavaParser.explicitGenericInvocationSuffix_return explicitGenericInvocationSuffix() throws RecognitionException {
         JavaParser.explicitGenericInvocationSuffix_return retval = new JavaParser.explicitGenericInvocationSuffix_return();
         retval.start = input.LT(1);
@@ -19031,7 +19031,7 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_superSuffix=new RewriteRuleSubtreeStream(adaptor,"rule superSuffix");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 116) ) { return retval; }
-            // jkit/parser/Java.g:895:2: ( 'super' superSuffix -> 'super' ( superSuffix )? | Identifier arguments -> Identifier ( arguments )? )
+            // jkit/java/Java.g:895:2: ( 'super' superSuffix -> 'super' ( superSuffix )? | Identifier arguments -> Identifier ( arguments )? )
             int alt164=2;
             int LA164_0 = input.LA(1);
 
@@ -19050,7 +19050,7 @@ public class JavaParser extends Parser {
             }
             switch (alt164) {
                 case 1 :
-                    // jkit/parser/Java.g:895:4: 'super' superSuffix
+                    // jkit/java/Java.g:895:4: 'super' superSuffix
                     {
                     string_literal541=(Token)match(input,153,FOLLOW_153_in_explicitGenericInvocationSuffix6707); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_153.add(string_literal541);
@@ -19077,7 +19077,7 @@ public class JavaParser extends Parser {
                     // 895:24: -> 'super' ( superSuffix )?
                     {
                         adaptor.addChild(root_0, stream_153.nextNode());
-                        // jkit/parser/Java.g:895:35: ( superSuffix )?
+                        // jkit/java/Java.g:895:35: ( superSuffix )?
                         if ( stream_superSuffix.hasNext() ) {
                             adaptor.addChild(root_0, stream_superSuffix.nextTree());
 
@@ -19090,7 +19090,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:896:6: Identifier arguments
+                    // jkit/java/Java.g:896:6: Identifier arguments
                     {
                     Identifier543=(Token)match(input,Identifier,FOLLOW_Identifier_in_explicitGenericInvocationSuffix6723); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_Identifier.add(Identifier543);
@@ -19117,7 +19117,7 @@ public class JavaParser extends Parser {
                     // 896:27: -> Identifier ( arguments )?
                     {
                         adaptor.addChild(root_0, stream_Identifier.nextNode());
-                        // jkit/parser/Java.g:896:41: ( arguments )?
+                        // jkit/java/Java.g:896:41: ( arguments )?
                         if ( stream_arguments.hasNext() ) {
                             adaptor.addChild(root_0, stream_arguments.nextTree());
 
@@ -19156,7 +19156,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "superSuffix"
-    // jkit/parser/Java.g:899:1: superSuffix : ( arguments -> ( arguments )? | '.' Identifier ( arguments )? );
+    // jkit/java/Java.g:899:1: superSuffix : ( arguments -> ( arguments )? | '.' Identifier ( arguments )? );
     public final JavaParser.superSuffix_return superSuffix() throws RecognitionException {
         JavaParser.superSuffix_return retval = new JavaParser.superSuffix_return();
         retval.start = input.LT(1);
@@ -19175,7 +19175,7 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_arguments=new RewriteRuleSubtreeStream(adaptor,"rule arguments");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 117) ) { return retval; }
-            // jkit/parser/Java.g:900:2: ( arguments -> ( arguments )? | '.' Identifier ( arguments )? )
+            // jkit/java/Java.g:900:2: ( arguments -> ( arguments )? | '.' Identifier ( arguments )? )
             int alt166=2;
             int LA166_0 = input.LA(1);
 
@@ -19194,7 +19194,7 @@ public class JavaParser extends Parser {
             }
             switch (alt166) {
                 case 1 :
-                    // jkit/parser/Java.g:900:4: arguments
+                    // jkit/java/Java.g:900:4: arguments
                     {
                     pushFollow(FOLLOW_arguments_in_superSuffix6744);
                     arguments545=arguments();
@@ -19217,7 +19217,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 900:14: -> ( arguments )?
                     {
-                        // jkit/parser/Java.g:900:17: ( arguments )?
+                        // jkit/java/Java.g:900:17: ( arguments )?
                         if ( stream_arguments.hasNext() ) {
                             adaptor.addChild(root_0, stream_arguments.nextTree());
 
@@ -19230,7 +19230,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:901:6: '.' Identifier ( arguments )?
+                    // jkit/java/Java.g:901:6: '.' Identifier ( arguments )?
                     {
                     root_0 = (Object)adaptor.nil();
 
@@ -19244,12 +19244,12 @@ public class JavaParser extends Parser {
                     Identifier547_tree = (Object)adaptor.create(Identifier547);
                     adaptor.addChild(root_0, Identifier547_tree);
                     }
-                    // jkit/parser/Java.g:901:21: ( arguments )?
+                    // jkit/java/Java.g:901:21: ( arguments )?
                     int alt165=2;
                     alt165 = dfa165.predict(input);
                     switch (alt165) {
                         case 1 :
-                            // jkit/parser/Java.g:901:22: arguments
+                            // jkit/java/Java.g:901:22: arguments
                             {
                             pushFollow(FOLLOW_arguments_in_superSuffix6761);
                             arguments548=arguments();
@@ -19293,7 +19293,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "selector"
-    // jkit/parser/Java.g:904:1: selector : ( '.' 'super' arguments -> ^( INVOKE 'super' ( arguments )? ) | '.' 'new' ( nonWildcardTypeArguments )? innerCreator -> ^( NEW innerCreator ) | '.' nonWildcardTypeArguments explicitGenericInvocationSuffix -> ^( INVOKE ^( TYPE_PARAMETER nonWildcardTypeArguments ) explicitGenericInvocationSuffix ) | '.' Identifier ( arguments -> ^( INVOKE Identifier ( arguments )? ) | -> ^( DEREF Identifier ) ) | '[' expression ']' -> ^( ARRAYINDEX expression ) );
+    // jkit/java/Java.g:904:1: selector : ( '.' 'super' arguments -> ^( INVOKE 'super' ( arguments )? ) | '.' 'new' ( nonWildcardTypeArguments )? innerCreator -> ^( NEW innerCreator ) | '.' nonWildcardTypeArguments explicitGenericInvocationSuffix -> ^( INVOKE ^( TYPE_PARAMETER nonWildcardTypeArguments ) explicitGenericInvocationSuffix ) | '.' Identifier ( arguments -> ^( INVOKE Identifier ( arguments )? ) | -> ^( DEREF Identifier ) ) | '[' expression ']' -> ^( ARRAYINDEX expression ) );
     public final JavaParser.selector_return selector() throws RecognitionException {
         JavaParser.selector_return retval = new JavaParser.selector_return();
         retval.start = input.LT(1);
@@ -19346,7 +19346,7 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_expression=new RewriteRuleSubtreeStream(adaptor,"rule expression");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 118) ) { return retval; }
-            // jkit/parser/Java.g:905:2: ( '.' 'super' arguments -> ^( INVOKE 'super' ( arguments )? ) | '.' 'new' ( nonWildcardTypeArguments )? innerCreator -> ^( NEW innerCreator ) | '.' nonWildcardTypeArguments explicitGenericInvocationSuffix -> ^( INVOKE ^( TYPE_PARAMETER nonWildcardTypeArguments ) explicitGenericInvocationSuffix ) | '.' Identifier ( arguments -> ^( INVOKE Identifier ( arguments )? ) | -> ^( DEREF Identifier ) ) | '[' expression ']' -> ^( ARRAYINDEX expression ) )
+            // jkit/java/Java.g:905:2: ( '.' 'super' arguments -> ^( INVOKE 'super' ( arguments )? ) | '.' 'new' ( nonWildcardTypeArguments )? innerCreator -> ^( NEW innerCreator ) | '.' nonWildcardTypeArguments explicitGenericInvocationSuffix -> ^( INVOKE ^( TYPE_PARAMETER nonWildcardTypeArguments ) explicitGenericInvocationSuffix ) | '.' Identifier ( arguments -> ^( INVOKE Identifier ( arguments )? ) | -> ^( DEREF Identifier ) ) | '[' expression ']' -> ^( ARRAYINDEX expression ) )
             int alt169=5;
             int LA169_0 = input.LA(1);
 
@@ -19393,7 +19393,7 @@ public class JavaParser extends Parser {
             }
             switch (alt169) {
                 case 1 :
-                    // jkit/parser/Java.g:905:4: '.' 'super' arguments
+                    // jkit/java/Java.g:905:4: '.' 'super' arguments
                     {
                     char_literal549=(Token)match(input,117,FOLLOW_117_in_selector6775); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_117.add(char_literal549);
@@ -19422,13 +19422,13 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 905:26: -> ^( INVOKE 'super' ( arguments )? )
                     {
-                        // jkit/parser/Java.g:905:29: ^( INVOKE 'super' ( arguments )? )
+                        // jkit/java/Java.g:905:29: ^( INVOKE 'super' ( arguments )? )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(INVOKE, "INVOKE"), root_1);
 
                         adaptor.addChild(root_1, stream_153.nextNode());
-                        // jkit/parser/Java.g:905:46: ( arguments )?
+                        // jkit/java/Java.g:905:46: ( arguments )?
                         if ( stream_arguments.hasNext() ) {
                             adaptor.addChild(root_1, stream_arguments.nextTree());
 
@@ -19444,7 +19444,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/parser/Java.g:906:6: '.' 'new' ( nonWildcardTypeArguments )? innerCreator
+                    // jkit/java/Java.g:906:6: '.' 'new' ( nonWildcardTypeArguments )? innerCreator
                     {
                     char_literal552=(Token)match(input,117,FOLLOW_117_in_selector6797); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_117.add(char_literal552);
@@ -19452,7 +19452,7 @@ public class JavaParser extends Parser {
                     string_literal553=(Token)match(input,196,FOLLOW_196_in_selector6799); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_196.add(string_literal553);
 
-                    // jkit/parser/Java.g:906:16: ( nonWildcardTypeArguments )?
+                    // jkit/java/Java.g:906:16: ( nonWildcardTypeArguments )?
                     int alt167=2;
                     int LA167_0 = input.LA(1);
 
@@ -19461,7 +19461,7 @@ public class JavaParser extends Parser {
                     }
                     switch (alt167) {
                         case 1 :
-                            // jkit/parser/Java.g:906:17: nonWildcardTypeArguments
+                            // jkit/java/Java.g:906:17: nonWildcardTypeArguments
                             {
                             pushFollow(FOLLOW_nonWildcardTypeArguments_in_selector6802);
                             nonWildcardTypeArguments554=nonWildcardTypeArguments();
@@ -19496,7 +19496,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 906:57: -> ^( NEW innerCreator )
                     {
-                        // jkit/parser/Java.g:906:60: ^( NEW innerCreator )
+                        // jkit/java/Java.g:906:60: ^( NEW innerCreator )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(NEW, "NEW"), root_1);
@@ -19512,7 +19512,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // jkit/parser/Java.g:907:5: '.' nonWildcardTypeArguments explicitGenericInvocationSuffix
+                    // jkit/java/Java.g:907:5: '.' nonWildcardTypeArguments explicitGenericInvocationSuffix
                     {
                     char_literal556=(Token)match(input,117,FOLLOW_117_in_selector6820); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_117.add(char_literal556);
@@ -19544,12 +19544,12 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 907:66: -> ^( INVOKE ^( TYPE_PARAMETER nonWildcardTypeArguments ) explicitGenericInvocationSuffix )
                     {
-                        // jkit/parser/Java.g:907:69: ^( INVOKE ^( TYPE_PARAMETER nonWildcardTypeArguments ) explicitGenericInvocationSuffix )
+                        // jkit/java/Java.g:907:69: ^( INVOKE ^( TYPE_PARAMETER nonWildcardTypeArguments ) explicitGenericInvocationSuffix )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(INVOKE, "INVOKE"), root_1);
 
-                        // jkit/parser/Java.g:907:78: ^( TYPE_PARAMETER nonWildcardTypeArguments )
+                        // jkit/java/Java.g:907:78: ^( TYPE_PARAMETER nonWildcardTypeArguments )
                         {
                         Object root_2 = (Object)adaptor.nil();
                         root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(TYPE_PARAMETER, "TYPE_PARAMETER"), root_2);
@@ -19569,7 +19569,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // jkit/parser/Java.g:908:4: '.' Identifier ( arguments -> ^( INVOKE Identifier ( arguments )? ) | -> ^( DEREF Identifier ) )
+                    // jkit/java/Java.g:908:4: '.' Identifier ( arguments -> ^( INVOKE Identifier ( arguments )? ) | -> ^( DEREF Identifier ) )
                     {
                     char_literal559=(Token)match(input,117,FOLLOW_117_in_selector6843); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_117.add(char_literal559);
@@ -19577,12 +19577,12 @@ public class JavaParser extends Parser {
                     Identifier560=(Token)match(input,Identifier,FOLLOW_Identifier_in_selector6845); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_Identifier.add(Identifier560);
 
-                    // jkit/parser/Java.g:909:3: ( arguments -> ^( INVOKE Identifier ( arguments )? ) | -> ^( DEREF Identifier ) )
+                    // jkit/java/Java.g:909:3: ( arguments -> ^( INVOKE Identifier ( arguments )? ) | -> ^( DEREF Identifier ) )
                     int alt168=2;
                     alt168 = dfa168.predict(input);
                     switch (alt168) {
                         case 1 :
-                            // jkit/parser/Java.g:910:4: arguments
+                            // jkit/java/Java.g:910:4: arguments
                             {
                             pushFollow(FOLLOW_arguments_in_selector6855);
                             arguments561=arguments();
@@ -19605,13 +19605,13 @@ public class JavaParser extends Parser {
                             root_0 = (Object)adaptor.nil();
                             // 910:14: -> ^( INVOKE Identifier ( arguments )? )
                             {
-                                // jkit/parser/Java.g:910:17: ^( INVOKE Identifier ( arguments )? )
+                                // jkit/java/Java.g:910:17: ^( INVOKE Identifier ( arguments )? )
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(INVOKE, "INVOKE"), root_1);
 
                                 adaptor.addChild(root_1, stream_Identifier.nextNode());
-                                // jkit/parser/Java.g:910:37: ( arguments )?
+                                // jkit/java/Java.g:910:37: ( arguments )?
                                 if ( stream_arguments.hasNext() ) {
                                     adaptor.addChild(root_1, stream_arguments.nextTree());
 
@@ -19627,7 +19627,7 @@ public class JavaParser extends Parser {
                             }
                             break;
                         case 2 :
-                            // jkit/parser/Java.g:911:6: 
+                            // jkit/java/Java.g:911:6: 
                             {
 
                             // AST REWRITE
@@ -19643,7 +19643,7 @@ public class JavaParser extends Parser {
                             root_0 = (Object)adaptor.nil();
                             // 911:6: -> ^( DEREF Identifier )
                             {
-                                // jkit/parser/Java.g:911:9: ^( DEREF Identifier )
+                                // jkit/java/Java.g:911:9: ^( DEREF Identifier )
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(DEREF, "DEREF"), root_1);
@@ -19665,7 +19665,7 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 5 :
-                    // jkit/parser/Java.g:913:6: '[' expression ']'
+                    // jkit/java/Java.g:913:6: '[' expression ']'
                     {
                     char_literal562=(Token)match(input,131,FOLLOW_131_in_selector6890); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_131.add(char_literal562);
@@ -19694,7 +19694,7 @@ public class JavaParser extends Parser {
                     root_0 = (Object)adaptor.nil();
                     // 913:25: -> ^( ARRAYINDEX expression )
                     {
-                        // jkit/parser/Java.g:913:28: ^( ARRAYINDEX expression )
+                        // jkit/java/Java.g:913:28: ^( ARRAYINDEX expression )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ARRAYINDEX, "ARRAYINDEX"), root_1);
@@ -19736,7 +19736,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "arguments"
-    // jkit/parser/Java.g:916:1: arguments : '(' ( expressionList )? ')' ;
+    // jkit/java/Java.g:916:1: arguments : '(' ( expressionList )? ')' ;
     public final JavaParser.arguments_return arguments() throws RecognitionException {
         JavaParser.arguments_return retval = new JavaParser.arguments_return();
         retval.start = input.LT(1);
@@ -19753,18 +19753,18 @@ public class JavaParser extends Parser {
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 119) ) { return retval; }
-            // jkit/parser/Java.g:917:2: ( '(' ( expressionList )? ')' )
-            // jkit/parser/Java.g:917:4: '(' ( expressionList )? ')'
+            // jkit/java/Java.g:917:2: ( '(' ( expressionList )? ')' )
+            // jkit/java/Java.g:917:4: '(' ( expressionList )? ')'
             {
             root_0 = (Object)adaptor.nil();
 
             char_literal565=(Token)match(input,154,FOLLOW_154_in_arguments6913); if (state.failed) return retval;
-            // jkit/parser/Java.g:917:9: ( expressionList )?
+            // jkit/java/Java.g:917:9: ( expressionList )?
             int alt170=2;
             alt170 = dfa170.predict(input);
             switch (alt170) {
                 case 1 :
-                    // jkit/parser/Java.g:0:0: expressionList
+                    // jkit/java/Java.g:0:0: expressionList
                     {
                     pushFollow(FOLLOW_expressionList_in_arguments6916);
                     expressionList566=expressionList();
@@ -19803,8 +19803,8 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred1_Java
     public final void synpred1_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:201:4: ( annotations )
-        // jkit/parser/Java.g:201:4: annotations
+        // jkit/java/Java.g:201:4: ( annotations )
+        // jkit/java/Java.g:201:4: annotations
         {
         pushFollow(FOLLOW_annotations_in_synpred1_Java440);
         annotations();
@@ -19818,8 +19818,8 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred38_Java
     public final void synpred38_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:291:9: ( methodDeclaration )
-        // jkit/parser/Java.g:291:9: methodDeclaration
+        // jkit/java/Java.g:291:9: ( methodDeclaration )
+        // jkit/java/Java.g:291:9: methodDeclaration
         {
         pushFollow(FOLLOW_methodDeclaration_in_synpred38_Java1135);
         methodDeclaration();
@@ -19833,8 +19833,8 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred39_Java
     public final void synpred39_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:292:9: ( fieldDeclaration )
-        // jkit/parser/Java.g:292:9: fieldDeclaration
+        // jkit/java/Java.g:292:9: ( fieldDeclaration )
+        // jkit/java/Java.g:292:9: fieldDeclaration
         {
         pushFollow(FOLLOW_fieldDeclaration_in_synpred39_Java1161);
         fieldDeclaration();
@@ -19848,8 +19848,8 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred46_Java
     public final void synpred46_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:320:3: ( constantDeclaration )
-        // jkit/parser/Java.g:320:3: constantDeclaration
+        // jkit/java/Java.g:320:3: ( constantDeclaration )
+        // jkit/java/Java.g:320:3: constantDeclaration
         {
         pushFollow(FOLLOW_constantDeclaration_in_synpred46_Java1451);
         constantDeclaration();
@@ -19863,8 +19863,8 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred47_Java
     public final void synpred47_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:321:5: ( type Identifier interfaceMethodDeclaratorRest )
-        // jkit/parser/Java.g:321:5: type Identifier interfaceMethodDeclaratorRest
+        // jkit/java/Java.g:321:5: ( type Identifier interfaceMethodDeclaratorRest )
+        // jkit/java/Java.g:321:5: type Identifier interfaceMethodDeclaratorRest
         {
         pushFollow(FOLLOW_type_in_synpred47_Java1473);
         type();
@@ -19884,8 +19884,8 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred83_Java
     public final void synpred83_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:424:16: ( '.' Identifier )
-        // jkit/parser/Java.g:424:16: '.' Identifier
+        // jkit/java/Java.g:424:16: ( '.' Identifier )
+        // jkit/java/Java.g:424:16: '.' Identifier
         {
         match(input,117,FOLLOW_117_in_synpred83_Java2369); if (state.failed) return ;
         match(input,Identifier,FOLLOW_Identifier_in_synpred83_Java2371); if (state.failed) return ;
@@ -19896,10 +19896,10 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred101_Java
     public final void synpred101_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:468:4: ( ( 'extends' type )? )
-        // jkit/parser/Java.g:468:4: ( 'extends' type )?
+        // jkit/java/Java.g:468:4: ( ( 'extends' type )? )
+        // jkit/java/Java.g:468:4: ( 'extends' type )?
         {
-        // jkit/parser/Java.g:468:4: ( 'extends' type )?
+        // jkit/java/Java.g:468:4: ( 'extends' type )?
         int alt180=2;
         int LA180_0 = input.LA(1);
 
@@ -19908,7 +19908,7 @@ public class JavaParser extends Parser {
         }
         switch (alt180) {
             case 1 :
-                // jkit/parser/Java.g:468:5: 'extends' type
+                // jkit/java/Java.g:468:5: 'extends' type
                 {
                 match(input,120,FOLLOW_120_in_synpred101_Java2673); if (state.failed) return ;
                 pushFollow(FOLLOW_type_in_synpred101_Java2675);
@@ -19929,8 +19929,8 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred117_Java
     public final void synpred117_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:520:4: ( annotation )
-        // jkit/parser/Java.g:520:4: annotation
+        // jkit/java/Java.g:520:4: ( annotation )
+        // jkit/java/Java.g:520:4: annotation
         {
         pushFollow(FOLLOW_annotation_in_synpred117_Java3101);
         annotation();
@@ -19944,15 +19944,15 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred134_Java
     public final void synpred134_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:568:6: ( interfaceDeclaration ( ';' )? )
-        // jkit/parser/Java.g:568:6: interfaceDeclaration ( ';' )?
+        // jkit/java/Java.g:568:6: ( interfaceDeclaration ( ';' )? )
+        // jkit/java/Java.g:568:6: interfaceDeclaration ( ';' )?
         {
         pushFollow(FOLLOW_interfaceDeclaration_in_synpred134_Java3349);
         interfaceDeclaration();
 
         state._fsp--;
         if (state.failed) return ;
-        // jkit/parser/Java.g:568:27: ( ';' )?
+        // jkit/java/Java.g:568:27: ( ';' )?
         int alt185=2;
         int LA185_0 = input.LA(1);
 
@@ -19961,7 +19961,7 @@ public class JavaParser extends Parser {
         }
         switch (alt185) {
             case 1 :
-                // jkit/parser/Java.g:0:0: ';'
+                // jkit/java/Java.g:0:0: ';'
                 {
                 match(input,114,FOLLOW_114_in_synpred134_Java3351); if (state.failed) return ;
 
@@ -19977,8 +19977,8 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred141_Java
     public final void synpred141_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:597:4: ( localVariableDeclaration )
-        // jkit/parser/Java.g:597:4: localVariableDeclaration
+        // jkit/java/Java.g:597:4: ( localVariableDeclaration )
+        // jkit/java/Java.g:597:4: localVariableDeclaration
         {
         pushFollow(FOLLOW_localVariableDeclaration_in_synpred141_Java3485);
         localVariableDeclaration();
@@ -19992,8 +19992,8 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred142_Java
     public final void synpred142_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:598:4: ( classOrInterfaceDeclaration )
-        // jkit/parser/Java.g:598:4: classOrInterfaceDeclaration
+        // jkit/java/Java.g:598:4: ( classOrInterfaceDeclaration )
+        // jkit/java/Java.g:598:4: classOrInterfaceDeclaration
         {
         pushFollow(FOLLOW_classOrInterfaceDeclaration_in_synpred142_Java3490);
         classOrInterfaceDeclaration();
@@ -20007,8 +20007,8 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred147_Java
     public final void synpred147_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:609:55: ( 'else' statement )
-        // jkit/parser/Java.g:609:55: 'else' statement
+        // jkit/java/Java.g:609:55: ( 'else' statement )
+        // jkit/java/Java.g:609:55: 'else' statement
         {
         match(input,165,FOLLOW_165_in_synpred147_Java3603); if (state.failed) return ;
         pushFollow(FOLLOW_statement_in_synpred147_Java3605);
@@ -20023,8 +20023,8 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred152_Java
     public final void synpred152_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:614:9: ( catches 'finally' block )
-        // jkit/parser/Java.g:614:9: catches 'finally' block
+        // jkit/java/Java.g:614:9: ( catches 'finally' block )
+        // jkit/java/Java.g:614:9: catches 'finally' block
         {
         pushFollow(FOLLOW_catches_in_synpred152_Java3734);
         catches();
@@ -20044,8 +20044,8 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred153_Java
     public final void synpred153_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:615:9: ( catches )
-        // jkit/parser/Java.g:615:9: catches
+        // jkit/java/Java.g:615:9: ( catches )
+        // jkit/java/Java.g:615:9: catches
         {
         pushFollow(FOLLOW_catches_in_synpred153_Java3768);
         catches();
@@ -20059,8 +20059,8 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred170_Java
     public final void synpred170_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:650:4: ( 'case' constantExpression ':' )
-        // jkit/parser/Java.g:650:4: 'case' constantExpression ':'
+        // jkit/java/Java.g:650:4: ( 'case' constantExpression ':' )
+        // jkit/java/Java.g:650:4: 'case' constantExpression ':'
         {
         match(input,177,FOLLOW_177_in_synpred170_Java4150); if (state.failed) return ;
         pushFollow(FOLLOW_constantExpression_in_synpred170_Java4152);
@@ -20076,8 +20076,8 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred171_Java
     public final void synpred171_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:651:4: ( 'case' enumConstantName ':' )
-        // jkit/parser/Java.g:651:4: 'case' enumConstantName ':'
+        // jkit/java/Java.g:651:4: ( 'case' enumConstantName ':' )
+        // jkit/java/Java.g:651:4: 'case' enumConstantName ':'
         {
         match(input,177,FOLLOW_177_in_synpred171_Java4170); if (state.failed) return ;
         pushFollow(FOLLOW_enumConstantName_in_synpred171_Java4172);
@@ -20093,8 +20093,8 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred173_Java
     public final void synpred173_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:661:4: ( forVarControl )
-        // jkit/parser/Java.g:661:4: forVarControl
+        // jkit/java/Java.g:661:4: ( forVarControl )
+        // jkit/java/Java.g:661:4: forVarControl
         {
         pushFollow(FOLLOW_forVarControl_in_synpred173_Java4234);
         forVarControl();
@@ -20108,10 +20108,10 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred178_Java
     public final void synpred178_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:666:4: ( ( variableModifier )* type variableDeclarators )
-        // jkit/parser/Java.g:666:4: ( variableModifier )* type variableDeclarators
+        // jkit/java/Java.g:666:4: ( ( variableModifier )* type variableDeclarators )
+        // jkit/java/Java.g:666:4: ( variableModifier )* type variableDeclarators
         {
-        // jkit/parser/Java.g:666:4: ( variableModifier )*
+        // jkit/java/Java.g:666:4: ( variableModifier )*
         loop193:
         do {
             int alt193=2;
@@ -20124,7 +20124,7 @@ public class JavaParser extends Parser {
 
             switch (alt193) {
         	case 1 :
-        	    // jkit/parser/Java.g:0:0: variableModifier
+        	    // jkit/java/Java.g:0:0: variableModifier
         	    {
         	    pushFollow(FOLLOW_variableModifier_in_synpred178_Java4296);
         	    variableModifier();
@@ -20157,8 +20157,8 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred181_Java
     public final void synpred181_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:699:4: ( '=' expression )
-        // jkit/parser/Java.g:699:4: '=' expression
+        // jkit/java/Java.g:699:4: ( '=' expression )
+        // jkit/java/Java.g:699:4: '=' expression
         {
         match(input,133,FOLLOW_133_in_synpred181_Java4466); if (state.failed) return ;
         pushFollow(FOLLOW_expression_in_synpred181_Java4468);
@@ -20173,8 +20173,8 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred182_Java
     public final void synpred182_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:700:6: ( '+' '=' expression )
-        // jkit/parser/Java.g:700:6: '+' '=' expression
+        // jkit/java/Java.g:700:6: ( '+' '=' expression )
+        // jkit/java/Java.g:700:6: '+' '=' expression
         {
         match(input,178,FOLLOW_178_in_synpred182_Java4487); if (state.failed) return ;
         match(input,133,FOLLOW_133_in_synpred182_Java4489); if (state.failed) return ;
@@ -20190,8 +20190,8 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred183_Java
     public final void synpred183_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:701:6: ( '-' '=' expression )
-        // jkit/parser/Java.g:701:6: '-' '=' expression
+        // jkit/java/Java.g:701:6: ( '-' '=' expression )
+        // jkit/java/Java.g:701:6: '-' '=' expression
         {
         match(input,179,FOLLOW_179_in_synpred183_Java4519); if (state.failed) return ;
         match(input,133,FOLLOW_133_in_synpred183_Java4521); if (state.failed) return ;
@@ -20207,8 +20207,8 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred184_Java
     public final void synpred184_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:702:6: ( '*' '=' expression )
-        // jkit/parser/Java.g:702:6: '*' '=' expression
+        // jkit/java/Java.g:702:6: ( '*' '=' expression )
+        // jkit/java/Java.g:702:6: '*' '=' expression
         {
         match(input,118,FOLLOW_118_in_synpred184_Java4551); if (state.failed) return ;
         match(input,133,FOLLOW_133_in_synpred184_Java4553); if (state.failed) return ;
@@ -20224,8 +20224,8 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred185_Java
     public final void synpred185_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:703:6: ( '/' '=' expression )
-        // jkit/parser/Java.g:703:6: '/' '=' expression
+        // jkit/java/Java.g:703:6: ( '/' '=' expression )
+        // jkit/java/Java.g:703:6: '/' '=' expression
         {
         match(input,180,FOLLOW_180_in_synpred185_Java4583); if (state.failed) return ;
         match(input,133,FOLLOW_133_in_synpred185_Java4585); if (state.failed) return ;
@@ -20241,8 +20241,8 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred186_Java
     public final void synpred186_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:704:6: ( '&=' expression )
-        // jkit/parser/Java.g:704:6: '&=' expression
+        // jkit/java/Java.g:704:6: ( '&=' expression )
+        // jkit/java/Java.g:704:6: '&=' expression
         {
         match(input,181,FOLLOW_181_in_synpred186_Java4616); if (state.failed) return ;
         pushFollow(FOLLOW_expression_in_synpred186_Java4618);
@@ -20257,8 +20257,8 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred187_Java
     public final void synpred187_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:705:6: ( '|=' expression )
-        // jkit/parser/Java.g:705:6: '|=' expression
+        // jkit/java/Java.g:705:6: ( '|=' expression )
+        // jkit/java/Java.g:705:6: '|=' expression
         {
         match(input,182,FOLLOW_182_in_synpred187_Java4641); if (state.failed) return ;
         pushFollow(FOLLOW_expression_in_synpred187_Java4643);
@@ -20273,8 +20273,8 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred188_Java
     public final void synpred188_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:706:6: ( '^=' expression )
-        // jkit/parser/Java.g:706:6: '^=' expression
+        // jkit/java/Java.g:706:6: ( '^=' expression )
+        // jkit/java/Java.g:706:6: '^=' expression
         {
         match(input,183,FOLLOW_183_in_synpred188_Java4666); if (state.failed) return ;
         pushFollow(FOLLOW_expression_in_synpred188_Java4668);
@@ -20289,8 +20289,8 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred189_Java
     public final void synpred189_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:707:6: ( '%' '=' expression )
-        // jkit/parser/Java.g:707:6: '%' '=' expression
+        // jkit/java/Java.g:707:6: ( '%' '=' expression )
+        // jkit/java/Java.g:707:6: '%' '=' expression
         {
         match(input,184,FOLLOW_184_in_synpred189_Java4696); if (state.failed) return ;
         match(input,133,FOLLOW_133_in_synpred189_Java4698); if (state.failed) return ;
@@ -20306,8 +20306,8 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred190_Java
     public final void synpred190_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:708:6: ( '<' '<' '=' expression )
-        // jkit/parser/Java.g:708:6: '<' '<' '=' expression
+        // jkit/java/Java.g:708:6: ( '<' '<' '=' expression )
+        // jkit/java/Java.g:708:6: '<' '<' '=' expression
         {
         match(input,122,FOLLOW_122_in_synpred190_Java4728); if (state.failed) return ;
         match(input,122,FOLLOW_122_in_synpred190_Java4730); if (state.failed) return ;
@@ -20324,8 +20324,8 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred191_Java
     public final void synpred191_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:709:6: ( '>' '>' '=' expression )
-        // jkit/parser/Java.g:709:6: '>' '>' '=' expression
+        // jkit/java/Java.g:709:6: ( '>' '>' '=' expression )
+        // jkit/java/Java.g:709:6: '>' '>' '=' expression
         {
         match(input,124,FOLLOW_124_in_synpred191_Java4762); if (state.failed) return ;
         match(input,124,FOLLOW_124_in_synpred191_Java4764); if (state.failed) return ;
@@ -20342,8 +20342,8 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred192_Java
     public final void synpred192_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:710:6: ( '>' '>' '>' '=' expression )
-        // jkit/parser/Java.g:710:6: '>' '>' '>' '=' expression
+        // jkit/java/Java.g:710:6: ( '>' '>' '>' '=' expression )
+        // jkit/java/Java.g:710:6: '>' '>' '>' '=' expression
         {
         match(input,124,FOLLOW_124_in_synpred192_Java4794); if (state.failed) return ;
         match(input,124,FOLLOW_124_in_synpred192_Java4796); if (state.failed) return ;
@@ -20361,11 +20361,11 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred203_Java
     public final void synpred203_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:784:8: ( ( '<' shiftExpression ) )
-        // jkit/parser/Java.g:784:8: ( '<' shiftExpression )
+        // jkit/java/Java.g:784:8: ( ( '<' shiftExpression ) )
+        // jkit/java/Java.g:784:8: ( '<' shiftExpression )
         {
-        // jkit/parser/Java.g:784:8: ( '<' shiftExpression )
-        // jkit/parser/Java.g:784:9: '<' shiftExpression
+        // jkit/java/Java.g:784:8: ( '<' shiftExpression )
+        // jkit/java/Java.g:784:9: '<' shiftExpression
         {
         match(input,122,FOLLOW_122_in_synpred203_Java5439); if (state.failed) return ;
         pushFollow(FOLLOW_shiftExpression_in_synpred203_Java5441);
@@ -20383,10 +20383,10 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred207_Java
     public final void synpred207_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:794:7: ( ( '<' '<' | '>' '>' ) additiveExpression )
-        // jkit/parser/Java.g:794:7: ( '<' '<' | '>' '>' ) additiveExpression
+        // jkit/java/Java.g:794:7: ( ( '<' '<' | '>' '>' ) additiveExpression )
+        // jkit/java/Java.g:794:7: ( '<' '<' | '>' '>' ) additiveExpression
         {
-        // jkit/parser/Java.g:794:7: ( '<' '<' | '>' '>' )
+        // jkit/java/Java.g:794:7: ( '<' '<' | '>' '>' )
         int alt194=2;
         int LA194_0 = input.LA(1);
 
@@ -20405,7 +20405,7 @@ public class JavaParser extends Parser {
         }
         switch (alt194) {
             case 1 :
-                // jkit/parser/Java.g:794:8: '<' '<'
+                // jkit/java/Java.g:794:8: '<' '<'
                 {
                 match(input,122,FOLLOW_122_in_synpred207_Java5553); if (state.failed) return ;
                 match(input,122,FOLLOW_122_in_synpred207_Java5555); if (state.failed) return ;
@@ -20413,7 +20413,7 @@ public class JavaParser extends Parser {
                 }
                 break;
             case 2 :
-                // jkit/parser/Java.g:794:19: '>' '>'
+                // jkit/java/Java.g:794:19: '>' '>'
                 {
                 match(input,124,FOLLOW_124_in_synpred207_Java5559); if (state.failed) return ;
                 match(input,124,FOLLOW_124_in_synpred207_Java5561); if (state.failed) return ;
@@ -20435,10 +20435,10 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred208_Java
     public final void synpred208_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:794:6: ( ( ( '<' '<' | '>' '>' ) additiveExpression )+ )
-        // jkit/parser/Java.g:794:6: ( ( '<' '<' | '>' '>' ) additiveExpression )+
+        // jkit/java/Java.g:794:6: ( ( ( '<' '<' | '>' '>' ) additiveExpression )+ )
+        // jkit/java/Java.g:794:6: ( ( '<' '<' | '>' '>' ) additiveExpression )+
         {
-        // jkit/parser/Java.g:794:6: ( ( '<' '<' | '>' '>' ) additiveExpression )+
+        // jkit/java/Java.g:794:6: ( ( '<' '<' | '>' '>' ) additiveExpression )+
         int cnt196=0;
         loop196:
         do {
@@ -20452,9 +20452,9 @@ public class JavaParser extends Parser {
 
             switch (alt196) {
         	case 1 :
-        	    // jkit/parser/Java.g:794:7: ( '<' '<' | '>' '>' ) additiveExpression
+        	    // jkit/java/Java.g:794:7: ( '<' '<' | '>' '>' ) additiveExpression
         	    {
-        	    // jkit/parser/Java.g:794:7: ( '<' '<' | '>' '>' )
+        	    // jkit/java/Java.g:794:7: ( '<' '<' | '>' '>' )
         	    int alt195=2;
         	    int LA195_0 = input.LA(1);
 
@@ -20473,7 +20473,7 @@ public class JavaParser extends Parser {
         	    }
         	    switch (alt195) {
         	        case 1 :
-        	            // jkit/parser/Java.g:794:8: '<' '<'
+        	            // jkit/java/Java.g:794:8: '<' '<'
         	            {
         	            match(input,122,FOLLOW_122_in_synpred208_Java5553); if (state.failed) return ;
         	            match(input,122,FOLLOW_122_in_synpred208_Java5555); if (state.failed) return ;
@@ -20481,7 +20481,7 @@ public class JavaParser extends Parser {
         	            }
         	            break;
         	        case 2 :
-        	            // jkit/parser/Java.g:794:19: '>' '>'
+        	            // jkit/java/Java.g:794:19: '>' '>'
         	            {
         	            match(input,124,FOLLOW_124_in_synpred208_Java5559); if (state.failed) return ;
         	            match(input,124,FOLLOW_124_in_synpred208_Java5561); if (state.failed) return ;
@@ -20517,8 +20517,8 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred209_Java
     public final void synpred209_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:796:9: ( '>' '>' '>' additiveExpression )
-        // jkit/parser/Java.g:796:9: '>' '>' '>' additiveExpression
+        // jkit/java/Java.g:796:9: ( '>' '>' '>' additiveExpression )
+        // jkit/java/Java.g:796:9: '>' '>' '>' additiveExpression
         {
         match(input,124,FOLLOW_124_in_synpred209_Java5598); if (state.failed) return ;
         match(input,124,FOLLOW_124_in_synpred209_Java5600); if (state.failed) return ;
@@ -20535,10 +20535,10 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred210_Java
     public final void synpred210_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:796:8: ( ( '>' '>' '>' additiveExpression )+ )
-        // jkit/parser/Java.g:796:8: ( '>' '>' '>' additiveExpression )+
+        // jkit/java/Java.g:796:8: ( ( '>' '>' '>' additiveExpression )+ )
+        // jkit/java/Java.g:796:8: ( '>' '>' '>' additiveExpression )+
         {
-        // jkit/parser/Java.g:796:8: ( '>' '>' '>' additiveExpression )+
+        // jkit/java/Java.g:796:8: ( '>' '>' '>' additiveExpression )+
         int cnt197=0;
         loop197:
         do {
@@ -20552,7 +20552,7 @@ public class JavaParser extends Parser {
 
             switch (alt197) {
         	case 1 :
-        	    // jkit/parser/Java.g:796:9: '>' '>' '>' additiveExpression
+        	    // jkit/java/Java.g:796:9: '>' '>' '>' additiveExpression
         	    {
         	    match(input,124,FOLLOW_124_in_synpred210_Java5598); if (state.failed) return ;
         	    match(input,124,FOLLOW_124_in_synpred210_Java5600); if (state.failed) return ;
@@ -20583,8 +20583,8 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred224_Java
     public final void synpred224_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:828:9: ( castExpression )
-        // jkit/parser/Java.g:828:9: castExpression
+        // jkit/java/Java.g:828:9: ( castExpression )
+        // jkit/java/Java.g:828:9: castExpression
         {
         pushFollow(FOLLOW_castExpression_in_synpred224_Java5951);
         castExpression();
@@ -20598,8 +20598,8 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred231_Java
     public final void synpred231_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:844:8: ( '(' primitiveType ')' unaryExpression )
-        // jkit/parser/Java.g:844:8: '(' primitiveType ')' unaryExpression
+        // jkit/java/Java.g:844:8: ( '(' primitiveType ')' unaryExpression )
+        // jkit/java/Java.g:844:8: '(' primitiveType ')' unaryExpression
         {
         match(input,154,FOLLOW_154_in_synpred231_Java6101); if (state.failed) return ;
         pushFollow(FOLLOW_primitiveType_in_synpred231_Java6103);
@@ -20620,8 +20620,8 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred232_Java
     public final void synpred232_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:845:8: ( '(' type ')' unaryExpressionNotPlusMinus )
-        // jkit/parser/Java.g:845:8: '(' type ')' unaryExpressionNotPlusMinus
+        // jkit/java/Java.g:845:8: ( '(' type ')' unaryExpressionNotPlusMinus )
+        // jkit/java/Java.g:845:8: '(' type ')' unaryExpressionNotPlusMinus
         {
         match(input,154,FOLLOW_154_in_synpred232_Java6130); if (state.failed) return ;
         pushFollow(FOLLOW_type_in_synpred232_Java6132);
@@ -20642,8 +20642,8 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred237_Java
     public final void synpred237_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:855:8: ( '[' expression ']' )
-        // jkit/parser/Java.g:855:8: '[' expression ']'
+        // jkit/java/Java.g:855:8: ( '[' expression ']' )
+        // jkit/java/Java.g:855:8: '[' expression ']'
         {
         match(input,131,FOLLOW_131_in_synpred237_Java6245); if (state.failed) return ;
         pushFollow(FOLLOW_expression_in_synpred237_Java6247);
@@ -20659,11 +20659,11 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred241_Java
     public final void synpred241_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:853:9: ( 'new' ( nonWildcardTypeArguments )? primitiveType ( ( '[' expression ']' )+ ( '[' ']' )* | ( '[' ']' )+ arrayInitializer ) )
-        // jkit/parser/Java.g:853:9: 'new' ( nonWildcardTypeArguments )? primitiveType ( ( '[' expression ']' )+ ( '[' ']' )* | ( '[' ']' )+ arrayInitializer )
+        // jkit/java/Java.g:853:9: ( 'new' ( nonWildcardTypeArguments )? primitiveType ( ( '[' expression ']' )+ ( '[' ']' )* | ( '[' ']' )+ arrayInitializer ) )
+        // jkit/java/Java.g:853:9: 'new' ( nonWildcardTypeArguments )? primitiveType ( ( '[' expression ']' )+ ( '[' ']' )* | ( '[' ']' )+ arrayInitializer )
         {
         match(input,196,FOLLOW_196_in_synpred241_Java6224); if (state.failed) return ;
-        // jkit/parser/Java.g:853:15: ( nonWildcardTypeArguments )?
+        // jkit/java/Java.g:853:15: ( nonWildcardTypeArguments )?
         int alt204=2;
         int LA204_0 = input.LA(1);
 
@@ -20672,7 +20672,7 @@ public class JavaParser extends Parser {
         }
         switch (alt204) {
             case 1 :
-                // jkit/parser/Java.g:0:0: nonWildcardTypeArguments
+                // jkit/java/Java.g:0:0: nonWildcardTypeArguments
                 {
                 pushFollow(FOLLOW_nonWildcardTypeArguments_in_synpred241_Java6226);
                 nonWildcardTypeArguments();
@@ -20690,14 +20690,14 @@ public class JavaParser extends Parser {
 
         state._fsp--;
         if (state.failed) return ;
-        // jkit/parser/Java.g:854:6: ( ( '[' expression ']' )+ ( '[' ']' )* | ( '[' ']' )+ arrayInitializer )
+        // jkit/java/Java.g:854:6: ( ( '[' expression ']' )+ ( '[' ']' )* | ( '[' ']' )+ arrayInitializer )
         int alt208=2;
         alt208 = dfa208.predict(input);
         switch (alt208) {
             case 1 :
-                // jkit/parser/Java.g:855:7: ( '[' expression ']' )+ ( '[' ']' )*
+                // jkit/java/Java.g:855:7: ( '[' expression ']' )+ ( '[' ']' )*
                 {
-                // jkit/parser/Java.g:855:7: ( '[' expression ']' )+
+                // jkit/java/Java.g:855:7: ( '[' expression ']' )+
                 int cnt205=0;
                 loop205:
                 do {
@@ -20705,7 +20705,7 @@ public class JavaParser extends Parser {
                     alt205 = dfa205.predict(input);
                     switch (alt205) {
                 	case 1 :
-                	    // jkit/parser/Java.g:855:8: '[' expression ']'
+                	    // jkit/java/Java.g:855:8: '[' expression ']'
                 	    {
                 	    match(input,131,FOLLOW_131_in_synpred241_Java6245); if (state.failed) return ;
                 	    pushFollow(FOLLOW_expression_in_synpred241_Java6247);
@@ -20728,7 +20728,7 @@ public class JavaParser extends Parser {
                     cnt205++;
                 } while (true);
 
-                // jkit/parser/Java.g:855:29: ( '[' ']' )*
+                // jkit/java/Java.g:855:29: ( '[' ']' )*
                 loop206:
                 do {
                     int alt206=2;
@@ -20741,7 +20741,7 @@ public class JavaParser extends Parser {
 
                     switch (alt206) {
                 	case 1 :
-                	    // jkit/parser/Java.g:855:30: '[' ']'
+                	    // jkit/java/Java.g:855:30: '[' ']'
                 	    {
                 	    match(input,131,FOLLOW_131_in_synpred241_Java6254); if (state.failed) return ;
                 	    match(input,132,FOLLOW_132_in_synpred241_Java6256); if (state.failed) return ;
@@ -20758,9 +20758,9 @@ public class JavaParser extends Parser {
                 }
                 break;
             case 2 :
-                // jkit/parser/Java.g:856:9: ( '[' ']' )+ arrayInitializer
+                // jkit/java/Java.g:856:9: ( '[' ']' )+ arrayInitializer
                 {
-                // jkit/parser/Java.g:856:9: ( '[' ']' )+
+                // jkit/java/Java.g:856:9: ( '[' ']' )+
                 int cnt207=0;
                 loop207:
                 do {
@@ -20774,7 +20774,7 @@ public class JavaParser extends Parser {
 
                     switch (alt207) {
                 	case 1 :
-                	    // jkit/parser/Java.g:856:10: '[' ']'
+                	    // jkit/java/Java.g:856:10: '[' ']'
                 	    {
                 	    match(input,131,FOLLOW_131_in_synpred241_Java6287); if (state.failed) return ;
                 	    match(input,132,FOLLOW_132_in_synpred241_Java6289); if (state.failed) return ;
@@ -20810,8 +20810,8 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred244_Java
     public final void synpred244_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:860:8: ( '[' expression ']' )
-        // jkit/parser/Java.g:860:8: '[' expression ']'
+        // jkit/java/Java.g:860:8: ( '[' expression ']' )
+        // jkit/java/Java.g:860:8: '[' expression ']'
         {
         match(input,131,FOLLOW_131_in_synpred244_Java6359); if (state.failed) return ;
         pushFollow(FOLLOW_expression_in_synpred244_Java6361);
@@ -20827,11 +20827,11 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred249_Java
     public final void synpred249_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:858:9: ( 'new' ( nonWildcardTypeArguments )? ( refComponent ( '.' refComponent )* ) ( ( '[' expression ']' )+ ( '[' ']' )* | ( '[' ']' )+ arrayInitializer | classCreatorRest ) )
-        // jkit/parser/Java.g:858:9: 'new' ( nonWildcardTypeArguments )? ( refComponent ( '.' refComponent )* ) ( ( '[' expression ']' )+ ( '[' ']' )* | ( '[' ']' )+ arrayInitializer | classCreatorRest )
+        // jkit/java/Java.g:858:9: ( 'new' ( nonWildcardTypeArguments )? ( refComponent ( '.' refComponent )* ) ( ( '[' expression ']' )+ ( '[' ']' )* | ( '[' ']' )+ arrayInitializer | classCreatorRest ) )
+        // jkit/java/Java.g:858:9: 'new' ( nonWildcardTypeArguments )? ( refComponent ( '.' refComponent )* ) ( ( '[' expression ']' )+ ( '[' ']' )* | ( '[' ']' )+ arrayInitializer | classCreatorRest )
         {
         match(input,196,FOLLOW_196_in_synpred249_Java6325); if (state.failed) return ;
-        // jkit/parser/Java.g:858:15: ( nonWildcardTypeArguments )?
+        // jkit/java/Java.g:858:15: ( nonWildcardTypeArguments )?
         int alt212=2;
         int LA212_0 = input.LA(1);
 
@@ -20840,7 +20840,7 @@ public class JavaParser extends Parser {
         }
         switch (alt212) {
             case 1 :
-                // jkit/parser/Java.g:0:0: nonWildcardTypeArguments
+                // jkit/java/Java.g:0:0: nonWildcardTypeArguments
                 {
                 pushFollow(FOLLOW_nonWildcardTypeArguments_in_synpred249_Java6327);
                 nonWildcardTypeArguments();
@@ -20853,15 +20853,15 @@ public class JavaParser extends Parser {
 
         }
 
-        // jkit/parser/Java.g:858:41: ( refComponent ( '.' refComponent )* )
-        // jkit/parser/Java.g:858:42: refComponent ( '.' refComponent )*
+        // jkit/java/Java.g:858:41: ( refComponent ( '.' refComponent )* )
+        // jkit/java/Java.g:858:42: refComponent ( '.' refComponent )*
         {
         pushFollow(FOLLOW_refComponent_in_synpred249_Java6333);
         refComponent();
 
         state._fsp--;
         if (state.failed) return ;
-        // jkit/parser/Java.g:858:58: ( '.' refComponent )*
+        // jkit/java/Java.g:858:58: ( '.' refComponent )*
         loop213:
         do {
             int alt213=2;
@@ -20874,7 +20874,7 @@ public class JavaParser extends Parser {
 
             switch (alt213) {
         	case 1 :
-        	    // jkit/parser/Java.g:858:59: '.' refComponent
+        	    // jkit/java/Java.g:858:59: '.' refComponent
         	    {
         	    match(input,117,FOLLOW_117_in_synpred249_Java6336); if (state.failed) return ;
         	    pushFollow(FOLLOW_refComponent_in_synpred249_Java6340);
@@ -20894,14 +20894,14 @@ public class JavaParser extends Parser {
 
         }
 
-        // jkit/parser/Java.g:859:6: ( ( '[' expression ']' )+ ( '[' ']' )* | ( '[' ']' )+ arrayInitializer | classCreatorRest )
+        // jkit/java/Java.g:859:6: ( ( '[' expression ']' )+ ( '[' ']' )* | ( '[' ']' )+ arrayInitializer | classCreatorRest )
         int alt217=3;
         alt217 = dfa217.predict(input);
         switch (alt217) {
             case 1 :
-                // jkit/parser/Java.g:860:7: ( '[' expression ']' )+ ( '[' ']' )*
+                // jkit/java/Java.g:860:7: ( '[' expression ']' )+ ( '[' ']' )*
                 {
-                // jkit/parser/Java.g:860:7: ( '[' expression ']' )+
+                // jkit/java/Java.g:860:7: ( '[' expression ']' )+
                 int cnt214=0;
                 loop214:
                 do {
@@ -20909,7 +20909,7 @@ public class JavaParser extends Parser {
                     alt214 = dfa214.predict(input);
                     switch (alt214) {
                 	case 1 :
-                	    // jkit/parser/Java.g:860:8: '[' expression ']'
+                	    // jkit/java/Java.g:860:8: '[' expression ']'
                 	    {
                 	    match(input,131,FOLLOW_131_in_synpred249_Java6359); if (state.failed) return ;
                 	    pushFollow(FOLLOW_expression_in_synpred249_Java6361);
@@ -20932,7 +20932,7 @@ public class JavaParser extends Parser {
                     cnt214++;
                 } while (true);
 
-                // jkit/parser/Java.g:860:29: ( '[' ']' )*
+                // jkit/java/Java.g:860:29: ( '[' ']' )*
                 loop215:
                 do {
                     int alt215=2;
@@ -20945,7 +20945,7 @@ public class JavaParser extends Parser {
 
                     switch (alt215) {
                 	case 1 :
-                	    // jkit/parser/Java.g:860:30: '[' ']'
+                	    // jkit/java/Java.g:860:30: '[' ']'
                 	    {
                 	    match(input,131,FOLLOW_131_in_synpred249_Java6368); if (state.failed) return ;
                 	    match(input,132,FOLLOW_132_in_synpred249_Java6370); if (state.failed) return ;
@@ -20962,9 +20962,9 @@ public class JavaParser extends Parser {
                 }
                 break;
             case 2 :
-                // jkit/parser/Java.g:861:9: ( '[' ']' )+ arrayInitializer
+                // jkit/java/Java.g:861:9: ( '[' ']' )+ arrayInitializer
                 {
-                // jkit/parser/Java.g:861:9: ( '[' ']' )+
+                // jkit/java/Java.g:861:9: ( '[' ']' )+
                 int cnt216=0;
                 loop216:
                 do {
@@ -20978,7 +20978,7 @@ public class JavaParser extends Parser {
 
                     switch (alt216) {
                 	case 1 :
-                	    // jkit/parser/Java.g:861:10: '[' ']'
+                	    // jkit/java/Java.g:861:10: '[' ']'
                 	    {
                 	    match(input,131,FOLLOW_131_in_synpred249_Java6403); if (state.failed) return ;
                 	    match(input,132,FOLLOW_132_in_synpred249_Java6405); if (state.failed) return ;
@@ -21005,7 +21005,7 @@ public class JavaParser extends Parser {
                 }
                 break;
             case 3 :
-                // jkit/parser/Java.g:862:9: classCreatorRest
+                // jkit/java/Java.g:862:9: classCreatorRest
                 {
                 pushFollow(FOLLOW_classCreatorRest_in_synpred249_Java6438);
                 classCreatorRest();
@@ -21025,8 +21025,8 @@ public class JavaParser extends Parser {
 
     // $ANTLR start synpred250_Java
     public final void synpred250_Java_fragment() throws RecognitionException {   
-        // jkit/parser/Java.g:864:9: ( type '.' 'class' )
-        // jkit/parser/Java.g:864:9: type '.' 'class'
+        // jkit/java/Java.g:864:9: ( type '.' 'class' )
+        // jkit/java/Java.g:864:9: type '.' 'class'
         {
         pushFollow(FOLLOW_type_in_synpred250_Java6470);
         type();
