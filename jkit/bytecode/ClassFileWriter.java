@@ -28,7 +28,7 @@ import jkit.ClassWriter;
 import jkit.core.*;
 import jkit.core.FlowGraph.*;
 import jkit.util.*;
-import jkit.util.bytecode.*;
+import jkit.bytecode.*;
 import jkit.util.graph.*;
 import jkit.stages.codegen.Typing;
 

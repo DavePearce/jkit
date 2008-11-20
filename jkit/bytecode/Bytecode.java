@@ -25,13 +25,6 @@ import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.Map;
 
-import jkit.bytecode.Constant.Double;
-import jkit.bytecode.Constant.Float;
-import jkit.bytecode.Constant.Info;
-import jkit.bytecode.Constant.Integer;
-import jkit.bytecode.Constant.Long;
-import jkit.bytecode.Constant.String;
-import jkit.bytecode.Constant.Utf8;
 import jkit.core.Type;
 import jkit.util.Pair;
 
@@ -837,7 +830,7 @@ public abstract class Bytecode {
 		}
 		
 		public byte[] toBytes(int offset, Map<String, Integer> labelOffsets,
-				Map<Info, Integer> constantPool) {
+				Map<Constant.Info, Integer> constantPool) {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			if (type instanceof Type.Double) {
 				if(op == LT) {
