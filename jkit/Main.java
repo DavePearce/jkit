@@ -34,7 +34,6 @@ import jkit.compiler.ClassCompiler.Pipeline;
 import jkit.java.JavaFileReader;
 import jkit.jkil.FlowGraph;
 import jkit.jkil.JKilWriter;
-import jkit.stages.*;
 
 /**
  * The main class provides the entry point for the JKit compiler. It is

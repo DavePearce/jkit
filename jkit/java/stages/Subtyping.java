@@ -9,7 +9,6 @@ import jkit.jkil.FlowGraph;
 import jkit.jkil.Method;
 import jkit.jkil.Type;
 import jkit.jkil.FlowGraph.*;
-import jkit.stages.*;
 import jkit.util.*;
 
 /**
