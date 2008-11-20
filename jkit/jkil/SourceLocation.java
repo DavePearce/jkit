@@ -8,7 +8,6 @@ package jkit.jkil;
  * 
  */
 public class SourceLocation {
-	
 	private String file;
 	private int line;
 	private int column;
