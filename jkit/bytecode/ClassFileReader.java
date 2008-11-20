@@ -1805,39 +1805,39 @@ public class ClassFileReader implements ClassReader {
 	
     // access flags for fields / methods / classes
 
-	protected static final int ACC_PUBLIC = 0x0001; 
-	protected static final int ACC_PRIVATE = 0x0002; 
-	protected static final int ACC_PROTECTED = 0x0004; 
-	protected static final int ACC_STATIC = 0x0008; 
-	protected static final int ACC_FINAL = 0x0010;         
-	protected static final int ACC_VOLATILE = 0x0040;
-	protected static final int ACC_TRANSIENT = 0x0080;
-	protected static final int ACC_SYNTHETIC = 0x1000;
-	protected static final int ACC_ENUM = 0x2000;
-	protected static final int ACC_BRIDGE = 0x0040;
-	protected static final int ACC_VARARGS = 0x0080;
+	public static final int ACC_PUBLIC = 0x0001; 
+	public static final int ACC_PRIVATE = 0x0002; 
+	public static final int ACC_public = 0x0004; 
+	public static final int ACC_STATIC = 0x0008; 
+	public static final int ACC_FINAL = 0x0010;         
+	public static final int ACC_VOLATILE = 0x0040;
+	public static final int ACC_TRANSIENT = 0x0080;
+	public static final int ACC_SYNTHETIC = 0x1000;
+	public static final int ACC_ENUM = 0x2000;
+	public static final int ACC_BRIDGE = 0x0040;
+	public static final int ACC_VARARGS = 0x0080;
 	    
     // access flags for methods / classes 
     
-	protected static final int ACC_SYNCHRONIZED = 0x0020;
-	protected static final int ACC_NATIVE = 0x0100;
-	protected static final int ACC_ABSTRACT = 0x0400;
-	protected static final int ACC_STRICT = 0x0800; 
+	public static final int ACC_SYNCHRONIZED = 0x0020;
+	public static final int ACC_NATIVE = 0x0100;
+	public static final int ACC_ABSTRACT = 0x0400;
+	public static final int ACC_STRICT = 0x0800; 
     
     // access flags for classes
     
-    protected static final int ACC_INTERFACE = 0x0200; 
-    protected static final int ACC_SUPER = 0x0020; 
+    public static final int ACC_INTERFACE = 0x0200; 
+    public static final int ACC_SUPER = 0x0020; 
     
     // from the VM SPEC
-	protected static final byte VM_BOOLEAN = 4;
-	protected static final byte VM_CHAR = 5;
-	protected static final byte VM_FLOAT = 6;
-	protected static final byte VM_DOUBLE = 7;
-	protected static final byte VM_BYTE = 8;
-	protected static final byte VM_SHORT = 9;
-	protected static final byte VM_INT = 10;
-	protected static final byte VM_LONG = 11;
+	public static final byte VM_BOOLEAN = 4;
+	public static final byte VM_CHAR = 5;
+	public static final byte VM_FLOAT = 6;
+	public static final byte VM_DOUBLE = 7;
+	public static final byte VM_BYTE = 8;
+	public static final byte VM_SHORT = 9;
+	public static final byte VM_INT = 10;
+	public static final byte VM_LONG = 11;
 
 	//  RESULT TYPES.
 	static final int TYPE_SHIFT = 6;
@@ -1898,77 +1898,77 @@ public class ClassFileReader implements ClassReader {
 	static final int MOD_SPECIAL = 2 << MOD_SHIFT;
 	static final int MOD_INTERFACE = 3 << MOD_SHIFT;
 	
-	protected static final int INSN_MASK = 63;
-	protected static final int WIDE_INSN = 18; 
+	public static final int INSN_MASK = 63;
+	public static final int WIDE_INSN = 18; 
 	
     // This table contains all the important info!
 	// It was constructed by hand, which was a bit of a pain ...
 	
-	protected static final int NOP = 0;
-	protected static final int LOADVAR = 1;
-	protected static final int STOREVAR = 2;	
-	protected static final int LOADCONST = 3;
-	protected static final int STORECONST = 4;
-	protected static final int ARRAYLOAD = 5;
-	protected static final int ARRAYSTORE = 6;
-	protected static final int ARRAYLENGTH = 7;
-	protected static final int IINC = 8;
-	protected static final int NEW = 9;
-	protected static final int THROW = 10;
-	protected static final int CHECKCAST = 11;
-	protected static final int INSTANCEOF = 12;
-	protected static final int MONITORENTER = 13;
-	protected static final int MONITOREXIT = 14;
-	protected static final int SWITCH = 15;
-	protected static final int CONVERT = 16;	
+	public static final int NOP = 0;
+	public static final int LOADVAR = 1;
+	public static final int STOREVAR = 2;	
+	public static final int LOADCONST = 3;
+	public static final int STORECONST = 4;
+	public static final int ARRAYLOAD = 5;
+	public static final int ARRAYSTORE = 6;
+	public static final int ARRAYLENGTH = 7;
+	public static final int IINC = 8;
+	public static final int NEW = 9;
+	public static final int THROW = 10;
+	public static final int CHECKCAST = 11;
+	public static final int INSTANCEOF = 12;
+	public static final int MONITORENTER = 13;
+	public static final int MONITOREXIT = 14;
+	public static final int SWITCH = 15;
+	public static final int CONVERT = 16;	
 	
 	// STACK INSTRUCTIONS
-	protected static final int POP = 19;
-	protected static final int DUP = 20;
-	protected static final int DUPX1 = 21;
-	protected static final int DUPX2 = 22;
-	protected static final int SWAP = 23;
+	public static final int POP = 19;
+	public static final int DUP = 20;
+	public static final int DUPX1 = 21;
+	public static final int DUPX2 = 22;
+	public static final int SWAP = 23;
 	
 	// ARITHMETIC INSTRUCTIONS
-	protected static final int ADD = 24;
-	protected static final int SUB = 25;
-	protected static final int MUL = 26;
-	protected static final int DIV = 27;
-	protected static final int REM = 28;
-	protected static final int NEG = 29;
-	protected static final int SHL = 30;
-	protected static final int SHR = 31;
-	protected static final int USHR = 32;
-	protected static final int AND = 33;
-	protected static final int OR = 34;
-	protected static final int XOR = 35;
-	protected static final int CMP = 36;
-	protected static final int CMPL = 37;
-	protected static final int CMPG = 38;
+	public static final int ADD = 24;
+	public static final int SUB = 25;
+	public static final int MUL = 26;
+	public static final int DIV = 27;
+	public static final int REM = 28;
+	public static final int NEG = 29;
+	public static final int SHL = 30;
+	public static final int SHR = 31;
+	public static final int USHR = 32;
+	public static final int AND = 33;
+	public static final int OR = 34;
+	public static final int XOR = 35;
+	public static final int CMP = 36;
+	public static final int CMPL = 37;
+	public static final int CMPG = 38;
 	
 	// BRANCHING INSTRUCTIONS
-	protected static final int IF = 39;
-	protected static final int IFCMP = 40;
-	protected static final int GOTO = 41;
-	protected static final int JSR = 42;
-	protected static final int RET = 43;	
-	protected static final int RETURN = 44;
+	public static final int IF = 39;
+	public static final int IFCMP = 40;
+	public static final int GOTO = 41;
+	public static final int JSR = 42;
+	public static final int RET = 43;	
+	public static final int RETURN = 44;
 	
 	// INDIRECT INSTRUCTIONS
-	protected static final int FIELDLOAD = 45;
-	protected static final int FIELDSTORE = 46;
-	protected static final int INVOKE = 47;
+	public static final int FIELDLOAD = 45;
+	public static final int FIELDSTORE = 46;
+	public static final int INVOKE = 47;
 
-	protected static final int EQUALS = 0;
-	protected static final int NOTEQUALS = 1;
-	protected static final int LESSTHAN = 2;		
-	protected static final int GREATERTHANEQUALS = 3;
-	protected static final int GREATERTHAN = 4;
-	protected static final int LESSTHANEQUALS = 5;
-	protected static final int NULL = 6;
-	protected static final int NONNULL = 7;
+	public static final int EQUALS = 0;
+	public static final int NOTEQUALS = 1;
+	public static final int LESSTHAN = 2;		
+	public static final int GREATERTHANEQUALS = 3;
+	public static final int GREATERTHAN = 4;
+	public static final int LESSTHANEQUALS = 5;
+	public static final int NULL = 6;
+	public static final int NONNULL = 7;
 	
-	protected static final int[] opmap = new int[] { 
+	public static final int[] opmap = new int[] { 
 		NOP | FMT_EMPTY, // NOP = 0;
 
 		LOADCONST | FMT_INTNULL | T_REF,          // ACONST_NULL = 1;

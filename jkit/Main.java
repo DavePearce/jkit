@@ -53,8 +53,7 @@ public class Main {
 	static{
 		// default targets
 		targets.put("class", ClassFileWriter.class);
-		targets.put("jkil", JKilWriter.class);
-		targets.put("java", JavaFileWriter.class);
+		targets.put("jkil", JKilWriter.class);		
 	}
 	
 	/**
