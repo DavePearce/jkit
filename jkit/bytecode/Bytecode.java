@@ -19,15 +19,21 @@
 //
 // (C) David James Pearce, 2007. 
 
-package jkit.util.bytecode;
+package jkit.bytecode;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.Map;
 
+import jkit.bytecode.Constant.Double;
+import jkit.bytecode.Constant.Float;
+import jkit.bytecode.Constant.Info;
+import jkit.bytecode.Constant.Integer;
+import jkit.bytecode.Constant.Long;
+import jkit.bytecode.Constant.String;
+import jkit.bytecode.Constant.Utf8;
 import jkit.core.Type;
 import jkit.util.Pair;
-import jkit.util.bytecode.Constant.Info;
 
 public abstract class Bytecode {
 	

@@ -19,11 +19,12 @@
 //
 // (C) David James Pearce, 2007. 
 
-package jkit.util.bytecode;
+package jkit.bytecode;
 
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
+
 import jkit.core.*;
 
 public class Constant {

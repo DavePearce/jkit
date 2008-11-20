@@ -25,8 +25,9 @@ import java.io.*;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+
+import jkit.bytecode.Types;
 import jkit.util.*;
-import jkit.util.bytecode.Types;
 
 /**
  * The ClassTable stores the hierarchy of Java Classes. Through this class you

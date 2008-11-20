@@ -387,7 +387,7 @@ public class Inferrer extends ForwardAnalysis<TypeMap> implements Stage {
 	private void assign(String s, Type t) {
 		Type oT = biggestTypes.get(s);
 		if(oT != null) {
-			if (jkit.util.bytecode.Types.slotSize(t) > jkit.util.bytecode.Types
+			if (jkit.bytecode.Types.slotSize(t) > jkit.bytecode.Types
 					.slotSize(oT)) {
 				biggestTypes.put(s, t);
 			}

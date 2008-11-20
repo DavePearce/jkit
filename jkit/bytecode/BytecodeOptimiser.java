@@ -1,8 +1,7 @@
-package jkit.util.bytecode;
+package jkit.bytecode;
 
 import java.util.*;
 
-import jkit.bytecode.ClassFileWriter;
 import jkit.core.*;
 
 /**

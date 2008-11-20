@@ -151,7 +151,7 @@ public class JKilWriter implements ClassWriter {
 			}
 			output.print(">");
 		}
-		if (!jkit.util.bytecode.Types.descriptor(superClass, false).equals(
+		if (!jkit.bytecode.Types.descriptor(superClass, false).equals(
 				"Ljava/lang/Object;")) {
 			output.print(" extends " + superClass.toShortString());
 		}

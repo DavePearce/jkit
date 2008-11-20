@@ -6,9 +6,9 @@ import java.util.jar.JarFile;
 import java.io.*;
 
 import jkit.bytecode.ClassFileReader;
+import jkit.bytecode.Types;
 import jkit.util.Pair;
 import jkit.util.Triple;
-import jkit.util.bytecode.Types;
 
 /**
  * A ClassLoader is responsible for loading classes from the filesystem. Classes

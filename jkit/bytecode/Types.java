@@ -1,4 +1,4 @@
-package jkit.util.bytecode;
+package jkit.bytecode;
 
 import jkit.core.*;
 import jkit.util.Pair;

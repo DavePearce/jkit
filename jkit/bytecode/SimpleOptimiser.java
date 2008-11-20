@@ -1,10 +1,9 @@
-package jkit.util.bytecode;
+package jkit.bytecode;
 
 import java.util.List;
 
-import jkit.bytecode.ClassFileWriter;
+import jkit.bytecode.Bytecode.*;
 import jkit.core.Type;
-import jkit.util.bytecode.Bytecode.*;
 
 /**
  * The simple optimiser provides a very simple implementation which does nothing
