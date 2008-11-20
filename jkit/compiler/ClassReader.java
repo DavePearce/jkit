@@ -1,4 +1,4 @@
-package jkit;
+package jkit.compiler;
 
 import java.util.List;
 

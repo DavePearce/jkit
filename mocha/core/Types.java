@@ -24,9 +24,9 @@ package mocha.core;
 import java.util.ArrayList;
 import java.util.Map;
 
-import jkit.core.ClassTable;
-import jkit.core.FieldNotFoundException;
-import jkit.core.MethodNotFoundException;
+import jkit.compiler.ClassTable;
+import jkit.compiler.FieldNotFoundException;
+import jkit.compiler.MethodNotFoundException;
 import jkit.jkil.Clazz;
 import jkit.jkil.Field;
 import jkit.jkil.FlowGraph;

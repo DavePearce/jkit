@@ -1,7 +1,7 @@
 // $ANTLR 3.1 jkit/java/Java.g 2008-11-21 12:08:58
 
 package jkit.java;
-import jkit.core.SyntaxError;
+import jkit.compiler.SyntaxError;
 
 
 import org.antlr.runtime.*;

@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 
-import jkit.core.ClassTable;
-import jkit.core.FieldNotFoundException;
-import jkit.core.InternalException;
+import jkit.compiler.ClassTable;
+import jkit.compiler.FieldNotFoundException;
+import jkit.compiler.InternalException;
 import jkit.jkil.Clazz;
 import jkit.jkil.Field;
 import jkit.jkil.FlowGraph;

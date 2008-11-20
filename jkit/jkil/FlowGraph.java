@@ -27,9 +27,9 @@ package jkit.jkil;
 
 import java.util.*;
 
-import jkit.core.ClassTable;
-import jkit.core.FieldNotFoundException;
-import jkit.core.MethodNotFoundException;
+import jkit.compiler.ClassTable;
+import jkit.compiler.FieldNotFoundException;
+import jkit.compiler.MethodNotFoundException;
 import jkit.util.*;
 import jkit.util.graph.DirectedAdjacencyList;
 

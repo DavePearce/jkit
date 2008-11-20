@@ -1,11 +1,9 @@
-package jkit.core;
+package jkit.compiler;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-import jkit.ClassReader;
-import jkit.ClassWriter;
 import jkit.jkil.Clazz;
 import jkit.stages.Stage;
 import jkit.util.Pair;
@@ -288,7 +286,7 @@ public class ClassCompiler {
 	}
 	
 	public static ClassReader constructReader(InputStream fis,
-			jkit.core.ClassLoader loader, Class<?> readerClass)
+			jkit.compiler.ClassLoader loader, Class<?> readerClass)
 			throws IllegalAccessException, InvocationTargetException,
 			InstantiationException {
 
@@ -296,7 +294,7 @@ public class ClassCompiler {
 			Class<?>[] params = c.getParameterTypes();
 			if (params != null && params.length == 2
 					&& params[0].equals(InputStream.class)
-					&& params[1].equals(jkit.core.ClassLoader.class)) {				
+					&& params[1].equals(jkit.compiler.ClassLoader.class)) {				
 				return (ClassReader) c.newInstance(fis,loader);
 			}
 		}

@@ -6,10 +6,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import jkit.core.ClassTable;
-import jkit.core.FieldNotFoundException;
-import jkit.core.InternalException;
-import jkit.core.MethodNotFoundException;
+import jkit.compiler.ClassTable;
+import jkit.compiler.FieldNotFoundException;
+import jkit.compiler.InternalException;
+import jkit.compiler.MethodNotFoundException;
 import jkit.jkil.Clazz;
 import jkit.jkil.FlowGraph;
 import jkit.jkil.Method;

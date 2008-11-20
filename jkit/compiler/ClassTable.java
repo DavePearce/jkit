@@ -19,7 +19,7 @@
 //
 // (C) David James Pearce, 2007. 
 
-package jkit.core;
+package jkit.compiler;
 
 import java.io.*;
 import java.util.*;

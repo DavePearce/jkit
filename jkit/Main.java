@@ -25,8 +25,12 @@ import java.io.*;
 import java.util.*;
 
 import jkit.bytecode.ClassFileWriter;
+import jkit.compiler.ClassCompiler;
+import jkit.compiler.ClassTable;
+import jkit.compiler.InternalException;
+import jkit.compiler.SyntaxError;
+import jkit.compiler.ClassCompiler.Pipeline;
 import jkit.core.*;
-import jkit.core.ClassCompiler.Pipeline;
 import jkit.java.JavaFileReader;
 import jkit.jkil.FlowGraph;
 import jkit.jkil.JKilWriter;

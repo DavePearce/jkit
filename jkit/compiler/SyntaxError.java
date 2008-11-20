@@ -19,7 +19,7 @@
 //
 // (C) David James Pearce, 2007. 
 
-package jkit.core;
+package jkit.compiler;
 
 /**
  * This exception is thrown when a syntax error occurs in the parser. 

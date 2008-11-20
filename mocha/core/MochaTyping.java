@@ -5,7 +5,7 @@ import java.util.Map;
 
 import mocha.util.Utils;
 
-import jkit.core.InternalException;
+import jkit.compiler.InternalException;
 import jkit.jkil.Clazz;
 import jkit.jkil.FlowGraph;
 import jkit.jkil.Method;

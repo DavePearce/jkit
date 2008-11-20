@@ -9,6 +9,10 @@ import java.util.Map;
 
 import mocha.core.Types;
 
+import jkit.compiler.ClassTable;
+import jkit.compiler.FieldNotFoundException;
+import jkit.compiler.InternalException;
+import jkit.compiler.MethodNotFoundException;
 import jkit.core.*;
 import jkit.jkil.Clazz;
 import jkit.jkil.Field;

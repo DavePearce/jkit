@@ -27,7 +27,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import jkit.core.ClassTable;
+import jkit.compiler.ClassTable;
 import jkit.util.Pair;
 
 /**

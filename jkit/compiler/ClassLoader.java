@@ -1,4 +1,4 @@
-package jkit.core;
+package jkit.compiler;
 
 import java.util.*;
 import java.util.jar.JarEntry;

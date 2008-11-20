@@ -35,8 +35,11 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
-import jkit.ClassReader;
 import jkit.bytecode.ClassFileReader;
+import jkit.compiler.ClassReader;
+import jkit.compiler.ClassTable;
+import jkit.compiler.FieldNotFoundException;
+import jkit.compiler.SyntaxError;
 import jkit.core.*;
 import jkit.jkil.Clazz;
 import jkit.jkil.Field;
@@ -68,7 +71,7 @@ public class JavaFileReader implements ClassReader {
 	/**
      * The class loader is needed to resolve types
      */
-	protected jkit.core.ClassLoader loader;
+	protected jkit.compiler.ClassLoader loader;
 
 	/**
      * The declared package of the class being parsed.
@@ -188,7 +191,7 @@ public class JavaFileReader implements ClassReader {
      * 
      * @throws IOException
      */
-	public JavaFileReader(String file, jkit.core.ClassLoader loader)
+	public JavaFileReader(String file, jkit.compiler.ClassLoader loader)
 			throws IOException {
 		CommonTokenStream tokenStream = new CommonTokenStream(new JavaLexer(
 				new ANTLRFileStream(file)));
@@ -208,7 +211,7 @@ public class JavaFileReader implements ClassReader {
      * 
      * @throws IOException
      */
-	public JavaFileReader(Reader r, jkit.core.ClassLoader loader)
+	public JavaFileReader(Reader r, jkit.compiler.ClassLoader loader)
 			throws IOException {
 		CommonTokenStream tokenStream = new CommonTokenStream(new JavaLexer(
 				new ANTLRReaderStream(r)));
@@ -228,7 +231,7 @@ public class JavaFileReader implements ClassReader {
      * 
      * @throws IOException
      */
-	public JavaFileReader(InputStream in, jkit.core.ClassLoader loader)
+	public JavaFileReader(InputStream in, jkit.compiler.ClassLoader loader)
 			throws IOException {
 		CommonTokenStream tokenStream = new CommonTokenStream(new JavaLexer(
 				new ANTLRInputStream(in)));
@@ -250,7 +253,7 @@ public class JavaFileReader implements ClassReader {
      * 
      * @throws IOException
      */
-	public JavaFileReader(Tree tree, jkit.core.ClassLoader loader)
+	public JavaFileReader(Tree tree, jkit.compiler.ClassLoader loader)
 			throws IOException {
 		this.loader = loader;
 		ast = tree;

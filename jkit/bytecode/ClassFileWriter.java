@@ -24,7 +24,11 @@ package jkit.bytecode;
 import java.io.*;
 import java.util.*;
 
-import jkit.ClassWriter;
+import jkit.compiler.ClassTable;
+import jkit.compiler.ClassWriter;
+import jkit.compiler.FieldNotFoundException;
+import jkit.compiler.InternalException;
+import jkit.compiler.MethodNotFoundException;
 import jkit.core.*;
 import jkit.jkil.Clazz;
 import jkit.jkil.Field;

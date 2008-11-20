@@ -1,4 +1,4 @@
-package jkit.core;
+package jkit.compiler;
 
 import jkit.jkil.Clazz;
 import jkit.jkil.FlowGraph;

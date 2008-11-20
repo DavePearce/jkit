@@ -3,6 +3,9 @@ package jkit.stages.codegen;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
+import jkit.compiler.ClassTable;
+import jkit.compiler.InternalException;
+import jkit.compiler.MethodNotFoundException;
 import jkit.core.*;
 import jkit.jkil.Clazz;
 import jkit.jkil.FlowGraph;
