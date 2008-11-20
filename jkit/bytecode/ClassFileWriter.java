@@ -37,7 +37,6 @@ import jkit.jkil.Method;
 import jkit.jkil.Type;
 import jkit.jkil.FlowGraph.*;
 import jkit.util.*;
-import jkit.bytecode.*;
 import jkit.util.graph.*;
 
 public class ClassFileWriter implements ClassWriter {
