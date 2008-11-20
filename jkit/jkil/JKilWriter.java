@@ -28,7 +28,7 @@
  * 
  */
 
-package jkit.io;
+package jkit.jkil;
 
 import java.io.*;
 import java.util.*;
@@ -38,6 +38,7 @@ import jkit.bytecode.ClassFileReader;
 import jkit.core.*;
 import jkit.core.FlowGraph.Expr;
 import jkit.core.FlowGraph.Point;
+import jkit.io.ClassWriter;
 import jkit.util.*;
 import jkit.util.graph.Graph;
 

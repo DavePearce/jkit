@@ -23,8 +23,8 @@ import jkit.core.ClassTable;
 import jkit.core.Clazz;
 import jkit.core.SyntaxError;
 import jkit.io.ClassReader;
-import jkit.io.JavaFileReader;
 import jkit.io.JavaFileWriter;
+import jkit.java.JavaFileReader;
 
 import jkit.Main;
 

@@ -19,7 +19,7 @@
 //
 // (C) David James Pearce, 2007. 
 
-package jkit.io;
+package jkit.java;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,6 +39,7 @@ import jkit.bytecode.ClassFileReader;
 import jkit.core.*;
 import jkit.core.FlowGraph.*;
 import jkit.core.Type.Reference;
+import jkit.io.ClassReader;
 import jkit.parser.JavaLexer;
 import jkit.parser.JavaParser;
 import jkit.util.Pair;
