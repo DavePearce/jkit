@@ -36,7 +36,6 @@ import java.lang.reflect.Modifier;
 
 import jkit.bytecode.ClassFileReader;
 import jkit.compiler.ClassWriter;
-import jkit.core.*;
 import jkit.jkil.FlowGraph.Expr;
 import jkit.jkil.FlowGraph.Point;
 import jkit.util.*;

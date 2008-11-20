@@ -237,7 +237,7 @@ public class ClassTable {
 					Set<Type.Variable> freeVars = mt.freeVariables();					
 					HashMap<String,Type> freeVarMap = new HashMap<String,Type>();
 					for(Type.Variable fv : freeVars) {
-						freeVarMap.put(fv.name,Type.referenceType("java.lang","Object"));
+						freeVarMap.put(fv.name(),Type.referenceType("java.lang","Object"));
 					}
 					mt = (Type.Function) mt.substitute(freeVarMap);
 					mts.add(new Triple<Clazz, Method, Type.Function>(c, m, mt));					
@@ -271,7 +271,7 @@ public class ClassTable {
 	public static Type.Reference commonSuperType(Type.Reference refT1,
 			Type.Reference refT2) throws ClassNotFoundException {
 		Type.Reference lubT = findCommonSuperType(refT2, refT1);
-		TypeElement[] es = union(refT1.elements, refT2.elements);
+		TypeElement[] es = union(refT1.elements(), refT2.elements());
 		return new Type.Reference(lubT.pkg(), lubT.classes(), es);
 	}
 
@@ -505,7 +505,7 @@ public class ClassTable {
 			// loose the @NonNull.
 			Type.Reference tr = (Type.Reference) r;
 			return Type.referenceType(tr.pkg(), tr.classes(),
-					concreteT.elements);
+					concreteT.elements());
 		} else {
 			return r;
 		}

@@ -3,7 +3,6 @@ package jkit.stages.checks;
 import java.util.Map;
 
 import jkit.compiler.InternalException;
-import jkit.core.*;
 import jkit.jkil.Clazz;
 import jkit.jkil.FlowGraph;
 import jkit.jkil.Method;

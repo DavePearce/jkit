@@ -1,7 +1,6 @@
 package jkit.bytecode;
 
 import jkit.compiler.ClassTable;
-import jkit.core.*;
 import jkit.jkil.Clazz;
 import jkit.jkil.Type;
 import jkit.util.Pair;

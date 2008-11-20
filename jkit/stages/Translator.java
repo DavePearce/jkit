@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 
 import jkit.compiler.InternalException;
-import jkit.core.*;
 import jkit.jkil.Clazz;
 import jkit.jkil.FlowGraph;
 import jkit.jkil.Method;

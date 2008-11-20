@@ -1,6 +1,5 @@
 package jkit.stages;
 
-import jkit.core.*;
 import jkit.jkil.Clazz;
 
 public interface Stage {

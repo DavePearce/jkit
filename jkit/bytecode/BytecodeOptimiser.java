@@ -2,8 +2,6 @@ package jkit.bytecode;
 
 import java.util.*;
 
-import jkit.core.*;
-
 /**
  * A bytecode optimiser is essentially a peep hole optimiser. The aim is to
  * identify and reduce common patterns that are inefficient. For example, the

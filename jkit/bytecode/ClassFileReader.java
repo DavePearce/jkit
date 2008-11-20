@@ -30,7 +30,6 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 
 import jkit.compiler.ClassReader;
-import jkit.core.*;
 import jkit.jkil.Clazz;
 import jkit.jkil.Field;
 import jkit.jkil.Method;

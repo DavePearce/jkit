@@ -30,7 +30,6 @@ import jkit.compiler.ClassTable;
 import jkit.compiler.InternalException;
 import jkit.compiler.SyntaxError;
 import jkit.compiler.ClassCompiler.Pipeline;
-import jkit.core.*;
 import jkit.java.JavaFileReader;
 import jkit.jkil.FlowGraph;
 import jkit.jkil.JKilWriter;
