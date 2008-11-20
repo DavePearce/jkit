@@ -1,0 +1,4 @@
+#!/bin/bash
+PACKAGE=mocha.jar
+
+java -jar $MOCHA_LIB_PATH$PACKAGE $1

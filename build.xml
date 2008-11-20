@@ -1,0 +1,37 @@
+<project name="JKit" default="build">
+  <target name="compile">
+    <javac debug="true" srcdir="." includes="jkit/**" excludes="jkit/types/**,jkit/testing/**"/> 
+  </target>
+
+  <target name="build" depends="compile">
+  	<mkdir dir="tmp"/>
+    <manifest file="tmp/MANIFEST.MF">
+      <attribute name="Built-By" value="${user.name}"/>
+      <attribute name="Main-Class" value="jkit.Main"/>
+    </manifest>
+    <jar destfile="lib/jkit.jar" basedir="." includes="jkit/**/*.class,mocha/**/*.class" manifest="tmp/MANIFEST.MF"/>
+  </target>
+
+  <target name="doc">
+    <javadoc
+       packagenames="jkit.*"
+       excludepackagenames="jkit.testing.*,jkit.types.*,jkit.parser.*"
+       sourcepath="."
+       destdir="docs/api"
+       author="true"
+       version="true"
+       use="true"
+       windowtitle="JKit API">
+      <doctitle><![CDATA[<h1>The Java Compiler Kit (JKit)</h1>]]></doctitle>
+      <bottom><![CDATA[<i>Copyright &#169; 2008 David J. Pearce. All Rights Reserved.</i>]]></bottom>
+      </javadoc>
+  </target>
+
+ <target name="clean">
+  <delete includeEmptyDirs="true" failonerror="false">
+   <fileset file="lib/*.jar"/>
+   <fileset dir="." includes="**/*.class"/>
+   <fileset dir="tmp/" includes="**"/>
+  </delete>
+ </target>
+</project>

@@ -1,0 +1,80 @@
+====================================================================
+JKit v0.1 Release Notes
+====================================================================
+By David J. Pearce, March 2008.
+
+There are currently numerous issues with the JKit compiler, and the
+following list identifies all those which are known to us.  If you
+find a problem which is not listed here, please email
+david.pearce@mcs.vuw.ac.nz with information detailing the problem.
+
+The various problems are split into different categories!
+
+====================================================================
+1) Parsing
+====================================================================
+
+1.1) Incomplete support for switch or finally statements (exceptions).
+     In particular, abnormal returns from try bodies and/or catch bodies
+     will not cause finally statements to be executed.
+
+1.2) Incomplete support for synchronisation primitives (exceptions)
+
+1.3) Limited support for wildcards and/or generic type lower bounds.
+
+1.4) Various problems related to using generic types in method bodies.
+
+1.5) Static imports do not work.
+
+1.6) No support for variable length argument lists. (PRIORITY)
+
+====================================================================
+2) Type Checking
+====================================================================
+
+2.1) No support for checking whether variables are defined before
+being used.
+
+2.2) No support for identifying dead-code.
+
+2.3) No support for checking method overriding issues
+     (e.g. covariance, contravariance, reducing visibility etc.)
+
+2.4) Should not be able to call non-static methods from static
+methods.
+
+====================================================================
+3) Code Generation
+====================================================================
+
+3.1) Unchecked exceptions emerging from methods are not caught
+correctly.
+
+3.2) Exceptions raised in synchronised blocks do not release locks
+correctly!
+
+3.3) static final fields are not marked as Constants in classfiles.
+
+3.4) Inner classes are not identified in classfiles.
+
+====================================================================
+4) Class File Generation
+====================================================================
+
+4.1) Assertions cannot be disabled!
+
+4.2) UTF8 Encoding in Constant.Utf8 maybe incorrect, according to VM
+  Spec "4.4.7 The CONSTANT_Utf8_info Structure".
+
+4.3) Inner Class information is not written to class files
+
+4.4) Line number information is not written to class files.
+
+====================================================================
+5) Misc
+====================================================================
+
+4.1) jkit does not pick up required java files and compile them like
+     javac.
+
+4.2) Java files which are mutually dependent may cause problems.

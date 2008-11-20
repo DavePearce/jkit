@@ -1,0 +1,26 @@
+
+<project name="Mocha" default="build">
+  <target name="compile">
+    <javac debug="true" srcdir=".." includes="jkit/** mocha/**" excludes="jack/compiler/**"/> 
+  </target>
+
+  <target name="build" depends="compile">
+  	<mkdir dir="../tmp"/>
+    <manifest file="../tmp/MANIFEST.MF">
+      <attribute name="Built-By" value="${user.name}"/>
+      <attribute name="Class-Path"
+      value="${java.class.path}"/>
+      <attribute name="Main-Class" value="mocha.Mocha"/>
+    </manifest>
+    <jar destfile="../lib/mocha.jar" basedir=".." includes="jkit/**/*.class
+    mocha/**/*.class" manifest="../tmp/MANIFEST.MF"/>
+  </target>
+
+ <target name="clean">
+  <delete includeEmptyDirs="true" failonerror="false">
+   <fileset file="lib/*.jar"/>
+   <fileset dir="." includes="**/*.class"/>
+   <fileset dir="tmp/" includes="**"/>
+  </delete>
+ </target>
+</project>

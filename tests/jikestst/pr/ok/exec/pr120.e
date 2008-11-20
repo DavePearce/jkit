@@ -1,0 +1,2 @@
+amethod
+hello

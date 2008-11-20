@@ -1,0 +1,74 @@
+body {
+	font-family: "Helvetica";
+	font-size: 12pt;
+	background: white;
+	margin: 1em;
+	text-align: justify;
+}
+
+.title {
+	padding: 4ex 0;
+}
+
+h1 {
+	font-family: Helvetica;
+	font-size: 2.25em;
+	text-align: center;
+}
+
+.author {
+	text-align: center;
+	padding-bottom: 2ex;
+}
+.date {
+	text-align: center;
+	padding-bottom: 2ex;
+}
+
+.center {
+	text-align: center;
+}
+
+.toc {
+	float: right;
+	width: 20em;
+	padding: 0 2em;
+	font-size: 11pt;
+}
+
+h2 {
+	margin-top: 30pt;
+	margin-bottom: 15pt;
+	font-family: Helvetica;
+	font-size: 1.5em;
+}
+
+p.menu {
+	font-size: 14pt;
+}
+
+a {
+	text-decoration: none
+}
+
+img {
+	margin: 1em;
+	padding: 1em;
+}
+
+pre {
+	border-style: dashed;
+	background: #d2dff3;
+	border-width: 1pt;
+	margin: 2em;
+	padding: 1em;
+}
+
+table.grammar {
+	font-style: italic;
+	border-style: solid;
+	background: #d2dff3;
+	border-width: 1pt;
+	margin: 2em;
+	padding: 1em;
+}

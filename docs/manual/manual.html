@@ -1,0 +1,994 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>The Java Compiler Kit (JKit) Reference Manual</title>
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+<body>
+
+<div class="title">
+<h1>The Java Compiler Kit (JKit) Reference Manual</h1>
+<div class="author">David J. Pearce</div>
+<div class="date">March 2008</div>
+<!-- End of title --></div>
+
+<div class="toc">
+<h2>Table of Contents</h2>
+<ol>
+	<li><a href="#introduction">Introduction</a>
+	<ol>
+		<li><a href="#pipelining">Pipelining</a></li>
+		<li><a href="#commandline">Command-line Interface</a></li>
+	</ol>
+	</li>
+	<li><a href="#types">Java Types</a>
+	<ol>
+		<li><a href="#types.usage">Creating Types</a></li>
+		<li><a href="#types.usage">Subtyping</a></li>
+		<li><a href="#types.usage">Type Elements</a></li>
+	</ol>
+	</li>
+	<li><a href="#jkil">Intermediate Representation</a>
+	<ol>
+		<li><a href="#jkil.statements">Statements and Expressions</a></li>
+		<li><a href="#jkil.flowgraphs">Flow Graphs</a></li>
+		<li><a href="#jkil.jkil">JKil Representation</a></li>
+		<li><a href="#jkil.exceptions">Exceptional Edges</a></li>
+	</ol>
+	</li>
+	<li><a href="#classes">Classes, Methods and Fields</a>
+	<ol>
+		<li><a href="#classes.classes">Classes</a></li>
+		<li><a href="#classes.methods">Methods and Fields</a></li>
+		<li><a href="#classes.classtable">Class Table</a></li>
+	</ol>
+	</li>
+	<li><a href="#codegen">Code Generation</a>
+	<ol>
+		<li><a href="#codegen.bytecode">Java Bytecode</a></li>
+		<li><a href="#codegen.flowgraphs">Flow Graph Flattening</a></li>
+		<li><a href="#codegen.expressions">Expression Flattening</a></li>
+		<li><a href="#codegen.booleans">Boolean Operators</a></li>
+	</ol>
+	</li>
+	<li><a href="#dataflow">Dataflow Analysis</a></li>
+	<li><a href="#extending">Implementing Language Extensions</a></li>
+</ol>
+<!-- End of toc --></div>
+
+<div id="introduction" class="section">
+<h2>1. Introduction</h2>
+
+<p>The Java Compiler Kit is a straightforward implementation of a
+Java compiler, designed with extensibility in mind. In building the JKit
+compiler, my aims are: firstly, to help with teaching compilers by
+considering one for a fully fledged language (Java), rather than a
+stripped-down imitation language; secondly, to aid research in
+programming languages, compilers and verification.</p>
+
+<div id="pipelining" class="subsection">
+<h3>1.1 Pipelining</h3>
+<p>As is common in compiler design, JKit uses a (configurable)
+staged <i>pipeline</i> for processing source files. The pipeline begings
+by reading and parsing the source file into an <i>intermediate
+language</i> called JKil; then, various stages are executed in a careful
+manner to continue processing of the source file; finally, the file is
+written out as a binary (which in this case, is a class file). The
+following gives a pictorial overview of the pipeline which highlights
+the most important stages:</p>
+
+<div class="center">
+<img width="964" src="pipeline.jpg" alt="pipeline" />
+</div>
+
+<p>Here, we can see, amongst others, the following important stages:</p>
+<dl>
+	<dt>Typing.</dt>
+	<dd>This stage is responsible for computing the types of
+	expressions, and making explicit any otherwise implicit type conversion
+	that are required. For example, if variables <code>x</code> and <code>y</code>
+	have type <code>int</code> then the expression <code>x+y</code> also
+	has type <code>int</code>.</dd>
+	<dt>Subtyping.</dt>
+	<dd>This stage is responsible for checking that expressions are
+	used correctly; for example, that we do not try to assign <code>null</code>
+	to a variable with primitive type <code>int</code>.</dd>
+	<dt>Variable Definitions.</dt>
+	<dd>This stage is responsible for checking that a variable is <i>defined</i>
+	before it is <i>used</i>. This is a requirement of Java source code
+	(unlike for some languages, such as C), and enforcing it requires using
+	a <a href="http://en.wikipedia.org/wiki/Data_flow_analysis"><i>dataflow
+	analysis</i></a> called <a
+		href="http://en.wikipedia.org/wiki/Reaching_definition"><i>reaching
+	definitions</i></a>.</dd>
+</dl>
+
+<p>The pipeline used in JKit is configurable --- meaning we can chop
+and change which stages are executed as we wish. While this is not
+particularly useful in the normal case, it is very helpful for several
+reasons. When debugging, we can identify the source of errors by
+preventing certain stages from running. And, when implementing different
+language extensions (e.g. <i>type inference</i>), we can customise the
+pipeline to suit our purposes.</p>
+<!-- End of Pipelining subsection --></div>
+
+<div id="commandline" class="subsection">
+<h3>1.2 Command-Line Interface</h3>
+
+<p>JKit provides a simple command-line interface, similar to <code>javac</code>.
+In particular, the interface allows customisation of the pipeline stages
+being employed, as well as the usual mechanisms for specifying the <code>classpath</code>
+etc.</p>
+<p>To see the command-line options available in JKit, simply run <code>jkit
+-help</code>. A summary of the important options is provided below:</p>
+<table border=0 width="80%">
+	<tr>
+		<td style="width:40%"><code>-verbose</code></td>
+		<td>Print out debugging information, useful for diagnosing
+		problems</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td><code>-cp</code><br />
+		<code>-classpath</code></td>
+		<td>Specify the class path for finding class files.</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td><code>-t <i>file type</i></code><br />
+		<code>-target <i>file type</i></code></td>
+		<td>Write the output in a particular file format (e.g. <code>-t
+		jkil</code> to convert the source file into jkil, rather than bytecode).</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td><code>-ls</code><br />
+		<code>-liststages</code></td>
+		<td>List the default pipeline stages used by JKit.</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td><code>-is <i>stagename</i></code><br />
+		<code>-ignorestage <i>stagename</i></code></td>
+		<td>Ignore a particular stage when compiling.</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td><code>-ss <i>stagename</i></code><br />
+		<code>-stopstage <i>stagename</i></code></td>
+		<td>Stop executing the pipeline at a particular stage, and
+		immediately write the output file (typically used in conjunction with
+		<code>-t jkil</code>).</td>
+	</tr>
+	<tr>
+		<td><code>-lt</code><br />
+		<code>-listtargets</code></td>
+		<td>Show the supported output file formats (by default, only <code>.jkil</code>
+		and <code>.class</code>)</td>
+	</tr>
+</table>
+
+<p>The following two examples illustrate the usage:</p>
+
+<pre>
+% jkit -ls
+
+*.java:
+ &gt;&gt; jkit.io.JavaFileReader
+    jkit.stages.codegen.FieldInitialisation     [Move field initialisation ...]
+    jkit.stages.codegen.Typing  [Ensure types used correctly within ...]
+    jkit.stages.codegen.ForEachLoop     [Breaks down Java 1.5 for-each loops.]
+    jkit.stages.codegen.Exceptions      [Add exceptional edges to method ...]
+    jkit.stages.checks.Subtyping        [Ensure types used correctly ...]
+    jkit.stages.checks.VariableDefinitions      [Ensure variables are ...]
+ &lt;&lt; jkit.io.ClassFileWriter
+</pre>
+
+<pre>
+% jkit -verbose -t jkil -is Subtyping Test.java
+Parsed Test.java [391ms]
+Loaded skeleton of Test
+Loaded class Test
+Applied stage jkit.stages.codegen.FieldInitialisation [16ms]
+Loaded c:\Program Files\java\jdk1.5.0\jre\lib\rt.jar:java/lang/Object.class [203ms]
+Loaded c:\Program Files\java\jdk1.5.0\jre\lib\rt.jar:java/lang/Byte.class [0ms]*
+Loaded c:\Program Files\java\jdk1.5.0\jre\lib\rt.jar:java/lang/Comparable.class [0ms]*
+Loaded c:\Program Files\java\jdk1.5.0\jre\lib\rt.jar:java/lang/Number.class [0ms]*
+Loaded c:\Program Files\java\jdk1.5.0\jre\lib\rt.jar:java/io/Serializable.class [203ms]
+Loaded c:\Program Files\java\jdk1.5.0\jre\lib\rt.jar:java/lang/Integer.class [0ms]*
+Loaded c:\Program Files\java\jdk1.5.0\jre\lib\rt.jar:java/lang/Character.class [0ms]*
+Loaded c:\Program Files\java\jdk1.5.0\jre\lib\rt.jar:java/lang/Short.class [16ms]*
+Applied stage jkit.stages.codegen.Typing [422ms]
+Applied stage jkit.stages.codegen.ForEachLoop [0ms]
+Applied stage jkit.stages.codegen.Exceptions [0ms]
+Applied stage jkit.stages.checks.VariableDefinitions [0ms]
+Written Test.jkil [109ms]
+</pre>
+
+<p>Observe that, when specifying a stage to ignore, we only need to
+provide a keyword, not the whole stage name; any stages matching that
+keyword will be ignored.</p>
+
+<!-- End of Command-line interface section --></div>
+<!-- End of Introduction section --></div>
+
+<div id="types" class="section">
+<h2>2. Java Types</h2>
+<p>JKit provides classes and methods for representing and
+manipulating Java types (such <code>int</code>, <code>String[]</code>
+etc). The majority of these can be found in the <code>jkit.core.Type</code>
+class. For example, the <code>Type.Int</code> class is used to represent
+<code>int</code> types, whilst <code>Type.Reference</code> represents
+general reference types, such as <code>java.lang.String</code>. Methods
+are also provided for determining whether one type is a subtype of
+another, finding the least upper bound of two types and generating JVM
+descriptor strings.</p>
+
+<div id="types.usage" class="subsection">
+<h3>2.1 Creating Types</h3>
+<p>For efficiency, the <code>Type</code> class provides a static
+interface for creating <code>Type</code> instances (doing this enables
+the <a href="http://en.wikipedia.org/wiki/Flyweight_pattern"><i>flyweight
+pattern</i></a>). For example, to create a <code>Type</code> object representing
+the Java type <code>int</code>, you simply call <code>Type.intType()</code>.
+Or, to create an array of <code>boolean</code>s you would call <code>Type.arrayType(Type.booleanType())</code>.
+We now outline the main <code>Type</code> classes available:</p>
+<ol>
+	<li>
+	<p><b>Primitives.</b> Each primitive type (i.e. <code>byte</code>,
+	<code>char</code>, <code>short</code>, <code>int</code>, <code>long</code>,
+	<code>float</code> and <code>double</code>) has an appropriate <code>Type.Xtype()</code>
+	constructor.</p>
+	</li>
+	<li>
+	<p><b>Arrays.</b> These are created using the methods <code>Type.arrayType(Type)</code>
+	(for uni-dimensional arrays) and <code>Type.arrayType(int, Type)</code>
+	(for multi-dimensional arrays). Given an <code>Array</code> object, one
+	can determine the element type via <code>Array.elementType()</code>.</p>
+	</li>
+	<li>
+	<p><b>References.</b> These consist of a <i>package</i> and one or
+	more <i>(name,[type])</i> class pairs. For example, the reference type
+	<code>java.lang.String</code> consists of the package <code>java.lang</code>
+	and class pair <code>("String",[])</code>. In contrast, the reference
+	type <code>jkit.core.Type.Array</code> is made up of the package <code>jkit.core</code>
+	and class pairs <code>("Type",[])</code>, <code>("Array",[])</code>.
+	Finally, the <i>types</i> component of the class pairs provides any
+	declared generic type variables. For example, the reference type
+	<code>java.lang.HashMap&lt;String,Integer&gt;</code> consists ot the package
+	<code>"java.lang"</code>
+	and class pair <code>("HashMap",[String,Integer])</code>. Reference
+	types are created using the <code>Type.referenceType()</code> family of
+	methods.</p>
+	</li>
+	<li>
+	<p><b>Functions.</b> These consist of a <i>return type</i> and one
+	or more <i>parameter types</i>. For example, the method <code>int
+	f(String x) { ... }</code> has a function type whose return type is <code>int</code>
+	and whose parameter type is <code>String</code>. Function types are
+	created using the <code>Type.functionType(...)</code> method.</p>
+	</li>
+</ol>
+<p>The following code is provided as an example to illustrate the
+usage:</p>
+<pre>
+import jkit.core.Type;
+
+class Test {
+    public static void main(String[] args) {
+	Type.Int it = Type.intType();
+	Type.Array at = Type.arrayType(Type.booleanType());
+	Type.Reference rt = Type.referenceType("java.lang","String");
+	
+	System.out.println("Types: " + it + ", " + at + ", " + rt);
+    }
+}
+</pre> <pre>
+% javac Test.java
+
+% java Test
+Types: int, boolean[], java.lang.String
+</pre>
+<p>Finally, there are several other <code>Type</code> classes not
+listed here. For example, the class <code>Type.Null</code> is the
+special type given to the <code>null</code> value, whilst <code>Type.Void</code>
+is used to represent (among other things) <code>void</code> return types
+for methods.</p>
+<!-- End of Creating Types Subsection --></div>
+
+<div id="types.subtyping" class="subsection">
+<h3>2.2 Subtyping</h3>
+
+<p>One of the key operations you can perform on <code>Type</code>
+objects is <code>Type.supsetEqOf(Type)</code>. This simply checks
+whether the parameter object is a <i>subtype</i> of the receiver object
+or not. For example, <code>int</code> is a subtype of <code>long</code>,
+<code>java.lang.String</code> is a subtype of <code>java.lang.Object</code>
+and <code>java.lang.Integer</code> is a subtype of <code>java.lang.Number</code>.
+This method is used in numerous places in the JKit compiler, but most
+notably in the <code>Subtyping</code> stage, where it is used to check
+for syntax errors. For example, consider the following (erroneous)
+method:</p>
+
+<pre>
+public void f(long x) {
+ int y = x;
+ ...
+}
+</pre>
+<p>This is checked for in the <code>Subtyping</code> stage by doing
+something similar to the following:</p>
+<pre>
+void check(...) {
+ ...
+ Type lhsT = ... // get type of left hand side
+ Type rhsT = ... // get type of right hand side
+
+ if(!lhsT.supsetEqOf(rhsT)) {
+  // This is a syntax error!
+  throw new InternalException(...);
+ }
+ ...
+}
+</pre>
+<!-- End of Subtyping subsection --></div>
+
+<div id="types.annotations" class="subsection">
+<h3>2.3 Type Elements</h3>
+
+<p><code>TypeElement</code>s are roughly similar to Java's
+annotations. Essentially, they allow is to extend Java's existing types
+in a systematic manner. For example, in Java you can write the
+following:</p>
+<pre>
+@Retention(RetentionPolicy.RUNTIME)
+public @interface NonNull { }
+
+class Test {
+ void f(@NonNull String) { ... }
+}
+</pre>
+<p>Here, we have created a <code>@NonNull</code> annotation, who's
+purpose is to further restrict reference types in Java <i>such that
+they cannot be null</i>. In JKit, this would correspond to constructing a <code>Type.Reference</code>
+object for <code>java.lang.String</code>, and supplying a <code>@NonNull</code>
+type element.</p>
+<p><b>NOTE:</b> JKit's support for type elements remains incomplete,
+and should be ignored for now.</p>
+<!-- End of Type Elements subsection --></div>
+<!-- End of Java Types section --></div>
+
+<div id="jkil" class="section">
+<h2>3. Intermediate Representation</h2>
+
+<p>The JKit compiler does not, for the most part, operate on the
+Java source language directly. This is because the source language is
+rather cumbersome and complex. Instead, a simplified <a
+	href="http://en.wikipedia.org/wiki/Intermediate_representation"><i>intermediate
+representation</i></a> is used. This reflects the Java source in many ways, but
+is much closer to <a href="http://en.wikipedia.org/wiki/Java_bytecode">Java
+bytecode</a>. In particular, it does not have any structured control-flow
+constructs (e.g. for loops); instead, it has only unstructured
+control-flow based on branching (e.g. <code>goto</code>).</p>
+
+<div id="jkil.stmts" class="subsection">
+<h3>3.1 Statements and Expressions</h3>
+<p>The <a href="http://en.wikipedia.org/wiki/Abstract_syntax_tree"><i>Abstract
+Syntax Tree</i></a> for statements and expresions is defined in the class <code>jkit.core.FlowGraph</code>.
+Inner classes representing different aspects of the Java language are
+provided there. For example, <code>return</code> statements are
+represented by the <code>FlowGraph.Return</code> class, whilst binary
+operators (e.g. <code>+</code>, <code>-</code> etc) are implemented by <code>FlowGraph.BinOp</code>.
+The following tables outlines the grammar for statements and
+expressions:</p>
+
+<table class="grammar">
+	<tr>
+		<td>Expr</td>
+		<td>::=</td>
+		<td>Value | LVal | UnOp | BinOp | Invoke | Cast | New | Exception</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>LVal</td>
+		<td>::=</td>
+		<td>LocalVar | Deref</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Value</td>
+		<td>::=</td>
+		<td>BoolVal | CharVal | ByteVal | ShortVal | IntVal | LongVal |
+		FloatVal | DoubleVal</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>LocalVar</td>
+		<td>::=</td>
+		<td>Name</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>UnOp</td>
+		<td>::=</td>
+		<td>( '!' | '~' | '-' | '--' | '++' ) Expr | Expr ( '--' | '++' )</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>BinOp</td>
+		<td>::=</td>
+		<td>Expr ('+' | '-' | '*' | '/' | '&lt;&lt;' | '&gt;&gt;' | '&lt;&lt;&lt;' | '&amp;' | '|'
+		| '^' | '&amp;&amp;' | '||' | '&lt;' | '&lt;=' | '&gt;' | '&gt;=' | '==' | '!=') Expr</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Deref</td>
+		<td>::=</td>
+		<td>Expr '.' Name</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Invoke</td>
+		<td>::=</td>
+		<td>Expr '.' Name '(' (Expr)* ')'</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Cast</td>
+		<td>::=</td>
+		<td>'(' Type ')' Expr</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>New</td>
+		<td>::=</td>
+		<td>'new' Type '(' (Expr)* ')'</td>
+	</tr>
+</table>
+
+<p>Here, <i>Name</i> identifies valid variable, method and field
+identifiers. Furthermore, <i>LVal</i> identifies those expressions which
+are allowed to be on the left-hand side of an assignment statement</p>
+
+<table class="grammar">
+	<tr>
+		<td>Stmt</td>
+		<td>::=</td>
+		<td>Assign | Return | Throw | Invoke | New | Nop</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Assign</td>
+		<td>::=</td>
+		<td>LVal '=' Expr</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Return</td>
+		<td>::=</td>
+		<td>'return' (Expr)?</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Throw</td>
+		<td>::=</td>
+		<td>'throw' Expr</td>
+	</tr>
+</table>
+
+<p>Note, the non-terminals above correspond to actual classes in <code>FlowGraph</code>.
+For example, <code>LocalVar</code> is implemented by <code>FlowGraph.LocalVar</code>,
+which contains a <code>String</code> field holding the variable name. A
+simple sequence of statements in this language is the following:</p>
+<pre>
+ x = z.method(1)
+ y = x * 2
+</pre>
+<p>In order to represent these statements in JKit, we must construct
+instances of the corresponding classes in <code>FlowGraph</code>. For
+example, objects representing the above sequence can be constructed as
+follows:</p>
+<pre>
+import jkit.core.FlowGraph;
+
+// First statement
+FlowGraph.LocalVar x = new FlowGraph.LocalVar("x");
+FlowGraph.LocalVar z = new FlowGraph.LocalVar("z");
+ArrayList&lt;FlowGraph.Expr&gt; parameters = new ArrayList&lt;FlowGraph.Expr&gt;();
+parameters.add(new FlowGraph.IntVal(1));
+FlowGraph.Deref z_f1 = new FlowGraph.Invoke(z,"method",parameters);
+FlowGraph.Assign s1 = new FlowGraph.Assign(x,z_f1);
+
+// Second statement
+FlowGraph.LocalVar y = new FlowGraph.LocalVar("y");
+FlowGraph.BinOp x_2 = new FlowGraph.BinOp(FlowGraph.BinOp.MUL,x,new IntVal(2));
+FlowGraph.Assign s2 = new FlowGraph.Assign(y,x_2);
+</pre>
+<p>Every expression <i>Expr</i> also has a type that identifies the
+type of the value returned by that expression. For example, the type of
+an <code>FlowGraph.IntVal</code> is <code>int</code>, whilst the type of
+an <code>FlowGraph.Invoke</code> is determined by the return type of the
+method being called. The type of an expression can be provided as an
+optional argument to the class constructor. For example, to type a
+simple addition of two integers would be as follows:</p>
+<pre>
+import jkit.core.FlowGraph;
+
+FlowGraph.BinOp add1_2 = new FlowGraph.BinOp(FlowGraph.BinOp.ADD, 
+                                             new IntVal(1), 
+                                             new IntVal(2), 
+                                             Type.intType());
+</pre>
+<p>Here, we can see that the binary operation is given the type <code>int</code>,
+which is valid given that both its operands have type <code>int</code>.
+Note that if no type is specified (as in the previous example), the
+default <i>any</i> type is assumed (you can think of this as the <i>unknown
+type</i>).</p>
+<!-- End of Statements and Expressions subsection --></div>
+
+<div id="jkil.flowgraphs" class="subsection">
+<h3>3.2 Flow Graphs</h3>
+<p>The intermediate representation used in JKit is based upon a <a
+	href="http://en.wikipedia.org/wiki/Control_flow_graph">control-flow
+graph</a> representation. This is a directed graph which connects statements
+together according to the sequence they may be executed in the program.
+For example, consider the following simple Java method:</p>
+<pre>
+void aMethod(int x) {
+ String r;
+ if(x &gt;= 0) { r = "greater"; } 
+ else { r = "smaller"; }
+ System.out.println(r);
+}
+
+void anotherMethod(int x) {
+ while(x &lt; 10) {
+  if(x == -1) { break; }	  
+  x = x + 1;
+ }
+}
+</pre>
+<p>These would be represented in JKit by the following control-flow
+graphs:</p>
+
+<div class="center">
+<img src="cfg1.jpg" alt="A Control-Flow Graph" /> <img src="cfg2.jpg"
+	alt="Another Control-Flow Graph" />
+</div>
+
+<p>Here the nodes of the graph are referred to as <i>points</i>.
+Each flow graph must have a designated <i>entry point</i>, which is
+marked above in blue. We can see that an edge may be labelled with a
+condition which indicates it is only taken <i>when that condition
+holds</i>. If no condition is given, the edge is always taken. Each point is
+associated with a <code>FlowGraph.Stmt</code> or <code>null</code> (to
+signal there is no statement which this point corresponds to). Note, it
+does not make sense for a particular point to have more than one
+unconditional edge coming from it; likewise, it doesn't make sense for
+the edges coming from one point to have conditions that "overlap" in
+some way.</p>
+
+<p>Control-flow graphs are represented in JKit by instances of <code>jkil.core.FlowGraph</code>.
+This extends the <code>DirectedAdjacencyList</code> class for
+representing directed graphs, which in turn adheres to the <code>java.util.Set</code>
+interface. Thus, flow graphs can be thought of simply as sets of edges,
+where each edge is a triple <i>(x,y,c)</i> that goes from <i>x</i> to <i>y</i>
+if condition <i>c</i> holds (which maybe <code>null</code>, if there is
+no condition). Thus, for example, we can iterate the edges of a
+control-flow graph quite easily as follows:</p>
+<pre>
+FlowGraph cfg = ...;
+
+for(Triple&lt;FlowGraph.Point ,FlowGraph.Point,FlowGraph.Expr&gt; edge : cfg) {
+ ...
+}
+</pre>
+<p>The type information required by Java does get rather cumbersome,
+however. Control-Flow Graphs can be constructed fairly easily by
+creating instances of FlowGraph. For example:</p>
+<pre>
+// construct graph entry-&gt;p1-&gt;p2
+FlowGraph.Point entry = new FlowGraph.Point(...);
+FlowGraph.Point p1 = new FlowGraph.Point(...);
+FlowGraph.Point p2 = new FlowGraph.Point(...);
+
+FlowGraph cfg = new FlowGraph(entry);
+cfg.add(new Triple(entry,p1,null));
+cfg.add(new Triple(p1,p2,null));
+</pre>
+<p>Every flow graph maintains a list of the local variables used
+within the statements and expressions of the flow graph. This list is
+accessed via <code>FlowGraph.localVariables()</code> which provides, for
+each variable, its type, modifiers, name and whether or not is a
+parameter. For simplicity, local variables are scoped for the entire
+flow-graph -- they cannot be scoped to a particular block as can be done
+in Java source, for example.</p>
+<!-- End of Flow Graphs subsection --></div>
+
+<div id="jkil.jkil" class="subsection">
+<h3>3.3 JKil</h3>
+<p>JKit provides a textual representation of the flow-graphs, known
+as the <i>JKit Intermediate Language (JKil)</i>. This essentially
+flattens the flow graphs using conditional branch and goto statements.
+However, these are not real statements used inside JKit; rather they
+correspond to the edges in the control-flow graph. For example, the
+following control-flow graph:</p>
+
+<div class="center">
+<img src="cfg1.jpg" alt="A Control-Flow Graph" />
+</div>
+
+<p>Would be represented by the following JKil code:</p>
+<pre>
+ void aMethod(int x) {
+    String 4r;
+   L0:
+    if (x[int] &gt;= 0[int])[boolean] goto L1
+    4r[java.lang.String] = "smaller"[java.lang.String]
+    goto L2
+   L1:
+    4r[java.lang.String] = "greater"[java.lang.String]
+   L2:
+    java.lang.System.out[java.io.PrintStream].println(4r[java.lang.String])[void]
+    return
+  }
+</pre>
+<p>From this, it becomes apparent that JKil is somewhat closer to
+Java bytecode than Java source, which is certainly the intention! Note
+that, the type determined for each expression is written inside square
+braces. While this can become rather difficult to read, the idea is that
+it helps debugging the various pipeline stages used in JKit.</p>
+<p>To obtain the JKil representation of a Java program, simply run
+JKit with the command-line switch <code>-t jkil</code> which causes JKit
+to create a <code>.jkil</code> file, rather than a <code>.class</code>
+file.</p>
+<!-- End of JKil Representation subsection --></div>
+
+<div id="jkil.exceptions" class="subsection">
+<h3>3.4 Exceptions</h3>
+<p>Exception handling is also done within the flow graph
+representation using so-called <i>exceptional edges</i>. An exceptional
+edge runs from a point that may generate a particular exception to the
+entry point of the corresponding handler (if there is one). Thus, the
+following code:</p>
+<pre>
+ void aMethod(int x, int y, int[] arr) {
+  try {
+   x = x / y;
+   arr[x] = 0;
+  } catch(ArrayOutOfBoundsException e) {
+   System.out.println("Array!");
+  } catch(ArithmeticException e) {
+   System.out.println("DivZero!");
+  }
+ }
+</pre>
+<p>Would be represented by the following flow graph:</p>
+
+<div class="center">
+<img src="cfg3.jpg" alt="Control Flow Graph with Exceptional Edges" />
+</div>
+
+<p>Here, we can see the exceptional edges marked with the exception
+they represent. Finally, if there is no appropriate handler within the
+method, then no exception edge will be included in the flow graph. This
+may change in future releases</p>
+<!-- End of Exceptional Edges subsection --></div>
+<!-- End of Intermediate Representations --></div>
+
+<div id="classes" class="section">
+<h2>4. Classes, Methods and Fields</h2>
+
+<p>Representations of classes, methods and fields are provided in
+JKit through the classes <code>jkit.core.Clazz</code>, <code>jkit.core.Method</code>
+and <code>jkit.core.Field</code>. These provide various important pieces
+of information about the item in question and, most importantly, provide
+access to the hierarchical structure of classes in Java.</p>
+
+<div id="classes.classes" class="subsection">
+<h3>4.1 Classes</h3>
+
+<p>The class <code>jkit.core.Clazz</code> is one of the most
+fundamental in JKit. For any class being compiled, or loaded from the <code>classpath</code>
+an instance of <code>Clazz</code> is provided. With this, the user can
+iterate the various methods, fields and inner classes provided in the
+class, as well the interfaces it implements and the super class it
+extends. Other information, including the full generic type of the
+class, any modifiers (e.g. <code>final</code>) on the class and the name
+of the class is also available. Users can also add methods or fields to
+existing classes and/or construct their own from scratch. The following
+illustrates the general usage with an example that removes a method with
+a particular name from a given class (if it exists):</p>
+<pre>
+void remove(String name, Clazz clazz) {
+ for(Method m : clazz.methods()) {
+  if(m.name().equals(name)) { 
+   c.methods().remove(m);
+   break;
+}}}
+</pre>
+<p>The constructor for a class is a method whose name matches the
+class in question. Static constructors (for <code>static</code> blocks)
+are given the special name <code>clinit</code>, although this will
+probably change in the future!</p>
+<!-- End of Classes subsection --></div>
+
+<div id="classes.methods" class="subsection">
+<h3>4.2 Methods and Fields</h3>
+
+<p>Methods are represented in JKit by instances of the class <code>jkit.core.Method</code>.
+This contains information about the method, including its modifiers
+(e.g. <code>public</code>, <code>static</code>, etc), its type (which is
+an instance of <code>Type.Function</code>), any exceptions it throws
+and, of course, the flow graph making up the method's body (if there is
+one). The following illustrates code to check whether a given method has
+a <code>void</code> return type or not:</p>
+<pre>
+void boolean hasVoidReturnType(Method m) {
+ Type.Function ft = m.type();
+ return ft.returnType().equals(Type.voidType());
+}
+</pre>
+<p>Fields are likewise represented in JKit by instances of the class
+<code>jkit.core.Field</code>. This contains information about the field,
+including its modifiers (e.g. <code>final</code>, <code>private</code>,
+etc) and its type.</p>
+<!-- End of Methods and Fields subsection --></div>
+
+<div id="classes.classtable" class="subsection">
+<h3>4.4 Class Table</h3>
+<p>The class <code>jkit.core.ClassTable</code> is also an important
+class within JKit. This provides a way for the user to locate a <code>Clazz</code>
+instance, given its name or type, by first checking if it is located in
+memory already and, if not, loading it from disk by searching the <code>classpath</code>.
+Other important methods include the family of <code>ClassTable.resolveMethod(...)</code>
+methods and, likewise, for <code>ClassTable.resolveField(...)</code>.
+These methods search the class hierarchy from a given class looking for
+an appropriate method/field matching the name and types given. The
+algorithms involved here are somewhat complex, and full details of how
+they work can be found in the <a
+	href="http://java.sun.com/docs/books/jls/third_edition/html/j3TOC.html">Java
+Language Specification</a>. Example code which illustrates the use of <code>ClassTable</code>
+to find a method with a given name that accepts no arguments is given
+below:</p>
+<pre>
+Method findMethod(Type.Reference owner, String methodName) {
+ ArrayList&lt;Type&gt; parameters = new ArrayList&lt;Type&gt;(); // no parameters
+ try {
+  Triple&lt;Clazz,Method,Type.Function&gt; minfo;
+  minfo = ClassTable.resolveMethod(owner,methodName,parameters);
+  return minfo.second();
+ } catch(ClassNotFoundException e) {
+  ...
+ } catch(MethodNotFoundException e) {
+  ...
+ }
+}
+</pre>
+<p>Here, we can see that <code>resolveMethod</code> returns a triple
+<i>(owner,method,type)</i>, where the <i>owner</i> identifies the class
+containing the method, the <i>method</i> gives access to the instance of
+<code>Method</code> representing the method and, finally, the <i>type</i>
+gives access to the fully substituted method type. The latter may seem
+redundant, since we can access type information from <code>Method</code>
+directly. However, this is not the case, since generic type substitution
+comes into play here. For example, suppose we have the following
+classes:</p>
+<pre>
+class Parent&lt;S,T&gt; {
+ S f(T x) { ... }
+}
+
+class Child&lt;T&gt; extends Parent&lt;String,T&gt; {
+ ...
+}
+</pre>
+<p>Now, suppose we have a variable <code>x</code> with type <code>Child&lt;Integer&gt;</code>
+and we wish to check whether the call <code>x.f(y)</code> is valid.
+Calling <code>ClassTable.resolveMethod(...)</code> will give us the
+triple <i>(owner,method,type)</i> for <code>Parent.method()</code>.
+Examining the type information provided by <code>Method.type()</code>
+yields <code>S f(T)</code>, which is insufficient to perform our check.
+On the other hand, the <i>type</i> returned will be <code>String
+f(Integer)</code> which has the generic type arguments substituted
+appropriately.</p>
+<!-- End of Class Table subsection --></div>
+<!-- End of Classes, Methods and Fields section --></div>
+
+<div id="codegen" class="section">
+<h2>5. Code Generation</h2>
+
+<div id="codegen.bytecode" class="subsection">
+<h3>5.1 Java Bytecode</h3>
+<p>The <a href="http://java.sun.com/docs/books/jvms/second_edition/html/VMSpecTOC.doc.html">Java
+Virtual Machine Specification</a> describes in detail the class file format,
+including the Java bytecode instruction set. Here, only a brief
+introduction to Java bytecode instructions will be given.</p>
+<p>In Java bytecode, a method is made up of a series of bytecode
+instructions. These instructions have access to a fixed-size local
+variable array, as well as a stack of known maximum depth. For example,
+consider this simple Java program:</p>
+
+<pre>
+class Test {
+    public int f(int x) {
+	int y = x * 2;
+	return y + x;
+    }
+}
+</pre>
+
+<p>We can compile this into a class file in the usual way as
+follows:</p>
+
+<pre>
+% javac Test.java
+</pre>
+
+<p>Now, we can view its bytecode instructions using <code>javap</code>
+as follows:</p>
+
+<pre>
+% javap -verbose Test
+
+ ...
+
+ public int f(int);
+  Code:
+   Stack=2, Locals=3, Args_size=2
+   0:   iload_1
+   1:   iconst_2
+   2:   imul
+   3:   istore_2
+   4:   iload_2
+   5:   iload_1
+   6:   iadd
+   7:   ireturn
+ LineNumberTable:
+   line 5: 0
+   line 6: 4
+ }
+</pre>
+
+<p>Here, some of the output from <code>javap</code> has been omitted
+for brevity. We can, however, see that the method <code>f(int)</code>
+has: a local variable array of size 3; a stack of maximum depth 2; and,
+accepts 2 arguments (the first of which is the special <code>this</code>
+variable).</p>
+
+<p>The bytecode instructions for method <code>f(int)</code> are also
+visible above. These are a straightforward translation of the original
+Java method. For example, the instruction <code>iload_1</code> loads an
+<i>integer value</i> from index 1 in the local variable array (which
+represents the parameter <code>x</code>) and places it onto the stack.
+Likewise, the <code>iconst_2</code> instruction places the <i>integer
+constant</i> '2' onto the stack. At this point, the instruction <code>imul</code>
+takes two integer values off the stack, multiples them together and
+places the result back onto the stack. The remaining bytecode
+instructions operate in a similar manner, and their full semantics are
+given in the <a
+	href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions.doc.html">
+The Java Virtual Machine Instruction Set </a>.</p>
+
+<h4>Invalid Bytecode!</h4>
+<p>Constructing an invalid sequence of bytecode instructions is very
+easy to do! For example, the following bytecode sequences are all
+invalid for different reasons:</p>
+<pre>
+ public int f(int);
+  Code:
+   Stack=1, Locals=3, Args_size=2
+   0:   iload_1
+   1:   iconst_2
+   2:   imul
+</pre>
+<p>Here, the maximum depth of the stack is exceeded.</p>
+<pre>
+ public int f(int);
+  Code:
+   Stack=2, Locals=3, Args_size=2
+   0:   iload_1
+   1:   imul
+</pre>
+<p>Here, the stack holds insufficient elements for the <code>imul</code>
+instruction.</p>
+<pre>
+ public int f(int);
+  Code:
+   Stack=2, Locals=3, Args_size=2
+   0:   iload_1
+   1:   iconst_2
+   2:   fmul
+</pre>
+<p>Here, the <code>fmul</code> instruction expects two <i>floating-point
+values</i> on the stack, but is given two <i>integer values</i>.</p>
+<!-- End of Java Bytecode subsection --></div>
+
+<div id="codegen.flowgraphs" class="subsection">
+<h3>5.2 Flow Graph Flattening</h3>
+<!-- End of Flow Graph Flattening subsection --></div>
+
+<div id="codegen.expressions" class="subsection">
+<h3>5.3 Expression Flattening</h3>
+<!-- End of Expression Flattening subsection --></div>
+
+<div id="codegen.booleans" class="subsection">
+<h3>5.4 Boolean Expressions</h3>
+<!-- End of Boolean Expressions subsection --></div>
+<!-- End of Code Generation section --></div>
+
+<div id="dataflow" class="section">
+<h2>5. Dataflow Analysis</h2>
+<!-- End of Dataflow Analysis section --></div>
+
+
+<div id="extensions" class="section">
+<h2>6. Implementing Language Extensions</h2>
+<!-- End of Implementing Language Extensions section --></div>
+
+</body>
+</html>
