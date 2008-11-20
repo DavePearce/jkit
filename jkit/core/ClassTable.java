@@ -25,7 +25,6 @@ import java.io.*;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import jkit.io.*;
 import jkit.util.*;
 import jkit.util.bytecode.Types;
 

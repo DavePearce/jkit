@@ -6,7 +6,6 @@ import java.util.*;
 
 import jkit.ClassReader;
 import jkit.ClassWriter;
-import jkit.io.*;
 import jkit.stages.Stage;
 import jkit.util.Pair;
 
