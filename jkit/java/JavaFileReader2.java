@@ -5,6 +5,7 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 
 import jkit.compiler.SyntaxError;
+import jkit.jkil.Field;
 import jkit.jkil.Type;
 
 import org.antlr.runtime.*;
@@ -118,7 +119,7 @@ public class JavaFileReader2 {
 			switch (c.getType()) {
 				case CLASS :
 				case INTERFACE :
-					classes.add(parseClassDeclaration(c));
+					classes.add(parseClass(c));
 					break;				
 			}
 		}
@@ -126,7 +127,7 @@ public class JavaFileReader2 {
 		return new JavaFile(pkg,imports,classes);
 	}
 	
-	protected JavaFile.Clazz parseClassDeclaration(Tree decl) {
+	protected JavaFile.Clazz parseClass(Tree decl) {
 		int idx = 0;
 		int modifiers = 0;
 		if (decl.getChild(idx).getType() == MODIFIERS) {
@@ -165,6 +166,22 @@ public class JavaFileReader2 {
 		// ====================================================================
 		
 		ArrayList<JavaFile.Declaration> declarations = new ArrayList<JavaFile.Declaration>();
+
+		for (int i = idx; i < decl.getChildCount(); ++i) {
+			Tree child = decl.getChild(i);
+			switch(child.getType()) {
+			case FIELD:			
+				break;
+			case METHOD:
+				break;
+			case CLASS:				
+			case INTERFACE:
+				declarations.add(parseClass(child));
+				break;				
+			case BLOCK:
+				break;
+			}				
+		}
 		
 		return new JavaFile.Clazz(modifiers,name,superclass,interfaces,declarations);
 	}
