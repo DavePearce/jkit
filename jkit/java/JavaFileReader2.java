@@ -1,7 +1,10 @@
 package jkit.java;
 
 import java.io.*;
+import java.lang.reflect.Modifier;
 import java.util.*;
+
+import jkit.compiler.SyntaxError;
 
 import org.antlr.runtime.*;
 import org.antlr.runtime.tree.*;
@@ -73,6 +76,7 @@ public class JavaFileReader2 {
 	
 	public JavaFile read() {
 		
+		ArrayList<JavaFile.Clazz> classes = new ArrayList<JavaFile.Clazz>();
 		ArrayList<String> imports = new ArrayList<String>();
 		String pkg = "";
 		
@@ -108,7 +112,67 @@ public class JavaFileReader2 {
 			}
 		}
 		
-		return new JavaFile(pkg,imports,null);
+		for (int i = 0; i != ast.getChildCount(); ++i) {
+			Tree c = ast.getChild(i);
+			switch (c.getType()) {
+				case CLASS :
+				case INTERFACE :
+					classes.add(parseClassDeclaration(c));
+					break;				
+			}
+		}
+		
+		return new JavaFile(pkg,imports,classes);
+	}
+	
+	protected JavaFile.Clazz parseClassDeclaration(Tree decl) {
+		int idx = 0;
+		int modifiers = 0;
+		if (decl.getChild(idx).getType() == MODIFIERS) {
+			modifiers = parseModifiers(decl.getChild(0));
+			idx++;
+		}
+		if (decl.getType() == INTERFACE) {
+			modifiers |= Modifier.INTERFACE;
+		}
+		String name = decl.getChild(idx++).getText();
+		
+		return new JavaFile.Clazz(modifiers,name);
+	}
+	
+	protected int parseModifiers(Tree ms) {
+		int mods = 0;
+		for (int i = 0; i != ms.getChildCount(); ++i) {
+			Tree mc = ms.getChild(i);
+			String m = mc.getText();
+			if (m.equals("public")) {
+				mods |= Modifier.PUBLIC;
+			} else if (m.equals("private")) {
+				mods |= Modifier.PRIVATE;
+			} else if (m.equals("protected")) {
+				mods |= Modifier.PROTECTED;
+			} else if (m.equals("static")) {
+				mods |= Modifier.STATIC;
+			} else if (m.equals("abstract")) {
+				mods |= Modifier.ABSTRACT;
+			} else if (m.equals("final")) {
+				mods |= Modifier.FINAL;
+			} else if (m.equals("native")) {
+				mods |= Modifier.NATIVE;
+			} else if (m.equals("synchronized")) {
+				mods |= Modifier.SYNCHRONIZED;
+			} else if (m.equals("transient")) {
+				mods |= Modifier.TRANSIENT;
+			} else if (m.equals("volatile")) {
+				mods |= Modifier.VOLATILE;
+			} else if (mc.getType() == ANNOTATION) {
+				// ignore annotations for now.
+			} else {
+				throw new SyntaxError("not expecting " + m, mc.getLine(), mc
+						.getCharPositionInLine());
+			}
+		}
+		return mods;
 	}
 	
 	// ANTLR Token Types

@@ -15,19 +15,28 @@ public class JavaFile {
 	}
 	
 	/**
-	 * Get the package declared at the beginning of this class (if there is one)
+	 * Get the package declared at the beginning of this file (if there is one)
 	 */			
 	public String pkg() { 
 		return pkg;
 	}
 	
 	/**
-	 * Get the list of import declarations at the beginning of this class.
+	 * Get the list of import declarations at the beginning of this file.
 	 * 
 	 * @return
 	 */
 	public List<String> imports() { 
 		return imports;
+	}
+	
+	/**
+	 * Get the list of class declarations in this file.
+	 * 
+	 * @return
+	 */
+	public List<Clazz> classes() { 
+		return classes;
 	}
 	
 	
@@ -62,10 +71,20 @@ public class JavaFile {
 	// ====================================================
 	
 	public static class Clazz {
-		public final String name;
+		private int modifiers;
+		private String name;
 				
-		public Clazz(String name) {
+		public Clazz(int modifiers, String name) {
+			this.modifiers = modifiers;
 			this.name = name;
+		}
+		
+		public int modifiers() {
+			return modifiers;
+		}
+		
+		public String name() {
+			return name;
 		}
 	}
 	
