@@ -3,7 +3,16 @@ package jkit.java;
 import java.util.*;
 
 public class JavaFile {
-
+	private String pkg;
+	private List<String> imports;
+	private List<ClassDecl> classes; 
+	
+	public JavaFile(String pkg, List<String> imports, List<ClassDecl> classes) {
+		this.pkg = pkg;
+		this.imports = imports;
+		this.classes = classes;
+	}
+		
 	/**
      * Represents the class of imperative statements allowed.
      * 
@@ -24,7 +33,13 @@ public class JavaFile {
 	// DECLARATIONS
 	// ====================================================
 	
-	
+	public static class ClassDecl {
+		public final String name;
+				
+		public ClassDecl(String name) {
+			this.name = name;
+		}
+	}
 	
 	// ====================================================
 	// STATEMENTS
