@@ -1,5 +1,6 @@
 package jkit.java;
 
+import java.lang.reflect.Modifier;
 import java.util.*;
 import jkit.jkil.SourceLocation;
 
@@ -67,16 +68,52 @@ public class JavaFile {
 	}
 
 	// ====================================================
+	// Type
+	// ====================================================
+
+	public static class Type {
+		private int dims;
+		private List<String> components;
+		public Type(List<String> components, int dims) {
+			this.components = components;
+			this.dims = dims;
+		}
+		public int dims() {
+			return dims;
+		}
+		public void setDims(int dims) {
+			this.dims = dims;
+		}
+		public List<String> components() {
+			return components;
+		}
+		public void setComponents(List<String> components) {
+			this.components = components;
+		}
+	}
+	
+	// ====================================================
 	// DECLARATIONS
 	// ====================================================
 	
-	public static class Clazz {
+	public static abstract class Declaration {
+		
+	}
+	
+	public static class Clazz extends Declaration {
 		private int modifiers;
 		private String name;
+		private Type superclass;
+		private List<Type> interfaces;
+		private List<Declaration> declarations;
 				
-		public Clazz(int modifiers, String name) {
+		public Clazz(int modifiers, String name, Type superclass,
+				List<Type> interfaces, List<Declaration> declarations) {
 			this.modifiers = modifiers;
 			this.name = name;
+			this.superclass = superclass;
+			this.interfaces = interfaces;
+			this.declarations = declarations;
 		}
 		
 		public int modifiers() {
@@ -86,6 +123,44 @@ public class JavaFile {
 		public String name() {
 			return name;
 		}
+
+		public Type superclass() {
+			return superclass;
+		}
+		
+		public List<Type> interfaces() {
+			return interfaces;
+		}
+		
+		public List<Declaration> declarations() { 
+			return declarations;
+		}
+		
+		
+		/**
+		 * Check whether this is an interface
+		 */
+		public boolean isInterface() { return (modifiers&Modifier.INTERFACE)!=0; } 
+
+		/**
+		 * Check whether this class or interface is abstract
+		 */
+		public boolean isAbstract() { return (modifiers&Modifier.ABSTRACT)!=0; }
+		
+		/**
+		 * Check whether this class or interface is final
+		 */
+		public boolean isFinal() { return (modifiers&Modifier.FINAL)!=0; }
+		
+		/**
+		 * Check whether this class or interface is static
+		 */
+		public boolean isStatic() { return (modifiers&Modifier.STATIC)!=0; }
+		
+		/**
+		 * Check whether this class or interface is static
+		 */
+		public boolean isPublic() { return (modifiers&Modifier.PUBLIC)!=0; }
 	}
 	
 	// ====================================================

@@ -21,6 +21,8 @@ public class JavaFileWriter {
 			output.println("package " + jf.pkg() + ";");
 		}
 		
+		output.println("");
+		
 		for(String imp : jf.imports()) {
 			output.println("import " + imp + ";");
 		}
@@ -35,10 +37,69 @@ public class JavaFileWriter {
 	}
 	
 	public void writeClass(JavaFile.Clazz decl, int depth) {
+		indent(depth);
 		writeModifiers(decl.modifiers());
+		
+		if(decl.isInterface()) {
+			output.print("interface ");
+		} else {
+			output.print("class ");
+		}
+		
 		output.print(decl.name());
+		
+		if(decl.isInterface()) {
+			if(decl.interfaces().size() > 0) {
+				output.print(" extends ");
+				boolean firstTime = true;
+				for(JavaFile.Type i : decl.interfaces()) {
+					if(!firstTime) {
+						output.print(", ");
+					} else { firstTime = false; }
+					writeType(i);
+				}
+			}
+		} else {
+			if(decl.superclass() != null) {
+				output.print(" extends ");
+				writeType(decl.superclass());
+			}
+			if(decl.interfaces().size() > 0) {
+				output.print(" implements ");
+				boolean firstTime = true;
+				for(JavaFile.Type i : decl.interfaces()) {
+					if(!firstTime) {
+						output.print(", ");
+					} else { firstTime = false; }
+					writeType(i);					
+				}
+			}
+		}
+		
 		output.println(" {");
-		output.println("}");
+		
+		for(JavaFile.Declaration d : decl.declarations()) {
+			if(d instanceof JavaFile.Clazz) {
+				writeClass((JavaFile.Clazz) d, depth + 1);
+			}
+		}
+		
+		indent(depth);output.println("}");
+	}
+	
+	protected void writeType(JavaFile.Type t) {
+		boolean firstTime=true;
+		for(String c : t.components()) {
+			if(!firstTime) {
+				output.write(".");
+			} else {
+				firstTime=false;
+			}
+			output.write(c);			
+		}
+		for(int i=0;i!=t.dims();++i) {
+			output.write("[]");
+		}
 	}
 	
 	protected void writeModifiers(int modifiers) {

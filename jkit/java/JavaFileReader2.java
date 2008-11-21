@@ -5,6 +5,7 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 
 import jkit.compiler.SyntaxError;
+import jkit.jkil.Type;
 
 import org.antlr.runtime.*;
 import org.antlr.runtime.tree.*;
@@ -78,7 +79,7 @@ public class JavaFileReader2 {
 		
 		ArrayList<JavaFile.Clazz> classes = new ArrayList<JavaFile.Clazz>();
 		ArrayList<String> imports = new ArrayList<String>();
-		String pkg = "";
+		String pkg = null;
 		
 		// Read top declarations first.
 		outer : for (int i = 0; i != ast.getChildCount(); ++i) {
@@ -137,7 +138,35 @@ public class JavaFileReader2 {
 		}
 		String name = decl.getChild(idx++).getText();
 		
-		return new JavaFile.Clazz(modifiers,name);
+		// ====================================================================
+		// ====================== PARSE EXTENDS CLAUSE ========================
+		// ====================================================================
+
+		JavaFile.Type superclass = null;
+		if (idx < decl.getChildCount() && decl.getChild(idx).getType() == EXTENDS) {
+			superclass = parseType(decl.getChild(idx++).getChild(0));
+		}
+		
+		// ====================================================================
+		// ===================== PARSE IMPLEMENTS CLAUSE ======================
+		// ====================================================================
+
+		ArrayList<JavaFile.Type> interfaces = new ArrayList<JavaFile.Type>();
+		if (idx < decl.getChildCount()
+				&& decl.getChild(idx).getType() == IMPLEMENTS) {
+			Tree ch = decl.getChild(idx++);
+			for (int i = 0; i != ch.getChildCount(); ++i) {
+				interfaces.add(parseType(ch.getChild(i)));
+			}
+		}
+		
+		// ====================================================================
+		// ======================== PARSE DECLARATIONS ========================
+		// ====================================================================
+		
+		ArrayList<JavaFile.Declaration> declarations = new ArrayList<JavaFile.Declaration>();
+		
+		return new JavaFile.Clazz(modifiers,name,superclass,interfaces,declarations);
 	}
 	
 	protected int parseModifiers(Tree ms) {
@@ -173,6 +202,30 @@ public class JavaFileReader2 {
 			}
 		}
 		return mods;
+	}
+	
+	protected static JavaFile.Type parseType(Tree type) {		
+		assert type.getType() == TYPE;
+						
+		// === ARRAY DIMENSIONS ===
+
+		int dims = 0;
+
+		for (int i = type.getChildCount() - 1; i > 0; --i) {
+			if (!type.getChild(i).getText().equals("[")) {
+				break;
+			}
+			dims++;
+		}
+		
+		// === COMPONENTS ===
+
+		ArrayList<String> components = new ArrayList<String>();
+		for(int i=0;i!=(type.getChildCount()-dims);++i) {
+			components.add(type.getChild(i).getText());
+		}
+		
+		return new JavaFile.Type(components,dims);
 	}
 	
 	// ANTLR Token Types
