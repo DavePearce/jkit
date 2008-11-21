@@ -71,7 +71,7 @@ public class JavaFileReader2 {
 		}
 	}
 	
-	public JavaFile readFile() {
+	public JavaFile read() {
 		
 		ArrayList<String> imports = new ArrayList<String>();
 		String pkg = "";
