@@ -81,10 +81,28 @@ public class JavaFileWriter {
 		for(JavaFile.Declaration d : decl.declarations()) {
 			if(d instanceof JavaFile.Clazz) {
 				writeClass((JavaFile.Clazz) d, depth + 1);
+			} else if(d instanceof JavaFile.Field) {
+				writeField((JavaFile.Field) d, depth + 1);
 			}
 		}
 		
 		indent(depth);output.println("}");
+	}
+	
+	protected void writeField(JavaFile.Field f, int depth) {
+		indent(depth);
+		writeModifiers(f.modifiers());		
+		writeType(f.type());		
+		output.print(f.name());
+		if(f.initialiser() != null) {
+			output.print(" = ");
+			writeExpression(f.initialiser());
+		}
+		output.println(";\n");
+	}
+	
+	protected void writeExpression(JavaFile.Expression e) {
+		
 	}
 	
 	protected void writeType(JavaFile.Type t) {
@@ -100,6 +118,7 @@ public class JavaFileWriter {
 		for(int i=0;i!=t.dims();++i) {
 			output.write("[]");
 		}
+		output.write(" ");
 	}
 	
 	protected void writeModifiers(int modifiers) {

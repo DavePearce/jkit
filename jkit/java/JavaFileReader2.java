@@ -6,7 +6,10 @@ import java.util.*;
 
 import jkit.compiler.SyntaxError;
 import jkit.jkil.Field;
+import jkit.jkil.FlowGraph;
 import jkit.jkil.Type;
+import jkit.jkil.FlowGraph.Expr;
+import jkit.jkil.FlowGraph.Point;
 
 import org.antlr.runtime.*;
 import org.antlr.runtime.tree.*;
@@ -170,7 +173,8 @@ public class JavaFileReader2 {
 		for (int i = idx; i < decl.getChildCount(); ++i) {
 			Tree child = decl.getChild(i);
 			switch(child.getType()) {
-			case FIELD:			
+			case FIELD:
+				declarations.addAll(parseField(child));
 				break;
 			case METHOD:
 				break;
@@ -184,6 +188,50 @@ public class JavaFileReader2 {
 		}
 		
 		return new JavaFile.Clazz(modifiers,name,superclass,interfaces,declarations);
+	}
+	
+	protected List<JavaFile.Field> parseField(Tree field) {
+		assert field.getType() == FIELD;
+
+		ArrayList<JavaFile.Field> fields = new ArrayList<JavaFile.Field>();
+
+		// === MODIFIERS ===
+		int modifiers = 0;
+		int idx = 0;
+		if (field.getChild(idx).getType() == MODIFIERS) {
+			modifiers = parseModifiers(field.getChild(0));
+			idx++;
+		}
+
+		// === FIELD TYPE ===
+		JavaFile.Type type = parseType(field.getChild(idx++));
+
+		// === FIELD NAME(S) ===
+
+		for (int i = idx; i < field.getChildCount(); ++i) {
+			Tree child = field.getChild(i);
+			String name = child.getText();
+			JavaFile.Expression initialiser = null;			
+			// A single "[" indicates an array
+			int aindx = 0;
+			while (aindx < child.getChildCount()
+					&& child.getChild(aindx).getText().equals("[")) {
+				type.setDims(type.dims()+1);
+				aindx++;
+			}
+			if (aindx < child.getChildCount()) {
+				// FIXME: problem of side effects in initialisers. The only real
+				// solution is to require that initialisers are inlined into
+				// constructors!
+				initialiser = parseExpression(child.getChild(aindx));
+			}
+			fields.add(new JavaFile.Field(modifiers, name, type, initialiser));
+		}
+		return fields;
+	}
+	
+	protected JavaFile.Expression parseExpression(Tree expr) {
+		return null;
 	}
 	
 	protected int parseModifiers(Tree ms) {

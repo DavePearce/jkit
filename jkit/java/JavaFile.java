@@ -53,19 +53,6 @@ public class JavaFile {
 			this.location = location;
 		}
 	}
-		
-	/**
-     * Represents all expressions in the code
-     * 
-     * @author djp
-     * 
-     */	
-	public static abstract class Expression {
-		public final SourceLocation location;
-		public Expression(SourceLocation location) {
-			this.location = location;
-		}
-	}
 
 	// ====================================================
 	// Type
@@ -163,6 +150,63 @@ public class JavaFile {
 		public boolean isPublic() { return (modifiers&Modifier.PUBLIC)!=0; }
 	}
 	
+	public static class Field extends Declaration {
+		private int modifiers;
+		private String name;
+		private Type type;
+		private Expression initialiser;
+		
+		public Field(int modifiers, String name, Type type,
+				Expression initialiser) {
+			this.modifiers = modifiers;
+			this.name = name;
+			this.type = type;
+			this.initialiser = initialiser;
+		}
+		
+		public int modifiers() {
+			return modifiers;
+		}
+		
+		public String name() {
+			return name;
+		}
+
+		public Type type() {
+			return type;
+		}
+		
+		public Expression initialiser() {
+			return initialiser;
+		}
+		
+		/**
+		 * Check whether this is an interface
+		 */
+		public boolean isInterface() { return (modifiers&Modifier.INTERFACE)!=0; } 
+
+		/**
+		 * Check whether this class or interface is abstract
+		 */
+		public boolean isAbstract() { return (modifiers&Modifier.ABSTRACT)!=0; }
+		
+		/**
+		 * Check whether this class or interface is final
+		 */
+		public boolean isFinal() { return (modifiers&Modifier.FINAL)!=0; }
+		
+		/**
+		 * Check whether this class or interface is static
+		 */
+		public boolean isStatic() { return (modifiers&Modifier.STATIC)!=0; }
+		
+		/**
+		 * Check whether this class or interface is static
+		 */
+		public boolean isPublic() { return (modifiers&Modifier.PUBLIC)!=0; }
+			
+	}
+	
 	// ====================================================
 	// STATEMENTS
 	// ====================================================
@@ -219,5 +263,16 @@ public class JavaFile {
 	// ====================================================
 	// EXPRESSIONS
 	// ====================================================
-
+	/**
+     * Represents all expressions in the code
+     * 
+     * @author djp
+     * 
+     */	
+	public static abstract class Expression {
+		public final SourceLocation location;
+		public Expression(SourceLocation location) {
+			this.location = location;
+		}
+	}
 }
