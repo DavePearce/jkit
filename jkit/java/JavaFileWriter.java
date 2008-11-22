@@ -102,7 +102,52 @@ public class JavaFileWriter {
 	}
 	
 	protected void writeExpression(JavaFile.Expression e) {
-		
+		if(e instanceof JavaFile.BoolVal) {
+			writeBoolVal((JavaFile.BoolVal)e);
+		} else if(e instanceof JavaFile.CharVal) {
+			writeCharVal((JavaFile.CharVal)e);
+		} else if(e instanceof JavaFile.IntVal) {
+			writeIntVal((JavaFile.IntVal)e);
+		} else if(e instanceof JavaFile.LongVal) {
+			writeLongVal((JavaFile.LongVal)e);
+		} else if(e instanceof JavaFile.FloatVal) {
+			writeFloatVal((JavaFile.FloatVal)e);
+		} else if(e instanceof JavaFile.DoubleVal) {
+			writeDoubleVal((JavaFile.DoubleVal)e);
+		} else {
+			throw new RuntimeException("Invalid expression encountered: "
+					+ e.getClass());
+		}
+	}
+	
+	protected void writeBoolVal(JavaFile.BoolVal e) {
+		if(e.value()) {
+			output.write("true");
+		} else {
+			output.write("false");
+		}
+	}
+	
+	protected void writeCharVal(JavaFile.CharVal e) {
+		output.write("'");
+		output.write(e.value()); // this will fail for non-ASCII chars
+		output.write("'");
+	}
+	
+	protected void writeIntVal(JavaFile.IntVal e) {		
+		output.write(Integer.toString(e.value()));
+	}
+	
+	protected void writeLongVal(JavaFile.LongVal e) {		
+		output.write(Long.toString(e.value()) + "L");
+	}
+	
+	protected void writeFloatVal(JavaFile.FloatVal e) {		
+		output.write(Float.toString(e.value()) + "F");
+	}
+	
+	protected void writeDoubleVal(JavaFile.DoubleVal e) {		
+		output.write(Double.toString(e.value()));
 	}
 	
 	protected void writeType(JavaFile.Type t) {

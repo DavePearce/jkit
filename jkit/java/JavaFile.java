@@ -2,7 +2,17 @@ package jkit.java;
 
 import java.lang.reflect.Modifier;
 import java.util.*;
+
 import jkit.jkil.SourceLocation;
+import jkit.jkil.Type;
+import jkit.jkil.FlowGraph.ArrayVal;
+import jkit.jkil.FlowGraph.Expr;
+import jkit.jkil.FlowGraph.FloatVal;
+import jkit.jkil.FlowGraph.LongVal;
+import jkit.jkil.FlowGraph.NullVal;
+import jkit.jkil.FlowGraph.Number;
+import jkit.jkil.FlowGraph.StringVal;
+import jkit.jkil.FlowGraph.Value;
 
 public class JavaFile {
 	private String pkg;
@@ -270,9 +280,226 @@ public class JavaFile {
      * 
      */	
 	public static abstract class Expression {
-		public final SourceLocation location;
-		public Expression(SourceLocation location) {
-			this.location = location;
+		
+	}
+	
+	public static abstract class Value extends Expression {
+		
+	}
+		
+	/**
+	 * Represents a numerical constant
+	 * 
+	 * @author djp
+	 *
+	 */
+	public static class Number extends Value {
+		protected int value;
+		
+		public Number(int value) {	
+			this.value = value;
 		}
 	}
+	
+	/**
+	 * A boolean constant.
+	 * 
+	 * @author djp
+	 *
+	 */
+	public static class BoolVal extends Number {
+		public BoolVal(boolean value) {
+			super(value?1:0);
+		}
+		
+		public boolean value() {
+			return value==1;
+		}
+	}
+	
+	/**
+	 * Represents a character constant.
+	 * 
+	 * @author djp
+	 *
+	 */
+	public static class CharVal extends Number {
+		public CharVal(char value) {
+			super(value);
+		}
+		
+		public char value() {
+			return (char)value;
+		}
+	}
+	
+	/**
+	 * Represents a byte constant.
+	 * 
+	 * @author djp
+	 *
+	 */
+	public static class ByteVal extends Number {
+		public ByteVal(byte value) {
+			super(value);
+		}
+		
+		public byte value() {
+			return (byte)value;
+		}
+	}
+	
+	/**
+	 * Represents a short constant.
+	 * @author djp
+	 *
+	 */
+	public static class ShortVal extends Number {
+		public ShortVal(short value) {
+			super(value);
+		}
+		
+		public short value() {
+			return (short)value;
+		}
+	}
+
+	/**
+     * Represents an int constant.
+     * 
+     * @author djp
+     * 
+     */	
+	public static class IntVal extends Number {
+		public IntVal(int value) {
+			super(value);
+		}
+		
+		public int value() {
+			return value;
+		}
+	}
+
+	/**
+     * Represents a long Constant.
+     * 
+     * @author djp
+     * 
+     */
+	public static class LongVal extends Value {
+		private long value;
+		
+		public LongVal(long value) {
+			this.value=value;
+		}
+		
+		public long value() {
+			return value;
+		}
+	}
+	
+	/**
+     * A Float Constant.
+     * 
+     * @author djp
+     * 
+     */
+	public static class FloatVal extends Value {
+		private float value;
+		
+		public FloatVal(float value) {
+			this.value=value;
+		}
+		
+		public float value() {
+			return value;
+		}
+	}
+
+	/**
+     * A Double Constant.
+     * 
+     * @author djp
+     * 
+     */
+	public static class DoubleVal extends Value {
+		private double value;
+		
+		public DoubleVal(double value) {			
+			this.value=value;
+		}
+		
+		public double value() {
+			return value;
+		}
+	}
+	
+	/**
+     * A String Constant.
+     * 
+     * @author djp
+     * 
+     */
+	public static class StringVal extends Value {
+		private final String value;
+		
+		public StringVal(String value) {			
+			this.value=value;
+		}
+		
+		public String value() {
+			return value;
+		}
+	}		
+	
+	/**
+     * The null Constant.
+     * 
+     * @author djp
+     * 
+     */
+	public static class NullVal extends Value {	}
+	
+	/**
+     * An array constant (used for array initialisers only).
+     * 
+     * @author djp
+     * 
+     */
+	public static class ArrayVal extends Value {
+		private List<Expression> values;
+		
+		public ArrayVal(List<Expression> values) {			
+			this.values = values;
+		}
+		
+		public List<Expression> values() {
+			return values;
+		}
+	}
+	
+	/**
+	 * A typed array constant (used for array initialisers only). This is
+	 * similar to a normal array constant, except that the target type is also
+	 * specified. For example:
+	 * 
+	 * <pre>
+     * Object[] test = new Object[]{&quot;abc&quot;, new Integer(2)};
+     * </pre>
+     * 
+	 * @author djp
+	 * 
+	 */
+	public static class TypedArrayVal extends ArrayVal {
+		private Type type;
+		
+		public TypedArrayVal(Type type, List<Expression> values) {			
+			super(values);
+			this.type = type;
+		}
+		
+		public Type type() {
+			return type;
+		}
+	}	
 }

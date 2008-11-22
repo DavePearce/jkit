@@ -5,11 +5,26 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 
 import jkit.compiler.SyntaxError;
+import jkit.java.JavaFileReader.Block;
 import jkit.jkil.Field;
 import jkit.jkil.FlowGraph;
 import jkit.jkil.Type;
+import jkit.jkil.FlowGraph.ArrayVal;
+import jkit.jkil.FlowGraph.Assign;
+import jkit.jkil.FlowGraph.BinOp;
+import jkit.jkil.FlowGraph.BoolVal;
+import jkit.jkil.FlowGraph.CharVal;
+import jkit.jkil.FlowGraph.DoubleVal;
 import jkit.jkil.FlowGraph.Expr;
+import jkit.jkil.FlowGraph.FloatVal;
+import jkit.jkil.FlowGraph.IntVal;
+import jkit.jkil.FlowGraph.LVal;
+import jkit.jkil.FlowGraph.LongVal;
+import jkit.jkil.FlowGraph.NullVal;
 import jkit.jkil.FlowGraph.Point;
+import jkit.jkil.FlowGraph.StringVal;
+import jkit.jkil.FlowGraph.UnOp;
+import jkit.util.Pair;
 
 import org.antlr.runtime.*;
 import org.antlr.runtime.tree.*;
@@ -231,7 +246,308 @@ public class JavaFileReader2 {
 	}
 	
 	protected JavaFile.Expression parseExpression(Tree expr) {
-		return null;
+		switch (expr.getType()) {
+			case CHARVAL :
+				return parseCharVal(expr);
+			case BOOLVAL :
+				return parseBoolVal(expr);
+			case INTVAL :
+				return parseIntVal(expr);
+			case FLOATVAL :
+				return parseFloatVal(expr);
+			case STRINGVAL :
+				return parseStringVal(expr);
+			case NULLVAL :
+				return parseNullVal(expr);
+			case ARRAYVAL :
+				return parseArrayVal(expr);
+			case ARRAYINIT :
+				return parseTypedArrayVal(expr);
+			case VAR :
+				// return parseVariable(expr);
+			case NEW :
+				// return parseNew(expr, null);
+			case INVOKE :
+				// return parseInvoke(expr);
+			case SELECTOR :
+				// return parseSelector(expr);
+			case GETCLASS :
+				// return parseGetClass(expr);
+			case PREINC :
+				// return parsePreIncrement(expr);
+			case PREDEC :
+				// return parsePreDecrement(expr);
+			case POSTINC :
+				// return parsePostIncrement(expr);
+			case POSTDEC :
+				// return parsePostDecrement(expr);
+			case NEG :
+				// return parseUnOp(UnOp.NEG, expr);
+			case NOT :
+				// return parseUnOp(UnOp.NOT, expr);
+			case INV :
+				// return parseUnOp(UnOp.INV, expr);
+			case CAST :
+				// return parseCast(expr);
+			case LABINOP :
+				// return parseLeftAssociativeBinOp(expr);
+			case USHR :
+				// return parseBinOp(BinOp.USHR, expr);
+			case LAND :
+				// return parseBinOp(BinOp.LAND, expr);
+			case LOR :
+				// return parseBinOp(BinOp.LOR, expr);
+			case AND :
+				// return parseBinOp(BinOp.AND, expr);
+			case OR :
+				// return parseBinOp(BinOp.OR, expr);
+			case XOR :
+				// return parseBinOp(BinOp.XOR, expr);
+			case EQ :
+				// return parseBinOp(BinOp.EQ, expr);
+			case NEQ :
+				// return parseBinOp(BinOp.NEQ, expr);
+			case LT :
+				// return parseBinOp(BinOp.LT, expr);
+			case LTEQ :
+				// return parseBinOp(BinOp.LTEQ, expr);
+			case GT :
+				// return parseBinOp(BinOp.GT, expr);
+			case GTEQ :
+				// return parseBinOp(BinOp.GTEQ, expr);
+			case INSTANCEOF :
+				// return parseInstanceOf(expr);
+			case TERNOP :
+				// return parseTernOp(expr);
+			case ASSIGN :
+			default :
+				throw new SyntaxError("Unknown expression encountered ("
+						+ expr.getText() + ")", expr.getLine(), expr
+						.getCharPositionInLine(), expr.getText().length());
+		}
+	}	
+	
+	
+	protected JavaFile.CharVal parseCharVal(Tree expr) {
+		String charv = expr.getChild(0).getText();
+		JavaFile.CharVal v = null;
+		if (charv.length() == 3) {
+			v = new JavaFile.CharVal(charv.charAt(1));
+		} else {
+			String tmp = charv.substring(1, charv.length() - 1);
+			if (tmp.equals("\\b"))
+				v = new JavaFile.CharVal('\b');
+			else if (tmp.equals("\\t"))
+				v = new JavaFile.CharVal('\t');
+			else if (tmp.equals("\\f"))
+				v = new JavaFile.CharVal('\f');
+			else if (tmp.equals("\\n"))
+				v = new JavaFile.CharVal('\n');
+			else if (tmp.equals("\\r"))
+				v = new JavaFile.CharVal('\r');
+			else if (tmp.equals("\\\""))
+				v = new JavaFile.CharVal('\"');
+			else if (tmp.equals("\\\\"))
+				v = new JavaFile.CharVal('\\');
+			else if (tmp.equals("\\'"))
+				v = new JavaFile.CharVal('\'');
+			else if (Character.isDigit(tmp.charAt(1)))  {
+				int octal_val = Integer.parseInt(tmp.substring(1,tmp.length()),8);
+				v = new JavaFile.CharVal((char) octal_val);
+			} else {
+				throw new RuntimeException(
+						"Unable to parse character constant: " + tmp);
+			}
+		} 
+		return v;
+	}
+	
+	protected JavaFile.Expression parseBoolVal(Tree expr) {
+		JavaFile.BoolVal v = new JavaFile.BoolVal(Boolean
+				.parseBoolean(expr.getChild(0).getText()));
+		return v;
+	}
+
+	protected JavaFile.Expression parseIntVal(Tree expr) {
+		int radix = 10;
+		String value = expr.getChild(0).getText();
+		if (value.startsWith("0x")) {
+			// HEX value
+			radix = 16;
+			value = value.substring(2);
+		}
+		char lc = value.charAt(value.length() - 1);
+
+		long val = parseLongVal(value.substring(0, value.length() - 1), radix);
+
+		if (lc == 'l' || lc == 'L') {
+			// return new LongVal(Long.parseLong(value.substring(0,
+			// value.length() - 1), radix));
+			return new JavaFile.LongVal(val);
+		} else if (radix == 10 && (lc == 'f' || lc == 'F')) {
+			return new JavaFile.FloatVal(val);
+		} else if (radix == 10 && (lc == 'd' || lc == 'D')) {
+			return new JavaFile.DoubleVal(val);
+		}
+
+		val = parseLongVal(value, radix);
+		return new JavaFile.IntVal((int) val);
+	}
+
+	/**
+     * Java's Long.parseLong() method throws an exception if the long parsed is
+     * too large whereas javac simply wraps. Hence, we need our own
+     * implementation.
+     */
+	protected static long parseLongVal(String in, int radix) {
+		char[] c = in.toCharArray();
+		long out = 0;
+		for (int i = 0; i < c.length; i++) {
+			int d = Character.digit(c[i], radix);
+			out = out * radix + d;
+		}
+		return out;
+	}
+
+	protected JavaFile.Expression parseStringVal(Tree expr) {
+		String v = expr.getChild(0).getText();
+
+		/*
+         * Parsing a string requires several steps to be taken. First, we need
+         * to strip quotes from the ends of the string.
+         */
+		v = v.substring(1, v.length() - 1);
+		// Second, step through the string and replace escaped characters
+		for (int i = 0; i < v.length(); i++) {
+			if (v.charAt(i) == '\\') {
+				if (v.length() <= i + 1) {
+					System.err
+							.println("String ends with escape character: dropped ("
+									+ v + ")");
+					// TODO this should never happen because the parser
+					// shouldn't allow. Verify.
+					throw new RuntimeException("bad string: " + v);
+				} else {
+					char replace = 0;
+					int len = 2;
+					switch (v.charAt(i + 1)) {
+						case 'b' :
+							replace = '\b';
+							break;
+						case 't' :
+							replace = '\t';
+							break;
+						case 'n' :
+							replace = '\n';
+							break;
+						case 'f' :
+							replace = '\f';
+							break;
+						case 'r' :
+							replace = '\r';
+							break;
+						case '"' :
+							replace = '\"';
+							break;
+						case '\'' :
+							replace = '\'';
+							break;
+						case '\\' :
+							replace = '\\';
+							break;
+						case 'u' :
+							len = 6; // unicode escapes are six digits long,
+							// including "slash u"
+							String unicode = v.substring(i + 2, i + 6);
+							replace = (char) Integer.parseInt(unicode, 16); // unicode
+							// string
+							// is
+							// in
+							// hex
+							break;
+						default :
+							// TODO: handle octal, catchall
+							throw new RuntimeException(
+									"unknown escaped character, not implemented: "
+											+ v.charAt(i + 1) + " (" + v + ")");
+					}
+					v = v.substring(0, i) + replace + v.substring(i + len);
+				}
+			}
+		}
+		// finally, construct a new string in the FlowGraph
+		return new JavaFile.StringVal(v);
+	}
+
+	protected JavaFile.Expression parseNullVal(Tree expr) {
+		return new JavaFile.NullVal();
+	}
+
+
+	/**
+	 * This parses a floating point value. Note that this may correspond to a
+	 * Java float, or a Java double!
+	 */
+	protected JavaFile.Expression parseFloatVal(Tree expr) {
+		String val = expr.getChild(0).getText();
+
+		char lc = val.charAt(val.length() - 1);
+		JavaFile.Expression r;
+		if (lc == 'f' || lc == 'F') {
+			r = new JavaFile.FloatVal(Float.parseFloat(val));
+		} else {
+			r = new JavaFile.DoubleVal(Double.parseDouble(val));
+		}
+		return r;
+	}
+
+	/**
+     * Parse an array initialiser expression. For example:
+     * 
+     * <pre>
+     * Object[] test = {&quot;abc&quot;, new Integer(2)};
+     * </pre>
+     * 
+     * @param expr
+     * @return
+     */
+	protected JavaFile.Expression parseArrayVal(Tree expr) {
+		List<JavaFile.Expression> values = parseExpressionList(0, expr
+				.getChildCount(), expr);
+		return new JavaFile.ArrayVal(values);
+	}
+
+	/**
+	 * Parse a typed array initialiser expression. This is distinct from an
+	 * array initialiser in a subtle way. To generate a typed array initiliser
+	 * you must specify the class of array to construct. For example:
+	 * 
+	 * <pre>
+	 * Object[] test = new Object[] { &quot;abc&quot;, new Integer(2) };
+	 * </pre>
+	 * 
+	 * 
+	 * @param expr
+	 * @return
+	 */
+	protected JavaFile.Expression parseTypedArrayVal(Tree expr) {
+		JavaFile.Type type = parseType(expr.getChild(0));
+		Tree aval = expr.getChild(1);
+		List<JavaFile.Expression> values = parseExpressionList(0, aval
+				.getChildCount(), aval);
+		return new JavaFile.TypedArrayVal(type, values);
+	}
+
+	protected List<JavaFile.Expression> parseExpressionList(int start,
+			int end, Tree expr) {
+
+		ArrayList<JavaFile.Expression> es = new ArrayList<JavaFile.Expression>();
+		
+		for (int i = start; i < end; i++) {
+			es.add(parseExpression(expr.getChild(i)));			
+		}
+
+		return es;
 	}
 	
 	protected int parseModifiers(Tree ms) {
