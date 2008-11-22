@@ -114,7 +114,15 @@ public class JavaFileWriter {
 			writeFloatVal((JavaFile.FloatVal)e);
 		} else if(e instanceof JavaFile.DoubleVal) {
 			writeDoubleVal((JavaFile.DoubleVal)e);
-		} else {
+		} else if(e instanceof JavaFile.StringVal) {
+			writeStringVal((JavaFile.StringVal)e);
+		} else if(e instanceof JavaFile.NullVal) {
+			writeNullVal((JavaFile.NullVal)e);
+		} else if(e instanceof JavaFile.ArrayVal) {
+			writeArrayVal((JavaFile.ArrayVal)e);
+		}
+		
+		else {
 			throw new RuntimeException("Invalid expression encountered: "
 					+ e.getClass());
 		}
@@ -148,6 +156,30 @@ public class JavaFileWriter {
 	
 	protected void writeDoubleVal(JavaFile.DoubleVal e) {		
 		output.write(Double.toString(e.value()));
+	}
+	
+	protected void writeStringVal(JavaFile.StringVal e) {		
+		output.write("\"");
+		output.write(e.value());
+		output.write("\"");
+	}
+	
+	protected void writeNullVal(JavaFile.NullVal e) {		
+		output.write("null");
+	}
+	
+	protected void writeArrayVal(JavaFile.ArrayVal e) {		
+		boolean firstTime = true;
+		output.write("{");
+		for(JavaFile.Expression i : e.values()) {
+			if(!firstTime) {
+				output.write(", ");
+			} else {
+				firstTime = false;
+			}
+			writeExpression(i);
+		}
+		output.write("}");
 	}
 	
 	protected void writeType(JavaFile.Type t) {
