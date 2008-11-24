@@ -292,29 +292,29 @@ public class JavaFileReader2 {
 			case LABINOP :
 				return parseLeftAssociativeBinOp(expr);
 			case USHR :
-				// return parseBinOp(BinOp.USHR, expr);
+				return parseBinOp(BinOp.USHR, expr);
 			case LAND :
-				// return parseBinOp(BinOp.LAND, expr);
+				return parseBinOp(BinOp.LAND, expr);
 			case LOR :
-				// return parseBinOp(BinOp.LOR, expr);
+				return parseBinOp(BinOp.LOR, expr);
 			case AND :
-				// return parseBinOp(BinOp.AND, expr);
+				return parseBinOp(BinOp.AND, expr);
 			case OR :
-				// return parseBinOp(BinOp.OR, expr);
+				return parseBinOp(BinOp.OR, expr);
 			case XOR :
-				// return parseBinOp(BinOp.XOR, expr);
+				return parseBinOp(BinOp.XOR, expr);
 			case EQ :
-				// return parseBinOp(BinOp.EQ, expr);
+				return parseBinOp(BinOp.EQ, expr);
 			case NEQ :
-				// return parseBinOp(BinOp.NEQ, expr);
+				return parseBinOp(BinOp.NEQ, expr);
 			case LT :
-				// return parseBinOp(BinOp.LT, expr);
+				return parseBinOp(BinOp.LT, expr);
 			case LTEQ :
-				// return parseBinOp(BinOp.LTEQ, expr);
+				return parseBinOp(BinOp.LTEQ, expr);
 			case GT :
-				// return parseBinOp(BinOp.GT, expr);
+				return parseBinOp(BinOp.GT, expr);
 			case GTEQ :
-				// return parseBinOp(BinOp.GTEQ, expr);
+				return parseBinOp(BinOp.GTEQ, expr);
 			case INSTANCEOF :
 				// return parseInstanceOf(expr);
 			case TERNOP :
@@ -333,15 +333,22 @@ public class JavaFileReader2 {
 		JavaFile.Expression lhs = parseExpression(expr.getChild(0));				
 
 		for (int i = 1; i < expr.getChildCount(); i = i + 2) {
-			int bop = parseBinOp(expr.getChild(i).getText(), expr);
+			int bop = parseBinOpOp(expr.getChild(i).getText(), expr);
 			lhs = new JavaFile.BinOp(bop, lhs, parseExpression(
 					expr.getChild(i + 1)));
 		}
 
 		return lhs;
 	}
-
-	protected int parseBinOp(String op, Tree expr) {
+	
+	protected JavaFile.Expression parseBinOp(int bop, Tree expr) {
+		JavaFile.Expression lhs = parseExpression(expr.getChild(0));
+		JavaFile.Expression rhs = parseExpression(expr.getChild(1));		
+		
+		return new JavaFile.BinOp(bop, lhs, rhs);
+	}
+	
+	protected int parseBinOpOp(String op, Tree expr) {
 		if (op.equals("+")) {
 			return BinOp.ADD;
 		} else if (op.equals("-")) {
