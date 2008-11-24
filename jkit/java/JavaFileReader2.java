@@ -264,7 +264,7 @@ public class JavaFileReader2 {
 			case ARRAYINIT :
 				return parseTypedArrayVal(expr);
 			case VAR :
-				// return parseVariable(expr);
+				return parseVariable(expr);
 			case NEW :
 				// return parseNew(expr, null);
 			case INVOKE :
@@ -290,7 +290,7 @@ public class JavaFileReader2 {
 			case CAST :
 				// return parseCast(expr);
 			case LABINOP :
-				// return parseLeftAssociativeBinOp(expr);
+				return parseLeftAssociativeBinOp(expr);
 			case USHR :
 				// return parseBinOp(BinOp.USHR, expr);
 			case LAND :
@@ -327,8 +327,49 @@ public class JavaFileReader2 {
 		}
 	}	
 	
+	// Binary operations which can be left associative are more complex and have
+	// to be delt with using a special LABINOP operator.
+	protected JavaFile.Expression parseLeftAssociativeBinOp(Tree expr) {
+		JavaFile.Expression lhs = parseExpression(expr.getChild(0));				
+
+		for (int i = 1; i < expr.getChildCount(); i = i + 2) {
+			int bop = parseBinOp(expr.getChild(i).getText(), expr);
+			lhs = new JavaFile.BinOp(bop, lhs, parseExpression(
+					expr.getChild(i + 1)));
+		}
+
+		return lhs;
+	}
+
+	protected int parseBinOp(String op, Tree expr) {
+		if (op.equals("+")) {
+			return BinOp.ADD;
+		} else if (op.equals("-")) {
+			return BinOp.SUB;
+		} else if (op.equals("/")) {
+			return BinOp.DIV;
+		} else if (op.equals("*")) {
+			return BinOp.MUL;
+		} else if (op.equals("%")) {
+			return BinOp.MOD;
+		} else if (op.equals("<")) {
+			return BinOp.SHL;
+		} else if (op.equals(">")) {
+			return BinOp.SHR;
+		} else {
+			throw new SyntaxError(
+					"Unknown left-associative binary operator encountered ('"
+							+ op + "').", expr.getLine(), expr
+							.getCharPositionInLine(), expr.getText().length());
+		}
+	}
 	
-	protected JavaFile.CharVal parseCharVal(Tree expr) {
+	protected JavaFile.Expression parseVariable(Tree expr) {
+		String name = expr.getChild(0).getText();
+		return new JavaFile.Variable(name);
+	}
+	
+	protected JavaFile.Expression parseCharVal(Tree expr) {
 		String charv = expr.getChild(0).getText();
 		JavaFile.CharVal v = null;
 		if (charv.length() == 3) {

@@ -17,7 +17,7 @@ public class JavaFileWriter {
 	}
 	
 	public void write(JavaFile jf) {
-		if(!jf.pkg().equals("")) {
+		if(jf.pkg() != null) {
 			output.println("package " + jf.pkg() + ";");
 		}
 		
@@ -102,6 +102,7 @@ public class JavaFileWriter {
 	}
 	
 	protected void writeExpression(JavaFile.Expression e) {
+		
 		if(e instanceof JavaFile.BoolVal) {
 			writeBoolVal((JavaFile.BoolVal)e);
 		} else if(e instanceof JavaFile.CharVal) {
@@ -120,9 +121,11 @@ public class JavaFileWriter {
 			writeNullVal((JavaFile.NullVal)e);
 		} else if(e instanceof JavaFile.ArrayVal) {
 			writeArrayVal((JavaFile.ArrayVal)e);
-		}
-		
-		else {
+		} else if(e instanceof JavaFile.Variable) {
+			writeVariable((JavaFile.Variable)e);
+		} else if(e instanceof JavaFile.BinOp) {
+			writeBinOp((JavaFile.BinOp)e);
+		} else {
 			throw new RuntimeException("Invalid expression encountered: "
 					+ e.getClass());
 		}
@@ -180,6 +183,34 @@ public class JavaFileWriter {
 			writeExpression(i);
 		}
 		output.write("}");
+	}
+	
+	protected void writeVariable(JavaFile.Variable e) {			
+		output.write(e.value());		
+	}
+	
+	protected static final String[] binopstr = {"+", "-", "*", "/", "%", "<<",
+			">>", ">>>", "&", "|", "^", "<", "<=", ">", ">=", "==", "!=", "&&",
+			"||", "++"};
+	
+	protected void writeBinOp(JavaFile.BinOp e) {		
+		if(e.lhs() instanceof JavaFile.BinOp) {
+			output.print("(");
+			writeExpression(e.lhs());
+			output.print(")");
+		} else {
+			
+			writeExpression(e.lhs());			
+		}
+		output.write(binopstr[e.op()]);
+		if(e.rhs() instanceof JavaFile.BinOp) {
+			output.print("(");
+			writeExpression(e.rhs());
+			output.print(")");
+		} else {
+			
+			writeExpression(e.rhs());			
+		}		
 	}
 	
 	protected void writeType(JavaFile.Type t) {

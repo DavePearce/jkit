@@ -6,6 +6,7 @@ import java.util.*;
 import jkit.jkil.SourceLocation;
 import jkit.jkil.Type;
 import jkit.jkil.FlowGraph.ArrayVal;
+import jkit.jkil.FlowGraph.BinOp;
 import jkit.jkil.FlowGraph.Expr;
 import jkit.jkil.FlowGraph.FloatVal;
 import jkit.jkil.FlowGraph.LongVal;
@@ -282,6 +283,79 @@ public class JavaFile {
 	public static abstract class Expression {
 		
 	}
+	
+	/**
+     * An (unresolved) variable
+     * 
+     * @author djp
+     * 
+     */
+	public static class Variable extends Expression {
+		private final String value;
+		
+		public Variable(String value) {			
+			this.value=value;
+		}
+		
+		public String value() {
+			return value;
+		}
+	}		
+	
+	/**
+     * A Binary Operator.  E.g. +.-,*,/,<,<=,>,?=,==,!=, etc.
+     * 
+     * @author djp
+     * 
+     */
+	public static final class BinOp extends Expression {
+		// BinOp Constants
+		public static final int ADD = 0;
+		public static final int SUB = 1;
+		public static final int MUL = 2;
+		public static final int DIV = 3;
+		public static final int MOD = 4;
+		public static final int SHL = 5;
+		public static final int SHR = 6;
+		public static final int USHR = 7;
+		public static final int AND = 8;
+		public static final int OR = 9;
+		public static final int XOR = 10;
+		
+		public static final int LT = 11;
+		public static final int LTEQ = 12;
+		public static final int GT = 13;
+		public static final int GTEQ = 14;
+		public static final int EQ = 15;
+		public static final int NEQ = 16;
+		public static final int LAND = 17;
+		public static final int LOR = 18;
+		
+		public static final int CONCAT = 19; // string concatenation
+				
+		protected final Expression lhs;
+		protected final Expression rhs;
+		protected final int op;				
+		
+		public BinOp(int op, Expression lhs, Expression rhs) {		
+			this.lhs = lhs;
+			this.rhs = rhs;
+			this.op=op;
+		}
+		
+		public int op() {
+			return op;
+		}
+		
+		public Expression lhs() {
+			return lhs;
+		}
+		
+		public Expression rhs() {
+			return rhs;
+		}
+	}
+	
 	
 	public static abstract class Value extends Expression {
 		
