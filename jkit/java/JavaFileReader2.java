@@ -13,6 +13,7 @@ import jkit.jkil.Clazz;
 import jkit.jkil.Field;
 import jkit.jkil.FlowGraph;
 import jkit.jkil.Type;
+import jkit.jkil.FlowGraph.ArrayIndex;
 import jkit.jkil.FlowGraph.ArrayVal;
 import jkit.jkil.FlowGraph.Assign;
 import jkit.jkil.FlowGraph.BinOp;
@@ -287,7 +288,7 @@ public class JavaFileReader2 {
 			case INVOKE :
 				return parseInvoke(expr);
 			case SELECTOR :
-				// return parseSelector(expr);
+				return parseSelector(expr);
 			case GETCLASS :
 				return parseGetClass(expr);
 			case PREINC :
@@ -343,6 +344,70 @@ public class JavaFileReader2 {
 						.getCharPositionInLine(), expr.getText().length());
 		}
 	}	
+	
+	protected JavaFile.Expression parseSelector(Tree selector) {		
+		Tree target = selector.getChild(0);
+
+		// The following is basically dealing with an awkward situation. For
+		// example, if you write e.g. java.lang.Float.floatToIntBits(x), then
+		// this gets translated into:
+		//
+		// SELECTOR
+		// VAR
+		// java
+		// DEREF
+		// lang
+		// DEREF
+		// Float
+		// INVOKE
+		// floatToIntBits
+		// ...
+		//
+		// Therefore, in fact, "java" is not a variable, but *part* of a class
+		// access. Thus, we first try "java" as a variable (which it can be)
+		// and,
+		// if this fails, assume it is part of a class access and then try to
+		// figure out which class.
+
+		int idx = 1;
+		JavaFile.Expression expr = new JavaFile.Variable(target.getChild(0).getText());
+		
+		for (int i = idx; i != selector.getChildCount(); ++i) {
+			Tree child = selector.getChild(i);
+			switch (child.getType()) {
+				case DEREF :
+					expr = new JavaFile.Deref(expr,child.getChild(0).getText());
+					break;
+				case ARRAYINDEX : {
+					expr = new JavaFile.ArrayIndex(expr,parseExpression(child
+							.getChild(0)));
+					break;
+				}
+				case INVOKE : {
+					int start = 0;
+					if(child.getChild(0).getType() == TYPE_PARAMETER) {		
+						start++;
+					} 
+					String method = child.getChild(start).getText();
+					
+					List<JavaFile.Expression> params = parseExpressionList(
+							start+1, child.getChildCount(), child);
+					
+					expr = new JavaFile.Invoke(expr, method, params,
+							new ArrayList<JavaFile.Type>());
+					break;
+				}
+				case NEW :
+					throw new RuntimeException("Selector new construction case not supported (yet)");					
+				default :
+					throw new SyntaxError("Unknown expression encountered.",
+							selector.getLine(), selector
+									.getCharPositionInLine(), selector
+									.getText().length());
+			}
+		}
+		return expr;
+	}
 	
 	/**
      * This parses a "new" expression. The key difficulties here, lie in the

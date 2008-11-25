@@ -14,6 +14,7 @@ import jkit.jkil.FlowGraph.Expr;
 import jkit.jkil.FlowGraph.FloatVal;
 import jkit.jkil.FlowGraph.InstanceOf;
 import jkit.jkil.FlowGraph.Invoke;
+import jkit.jkil.FlowGraph.LVal;
 import jkit.jkil.FlowGraph.LongVal;
 import jkit.jkil.FlowGraph.NullVal;
 import jkit.jkil.FlowGraph.Number;
@@ -550,6 +551,55 @@ public class JavaFile {
 		}
 	}
 	
+	/**
+     * Represents the act of derefencing a field.
+     * 
+     * @author djp
+     * 
+     */
+	public static final class Deref extends Expression {
+		private Expression target;
+		private String name;
+		
+		
+		public Deref(Expression lhs, String rhs) {
+			this.target = lhs;
+			this.name = rhs;
+		}
+		
+		public Expression target() { 
+			return target;
+		}
+		
+		public String name() {
+			return name;
+		}
+	}
+	
+	/**
+     * Represents an index into an array. E.g. A[i] is an index into array A.
+     * 
+     * @author djp
+     * 
+     */
+	public static class ArrayIndex extends Expression {
+		private Expression array;
+		private Expression idx;
+		
+		
+		public ArrayIndex(Expression array, Expression idx) {
+			this.array = array;
+			this.idx = idx;
+		}
+	
+		public Expression target() { 
+			return array;			
+		}
+		
+		public Expression index() {
+			return idx;
+		}
+	}
 	
 	// ====================================================
 	// Values

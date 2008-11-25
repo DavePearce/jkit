@@ -143,10 +143,27 @@ public class JavaFileWriter {
 			writeInvoke((JavaFile.Invoke) e);
 		} else if(e instanceof JavaFile.New) {
 			writeNew((JavaFile.New) e);
+		} else if(e instanceof JavaFile.ArrayIndex) {
+			writeArrayIndex((JavaFile.ArrayIndex) e);
+		} else if(e instanceof JavaFile.Deref) {
+			writeDeref((JavaFile.Deref) e);
 		} else {
 			throw new RuntimeException("Invalid expression encountered: "
 					+ e.getClass());
 		}
+	}
+	
+	protected void writeDeref(JavaFile.Deref e) {
+		writeExpression(e.target());
+		output.write(".");
+		output.write(e.name());		
+	}
+	
+	protected void writeArrayIndex(JavaFile.ArrayIndex e) {
+		writeExpression(e.target());
+		output.write("[");
+		writeExpression(e.index());
+		output.write("]");
 	}
 	
 	protected void writeNew(JavaFile.New e) {
@@ -182,7 +199,7 @@ public class JavaFileWriter {
 	
 	protected void writeInvoke(JavaFile.Invoke e) {
 		if(e.target() != null) {
-			writeExpression(e);
+			writeExpression(e.target());
 			output.write(".");
 		}
 		output.write(e.name());
