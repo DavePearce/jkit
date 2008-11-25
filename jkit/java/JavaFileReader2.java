@@ -4,8 +4,12 @@ import java.io.*;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
+import jkit.compiler.ClassTable;
 import jkit.compiler.SyntaxError;
 import jkit.java.JavaFileReader.Block;
+import jkit.java.JavaFileReader.ClassScope;
+import jkit.java.JavaFileReader.Scope;
+import jkit.jkil.Clazz;
 import jkit.jkil.Field;
 import jkit.jkil.FlowGraph;
 import jkit.jkil.Type;
@@ -15,15 +19,23 @@ import jkit.jkil.FlowGraph.BinOp;
 import jkit.jkil.FlowGraph.BoolVal;
 import jkit.jkil.FlowGraph.Cast;
 import jkit.jkil.FlowGraph.CharVal;
+import jkit.jkil.FlowGraph.ClassAccess;
+import jkit.jkil.FlowGraph.ClassVal;
+import jkit.jkil.FlowGraph.Deref;
 import jkit.jkil.FlowGraph.DoubleVal;
 import jkit.jkil.FlowGraph.Expr;
 import jkit.jkil.FlowGraph.FloatVal;
+import jkit.jkil.FlowGraph.InstanceOf;
 import jkit.jkil.FlowGraph.IntVal;
+import jkit.jkil.FlowGraph.Invoke;
 import jkit.jkil.FlowGraph.LVal;
+import jkit.jkil.FlowGraph.LocalVar;
 import jkit.jkil.FlowGraph.LongVal;
+import jkit.jkil.FlowGraph.New;
 import jkit.jkil.FlowGraph.NullVal;
 import jkit.jkil.FlowGraph.Point;
 import jkit.jkil.FlowGraph.StringVal;
+import jkit.jkil.FlowGraph.TernOp;
 import jkit.jkil.FlowGraph.UnOp;
 import jkit.util.Pair;
 
@@ -206,6 +218,10 @@ public class JavaFileReader2 {
 		return new JavaFile.Clazz(modifiers,name,superclass,interfaces,declarations);
 	}
 	
+	protected JavaFile.Method parseMethod(Tree method) {
+		return null;
+	}
+	
 	protected List<JavaFile.Field> parseField(Tree field) {
 		assert field.getType() == FIELD;
 
@@ -267,13 +283,13 @@ public class JavaFileReader2 {
 			case VAR :
 				return parseVariable(expr);
 			case NEW :
-				// return parseNew(expr, null);
+				return parseNew(expr);
 			case INVOKE :
-				// return parseInvoke(expr);
+				return parseInvoke(expr);
 			case SELECTOR :
 				// return parseSelector(expr);
 			case GETCLASS :
-				// return parseGetClass(expr);
+				return parseGetClass(expr);
 			case PREINC :
 				return parseUnOp(UnOp.PREINC,expr);
 			case PREDEC :
@@ -317,9 +333,9 @@ public class JavaFileReader2 {
 			case GTEQ :
 				return parseBinOp(BinOp.GTEQ, expr);
 			case INSTANCEOF :
-				// return parseInstanceOf(expr);
+				return parseInstanceOf(expr);
 			case TERNOP :
-				// return parseTernOp(expr);
+				return parseTernOp(expr);
 			case ASSIGN :
 			default :
 				throw new SyntaxError("Unknown expression encountered ("
@@ -327,6 +343,84 @@ public class JavaFileReader2 {
 						.getCharPositionInLine(), expr.getText().length());
 		}
 	}	
+	
+	/**
+     * This parses a "new" expression. The key difficulties here, lie in the
+     * fact that a new statement can involve an anonymous class declaration.
+     * 
+     * @param expr
+     * @return
+     */
+	protected JavaFile.Expression parseNew(Tree expr) {
+		// first, parse any parameters supplied
+		ArrayList<JavaFile.Declaration> declarations = new ArrayList<JavaFile.Declaration>();
+
+		int end = expr.getChildCount();
+		for (int i = 1; i < expr.getChildCount(); ++i) {
+			Tree child = expr.getChild(i);
+			if (child.getType() == METHOD) {
+				// Store anonymous class methods
+				declarations.add(parseMethod(child));
+				end = Math.min(i, end);
+			} else if (child.getType() == FIELD) {
+				declarations.addAll(parseField(child));
+				end = Math.min(i, end);
+			}
+		}
+
+		List<JavaFile.Expression> params = parseExpressionList(1, end, expr);
+
+		return new JavaFile.New(parseType(expr.getChild(0)), params,
+				declarations);
+	}
+	
+	/**
+     * This method parses an isolated invoke call. For example, "f()" is
+     * isolated, whilst "x.f()" or "this.f()" etc are not.
+     * 
+     * @param expr
+     * @return
+     */
+	public JavaFile.Expression parseInvoke(Tree expr) {
+				
+		// =================================================
+		// ======== PARSE TYPE PARAMETERS (IF ANY) =========
+		// =================================================
+		int start = 0;
+		
+		// First, check for type parameters. These are present for
+        // method invocations which explicitly indicate the type
+        // parameters to use. For example, x.<K>someMethod();
+		if(expr.getChild(0).getType() == TYPE_PARAMETER) {		
+			start++;
+		} 
+
+		String method = expr.getChild(start).getText();
+		
+		List<JavaFile.Expression> params = parseExpressionList(start+1, expr
+				.getChildCount(), expr);
+
+		// Need to do something with type parameters.
+		
+		return new JavaFile.Invoke(null, method, params,
+				new ArrayList<JavaFile.Type>());
+	}
+	
+	public JavaFile.Expression parseGetClass(Tree expr) {		
+		return new JavaFile.ClassVal(parseType(expr.getChild(0)));
+	}
+	
+	protected JavaFile.Expression parseTernOp(Tree expr) {
+		JavaFile.Expression cond = parseExpression(expr.getChild(0));
+		JavaFile.Expression tbranch = parseExpression(expr.getChild(1));
+		JavaFile.Expression fbranch = parseExpression(expr.getChild(2));
+		return new JavaFile.TernOp(cond, tbranch, fbranch);
+	}
+	
+	protected JavaFile.Expression parseInstanceOf(Tree expr) {
+		JavaFile.Expression e = parseExpression(expr.getChild(0));
+		return new JavaFile.InstanceOf(e, parseType(expr.getChild(1)));
+	}
 	
 	protected JavaFile.Expression parseCast(Tree expr) {		
 		return new JavaFile.Cast(parseType(expr.getChild(0)), parseExpression(expr.getChild(1)));

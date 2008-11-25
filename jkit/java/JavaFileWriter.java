@@ -125,18 +125,97 @@ public class JavaFileWriter {
 			writeNullVal((JavaFile.NullVal)e);
 		} else if(e instanceof JavaFile.ArrayVal) {
 			writeArrayVal((JavaFile.ArrayVal)e);
+		} else if(e instanceof JavaFile.ClassVal) {
+			writeClassVal((JavaFile.ClassVal) e);
 		} else if(e instanceof JavaFile.Variable) {
 			writeVariable((JavaFile.Variable)e);
 		} else if(e instanceof JavaFile.UnOp) {
 			writeUnOp((JavaFile.UnOp)e);
 		} else if(e instanceof JavaFile.BinOp) {
 			writeBinOp((JavaFile.BinOp)e);
+		} else if(e instanceof JavaFile.TernOp) {
+			writeTernOp((JavaFile.TernOp)e);
 		} else if(e instanceof JavaFile.Cast) {
 			writeCast((JavaFile.Cast)e);
+		} else if(e instanceof JavaFile.InstanceOf) {
+			writeInstanceOf((JavaFile.InstanceOf)e);
+		} else if(e instanceof JavaFile.Invoke) {
+			writeInvoke((JavaFile.Invoke) e);
+		} else if(e instanceof JavaFile.New) {
+			writeNew((JavaFile.New) e);
 		} else {
 			throw new RuntimeException("Invalid expression encountered: "
 					+ e.getClass());
 		}
+	}
+	
+	protected void writeNew(JavaFile.New e) {
+		output.write("new ");
+		writeType(e.type());		
+		output.write("(");
+		boolean firstTime=true;
+		for(JavaFile.Expression i : e.parameters()) {
+			if(!firstTime) {
+				output.write(", ");
+			} else {
+				firstTime = false;
+			}
+			writeExpression(i);
+		}
+		output.write(")");
+		
+		if(e.declarations().size() > 0) {
+			output.write(" { ");
+			for(JavaFile.Declaration d : e.declarations()) {				
+				if(d instanceof JavaFile.Clazz) {
+					writeClass((JavaFile.Clazz) d, 0);
+				} else if(d instanceof JavaFile.Field) {
+					writeField((JavaFile.Field) d, 0);
+				} else {
+					throw new RuntimeException(
+							"Support required for methods in anonymous inner classes");
+				}
+			}
+			output.write(" } ");
+		}
+	}
+	
+	protected void writeInvoke(JavaFile.Invoke e) {
+		if(e.target() != null) {
+			writeExpression(e);
+			output.write(".");
+		}
+		output.write(e.name());
+		if(e.typeParameters().size() > 0) {
+			output.write("<");
+			boolean firstTime=true;
+			for(JavaFile.Type i : e.typeParameters()) {
+				if(!firstTime) {
+					output.write(",");
+				} else {
+					firstTime = false;
+				}
+				writeType(i);
+			}	
+			output.write(">");
+		}
+		output.write("(");
+		boolean firstTime=true;
+		for(JavaFile.Expression i : e.parameters()) {
+			if(!firstTime) {
+				output.write(", ");
+			} else {
+				firstTime = false;
+			}
+			writeExpression(i);
+		}
+		output.write(")");
+	}
+	
+	protected void writeInstanceOf(JavaFile.InstanceOf e) {		
+		writeExpression(e.lhs());
+		output.write(" instanceof ");
+		writeType(e.rhs());		
 	}
 	
 	protected void writeCast(JavaFile.Cast e) {
@@ -200,6 +279,11 @@ public class JavaFileWriter {
 		output.write("}");
 	}
 	
+	protected void writeClassVal(JavaFile.ClassVal e) {
+		writeType(e.value());
+		output.write(".class");
+	}
+	
 	protected void writeVariable(JavaFile.Variable e) {			
 		output.write(e.value());		
 	}
@@ -211,14 +295,8 @@ public class JavaFileWriter {
 		if(e.op() != JavaFile.UnOp.POSTDEC && e.op() != JavaFile.UnOp.POSTINC) {
 			output.write(unopstr[e.op()]);
 		}
-		
-		if(e.expr() instanceof JavaFile.BinOp) {
-			output.print("(");
-			writeExpression(e.expr());
-			output.print(")");
-		} else {
-			writeExpression(e.expr());			
-		}
+				
+		writeExpressionWithBracketsIfNecessary(e.expr());					
 		
 		if (e.op() == JavaFile.UnOp.POSTDEC || e.op() == JavaFile.UnOp.POSTINC) {
 			output.write(unopstr[e.op()]);
@@ -231,24 +309,28 @@ public class JavaFileWriter {
 			"||", "++"};
 	
 	
-	protected void writeBinOp(JavaFile.BinOp e) {		
-		if(e.lhs() instanceof JavaFile.BinOp) {
-			output.print("(");
-			writeExpression(e.lhs());
-			output.print(")");
-		} else {
-			
-			writeExpression(e.lhs());			
-		}
+	protected void writeBinOp(JavaFile.BinOp e) {				
+		writeExpressionWithBracketsIfNecessary(e.lhs());					
 		output.write(binopstr[e.op()]);
-		if(e.rhs() instanceof JavaFile.BinOp) {
+		writeExpressionWithBracketsIfNecessary(e.rhs());						
+	}
+	
+	protected void writeTernOp(JavaFile.TernOp e) {		
+		writeExpressionWithBracketsIfNecessary(e.condition());		
+		output.write(" ? ");
+		writeExpressionWithBracketsIfNecessary(e.trueBranch());
+		output.write(" : ");
+		writeExpressionWithBracketsIfNecessary(e.falseBranch());
+	}
+	
+	protected void writeExpressionWithBracketsIfNecessary(JavaFile.Expression e) {		
+		if(e instanceof JavaFile.BinOp) {
 			output.print("(");
-			writeExpression(e.rhs());
+			writeExpression(e);
 			output.print(")");
 		} else {
-			
-			writeExpression(e.rhs());			
-		}		
+			writeExpression(e);			
+		}
 	}
 	
 	protected void writeType(JavaFile.Type t) {

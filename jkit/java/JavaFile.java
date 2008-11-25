@@ -3,17 +3,23 @@ package jkit.java;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
+import jkit.jkil.FlowGraph;
 import jkit.jkil.SourceLocation;
 import jkit.jkil.Type;
 import jkit.jkil.FlowGraph.ArrayVal;
 import jkit.jkil.FlowGraph.BinOp;
 import jkit.jkil.FlowGraph.Cast;
+import jkit.jkil.FlowGraph.ClassVal;
 import jkit.jkil.FlowGraph.Expr;
 import jkit.jkil.FlowGraph.FloatVal;
+import jkit.jkil.FlowGraph.InstanceOf;
+import jkit.jkil.FlowGraph.Invoke;
 import jkit.jkil.FlowGraph.LongVal;
 import jkit.jkil.FlowGraph.NullVal;
 import jkit.jkil.FlowGraph.Number;
+import jkit.jkil.FlowGraph.Stmt;
 import jkit.jkil.FlowGraph.StringVal;
+import jkit.jkil.FlowGraph.TernOp;
 import jkit.jkil.FlowGraph.Value;
 
 public class JavaFile {
@@ -160,6 +166,10 @@ public class JavaFile {
 		 * Check whether this class or interface is static
 		 */
 		public boolean isPublic() { return (modifiers&Modifier.PUBLIC)!=0; }
+	}
+	
+	public static class Method extends Declaration {
+		
 	}
 	
 	public static class Field extends Declaration {
@@ -328,12 +338,38 @@ public class JavaFile {
 	}
 	
 	/**
+     * Represents an InstanceOf binary operation.
+     * 
+     * @author djp
+     * 
+     */
+	public static class InstanceOf extends Expression {
+		protected Expression lhs;		
+		protected Type rhs;		
+		
+		public InstanceOf(Expression lhs, Type rhs) {
+			this.lhs = lhs;
+			this.rhs = rhs;
+		}
+		
+
+		public Expression lhs() {
+			return lhs;
+		}
+		
+		public Type rhs() {
+			return rhs;
+		}
+	}
+
+	
+	/**
      * Represents Unary Arithmetic Operators
      * 
      * @author djp
      * 
      */
-	public static final class UnOp extends Expression {
+	public static class UnOp extends Expression {
 		public static final int NOT = 0;
 		public static final int INV = 1;
 		public static final int NEG = 2;
@@ -365,7 +401,7 @@ public class JavaFile {
      * @author djp
      * 
      */
-	public static final class BinOp extends Expression {
+	public static class BinOp extends Expression {
 		// BinOp Constants
 		public static final int ADD = 0;
 		public static final int SUB = 1;
@@ -413,6 +449,111 @@ public class JavaFile {
 		}
 	}
 	
+	public static class TernOp extends Expression {
+		
+		protected Expression cond;
+		protected Expression toption;
+		protected Expression foption;
+		
+		public TernOp(Expression con, Expression tOption, Expression fOption) {		
+			cond = con;
+			toption = tOption;
+			foption = fOption;
+		}
+		
+		public Expression trueBranch() {
+			return toption;
+		}
+		
+		public Expression falseBranch() {
+			return foption;
+		}
+		
+		public Expression condition() {
+			return cond;
+		}
+	}	
+	
+	/**
+	 * Represents a method call. The method call be either "polymorphic", or
+	 * "non-polymorphic". The former means the method will be called on the
+	 * dynamic type of the received, whilst the latter means that the method
+	 * will be called directly on the static type of the receiver.
+	 * 
+	 * @author djp
+	 * 
+	 */
+	public static class Invoke extends Expression {
+		private Expression target;
+		private String name;		
+		private List<Expression> parameters;
+		private List<Type> typeParameters;		
+						
+		/**
+		 * Construct a method which may, or may not be polymorphic.
+		 * 
+		 * @param target
+		 *            The expression from which the receiver is determined
+		 * @param name
+		 *            The name of the method
+		 * @param parameters
+		 *            The parameters of the method
+		 */
+		public Invoke(Expression target, String name, List<Expression> parameters,
+				List<Type> typeParameters) {			
+			this.target = target;
+			this.name = name;
+			this.parameters = parameters;
+			this.typeParameters = typeParameters;										
+		}
+		
+		public Expression target() { return target; }
+		
+		public String name() { return name; }
+		
+		public List<Expression> parameters() { return parameters; }
+		
+		public List<Type> typeParameters() { return typeParameters; }
+	}
+	
+	/**
+     * Represents the new operator. The parameters provided are either passed to
+     * that object's constructor, or are used to determine the necessary array
+     * dimensions (e.g. in new array[x+1]). Observe that, if this new operator
+     * declares an anonymous class, then this can include various declarations.
+     * 
+     * @author djp
+     * 
+     */
+	public static final class New extends Expression {
+		private Type type;
+		private List<Expression> parameters;
+		private List<Declaration> declarations;
+
+		public New(Type type, List<Expression> parameters,
+				List<Declaration> declarations) {
+			this.type = type;
+			this.parameters = parameters;
+			this.declarations = declarations;
+		}
+
+		public Type type() {
+			return type;
+		}
+
+		public List<Expression> parameters() {
+			return parameters;
+		}
+
+		public List<Declaration> declarations() {
+			return declarations;
+		}
+	}
+	
+	
+	// ====================================================
+	// Values
+	// ====================================================
 	
 	public static abstract class Value extends Expression {
 		
@@ -590,7 +731,7 @@ public class JavaFile {
      * 
      */
 	public static class NullVal extends Value {	}
-	
+			
 	/**
      * An array constant (used for array initialisers only).
      * 
@@ -633,4 +774,20 @@ public class JavaFile {
 			return type;
 		}
 	}	
+	
+	/**
+	 * Represents a Class Constant
+	 * 
+	 */
+	public static class ClassVal extends Value {
+		private final Type classType;
+
+		public ClassVal(Type type) {			
+			this.classType = type;
+		}
+		
+		public Type value() {
+			return classType;
+		}
+	}
 }
