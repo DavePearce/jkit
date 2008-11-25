@@ -57,12 +57,14 @@ public class JavaFileWriter {
 						output.print(", ");
 					} else { firstTime = false; }
 					writeType(i);
+					output.write(" ");
 				}
 			}
 		} else {
 			if(decl.superclass() != null) {
 				output.print(" extends ");
 				writeType(decl.superclass());
+				output.write(" ");
 			}
 			if(decl.interfaces().size() > 0) {
 				output.print(" implements ");
@@ -71,7 +73,8 @@ public class JavaFileWriter {
 					if(!firstTime) {
 						output.print(", ");
 					} else { firstTime = false; }
-					writeType(i);					
+					writeType(i);
+					output.write(" ");
 				}
 			}
 		}
@@ -92,7 +95,8 @@ public class JavaFileWriter {
 	protected void writeField(JavaFile.Field f, int depth) {
 		indent(depth);
 		writeModifiers(f.modifiers());		
-		writeType(f.type());		
+		writeType(f.type());
+		output.write(" ");
 		output.print(f.name());
 		if(f.initialiser() != null) {
 			output.print(" = ");
@@ -127,10 +131,19 @@ public class JavaFileWriter {
 			writeUnOp((JavaFile.UnOp)e);
 		} else if(e instanceof JavaFile.BinOp) {
 			writeBinOp((JavaFile.BinOp)e);
+		} else if(e instanceof JavaFile.Cast) {
+			writeCast((JavaFile.Cast)e);
 		} else {
 			throw new RuntimeException("Invalid expression encountered: "
 					+ e.getClass());
 		}
+	}
+	
+	protected void writeCast(JavaFile.Cast e) {
+		output.write("(");
+		writeType(e.type());
+		output.write(") ");
+		writeExpression(e.expr());
 	}
 	
 	protected void writeBoolVal(JavaFile.BoolVal e) {
@@ -250,8 +263,7 @@ public class JavaFileWriter {
 		}
 		for(int i=0;i!=t.dims();++i) {
 			output.write("[]");
-		}
-		output.write(" ");
+		}		
 	}
 	
 	protected void writeModifiers(int modifiers) {

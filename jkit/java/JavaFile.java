@@ -7,6 +7,7 @@ import jkit.jkil.SourceLocation;
 import jkit.jkil.Type;
 import jkit.jkil.FlowGraph.ArrayVal;
 import jkit.jkil.FlowGraph.BinOp;
+import jkit.jkil.FlowGraph.Cast;
 import jkit.jkil.FlowGraph.Expr;
 import jkit.jkil.FlowGraph.FloatVal;
 import jkit.jkil.FlowGraph.LongVal;
@@ -301,6 +302,30 @@ public class JavaFile {
 			return value;
 		}
 	}		
+	
+	/**
+	 * Represents an explicit cast.
+	 * 
+	 * @author djp
+	 *
+	 */
+	public static class Cast extends Expression {		
+		protected Expression expr;
+		protected Type type;
+		
+		public Cast(Type type,  Expression expr) {			
+			this.expr = expr;
+			this.type = type;
+		}
+
+		public Expression expr() {
+			return expr;
+		}
+		
+		public Type type() {
+			return type;
+		}
+	}
 	
 	/**
      * Represents Unary Arithmetic Operators

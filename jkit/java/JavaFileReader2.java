@@ -275,13 +275,13 @@ public class JavaFileReader2 {
 			case GETCLASS :
 				// return parseGetClass(expr);
 			case PREINC :
-				// return parsePreIncrement(expr);
+				return parseUnOp(UnOp.PREINC,expr);
 			case PREDEC :
-				// return parsePreDecrement(expr);
+				return parseUnOp(UnOp.PREDEC,expr);
 			case POSTINC :
-				// return parsePostIncrement(expr);
+				return parseUnOp(UnOp.POSTINC,expr);
 			case POSTDEC :
-				// return parsePostDecrement(expr);
+				return parseUnOp(UnOp.POSTDEC,expr);
 			case NEG :
 				return parseUnOp(UnOp.NEG, expr);
 			case NOT :
@@ -289,7 +289,7 @@ public class JavaFileReader2 {
 			case INV :
 				return parseUnOp(UnOp.INV, expr);
 			case CAST :
-				// return parseCast(expr);
+				return parseCast(expr);
 			case LABINOP :
 				return parseLeftAssociativeBinOp(expr);
 			case USHR :
@@ -327,6 +327,10 @@ public class JavaFileReader2 {
 						.getCharPositionInLine(), expr.getText().length());
 		}
 	}	
+	
+	protected JavaFile.Expression parseCast(Tree expr) {		
+		return new JavaFile.Cast(parseType(expr.getChild(0)), parseExpression(expr.getChild(1)));
+	}
 	
 	protected JavaFile.Expression parseUnOp(int uop, Tree expr) {
 		return new JavaFile.UnOp(uop, parseExpression(expr.getChild(0)));
