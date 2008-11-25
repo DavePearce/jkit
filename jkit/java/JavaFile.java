@@ -303,6 +303,38 @@ public class JavaFile {
 	}		
 	
 	/**
+     * Represents Unary Arithmetic Operators
+     * 
+     * @author djp
+     * 
+     */
+	public static final class UnOp extends Expression {
+		public static final int NOT = 0;
+		public static final int INV = 1;
+		public static final int NEG = 2;
+		public static final int PREINC = 3;
+		public static final int PREDEC = 4;
+		public static final int POSTINC = 5;
+		public static final int POSTDEC = 6;
+				
+		protected final Expression expr;		
+		protected final int op;
+		
+		public UnOp(int op, Expression expr) {
+			this.expr = expr;
+			this.op=op;
+		}		
+		
+		public int op() {
+			return op;
+		}
+		
+		public Expression expr() {
+			return expr;
+		}
+	}
+	
+	/**
      * A Binary Operator.  E.g. +.-,*,/,<,<=,>,?=,==,!=, etc.
      * 
      * @author djp

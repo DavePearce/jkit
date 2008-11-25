@@ -123,6 +123,8 @@ public class JavaFileWriter {
 			writeArrayVal((JavaFile.ArrayVal)e);
 		} else if(e instanceof JavaFile.Variable) {
 			writeVariable((JavaFile.Variable)e);
+		} else if(e instanceof JavaFile.UnOp) {
+			writeUnOp((JavaFile.UnOp)e);
 		} else if(e instanceof JavaFile.BinOp) {
 			writeBinOp((JavaFile.BinOp)e);
 		} else {
@@ -189,9 +191,32 @@ public class JavaFileWriter {
 		output.write(e.value());		
 	}
 	
+	public static final String[] unopstr={"!","~","-","++","--","++","--"};
+	
+	protected void writeUnOp(JavaFile.UnOp e) {		
+		
+		if(e.op() != JavaFile.UnOp.POSTDEC && e.op() != JavaFile.UnOp.POSTINC) {
+			output.write(unopstr[e.op()]);
+		}
+		
+		if(e.expr() instanceof JavaFile.BinOp) {
+			output.print("(");
+			writeExpression(e.expr());
+			output.print(")");
+		} else {
+			writeExpression(e.expr());			
+		}
+		
+		if (e.op() == JavaFile.UnOp.POSTDEC || e.op() == JavaFile.UnOp.POSTINC) {
+			output.write(unopstr[e.op()]);
+		}
+	}
+	
+
 	protected static final String[] binopstr = {"+", "-", "*", "/", "%", "<<",
 			">>", ">>>", "&", "|", "^", "<", "<=", ">", ">=", "==", "!=", "&&",
 			"||", "++"};
+	
 	
 	protected void writeBinOp(JavaFile.BinOp e) {		
 		if(e.lhs() instanceof JavaFile.BinOp) {

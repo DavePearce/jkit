@@ -13,6 +13,7 @@ import jkit.jkil.FlowGraph.ArrayVal;
 import jkit.jkil.FlowGraph.Assign;
 import jkit.jkil.FlowGraph.BinOp;
 import jkit.jkil.FlowGraph.BoolVal;
+import jkit.jkil.FlowGraph.Cast;
 import jkit.jkil.FlowGraph.CharVal;
 import jkit.jkil.FlowGraph.DoubleVal;
 import jkit.jkil.FlowGraph.Expr;
@@ -282,11 +283,11 @@ public class JavaFileReader2 {
 			case POSTDEC :
 				// return parsePostDecrement(expr);
 			case NEG :
-				// return parseUnOp(UnOp.NEG, expr);
+				return parseUnOp(UnOp.NEG, expr);
 			case NOT :
-				// return parseUnOp(UnOp.NOT, expr);
+				return parseUnOp(UnOp.NOT, expr);
 			case INV :
-				// return parseUnOp(UnOp.INV, expr);
+				return parseUnOp(UnOp.INV, expr);
 			case CAST :
 				// return parseCast(expr);
 			case LABINOP :
@@ -326,6 +327,10 @@ public class JavaFileReader2 {
 						.getCharPositionInLine(), expr.getText().length());
 		}
 	}	
+	
+	protected JavaFile.Expression parseUnOp(int uop, Tree expr) {
+		return new JavaFile.UnOp(uop, parseExpression(expr.getChild(0)));
+	}
 	
 	// Binary operations which can be left associative are more complex and have
 	// to be delt with using a special LABINOP operator.
