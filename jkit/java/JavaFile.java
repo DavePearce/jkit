@@ -6,22 +6,7 @@ import java.util.*;
 import jkit.jkil.FlowGraph;
 import jkit.jkil.SourceLocation;
 import jkit.jkil.Type;
-import jkit.jkil.FlowGraph.ArrayVal;
-import jkit.jkil.FlowGraph.BinOp;
-import jkit.jkil.FlowGraph.Cast;
-import jkit.jkil.FlowGraph.ClassVal;
-import jkit.jkil.FlowGraph.Expr;
-import jkit.jkil.FlowGraph.FloatVal;
-import jkit.jkil.FlowGraph.InstanceOf;
-import jkit.jkil.FlowGraph.Invoke;
-import jkit.jkil.FlowGraph.LVal;
-import jkit.jkil.FlowGraph.LongVal;
-import jkit.jkil.FlowGraph.NullVal;
-import jkit.jkil.FlowGraph.Number;
-import jkit.jkil.FlowGraph.Stmt;
-import jkit.jkil.FlowGraph.StringVal;
-import jkit.jkil.FlowGraph.TernOp;
-import jkit.jkil.FlowGraph.Value;
+import jkit.util.*;
 
 public class JavaFile {
 	private String pkg;
@@ -111,7 +96,7 @@ public class JavaFile {
 		private String name;
 		private Type superclass;
 		private List<Type> interfaces;
-		private List<Declaration> declarations;
+		private List<Declaration> declarations;		
 				
 		public Clazz(int modifiers, String name, Type superclass,
 				List<Type> interfaces, List<Declaration> declarations) {
@@ -119,7 +104,7 @@ public class JavaFile {
 			this.name = name;
 			this.superclass = superclass;
 			this.interfaces = interfaces;
-			this.declarations = declarations;
+			this.declarations = declarations;			
 		}
 		
 		public int modifiers() {
@@ -140,9 +125,8 @@ public class JavaFile {
 		
 		public List<Declaration> declarations() { 
 			return declarations;
-		}
-		
-		
+		}		
+				
 		/**
 		 * Check whether this is an interface
 		 */
@@ -169,8 +153,56 @@ public class JavaFile {
 		public boolean isPublic() { return (modifiers&Modifier.PUBLIC)!=0; }
 	}
 	
+	/**
+	 * This class stores all known information about a method, including it's
+	 * full (possibly generic) type, its name, its modifiers (e.g. public/private
+	 * etc), as well as the methods code.
+	 * 
+	 * @author djp
+	 * 
+	 */
 	public static class Method extends Declaration {
+		private int modifiers;
+		private String name;
+		private Type returnType;
+		private List<Pair<String,Type>> parameters;		
+		private List<Type> exceptions;
+		private JavaFile.Block block;
+
+		public Method(int modifiers, String name, Type returnType,
+				List<Pair<String,Type>> parameters,List<Type> exceptions,
+				JavaFile.Block block) {
+			this.modifiers = modifiers;
+			this.returnType = returnType;
+			this.name = name;
+			this.parameters = parameters;
+			this.exceptions = exceptions;
+			this.block = block;
+		}
 		
+		public int modifiers() {
+			return modifiers;
+		}
+		
+		public String name() {
+			return name;
+		}
+
+		public Type returnType() {
+			return returnType;
+		}
+		
+		public List<Pair<String,Type>> parameters() {
+			return parameters;
+		}
+		
+		public List<Type> exceptions() {
+			return exceptions;
+		}
+		
+		public Block block() {
+			return block;
+		}
 	}
 	
 	public static class Field extends Declaration {
@@ -235,22 +267,40 @@ public class JavaFile {
 	// ====================================================
 
 	public static class Block extends Statement {
-		public final List<Statement> statements;
-		public Block(List<Statement> statements, SourceLocation location) {
-			super(location);
+		private List<Statement> statements;
+		public Block(List<Statement> statements) {
+			super(null);
 			this.statements = statements; 
+		}
+		
+		public List<Statement> statements() {
+			return statements;
 		}
 	}
 	
 	public static class Assignment extends Statement {
-		public Assignment(SourceLocation location) {
-			super(location);
+		private Expression lhs,rhs;
+		public Assignment(Expression lhs, Expression rhs) {
+			super(null);
+			this.lhs=lhs;
+			this.rhs=rhs;
 		}
+		public Expression lhs() { return lhs; }
+		public Expression rhs() { return rhs; }
+	}
+	
+	public static class Return extends Statement {
+		private Expression expr;
+		public Return(Expression expr) {
+			super(null);
+			this.expr = expr;			
+		}
+		public Expression expr() { return expr; }		
 	}
 	
 	public static class WhileLoop extends Statement {
-		public final Expression condition;
-		public final Statement body;
+		public Expression condition;
+		public Statement body;
 		public WhileLoop(Expression condition, Statement body,
 				SourceLocation location) {
 			super(location);
@@ -260,10 +310,10 @@ public class JavaFile {
 	}
 	
 	public static class ForLoop extends Statement {
-		public final Statement initialiser;
-		public final Expression condition;
-		public final Statement increment;
-		public final Statement body;
+		public Statement initialiser;
+		public Expression condition;
+		public Statement increment;
+		public Statement body;
 		
 		
 		public ForLoop(Statement initialiser, Expression condition,
@@ -282,6 +332,46 @@ public class JavaFile {
 		}
 	}
 	
+	/**
+     * A VarDef is a symbol table entry for a local variable. It can be thought
+     * of as a declaration for that variable, including its type, modifiers,
+     * name and whether or not it is a parameter to the method.
+     * 
+     * @author djp
+     */
+	public static class VarDef extends Statement {		
+		private int modifiers;
+		private List<Triple<String,Type,Expression> > definitions;
+		
+		public VarDef(int modifiers, List<Triple<String,Type,Expression> > definitions) {
+			super(null);
+			this.modifiers = modifiers;
+			this.definitions = definitions;
+		}
+						
+		/**
+         * Set the modifiers of this local variable. Use
+         * java.lang.reflect.Modifier for this.
+         * 
+         * @param type
+         */
+		public void setModifiers(int modifiers) { this.modifiers = modifiers; }
+		
+		/**
+		 * Get modifiers of this local variable
+		 * 
+		 * @return
+		 */
+		public int modifiers() { return modifiers; }		
+		
+		public void setDefinitions(List<Triple<String,Type,Expression>> e) {
+			definitions = e;
+		}
+		
+		public List<Triple<String,Type,Expression> > definitions() {
+			return definitions;
+		}
+	}
 	
 	// ====================================================
 	// EXPRESSIONS
@@ -303,7 +393,7 @@ public class JavaFile {
      * 
      */
 	public static class Variable extends Expression {
-		private final String value;
+		private String value;
 		
 		public Variable(String value) {			
 			this.value=value;
@@ -427,9 +517,9 @@ public class JavaFile {
 		
 		public static final int CONCAT = 19; // string concatenation
 				
-		protected final Expression lhs;
-		protected final Expression rhs;
-		protected final int op;				
+		protected Expression lhs;
+		protected Expression rhs;
+		protected int op;				
 		
 		public BinOp(int op, Expression lhs, Expression rhs) {		
 			this.lhs = lhs;
@@ -526,7 +616,7 @@ public class JavaFile {
      * @author djp
      * 
      */
-	public static final class New extends Expression {
+	public static class New extends Expression {
 		private Type type;
 		private List<Expression> parameters;
 		private List<Declaration> declarations;
@@ -557,7 +647,7 @@ public class JavaFile {
      * @author djp
      * 
      */
-	public static final class Deref extends Expression {
+	public static class Deref extends Expression {
 		private Expression target;
 		private String name;
 		
@@ -585,17 +675,16 @@ public class JavaFile {
 	public static class ArrayIndex extends Expression {
 		private Expression array;
 		private Expression idx;
-		
-		
+
 		public ArrayIndex(Expression array, Expression idx) {
 			this.array = array;
 			this.idx = idx;
 		}
-	
-		public Expression target() { 
-			return array;			
+
+		public Expression target() {
+			return array;
 		}
-		
+
 		public Expression index() {
 			return idx;
 		}
@@ -763,7 +852,7 @@ public class JavaFile {
      * 
      */
 	public static class StringVal extends Value {
-		private final String value;
+		private String value;
 		
 		public StringVal(String value) {			
 			this.value=value;
@@ -830,7 +919,7 @@ public class JavaFile {
 	 * 
 	 */
 	public static class ClassVal extends Value {
-		private final Type classType;
+		private Type classType;
 
 		public ClassVal(Type type) {			
 			this.classType = type;

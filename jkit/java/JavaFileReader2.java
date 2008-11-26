@@ -8,6 +8,7 @@ import jkit.compiler.ClassTable;
 import jkit.compiler.SyntaxError;
 import jkit.java.JavaFileReader.Block;
 import jkit.java.JavaFileReader.ClassScope;
+import jkit.java.JavaFileReader.MethodScope;
 import jkit.java.JavaFileReader.Scope;
 import jkit.jkil.Clazz;
 import jkit.jkil.Field;
@@ -31,14 +32,17 @@ import jkit.jkil.FlowGraph.IntVal;
 import jkit.jkil.FlowGraph.Invoke;
 import jkit.jkil.FlowGraph.LVal;
 import jkit.jkil.FlowGraph.LocalVar;
+import jkit.jkil.FlowGraph.LocalVarDef;
 import jkit.jkil.FlowGraph.LongVal;
 import jkit.jkil.FlowGraph.New;
 import jkit.jkil.FlowGraph.NullVal;
 import jkit.jkil.FlowGraph.Point;
+import jkit.jkil.FlowGraph.Return;
 import jkit.jkil.FlowGraph.StringVal;
 import jkit.jkil.FlowGraph.TernOp;
 import jkit.jkil.FlowGraph.UnOp;
 import jkit.util.Pair;
+import jkit.util.Triple;
 
 import org.antlr.runtime.*;
 import org.antlr.runtime.tree.*;
@@ -206,6 +210,7 @@ public class JavaFileReader2 {
 				declarations.addAll(parseField(child));
 				break;
 			case METHOD:
+				declarations.add(parseMethod(child));
 				break;
 			case CLASS:				
 			case INTERFACE:
@@ -220,7 +225,68 @@ public class JavaFileReader2 {
 	}
 	
 	protected JavaFile.Method parseMethod(Tree method) {
-		return null;
+		
+		// === TYPE MODIFIERS ===
+
+		int modifiers = 0;
+		int idx = 0;
+		if (method.getChild(idx).getType() == MODIFIERS) {
+			modifiers = parseModifiers(method.getChild(0));
+			idx++;
+		}
+
+		// === TYPE ARGUMENTS ===
+
+		ArrayList<JavaFile.Type> typeArgs = new ArrayList<JavaFile.Type>();
+		while (method.getChild(idx).getType() == TYPE_PARAMETER) {			
+			typeArgs.add(parseType(method.getChild(idx++)));			
+		}
+
+		String name = method.getChild(idx++).getText();
+		
+		JavaFile.Type returnType = parseType(method.getChild(idx++));
+		
+		// === FORMAL PARAMETERS ===
+
+		ArrayList<Pair<String,JavaFile.Type> > params = new ArrayList<Pair<String,JavaFile.Type>>();
+		
+		while (idx < method.getChildCount()
+				&& method.getChild(idx).getType() == PARAMETER) {
+			Tree c = method.getChild(idx);
+			JavaFile.Type t = parseType(c.getChild(0));
+			String n = c.getChild(1).getText();
+
+			for (int i = 2; i < c.getChildCount(); i = i + 2) {
+				t.setDims(t.dims()+1);
+			}
+
+			params.add(new Pair(n,t));
+			idx++;
+		}
+		
+		// === THROWS CLAUSE ===
+
+		ArrayList<JavaFile.Type> exceptions = new ArrayList<JavaFile.Type>();
+
+		if (idx < method.getChildCount()
+				&& method.getChild(idx).getType() == THROWS) {
+			Tree tt = method.getChild(idx++);
+			for (int i = 0; i != tt.getChildCount(); ++i) {
+				exceptions.add(parseType(tt.getChild(i)));
+			}
+		}
+
+		// === METHOD BODY ===
+		
+		JavaFile.Block block = null;
+		
+		if (idx < method.getChildCount()
+				&& method.getChild(idx).getType() == BLOCK) {
+			// do nothing
+			block = parseBlock(method.getChild(idx));
+		}
+		
+		return new JavaFile.Method(modifiers,name,returnType,params,exceptions,block);
 	}
 	
 	protected List<JavaFile.Field> parseField(Tree field) {
@@ -262,6 +328,142 @@ public class JavaFileReader2 {
 		}
 		return fields;
 	}
+	
+	protected JavaFile.Statement parseStatement(Tree stmt) {
+		switch (stmt.getType()) {
+			case BLOCK:
+				return parseBlock(stmt);
+			case VARDEF :
+				return parseVarDef(stmt);
+			case ASSIGN :
+				return parseAssign(stmt);
+			case RETURN :
+				return parseReturn(stmt);
+			case THROW :
+				// return parseThrow(stmt);
+			case NEW :
+				// return parseNewStmt(stmt);
+			case INVOKE :
+				// return parseInvokeStmt(stmt);
+			case IF :
+				// return parseIf(stmt);
+			case SWITCH :
+				// return parseSwitch(stmt);
+			case FOR :
+				// return parseFor(stmt, label);
+			case WHILE :
+				// return parseWhile(stmt, label);
+			case DOWHILE :
+				// return parseDoWhile(stmt, label);
+			case SELECTOR :
+				// return parseSelectorStmt(stmt);
+			case CONTINUE :
+				// return parseContinue(stmt, label);
+			case BREAK :
+				// return parseBreak(stmt, label);
+			case LABEL :
+				//return parseStatement(stmt.getChild(1), stmt.getChild(0)
+				//		.getText());
+			case POSTINC :
+			case PREINC :
+			case POSTDEC :
+			case PREDEC :
+				// return parseIncDec(stmt);
+			case ASSERT :
+				// return parseAssert(stmt);
+			case TRY :
+				// return parseTry(stmt);
+			case SYNCHRONIZED :
+				// return parseSynchronisedBlock(stmt, label);
+			default :
+				throw new SyntaxError("Unknown expression encountered ("
+						+ stmt.getText() + ")", stmt.getLine(),
+						stmt.getCharPositionInLine(), stmt.getText()
+								.length());
+		}
+	}
+	
+	/**
+     * This method is responsible for parsing a block of code, which is a set of
+     * statements between '{' and '}'
+     * 
+     * @param block
+     *            block to parse           
+     * @return A Block containing all the statements in this block
+     * 
+     */
+	protected JavaFile.Block parseBlock(Tree block) {
+		ArrayList<JavaFile.Statement> stmts = new ArrayList<JavaFile.Statement>();
+
+		// === ITERATE STATEMENTS ===
+
+		for (int i = 0; i != block.getChildCount(); ++i) {
+			JavaFile.Statement stmt = parseStatement(block.getChild(i));			
+			stmts.add(stmt);
+		}
+
+		return new JavaFile.Block(stmts);
+	}
+	
+	/**
+     * Responsible for translating variable declarations. ANTLR tree format:
+     * 
+     * VARDEF MODIFIERS? TYPE NAME [= EXPRESSION]
+     * 
+     * @param stmt
+     *            ANTLR if-statement tree
+     * @return
+     */
+	protected JavaFile.Statement parseVarDef(Tree stmt) {
+		ArrayList<Triple<String, JavaFile.Type, JavaFile.Expression>> vardefs = new ArrayList<Triple<String, JavaFile.Type, JavaFile.Expression>>();
+
+		// === MODIFIERS ===
+		int modifiers = parseModifiers(stmt.getChild(0));
+
+		// === NAME(S) ===
+
+		for (int i = 2; i < stmt.getChildCount(); i = i + 1) {
+			Tree nameTree = stmt.getChild(i);
+			String myName = nameTree.getText();
+			JavaFile.Type myType = parseType(stmt.getChild(1));
+			JavaFile.Expression myInitialiser = null;
+			// Parse array type modifiers (if there are any)
+			for (int j = 0; j < nameTree.getChildCount(); j = j + 1) {
+				Tree am = nameTree.getChild(j);
+				if (am.getText().equals("[")) {
+					myType.setDims(myType.dims() + 1);
+				} else {
+					// If we get here, then we've hit an initialiser
+					myInitialiser = parseExpression(am);
+				}
+			}
+
+			vardefs.add(new Triple(myName, myType, myInitialiser));
+		}
+
+		return new JavaFile.VarDef(modifiers, vardefs);
+	}
+	
+	/**
+     * This method parses an assignment statement.
+     * 
+     * @param stmt
+     * @return
+     */
+	protected JavaFile.Statement parseAssign(Tree stmt) {
+		JavaFile.Expression lhs = parseExpression(stmt.getChild(0));
+		JavaFile.Expression rhs = parseExpression(stmt.getChild(1));
+		return new JavaFile.Assignment(lhs,rhs);
+	}
+	
+	protected JavaFile.Statement parseReturn(Tree stmt) {
+		if (stmt.getChildCount() > 0) {			
+			return new JavaFile.Return(parseExpression(stmt.getChild(0)));
+		} else {
+			return new JavaFile.Return(null);
+		}
+	}
+
 	
 	protected JavaFile.Expression parseExpression(Tree expr) {
 		switch (expr.getType()) {
@@ -819,7 +1021,11 @@ public class JavaFileReader2 {
 
 		ArrayList<String> components = new ArrayList<String>();
 		for(int i=0;i!=(type.getChildCount()-dims);++i) {
-			components.add(type.getChild(i).getText());
+			String text = type.getChild(i).getText();
+			if(text.equals("VOID")) {
+				text = "void"; // hack!
+			}
+			components.add(text);
 		}
 		
 		return new JavaFile.Type(components,dims);
