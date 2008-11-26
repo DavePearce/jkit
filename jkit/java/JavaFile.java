@@ -348,6 +348,15 @@ public class JavaFile {
 		public Expression expr() { return expr; }		
 	}
 	
+	public static class Assert extends Statement {
+		private Expression expr;
+		public Assert(Expression expr) {
+			super(null);
+			this.expr = expr;			
+		}
+		public Expression expr() { return expr; }		
+	}
+	
 	public static class Break extends Statement {
 		private String label;
 		public Break(String label) {

@@ -372,7 +372,7 @@ public class JavaFileReader2 {
 			case PREDEC :
 				// return parseIncDec(stmt);
 			case ASSERT :
-				// return parseAssert(stmt);
+				return parseAssert(stmt);
 			case TRY :
 				return parseTry(stmt);
 			case SYNCHRONIZED :
@@ -520,6 +520,10 @@ public class JavaFileReader2 {
 		return new JavaFile.Throw(parseExpression(stmt.getChild(0)));		
 	}
 	
+	protected JavaFile.Statement parseAssert(Tree stmt) {
+		JavaFile.Expression expr = parseExpression(stmt.getChild(0));		
+		return new JavaFile.Assert(expr);
+	}
 	
 	/**
      * Responsible for parsing break statements.

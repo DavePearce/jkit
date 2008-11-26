@@ -156,6 +156,8 @@ public class JavaFileWriter {
 			writeReturn((JavaFile.Return) e, depth);
 		} else if(e instanceof JavaFile.Throw) {
 			writeThrow((JavaFile.Throw) e, depth);
+		} else if(e instanceof JavaFile.Assert) {
+			writeAssert((JavaFile.Assert) e, depth);
 		} else if(e instanceof JavaFile.Break) {
 			writeBreak((JavaFile.Break) e, depth);
 		} else if(e instanceof JavaFile.Continue) {
@@ -250,6 +252,13 @@ public class JavaFileWriter {
 	protected void writeThrow(JavaFile.Throw ret, int depth) {
 		indent(depth);		
 		output.write("throw ");				
+		writeExpression(ret.expr());		
+		output.println(";");
+	}
+	
+	protected void writeAssert(JavaFile.Assert ret, int depth) {
+		indent(depth);		
+		output.write("assert ");				
 		writeExpression(ret.expr());		
 		output.println(";");
 	}
