@@ -529,7 +529,7 @@ public class JavaFile {
      * @author djp
      * 
      */	
-	public static abstract class Expression {
+	public static interface Expression {
 		
 	}
 	
@@ -539,7 +539,7 @@ public class JavaFile {
      * @author djp
      * 
      */
-	public static class Variable extends Expression {
+	public static class Variable implements Expression {
 		private String value;
 		
 		public Variable(String value) {			
@@ -557,7 +557,7 @@ public class JavaFile {
 	 * @author djp
 	 *
 	 */
-	public static class Cast extends Expression {		
+	public static class Cast implements Expression {		
 		protected Expression expr;
 		protected Type type;
 		
@@ -581,7 +581,7 @@ public class JavaFile {
      * @author djp
      * 
      */
-	public static class InstanceOf extends Expression {
+	public static class InstanceOf implements Expression {
 		protected Expression lhs;		
 		protected Type rhs;		
 		
@@ -607,7 +607,7 @@ public class JavaFile {
      * @author djp
      * 
      */
-	public static class UnOp extends Expression {
+	public static class UnOp implements Expression {
 		public static final int NOT = 0;
 		public static final int INV = 1;
 		public static final int NEG = 2;
@@ -639,7 +639,7 @@ public class JavaFile {
      * @author djp
      * 
      */
-	public static class BinOp extends Expression {
+	public static class BinOp implements Expression {
 		// BinOp Constants
 		public static final int ADD = 0;
 		public static final int SUB = 1;
@@ -687,7 +687,7 @@ public class JavaFile {
 		}
 	}
 	
-	public static class TernOp extends Expression {
+	public static class TernOp implements Expression {
 		
 		protected Expression cond;
 		protected Expression toption;
@@ -721,7 +721,7 @@ public class JavaFile {
 	 * @author djp
 	 * 
 	 */
-	public static class Invoke extends Expression {
+	public static class Invoke implements Expression, SimpleStatement {
 		private Expression target;
 		private String name;		
 		private List<Expression> parameters;
@@ -763,7 +763,7 @@ public class JavaFile {
      * @author djp
      * 
      */
-	public static class New extends Expression {
+	public static class New implements Expression {
 		private Type type;
 		private List<Expression> parameters;
 		private List<Declaration> declarations;
@@ -794,7 +794,7 @@ public class JavaFile {
      * @author djp
      * 
      */
-	public static class Deref extends Expression {
+	public static class Deref implements Expression {
 		private Expression target;
 		private String name;
 		
@@ -819,7 +819,7 @@ public class JavaFile {
      * @author djp
      * 
      */
-	public static class ArrayIndex extends Expression {
+	public static class ArrayIndex implements Expression {
 		private Expression array;
 		private Expression idx;
 
@@ -841,7 +841,7 @@ public class JavaFile {
 	// Values
 	// ====================================================
 	
-	public static abstract class Value extends Expression {
+	public static abstract class Value implements Expression {
 		
 	}
 		

@@ -347,7 +347,7 @@ public class JavaFileReader2 {
 			case NEW :
 				// return parseNewStmt(stmt);
 			case INVOKE :
-				// return parseInvokeStmt(stmt);
+				return parseInvoke(stmt);
 			case IF :
 				return parseIf(stmt);
 			case SWITCH :
@@ -798,7 +798,7 @@ public class JavaFileReader2 {
      * @param expr
      * @return
      */
-	public JavaFile.Expression parseInvoke(Tree expr) {
+	public JavaFile.Invoke parseInvoke(Tree expr) {
 				
 		// =================================================
 		// ======== PARSE TYPE PARAMETERS (IF ANY) =========

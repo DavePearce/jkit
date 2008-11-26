@@ -169,6 +169,8 @@ public class JavaFileWriter {
 			writeWhile((JavaFile.While) e);
 		} else if(e instanceof JavaFile.DoWhile) {
 			writeDoWhile((JavaFile.DoWhile) e);
+		} else if(e instanceof JavaFile.Invoke) {
+			writeInvoke((JavaFile.Invoke) e);
 		} else {
 			throw new RuntimeException("Invalid statement encountered: "
 					+ e.getClass());
