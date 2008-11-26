@@ -278,6 +278,18 @@ public class JavaFile {
 		}
 	}
 	
+	public static class SynchronisedBlock extends Block {
+		private Expression expr;
+		public SynchronisedBlock(Expression expr, List<Statement> statements) {
+			super(statements);
+			this.expr = expr; 
+		}
+		
+		public Expression expr() {
+			return expr;
+		}
+	}
+	
 	public static class Assignment extends Statement {
 		private Expression lhs,rhs;
 		public Assignment(Expression lhs, Expression rhs) {
@@ -321,11 +333,15 @@ public class JavaFile {
 		private Statement statement;
 		public Label(String label, Statement statement) {
 			super(null);
-			this.label = label;	
+			this.label = label;
 			this.statement = statement;
 		}
-		public String label() { return label; }
-		public Statement statement() { return statement; }
+		public String label() {
+			return label;
+		}
+		public Statement statement() {
+			return statement;
+		}
 	}
 	
 	public static class Continue extends Statement {

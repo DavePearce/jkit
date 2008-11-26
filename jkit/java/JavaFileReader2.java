@@ -73,6 +73,7 @@ public class JavaFileReader2 {
 
 		try {
 			ast = (Tree) parser.compilationUnit().getTree();
+			// printTree(ast, 0, -1);
 		} catch (RecognitionException e) {
 		}
 	}
@@ -109,8 +110,7 @@ public class JavaFileReader2 {
 				new ANTLRInputStream(in)));
 		JavaParser parser = new JavaParser(tokenStream);
 		try {
-			ast = (Tree) parser.compilationUnit().getTree();
-			// printTree(ast, 0, -1);
+			ast = (Tree) parser.compilationUnit().getTree();			
 		} catch (RecognitionException e) {
 		}
 	}
@@ -376,7 +376,7 @@ public class JavaFileReader2 {
 			case TRY :
 				// return parseTry(stmt);
 			case SYNCHRONIZED :
-				// return parseSynchronisedBlock(stmt, label);
+				return parseSynchronisedBlock(stmt);
 			default :
 				throw new SyntaxError("Unknown expression encountered ("
 						+ stmt.getText() + ")", stmt.getLine(),
@@ -406,6 +406,30 @@ public class JavaFileReader2 {
 
 		return new JavaFile.Block(stmts);
 	}
+	
+	/**
+     * This method is responsible for parsing a synchronized block of code,
+     * e.g, "synchronised(e.list()) { ... }"
+     * 
+     * @param block
+     *            block to parse
+     * @return A Block containing all the statements in this block
+     * 
+     */
+	protected JavaFile.Block parseSynchronisedBlock(Tree block) {
+		ArrayList<JavaFile.Statement> stmts = new ArrayList<JavaFile.Statement>();
+		JavaFile.Expression e = parseExpression(block.getChild(0));
+		
+		// === ITERATE STATEMENTS ===
+		Tree child = block.getChild(1);
+		for (int i = 0; i != child.getChildCount(); ++i) {
+			JavaFile.Statement stmt = parseStatement(child.getChild(i));			
+			stmts.add(stmt);
+		}
+
+		return new JavaFile.SynchronisedBlock(e,stmts);
+	}
+	
 	
 	/**
      * Responsible for translating variable declarations. ANTLR tree format:
@@ -1084,6 +1108,25 @@ public class JavaFileReader2 {
 		}
 		
 		return new JavaFile.Type(components,dims);
+	}
+	
+	public static void printTree(Tree ast, int n, int line) {
+		if (ast.getLine() != line) {
+			System.out.print("(line " + ast.getLine() + ")\t");
+		} else {
+			int ls = Integer.toString(line).length();
+			for (int i = 0; i != ls + 7; ++i) {
+				System.out.print(" ");
+			}
+			System.out.print("\t");
+		}
+		for (int i = 0; i != n; ++i) {
+			System.out.print(" ");
+		}
+		System.out.println(ast.getText() + " ");
+		for (int i = 0; i != ast.getChildCount(); ++i) {
+			printTree(ast.getChild(i), n + 1, ast.getLine());
+		}
 	}
 	
 	// ANTLR Token Types

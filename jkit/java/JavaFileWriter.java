@@ -142,7 +142,9 @@ public class JavaFileWriter {
 	}
 	
 	protected void writeStatement(JavaFile.Statement e, int depth) {
-		if(e instanceof JavaFile.Block) {
+		if(e instanceof JavaFile.SynchronisedBlock) {
+			writeSynchronisedBlock((JavaFile.SynchronisedBlock)e, depth);
+		} else if(e instanceof JavaFile.Block) {
 			writeBlock((JavaFile.Block)e, depth);
 		} else if(e instanceof JavaFile.VarDef) {
 			writeVarDef((JavaFile.VarDef) e, depth);
@@ -167,6 +169,17 @@ public class JavaFileWriter {
 	protected void writeBlock(JavaFile.Block block, int depth) {
 		indent(depth);
 		output.println("{");
+		for(JavaFile.Statement s : block.statements()) {
+			writeStatement(s,depth+1);
+		}
+		indent(depth);output.println("}");
+	}
+	
+	protected void writeSynchronisedBlock(JavaFile.SynchronisedBlock block, int depth) {
+		indent(depth);
+		output.write("synchronized(");
+		writeExpression(block.expr());
+		output.println(") {");
 		for(JavaFile.Statement s : block.statements()) {
 			writeStatement(s,depth+1);
 		}
