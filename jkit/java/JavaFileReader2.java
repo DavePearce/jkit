@@ -345,13 +345,13 @@ public class JavaFileReader2 {
 			case THROW :
 				return parseThrow(stmt);
 			case NEW :
-				// return parseNewStmt(stmt);
+				return parseNew(stmt);
 			case INVOKE :
 				return parseInvoke(stmt);
 			case IF :
 				return parseIf(stmt);
 			case SWITCH :
-				// return parseSwitch(stmt);
+				return parseSwitch(stmt);
 			case FOR :
 				return parseFor(stmt);
 			case WHILE :
@@ -615,6 +615,34 @@ public class JavaFileReader2 {
 		return new JavaFile.For(initialiser,condition,increment,body);
 	}
 	
+	protected JavaFile.Statement parseSwitch(Tree stmt) {
+		// Second, process the expression to switch on
+		JavaFile.Expression condition = parseExpression(stmt.getChild(0));
+		ArrayList<JavaFile.Case> cases = new ArrayList<JavaFile.Case>();
+		
+		for (int i = 1; i < stmt.getChildCount(); i++) {
+			Tree child = stmt.getChild(i);
+			if (child.getType() == CASE) {
+				JavaFile.Expression c = parseExpression(child.getChild(0));
+				List<JavaFile.Statement> stmts = null;
+				if (child.getChild(1) != null) {
+					JavaFile.Block b = parseBlock(child.getChild(1));
+					stmts = b.statements();
+				}
+				cases.add(new JavaFile.Case(c, stmts));
+			} else {
+				// default label
+				List<JavaFile.Statement> stmts = new ArrayList<JavaFile.Statement>();
+				if (child.getChild(0) != null) {
+					JavaFile.Block b = parseBlock(child.getChild(0));
+					stmts = b.statements();
+				}
+				cases.add(new JavaFile.DefaultCase(stmts));
+			}
+		}
+		return new JavaFile.Switch(condition,cases);
+	}
+	
 	protected JavaFile.Expression parseExpression(Tree expr) {
 		switch (expr.getType()) {
 			case CHARVAL :
@@ -768,7 +796,7 @@ public class JavaFileReader2 {
      * @param expr
      * @return
      */
-	protected JavaFile.Expression parseNew(Tree expr) {
+	protected JavaFile.New parseNew(Tree expr) {
 		// first, parse any parameters supplied
 		ArrayList<JavaFile.Declaration> declarations = new ArrayList<JavaFile.Declaration>();
 

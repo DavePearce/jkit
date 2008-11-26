@@ -169,8 +169,12 @@ public class JavaFileWriter {
 			writeWhile((JavaFile.While) e);
 		} else if(e instanceof JavaFile.DoWhile) {
 			writeDoWhile((JavaFile.DoWhile) e);
+		} else if(e instanceof JavaFile.Switch) {
+			writeSwitch((JavaFile.Switch) e);
 		} else if(e instanceof JavaFile.Invoke) {
 			writeInvoke((JavaFile.Invoke) e);
+		} else if(e instanceof JavaFile.New) {
+			writeNew((JavaFile.New) e);
 		} else {
 			throw new RuntimeException("Invalid statement encountered: "
 					+ e.getClass());
@@ -356,6 +360,30 @@ public class JavaFileWriter {
 		} else {
 			write(";");
 		}
+	}
+	
+	protected void writeSwitch(JavaFile.Switch s) {
+		write("switch(");
+		writeExpression(s.condition());
+		write(")");
+		write("{");
+		for(JavaFile.Case c : s.cases()) {
+			if(c instanceof JavaFile.DefaultCase) {
+				write("default:");
+				write("\n");
+			} else {
+				writeExpression(c.condition());
+				write(":");
+				write("\n");
+			}			
+			for(JavaFile.Statement x : c.statements()) {
+				writeStatement(x);
+				if(x instanceof JavaFile.SimpleStatement) {
+					write(";");
+				}
+			}
+		}
+		write("}");
 	}
 	
 	protected void writeExpression(JavaFile.Expression e) {
@@ -645,6 +673,9 @@ public class JavaFileWriter {
 		} else if(s.equals("}")) {
 			output.println("}");
 			depth = depth - 1;
+			indent(depth);
+		} else if(s.equals("\n")) {
+			output.print("\n");
 			indent(depth);
 		} else {
 			output.write(s);

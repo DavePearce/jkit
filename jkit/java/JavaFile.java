@@ -520,6 +520,48 @@ public class JavaFile {
 		}
 	}
 	
+	public static class Case {
+		private Expression condition;
+		private List<Statement> statements;
+		
+		public Case(Expression condition, List<Statement> statements) {
+			this.condition = condition;
+			this.statements = statements;
+		}
+		
+		public Expression condition() {
+			return condition;
+		}
+
+		public List<Statement> statements() {
+			return statements;
+		}		
+	}
+	
+	public static class DefaultCase extends Case {
+		public DefaultCase(List<Statement> statements) {
+			super(null,statements);
+		}
+	}
+	
+	public static class Switch implements Statement {
+		private Expression condition;
+		private List<Case> cases;
+		
+		public Switch(Expression condition, List<Case> cases) {
+			this.condition = condition;
+			this.cases = cases;
+		}
+		
+		public Expression condition() {
+			return condition;
+		}
+		
+		public List<Case> cases() {
+			return cases;
+		}		
+	}
+	
 	// ====================================================
 	// EXPRESSIONS
 	// ====================================================
@@ -763,7 +805,7 @@ public class JavaFile {
      * @author djp
      * 
      */
-	public static class New implements Expression {
+	public static class New implements Expression, SimpleStatement {
 		private Type type;
 		private List<Expression> parameters;
 		private List<Declaration> declarations;
