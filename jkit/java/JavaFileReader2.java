@@ -355,7 +355,7 @@ public class JavaFileReader2 {
 			case FOR :
 				// return parseFor(stmt, label);
 			case WHILE :
-				// return parseWhile(stmt, label);
+				return parseWhile(stmt);
 			case DOWHILE :
 				// return parseDoWhile(stmt, label);
 			case SELECTOR :
@@ -575,6 +575,12 @@ public class JavaFileReader2 {
 		JavaFile.Statement trueStmt = parseStatement(stmt.getChild(1));
 		JavaFile.Statement falseStmt = stmt.getChildCount() < 3 ? null : parseStatement(stmt.getChild(2));
 		return new JavaFile.If(condition,trueStmt,falseStmt);		
+	}
+	
+	protected JavaFile.Statement parseWhile(Tree stmt) {
+		JavaFile.Expression condition = parseExpression(stmt.getChild(0).getChild(0));
+		JavaFile.Statement body = parseStatement(stmt.getChild(1));		
+		return new JavaFile.While(condition,body);		
 	}
 	
 	protected JavaFile.Expression parseExpression(Tree expr) {

@@ -406,16 +406,23 @@ public class JavaFile {
 		}
 	}
 	
-	public static class WhileLoop extends Statement {
-		public Expression condition;
-		public Statement body;
-		public WhileLoop(Expression condition, Statement body,
-				SourceLocation location) {
-			super(location);
-			this.body = body; 
+	public static class While extends Statement {
+		private Expression condition;
+		private Statement body;		
+
+		public While(Expression condition, Statement body) {
+			super(null);
 			this.condition = condition;
-		}		
-	}
+			this.body = body;
+		}
+
+		public Expression condition() {
+			return condition;
+		}
+		public Statement body() {
+			return body;
+		}
+	}		
 	
 	public static class ForLoop extends Statement {
 		public Statement initialiser;

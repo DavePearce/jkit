@@ -164,6 +164,8 @@ public class JavaFileWriter {
 			writeLabel((JavaFile.Label) e, depth);
 		} else if(e instanceof JavaFile.If) {
 			writeIf((JavaFile.If) e, depth);
+		} else if(e instanceof JavaFile.While) {
+			writeWhile((JavaFile.While) e, depth);
 		} else {
 			throw new RuntimeException("Invalid statement encountered: "
 					+ e.getClass());
@@ -289,6 +291,14 @@ public class JavaFileWriter {
 			indent(depth+1); output.write("else");
 			writeStatement(stmt.trueStatement(),depth);
 		}
+	}
+	
+	protected void writeWhile(JavaFile.While stmt, int depth) {
+		indent(depth);
+		output.write("while(");
+		writeExpression(stmt.condition());
+		output.write(") ");
+		writeStatement(stmt.body(),depth);		
 	}
 	
 	protected void writeExpression(JavaFile.Expression e) {
