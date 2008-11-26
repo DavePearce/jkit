@@ -51,13 +51,12 @@ public class JavaFile {
      * @author djp
      * 
      */		
-	public static abstract class Statement {
-		public final SourceLocation location;
-		public Statement(SourceLocation location) {
-			this.location = location;
-		}
+	public static interface Statement {		
 	}
 
+	public static interface SimpleStatement extends Statement {		
+	}
+	
 	// ====================================================
 	// Type
 	// ====================================================
@@ -266,10 +265,10 @@ public class JavaFile {
 	// STATEMENTS
 	// ====================================================
 
-	public static class Block extends Statement {
+	public static class Block implements Statement {
 		private List<Statement> statements;
 		public Block(List<Statement> statements) {
-			super(null);
+			
 			this.statements = statements; 
 		}
 		
@@ -319,10 +318,10 @@ public class JavaFile {
 			return handlers;
 		}
 	}
-	public static class Assignment extends Statement {
+	public static class Assignment implements SimpleStatement {
 		private Expression lhs,rhs;
 		public Assignment(Expression lhs, Expression rhs) {
-			super(null);
+			
 			this.lhs=lhs;
 			this.rhs=rhs;
 		}
@@ -330,47 +329,47 @@ public class JavaFile {
 		public Expression rhs() { return rhs; }
 	}
 	
-	public static class Return extends Statement {
+	public static class Return implements SimpleStatement {
 		private Expression expr;
 		public Return(Expression expr) {
-			super(null);
+			
 			this.expr = expr;			
 		}
 		public Expression expr() { return expr; }		
 	}
 	
-	public static class Throw extends Statement {
+	public static class Throw implements SimpleStatement {
 		private Expression expr;
 		public Throw(Expression expr) {
-			super(null);
+			
 			this.expr = expr;			
 		}
 		public Expression expr() { return expr; }		
 	}
 	
-	public static class Assert extends Statement {
+	public static class Assert implements SimpleStatement {
 		private Expression expr;
 		public Assert(Expression expr) {
-			super(null);
+			
 			this.expr = expr;			
 		}
 		public Expression expr() { return expr; }		
 	}
 	
-	public static class Break extends Statement {
+	public static class Break implements SimpleStatement {
 		private String label;
 		public Break(String label) {
-			super(null);
+			
 			this.label = label;	
 		}
 		public String label() { return label; }		
 	}
 	
-	public static class Label extends Statement {
+	public static class Label implements Statement {
 		private String label;
 		private Statement statement;
 		public Label(String label, Statement statement) {
-			super(null);
+			
 			this.label = label;
 			this.statement = statement;
 		}
@@ -382,23 +381,23 @@ public class JavaFile {
 		}
 	}
 	
-	public static class Continue extends Statement {
+	public static class Continue implements SimpleStatement {
 		private String label;
 		public Continue(String label) {
-			super(null);
+			
 			this.label = label;	
 		}
 		public String label() { return label; }		
 	}
 	
-	public static class If extends Statement {
+	public static class If implements Statement {
 		private Expression condition;
 		private Statement trueStatement;
 		private Statement falseStatement;
 
 		public If(Expression condition, Statement trueStatement,
 				Statement falseStatement) {
-			super(null);
+			
 			this.condition = condition;
 			this.trueStatement = trueStatement;
 			this.falseStatement = falseStatement;
@@ -415,12 +414,12 @@ public class JavaFile {
 		}
 	}
 	
-	public static class While extends Statement {
+	public static class While implements Statement {
 		private Expression condition;
 		private Statement body;		
 
 		public While(Expression condition, Statement body) {
-			super(null);
+			
 			this.condition = condition;
 			this.body = body;
 		}
@@ -433,28 +432,52 @@ public class JavaFile {
 		}
 	}		
 	
-	public static class ForLoop extends Statement {
-		public Statement initialiser;
-		public Expression condition;
-		public Statement increment;
-		public Statement body;
-		
-		
-		public ForLoop(Statement initialiser, Expression condition,
-				Statement increment, Statement body, SourceLocation location) {
-			super(location);
+	public static class DoWhile implements Statement {
+		private Expression condition;
+		private Statement body;		
+
+		public DoWhile(Expression condition, Statement body) {
+			
+			this.condition = condition;
+			this.body = body;
+		}
+
+		public Expression condition() {
+			return condition;
+		}
+		public Statement body() {
+			return body;
+		}
+	}
+	
+	public static class For implements Statement {
+		private Statement initialiser;
+		private Expression condition;
+		private Statement increment;
+		private Statement body;		
+
+		public For(Statement initialiser, Expression condition,
+				Statement increment, Statement body) {
+			
 			this.initialiser = initialiser;
 			this.condition = condition;
 			this.increment = increment;
-			this.body = body; 						
+			this.body = body;
 		}
-	}
-		
-	public static class ForEachLoop extends Statement {
-		public ForEachLoop(SourceLocation location) {
-			super(location);
+
+		public Statement initialiser() {
+			return initialiser;
 		}
-	}
+		public Expression condition() {
+			return condition;
+		}
+		public Statement body() {
+			return body;
+		}
+		public Statement increment() {
+			return increment;
+		}
+	}	
 	
 	/**
      * A VarDef is a symbol table entry for a local variable. It can be thought
@@ -463,12 +486,12 @@ public class JavaFile {
      * 
      * @author djp
      */
-	public static class VarDef extends Statement {		
+	public static class VarDef implements SimpleStatement {		
 		private int modifiers;
 		private List<Triple<String,Type,Expression> > definitions;
 		
 		public VarDef(int modifiers, List<Triple<String,Type,Expression> > definitions) {
-			super(null);
+			
 			this.modifiers = modifiers;
 			this.definitions = definitions;
 		}

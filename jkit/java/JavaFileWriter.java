@@ -7,6 +7,7 @@ import jkit.util.*;
 
 public class JavaFileWriter {
 	private PrintWriter output;
+	private int depth = 0;
 	
 	public JavaFileWriter(Writer out) {
 		output = new PrintWriter(out);
@@ -18,296 +19,341 @@ public class JavaFileWriter {
 	
 	public void write(JavaFile jf) {
 		if(jf.pkg() != null) {
-			output.println("package " + jf.pkg() + ";");
-		}
-		
-		output.println("");
+			output.println("package " + jf.pkg() + ";\n");
+		}				
 		
 		for(String imp : jf.imports()) {
-			output.println("import " + imp + ";");
-		}
-		
-		output.println("");
+			output.println("import " + imp + ";\n");
+		}				
 		
 		for(JavaFile.Clazz decl : jf.classes()) {
-			writeClass(decl,0);
+			writeClass(decl);
 		}
 		
 		output.flush();
 	}
 	
-	public void writeClass(JavaFile.Clazz decl, int depth) {
-		indent(depth);
+	public void writeClass(JavaFile.Clazz decl) {
+		
 		writeModifiers(decl.modifiers());
 		
 		if(decl.isInterface()) {
-			output.print("interface ");
+			write("interface ");
 		} else {
-			output.print("class ");
+			write("class ");
 		}
 		
-		output.print(decl.name());
+		write(decl.name());
 		
 		if(decl.isInterface()) {
 			if(decl.interfaces().size() > 0) {
-				output.print(" extends ");
+				write(" extends ");
 				boolean firstTime = true;
 				for(JavaFile.Type i : decl.interfaces()) {
 					if(!firstTime) {
-						output.print(", ");
+						write(", ");
 					} else { firstTime = false; }
 					writeType(i);
-					output.write(" ");
+					write(" ");
 				}
 			}
 		} else {
 			if(decl.superclass() != null) {
-				output.print(" extends ");
+				write(" extends ");
 				writeType(decl.superclass());
-				output.write(" ");
+				write(" ");
 			}
 			if(decl.interfaces().size() > 0) {
-				output.print(" implements ");
+				write(" implements ");
 				boolean firstTime = true;
 				for(JavaFile.Type i : decl.interfaces()) {
 					if(!firstTime) {
-						output.print(", ");
+						write(", ");
 					} else { firstTime = false; }
 					writeType(i);
-					output.write(" ");
+					write(" ");
 				}
 			}
 		}
 		
-		output.println(" {");
+		write("{");
 		
 		for(JavaFile.Declaration d : decl.declarations()) {
 			if(d instanceof JavaFile.Clazz) {
-				writeClass((JavaFile.Clazz) d, depth + 1);
+				writeClass((JavaFile.Clazz) d);
 			} else if(d instanceof JavaFile.Field) {
-				writeField((JavaFile.Field) d, depth + 1);
+				writeField((JavaFile.Field) d);
 			} else if(d instanceof JavaFile.Method) {
-				writeMethod((JavaFile.Method) d, depth + 1);
+				writeMethod((JavaFile.Method) d);
 			}
 		}
 		
-		indent(depth);output.println("}");
+		write("}");
 	}
 	
-	protected void writeMethod(JavaFile.Method m, int depth) {
-		indent(depth);
+	protected void writeMethod(JavaFile.Method m) {
+		
 		writeModifiers(m.modifiers());
 		writeType(m.returnType());
-		output.write(" ");
-		output.write(m.name());
-		output.write("(");
+		write(" ");
+		write(m.name());
+		write("(");
 		boolean firstTime=true;
 		for(Pair<String,JavaFile.Type> p : m.parameters()) {
 			if(!firstTime) {
-				output.write(", ");				
+				write(", ");				
 			}
 			firstTime=false;
 			writeType(p.second());
-			output.write(" ");
-			output.write(p.first());
+			write(" ");
+			write(p.first());
 		}
-		output.write(")");
+		write(")");
 		
 		if(m.exceptions().size() > 0) {
-			output.write("throws ");
+			write("throws ");
 			firstTime=true;
 			for(JavaFile.Type t : m.exceptions()) {
 				if(!firstTime) {
-					output.write(", ");				
+					write(", ");				
 				}
 				firstTime=false;
 				writeType(t);
 			}
 		}
 				
-		if(m.block() != null) { writeBlock(m.block(),depth); }
+		if(m.block() != null) { writeBlock(m.block()); }
 	}
 	
-	protected void writeField(JavaFile.Field f, int depth) {
-		indent(depth);
+	protected void writeField(JavaFile.Field f) {
+		
 		writeModifiers(f.modifiers());		
 		writeType(f.type());
-		output.write(" ");
-		output.print(f.name());
+		write(" ");
+		write(f.name());
 		if(f.initialiser() != null) {
-			output.print(" = ");
+			write(" = ");
 			writeExpression(f.initialiser());
 		}
-		output.println(";\n");
+		write(";\n");
 	}
 	
-	protected void writeStatement(JavaFile.Statement e, int depth) {
+	protected void writeStatement(JavaFile.Statement e) {
 		if(e instanceof JavaFile.SynchronisedBlock) {
-			writeSynchronisedBlock((JavaFile.SynchronisedBlock)e, depth);
+			writeSynchronisedBlock((JavaFile.SynchronisedBlock)e);
 		} else if(e instanceof JavaFile.TryCatchBlock) {
-			writeTryCatchBlock((JavaFile.TryCatchBlock)e, depth);
+			writeTryCatchBlock((JavaFile.TryCatchBlock)e);
 		} else if(e instanceof JavaFile.Block) {
-			writeBlock((JavaFile.Block)e, depth);
+			writeBlock((JavaFile.Block)e);
 		} else if(e instanceof JavaFile.VarDef) {
-			writeVarDef((JavaFile.VarDef) e, depth);
+			writeVarDef((JavaFile.VarDef) e);
 		} else if(e instanceof JavaFile.Assignment) {
-			writeAssignment((JavaFile.Assignment) e, depth);
+			writeAssignment((JavaFile.Assignment) e);
 		} else if(e instanceof JavaFile.Return) {
-			writeReturn((JavaFile.Return) e, depth);
+			writeReturn((JavaFile.Return) e);
 		} else if(e instanceof JavaFile.Throw) {
-			writeThrow((JavaFile.Throw) e, depth);
+			writeThrow((JavaFile.Throw) e);
 		} else if(e instanceof JavaFile.Assert) {
-			writeAssert((JavaFile.Assert) e, depth);
+			writeAssert((JavaFile.Assert) e);
 		} else if(e instanceof JavaFile.Break) {
-			writeBreak((JavaFile.Break) e, depth);
+			writeBreak((JavaFile.Break) e);
 		} else if(e instanceof JavaFile.Continue) {
-			writeContinue((JavaFile.Continue) e, depth);
+			writeContinue((JavaFile.Continue) e);
 		} else if(e instanceof JavaFile.Label) {
-			writeLabel((JavaFile.Label) e, depth);
+			writeLabel((JavaFile.Label) e);
 		} else if(e instanceof JavaFile.If) {
-			writeIf((JavaFile.If) e, depth);
+			writeIf((JavaFile.If) e);
+		} else if(e instanceof JavaFile.For) {
+			writeFor((JavaFile.For) e);
 		} else if(e instanceof JavaFile.While) {
-			writeWhile((JavaFile.While) e, depth);
+			writeWhile((JavaFile.While) e);
+		} else if(e instanceof JavaFile.DoWhile) {
+			writeDoWhile((JavaFile.DoWhile) e);
 		} else {
 			throw new RuntimeException("Invalid statement encountered: "
 					+ e.getClass());
 		}
 	}
 	
-	protected void writeBlock(JavaFile.Block block, int depth) {
-		indent(depth);
-		output.println("{");
+	protected void writeBlock(JavaFile.Block block) {		
+		write("{");
 		for(JavaFile.Statement s : block.statements()) {
-			writeStatement(s,depth+1);
+			writeStatement(s);		
+			if(s instanceof JavaFile.SimpleStatement) {
+				write(";");
+			}
 		}
-		indent(depth);output.println("}");
+		write("}");
 	}
 	
-	protected void writeSynchronisedBlock(JavaFile.SynchronisedBlock block, int depth) {
-		indent(depth);
-		output.write("synchronized(");
+	protected void writeSynchronisedBlock(JavaFile.SynchronisedBlock block) {
+		
+		write("synchronized(");
 		writeExpression(block.expr());
-		output.println(") {");
+		write(")");
+		write("{");
 		for(JavaFile.Statement s : block.statements()) {
-			writeStatement(s,depth+1);
+			writeStatement(s);
+			if(s instanceof JavaFile.SimpleStatement) {
+				write(";");
+			}
 		}
-		indent(depth);output.println("}");
+		write("}");
 	}
 	
-	protected void writeTryCatchBlock(JavaFile.TryCatchBlock block, int depth) {
-		indent(depth);
-		output.write("try ");		
-		output.println(" {");
+	protected void writeTryCatchBlock(JavaFile.TryCatchBlock block) {
+		
+		write("try ");		
+		write(" {");
 		for(JavaFile.Statement s : block.statements()) {
-			writeStatement(s,depth+1);
+			writeStatement(s);
+			if(s instanceof JavaFile.SimpleStatement) {
+				write(";");
+			}
 		}
-		indent(depth);output.write("}");
+		write("}");
 		
 		for(JavaFile.CatchBlock c : block.handlers()) {
-			output.write(" catch(");
+			write(" catch(");
 			writeType(c.type());
-			output.write(" ");
-			output.write(c.variable());
-			output.println(") {");
+			write(" ");
+			write(c.variable());
+			write(")");
+			write("{");
 			for(JavaFile.Statement s : c.statements()) {
-				writeStatement(s,depth+1);
+				writeStatement(s);
+				if(s instanceof JavaFile.SimpleStatement) {
+					write(";");
+				}
 			}	
-			indent(depth); output.println("}");
+			 write("}");
 		}
 	}
 	
-	protected void writeVarDef(JavaFile.VarDef def, int depth) {				
+	protected void writeVarDef(JavaFile.VarDef def) {				
 		for(Triple<String,JavaFile.Type,JavaFile.Expression> d : def.definitions()) {			
-			indent(depth);
+			
 			writeModifiers(def.modifiers());
 			writeType(d.second());
-			output.write(" ");
-			output.write(d.first());
+			write(" ");
+			write(d.first());
 			if(d.third() != null) {
-				output.write(" = ");
+				write(" = ");
 				writeExpression(d.third());
 			}
-			output.println(";");
 		}
 	}
 	
-	protected void writeAssignment(JavaFile.Assignment def, int depth) {
-		indent(depth);
+	protected void writeAssignment(JavaFile.Assignment def) {
+		
 		writeExpression(def.lhs());
-		output.write(" = ");
-		writeExpression(def.rhs());
-		output.println(";");
+		write(" = ");
+		writeExpression(def.rhs());		
 	}
 	
-	protected void writeReturn(JavaFile.Return ret, int depth) {
-		indent(depth);		
-		output.write("return");
+	protected void writeReturn(JavaFile.Return ret) {
+				
+		write("return");
 		if(ret.expr() != null) {
-			output.write(" ");
+			write(" ");
 			writeExpression(ret.expr());
 		}
-		output.println(";");
 	}
 	
-	protected void writeThrow(JavaFile.Throw ret, int depth) {
-		indent(depth);		
-		output.write("throw ");				
+	protected void writeThrow(JavaFile.Throw ret) {
+				
+		write("throw ");				
 		writeExpression(ret.expr());		
-		output.println(";");
 	}
 	
-	protected void writeAssert(JavaFile.Assert ret, int depth) {
-		indent(depth);		
-		output.write("assert ");				
-		writeExpression(ret.expr());		
-		output.println(";");
+	protected void writeAssert(JavaFile.Assert ret) {
+				
+		write("assert ");				
+		writeExpression(ret.expr());				
 	}
 	
-	protected void writeBreak(JavaFile.Break brk, int depth) {
-		indent(depth);		
-		output.write("break");
+	protected void writeBreak(JavaFile.Break brk) {
+				
+		write("break");
 		if(brk.label() != null) {
-			output.write(" ");
-			output.write(brk.label());
-		}
-		output.println(";");
+			write(" ");
+			write(brk.label());
+		}		
 	}
 	
-	protected void writeContinue(JavaFile.Continue brk, int depth) {
-		indent(depth);		
-		output.write("continue");
+	protected void writeContinue(JavaFile.Continue brk) {
+				
+		write("continue");
 		if(brk.label() != null) {
-			output.write(" ");
-			output.write(brk.label());
-		}
-		output.println(";");
+			write(" ");
+			write(brk.label());
+		}		
 	}
 	
-	protected void writeLabel(JavaFile.Label lab, int depth) {
-		indent(depth);		
-		output.write(lab.label());
-		output.write(": ");
-		writeStatement(lab.statement(),0);
+	protected void writeLabel(JavaFile.Label lab) {				
+		write(lab.label());
+		write(": ");
+		writeStatement(lab.statement());
 	}
 	
-	protected void writeIf(JavaFile.If stmt, int depth) {
-		indent(depth);
-		output.write("if(");
+	protected void writeIf(JavaFile.If stmt) {
+		
+		write("if(");
 		writeExpression(stmt.condition());
-		output.write(") ");
-		writeStatement(stmt.trueStatement(),depth);
+		write(") ");
+		writeStatement(stmt.trueStatement());
 		if(stmt.falseStatement() != null) {
-			indent(depth+1); output.write("else");
-			writeStatement(stmt.trueStatement(),depth);
+			indent(depth+1); write("else");
+			writeStatement(stmt.trueStatement());
 		}
 	}
 	
-	protected void writeWhile(JavaFile.While stmt, int depth) {
-		indent(depth);
-		output.write("while(");
+	protected void writeWhile(JavaFile.While stmt) {
+		write("while(");
 		writeExpression(stmt.condition());
-		output.write(") ");
-		writeStatement(stmt.body(),depth);		
+		write(") ");
+		if(stmt.body() != null) {			
+			writeStatement(stmt.body());			
+		} 
+		if(!(stmt.body() instanceof JavaFile.Block)) {
+			write(";");
+		}		
+	}
+	
+	protected void writeDoWhile(JavaFile.DoWhile stmt) {
+		
+		write("do ");
+		writeStatement(stmt.body());
+		write("while(");
+		writeExpression(stmt.condition());
+		write(");");
+	}
+	
+	protected void writeFor(JavaFile.For stmt) {
+		
+		write("for(");
+		if(stmt.increment() != null) {
+			writeStatement(stmt.initialiser());
+		} 
+		
+		write("; ");
+				
+		if(stmt.condition() != null) {
+			writeExpression(stmt.condition());
+		} 
+		
+		write("; ");
+		
+		if(stmt.increment() != null) {
+			writeStatement(stmt.increment());
+		}
+		write(")");
+		
+		if(stmt.body() != null) {
+			writeStatement(stmt.body());
+		} else {
+			write(";");
+		}
 	}
 	
 	protected void writeExpression(JavaFile.Expression e) {
@@ -360,156 +406,156 @@ public class JavaFileWriter {
 	
 	protected void writeDeref(JavaFile.Deref e) {
 		writeExpression(e.target());
-		output.write(".");
-		output.write(e.name());		
+		write(".");
+		write(e.name());		
 	}
 	
 	protected void writeArrayIndex(JavaFile.ArrayIndex e) {
 		writeExpression(e.target());
-		output.write("[");
+		write("[");
 		writeExpression(e.index());
-		output.write("]");
+		write("]");
 	}
 	
 	protected void writeNew(JavaFile.New e) {
-		output.write("new ");
+		write("new ");
 		writeType(e.type());		
-		output.write("(");
+		write("(");
 		boolean firstTime=true;
 		for(JavaFile.Expression i : e.parameters()) {
 			if(!firstTime) {
-				output.write(", ");
+				write(", ");
 			} else {
 				firstTime = false;
 			}
 			writeExpression(i);
 		}
-		output.write(")");
+		write(")");
 		
 		if(e.declarations().size() > 0) {
-			output.write(" { ");
+			write(" { ");
 			for(JavaFile.Declaration d : e.declarations()) {				
 				if(d instanceof JavaFile.Clazz) {
-					writeClass((JavaFile.Clazz) d, 0);
+					writeClass((JavaFile.Clazz) d);
 				} else if(d instanceof JavaFile.Field) {
-					writeField((JavaFile.Field) d, 0);
+					writeField((JavaFile.Field) d);
 				} else if(d instanceof JavaFile.Method) {
-					writeMethod((JavaFile.Method) d, 0);
+					writeMethod((JavaFile.Method) d);
 				} else {
 					throw new RuntimeException(
 							"Support required for methods in anonymous inner classes");
 				}
 			}
-			output.write(" } ");
+			write(" } ");
 		}
 	}
 	
 	protected void writeInvoke(JavaFile.Invoke e) {
 		if(e.target() != null) {
 			writeExpression(e.target());
-			output.write(".");
+			write(".");
 		}
-		output.write(e.name());
+		write(e.name());
 		if(e.typeParameters().size() > 0) {
-			output.write("<");
+			write("<");
 			boolean firstTime=true;
 			for(JavaFile.Type i : e.typeParameters()) {
 				if(!firstTime) {
-					output.write(",");
+					write(",");
 				} else {
 					firstTime = false;
 				}
 				writeType(i);
 			}	
-			output.write(">");
+			write(">");
 		}
-		output.write("(");
+		write("(");
 		boolean firstTime=true;
 		for(JavaFile.Expression i : e.parameters()) {
 			if(!firstTime) {
-				output.write(", ");
+				write(", ");
 			} else {
 				firstTime = false;
 			}
 			writeExpression(i);
 		}
-		output.write(")");
+		write(")");
 	}
 	
 	protected void writeInstanceOf(JavaFile.InstanceOf e) {		
 		writeExpression(e.lhs());
-		output.write(" instanceof ");
+		write(" instanceof ");
 		writeType(e.rhs());		
 	}
 	
 	protected void writeCast(JavaFile.Cast e) {
-		output.write("(");
+		write("(");
 		writeType(e.type());
-		output.write(") ");
+		write(") ");
 		writeExpression(e.expr());
 	}
 	
 	protected void writeBoolVal(JavaFile.BoolVal e) {
 		if(e.value()) {
-			output.write("true");
+			write("true");
 		} else {
-			output.write("false");
+			write("false");
 		}
 	}
 	
 	protected void writeCharVal(JavaFile.CharVal e) {
-		output.write("'");
-		output.write(e.value()); // this will fail for non-ASCII chars
-		output.write("'");
+		write("'");
+		write(Character.toString(e.value())); // this will fail for non-ASCII chars
+		write("'");
 	}
 	
 	protected void writeIntVal(JavaFile.IntVal e) {		
-		output.write(Integer.toString(e.value()));
+		write(Integer.toString(e.value()));
 	}
 	
 	protected void writeLongVal(JavaFile.LongVal e) {		
-		output.write(Long.toString(e.value()) + "L");
+		write(Long.toString(e.value()) + "L");
 	}
 	
 	protected void writeFloatVal(JavaFile.FloatVal e) {		
-		output.write(Float.toString(e.value()) + "F");
+		write(Float.toString(e.value()) + "F");
 	}
 	
 	protected void writeDoubleVal(JavaFile.DoubleVal e) {		
-		output.write(Double.toString(e.value()));
+		write(Double.toString(e.value()));
 	}
 	
 	protected void writeStringVal(JavaFile.StringVal e) {		
-		output.write("\"");
-		output.write(e.value());
-		output.write("\"");
+		write("\"");
+		write(e.value());
+		write("\"");
 	}
 	
 	protected void writeNullVal(JavaFile.NullVal e) {		
-		output.write("null");
+		write("null");
 	}
 	
 	protected void writeArrayVal(JavaFile.ArrayVal e) {		
 		boolean firstTime = true;
-		output.write("{");
+		write("{");
 		for(JavaFile.Expression i : e.values()) {
 			if(!firstTime) {
-				output.write(", ");
+				write(", ");
 			} else {
 				firstTime = false;
 			}
 			writeExpression(i);
 		}
-		output.write("}");
+		write("}");
 	}
 	
 	protected void writeClassVal(JavaFile.ClassVal e) {
 		writeType(e.value());
-		output.write(".class");
+		write(".class");
 	}
 	
 	protected void writeVariable(JavaFile.Variable e) {			
-		output.write(e.value());		
+		write(e.value());		
 	}
 	
 	public static final String[] unopstr={"!","~","-","++","--","++","--"};
@@ -517,13 +563,13 @@ public class JavaFileWriter {
 	protected void writeUnOp(JavaFile.UnOp e) {		
 		
 		if(e.op() != JavaFile.UnOp.POSTDEC && e.op() != JavaFile.UnOp.POSTINC) {
-			output.write(unopstr[e.op()]);
+			write(unopstr[e.op()]);
 		}
 				
 		writeExpressionWithBracketsIfNecessary(e.expr());					
 		
 		if (e.op() == JavaFile.UnOp.POSTDEC || e.op() == JavaFile.UnOp.POSTINC) {
-			output.write(unopstr[e.op()]);
+			write(unopstr[e.op()]);
 		}
 	}
 	
@@ -535,23 +581,23 @@ public class JavaFileWriter {
 	
 	protected void writeBinOp(JavaFile.BinOp e) {				
 		writeExpressionWithBracketsIfNecessary(e.lhs());					
-		output.write(binopstr[e.op()]);
+		write(binopstr[e.op()]);
 		writeExpressionWithBracketsIfNecessary(e.rhs());						
 	}
 	
 	protected void writeTernOp(JavaFile.TernOp e) {		
 		writeExpressionWithBracketsIfNecessary(e.condition());		
-		output.write(" ? ");
+		write(" ? ");
 		writeExpressionWithBracketsIfNecessary(e.trueBranch());
-		output.write(" : ");
+		write(" : ");
 		writeExpressionWithBracketsIfNecessary(e.falseBranch());
 	}
 	
 	protected void writeExpressionWithBracketsIfNecessary(JavaFile.Expression e) {		
 		if(e instanceof JavaFile.BinOp) {
-			output.print("(");
+			write("(");
 			writeExpression(e);
-			output.print(")");
+			write(")");
 		} else {
 			writeExpression(e);			
 		}
@@ -561,33 +607,50 @@ public class JavaFileWriter {
 		boolean firstTime=true;
 		for(String c : t.components()) {
 			if(!firstTime) {
-				output.write(".");
+				write(".");
 			} else {
 				firstTime=false;
 			}
-			output.write(c);			
+			write(c);			
 		}
 		for(int i=0;i!=t.dims();++i) {
-			output.write("[]");
+			write("[]");
 		}		
 	}
 	
 	protected void writeModifiers(int modifiers) {
-		if((modifiers & Modifier.STATIC)!=0) { output.print("static "); }
-		if((modifiers & Modifier.ABSTRACT)!=0) { output.print("abstract "); }
-		if((modifiers & Modifier.FINAL)!=0) { output.print("final "); }
-		if((modifiers & Modifier.NATIVE)!=0) { output.print("native "); }
-		if((modifiers & Modifier.PRIVATE)!=0) { output.print("private "); }
-		if((modifiers & Modifier.PROTECTED)!=0) { output.print("protected "); }
-		if((modifiers & Modifier.PUBLIC)!=0) { output.print("public "); }
-		if((modifiers & Modifier.STRICT)!=0) { output.print("strict "); }
-		if((modifiers & Modifier.SYNCHRONIZED)!=0) { output.print("synchronized "); }
-		if((modifiers & Modifier.TRANSIENT)!=0) { output.print("transient "); }
-		if((modifiers & Modifier.VOLATILE)!=0) { output.print("volatile "); }
+		if((modifiers & Modifier.STATIC)!=0) { write("static "); }
+		if((modifiers & Modifier.ABSTRACT)!=0) { write("abstract "); }
+		if((modifiers & Modifier.FINAL)!=0) { write("final "); }
+		if((modifiers & Modifier.NATIVE)!=0) { write("native "); }
+		if((modifiers & Modifier.PRIVATE)!=0) { write("private "); }
+		if((modifiers & Modifier.PROTECTED)!=0) { write("protected "); }
+		if((modifiers & Modifier.PUBLIC)!=0) { write("public "); }
+		if((modifiers & Modifier.STRICT)!=0) { write("strict "); }
+		if((modifiers & Modifier.SYNCHRONIZED)!=0) { write("synchronized "); }
+		if((modifiers & Modifier.TRANSIENT)!=0) { write("transient "); }
+		if((modifiers & Modifier.VOLATILE)!=0) { write("volatile "); }
+	}
+	
+	protected void write(String s) {		
+		if(s.equals(";")) {
+			output.println(";");
+			indent(depth);
+		} else if(s.equals("{")) {
+			output.println(" {");
+			depth = depth + 1;
+			indent(depth);
+		} else if(s.equals("}")) {
+			output.println("}");
+			depth = depth - 1;
+			indent(depth);
+		} else {
+			output.write(s);
+		}
 	}
 	
 	protected void indent(int level) {
-		for(int i=0;i!=level;++i) {
+		for(int i=0;i<level;++i) {
 			output.print("  ");
 		}
 	}

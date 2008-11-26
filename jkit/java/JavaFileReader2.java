@@ -73,7 +73,7 @@ public class JavaFileReader2 {
 
 		try {
 			ast = (Tree) parser.compilationUnit().getTree();
-			// printTree(ast, 0, -1);
+			printTree(ast, 0, -1);
 		} catch (RecognitionException e) {
 		}
 	}
@@ -353,11 +353,11 @@ public class JavaFileReader2 {
 			case SWITCH :
 				// return parseSwitch(stmt);
 			case FOR :
-				// return parseFor(stmt, label);
+				return parseFor(stmt);
 			case WHILE :
 				return parseWhile(stmt);
 			case DOWHILE :
-				// return parseDoWhile(stmt, label);
+				return parseDoWhile(stmt);
 			case SELECTOR :
 				// return parseSelectorStmt(stmt);
 			case CONTINUE :
@@ -585,6 +585,34 @@ public class JavaFileReader2 {
 		JavaFile.Expression condition = parseExpression(stmt.getChild(0).getChild(0));
 		JavaFile.Statement body = parseStatement(stmt.getChild(1));		
 		return new JavaFile.While(condition,body);		
+	}
+	
+	protected JavaFile.Statement parseDoWhile(Tree stmt) {
+		JavaFile.Expression condition = parseExpression(stmt.getChild(0).getChild(0));
+		JavaFile.Statement body = parseStatement(stmt.getChild(1));		
+		return new JavaFile.DoWhile(condition,body);		
+	}
+	
+	protected JavaFile.Statement parseFor(Tree stmt) {
+		JavaFile.Statement initialiser = null;		
+		JavaFile.Expression condition = null;
+		JavaFile.Statement increment = null;
+		JavaFile.Statement body = null;
+		
+		if(stmt.getChild(0).getChildCount() > 0) {
+			initialiser = parseStatement(stmt.getChild(0).getChild(0));	
+		}
+		if(stmt.getChild(1).getChildCount() > 0) {
+			condition = parseExpression(stmt.getChild(1).getChild(0));	
+		}
+		if(stmt.getChild(2).getChildCount() > 0) {
+			increment = parseStatement(stmt.getChild(2).getChild(0));	
+		}
+		if(stmt.getChild(3).getChildCount() > 0) {
+			body = parseStatement(stmt.getChild(3));			
+		}
+		
+		return new JavaFile.For(initialiser,condition,increment,body);
 	}
 	
 	protected JavaFile.Expression parseExpression(Tree expr) {
