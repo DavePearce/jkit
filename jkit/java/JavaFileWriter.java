@@ -162,6 +162,8 @@ public class JavaFileWriter {
 			writeContinue((JavaFile.Continue) e, depth);
 		} else if(e instanceof JavaFile.Label) {
 			writeLabel((JavaFile.Label) e, depth);
+		} else if(e instanceof JavaFile.If) {
+			writeIf((JavaFile.If) e, depth);
 		} else {
 			throw new RuntimeException("Invalid statement encountered: "
 					+ e.getClass());
@@ -275,6 +277,18 @@ public class JavaFileWriter {
 		output.write(lab.label());
 		output.write(": ");
 		writeStatement(lab.statement(),0);
+	}
+	
+	protected void writeIf(JavaFile.If stmt, int depth) {
+		indent(depth);
+		output.write("if(");
+		writeExpression(stmt.condition());
+		output.write(") ");
+		writeStatement(stmt.trueStatement(),depth);
+		if(stmt.falseStatement() != null) {
+			indent(depth+1); output.write("else");
+			writeStatement(stmt.trueStatement(),depth);
+		}
 	}
 	
 	protected void writeExpression(JavaFile.Expression e) {

@@ -349,7 +349,7 @@ public class JavaFileReader2 {
 			case INVOKE :
 				// return parseInvokeStmt(stmt);
 			case IF :
-				// return parseIf(stmt);
+				return parseIf(stmt);
 			case SWITCH :
 				// return parseSwitch(stmt);
 			case FOR :
@@ -568,6 +568,13 @@ public class JavaFileReader2 {
 		JavaFile.Statement s = parseStatement(stmt.getChild(1));
 		
 		return new JavaFile.Label(label,s);
+	}
+	
+	protected JavaFile.Statement parseIf(Tree stmt) {
+		JavaFile.Expression condition = parseExpression(stmt.getChild(0));
+		JavaFile.Statement trueStmt = parseStatement(stmt.getChild(1));
+		JavaFile.Statement falseStmt = stmt.getChildCount() < 3 ? null : parseStatement(stmt.getChild(2));
+		return new JavaFile.If(condition,trueStmt,falseStmt);		
 	}
 	
 	protected JavaFile.Expression parseExpression(Tree expr) {

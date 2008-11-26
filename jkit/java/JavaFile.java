@@ -310,7 +310,7 @@ public class JavaFile {
 	
 	public static class TryCatchBlock extends Block {
 		private List<CatchBlock> handlers;
-		public TryCatchBlock(List<CatchBlock> handlers,List<Statement> statements) {
+		public TryCatchBlock(List<CatchBlock> handlers, List<Statement> statements) {
 			super(statements);
 			this.handlers = handlers;
 		}
@@ -380,6 +380,30 @@ public class JavaFile {
 			this.label = label;	
 		}
 		public String label() { return label; }		
+	}
+	
+	public static class If extends Statement {
+		private Expression condition;
+		private Statement trueStatement;
+		private Statement falseStatement;
+
+		public If(Expression condition, Statement trueStatement,
+				Statement falseStatement) {
+			super(null);
+			this.condition = condition;
+			this.trueStatement = trueStatement;
+			this.falseStatement = falseStatement;
+		}
+
+		public Expression condition() {
+			return condition;
+		}
+		public Statement trueStatement() {
+			return trueStatement;
+		}
+		public Statement falseStatement() {
+			return falseStatement;
+		}
 	}
 	
 	public static class WhileLoop extends Statement {
