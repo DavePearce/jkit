@@ -144,6 +144,8 @@ public class JavaFileWriter {
 	protected void writeStatement(JavaFile.Statement e, int depth) {
 		if(e instanceof JavaFile.SynchronisedBlock) {
 			writeSynchronisedBlock((JavaFile.SynchronisedBlock)e, depth);
+		} else if(e instanceof JavaFile.TryCatchBlock) {
+			writeTryCatchBlock((JavaFile.TryCatchBlock)e, depth);
 		} else if(e instanceof JavaFile.Block) {
 			writeBlock((JavaFile.Block)e, depth);
 		} else if(e instanceof JavaFile.VarDef) {
@@ -184,6 +186,28 @@ public class JavaFileWriter {
 			writeStatement(s,depth+1);
 		}
 		indent(depth);output.println("}");
+	}
+	
+	protected void writeTryCatchBlock(JavaFile.TryCatchBlock block, int depth) {
+		indent(depth);
+		output.write("try ");		
+		output.println(" {");
+		for(JavaFile.Statement s : block.statements()) {
+			writeStatement(s,depth+1);
+		}
+		indent(depth);output.write("}");
+		
+		for(JavaFile.CatchBlock c : block.handlers()) {
+			output.write(" catch(");
+			writeType(c.type());
+			output.write(" ");
+			output.write(c.variable());
+			output.println(") {");
+			for(JavaFile.Statement s : c.statements()) {
+				writeStatement(s,depth+1);
+			}	
+			indent(depth); output.println("}");
+		}
 	}
 	
 	protected void writeVarDef(JavaFile.VarDef def, int depth) {				

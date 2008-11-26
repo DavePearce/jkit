@@ -290,6 +290,35 @@ public class JavaFile {
 		}
 	}
 	
+	public static class CatchBlock extends Block {
+		private Type type;
+		private String variable;
+		public CatchBlock(Type type, String variable, List<Statement> statements) {
+			super(statements);
+			this.type = type;
+			this.variable = variable;
+		}
+		
+		public Type type() {
+			return type;
+		}
+		
+		public String variable() {
+			return variable;
+		}
+	}
+	
+	public static class TryCatchBlock extends Block {
+		private List<CatchBlock> handlers;
+		public TryCatchBlock(List<CatchBlock> handlers,List<Statement> statements) {
+			super(statements);
+			this.handlers = handlers;
+		}
+		
+		public List<CatchBlock> handlers() {
+			return handlers;
+		}
+	}
 	public static class Assignment extends Statement {
 		private Expression lhs,rhs;
 		public Assignment(Expression lhs, Expression rhs) {

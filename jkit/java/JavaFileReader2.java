@@ -374,7 +374,7 @@ public class JavaFileReader2 {
 			case ASSERT :
 				// return parseAssert(stmt);
 			case TRY :
-				// return parseTry(stmt);
+				return parseTry(stmt);
 			case SYNCHRONIZED :
 				return parseSynchronisedBlock(stmt);
 			default :
@@ -416,7 +416,7 @@ public class JavaFileReader2 {
      * @return A Block containing all the statements in this block
      * 
      */
-	protected JavaFile.Block parseSynchronisedBlock(Tree block) {
+	protected JavaFile.Statement parseSynchronisedBlock(Tree block) {
 		ArrayList<JavaFile.Statement> stmts = new ArrayList<JavaFile.Statement>();
 		JavaFile.Expression e = parseExpression(block.getChild(0));
 		
@@ -428,6 +428,32 @@ public class JavaFileReader2 {
 		}
 
 		return new JavaFile.SynchronisedBlock(e,stmts);
+	}
+	
+	protected JavaFile.Statement parseTry(Tree block) {
+		ArrayList<JavaFile.Statement> stmts = new ArrayList<JavaFile.Statement>();
+		ArrayList<JavaFile.CatchBlock> handlers = new ArrayList<JavaFile.CatchBlock>();
+
+		// === ITERATE STATEMENTS ===
+		Tree child = block.getChild(0);
+		for (int i = 0; i != child.getChildCount(); ++i) {
+			JavaFile.Statement stmt = parseStatement(child.getChild(i));			
+			stmts.add(stmt);
+		}
+
+		for (int i = 1; i < block.getChildCount(); ++i) {
+			ArrayList<JavaFile.Statement> cbstmts = new ArrayList<JavaFile.Statement>();			
+			Tree cb = block.getChild(i).getChild(0);
+			JavaFile.Type type = parseType(cb.getChild(0));
+			Tree cbb = block.getChild(i).getChild(1);
+			for (int j = 0; j != cbb.getChildCount(); ++j) {
+				JavaFile.Statement stmt = parseStatement(cbb.getChild(j));
+				cbstmts.add(stmt);
+			}
+			handlers.add(new JavaFile.CatchBlock(type,cb.getChild(1).getText(),cbstmts));
+		}
+		
+		return new JavaFile.TryCatchBlock(handlers,stmts);
 	}
 	
 	
