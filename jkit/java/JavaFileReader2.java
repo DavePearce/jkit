@@ -8,8 +8,10 @@ import jkit.compiler.ClassTable;
 import jkit.compiler.SyntaxError;
 import jkit.java.JavaFileReader.Block;
 import jkit.java.JavaFileReader.ClassScope;
+import jkit.java.JavaFileReader.LoopScope;
 import jkit.java.JavaFileReader.MethodScope;
 import jkit.java.JavaFileReader.Scope;
+import jkit.java.JavaFileReader.SwitchScope;
 import jkit.jkil.Clazz;
 import jkit.jkil.Field;
 import jkit.jkil.FlowGraph;
@@ -40,6 +42,7 @@ import jkit.jkil.FlowGraph.Point;
 import jkit.jkil.FlowGraph.Return;
 import jkit.jkil.FlowGraph.StringVal;
 import jkit.jkil.FlowGraph.TernOp;
+import jkit.jkil.FlowGraph.Throw;
 import jkit.jkil.FlowGraph.UnOp;
 import jkit.util.Pair;
 import jkit.util.Triple;
@@ -340,7 +343,7 @@ public class JavaFileReader2 {
 			case RETURN :
 				return parseReturn(stmt);
 			case THROW :
-				// return parseThrow(stmt);
+				return parseThrow(stmt);
 			case NEW :
 				// return parseNewStmt(stmt);
 			case INVOKE :
@@ -358,12 +361,11 @@ public class JavaFileReader2 {
 			case SELECTOR :
 				// return parseSelectorStmt(stmt);
 			case CONTINUE :
-				// return parseContinue(stmt, label);
+				return parseContinue(stmt);
 			case BREAK :
-				// return parseBreak(stmt, label);
+				return parseBreak(stmt);
 			case LABEL :
-				//return parseStatement(stmt.getChild(1), stmt.getChild(0)
-				//		.getText());
+				return parseLabel(stmt);
 			case POSTINC :
 			case PREINC :
 			case POSTDEC :
@@ -464,6 +466,59 @@ public class JavaFileReader2 {
 		}
 	}
 
+	protected JavaFile.Statement parseThrow(Tree stmt) {				
+		return new JavaFile.Throw(parseExpression(stmt.getChild(0)));		
+	}
+	
+	
+	/**
+     * Responsible for parsing break statements.
+     * 
+     * @param stmt
+     * @param label
+     * @param cfg
+     * @return
+     */
+	protected JavaFile.Statement parseBreak(Tree stmt) {
+		if (stmt.getChildCount() > 0) {
+			// this is a labelled break statement.			
+			return new JavaFile.Break(stmt.getChild(0).getText());
+		} else {
+			return new JavaFile.Break(null);			
+		}
+	}
+
+	/**
+     * Responsible for parsing continue statements.
+     * 
+     * @param stmt
+     * @param label
+     * @param cfg
+     * @return
+     */
+	protected JavaFile.Statement parseContinue(Tree stmt) {
+		if (stmt.getChildCount() > 0) {
+			// this is a labelled continue statement.			
+			return new JavaFile.Continue(stmt.getChild(0).getText());
+		} else {
+			return new JavaFile.Continue(null);			
+		}
+	}
+	
+	/**
+     * Responsible for parsing labelled statements.
+     * 
+     * @param stmt
+     * @param label
+     * @param cfg
+     * @return
+     */
+	protected JavaFile.Statement parseLabel(Tree stmt) {
+		String label = stmt.getChild(0).getText();
+		JavaFile.Statement s = parseStatement(stmt.getChild(1));
+		
+		return new JavaFile.Label(label,s);
+	}
 	
 	protected JavaFile.Expression parseExpression(Tree expr) {
 		switch (expr.getType()) {

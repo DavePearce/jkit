@@ -150,6 +150,14 @@ public class JavaFileWriter {
 			writeAssignment((JavaFile.Assignment) e, depth);
 		} else if(e instanceof JavaFile.Return) {
 			writeReturn((JavaFile.Return) e, depth);
+		} else if(e instanceof JavaFile.Throw) {
+			writeThrow((JavaFile.Throw) e, depth);
+		} else if(e instanceof JavaFile.Break) {
+			writeBreak((JavaFile.Break) e, depth);
+		} else if(e instanceof JavaFile.Continue) {
+			writeContinue((JavaFile.Continue) e, depth);
+		} else if(e instanceof JavaFile.Label) {
+			writeLabel((JavaFile.Label) e, depth);
 		} else {
 			throw new RuntimeException("Invalid statement encountered: "
 					+ e.getClass());
@@ -196,6 +204,40 @@ public class JavaFileWriter {
 			writeExpression(ret.expr());
 		}
 		output.println(";");
+	}
+	
+	protected void writeThrow(JavaFile.Throw ret, int depth) {
+		indent(depth);		
+		output.write("throw ");				
+		writeExpression(ret.expr());		
+		output.println(";");
+	}
+	
+	protected void writeBreak(JavaFile.Break brk, int depth) {
+		indent(depth);		
+		output.write("break");
+		if(brk.label() != null) {
+			output.write(" ");
+			output.write(brk.label());
+		}
+		output.println(";");
+	}
+	
+	protected void writeContinue(JavaFile.Continue brk, int depth) {
+		indent(depth);		
+		output.write("continue");
+		if(brk.label() != null) {
+			output.write(" ");
+			output.write(brk.label());
+		}
+		output.println(";");
+	}
+	
+	protected void writeLabel(JavaFile.Label lab, int depth) {
+		indent(depth);		
+		output.write(lab.label());
+		output.write(": ");
+		writeStatement(lab.statement(),0);
 	}
 	
 	protected void writeExpression(JavaFile.Expression e) {

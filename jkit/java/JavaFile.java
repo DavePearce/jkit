@@ -298,6 +298,45 @@ public class JavaFile {
 		public Expression expr() { return expr; }		
 	}
 	
+	public static class Throw extends Statement {
+		private Expression expr;
+		public Throw(Expression expr) {
+			super(null);
+			this.expr = expr;			
+		}
+		public Expression expr() { return expr; }		
+	}
+	
+	public static class Break extends Statement {
+		private String label;
+		public Break(String label) {
+			super(null);
+			this.label = label;	
+		}
+		public String label() { return label; }		
+	}
+	
+	public static class Label extends Statement {
+		private String label;
+		private Statement statement;
+		public Label(String label, Statement statement) {
+			super(null);
+			this.label = label;	
+			this.statement = statement;
+		}
+		public String label() { return label; }
+		public Statement statement() { return statement; }
+	}
+	
+	public static class Continue extends Statement {
+		private String label;
+		public Continue(String label) {
+			super(null);
+			this.label = label;	
+		}
+		public String label() { return label; }		
+	}
+	
 	public static class WhileLoop extends Statement {
 		public Expression condition;
 		public Statement body;
