@@ -370,7 +370,7 @@ public class JavaFileReader2 {
 			case PREINC :
 			case POSTDEC :
 			case PREDEC :
-				// return parseIncDec(stmt);
+				return parseIncDec(stmt);
 			case ASSERT :
 				return parseAssert(stmt);
 			case TRY :
@@ -641,6 +641,26 @@ public class JavaFileReader2 {
 			}
 		}
 		return new JavaFile.Switch(condition,cases);
+	}
+	
+	/**
+     * Parse a standalone pre/post inc/dec statement (e.g. ++i, --i, etc)
+     * 
+     * @param stmt
+     * @return
+     */
+	public JavaFile.Statement parseIncDec(Tree stmt) {
+		JavaFile.UnOp lhs = (JavaFile.UnOp) parseExpression(stmt);
+		JavaFile.Expression lval = lhs.expr();
+		if (lhs.op() == JavaFile.UnOp.POSTDEC
+				|| lhs.op() == JavaFile.UnOp.PREDEC) {
+			return new JavaFile.Assignment(lval, new JavaFile.BinOp(
+					JavaFile.BinOp.SUB, lval, new JavaFile.IntVal(1)));
+		} else {
+			// must be preinc or postinc
+			return new JavaFile.Assignment(lval, new JavaFile.BinOp(
+					JavaFile.BinOp.ADD, lval, new JavaFile.IntVal(1)));
+		}
 	}
 	
 	protected JavaFile.Expression parseExpression(Tree expr) {
