@@ -528,7 +528,9 @@ public class ClassLoader {
 	 *            The location of the enclosing package. This is either a jar
 	 *            file, or a directory.
 	 */
-	private void addPackageItem(String name, File pkgLocation, boolean isCompiled) {		
+	private void addPackageItem(String name, File pkgLocation, boolean isCompiled) {
+		if(name == null) return;
+		
 		// this is a class file.		
 		String pkg = pathParent(name);
 		String clazz = pathChild(name);		
