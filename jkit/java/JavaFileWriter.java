@@ -697,13 +697,13 @@ public class JavaFileWriter {
 		writeExpressionWithBracketsIfNecessary(e.falseBranch());
 	}
 	
-	protected void writeExpressionWithBracketsIfNecessary(JavaFile.Expression e) {		
-		if(e instanceof JavaFile.BinOp || e instanceof JavaFile.InstanceOf) {
+	protected void writeExpressionWithBracketsIfNecessary(JavaFile.Expression e) {
+		if (e instanceof JavaFile.BinOp || e instanceof JavaFile.InstanceOf) {
 			write("(");
 			writeExpression(e);
 			write(")");
 		} else {
-			writeExpression(e);			
+			writeExpression(e);
 		}
 	}
 	
