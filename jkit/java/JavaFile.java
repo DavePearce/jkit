@@ -479,6 +479,76 @@ public class JavaFile {
 		}
 	}	
 	
+	public static class ForEach implements Statement {
+		private String var;
+		private int modifiers; // for variable
+		private Type type; // for variable
+		private Expression source; 
+		private Statement body;
+		
+		public ForEach(int modifiers, String var, Type type, Expression source, Statement body) {
+			this.modifiers = modifiers;
+			this.var = var;
+			this.type = type;
+			this.source = source;
+			this.body = body;
+		}
+		
+		/**
+		 * Set the modifiers of the variable declared in the for-each statement.
+		 * Use java.lang.reflect.Modifier for this.
+		 * 
+		 * @param type
+		 */
+		public void setModifiers(int modifiers) { this.modifiers = modifiers; }
+		
+		/**
+		 * Get modifiers of this local variable
+		 * 
+		 * @return
+		 */
+		public int modifiers() { return modifiers; }	
+		
+		/**
+		 * Get type of variable declared in for-each statement.
+		 * 
+		 * @return
+		 */
+		public Type type() {
+			return type;
+		}
+		
+		/**
+		 * Get name of variable declared in for-each statement.
+		 * 
+		 * @return
+		 */
+		public String var() { 
+			return var;
+		}
+		
+		/**
+		 * Get the source expression which corresponds to an array or collection
+		 * which the for-each statement is going to iterate over.
+		 * 
+		 * @return
+		 */
+		public Expression source() {
+			return source;
+		}
+		
+		
+		/**
+		 * Get the body of the for-each statement. Maybe null if there is no
+		 * body!
+		 * 
+		 * @return
+		 */
+		public Statement body() {
+			return body;
+		}
+	}
+	
 	/**
      * A VarDef is a symbol table entry for a local variable. It can be thought
      * of as a declaration for that variable, including its type, modifiers,

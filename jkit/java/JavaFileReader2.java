@@ -599,6 +599,10 @@ public class JavaFileReader2 {
 		JavaFile.Statement increment = null;
 		JavaFile.Statement body = null;
 		
+		if (stmt.getChild(0).getType() == FOREACH) {
+			return parseForEach(stmt.getChild(0), stmt.getChild(1));
+		}
+		
 		if(stmt.getChild(0).getChildCount() > 0) {
 			initialiser = parseStatement(stmt.getChild(0).getChild(0));	
 		}
@@ -613,6 +617,29 @@ public class JavaFileReader2 {
 		}
 		
 		return new JavaFile.For(initialiser,condition,increment,body);
+	}
+	
+	/**
+     * Responsible for translating Java 1.5 for statements. ANTLR tree format:
+     * 
+     * FOR FOREACH [YUCK NEED TO FIX THIS] VARDEF VAR STATEMENT
+     * 
+     * @param stmt
+     *            ANTLR for-statement tree
+     * @param cfg
+     *            control-flow graph
+     * @return
+     */
+	protected JavaFile.Statement parseForEach(Tree stmt, Tree body) {
+
+		Tree varDef = stmt.getChild(0);
+		int varMods = parseModifiers(varDef.getChild(0));
+		JavaFile.Type varType = parseType(varDef.getChild(1));
+		String varName = varDef.getChild(2).getText();
+		JavaFile.Expression src = parseExpression(stmt.getChild(1));
+		JavaFile.Statement loopBody = parseStatement(body);
+		
+		return new JavaFile.ForEach(varMods,varName,varType,src,loopBody);
 	}
 	
 	protected JavaFile.Statement parseSwitch(Tree stmt) {

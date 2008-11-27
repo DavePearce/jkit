@@ -140,6 +140,20 @@ public class JavaFileWriter {
 		write(";");
 	}
 	
+	protected void writeSubStatement(JavaFile.Statement e) {
+		if(e instanceof JavaFile.Block) {
+			writeStatement(e);
+		} else {
+			depth = depth + 1;
+			write("\n");
+			writeStatement(e);
+			depth = depth - 1;
+			if(e instanceof JavaFile.SimpleStatement) {
+				write(";");
+			}			
+		}
+	}
+	
 	protected void writeStatement(JavaFile.Statement e) {
 		if(e instanceof JavaFile.SynchronisedBlock) {
 			writeSynchronisedBlock((JavaFile.SynchronisedBlock)e);
@@ -167,6 +181,8 @@ public class JavaFileWriter {
 			writeIf((JavaFile.If) e);
 		} else if(e instanceof JavaFile.For) {
 			writeFor((JavaFile.For) e);
+		} else if(e instanceof JavaFile.ForEach) {
+			writeForEach((JavaFile.ForEach) e);
 		} else if(e instanceof JavaFile.While) {
 			writeWhile((JavaFile.While) e);
 		} else if(e instanceof JavaFile.DoWhile) {
@@ -212,7 +228,7 @@ public class JavaFileWriter {
 	protected void writeTryCatchBlock(JavaFile.TryCatchBlock block) {
 		
 		write("try ");		
-		write(" {");
+		write("{");
 		for(JavaFile.Statement s : block.statements()) {
 			writeStatement(s);
 			if(s instanceof JavaFile.SimpleStatement) {
@@ -309,10 +325,12 @@ public class JavaFileWriter {
 		write("if(");
 		writeExpression(stmt.condition());
 		write(") ");
-		writeStatement(stmt.trueStatement());
-		if(stmt.falseStatement() != null) {
-			indent(depth+1); write("else");
-			writeStatement(stmt.trueStatement());
+		writeSubStatement(stmt.trueStatement());		
+		
+		if (stmt.falseStatement() != null) {
+			indent(depth + 1);
+			write("else");
+			writeSubStatement(stmt.falseStatement());			
 		}
 	}
 	
@@ -320,10 +338,9 @@ public class JavaFileWriter {
 		write("while(");
 		writeExpression(stmt.condition());
 		write(") ");
-		if(stmt.body() != null) {			
-			writeStatement(stmt.body());			
-		} 
-		if(!(stmt.body() instanceof JavaFile.Block)) {
+		if (stmt.body() != null) {
+			writeSubStatement(stmt.body());			
+		} else {
 			write(";");
 		}		
 	}
@@ -331,7 +348,7 @@ public class JavaFileWriter {
 	protected void writeDoWhile(JavaFile.DoWhile stmt) {
 		
 		write("do ");
-		writeStatement(stmt.body());
+		writeSubStatement(stmt.body());
 		write("while(");
 		writeExpression(stmt.condition());
 		write(");");
@@ -358,7 +375,25 @@ public class JavaFileWriter {
 		write(")");
 		
 		if(stmt.body() != null) {
-			writeStatement(stmt.body());
+			writeSubStatement(stmt.body());					
+		} else {
+			write(";");
+		}
+	}
+	
+	protected void writeForEach(JavaFile.ForEach stmt) {
+		write("for(");
+		writeModifiers(stmt.modifiers());
+		write(" ");
+		writeType(stmt.type());
+		write(" ");
+		write(stmt.var());
+		write(" : ");
+		writeExpression(stmt.source());
+		write(")");
+		
+		if (stmt.body() != null) {
+			writeSubStatement(stmt.body());			
 		} else {
 			write(";");
 		}
