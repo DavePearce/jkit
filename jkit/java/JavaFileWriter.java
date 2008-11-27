@@ -23,9 +23,11 @@ public class JavaFileWriter {
 		}				
 		
 		for(String imp : jf.imports()) {
-			output.println("import " + imp + ";\n");
+			output.println("import " + imp + ";");
 		}				
-		
+		if(jf.imports().size() > 0) {
+			output.println("\n");
+		}
 		for(JavaFile.Clazz decl : jf.classes()) {
 			writeClass(decl);
 		}
@@ -135,7 +137,7 @@ public class JavaFileWriter {
 			write(" = ");
 			writeExpression(f.initialiser());
 		}
-		write(";\n");
+		write(";");
 	}
 	
 	protected void writeStatement(JavaFile.Statement e) {

@@ -73,7 +73,7 @@ public class JavaFileReader2 {
 
 		try {
 			ast = (Tree) parser.compilationUnit().getTree();
-			printTree(ast, 0, -1);
+			// printTree(ast, 0, -1);
 		} catch (RecognitionException e) {
 		}
 	}
@@ -359,7 +359,7 @@ public class JavaFileReader2 {
 			case DOWHILE :
 				return parseDoWhile(stmt);
 			case SELECTOR :
-				// return parseSelectorStmt(stmt);
+				return parseSelectorStmt(stmt);
 			case CONTINUE :
 				return parseContinue(stmt);
 			case BREAK :
@@ -660,6 +660,15 @@ public class JavaFileReader2 {
 			// must be preinc or postinc
 			return new JavaFile.Assignment(lval, new JavaFile.BinOp(
 					JavaFile.BinOp.ADD, lval, new JavaFile.IntVal(1)));
+		}
+	}
+	
+	public JavaFile.Statement parseSelectorStmt(Tree stmt) {
+		JavaFile.Expression e = parseExpression(stmt);
+		if(e instanceof JavaFile.Statement) {
+			return (JavaFile.Statement) e;
+		} else {
+			throw new RuntimeException("Syntax Error");
 		}
 	}
 	
