@@ -97,8 +97,11 @@ public class JavaFileWriter {
 	protected void writeMethod(JavaFile.Method m) {
 		write("\n");
 		writeModifiers(m.modifiers());
-		writeType(m.returnType());
-		write(" ");
+		if(m.returnType() != null) {
+			// can be null if this method is actually a constructor.
+			writeType(m.returnType());
+			write(" ");
+		}		
 		write(m.name());
 		write("(");
 		boolean firstTime=true;
@@ -680,7 +683,9 @@ public class JavaFileWriter {
 	
 	protected void writeBinOp(JavaFile.BinOp e) {				
 		writeExpressionWithBracketsIfNecessary(e.lhs());					
+		write(" ");
 		write(binopstr[e.op()]);
+		write(" ");
 		writeExpressionWithBracketsIfNecessary(e.rhs());						
 	}
 	
@@ -693,7 +698,7 @@ public class JavaFileWriter {
 	}
 	
 	protected void writeExpressionWithBracketsIfNecessary(JavaFile.Expression e) {		
-		if(e instanceof JavaFile.BinOp) {
+		if(e instanceof JavaFile.BinOp || e instanceof JavaFile.InstanceOf) {
 			write("(");
 			writeExpression(e);
 			write(")");

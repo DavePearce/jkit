@@ -247,7 +247,13 @@ public class JavaFileReader2 {
 
 		String name = method.getChild(idx++).getText();
 		
-		JavaFile.Type returnType = parseType(method.getChild(idx++));
+		JavaFile.Type returnType = null;
+		
+		// if no return type, then is a constructor
+		if(method.getChild(idx).getType() == TYPE) {
+			returnType = parseType(method.getChild(idx));
+		}
+		idx = idx + 1;
 		
 		// === FORMAL PARAMETERS ===
 
@@ -289,7 +295,11 @@ public class JavaFileReader2 {
 			block = parseBlock(method.getChild(idx));
 		}
 		
-		return new JavaFile.Method(modifiers,name,returnType,params,exceptions,block);
+		if(returnType == null) {
+			return new JavaFile.Constructor(modifiers,name,params,exceptions,block);
+		} else {
+			return new JavaFile.Method(modifiers,name,returnType,params,exceptions,block);
+		}
 	}
 	
 	protected List<JavaFile.Field> parseField(Tree field) {

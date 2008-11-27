@@ -204,6 +204,20 @@ public class JavaFile {
 		}
 	}
 	
+	/**
+	 * A constructor is a special kind of method.
+	 * 
+	 * @author djp
+	 * 
+	 */
+	public static class Constructor extends Method {
+		public Constructor(int modifiers, String name,
+				List<Pair<String, Type>> parameters, List<Type> exceptions,
+				JavaFile.Block block) {
+			super(modifiers, name, null, parameters, exceptions, block);
+		}
+	}
+	
 	public static class Field extends Declaration {
 		private int modifiers;
 		private String name;

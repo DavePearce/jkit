@@ -176,6 +176,7 @@ tokens {
  ARRAYINIT;
  ARGS;
  LABINOP; // left-associative binary operator
+ NONE; // to indicate the absence of a type (for constructors)
 }
 
 @lexer::members {
@@ -183,11 +184,11 @@ protected boolean enumIsKeyword = true;
 }
 @lexer::header {
 package jkit.java;
-import jkit.core.SyntaxError;
+import jkit.compiler.SyntaxError;
 }
 @header {
 package jkit.java;
-import jkit.core.SyntaxError;
+import jkit.compiler.SyntaxError;
 }
 
 @rulecatch { 
@@ -291,7 +292,7 @@ classBodyDeclaration
      	|	methodDeclaration -> ^(METHOD ^(MODIFIERS modifier*)? methodDeclaration)
      	|	fieldDeclaration -> ^(FIELD ^(MODIFIERS modifier*)? fieldDeclaration)
     	|	'void' Identifier voidMethodDeclaratorRest -> ^(METHOD ^(MODIFIERS modifier*)? Identifier ^(TYPE VOID) voidMethodDeclaratorRest?)
-    	|	Identifier constructorDeclaratorRest -> ^(METHOD ^(MODIFIERS modifier*)? Identifier ^(TYPE VOID) constructorDeclaratorRest)
+    	|	Identifier constructorDeclaratorRest -> ^(METHOD ^(MODIFIERS modifier*)? Identifier ^(NONE) constructorDeclaratorRest)
     	|	interfaceDeclaration -> ^(INTERFACE ^(MODIFIERS modifier*)? interfaceDeclaration)
     	|	classDeclaration -> ^(CLASS ^(MODIFIERS modifier*)? classDeclaration)
     )
@@ -304,7 +305,7 @@ genericMethodOrConstructorDecl
 genericMethodOrConstructorRest
 	:	type Identifier methodDeclaratorRest -> Identifier type methodDeclaratorRest?
 	|	'void' Identifier methodDeclaratorRest -> Identifier ^(TYPE VOID) methodDeclaratorRest?
-	|	Identifier constructorDeclaratorRest -> Identifier ^(TYPE VOID) constructorDeclaratorRest
+	|	Identifier constructorDeclaratorRest -> Identifier ^(NONE) constructorDeclaratorRest
 	;
 
 methodDeclaration
