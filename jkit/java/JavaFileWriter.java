@@ -26,7 +26,7 @@ public class JavaFileWriter {
 			output.println("import " + imp + ";");
 		}				
 		if(jf.imports().size() > 0) {
-			output.println("\n");
+			output.println("");
 		}
 		for(JavaFile.Clazz decl : jf.classes()) {
 			writeClass(decl);
@@ -94,7 +94,7 @@ public class JavaFileWriter {
 	}
 	
 	protected void writeMethod(JavaFile.Method m) {
-		
+		write("\n");
 		writeModifiers(m.modifiers());
 		writeType(m.returnType());
 		write(" ");
@@ -124,7 +124,7 @@ public class JavaFileWriter {
 			}
 		}
 				
-		if(m.block() != null) { writeBlock(m.block()); }
+		if(m.block() != null) { writeBlock(m.block()); }				
 	}
 	
 	protected void writeField(JavaFile.Field f) {
@@ -651,13 +651,13 @@ public class JavaFileWriter {
 	}
 	
 	protected void writeModifiers(int modifiers) {
-		if((modifiers & Modifier.STATIC)!=0) { write("static "); }
-		if((modifiers & Modifier.ABSTRACT)!=0) { write("abstract "); }
-		if((modifiers & Modifier.FINAL)!=0) { write("final "); }
-		if((modifiers & Modifier.NATIVE)!=0) { write("native "); }
 		if((modifiers & Modifier.PRIVATE)!=0) { write("private "); }
 		if((modifiers & Modifier.PROTECTED)!=0) { write("protected "); }
 		if((modifiers & Modifier.PUBLIC)!=0) { write("public "); }
+		if((modifiers & Modifier.STATIC)!=0) { write("static "); }
+		if((modifiers & Modifier.ABSTRACT)!=0) { write("abstract "); }
+		if((modifiers & Modifier.FINAL)!=0) { write("final "); }
+		if((modifiers & Modifier.NATIVE)!=0) { write("native "); }				
 		if((modifiers & Modifier.STRICT)!=0) { write("strict "); }
 		if((modifiers & Modifier.SYNCHRONIZED)!=0) { write("synchronized "); }
 		if((modifiers & Modifier.TRANSIENT)!=0) { write("transient "); }
