@@ -8,7 +8,7 @@ import java.io.*;
 public class Test {
 
 	public static void main(String[] args) {
-		String outputdir = "tmp";
+		String outputdir = null;
 
 		int i;
 
@@ -23,15 +23,20 @@ public class Test {
 
 		for (; i != args.length; ++i) {
 			try {
-				File path = new File(outputdir + File.separatorChar + args[i])
-						.getParentFile();
-				if (!path.exists()) {
-					path.mkdir();
+				if(outputdir != null) {
+					File path = new File(outputdir + File.separatorChar + args[i])
+					.getParentFile();
+					if (!path.exists()) {
+						path.mkdirs();
+					}
+					FileWriter writer = new FileWriter(outputdir
+							+ File.separatorChar + args[i]);				
+					new JavaFileWriter(writer).write(new JavaFileReader2(args[i])
+					.read());
+				} else {
+					new JavaFileWriter(System.out).write(new JavaFileReader2(args[i])
+					.read());
 				}
-				FileWriter writer = new FileWriter(outputdir
-						+ File.separatorChar + args[i]);				
-				new JavaFileWriter(writer).write(new JavaFileReader2(args[i])
-				.read());
 			} catch (IOException e) {
 				System.out.println("ERROR: " + e);
 			} catch (SyntaxError e) {

@@ -2,6 +2,7 @@ package jkit.java;
 
 import java.io.*;
 import java.lang.reflect.Modifier;
+import java.util.*;
 
 import jkit.util.*; 
 
@@ -124,7 +125,11 @@ public class JavaFileWriter {
 			}
 		}
 				
-		if(m.block() != null) { writeBlock(m.block()); }				
+		if(m.block() != null) { 
+			writeBlock(m.block()); 
+		} else {
+			write(";");
+		}
 	}
 	
 	protected void writeField(JavaFile.Field f) {
@@ -328,8 +333,10 @@ public class JavaFileWriter {
 		writeSubStatement(stmt.trueStatement());		
 		
 		if (stmt.falseStatement() != null) {
-			indent(depth + 1);
-			write("else");
+			if(!(stmt.trueStatement() instanceof JavaFile.Block)) {
+				write("\n");
+			}
+			write("else");	
 			writeSubStatement(stmt.falseStatement());			
 		}
 	}
@@ -486,34 +493,59 @@ public class JavaFileWriter {
 	
 	protected void writeNew(JavaFile.New e) {
 		write("new ");
-		writeType(e.type());		
-		write("(");
-		boolean firstTime=true;
-		for(JavaFile.Expression i : e.parameters()) {
-			if(!firstTime) {
-				write(", ");
-			} else {
-				firstTime = false;
-			}
-			writeExpression(i);
-		}
-		write(")");
-		
-		if(e.declarations().size() > 0) {
-			write(" { ");
-			for(JavaFile.Declaration d : e.declarations()) {				
-				if(d instanceof JavaFile.Clazz) {
-					writeClass((JavaFile.Clazz) d);
-				} else if(d instanceof JavaFile.Field) {
-					writeField((JavaFile.Field) d);
-				} else if(d instanceof JavaFile.Method) {
-					writeMethod((JavaFile.Method) d);
+		if(e.type().dims() > 0) {
+			// array initialiser
+			List<JavaFile.Expression> ps = e.parameters();
+			
+			boolean firstTime=true;
+			for(String c : e.type().components()) {
+				if(!firstTime) {
+					write(".");
 				} else {
-					throw new RuntimeException(
-							"Support required for methods in anonymous inner classes");
+					firstTime=false;
+				}
+				write(c);			
+			}
+			
+			for(int i=0;i!=e.type().dims();++i) {
+				if(i < ps.size()) {
+					write("[");
+					writeExpression(ps.get(i));
+					write("]");
+				} else {
+					write("[]");
 				}
 			}
-			write(" } ");
+		} else {
+			writeType(e.type());
+			write("(");
+			boolean firstTime=true;
+			for(JavaFile.Expression i : e.parameters()) {
+				if(!firstTime) {
+					write(", ");
+				} else {
+					firstTime = false;
+				}
+				writeExpression(i);
+			}
+			write(")");
+
+			if(e.declarations().size() > 0) {
+				write(" { ");
+				for(JavaFile.Declaration d : e.declarations()) {				
+					if(d instanceof JavaFile.Clazz) {
+						writeClass((JavaFile.Clazz) d);
+					} else if(d instanceof JavaFile.Field) {
+						writeField((JavaFile.Field) d);
+					} else if(d instanceof JavaFile.Method) {
+						writeMethod((JavaFile.Method) d);
+					} else {
+						throw new RuntimeException(
+						"Support required for methods in anonymous inner classes");
+					}
+				}
+				write(" } ");
+			}
 		}
 	}
 	
@@ -572,7 +604,7 @@ public class JavaFileWriter {
 	
 	protected void writeCharVal(JavaFile.CharVal e) {
 		write("'");
-		write(Character.toString(e.value())); // this will fail for non-ASCII chars
+		writeWithEscapes(Character.toString(e.value()));		
 		write("'");
 	}
 	
@@ -594,7 +626,7 @@ public class JavaFileWriter {
 	
 	protected void writeStringVal(JavaFile.StringVal e) {		
 		write("\"");
-		write(e.value());
+		writeWithEscapes(e.value());
 		write("\"");
 	}
 	
@@ -697,6 +729,49 @@ public class JavaFileWriter {
 		if((modifiers & Modifier.SYNCHRONIZED)!=0) { write("synchronized "); }
 		if((modifiers & Modifier.TRANSIENT)!=0) { write("transient "); }
 		if((modifiers & Modifier.VOLATILE)!=0) { write("volatile "); }
+	}
+	
+	protected void writeWithEscapes(String s) {
+		for(int i=0;i!=s.length();++i) {
+			char c = s.charAt(i);
+			switch (c) {
+			case '\b':
+				output.write("\\b");
+				break;
+			case '\t':
+				output.write("\\t");
+				break;
+			case '\f':
+				output.write("\\f");
+				break;
+			case '\n':
+				output.write("\\n");
+				break;
+			case '\r':
+				output.write("\\r");
+				break;
+			case '\"':
+				output.write("\\\"");
+				break;
+			case '\\':
+				output.write("\\");
+				break;
+			case '\'':		
+				output.write("\\'");
+				break;
+			default:
+				if(c >= 32 && c < 128) {
+					output.write(Character.toString(c));
+				} else {
+					String str = Integer.toString(c,16);
+					int padding = 4 - str.length();
+					for(int k=0;k!=padding;++k) {
+						str = "0" + str;
+					}
+					output.write("\\u" + str);
+				}
+			}
+		}
 	}
 	
 	protected void write(String s) {		
