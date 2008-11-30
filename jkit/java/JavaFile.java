@@ -323,16 +323,24 @@ public class JavaFile {
 	
 	public static class TryCatchBlock extends Block {
 		private List<CatchBlock> handlers;
-		public TryCatchBlock(List<CatchBlock> handlers, List<Statement> statements) {
+		private Block finallyBlk;
+
+		public TryCatchBlock(List<CatchBlock> handlers, Block finallyBlk,
+				List<Statement> statements) {
 			super(statements);
 			this.handlers = handlers;
+			this.finallyBlk = finallyBlk;
 		}
 		
 		public List<CatchBlock> handlers() {
 			return handlers;
 		}
+		
+		public Block finaly() {
+			return finallyBlk;
+		}
 	}
-	public static class Assignment implements SimpleStatement {
+	public static class Assignment implements SimpleStatement, Expression {
 		private Expression lhs,rhs;
 		public Assignment(Expression lhs, Expression rhs) {
 			

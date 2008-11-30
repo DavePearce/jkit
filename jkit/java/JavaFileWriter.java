@@ -260,6 +260,11 @@ public class JavaFileWriter {
 			}	
 			 write("}");
 		}
+		
+		if(block.finaly() != null) {
+			write(" finally");
+			writeBlock(block.finaly());
+		}
 	}
 	
 	protected void writeVarDef(JavaFile.VarDef def) {				
@@ -475,6 +480,11 @@ public class JavaFileWriter {
 			writeArrayIndex((JavaFile.ArrayIndex) e);
 		} else if(e instanceof JavaFile.Deref) {
 			writeDeref((JavaFile.Deref) e);
+		} else if(e instanceof JavaFile.Assignment) {
+			// force brackets
+			write("(");
+			writeAssignment((JavaFile.Assignment) e);
+			write(")");
 		} else {
 			throw new RuntimeException("Invalid expression encountered: "
 					+ e.getClass());

@@ -443,7 +443,8 @@ public class JavaFileReader2 {
 	protected JavaFile.Statement parseTry(Tree block) {
 		ArrayList<JavaFile.Statement> stmts = new ArrayList<JavaFile.Statement>();
 		ArrayList<JavaFile.CatchBlock> handlers = new ArrayList<JavaFile.CatchBlock>();
-
+		JavaFile.Block finallyBlk = null;
+		
 		// === ITERATE STATEMENTS ===
 		Tree child = block.getChild(0);
 		for (int i = 0; i != child.getChildCount(); ++i) {
@@ -453,17 +454,23 @@ public class JavaFileReader2 {
 
 		for (int i = 1; i < block.getChildCount(); ++i) {
 			ArrayList<JavaFile.Statement> cbstmts = new ArrayList<JavaFile.Statement>();			
-			Tree cb = block.getChild(i).getChild(0);
-			JavaFile.Type type = parseType(cb.getChild(0));
-			Tree cbb = block.getChild(i).getChild(1);
-			for (int j = 0; j != cbb.getChildCount(); ++j) {
-				JavaFile.Statement stmt = parseStatement(cbb.getChild(j));
-				cbstmts.add(stmt);
+			child = block.getChild(i);
+			
+			if(child.getType() == CATCH) {
+				Tree cb = child.getChild(0);			
+				JavaFile.Type type = parseType(cb.getChild(0));
+				Tree cbb = child.getChild(1);
+				for (int j = 0; j != cbb.getChildCount(); ++j) {
+					JavaFile.Statement stmt = parseStatement(cbb.getChild(j));
+					cbstmts.add(stmt);
+				}
+				handlers.add(new JavaFile.CatchBlock(type,cb.getChild(1).getText(),cbstmts));
+			} else {
+				finallyBlk = parseBlock(child.getChild(0));				
 			}
-			handlers.add(new JavaFile.CatchBlock(type,cb.getChild(1).getText(),cbstmts));
 		}
 		
-		return new JavaFile.TryCatchBlock(handlers,stmts);
+		return new JavaFile.TryCatchBlock(handlers,finallyBlk,stmts);
 	}
 	
 	
@@ -512,7 +519,7 @@ public class JavaFileReader2 {
      * @param stmt
      * @return
      */
-	protected JavaFile.Statement parseAssign(Tree stmt) {
+	protected JavaFile.Assignment parseAssign(Tree stmt) {
 		JavaFile.Expression lhs = parseExpression(stmt.getChild(0));
 		JavaFile.Expression rhs = parseExpression(stmt.getChild(1));
 		return new JavaFile.Assignment(lhs,rhs);
@@ -784,6 +791,7 @@ public class JavaFileReader2 {
 			case TERNOP :
 				return parseTernOp(expr);
 			case ASSIGN :
+				return parseAssign(expr);
 			default :
 				throw new SyntaxError("Unknown expression encountered ("
 						+ expr.getText() + ")", expr.getLine(), expr
@@ -1272,7 +1280,7 @@ public class JavaFileReader2 {
 			}
 			ArrayList<JavaFile.Type> genArgs = new ArrayList<JavaFile.Type>();
 			for (int j = 0; j != child.getChildCount(); ++j) {
-				genArgs.add(parseType(child.getChild(i)));
+				genArgs.add(parseType(child.getChild(j)));
 			}
 			components.add(new Pair(text, genArgs));
 		}

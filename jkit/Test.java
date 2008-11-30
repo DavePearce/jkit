@@ -43,6 +43,9 @@ public class Test {
 				System.err.println(args[i] + ":" + e.line() + ": "
 						+ e.getMessage());
 				e.printStackTrace(System.err);
+			} catch(Exception e) {
+				System.err.println("Error: " + args[i]);
+				e.printStackTrace(System.err);
 			}
 		}
 	}
