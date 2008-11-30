@@ -1024,9 +1024,15 @@ public class JavaFileReader2 {
 			else if (Character.isDigit(tmp.charAt(1)))  {
 				int octal_val = Integer.parseInt(tmp.substring(1,tmp.length()),8);
 				v = new JavaFile.CharVal((char) octal_val);
+			} else if(tmp.startsWith("\\u")) {
+				// including "slash u"
+				String unicode = tmp.substring(2, 6);
+				v = new JavaFile.CharVal((char) Integer.parseInt(unicode, 16));						
 			} else {
-				throw new RuntimeException(
-						"Unable to parse character constant: " + tmp);
+				throw new SyntaxError(
+						"Unable to parse character constant: " + tmp,
+						expr.getLine(), expr.getCharPositionInLine(),
+						expr.getText().length());
 			}
 		} 
 		return v;
@@ -1136,10 +1142,24 @@ public class JavaFileReader2 {
 							// hex
 							break;
 						default :
-							// TODO: handle octal, catchall
-							throw new RuntimeException(
-									"unknown escaped character, not implemented: "
-											+ v.charAt(i + 1) + " (" + v + ")");
+							if (Character.isDigit(v.charAt(i+1)))  {
+								// Handle octal escape codes here.
+								//
+								// Octal escapes are upto 4 characters long. So,
+                                // we need to figure out exactly how long!
+								for(len=1;len!=4;++len) {
+									if(!Character.isDigit(v.charAt(i+len))) {
+										break;
+									}
+								}								
+								int octal_val = Integer.parseInt(v.substring(i+1,i+len),8);
+								replace = (char) octal_val;								
+							} else {
+								throw new SyntaxError(
+									"Unable to escape character: " + v,
+									expr.getLine(), expr.getCharPositionInLine(),
+									expr.getText().length());					
+							}
 					}
 					v = v.substring(0, i) + replace + v.substring(i + len);
 				}
