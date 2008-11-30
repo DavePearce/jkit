@@ -212,10 +212,12 @@ public abstract class BackwardAnalysis<T extends FlowSet> {
 
 		for (Triple<Point, Point, Expr> curTriple : cfg) {
 			if (cfg.from(curTriple.second()).isEmpty()) {
-				out.add(curTriple.second());
+				Point p = curTriple.second();
+				if(p.statement() != null){
+				out.add(p);
+				}
 			}
 		}
-		
 		return out;
 	}
 }
