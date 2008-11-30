@@ -424,6 +424,7 @@ public class JavaFileWriter {
 				write("default:");
 				write("\n");
 			} else {
+				write("case ");
 				writeExpression(c.condition());
 				write(":");
 				write("\n");
