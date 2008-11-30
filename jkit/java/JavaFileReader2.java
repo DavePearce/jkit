@@ -1148,7 +1148,7 @@ public class JavaFileReader2 {
 								// Octal escapes are upto 4 characters long. So,
                                 // we need to figure out exactly how long!
 								for(len=1;len!=4;++len) {
-									if(!Character.isDigit(v.charAt(i+len))) {
+									if((i+len) >= v.length() || !Character.isDigit(v.charAt(i+len))) {
 										break;
 									}
 								}								
