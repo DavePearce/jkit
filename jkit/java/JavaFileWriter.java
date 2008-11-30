@@ -367,7 +367,7 @@ public class JavaFileWriter {
 	protected void writeFor(JavaFile.For stmt) {
 		
 		write("for(");
-		if(stmt.increment() != null) {
+		if(stmt.initialiser() != null) {
 			writeStatement(stmt.initialiser());
 		} 
 		
