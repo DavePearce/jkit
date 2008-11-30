@@ -500,14 +500,29 @@ public class JavaFileWriter {
 			// array initialiser
 			List<JavaFile.Expression> ps = e.parameters();
 			
-			boolean firstTime=true;
-			for(String c : e.type().components()) {
-				if(!firstTime) {
+			boolean firstTime = true;
+			for (Pair<String, List<JavaFile.Type>> c : e.type().components()) {
+				if (!firstTime) {
 					write(".");
 				} else {
-					firstTime=false;
+					firstTime = false;
 				}
-				write(c);			
+				write(c.first());
+				
+				if (!c.second().isEmpty()) {
+					// yes, there are generic parameters as well.
+					write("<");
+					firstTime = true;
+					for (JavaFile.Type t : c.second()) {
+						if (!firstTime) {
+							write(",");
+						} else {
+							firstTime = false;
+						}
+						writeType(t);
+					}
+					write(">");
+				}
 			}
 			
 			for(int i=0;i!=e.type().dims();++i) {
@@ -709,13 +724,27 @@ public class JavaFileWriter {
 	
 	protected void writeType(JavaFile.Type t) {
 		boolean firstTime=true;
-		for(String c : t.components()) {
+		for(Pair<String,List<JavaFile.Type>> c : t.components()) {
 			if(!firstTime) {
 				write(".");
 			} else {
 				firstTime=false;
 			}
-			write(c);			
+			write(c.first());			
+			if (!c.second().isEmpty()) {
+				// yes, there are generic parameters as well.
+				write("<");
+				firstTime = true;
+				for (JavaFile.Type d : c.second()) {
+					if (!firstTime) {
+						write(",");
+					} else {
+						firstTime = false;
+					}
+					writeType(d);
+				}
+				write(">");
+			}
 		}
 		for(int i=0;i!=t.dims();++i) {
 			write("[]");

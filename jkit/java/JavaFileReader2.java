@@ -1247,9 +1247,9 @@ public class JavaFileReader2 {
 		return mods;
 	}
 	
-	protected static JavaFile.Type parseType(Tree type) {		
+	protected static JavaFile.Type parseType(Tree type) {
 		assert type.getType() == TYPE;
-						
+
 		// === ARRAY DIMENSIONS ===
 
 		int dims = 0;
@@ -1260,16 +1260,21 @@ public class JavaFileReader2 {
 			}
 			dims++;
 		}
-		
+
 		// === COMPONENTS ===
 
-		ArrayList<String> components = new ArrayList<String>();
-		for(int i=0;i!=(type.getChildCount()-dims);++i) {
-			String text = type.getChild(i).getText();
-			if(text.equals("VOID")) {
+		ArrayList<Pair<String, List<JavaFile.Type>>> components = new ArrayList<Pair<String, List<JavaFile.Type>>>();
+		for (int i = 0; i != (type.getChildCount() - dims); ++i) {
+			Tree child = type.getChild(i);
+			String text = child.getText();
+			if (text.equals("VOID")) {
 				text = "void"; // hack!
 			}
-			components.add(text);
+			ArrayList<JavaFile.Type> genArgs = new ArrayList<JavaFile.Type>();
+			for (int j = 0; j != child.getChildCount(); ++j) {
+				genArgs.add(parseType(child.getChild(i)));
+			}
+			components.add(new Pair(text, genArgs));
 		}
 		
 		return new JavaFile.Type(components,dims);

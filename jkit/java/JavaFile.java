@@ -63,8 +63,8 @@ public class JavaFile {
 
 	public static class Type {
 		private int dims;
-		private List<String> components;
-		public Type(List<String> components, int dims) {
+		private List<Pair<String, List<Type>>> components;
+		public Type(List<Pair<String, List<Type>>> components, int dims) {
 			this.components = components;
 			this.dims = dims;
 		}
@@ -74,10 +74,10 @@ public class JavaFile {
 		public void setDims(int dims) {
 			this.dims = dims;
 		}
-		public List<String> components() {
+		public List<Pair<String, List<Type>>> components() {
 			return components;
 		}
-		public void setComponents(List<String> components) {
+		public void setComponents(List<Pair<String, List<Type>>> components) {
 			this.components = components;
 		}
 	}
