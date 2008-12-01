@@ -92,21 +92,39 @@ public class JavaFile {
 	}
 	
 	public static class WildcardType implements Type {
-		private ClassType lowerBound;
-		private ClassType upperBound;
+		private Type lowerBound;
+		private Type upperBound;
 
-		public WildcardType(ClassType lowerBound, ClassType upperBound) {
+		public WildcardType(Type lowerBound, Type upperBound) {
 			this.lowerBound = lowerBound;
 			this.upperBound = upperBound;
 		}
 
-		public ClassType upperBound() {
+		public Type upperBound() {
 			return upperBound;
 		}
 
-		public ClassType lowerBound() {
+		public Type lowerBound() {
 			return lowerBound;
 		}
+	}
+	
+	public static class VariableType implements Type {
+		private String variable;
+		private List<Type> lowerBounds;
+
+		public VariableType(String variable, List<Type> lowerBounds) {
+			this.variable = variable;
+			this.lowerBounds = lowerBounds;			
+		}
+
+		public String variable() {
+			return variable;
+		}
+
+		public List<Type> lowerBounds() {
+			return lowerBounds;
+		}		
 	}
 	
 	// ====================================================
@@ -191,17 +209,21 @@ public class JavaFile {
 		private int modifiers;
 		private String name;
 		private Type returnType;
-		private List<Pair<String,Type>> parameters;		
+		private List<Pair<String,Type>> parameters;
+		private List<VariableType> typeParameters;
 		private List<ClassType> exceptions;
 		private JavaFile.Block block;
 
 		public Method(int modifiers, String name, Type returnType,
-				List<Pair<String,Type>> parameters,List<ClassType> exceptions,
+				List<Pair<String,Type>> parameters,
+				List<VariableType> typeParameters,
+				List<ClassType> exceptions,
 				JavaFile.Block block) {
 			this.modifiers = modifiers;
 			this.returnType = returnType;
 			this.name = name;
 			this.parameters = parameters;
+			this.typeParameters = typeParameters;
 			this.exceptions = exceptions;
 			this.block = block;
 		}
@@ -222,6 +244,10 @@ public class JavaFile {
 			return parameters;
 		}
 		
+		public List<VariableType> typeParameters() {
+			return typeParameters;
+		}
+		
 		public List<ClassType> exceptions() {
 			return exceptions;
 		}
@@ -239,9 +265,10 @@ public class JavaFile {
 	 */
 	public static class Constructor extends Method {
 		public Constructor(int modifiers, String name,
-				List<Pair<String, Type>> parameters, List<ClassType> exceptions,
+				List<Pair<String, Type>> parameters, List<VariableType> typeParameters,
+				List<ClassType> exceptions,
 				JavaFile.Block block) {
-			super(modifiers, name, null, parameters, exceptions, block);
+			super(modifiers, name, null, parameters, typeParameters, exceptions, block);
 		}
 	}
 	

@@ -46,7 +46,7 @@ public class JavaFileWriter {
 			write("class ");
 		}
 		
-		write(decl.name());
+		write(decl.name());				
 		
 		if(decl.isInterface()) {
 			if(decl.interfaces().size() > 0) {
@@ -97,6 +97,15 @@ public class JavaFileWriter {
 	protected void writeMethod(JavaFile.Method m) {
 		write("\n");
 		writeModifiers(m.modifiers());
+		
+		if(m.typeParameters().size() > 0) {
+			write("<");
+			for(JavaFile.Type t : m.typeParameters()) {
+				writeType(t);
+			}
+			write("> ");
+		}
+		
 		if(m.returnType() != null) {
 			// can be null if this method is actually a constructor.
 			writeType(m.returnType());
@@ -724,6 +733,8 @@ public class JavaFileWriter {
 			writeArrayType((JavaFile.ArrayType)t);
 		} else if(t instanceof JavaFile.WildcardType) {
 			writeWildcardType((JavaFile.WildcardType)t);
+		} else if(t instanceof JavaFile.VariableType) {
+			writeVariableType((JavaFile.VariableType)t);
 		}
 	}
 	
@@ -740,8 +751,24 @@ public class JavaFileWriter {
 			writeType(wt.lowerBound());
 		} else if(wt.upperBound() != null) {
 			write(" super ");
-			writeType(wt.lowerBound());
+			writeType(wt.upperBound());
 		}		
+	}
+	
+	protected void writeVariableType(JavaFile.VariableType vt) {
+		write(vt.variable());
+		
+		if(vt.lowerBounds().size() > 0) {
+			write(" extends ");
+			boolean firstTime = true;
+			for(JavaFile.Type lb : vt.lowerBounds()) {
+				if(!firstTime) {
+					write(" & ");
+				}
+				firstTime=false;
+				writeType(lb);	
+			}			
+		} 	
 	}
 	
 	protected void writeClassType(JavaFile.ClassType t) {		

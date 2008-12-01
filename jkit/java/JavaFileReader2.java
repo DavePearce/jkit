@@ -241,9 +241,9 @@ public class JavaFileReader2 {
 
 		// === TYPE ARGUMENTS ===
 
-		ArrayList<JavaFile.Type> typeArgs = new ArrayList<JavaFile.Type>();
+		ArrayList<JavaFile.VariableType> typeArgs = new ArrayList<JavaFile.VariableType>();
 		while (method.getChild(idx).getType() == TYPE_PARAMETER) {			
-			typeArgs.add(parseType(method.getChild(idx++)));			
+			typeArgs.add(parseVariableType(method.getChild(idx++)));			
 		}
 
 		String name = method.getChild(idx++).getText();
@@ -297,9 +297,9 @@ public class JavaFileReader2 {
 		}
 		
 		if(returnType == null) {
-			return new JavaFile.Constructor(modifiers,name,params,exceptions,block);
+			return new JavaFile.Constructor(modifiers,name,params,typeArgs,exceptions,block);
 		} else {
-			return new JavaFile.Method(modifiers,name,returnType,params,exceptions,block);
+			return new JavaFile.Method(modifiers,name,returnType,params,typeArgs,exceptions,block);
 		}
 	}
 	
@@ -1278,7 +1278,6 @@ public class JavaFileReader2 {
 	
 	protected static JavaFile.Type parseType(Tree type) {
 		assert type.getType() == TYPE;
-
 		
 		if(type.getChild(0).getText().equals("?")) {
 			// special case to deal with wildcards
@@ -1325,12 +1324,8 @@ public class JavaFileReader2 {
 				ArrayList<JavaFile.Type> genArgs = new ArrayList<JavaFile.Type>();				
 
 				for (int j = 0; j != child.getChildCount(); ++j) {
-					Tree childchild = child.getChild(j);
-					if(childchild.getType() == EXTENDS) {
-						// this is a lower bound, not a generic argument.
-					} else {
-						genArgs.add(parseType(childchild));
-					}
+					Tree childchild = child.getChild(j);				
+					genArgs.add(parseType(childchild));
 				}
 
 				components.add(new Pair<String,List<JavaFile.Type>>(text, genArgs));				
@@ -1374,6 +1369,20 @@ public class JavaFileReader2 {
 		}
 				
 		return new JavaFile.ClassType(components);			
+	}
+	
+	protected static JavaFile.VariableType parseVariableType(Tree type) {
+		Tree child = type.getChild(0);
+		String text = child.getText();
+		List<JavaFile.Type> lowerBounds = new ArrayList<JavaFile.Type>();
+		
+		if(child.getChildCount() > 0 && child.getChild(0).getType() == EXTENDS) {
+			Tree childchild = child.getChild(0);			
+			for(int i=0;i!= childchild.getChildCount();++i) {
+				lowerBounds.add(parseType(childchild.getChild(i)));
+			}
+		}
+		return new JavaFile.VariableType(text,lowerBounds);
 	}
 	
 	public static void printTree(Tree ast, int n, int line) {
