@@ -178,6 +178,7 @@ tokens {
  LABINOP; // left-associative binary operator
  NONE; // to indicate the absence of a type (for constructors)
  STATIC;
+ ENUM_CONSTANT;
 }
 
 @lexer::members {
@@ -245,19 +246,19 @@ bound
 	;
 
 enumDeclaration
-	:	ENUM Identifier ('implements' typeList)? enumBody
+	:	ENUM Identifier ('implements' typeList)? enumBody -> Identifier ^(IMPLEMENTS typeList)? enumBody?
 	;
 	
 enumBody
-	:	'{' enumConstants? ','? enumBodyDeclarations? '}'
+	:	'{' enumConstants? ','? enumBodyDeclarations? '}' -> enumConstants?
 	;
 
 enumConstants
-	:	enumConstant (',' enumConstant)*
+	:	enumConstant (',' enumConstant)* -> enumConstant+
 	;
 	
 enumConstant
-	:	annotations? Identifier (arguments)? (classBody)? ->annotations? Identifier (arguments?)? (classBody?)?
+	:	annotations? Identifier (arguments)? (classBody)? -> ^(ENUM_CONSTANT annotations? Identifier (arguments?)? (classBody?)?)
 	;
 	
 enumBodyDeclarations
@@ -297,6 +298,7 @@ classBodyDeclaration
     	|	Identifier constructorDeclaratorRest -> ^(METHOD ^(MODIFIERS modifier*)? Identifier ^(NONE) constructorDeclaratorRest)
     	|	interfaceDeclaration -> ^(INTERFACE ^(MODIFIERS modifier*)? interfaceDeclaration)
     	|	classDeclaration -> ^(CLASS ^(MODIFIERS modifier*)? classDeclaration)
+    	|   enumDeclaration -> ^(ENUM ^(MODIFIERS modifier*)? enumDeclaration)
     )
 	;
 	
