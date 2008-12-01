@@ -1280,7 +1280,7 @@ public class JavaFileReader2 {
 		assert type.getType() == TYPE;
 
 		
-		if(type.getChild(0).getText() == "?") {
+		if(type.getChild(0).getText().equals("?")) {
 			// special case to deal with wildcards
 			Tree child = type.getChild(0);
 			
@@ -1313,7 +1313,7 @@ public class JavaFileReader2 {
 			}
 			
 			// 
-			ArrayList<Pair<String, List<JavaFile.ClassType>>> components = new ArrayList<Pair<String, List<JavaFile.ClassType>>>();
+			ArrayList<Pair<String, List<JavaFile.Type>>> components = new ArrayList<Pair<String, List<JavaFile.Type>>>();
 
 			for (int i = 0; i != (type.getChildCount()-dims); ++i) {
 				Tree child = type.getChild(i);
@@ -1322,18 +1322,18 @@ public class JavaFileReader2 {
 				if (text.equals("VOID")) {
 					text = "void"; // hack!
 				}
-				ArrayList<JavaFile.ClassType> genArgs = new ArrayList<JavaFile.ClassType>();				
+				ArrayList<JavaFile.Type> genArgs = new ArrayList<JavaFile.Type>();				
 
 				for (int j = 0; j != child.getChildCount(); ++j) {
 					Tree childchild = child.getChild(j);
 					if(childchild.getType() == EXTENDS) {
 						// this is a lower bound, not a generic argument.
 					} else {
-						genArgs.add(parseClassType(childchild));
+						genArgs.add(parseType(childchild));
 					}
 				}
 
-				components.add(new Pair(text, genArgs));				
+				components.add(new Pair<String,List<JavaFile.Type>>(text, genArgs));				
 			}
 			
 			JavaFile.Type r = new JavaFile.ClassType(components);
@@ -1350,7 +1350,7 @@ public class JavaFileReader2 {
 
 		// === COMPONENTS ===
 
-		ArrayList<Pair<String, List<JavaFile.ClassType>>> components = new ArrayList<Pair<String, List<JavaFile.ClassType>>>();
+		ArrayList<Pair<String, List<JavaFile.Type>>> components = new ArrayList<Pair<String, List<JavaFile.Type>>>();
 
 		for (int i = 0; i != type.getChildCount(); ++i) {
 			Tree child = type.getChild(i);
@@ -1359,18 +1359,18 @@ public class JavaFileReader2 {
 			if (text.equals("VOID")) {
 				text = "void"; // hack!
 			}
-			ArrayList<JavaFile.ClassType> genArgs = new ArrayList<JavaFile.ClassType>();				
+			ArrayList<JavaFile.Type> genArgs = new ArrayList<JavaFile.Type>();				
 
 			for (int j = 0; j != child.getChildCount(); ++j) {
 				Tree childchild = child.getChild(j);
 				if(childchild.getType() == EXTENDS) {
 					// this is a lower bound, not a generic argument.
 				} else {
-					genArgs.add(parseClassType(childchild));
+					genArgs.add(parseType(childchild));
 				}
 			}
 
-			components.add(new Pair(text, genArgs));				
+			components.add(new Pair<String,List<JavaFile.Type>>(text, genArgs));				
 		}
 				
 		return new JavaFile.ClassType(components);			

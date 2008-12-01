@@ -734,6 +734,7 @@ public class JavaFileWriter {
 	
 	protected void writeWildcardType(JavaFile.WildcardType wt) {
 		write("?");
+		
 		if(wt.lowerBound() != null) {
 			write(" extends ");
 			writeType(wt.lowerBound());
@@ -745,7 +746,7 @@ public class JavaFileWriter {
 	
 	protected void writeClassType(JavaFile.ClassType t) {		
 		boolean firstTime=true;
-		for(Pair<String,List<JavaFile.ClassType>> c : t.components()) {
+		for(Pair<String,List<JavaFile.Type>> c : t.components()) {
 			if(!firstTime) {
 				write(".");
 			} else {
@@ -756,7 +757,7 @@ public class JavaFileWriter {
 				// yes, there are generic parameters as well.
 				write("<");
 				firstTime = true;
-				for (JavaFile.ClassType d : c.second()) {
+				for (JavaFile.Type d : c.second()) {
 					if (!firstTime) {
 						write(",");
 					} else {

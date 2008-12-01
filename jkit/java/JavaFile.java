@@ -77,16 +77,16 @@ public class JavaFile {
 	
 	public static class ClassType implements Type {
 		
-		private List<Pair<String, List<ClassType>>> components;
+		private List<Pair<String, List<Type>>> components;
 		public ClassType(
-				List<Pair<String, List<ClassType>>> components) {
+				List<Pair<String, List<Type>>> components) {
 			this.components = components;			
 		}		
-		public List<Pair<String, List<ClassType>>> components() {
+		public List<Pair<String, List<Type>>> components() {
 			return components;
 		}
 		public void setComponents(
-				List<Pair<String, List<ClassType>>> components) {
+				List<Pair<String, List<Type>>> components) {
 			this.components = components;
 		}
 	}
