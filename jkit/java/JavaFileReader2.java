@@ -75,7 +75,7 @@ public class JavaFileReader2 {
 
 		try {
 			ast = (Tree) parser.compilationUnit().getTree();
-			printTree(ast, 0, -1);
+			// printTree(ast, 0, -1);
 		} catch (RecognitionException e) {
 		}
 	}
@@ -280,7 +280,7 @@ public class JavaFileReader2 {
 			JavaFile.Type t = parseType(c.getChild(1));
 			String n = c.getChild(2).getText();
 
-			for (int i = 2; i < c.getChildCount(); i = i + 2) {
+			for (int i = 3; i < c.getChildCount(); i = i + 2) {
 				t = new JavaFile.ArrayType(t);
 			}
 
