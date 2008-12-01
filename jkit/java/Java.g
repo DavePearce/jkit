@@ -328,6 +328,7 @@ interfaceBodyDeclaration
 		| 'void' Identifier voidInterfaceMethodDeclaratorRest -> ^(METHOD ^(MODIFIERS modifier*)? Identifier ^(TYPE VOID) voidInterfaceMethodDeclaratorRest?)
 		| interfaceDeclaration -> ^(INTERFACE ^(MODIFIERS modifier*)? interfaceDeclaration) 
 		| classDeclaration -> ^(CLASS ^(MODIFIERS modifier*)? classDeclaration)
+    	|   enumDeclaration -> ^(ENUM ^(MODIFIERS modifier*)? enumDeclaration)
 		)
 	|	';'!
 	;	
