@@ -63,43 +63,48 @@ public class JavaFile {
 
 	public static interface Type {}
 	
-	public static class ReferenceType implements Type {
-		private int dims;
-		private List<Pair<String, List<ReferenceType>>> components;
-		public ReferenceType(
-				List<Pair<String, List<ReferenceType>>> components, int dims) {
-			this.components = components;
-			this.dims = dims;
+	public static class ArrayType implements Type {		
+		private Type element;
+		
+		public ArrayType(Type element) {
+			this.element = element;			
 		}
-		public int dims() {
-			return dims;
-		}
-		public void setDims(int dims) {
-			this.dims = dims;
-		}
-		public List<Pair<String, List<ReferenceType>>> components() {
+		
+		public Type element() {
+			return element;
+		}		
+	}
+	
+	public static class ClassType implements Type {
+		
+		private List<Pair<String, List<ClassType>>> components;
+		public ClassType(
+				List<Pair<String, List<ClassType>>> components) {
+			this.components = components;			
+		}		
+		public List<Pair<String, List<ClassType>>> components() {
 			return components;
 		}
 		public void setComponents(
-				List<Pair<String, List<ReferenceType>>> components) {
+				List<Pair<String, List<ClassType>>> components) {
 			this.components = components;
 		}
 	}
 	
 	public static class WildcardType implements Type {
-		private ReferenceType lowerBound;
-		private ReferenceType upperBound;
+		private ClassType lowerBound;
+		private ClassType upperBound;
 
-		public WildcardType(ReferenceType lowerBound, ReferenceType upperBound) {
+		public WildcardType(ClassType lowerBound, ClassType upperBound) {
 			this.lowerBound = lowerBound;
 			this.upperBound = upperBound;
 		}
 
-		public ReferenceType upperBound() {
+		public ClassType upperBound() {
 			return upperBound;
 		}
 
-		public ReferenceType lowerBound() {
+		public ClassType lowerBound() {
 			return lowerBound;
 		}
 	}
@@ -115,12 +120,12 @@ public class JavaFile {
 	public static class Clazz extends Declaration {
 		private int modifiers;
 		private String name;
-		private ReferenceType superclass;
-		private List<ReferenceType> interfaces;
+		private ClassType superclass;
+		private List<ClassType> interfaces;
 		private List<Declaration> declarations;		
 				
-		public Clazz(int modifiers, String name, ReferenceType superclass,
-				List<ReferenceType> interfaces, List<Declaration> declarations) {
+		public Clazz(int modifiers, String name, ClassType superclass,
+				List<ClassType> interfaces, List<Declaration> declarations) {
 			this.modifiers = modifiers;
 			this.name = name;
 			this.superclass = superclass;
@@ -136,11 +141,11 @@ public class JavaFile {
 			return name;
 		}
 
-		public ReferenceType superclass() {
+		public ClassType superclass() {
 			return superclass;
 		}
 		
-		public List<ReferenceType> interfaces() {
+		public List<ClassType> interfaces() {
 			return interfaces;
 		}
 		
@@ -187,11 +192,11 @@ public class JavaFile {
 		private String name;
 		private Type returnType;
 		private List<Pair<String,Type>> parameters;		
-		private List<ReferenceType> exceptions;
+		private List<ClassType> exceptions;
 		private JavaFile.Block block;
 
 		public Method(int modifiers, String name, Type returnType,
-				List<Pair<String,Type>> parameters,List<ReferenceType> exceptions,
+				List<Pair<String,Type>> parameters,List<ClassType> exceptions,
 				JavaFile.Block block) {
 			this.modifiers = modifiers;
 			this.returnType = returnType;
@@ -217,7 +222,7 @@ public class JavaFile {
 			return parameters;
 		}
 		
-		public List<ReferenceType> exceptions() {
+		public List<ClassType> exceptions() {
 			return exceptions;
 		}
 		
@@ -234,7 +239,7 @@ public class JavaFile {
 	 */
 	public static class Constructor extends Method {
 		public Constructor(int modifiers, String name,
-				List<Pair<String, Type>> parameters, List<ReferenceType> exceptions,
+				List<Pair<String, Type>> parameters, List<ClassType> exceptions,
 				JavaFile.Block block) {
 			super(modifiers, name, null, parameters, exceptions, block);
 		}
@@ -326,15 +331,15 @@ public class JavaFile {
 	}
 	
 	public static class CatchBlock extends Block {
-		private ReferenceType type;
+		private ClassType type;
 		private String variable;
-		public CatchBlock(ReferenceType type, String variable, List<Statement> statements) {
+		public CatchBlock(ClassType type, String variable, List<Statement> statements) {
 			super(statements);
 			this.type = type;
 			this.variable = variable;
 		}
 		
-		public ReferenceType type() {
+		public ClassType type() {
 			return type;
 		}
 		
@@ -1222,13 +1227,13 @@ public class JavaFile {
 	 * 
 	 */
 	public static class ClassVal extends Value {
-		private ReferenceType classType;
+		private ClassType classType;
 
-		public ClassVal(ReferenceType type) {			
+		public ClassVal(ClassType type) {			
 			this.classType = type;
 		}
 		
-		public ReferenceType value() {
+		public ClassType value() {
 			return classType;
 		}
 	}

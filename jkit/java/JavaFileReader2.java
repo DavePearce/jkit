@@ -183,21 +183,21 @@ public class JavaFileReader2 {
 		// ====================== PARSE EXTENDS CLAUSE ========================
 		// ====================================================================
 
-		JavaFile.ReferenceType superclass = null;
+		JavaFile.ClassType superclass = null;
 		if (idx < decl.getChildCount() && decl.getChild(idx).getType() == EXTENDS) {
-			superclass = parseReferenceType(decl.getChild(idx++).getChild(0));
+			superclass = parseClassType(decl.getChild(idx++).getChild(0));
 		}
 		
 		// ====================================================================
 		// ===================== PARSE IMPLEMENTS CLAUSE ======================
 		// ====================================================================
 
-		ArrayList<JavaFile.ReferenceType> interfaces = new ArrayList<JavaFile.ReferenceType>();
+		ArrayList<JavaFile.ClassType> interfaces = new ArrayList<JavaFile.ClassType>();
 		if (idx < decl.getChildCount()
 				&& decl.getChild(idx).getType() == IMPLEMENTS) {
 			Tree ch = decl.getChild(idx++);
 			for (int i = 0; i != ch.getChildCount(); ++i) {
-				interfaces.add(parseReferenceType(ch.getChild(i)));
+				interfaces.add(parseClassType(ch.getChild(i)));
 			}
 		}
 		
@@ -267,7 +267,7 @@ public class JavaFileReader2 {
 			String n = c.getChild(1).getText();
 
 			for (int i = 2; i < c.getChildCount(); i = i + 2) {
-				t.setDims(t.dims()+1);
+				t = new JavaFile.ArrayType(t);
 			}
 
 			params.add(new Pair(n,t));
@@ -276,13 +276,13 @@ public class JavaFileReader2 {
 		
 		// === THROWS CLAUSE ===
 
-		ArrayList<JavaFile.ReferenceType> exceptions = new ArrayList<JavaFile.ReferenceType>();
+		ArrayList<JavaFile.ClassType> exceptions = new ArrayList<JavaFile.ClassType>();
 
 		if (idx < method.getChildCount()
 				&& method.getChild(idx).getType() == THROWS) {
 			Tree tt = method.getChild(idx++);
 			for (int i = 0; i != tt.getChildCount(); ++i) {
-				exceptions.add(parseReferenceType(tt.getChild(i)));
+				exceptions.add(parseClassType(tt.getChild(i)));
 			}
 		}
 
@@ -329,7 +329,7 @@ public class JavaFileReader2 {
 			int aindx = 0;
 			while (aindx < child.getChildCount()
 					&& child.getChild(aindx).getText().equals("[")) {
-				type.setDims(type.dims()+1);
+				type = new JavaFile.ArrayType(type);				
 				aindx++;
 			}
 			if (aindx < child.getChildCount()) {
@@ -459,7 +459,7 @@ public class JavaFileReader2 {
 			
 			if(child.getType() == CATCH) {
 				Tree cb = child.getChild(0);			
-				JavaFile.ReferenceType type = parseReferenceType(cb.getChild(0));
+				JavaFile.ClassType type = parseClassType(cb.getChild(0));
 				Tree cbb = child.getChild(1);
 				for (int j = 0; j != cbb.getChildCount(); ++j) {
 					JavaFile.Statement stmt = parseStatement(cbb.getChild(j));
@@ -501,7 +501,7 @@ public class JavaFileReader2 {
 			for (int j = 0; j < nameTree.getChildCount(); j = j + 1) {
 				Tree am = nameTree.getChild(j);
 				if (am.getText().equals("[")) {
-					myType.setDims(myType.dims() + 1);
+					myType = new JavaFile.ArrayType(myType);
 				} else {
 					// If we get here, then we've hit an initialiser
 					myInitialiser = parseExpression(am);
@@ -927,7 +927,7 @@ public class JavaFileReader2 {
 	}
 	
 	public JavaFile.Expression parseGetClass(Tree expr) {		
-		return new JavaFile.ClassVal(parseReferenceType(expr.getChild(0)));
+		return new JavaFile.ClassVal(parseClassType(expr.getChild(0)));
 	}
 	
 	protected JavaFile.Expression parseTernOp(Tree expr) {
@@ -1284,65 +1284,96 @@ public class JavaFileReader2 {
 			// special case to deal with wildcards
 			Tree child = type.getChild(0);
 			
-			JavaFile.ReferenceType lowerBound = null;
-			JavaFile.ReferenceType upperBound = null;
+			JavaFile.ClassType lowerBound = null;
+			JavaFile.ClassType upperBound = null;
 			
 			if (child.getChildCount() > 0
 					&& child.getChild(0).getType() == EXTENDS) {			
-				lowerBound = parseReferenceType(child.getChild(0).getChild(0));
+				lowerBound = parseClassType(child.getChild(0).getChild(0));
 				
 			} else if (child.getChildCount() > 0
 					&& child.getChild(0).getType() == SUPER) {
 				
-				upperBound = parseReferenceType(child.getChild(0).getChild(0));				
+				upperBound = parseClassType(child.getChild(0).getChild(0));				
 			}
 			// Ok, all done!
 			return new JavaFile.WildcardType(lowerBound, upperBound);					
 		} else {
-			// check primitives here.
-			return parseReferenceType(type);
+			
+			// === ARRAY DIMENSIONS ===
+
+			int dims = 0;
+
+			// TODO: Extend this to support annotations in array reference position
+			for (int i = type.getChildCount() - 1; i > 0; --i) {
+				if (!type.getChild(i).getText().equals("[")) {
+					break;
+				}
+				dims++;
+			}
+			
+			// 
+			ArrayList<Pair<String, List<JavaFile.ClassType>>> components = new ArrayList<Pair<String, List<JavaFile.ClassType>>>();
+
+			for (int i = 0; i != (type.getChildCount()-dims); ++i) {
+				Tree child = type.getChild(i);
+
+				String text = child.getText();
+				if (text.equals("VOID")) {
+					text = "void"; // hack!
+				}
+				ArrayList<JavaFile.ClassType> genArgs = new ArrayList<JavaFile.ClassType>();				
+
+				for (int j = 0; j != child.getChildCount(); ++j) {
+					Tree childchild = child.getChild(j);
+					if(childchild.getType() == EXTENDS) {
+						// this is a lower bound, not a generic argument.
+					} else {
+						genArgs.add(parseClassType(childchild));
+					}
+				}
+
+				components.add(new Pair(text, genArgs));				
+			}
+			
+			JavaFile.Type r = new JavaFile.ClassType(components);
+			
+			for(int i=0;i!=dims;++i) {
+				r = new JavaFile.ArrayType(r);
+			}
+			return r;	
 		}
 	}
 	
-	protected static JavaFile.ReferenceType parseReferenceType(Tree type) {
+	protected static JavaFile.ClassType parseClassType(Tree type) {
 		assert type.getType() == TYPE;
-		// === ARRAY DIMENSIONS ===
-
-		int dims = 0;
-
-		for (int i = type.getChildCount() - 1; i > 0; --i) {
-			if (!type.getChild(i).getText().equals("[")) {
-				break;
-			}
-			dims++;
-		}
 
 		// === COMPONENTS ===
 
-		ArrayList<Pair<String, List<JavaFile.ReferenceType>>> components = new ArrayList<Pair<String, List<JavaFile.ReferenceType>>>();
+		ArrayList<Pair<String, List<JavaFile.ClassType>>> components = new ArrayList<Pair<String, List<JavaFile.ClassType>>>();
 
-		for (int i = 0; i != (type.getChildCount() - dims); ++i) {
+		for (int i = 0; i != type.getChildCount(); ++i) {
 			Tree child = type.getChild(i);
 
 			String text = child.getText();
 			if (text.equals("VOID")) {
 				text = "void"; // hack!
 			}
-			ArrayList<JavaFile.ReferenceType> genArgs = new ArrayList<JavaFile.ReferenceType>();				
+			ArrayList<JavaFile.ClassType> genArgs = new ArrayList<JavaFile.ClassType>();				
 
 			for (int j = 0; j != child.getChildCount(); ++j) {
 				Tree childchild = child.getChild(j);
 				if(childchild.getType() == EXTENDS) {
 					// this is a lower bound, not a generic argument.
 				} else {
-					genArgs.add(parseReferenceType(childchild));
+					genArgs.add(parseClassType(childchild));
 				}
 			}
 
 			components.add(new Pair(text, genArgs));				
 		}
-
-		return new JavaFile.ReferenceType(components,dims);			
+				
+		return new JavaFile.ClassType(components);			
 	}
 	
 	public static void printTree(Tree ast, int n, int line) {
