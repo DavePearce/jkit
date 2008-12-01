@@ -879,7 +879,7 @@ primary
 	;
 
 innerCreator
-	:	Identifier classCreatorRest -> Identifier classCreatorRest?
+	:	Identifier classCreatorRest -> ^(TYPE Identifier) classCreatorRest?
 	;
 
 classCreatorRest
@@ -906,7 +906,7 @@ superSuffix
 	
 selector
 	:	'.' 'super' arguments -> ^(INVOKE 'super' arguments?)
-	|   '.' 'new' (nonWildcardTypeArguments)? innerCreator -> ^(NEW innerCreator)// FIXME: WHAT DOES THIS RULE DO?
+	|   '.' 'new' (nonWildcardTypeArguments)? innerCreator -> ^(NEW innerCreator) 
 	| 	'.' nonWildcardTypeArguments explicitGenericInvocationSuffix -> ^(INVOKE ^(TYPE_PARAMETER nonWildcardTypeArguments) explicitGenericInvocationSuffix)
 	|	'.' Identifier 
 		(

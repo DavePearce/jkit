@@ -994,12 +994,32 @@ public class JavaFile {
      */
 	public static class New implements Expression, SimpleStatement {
 		private Type type;
+		private Expression context;
 		private List<Expression> parameters;
 		private List<Declaration> declarations;
 
-		public New(Type type, List<Expression> parameters,
+		/**
+         * Create an AST node represent a new statement or expression.
+         * 
+         * @param type -
+         *            the type being constructed e.g. java.lang.String or
+         *            Integer[]
+         * @param Context -
+         *            the context in which the type is constructed. This is only
+         *            required for non-static classes which are created outside
+         *            of their enclosing class's scope. For example, i = o.new
+         *            Inner();
+         * @param parameters -
+         *            The parameters (if any) supplied to the constructor.
+         * @param declarations -
+         *            the list of field/method/class declarations contained in
+         *            this statement. These arise only when constructing a new
+         *            anonymous class.
+         */
+		public New(Type type, Expression context, List<Expression> parameters,
 				List<Declaration> declarations) {
 			this.type = type;
+			this.context = context;
 			this.parameters = parameters;
 			this.declarations = declarations;
 		}
@@ -1008,12 +1028,32 @@ public class JavaFile {
 			return type;
 		}
 
+		public void setType(Type type) {
+			this.type = type;
+		}
+		
 		public List<Expression> parameters() {
 			return parameters;
 		}
 
+		public void setParameters(List<Expression> parameters) {
+			this.parameters = parameters;
+		}
+		
 		public List<Declaration> declarations() {
 			return declarations;
+		}
+		
+		public void setDeclarations(List<Declaration> declarations) {
+			this.declarations = declarations;
+		}
+		
+		public Expression context() {
+			return context;
+		}
+		
+		public void setContext(Expression context) {
+			this.context = context;
 		}
 	}
 	

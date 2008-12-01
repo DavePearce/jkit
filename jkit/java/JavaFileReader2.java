@@ -882,8 +882,12 @@ public class JavaFileReader2 {
 							new ArrayList<JavaFile.Type>());
 					break;
 				}
-				case NEW :
-					throw new RuntimeException("Selector new construction case not supported (yet)");					
+				case NEW : {
+					JavaFile.New tmp = parseNew(child);
+					tmp.setContext(expr);
+					expr = tmp;
+					break;
+				}
 				default :
 					throw new SyntaxError("Unknown expression encountered.",
 							selector.getLine(), selector
@@ -920,7 +924,7 @@ public class JavaFileReader2 {
 
 		List<JavaFile.Expression> params = parseExpressionList(1, end, expr);
 
-		return new JavaFile.New(parseType(expr.getChild(0)), params,
+		return new JavaFile.New(parseType(expr.getChild(0)), null, params,
 				declarations);
 	}
 	

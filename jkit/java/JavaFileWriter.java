@@ -565,6 +565,10 @@ public class JavaFileWriter {
 	}
 	
 	protected void writeNew(JavaFile.New e) {
+		if(e.context() != null) {
+			writeExpressionWithBracketsIfNecessary(e.context());
+			write(".");
+		}
 		write("new ");
 		if(e.type() instanceof JavaFile.ArrayType) {
 			// array initialiser
