@@ -217,12 +217,16 @@ public class JavaFile {
 		private String name;
 		private Type returnType;
 		private List<Pair<String,Type>> parameters;
+		private boolean varargs;
 		private List<VariableType> typeParameters;
 		private List<ClassType> exceptions;
 		private JavaFile.Block block;
 
-		public Method(int modifiers, String name, Type returnType,
+		public Method(int modifiers, 
+				String name, 
+				Type returnType,
 				List<Pair<String,Type>> parameters,
+				boolean varargs,
 				List<VariableType> typeParameters,
 				List<ClassType> exceptions,
 				JavaFile.Block block) {
@@ -230,6 +234,7 @@ public class JavaFile {
 			this.returnType = returnType;
 			this.name = name;
 			this.parameters = parameters;
+			this.varargs = varargs;
 			this.typeParameters = typeParameters;
 			this.exceptions = exceptions;
 			this.block = block;
@@ -249,6 +254,16 @@ public class JavaFile {
 		
 		public List<Pair<String,Type>> parameters() {
 			return parameters;
+		}
+		
+		/**
+         * Indicates whether or not this method accept a variable-length
+         * argument list.
+         * 
+         * @return
+         */
+		public boolean varargs() {
+			return varargs;
 		}
 		
 		public List<VariableType> typeParameters() {
@@ -272,10 +287,12 @@ public class JavaFile {
 	 */
 	public static class Constructor extends Method {
 		public Constructor(int modifiers, String name,
-				List<Pair<String, Type>> parameters, List<VariableType> typeParameters,
+				List<Pair<String, Type>> parameters, boolean varargs,
+				List<VariableType> typeParameters,
 				List<ClassType> exceptions,
 				JavaFile.Block block) {
-			super(modifiers, name, null, parameters, typeParameters, exceptions, block);
+			super(modifiers, name, null, parameters, varargs, typeParameters,
+					exceptions, block);
 		}
 	}
 	
@@ -648,6 +665,7 @@ public class JavaFile {
 			
 			this.modifiers = modifiers;
 			this.definitions = definitions;
+			this.type = type;
 		}
 						
 		/**

@@ -4,6 +4,7 @@ import java.io.*;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
+import jkit.bytecode.ClassFileReader;
 import jkit.compiler.ClassTable;
 import jkit.compiler.SyntaxError;
 import jkit.java.JavaFileReader.Block;
@@ -74,7 +75,7 @@ public class JavaFileReader2 {
 
 		try {
 			ast = (Tree) parser.compilationUnit().getTree();
-			// printTree(ast, 0, -1);
+			printTree(ast, 0, -1);
 		} catch (RecognitionException e) {
 		}
 	}
@@ -280,6 +281,18 @@ public class JavaFileReader2 {
 			idx++;
 		}
 		
+		// === VAR ARGS ===
+		boolean varargs = false;
+		if (idx < method.getChildCount()
+				&& method.getChild(idx).getType() == VARARGS) {
+			Tree c = method.getChild(idx);
+			JavaFile.Type t = parseType(c.getChild(0));
+			String n = c.getChild(1).getText();
+			params.add(new Pair(n,t));			
+			idx++;
+			varargs = true;
+		}
+		
 		// === THROWS CLAUSE ===
 
 		ArrayList<JavaFile.ClassType> exceptions = new ArrayList<JavaFile.ClassType>();
@@ -303,9 +316,9 @@ public class JavaFileReader2 {
 		}
 		
 		if(returnType == null) {
-			return new JavaFile.Constructor(modifiers,name,params,typeArgs,exceptions,block);
+			return new JavaFile.Constructor(modifiers,name,params,varargs,typeArgs,exceptions,block);
 		} else {
-			return new JavaFile.Method(modifiers,name,returnType,params,typeArgs,exceptions,block);
+			return new JavaFile.Method(modifiers,name,returnType,params,varargs,typeArgs,exceptions,block);
 		}
 	}
 	
@@ -514,8 +527,7 @@ public class JavaFileReader2 {
 					myInitialiser = parseExpression(am);
 				}
 			}
-
-			vardefs.add(new Triple(myName, dims, myInitialiser));
+			vardefs.add(new Triple<String, Integer, JavaFile.Expression>(myName, dims, myInitialiser));
 		}
 
 		return new JavaFile.VarDef(modifiers, type, vardefs);

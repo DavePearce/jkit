@@ -50,7 +50,12 @@ public class JavaFileWriter {
 		
 		if(decl.typeParameters().size() > 0) {
 			write("<");
+			boolean firstTime = true;
 			for(JavaFile.VariableType vt : decl.typeParameters()) {
+				if(!firstTime) {
+					write(",");
+				}
+				firstTime=false;
 				writeVariableType(vt);
 			}
 			write(">");
@@ -108,7 +113,12 @@ public class JavaFileWriter {
 		
 		if(m.typeParameters().size() > 0) {
 			write("<");
+			boolean firstTime=true;
 			for(JavaFile.Type t : m.typeParameters()) {
+				if(!firstTime) {
+					write(",");
+				}
+				firstTime=false;
 				writeType(t);
 			}
 			write("> ");
@@ -122,19 +132,26 @@ public class JavaFileWriter {
 		write(m.name());
 		write("(");
 		boolean firstTime=true;
+		int va_count = 1; // to detect varargs 
 		for(Pair<String,JavaFile.Type> p : m.parameters()) {
 			if(!firstTime) {
 				write(", ");				
 			}
 			firstTime=false;
 			writeType(p.second());
+			
+			if(m.varargs() && va_count == m.parameters().size()) {
+				write("...");
+			}
+			
 			write(" ");
 			write(p.first());
+			va_count++;
 		}
 		write(")");
 		
 		if(m.exceptions().size() > 0) {
-			write("throws ");
+			write(" throws ");
 			firstTime=true;
 			for(JavaFile.ClassType t : m.exceptions()) {
 				if(!firstTime) {
@@ -287,7 +304,7 @@ public class JavaFileWriter {
 	protected void writeVarDef(JavaFile.VarDef def) {
 		writeModifiers(def.modifiers());
 		writeType(def.type());
-		
+		write(" ");
 		boolean firstTime=true;
 		for(Triple<String,Integer,JavaFile.Expression> d : def.definitions()) {
 			if(!firstTime) {
