@@ -491,33 +491,34 @@ public class JavaFileReader2 {
      * @return
      */
 	protected JavaFile.Statement parseVarDef(Tree stmt) {
-		ArrayList<Triple<String, JavaFile.Type, JavaFile.Expression>> vardefs = new ArrayList<Triple<String, JavaFile.Type, JavaFile.Expression>>();
+		ArrayList<Triple<String, Integer, JavaFile.Expression>> vardefs = new ArrayList<Triple<String, Integer, JavaFile.Expression>>();
 
 		// === MODIFIERS ===
 		int modifiers = parseModifiers(stmt.getChild(0));
 
-		// === NAME(S) ===
-
+		JavaFile.Type type = parseType(stmt.getChild(1));
+		
 		for (int i = 2; i < stmt.getChildCount(); i = i + 1) {
 			Tree nameTree = stmt.getChild(i);
 			String myName = nameTree.getText();
-			JavaFile.Type myType = parseType(stmt.getChild(1));
+			
 			JavaFile.Expression myInitialiser = null;
 			// Parse array type modifiers (if there are any)
+			int dims = 0;
 			for (int j = 0; j < nameTree.getChildCount(); j = j + 1) {
 				Tree am = nameTree.getChild(j);
 				if (am.getText().equals("[")) {
-					myType = new JavaFile.ArrayType(myType);
+					dims ++;
 				} else {
 					// If we get here, then we've hit an initialiser
 					myInitialiser = parseExpression(am);
 				}
 			}
 
-			vardefs.add(new Triple(myName, myType, myInitialiser));
+			vardefs.add(new Triple(myName, dims, myInitialiser));
 		}
 
-		return new JavaFile.VarDef(modifiers, vardefs);
+		return new JavaFile.VarDef(modifiers, type, vardefs);
 	}
 	
 	/**

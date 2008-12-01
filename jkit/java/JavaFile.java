@@ -641,9 +641,10 @@ public class JavaFile {
      */
 	public static class VarDef implements SimpleStatement {		
 		private int modifiers;
-		private List<Triple<String,Type,Expression> > definitions;
+		private Type type;
+		private List<Triple<String,Integer,Expression> > definitions;
 		
-		public VarDef(int modifiers, List<Triple<String,Type,Expression> > definitions) {
+		public VarDef(int modifiers, Type type, List<Triple<String,Integer,Expression> > definitions) {
 			
 			this.modifiers = modifiers;
 			this.definitions = definitions;
@@ -664,13 +665,11 @@ public class JavaFile {
 		 */
 		public int modifiers() { return modifiers; }		
 		
-		public void setDefinitions(List<Triple<String,Type,Expression>> e) {
-			definitions = e;
-		}
-		
-		public List<Triple<String,Type,Expression> > definitions() {
+		public List<Triple<String,Integer,Expression> > definitions() {
 			return definitions;
 		}
+		
+		public Type type() { return type; }
 	}
 	
 	public static class Case {

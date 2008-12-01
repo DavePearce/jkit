@@ -284,13 +284,20 @@ public class JavaFileWriter {
 		}
 	}
 	
-	protected void writeVarDef(JavaFile.VarDef def) {				
-		for(Triple<String,JavaFile.Type,JavaFile.Expression> d : def.definitions()) {			
-			
-			writeModifiers(def.modifiers());
-			writeType(d.second());
-			write(" ");
+	protected void writeVarDef(JavaFile.VarDef def) {
+		writeModifiers(def.modifiers());
+		writeType(def.type());
+		
+		boolean firstTime=true;
+		for(Triple<String,Integer,JavaFile.Expression> d : def.definitions()) {
+			if(!firstTime) {
+				write(", ");				
+			}
+			firstTime=false;
 			write(d.first());
+			for(int i=0;i!=d.second();++i) {
+				write("[]");
+			}
 			if(d.third() != null) {
 				write(" = ");
 				writeExpression(d.third());
@@ -842,7 +849,7 @@ public class JavaFileWriter {
 				output.write("\\\"");
 				break;
 			case '\\':
-				output.write("\\");
+				output.write("\\\\");
 				break;
 			case '\'':		
 				output.write("\\'");
