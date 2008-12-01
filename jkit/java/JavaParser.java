@@ -1,4 +1,4 @@
-// $ANTLR 3.1 jkit/java/Java.g 2008-12-02 10:20:03
+// $ANTLR 3.1 jkit/java/Java.g 2008-12-02 10:31:53
 
 package jkit.java;
 import jkit.compiler.SyntaxError;
@@ -8159,7 +8159,7 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "formalParameterDecls"
-    // jkit/java/Java.g:484:1: formalParameterDecls : ( variableModifier )* type ( variableDeclaratorId ( ',' formalParameterDecls )? -> ^( PARAMETER ^( MODIFIERS ( variableModifier )* ) type variableDeclaratorId ) ( formalParameterDecls )? | '...' variableDeclaratorId -> ^( VARARGS type variableDeclaratorId ) ) ;
+    // jkit/java/Java.g:484:1: formalParameterDecls : ( variableModifier )* type ( variableDeclaratorId ( ',' formalParameterDecls )? -> ^( PARAMETER ^( MODIFIERS ( variableModifier )* ) type variableDeclaratorId ) ( formalParameterDecls )? | '...' variableDeclaratorId -> ^( VARARGS ^( MODIFIERS ( variableModifier )* ) type variableDeclaratorId ) ) ;
     public final JavaParser.formalParameterDecls_return formalParameterDecls() throws RecognitionException {
         JavaParser.formalParameterDecls_return retval = new JavaParser.formalParameterDecls_return();
         retval.start = input.LT(1);
@@ -8189,8 +8189,8 @@ public class JavaParser extends Parser {
         RewriteRuleSubtreeStream stream_type=new RewriteRuleSubtreeStream(adaptor,"rule type");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 54) ) { return retval; }
-            // jkit/java/Java.g:485:2: ( ( variableModifier )* type ( variableDeclaratorId ( ',' formalParameterDecls )? -> ^( PARAMETER ^( MODIFIERS ( variableModifier )* ) type variableDeclaratorId ) ( formalParameterDecls )? | '...' variableDeclaratorId -> ^( VARARGS type variableDeclaratorId ) ) )
-            // jkit/java/Java.g:485:4: ( variableModifier )* type ( variableDeclaratorId ( ',' formalParameterDecls )? -> ^( PARAMETER ^( MODIFIERS ( variableModifier )* ) type variableDeclaratorId ) ( formalParameterDecls )? | '...' variableDeclaratorId -> ^( VARARGS type variableDeclaratorId ) )
+            // jkit/java/Java.g:485:2: ( ( variableModifier )* type ( variableDeclaratorId ( ',' formalParameterDecls )? -> ^( PARAMETER ^( MODIFIERS ( variableModifier )* ) type variableDeclaratorId ) ( formalParameterDecls )? | '...' variableDeclaratorId -> ^( VARARGS ^( MODIFIERS ( variableModifier )* ) type variableDeclaratorId ) ) )
+            // jkit/java/Java.g:485:4: ( variableModifier )* type ( variableDeclaratorId ( ',' formalParameterDecls )? -> ^( PARAMETER ^( MODIFIERS ( variableModifier )* ) type variableDeclaratorId ) ( formalParameterDecls )? | '...' variableDeclaratorId -> ^( VARARGS ^( MODIFIERS ( variableModifier )* ) type variableDeclaratorId ) )
             {
             // jkit/java/Java.g:485:4: ( variableModifier )*
             loop75:
@@ -8228,7 +8228,7 @@ public class JavaParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_type.add(type220.getTree());
-            // jkit/java/Java.g:485:27: ( variableDeclaratorId ( ',' formalParameterDecls )? -> ^( PARAMETER ^( MODIFIERS ( variableModifier )* ) type variableDeclaratorId ) ( formalParameterDecls )? | '...' variableDeclaratorId -> ^( VARARGS type variableDeclaratorId ) )
+            // jkit/java/Java.g:485:27: ( variableDeclaratorId ( ',' formalParameterDecls )? -> ^( PARAMETER ^( MODIFIERS ( variableModifier )* ) type variableDeclaratorId ) ( formalParameterDecls )? | '...' variableDeclaratorId -> ^( VARARGS ^( MODIFIERS ( variableModifier )* ) type variableDeclaratorId ) )
             int alt77=2;
             int LA77_0 = input.LA(1);
 
@@ -8347,7 +8347,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: type, variableDeclaratorId
+                    // elements: variableModifier, variableDeclaratorId, type
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -8357,13 +8357,27 @@ public class JavaParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
                     root_0 = (Object)adaptor.nil();
-                    // 487:38: -> ^( VARARGS type variableDeclaratorId )
+                    // 487:38: -> ^( VARARGS ^( MODIFIERS ( variableModifier )* ) type variableDeclaratorId )
                     {
-                        // jkit/java/Java.g:487:41: ^( VARARGS type variableDeclaratorId )
+                        // jkit/java/Java.g:487:41: ^( VARARGS ^( MODIFIERS ( variableModifier )* ) type variableDeclaratorId )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(VARARGS, "VARARGS"), root_1);
 
+                        // jkit/java/Java.g:487:51: ^( MODIFIERS ( variableModifier )* )
+                        {
+                        Object root_2 = (Object)adaptor.nil();
+                        root_2 = (Object)adaptor.becomeRoot((Object)adaptor.create(MODIFIERS, "MODIFIERS"), root_2);
+
+                        // jkit/java/Java.g:487:63: ( variableModifier )*
+                        while ( stream_variableModifier.hasNext() ) {
+                            adaptor.addChild(root_2, stream_variableModifier.nextTree());
+
+                        }
+                        stream_variableModifier.reset();
+
+                        adaptor.addChild(root_1, root_2);
+                        }
                         adaptor.addChild(root_1, stream_type.nextTree());
                         adaptor.addChild(root_1, stream_variableDeclaratorId.nextTree());
 
@@ -8422,7 +8436,7 @@ public class JavaParser extends Parser {
             // jkit/java/Java.g:493:2: ( block -> block )
             // jkit/java/Java.g:493:4: block
             {
-            pushFollow(FOLLOW_block_in_methodBody2912);
+            pushFollow(FOLLOW_block_in_methodBody2919);
             block226=block();
 
             state._fsp--;
@@ -8496,7 +8510,7 @@ public class JavaParser extends Parser {
             // jkit/java/Java.g:497:2: (i+= Identifier ( '.' i+= Identifier )* -> ( $i)+ )
             // jkit/java/Java.g:497:4: i+= Identifier ( '.' i+= Identifier )*
             {
-            i=(Token)match(input,Identifier,FOLLOW_Identifier_in_qualifiedName2930); if (state.failed) return retval; 
+            i=(Token)match(input,Identifier,FOLLOW_Identifier_in_qualifiedName2937); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_Identifier.add(i);
 
             if (list_i==null) list_i=new ArrayList();
@@ -8517,10 +8531,10 @@ public class JavaParser extends Parser {
             	case 1 :
             	    // jkit/java/Java.g:497:19: '.' i+= Identifier
             	    {
-            	    char_literal227=(Token)match(input,119,FOLLOW_119_in_qualifiedName2933); if (state.failed) return retval; 
+            	    char_literal227=(Token)match(input,119,FOLLOW_119_in_qualifiedName2940); if (state.failed) return retval; 
             	    if ( state.backtracking==0 ) stream_119.add(char_literal227);
 
-            	    i=(Token)match(input,Identifier,FOLLOW_Identifier_in_qualifiedName2937); if (state.failed) return retval; 
+            	    i=(Token)match(input,Identifier,FOLLOW_Identifier_in_qualifiedName2944); if (state.failed) return retval; 
             	    if ( state.backtracking==0 ) stream_Identifier.add(i);
 
             	    if (list_i==null) list_i=new ArrayList();
@@ -8666,7 +8680,7 @@ public class JavaParser extends Parser {
                 case 1 :
                     // jkit/java/Java.g:501:6: integerLiteral
                     {
-                    pushFollow(FOLLOW_integerLiteral_in_literal2960);
+                    pushFollow(FOLLOW_integerLiteral_in_literal2967);
                     integerLiteral228=integerLiteral();
 
                     state._fsp--;
@@ -8705,7 +8719,7 @@ public class JavaParser extends Parser {
                 case 2 :
                     // jkit/java/Java.g:502:9: FloatingPointLiteral
                     {
-                    FloatingPointLiteral229=(Token)match(input,FloatingPointLiteral,FOLLOW_FloatingPointLiteral_in_literal2978); if (state.failed) return retval; 
+                    FloatingPointLiteral229=(Token)match(input,FloatingPointLiteral,FOLLOW_FloatingPointLiteral_in_literal2985); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_FloatingPointLiteral.add(FloatingPointLiteral229);
 
 
@@ -8741,7 +8755,7 @@ public class JavaParser extends Parser {
                 case 3 :
                     // jkit/java/Java.g:503:9: CharacterLiteral
                     {
-                    CharacterLiteral230=(Token)match(input,CharacterLiteral,FOLLOW_CharacterLiteral_in_literal2996); if (state.failed) return retval; 
+                    CharacterLiteral230=(Token)match(input,CharacterLiteral,FOLLOW_CharacterLiteral_in_literal3003); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_CharacterLiteral.add(CharacterLiteral230);
 
 
@@ -8777,7 +8791,7 @@ public class JavaParser extends Parser {
                 case 4 :
                     // jkit/java/Java.g:504:9: StringLiteral
                     {
-                    StringLiteral231=(Token)match(input,StringLiteral,FOLLOW_StringLiteral_in_literal3014); if (state.failed) return retval; 
+                    StringLiteral231=(Token)match(input,StringLiteral,FOLLOW_StringLiteral_in_literal3021); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_StringLiteral.add(StringLiteral231);
 
 
@@ -8813,7 +8827,7 @@ public class JavaParser extends Parser {
                 case 5 :
                     // jkit/java/Java.g:505:9: booleanLiteral
                     {
-                    pushFollow(FOLLOW_booleanLiteral_in_literal3032);
+                    pushFollow(FOLLOW_booleanLiteral_in_literal3039);
                     booleanLiteral232=booleanLiteral();
 
                     state._fsp--;
@@ -8852,7 +8866,7 @@ public class JavaParser extends Parser {
                 case 6 :
                     // jkit/java/Java.g:506:9: 'null'
                     {
-                    string_literal233=(Token)match(input,159,FOLLOW_159_in_literal3050); if (state.failed) return retval; 
+                    string_literal233=(Token)match(input,159,FOLLOW_159_in_literal3057); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_159.add(string_literal233);
 
 
@@ -9054,7 +9068,7 @@ public class JavaParser extends Parser {
             	case 1 :
             	    // jkit/java/Java.g:0:0: annotation
             	    {
-            	    pushFollow(FOLLOW_annotation_in_annotations3138);
+            	    pushFollow(FOLLOW_annotation_in_annotations3145);
             	    annotation236=annotation();
 
             	    state._fsp--;
@@ -9130,10 +9144,10 @@ public class JavaParser extends Parser {
             // jkit/java/Java.g:527:2: ( '@' annotationName ( '(' ( elementValuePairs )? ')' )? -> ^( ANNOTATION annotationName ) )
             // jkit/java/Java.g:527:4: '@' annotationName ( '(' ( elementValuePairs )? ')' )?
             {
-            char_literal237=(Token)match(input,162,FOLLOW_162_in_annotation3150); if (state.failed) return retval; 
+            char_literal237=(Token)match(input,162,FOLLOW_162_in_annotation3157); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_162.add(char_literal237);
 
-            pushFollow(FOLLOW_annotationName_in_annotation3152);
+            pushFollow(FOLLOW_annotationName_in_annotation3159);
             annotationName238=annotationName();
 
             state._fsp--;
@@ -9146,7 +9160,7 @@ public class JavaParser extends Parser {
                 case 1 :
                     // jkit/java/Java.g:527:24: '(' ( elementValuePairs )? ')'
                     {
-                    char_literal239=(Token)match(input,156,FOLLOW_156_in_annotation3155); if (state.failed) return retval; 
+                    char_literal239=(Token)match(input,156,FOLLOW_156_in_annotation3162); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_156.add(char_literal239);
 
                     // jkit/java/Java.g:527:28: ( elementValuePairs )?
@@ -9156,7 +9170,7 @@ public class JavaParser extends Parser {
                         case 1 :
                             // jkit/java/Java.g:0:0: elementValuePairs
                             {
-                            pushFollow(FOLLOW_elementValuePairs_in_annotation3157);
+                            pushFollow(FOLLOW_elementValuePairs_in_annotation3164);
                             elementValuePairs240=elementValuePairs();
 
                             state._fsp--;
@@ -9168,7 +9182,7 @@ public class JavaParser extends Parser {
 
                     }
 
-                    char_literal241=(Token)match(input,157,FOLLOW_157_in_annotation3160); if (state.failed) return retval; 
+                    char_literal241=(Token)match(input,157,FOLLOW_157_in_annotation3167); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_157.add(char_literal241);
 
 
@@ -9254,7 +9268,7 @@ public class JavaParser extends Parser {
             {
             root_0 = (Object)adaptor.nil();
 
-            Identifier242=(Token)match(input,Identifier,FOLLOW_Identifier_in_annotationName3182); if (state.failed) return retval;
+            Identifier242=(Token)match(input,Identifier,FOLLOW_Identifier_in_annotationName3189); if (state.failed) return retval;
             if ( state.backtracking==0 ) {
             Identifier242_tree = (Object)adaptor.create(Identifier242);
             adaptor.addChild(root_0, Identifier242_tree);
@@ -9268,12 +9282,12 @@ public class JavaParser extends Parser {
             	case 1 :
             	    // jkit/java/Java.g:531:16: '.' Identifier
             	    {
-            	    char_literal243=(Token)match(input,119,FOLLOW_119_in_annotationName3185); if (state.failed) return retval;
+            	    char_literal243=(Token)match(input,119,FOLLOW_119_in_annotationName3192); if (state.failed) return retval;
             	    if ( state.backtracking==0 ) {
             	    char_literal243_tree = (Object)adaptor.create(char_literal243);
             	    adaptor.addChild(root_0, char_literal243_tree);
             	    }
-            	    Identifier244=(Token)match(input,Identifier,FOLLOW_Identifier_in_annotationName3187); if (state.failed) return retval;
+            	    Identifier244=(Token)match(input,Identifier,FOLLOW_Identifier_in_annotationName3194); if (state.failed) return retval;
             	    if ( state.backtracking==0 ) {
             	    Identifier244_tree = (Object)adaptor.create(Identifier244);
             	    adaptor.addChild(root_0, Identifier244_tree);
@@ -9337,7 +9351,7 @@ public class JavaParser extends Parser {
             {
             root_0 = (Object)adaptor.nil();
 
-            pushFollow(FOLLOW_elementValuePair_in_elementValuePairs3201);
+            pushFollow(FOLLOW_elementValuePair_in_elementValuePairs3208);
             elementValuePair245=elementValuePair();
 
             state._fsp--;
@@ -9358,12 +9372,12 @@ public class JavaParser extends Parser {
             	case 1 :
             	    // jkit/java/Java.g:535:22: ',' elementValuePair
             	    {
-            	    char_literal246=(Token)match(input,125,FOLLOW_125_in_elementValuePairs3204); if (state.failed) return retval;
+            	    char_literal246=(Token)match(input,125,FOLLOW_125_in_elementValuePairs3211); if (state.failed) return retval;
             	    if ( state.backtracking==0 ) {
             	    char_literal246_tree = (Object)adaptor.create(char_literal246);
             	    adaptor.addChild(root_0, char_literal246_tree);
             	    }
-            	    pushFollow(FOLLOW_elementValuePair_in_elementValuePairs3206);
+            	    pushFollow(FOLLOW_elementValuePair_in_elementValuePairs3213);
             	    elementValuePair247=elementValuePair();
 
             	    state._fsp--;
@@ -9435,12 +9449,12 @@ public class JavaParser extends Parser {
                 case 1 :
                     // jkit/java/Java.g:539:5: Identifier '='
                     {
-                    Identifier248=(Token)match(input,Identifier,FOLLOW_Identifier_in_elementValuePair3221); if (state.failed) return retval;
+                    Identifier248=(Token)match(input,Identifier,FOLLOW_Identifier_in_elementValuePair3228); if (state.failed) return retval;
                     if ( state.backtracking==0 ) {
                     Identifier248_tree = (Object)adaptor.create(Identifier248);
                     adaptor.addChild(root_0, Identifier248_tree);
                     }
-                    char_literal249=(Token)match(input,135,FOLLOW_135_in_elementValuePair3223); if (state.failed) return retval;
+                    char_literal249=(Token)match(input,135,FOLLOW_135_in_elementValuePair3230); if (state.failed) return retval;
                     if ( state.backtracking==0 ) {
                     char_literal249_tree = (Object)adaptor.create(char_literal249);
                     adaptor.addChild(root_0, char_literal249_tree);
@@ -9451,7 +9465,7 @@ public class JavaParser extends Parser {
 
             }
 
-            pushFollow(FOLLOW_elementValue_in_elementValuePair3227);
+            pushFollow(FOLLOW_elementValue_in_elementValuePair3234);
             elementValue250=elementValue();
 
             state._fsp--;
@@ -9511,7 +9525,7 @@ public class JavaParser extends Parser {
                     {
                     root_0 = (Object)adaptor.nil();
 
-                    pushFollow(FOLLOW_conditionalExpression_in_elementValue3239);
+                    pushFollow(FOLLOW_conditionalExpression_in_elementValue3246);
                     conditionalExpression251=conditionalExpression();
 
                     state._fsp--;
@@ -9525,7 +9539,7 @@ public class JavaParser extends Parser {
                     {
                     root_0 = (Object)adaptor.nil();
 
-                    pushFollow(FOLLOW_annotation_in_elementValue3246);
+                    pushFollow(FOLLOW_annotation_in_elementValue3253);
                     annotation252=annotation();
 
                     state._fsp--;
@@ -9539,7 +9553,7 @@ public class JavaParser extends Parser {
                     {
                     root_0 = (Object)adaptor.nil();
 
-                    pushFollow(FOLLOW_elementValueArrayInitializer_in_elementValue3253);
+                    pushFollow(FOLLOW_elementValueArrayInitializer_in_elementValue3260);
                     elementValueArrayInitializer253=elementValueArrayInitializer();
 
                     state._fsp--;
@@ -9601,7 +9615,7 @@ public class JavaParser extends Parser {
             {
             root_0 = (Object)adaptor.nil();
 
-            char_literal254=(Token)match(input,128,FOLLOW_128_in_elementValueArrayInitializer3265); if (state.failed) return retval;
+            char_literal254=(Token)match(input,128,FOLLOW_128_in_elementValueArrayInitializer3272); if (state.failed) return retval;
             if ( state.backtracking==0 ) {
             char_literal254_tree = (Object)adaptor.create(char_literal254);
             adaptor.addChild(root_0, char_literal254_tree);
@@ -9613,7 +9627,7 @@ public class JavaParser extends Parser {
                 case 1 :
                     // jkit/java/Java.g:549:9: elementValue ( ',' elementValue )*
                     {
-                    pushFollow(FOLLOW_elementValue_in_elementValueArrayInitializer3268);
+                    pushFollow(FOLLOW_elementValue_in_elementValueArrayInitializer3275);
                     elementValue255=elementValue();
 
                     state._fsp--;
@@ -9634,12 +9648,12 @@ public class JavaParser extends Parser {
                     	case 1 :
                     	    // jkit/java/Java.g:549:23: ',' elementValue
                     	    {
-                    	    char_literal256=(Token)match(input,125,FOLLOW_125_in_elementValueArrayInitializer3271); if (state.failed) return retval;
+                    	    char_literal256=(Token)match(input,125,FOLLOW_125_in_elementValueArrayInitializer3278); if (state.failed) return retval;
                     	    if ( state.backtracking==0 ) {
                     	    char_literal256_tree = (Object)adaptor.create(char_literal256);
                     	    adaptor.addChild(root_0, char_literal256_tree);
                     	    }
-                    	    pushFollow(FOLLOW_elementValue_in_elementValueArrayInitializer3273);
+                    	    pushFollow(FOLLOW_elementValue_in_elementValueArrayInitializer3280);
                     	    elementValue257=elementValue();
 
                     	    state._fsp--;
@@ -9660,7 +9674,7 @@ public class JavaParser extends Parser {
 
             }
 
-            char_literal258=(Token)match(input,129,FOLLOW_129_in_elementValueArrayInitializer3280); if (state.failed) return retval;
+            char_literal258=(Token)match(input,129,FOLLOW_129_in_elementValueArrayInitializer3287); if (state.failed) return retval;
             if ( state.backtracking==0 ) {
             char_literal258_tree = (Object)adaptor.create(char_literal258);
             adaptor.addChild(root_0, char_literal258_tree);
@@ -9717,22 +9731,22 @@ public class JavaParser extends Parser {
             {
             root_0 = (Object)adaptor.nil();
 
-            char_literal259=(Token)match(input,162,FOLLOW_162_in_annotationTypeDeclaration3292); if (state.failed) return retval;
+            char_literal259=(Token)match(input,162,FOLLOW_162_in_annotationTypeDeclaration3299); if (state.failed) return retval;
             if ( state.backtracking==0 ) {
             char_literal259_tree = (Object)adaptor.create(char_literal259);
             adaptor.addChild(root_0, char_literal259_tree);
             }
-            string_literal260=(Token)match(input,130,FOLLOW_130_in_annotationTypeDeclaration3294); if (state.failed) return retval;
+            string_literal260=(Token)match(input,130,FOLLOW_130_in_annotationTypeDeclaration3301); if (state.failed) return retval;
             if ( state.backtracking==0 ) {
             string_literal260_tree = (Object)adaptor.create(string_literal260);
             adaptor.addChild(root_0, string_literal260_tree);
             }
-            Identifier261=(Token)match(input,Identifier,FOLLOW_Identifier_in_annotationTypeDeclaration3296); if (state.failed) return retval;
+            Identifier261=(Token)match(input,Identifier,FOLLOW_Identifier_in_annotationTypeDeclaration3303); if (state.failed) return retval;
             if ( state.backtracking==0 ) {
             Identifier261_tree = (Object)adaptor.create(Identifier261);
             adaptor.addChild(root_0, Identifier261_tree);
             }
-            pushFollow(FOLLOW_annotationTypeBody_in_annotationTypeDeclaration3298);
+            pushFollow(FOLLOW_annotationTypeBody_in_annotationTypeDeclaration3305);
             annotationTypeBody262=annotationTypeBody();
 
             state._fsp--;
@@ -9788,7 +9802,7 @@ public class JavaParser extends Parser {
             {
             root_0 = (Object)adaptor.nil();
 
-            char_literal263=(Token)match(input,128,FOLLOW_128_in_annotationTypeBody3310); if (state.failed) return retval;
+            char_literal263=(Token)match(input,128,FOLLOW_128_in_annotationTypeBody3317); if (state.failed) return retval;
             if ( state.backtracking==0 ) {
             char_literal263_tree = (Object)adaptor.create(char_literal263);
             adaptor.addChild(root_0, char_literal263_tree);
@@ -9800,7 +9814,7 @@ public class JavaParser extends Parser {
                 case 1 :
                     // jkit/java/Java.g:557:9: annotationTypeElementDeclarations
                     {
-                    pushFollow(FOLLOW_annotationTypeElementDeclarations_in_annotationTypeBody3313);
+                    pushFollow(FOLLOW_annotationTypeElementDeclarations_in_annotationTypeBody3320);
                     annotationTypeElementDeclarations264=annotationTypeElementDeclarations();
 
                     state._fsp--;
@@ -9812,7 +9826,7 @@ public class JavaParser extends Parser {
 
             }
 
-            char_literal265=(Token)match(input,129,FOLLOW_129_in_annotationTypeBody3317); if (state.failed) return retval;
+            char_literal265=(Token)match(input,129,FOLLOW_129_in_annotationTypeBody3324); if (state.failed) return retval;
             if ( state.backtracking==0 ) {
             char_literal265_tree = (Object)adaptor.create(char_literal265);
             adaptor.addChild(root_0, char_literal265_tree);
@@ -9868,7 +9882,7 @@ public class JavaParser extends Parser {
             // jkit/java/Java.g:561:4: ( annotationTypeElementDeclaration )
             // jkit/java/Java.g:561:5: annotationTypeElementDeclaration
             {
-            pushFollow(FOLLOW_annotationTypeElementDeclaration_in_annotationTypeElementDeclarations3330);
+            pushFollow(FOLLOW_annotationTypeElementDeclaration_in_annotationTypeElementDeclarations3337);
             annotationTypeElementDeclaration266=annotationTypeElementDeclaration();
 
             state._fsp--;
@@ -9886,7 +9900,7 @@ public class JavaParser extends Parser {
             	case 1 :
             	    // jkit/java/Java.g:561:40: annotationTypeElementDeclaration
             	    {
-            	    pushFollow(FOLLOW_annotationTypeElementDeclaration_in_annotationTypeElementDeclarations3334);
+            	    pushFollow(FOLLOW_annotationTypeElementDeclaration_in_annotationTypeElementDeclarations3341);
             	    annotationTypeElementDeclaration267=annotationTypeElementDeclaration();
 
             	    state._fsp--;
@@ -9958,7 +9972,7 @@ public class JavaParser extends Parser {
             	case 1 :
             	    // jkit/java/Java.g:565:5: modifier
             	    {
-            	    pushFollow(FOLLOW_modifier_in_annotationTypeElementDeclaration3349);
+            	    pushFollow(FOLLOW_modifier_in_annotationTypeElementDeclaration3356);
             	    modifier268=modifier();
 
             	    state._fsp--;
@@ -9973,7 +9987,7 @@ public class JavaParser extends Parser {
                 }
             } while (true);
 
-            pushFollow(FOLLOW_annotationTypeElementRest_in_annotationTypeElementDeclaration3353);
+            pushFollow(FOLLOW_annotationTypeElementRest_in_annotationTypeElementDeclaration3360);
             annotationTypeElementRest269=annotationTypeElementRest();
 
             state._fsp--;
@@ -10115,19 +10129,19 @@ public class JavaParser extends Parser {
                     {
                     root_0 = (Object)adaptor.nil();
 
-                    pushFollow(FOLLOW_type_in_annotationTypeElementRest3365);
+                    pushFollow(FOLLOW_type_in_annotationTypeElementRest3372);
                     type270=type();
 
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) adaptor.addChild(root_0, type270.getTree());
-                    pushFollow(FOLLOW_annotationMethodOrConstantRest_in_annotationTypeElementRest3367);
+                    pushFollow(FOLLOW_annotationMethodOrConstantRest_in_annotationTypeElementRest3374);
                     annotationMethodOrConstantRest271=annotationMethodOrConstantRest();
 
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) adaptor.addChild(root_0, annotationMethodOrConstantRest271.getTree());
-                    char_literal272=(Token)match(input,116,FOLLOW_116_in_annotationTypeElementRest3369); if (state.failed) return retval;
+                    char_literal272=(Token)match(input,116,FOLLOW_116_in_annotationTypeElementRest3376); if (state.failed) return retval;
                     if ( state.backtracking==0 ) {
                     char_literal272_tree = (Object)adaptor.create(char_literal272);
                     adaptor.addChild(root_0, char_literal272_tree);
@@ -10140,7 +10154,7 @@ public class JavaParser extends Parser {
                     {
                     root_0 = (Object)adaptor.nil();
 
-                    pushFollow(FOLLOW_classDeclaration_in_annotationTypeElementRest3376);
+                    pushFollow(FOLLOW_classDeclaration_in_annotationTypeElementRest3383);
                     classDeclaration273=classDeclaration();
 
                     state._fsp--;
@@ -10153,7 +10167,7 @@ public class JavaParser extends Parser {
                         case 1 :
                             // jkit/java/Java.g:0:0: ';'
                             {
-                            char_literal274=(Token)match(input,116,FOLLOW_116_in_annotationTypeElementRest3378); if (state.failed) return retval;
+                            char_literal274=(Token)match(input,116,FOLLOW_116_in_annotationTypeElementRest3385); if (state.failed) return retval;
                             if ( state.backtracking==0 ) {
                             char_literal274_tree = (Object)adaptor.create(char_literal274);
                             adaptor.addChild(root_0, char_literal274_tree);
@@ -10172,7 +10186,7 @@ public class JavaParser extends Parser {
                     {
                     root_0 = (Object)adaptor.nil();
 
-                    pushFollow(FOLLOW_interfaceDeclaration_in_annotationTypeElementRest3386);
+                    pushFollow(FOLLOW_interfaceDeclaration_in_annotationTypeElementRest3393);
                     interfaceDeclaration275=interfaceDeclaration();
 
                     state._fsp--;
@@ -10185,7 +10199,7 @@ public class JavaParser extends Parser {
                         case 1 :
                             // jkit/java/Java.g:0:0: ';'
                             {
-                            char_literal276=(Token)match(input,116,FOLLOW_116_in_annotationTypeElementRest3388); if (state.failed) return retval;
+                            char_literal276=(Token)match(input,116,FOLLOW_116_in_annotationTypeElementRest3395); if (state.failed) return retval;
                             if ( state.backtracking==0 ) {
                             char_literal276_tree = (Object)adaptor.create(char_literal276);
                             adaptor.addChild(root_0, char_literal276_tree);
@@ -10204,7 +10218,7 @@ public class JavaParser extends Parser {
                     {
                     root_0 = (Object)adaptor.nil();
 
-                    pushFollow(FOLLOW_enumDeclaration_in_annotationTypeElementRest3396);
+                    pushFollow(FOLLOW_enumDeclaration_in_annotationTypeElementRest3403);
                     enumDeclaration277=enumDeclaration();
 
                     state._fsp--;
@@ -10217,7 +10231,7 @@ public class JavaParser extends Parser {
                         case 1 :
                             // jkit/java/Java.g:0:0: ';'
                             {
-                            char_literal278=(Token)match(input,116,FOLLOW_116_in_annotationTypeElementRest3398); if (state.failed) return retval;
+                            char_literal278=(Token)match(input,116,FOLLOW_116_in_annotationTypeElementRest3405); if (state.failed) return retval;
                             if ( state.backtracking==0 ) {
                             char_literal278_tree = (Object)adaptor.create(char_literal278);
                             adaptor.addChild(root_0, char_literal278_tree);
@@ -10236,7 +10250,7 @@ public class JavaParser extends Parser {
                     {
                     root_0 = (Object)adaptor.nil();
 
-                    pushFollow(FOLLOW_annotationTypeDeclaration_in_annotationTypeElementRest3406);
+                    pushFollow(FOLLOW_annotationTypeDeclaration_in_annotationTypeElementRest3413);
                     annotationTypeDeclaration279=annotationTypeDeclaration();
 
                     state._fsp--;
@@ -10249,7 +10263,7 @@ public class JavaParser extends Parser {
                         case 1 :
                             // jkit/java/Java.g:0:0: ';'
                             {
-                            char_literal280=(Token)match(input,116,FOLLOW_116_in_annotationTypeElementRest3408); if (state.failed) return retval;
+                            char_literal280=(Token)match(input,116,FOLLOW_116_in_annotationTypeElementRest3415); if (state.failed) return retval;
                             if ( state.backtracking==0 ) {
                             char_literal280_tree = (Object)adaptor.create(char_literal280);
                             adaptor.addChild(root_0, char_literal280_tree);
@@ -10339,7 +10353,7 @@ public class JavaParser extends Parser {
                     {
                     root_0 = (Object)adaptor.nil();
 
-                    pushFollow(FOLLOW_annotationMethodRest_in_annotationMethodOrConstantRest3421);
+                    pushFollow(FOLLOW_annotationMethodRest_in_annotationMethodOrConstantRest3428);
                     annotationMethodRest281=annotationMethodRest();
 
                     state._fsp--;
@@ -10353,7 +10367,7 @@ public class JavaParser extends Parser {
                     {
                     root_0 = (Object)adaptor.nil();
 
-                    pushFollow(FOLLOW_annotationConstantRest_in_annotationMethodOrConstantRest3428);
+                    pushFollow(FOLLOW_annotationConstantRest_in_annotationMethodOrConstantRest3435);
                     annotationConstantRest282=annotationConstantRest();
 
                     state._fsp--;
@@ -10413,17 +10427,17 @@ public class JavaParser extends Parser {
             {
             root_0 = (Object)adaptor.nil();
 
-            Identifier283=(Token)match(input,Identifier,FOLLOW_Identifier_in_annotationMethodRest3441); if (state.failed) return retval;
+            Identifier283=(Token)match(input,Identifier,FOLLOW_Identifier_in_annotationMethodRest3448); if (state.failed) return retval;
             if ( state.backtracking==0 ) {
             Identifier283_tree = (Object)adaptor.create(Identifier283);
             adaptor.addChild(root_0, Identifier283_tree);
             }
-            char_literal284=(Token)match(input,156,FOLLOW_156_in_annotationMethodRest3443); if (state.failed) return retval;
+            char_literal284=(Token)match(input,156,FOLLOW_156_in_annotationMethodRest3450); if (state.failed) return retval;
             if ( state.backtracking==0 ) {
             char_literal284_tree = (Object)adaptor.create(char_literal284);
             adaptor.addChild(root_0, char_literal284_tree);
             }
-            char_literal285=(Token)match(input,157,FOLLOW_157_in_annotationMethodRest3445); if (state.failed) return retval;
+            char_literal285=(Token)match(input,157,FOLLOW_157_in_annotationMethodRest3452); if (state.failed) return retval;
             if ( state.backtracking==0 ) {
             char_literal285_tree = (Object)adaptor.create(char_literal285);
             adaptor.addChild(root_0, char_literal285_tree);
@@ -10439,7 +10453,7 @@ public class JavaParser extends Parser {
                 case 1 :
                     // jkit/java/Java.g:582:25: defaultValue
                     {
-                    pushFollow(FOLLOW_defaultValue_in_annotationMethodRest3448);
+                    pushFollow(FOLLOW_defaultValue_in_annotationMethodRest3455);
                     defaultValue286=defaultValue();
 
                     state._fsp--;
@@ -10497,7 +10511,7 @@ public class JavaParser extends Parser {
             {
             root_0 = (Object)adaptor.nil();
 
-            pushFollow(FOLLOW_variableDeclarators_in_annotationConstantRest3465);
+            pushFollow(FOLLOW_variableDeclarators_in_annotationConstantRest3472);
             variableDeclarators287=variableDeclarators();
 
             state._fsp--;
@@ -10551,12 +10565,12 @@ public class JavaParser extends Parser {
             {
             root_0 = (Object)adaptor.nil();
 
-            string_literal288=(Token)match(input,163,FOLLOW_163_in_defaultValue3480); if (state.failed) return retval;
+            string_literal288=(Token)match(input,163,FOLLOW_163_in_defaultValue3487); if (state.failed) return retval;
             if ( state.backtracking==0 ) {
             string_literal288_tree = (Object)adaptor.create(string_literal288);
             adaptor.addChild(root_0, string_literal288_tree);
             }
-            pushFollow(FOLLOW_elementValue_in_defaultValue3482);
+            pushFollow(FOLLOW_elementValue_in_defaultValue3489);
             elementValue289=elementValue();
 
             state._fsp--;
@@ -10612,7 +10626,7 @@ public class JavaParser extends Parser {
             // jkit/java/Java.g:596:2: ( '{' ( blockStatement )* '}' -> ^( BLOCK ( blockStatement )* ) )
             // jkit/java/Java.g:596:4: '{' ( blockStatement )* '}'
             {
-            char_literal290=(Token)match(input,128,FOLLOW_128_in_block3496); if (state.failed) return retval; 
+            char_literal290=(Token)match(input,128,FOLLOW_128_in_block3503); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_128.add(char_literal290);
 
             // jkit/java/Java.g:596:8: ( blockStatement )*
@@ -10624,7 +10638,7 @@ public class JavaParser extends Parser {
             	case 1 :
             	    // jkit/java/Java.g:0:0: blockStatement
             	    {
-            	    pushFollow(FOLLOW_blockStatement_in_block3498);
+            	    pushFollow(FOLLOW_blockStatement_in_block3505);
             	    blockStatement291=blockStatement();
 
             	    state._fsp--;
@@ -10639,7 +10653,7 @@ public class JavaParser extends Parser {
                 }
             } while (true);
 
-            char_literal292=(Token)match(input,129,FOLLOW_129_in_block3501); if (state.failed) return retval; 
+            char_literal292=(Token)match(input,129,FOLLOW_129_in_block3508); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_129.add(char_literal292);
 
 
@@ -10728,7 +10742,7 @@ public class JavaParser extends Parser {
                     {
                     root_0 = (Object)adaptor.nil();
 
-                    pushFollow(FOLLOW_localVariableDeclaration_in_blockStatement3522);
+                    pushFollow(FOLLOW_localVariableDeclaration_in_blockStatement3529);
                     localVariableDeclaration293=localVariableDeclaration();
 
                     state._fsp--;
@@ -10742,7 +10756,7 @@ public class JavaParser extends Parser {
                     {
                     root_0 = (Object)adaptor.nil();
 
-                    pushFollow(FOLLOW_classOrInterfaceDeclaration_in_blockStatement3527);
+                    pushFollow(FOLLOW_classOrInterfaceDeclaration_in_blockStatement3534);
                     classOrInterfaceDeclaration294=classOrInterfaceDeclaration();
 
                     state._fsp--;
@@ -10756,7 +10770,7 @@ public class JavaParser extends Parser {
                     {
                     root_0 = (Object)adaptor.nil();
 
-                    pushFollow(FOLLOW_statement_in_blockStatement3535);
+                    pushFollow(FOLLOW_statement_in_blockStatement3542);
                     statement295=statement();
 
                     state._fsp--;
@@ -10832,7 +10846,7 @@ public class JavaParser extends Parser {
             	case 1 :
             	    // jkit/java/Java.g:0:0: variableModifier
             	    {
-            	    pushFollow(FOLLOW_variableModifier_in_localVariableDeclaration3547);
+            	    pushFollow(FOLLOW_variableModifier_in_localVariableDeclaration3554);
             	    variableModifier296=variableModifier();
 
             	    state._fsp--;
@@ -10847,25 +10861,25 @@ public class JavaParser extends Parser {
                 }
             } while (true);
 
-            pushFollow(FOLLOW_type_in_localVariableDeclaration3550);
+            pushFollow(FOLLOW_type_in_localVariableDeclaration3557);
             type297=type();
 
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_type.add(type297.getTree());
-            pushFollow(FOLLOW_variableDeclarators_in_localVariableDeclaration3552);
+            pushFollow(FOLLOW_variableDeclarators_in_localVariableDeclaration3559);
             variableDeclarators298=variableDeclarators();
 
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_variableDeclarators.add(variableDeclarators298.getTree());
-            char_literal299=(Token)match(input,116,FOLLOW_116_in_localVariableDeclaration3554); if (state.failed) return retval; 
+            char_literal299=(Token)match(input,116,FOLLOW_116_in_localVariableDeclaration3561); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_116.add(char_literal299);
 
 
 
             // AST REWRITE
-            // elements: variableDeclarators, variableModifier, type
+            // elements: type, variableDeclarators, variableModifier
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -11070,7 +11084,7 @@ public class JavaParser extends Parser {
                     {
                     root_0 = (Object)adaptor.nil();
 
-                    pushFollow(FOLLOW_block_in_statement3583);
+                    pushFollow(FOLLOW_block_in_statement3590);
                     block300=block();
 
                     state._fsp--;
@@ -11082,10 +11096,10 @@ public class JavaParser extends Parser {
                 case 2 :
                     // jkit/java/Java.g:611:7: lc= 'assert' expression ( ':' expression )? ';'
                     {
-                    lc=(Token)match(input,164,FOLLOW_164_in_statement3593); if (state.failed) return retval; 
+                    lc=(Token)match(input,164,FOLLOW_164_in_statement3600); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_164.add(lc);
 
-                    pushFollow(FOLLOW_expression_in_statement3595);
+                    pushFollow(FOLLOW_expression_in_statement3602);
                     expression301=expression();
 
                     state._fsp--;
@@ -11102,10 +11116,10 @@ public class JavaParser extends Parser {
                         case 1 :
                             // jkit/java/Java.g:611:31: ':' expression
                             {
-                            char_literal302=(Token)match(input,165,FOLLOW_165_in_statement3598); if (state.failed) return retval; 
+                            char_literal302=(Token)match(input,165,FOLLOW_165_in_statement3605); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_165.add(char_literal302);
 
-                            pushFollow(FOLLOW_expression_in_statement3600);
+                            pushFollow(FOLLOW_expression_in_statement3607);
                             expression303=expression();
 
                             state._fsp--;
@@ -11117,7 +11131,7 @@ public class JavaParser extends Parser {
 
                     }
 
-                    char_literal304=(Token)match(input,116,FOLLOW_116_in_statement3604); if (state.failed) return retval; 
+                    char_literal304=(Token)match(input,116,FOLLOW_116_in_statement3611); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_116.add(char_literal304);
 
 
@@ -11159,16 +11173,16 @@ public class JavaParser extends Parser {
                 case 3 :
                     // jkit/java/Java.g:612:7: lc= 'if' parExpression statement ( options {k=1; } : 'else' statement )?
                     {
-                    lc=(Token)match(input,166,FOLLOW_166_in_statement3626); if (state.failed) return retval; 
+                    lc=(Token)match(input,166,FOLLOW_166_in_statement3633); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_166.add(lc);
 
-                    pushFollow(FOLLOW_parExpression_in_statement3628);
+                    pushFollow(FOLLOW_parExpression_in_statement3635);
                     parExpression305=parExpression();
 
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_parExpression.add(parExpression305.getTree());
-                    pushFollow(FOLLOW_statement_in_statement3630);
+                    pushFollow(FOLLOW_statement_in_statement3637);
                     statement306=statement();
 
                     state._fsp--;
@@ -11179,7 +11193,7 @@ public class JavaParser extends Parser {
                     int LA103_0 = input.LA(1);
 
                     if ( (LA103_0==167) ) {
-                        int LA103_1 = input.LA(2);
+                        int LA103_2 = input.LA(2);
 
                         if ( (synpred148_Java()) ) {
                             alt103=1;
@@ -11189,10 +11203,10 @@ public class JavaParser extends Parser {
                         case 1 :
                             // jkit/java/Java.g:612:55: 'else' statement
                             {
-                            string_literal307=(Token)match(input,167,FOLLOW_167_in_statement3640); if (state.failed) return retval; 
+                            string_literal307=(Token)match(input,167,FOLLOW_167_in_statement3647); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_167.add(string_literal307);
 
-                            pushFollow(FOLLOW_statement_in_statement3642);
+                            pushFollow(FOLLOW_statement_in_statement3649);
                             statement308=statement();
 
                             state._fsp--;
@@ -11207,7 +11221,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: statement, statement, parExpression
+                    // elements: statement, parExpression, statement
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -11244,22 +11258,22 @@ public class JavaParser extends Parser {
                 case 4 :
                     // jkit/java/Java.g:613:7: lc= 'for' '(' forControl ')' statement
                     {
-                    lc=(Token)match(input,168,FOLLOW_168_in_statement3668); if (state.failed) return retval; 
+                    lc=(Token)match(input,168,FOLLOW_168_in_statement3675); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_168.add(lc);
 
-                    char_literal309=(Token)match(input,156,FOLLOW_156_in_statement3670); if (state.failed) return retval; 
+                    char_literal309=(Token)match(input,156,FOLLOW_156_in_statement3677); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_156.add(char_literal309);
 
-                    pushFollow(FOLLOW_forControl_in_statement3672);
+                    pushFollow(FOLLOW_forControl_in_statement3679);
                     forControl310=forControl();
 
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_forControl.add(forControl310.getTree());
-                    char_literal311=(Token)match(input,157,FOLLOW_157_in_statement3674); if (state.failed) return retval; 
+                    char_literal311=(Token)match(input,157,FOLLOW_157_in_statement3681); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_157.add(char_literal311);
 
-                    pushFollow(FOLLOW_statement_in_statement3676);
+                    pushFollow(FOLLOW_statement_in_statement3683);
                     statement312=statement();
 
                     state._fsp--;
@@ -11299,16 +11313,16 @@ public class JavaParser extends Parser {
                 case 5 :
                     // jkit/java/Java.g:614:7: lc= 'while' parExpression statement
                     {
-                    lc=(Token)match(input,169,FOLLOW_169_in_statement3697); if (state.failed) return retval; 
+                    lc=(Token)match(input,169,FOLLOW_169_in_statement3704); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_169.add(lc);
 
-                    pushFollow(FOLLOW_parExpression_in_statement3699);
+                    pushFollow(FOLLOW_parExpression_in_statement3706);
                     parExpression313=parExpression();
 
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_parExpression.add(parExpression313.getTree());
-                    pushFollow(FOLLOW_statement_in_statement3701);
+                    pushFollow(FOLLOW_statement_in_statement3708);
                     statement314=statement();
 
                     state._fsp--;
@@ -11317,7 +11331,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: statement, parExpression
+                    // elements: parExpression, statement
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -11356,25 +11370,25 @@ public class JavaParser extends Parser {
                 case 6 :
                     // jkit/java/Java.g:615:7: lc= 'do' statement 'while' parExpression ';'
                     {
-                    lc=(Token)match(input,170,FOLLOW_170_in_statement3726); if (state.failed) return retval; 
+                    lc=(Token)match(input,170,FOLLOW_170_in_statement3733); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_170.add(lc);
 
-                    pushFollow(FOLLOW_statement_in_statement3728);
+                    pushFollow(FOLLOW_statement_in_statement3735);
                     statement315=statement();
 
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_statement.add(statement315.getTree());
-                    string_literal316=(Token)match(input,169,FOLLOW_169_in_statement3730); if (state.failed) return retval; 
+                    string_literal316=(Token)match(input,169,FOLLOW_169_in_statement3737); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_169.add(string_literal316);
 
-                    pushFollow(FOLLOW_parExpression_in_statement3732);
+                    pushFollow(FOLLOW_parExpression_in_statement3739);
                     parExpression317=parExpression();
 
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_parExpression.add(parExpression317.getTree());
-                    char_literal318=(Token)match(input,116,FOLLOW_116_in_statement3734); if (state.failed) return retval; 
+                    char_literal318=(Token)match(input,116,FOLLOW_116_in_statement3741); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_116.add(char_literal318);
 
 
@@ -11419,10 +11433,10 @@ public class JavaParser extends Parser {
                 case 7 :
                     // jkit/java/Java.g:616:7: lc= 'try' block ( catches fc= 'finally' block -> ^( TRY[$lc] block catches ^( FINALLY[$fc] block ) ) | catches -> ^( TRY[$lc] block catches ) | fc= 'finally' block -> ^( TRY[$lc] block ^( FINALLY[$fc] block ) ) )
                     {
-                    lc=(Token)match(input,171,FOLLOW_171_in_statement3759); if (state.failed) return retval; 
+                    lc=(Token)match(input,171,FOLLOW_171_in_statement3766); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_171.add(lc);
 
-                    pushFollow(FOLLOW_block_in_statement3761);
+                    pushFollow(FOLLOW_block_in_statement3768);
                     block319=block();
 
                     state._fsp--;
@@ -11474,16 +11488,16 @@ public class JavaParser extends Parser {
                         case 1 :
                             // jkit/java/Java.g:617:9: catches fc= 'finally' block
                             {
-                            pushFollow(FOLLOW_catches_in_statement3771);
+                            pushFollow(FOLLOW_catches_in_statement3778);
                             catches320=catches();
 
                             state._fsp--;
                             if (state.failed) return retval;
                             if ( state.backtracking==0 ) stream_catches.add(catches320.getTree());
-                            fc=(Token)match(input,172,FOLLOW_172_in_statement3775); if (state.failed) return retval; 
+                            fc=(Token)match(input,172,FOLLOW_172_in_statement3782); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_172.add(fc);
 
-                            pushFollow(FOLLOW_block_in_statement3777);
+                            pushFollow(FOLLOW_block_in_statement3784);
                             block321=block();
 
                             state._fsp--;
@@ -11492,7 +11506,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: catches, block, block
+                            // elements: block, catches, block
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -11532,7 +11546,7 @@ public class JavaParser extends Parser {
                         case 2 :
                             // jkit/java/Java.g:618:9: catches
                             {
-                            pushFollow(FOLLOW_catches_in_statement3805);
+                            pushFollow(FOLLOW_catches_in_statement3812);
                             catches322=catches();
 
                             state._fsp--;
@@ -11541,7 +11555,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: catches, block
+                            // elements: block, catches
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -11572,10 +11586,10 @@ public class JavaParser extends Parser {
                         case 3 :
                             // jkit/java/Java.g:619:9: fc= 'finally' block
                             {
-                            fc=(Token)match(input,172,FOLLOW_172_in_statement3828); if (state.failed) return retval; 
+                            fc=(Token)match(input,172,FOLLOW_172_in_statement3835); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_172.add(fc);
 
-                            pushFollow(FOLLOW_block_in_statement3830);
+                            pushFollow(FOLLOW_block_in_statement3837);
                             block323=block();
 
                             state._fsp--;
@@ -11629,25 +11643,25 @@ public class JavaParser extends Parser {
                 case 8 :
                     // jkit/java/Java.g:621:7: lc= 'switch' parExpression '{' switchBlockStatementGroups '}'
                     {
-                    lc=(Token)match(input,173,FOLLOW_173_in_statement3864); if (state.failed) return retval; 
+                    lc=(Token)match(input,173,FOLLOW_173_in_statement3871); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_173.add(lc);
 
-                    pushFollow(FOLLOW_parExpression_in_statement3866);
+                    pushFollow(FOLLOW_parExpression_in_statement3873);
                     parExpression324=parExpression();
 
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_parExpression.add(parExpression324.getTree());
-                    char_literal325=(Token)match(input,128,FOLLOW_128_in_statement3868); if (state.failed) return retval; 
+                    char_literal325=(Token)match(input,128,FOLLOW_128_in_statement3875); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_128.add(char_literal325);
 
-                    pushFollow(FOLLOW_switchBlockStatementGroups_in_statement3870);
+                    pushFollow(FOLLOW_switchBlockStatementGroups_in_statement3877);
                     switchBlockStatementGroups326=switchBlockStatementGroups();
 
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_switchBlockStatementGroups.add(switchBlockStatementGroups326.getTree());
-                    char_literal327=(Token)match(input,129,FOLLOW_129_in_statement3872); if (state.failed) return retval; 
+                    char_literal327=(Token)match(input,129,FOLLOW_129_in_statement3879); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_129.add(char_literal327);
 
 
@@ -11684,16 +11698,16 @@ public class JavaParser extends Parser {
                 case 9 :
                     // jkit/java/Java.g:622:7: lc= 'synchronized' parExpression block
                     {
-                    lc=(Token)match(input,142,FOLLOW_142_in_statement3893); if (state.failed) return retval; 
+                    lc=(Token)match(input,142,FOLLOW_142_in_statement3900); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_142.add(lc);
 
-                    pushFollow(FOLLOW_parExpression_in_statement3895);
+                    pushFollow(FOLLOW_parExpression_in_statement3902);
                     parExpression328=parExpression();
 
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_parExpression.add(parExpression328.getTree());
-                    pushFollow(FOLLOW_block_in_statement3897);
+                    pushFollow(FOLLOW_block_in_statement3904);
                     block329=block();
 
                     state._fsp--;
@@ -11702,7 +11716,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: block, parExpression
+                    // elements: parExpression, block
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -11733,7 +11747,7 @@ public class JavaParser extends Parser {
                 case 10 :
                     // jkit/java/Java.g:623:7: lc= 'return' ( expression )? ';'
                     {
-                    lc=(Token)match(input,174,FOLLOW_174_in_statement3918); if (state.failed) return retval; 
+                    lc=(Token)match(input,174,FOLLOW_174_in_statement3925); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_174.add(lc);
 
                     // jkit/java/Java.g:623:19: ( expression )?
@@ -11743,7 +11757,7 @@ public class JavaParser extends Parser {
                         case 1 :
                             // jkit/java/Java.g:0:0: expression
                             {
-                            pushFollow(FOLLOW_expression_in_statement3920);
+                            pushFollow(FOLLOW_expression_in_statement3927);
                             expression330=expression();
 
                             state._fsp--;
@@ -11755,7 +11769,7 @@ public class JavaParser extends Parser {
 
                     }
 
-                    char_literal331=(Token)match(input,116,FOLLOW_116_in_statement3923); if (state.failed) return retval; 
+                    char_literal331=(Token)match(input,116,FOLLOW_116_in_statement3930); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_116.add(char_literal331);
 
 
@@ -11796,16 +11810,16 @@ public class JavaParser extends Parser {
                 case 11 :
                     // jkit/java/Java.g:624:7: lc= 'throw' expression ';'
                     {
-                    lc=(Token)match(input,175,FOLLOW_175_in_statement3943); if (state.failed) return retval; 
+                    lc=(Token)match(input,175,FOLLOW_175_in_statement3950); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_175.add(lc);
 
-                    pushFollow(FOLLOW_expression_in_statement3945);
+                    pushFollow(FOLLOW_expression_in_statement3952);
                     expression332=expression();
 
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_expression.add(expression332.getTree());
-                    char_literal333=(Token)match(input,116,FOLLOW_116_in_statement3947); if (state.failed) return retval; 
+                    char_literal333=(Token)match(input,116,FOLLOW_116_in_statement3954); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_116.add(char_literal333);
 
 
@@ -11841,7 +11855,7 @@ public class JavaParser extends Parser {
                 case 12 :
                     // jkit/java/Java.g:625:7: lc= 'break' ( Identifier )? ';'
                     {
-                    lc=(Token)match(input,176,FOLLOW_176_in_statement3966); if (state.failed) return retval; 
+                    lc=(Token)match(input,176,FOLLOW_176_in_statement3973); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_176.add(lc);
 
                     // jkit/java/Java.g:625:18: ( Identifier )?
@@ -11855,7 +11869,7 @@ public class JavaParser extends Parser {
                         case 1 :
                             // jkit/java/Java.g:0:0: Identifier
                             {
-                            Identifier334=(Token)match(input,Identifier,FOLLOW_Identifier_in_statement3968); if (state.failed) return retval; 
+                            Identifier334=(Token)match(input,Identifier,FOLLOW_Identifier_in_statement3975); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_Identifier.add(Identifier334);
 
 
@@ -11864,7 +11878,7 @@ public class JavaParser extends Parser {
 
                     }
 
-                    char_literal335=(Token)match(input,116,FOLLOW_116_in_statement3971); if (state.failed) return retval; 
+                    char_literal335=(Token)match(input,116,FOLLOW_116_in_statement3978); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_116.add(char_literal335);
 
 
@@ -11905,7 +11919,7 @@ public class JavaParser extends Parser {
                 case 13 :
                     // jkit/java/Java.g:626:7: lc= 'continue' ( Identifier )? ';'
                     {
-                    lc=(Token)match(input,177,FOLLOW_177_in_statement3991); if (state.failed) return retval; 
+                    lc=(Token)match(input,177,FOLLOW_177_in_statement3998); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_177.add(lc);
 
                     // jkit/java/Java.g:626:21: ( Identifier )?
@@ -11919,7 +11933,7 @@ public class JavaParser extends Parser {
                         case 1 :
                             // jkit/java/Java.g:0:0: Identifier
                             {
-                            Identifier336=(Token)match(input,Identifier,FOLLOW_Identifier_in_statement3993); if (state.failed) return retval; 
+                            Identifier336=(Token)match(input,Identifier,FOLLOW_Identifier_in_statement4000); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_Identifier.add(Identifier336);
 
 
@@ -11928,7 +11942,7 @@ public class JavaParser extends Parser {
 
                     }
 
-                    char_literal337=(Token)match(input,116,FOLLOW_116_in_statement3996); if (state.failed) return retval; 
+                    char_literal337=(Token)match(input,116,FOLLOW_116_in_statement4003); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_116.add(char_literal337);
 
 
@@ -11969,7 +11983,7 @@ public class JavaParser extends Parser {
                 case 14 :
                     // jkit/java/Java.g:627:7: ';'
                     {
-                    char_literal338=(Token)match(input,116,FOLLOW_116_in_statement4014); if (state.failed) return retval; 
+                    char_literal338=(Token)match(input,116,FOLLOW_116_in_statement4021); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_116.add(char_literal338);
 
 
@@ -12003,13 +12017,13 @@ public class JavaParser extends Parser {
                 case 15 :
                     // jkit/java/Java.g:628:7: statementExpression ';'
                     {
-                    pushFollow(FOLLOW_statementExpression_in_statement4029);
+                    pushFollow(FOLLOW_statementExpression_in_statement4036);
                     statementExpression339=statementExpression();
 
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_statementExpression.add(statementExpression339.getTree());
-                    char_literal340=(Token)match(input,116,FOLLOW_116_in_statement4031); if (state.failed) return retval; 
+                    char_literal340=(Token)match(input,116,FOLLOW_116_in_statement4038); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_116.add(char_literal340);
 
 
@@ -12037,13 +12051,13 @@ public class JavaParser extends Parser {
                 case 16 :
                     // jkit/java/Java.g:629:7: lc= Identifier ':' statement
                     {
-                    lc=(Token)match(input,Identifier,FOLLOW_Identifier_in_statement4045); if (state.failed) return retval; 
+                    lc=(Token)match(input,Identifier,FOLLOW_Identifier_in_statement4052); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_Identifier.add(lc);
 
-                    char_literal341=(Token)match(input,165,FOLLOW_165_in_statement4047); if (state.failed) return retval; 
+                    char_literal341=(Token)match(input,165,FOLLOW_165_in_statement4054); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_165.add(char_literal341);
 
-                    pushFollow(FOLLOW_statement_in_statement4049);
+                    pushFollow(FOLLOW_statement_in_statement4056);
                     statement342=statement();
 
                     state._fsp--;
@@ -12052,7 +12066,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: Identifier, statement
+                    // elements: statement, Identifier
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -12127,7 +12141,7 @@ public class JavaParser extends Parser {
             {
             root_0 = (Object)adaptor.nil();
 
-            pushFollow(FOLLOW_catchClause_in_catches4071);
+            pushFollow(FOLLOW_catchClause_in_catches4078);
             catchClause343=catchClause();
 
             state._fsp--;
@@ -12142,7 +12156,7 @@ public class JavaParser extends Parser {
             	case 1 :
             	    // jkit/java/Java.g:633:17: catchClause
             	    {
-            	    pushFollow(FOLLOW_catchClause_in_catches4074);
+            	    pushFollow(FOLLOW_catchClause_in_catches4081);
             	    catchClause344=catchClause();
 
             	    state._fsp--;
@@ -12213,22 +12227,22 @@ public class JavaParser extends Parser {
             // jkit/java/Java.g:637:2: (lc= 'catch' '(' formalParameter ')' block -> ^( CATCH[$lc] ^( PARAMETER formalParameter ) block ) )
             // jkit/java/Java.g:637:4: lc= 'catch' '(' formalParameter ')' block
             {
-            lc=(Token)match(input,178,FOLLOW_178_in_catchClause4090); if (state.failed) return retval; 
+            lc=(Token)match(input,178,FOLLOW_178_in_catchClause4097); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_178.add(lc);
 
-            char_literal345=(Token)match(input,156,FOLLOW_156_in_catchClause4092); if (state.failed) return retval; 
+            char_literal345=(Token)match(input,156,FOLLOW_156_in_catchClause4099); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_156.add(char_literal345);
 
-            pushFollow(FOLLOW_formalParameter_in_catchClause4094);
+            pushFollow(FOLLOW_formalParameter_in_catchClause4101);
             formalParameter346=formalParameter();
 
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_formalParameter.add(formalParameter346.getTree());
-            char_literal347=(Token)match(input,157,FOLLOW_157_in_catchClause4096); if (state.failed) return retval; 
+            char_literal347=(Token)match(input,157,FOLLOW_157_in_catchClause4103); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_157.add(char_literal347);
 
-            pushFollow(FOLLOW_block_in_catchClause4098);
+            pushFollow(FOLLOW_block_in_catchClause4105);
             block348=block();
 
             state._fsp--;
@@ -12335,7 +12349,7 @@ public class JavaParser extends Parser {
             	case 1 :
             	    // jkit/java/Java.g:0:0: variableModifier
             	    {
-            	    pushFollow(FOLLOW_variableModifier_in_formalParameter4124);
+            	    pushFollow(FOLLOW_variableModifier_in_formalParameter4131);
             	    variableModifier349=variableModifier();
 
             	    state._fsp--;
@@ -12350,13 +12364,13 @@ public class JavaParser extends Parser {
                 }
             } while (true);
 
-            pushFollow(FOLLOW_type_in_formalParameter4127);
+            pushFollow(FOLLOW_type_in_formalParameter4134);
             type350=type();
 
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) adaptor.addChild(root_0, type350.getTree());
-            pushFollow(FOLLOW_variableDeclaratorId_in_formalParameter4129);
+            pushFollow(FOLLOW_variableDeclaratorId_in_formalParameter4136);
             variableDeclaratorId351=variableDeclaratorId();
 
             state._fsp--;
@@ -12423,7 +12437,7 @@ public class JavaParser extends Parser {
             	case 1 :
             	    // jkit/java/Java.g:645:5: switchBlockStatementGroup
             	    {
-            	    pushFollow(FOLLOW_switchBlockStatementGroup_in_switchBlockStatementGroups4143);
+            	    pushFollow(FOLLOW_switchBlockStatementGroup_in_switchBlockStatementGroups4150);
             	    switchBlockStatementGroup352=switchBlockStatementGroup();
 
             	    state._fsp--;
@@ -12485,7 +12499,7 @@ public class JavaParser extends Parser {
             // jkit/java/Java.g:649:2: ( switchLabel ( blockStatement )* -> ^( switchLabel ^( BLOCK ( blockStatement )* ) ) )
             // jkit/java/Java.g:649:4: switchLabel ( blockStatement )*
             {
-            pushFollow(FOLLOW_switchLabel_in_switchBlockStatementGroup4157);
+            pushFollow(FOLLOW_switchLabel_in_switchBlockStatementGroup4164);
             switchLabel353=switchLabel();
 
             state._fsp--;
@@ -12500,7 +12514,7 @@ public class JavaParser extends Parser {
             	case 1 :
             	    // jkit/java/Java.g:0:0: blockStatement
             	    {
-            	    pushFollow(FOLLOW_blockStatement_in_switchBlockStatementGroup4159);
+            	    pushFollow(FOLLOW_blockStatement_in_switchBlockStatementGroup4166);
             	    blockStatement354=blockStatement();
 
             	    state._fsp--;
@@ -12518,7 +12532,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: blockStatement, switchLabel
+            // elements: switchLabel, blockStatement
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -12617,16 +12631,16 @@ public class JavaParser extends Parser {
                 case 1 :
                     // jkit/java/Java.g:653:4: lc= 'case' constantExpression ':'
                     {
-                    lc=(Token)match(input,179,FOLLOW_179_in_switchLabel4187); if (state.failed) return retval; 
+                    lc=(Token)match(input,179,FOLLOW_179_in_switchLabel4194); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_179.add(lc);
 
-                    pushFollow(FOLLOW_constantExpression_in_switchLabel4189);
+                    pushFollow(FOLLOW_constantExpression_in_switchLabel4196);
                     constantExpression355=constantExpression();
 
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_constantExpression.add(constantExpression355.getTree());
-                    char_literal356=(Token)match(input,165,FOLLOW_165_in_switchLabel4191); if (state.failed) return retval; 
+                    char_literal356=(Token)match(input,165,FOLLOW_165_in_switchLabel4198); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_165.add(char_literal356);
 
 
@@ -12662,16 +12676,16 @@ public class JavaParser extends Parser {
                 case 2 :
                     // jkit/java/Java.g:654:4: lc= 'case' enumConstantName ':'
                     {
-                    lc=(Token)match(input,179,FOLLOW_179_in_switchLabel4207); if (state.failed) return retval; 
+                    lc=(Token)match(input,179,FOLLOW_179_in_switchLabel4214); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_179.add(lc);
 
-                    pushFollow(FOLLOW_enumConstantName_in_switchLabel4209);
+                    pushFollow(FOLLOW_enumConstantName_in_switchLabel4216);
                     enumConstantName357=enumConstantName();
 
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_enumConstantName.add(enumConstantName357.getTree());
-                    char_literal358=(Token)match(input,165,FOLLOW_165_in_switchLabel4211); if (state.failed) return retval; 
+                    char_literal358=(Token)match(input,165,FOLLOW_165_in_switchLabel4218); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_165.add(char_literal358);
 
 
@@ -12707,10 +12721,10 @@ public class JavaParser extends Parser {
                 case 3 :
                     // jkit/java/Java.g:655:4: lc= 'default' ':'
                     {
-                    lc=(Token)match(input,163,FOLLOW_163_in_switchLabel4227); if (state.failed) return retval; 
+                    lc=(Token)match(input,163,FOLLOW_163_in_switchLabel4234); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_163.add(lc);
 
-                    char_literal359=(Token)match(input,165,FOLLOW_165_in_switchLabel4229); if (state.failed) return retval; 
+                    char_literal359=(Token)match(input,165,FOLLOW_165_in_switchLabel4236); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_165.add(char_literal359);
 
 
@@ -12803,12 +12817,12 @@ public class JavaParser extends Parser {
             	case 1 :
             	    // jkit/java/Java.g:659:5: ',' statementExpression
             	    {
-            	    char_literal360=(Token)match(input,125,FOLLOW_125_in_moreStatementExpressions4248); if (state.failed) return retval;
+            	    char_literal360=(Token)match(input,125,FOLLOW_125_in_moreStatementExpressions4255); if (state.failed) return retval;
             	    if ( state.backtracking==0 ) {
             	    char_literal360_tree = (Object)adaptor.create(char_literal360);
             	    adaptor.addChild(root_0, char_literal360_tree);
             	    }
-            	    pushFollow(FOLLOW_statementExpression_in_moreStatementExpressions4250);
+            	    pushFollow(FOLLOW_statementExpression_in_moreStatementExpressions4257);
             	    statementExpression361=statementExpression();
 
             	    state._fsp--;
@@ -12885,7 +12899,7 @@ public class JavaParser extends Parser {
                 case 1 :
                     // jkit/java/Java.g:664:4: forVarControl
                     {
-                    pushFollow(FOLLOW_forVarControl_in_forControl4271);
+                    pushFollow(FOLLOW_forVarControl_in_forControl4278);
                     forVarControl362=forVarControl();
 
                     state._fsp--;
@@ -12931,7 +12945,7 @@ public class JavaParser extends Parser {
                         case 1 :
                             // jkit/java/Java.g:0:0: forInit
                             {
-                            pushFollow(FOLLOW_forInit_in_forControl4284);
+                            pushFollow(FOLLOW_forInit_in_forControl4291);
                             forInit363=forInit();
 
                             state._fsp--;
@@ -12943,7 +12957,7 @@ public class JavaParser extends Parser {
 
                     }
 
-                    char_literal364=(Token)match(input,116,FOLLOW_116_in_forControl4287); if (state.failed) return retval; 
+                    char_literal364=(Token)match(input,116,FOLLOW_116_in_forControl4294); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_116.add(char_literal364);
 
                     // jkit/java/Java.g:665:19: (fc= expression )?
@@ -12953,7 +12967,7 @@ public class JavaParser extends Parser {
                         case 1 :
                             // jkit/java/Java.g:0:0: fc= expression
                             {
-                            pushFollow(FOLLOW_expression_in_forControl4291);
+                            pushFollow(FOLLOW_expression_in_forControl4298);
                             fc=expression();
 
                             state._fsp--;
@@ -12965,7 +12979,7 @@ public class JavaParser extends Parser {
 
                     }
 
-                    char_literal365=(Token)match(input,116,FOLLOW_116_in_forControl4294); if (state.failed) return retval; 
+                    char_literal365=(Token)match(input,116,FOLLOW_116_in_forControl4301); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_116.add(char_literal365);
 
                     // jkit/java/Java.g:665:38: (fu= forUpdate )?
@@ -12975,7 +12989,7 @@ public class JavaParser extends Parser {
                         case 1 :
                             // jkit/java/Java.g:0:0: fu= forUpdate
                             {
-                            pushFollow(FOLLOW_forUpdate_in_forControl4298);
+                            pushFollow(FOLLOW_forUpdate_in_forControl4305);
                             fu=forUpdate();
 
                             state._fsp--;
@@ -12990,7 +13004,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: expression, forUpdate, forInit
+                    // elements: forInit, expression, forUpdate
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -13120,7 +13134,7 @@ public class JavaParser extends Parser {
                     	case 1 :
                     	    // jkit/java/Java.g:0:0: variableModifier
                     	    {
-                    	    pushFollow(FOLLOW_variableModifier_in_forInit4333);
+                    	    pushFollow(FOLLOW_variableModifier_in_forInit4340);
                     	    variableModifier366=variableModifier();
 
                     	    state._fsp--;
@@ -13135,13 +13149,13 @@ public class JavaParser extends Parser {
                         }
                     } while (true);
 
-                    pushFollow(FOLLOW_type_in_forInit4336);
+                    pushFollow(FOLLOW_type_in_forInit4343);
                     type367=type();
 
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_type.add(type367.getTree());
-                    pushFollow(FOLLOW_variableDeclarators_in_forInit4338);
+                    pushFollow(FOLLOW_variableDeclarators_in_forInit4345);
                     variableDeclarators368=variableDeclarators();
 
                     state._fsp--;
@@ -13150,7 +13164,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: variableDeclarators, variableModifier, type
+                    // elements: variableDeclarators, type, variableModifier
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -13197,7 +13211,7 @@ public class JavaParser extends Parser {
                     {
                     root_0 = (Object)adaptor.nil();
 
-                    pushFollow(FOLLOW_expressionList_in_forInit4360);
+                    pushFollow(FOLLOW_expressionList_in_forInit4367);
                     expressionList369=expressionList();
 
                     state._fsp--;
@@ -13276,7 +13290,7 @@ public class JavaParser extends Parser {
             	case 1 :
             	    // jkit/java/Java.g:0:0: variableModifier
             	    {
-            	    pushFollow(FOLLOW_variableModifier_in_forVarControl4372);
+            	    pushFollow(FOLLOW_variableModifier_in_forVarControl4379);
             	    variableModifier370=variableModifier();
 
             	    state._fsp--;
@@ -13291,19 +13305,19 @@ public class JavaParser extends Parser {
                 }
             } while (true);
 
-            pushFollow(FOLLOW_type_in_forVarControl4375);
+            pushFollow(FOLLOW_type_in_forVarControl4382);
             type371=type();
 
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_type.add(type371.getTree());
-            Identifier372=(Token)match(input,Identifier,FOLLOW_Identifier_in_forVarControl4377); if (state.failed) return retval; 
+            Identifier372=(Token)match(input,Identifier,FOLLOW_Identifier_in_forVarControl4384); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_Identifier.add(Identifier372);
 
-            char_literal373=(Token)match(input,165,FOLLOW_165_in_forVarControl4379); if (state.failed) return retval; 
+            char_literal373=(Token)match(input,165,FOLLOW_165_in_forVarControl4386); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_165.add(char_literal373);
 
-            pushFollow(FOLLOW_expression_in_forVarControl4381);
+            pushFollow(FOLLOW_expression_in_forVarControl4388);
             expression374=expression();
 
             state._fsp--;
@@ -13312,7 +13326,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: expression, Identifier, variableModifier, type
+            // elements: Identifier, expression, type, variableModifier
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -13398,7 +13412,7 @@ public class JavaParser extends Parser {
             {
             root_0 = (Object)adaptor.nil();
 
-            pushFollow(FOLLOW_expressionList_in_forUpdate4411);
+            pushFollow(FOLLOW_expressionList_in_forUpdate4418);
             expressionList375=expressionList();
 
             state._fsp--;
@@ -13454,14 +13468,14 @@ public class JavaParser extends Parser {
             {
             root_0 = (Object)adaptor.nil();
 
-            char_literal376=(Token)match(input,156,FOLLOW_156_in_parExpression4424); if (state.failed) return retval;
-            pushFollow(FOLLOW_expression_in_parExpression4427);
+            char_literal376=(Token)match(input,156,FOLLOW_156_in_parExpression4431); if (state.failed) return retval;
+            pushFollow(FOLLOW_expression_in_parExpression4434);
             expression377=expression();
 
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) adaptor.addChild(root_0, expression377.getTree());
-            char_literal378=(Token)match(input,157,FOLLOW_157_in_parExpression4429); if (state.failed) return retval;
+            char_literal378=(Token)match(input,157,FOLLOW_157_in_parExpression4436); if (state.failed) return retval;
 
             }
 
@@ -13512,7 +13526,7 @@ public class JavaParser extends Parser {
             {
             root_0 = (Object)adaptor.nil();
 
-            pushFollow(FOLLOW_expression_in_expressionList4447);
+            pushFollow(FOLLOW_expression_in_expressionList4454);
             expression379=expression();
 
             state._fsp--;
@@ -13533,8 +13547,8 @@ public class JavaParser extends Parser {
             	case 1 :
             	    // jkit/java/Java.g:688:21: ',' expression
             	    {
-            	    char_literal380=(Token)match(input,125,FOLLOW_125_in_expressionList4450); if (state.failed) return retval;
-            	    pushFollow(FOLLOW_expression_in_expressionList4453);
+            	    char_literal380=(Token)match(input,125,FOLLOW_125_in_expressionList4457); if (state.failed) return retval;
+            	    pushFollow(FOLLOW_expression_in_expressionList4460);
             	    expression381=expression();
 
             	    state._fsp--;
@@ -13595,7 +13609,7 @@ public class JavaParser extends Parser {
             {
             root_0 = (Object)adaptor.nil();
 
-            pushFollow(FOLLOW_expression_in_statementExpression4469);
+            pushFollow(FOLLOW_expression_in_statementExpression4476);
             expression382=expression();
 
             state._fsp--;
@@ -13647,7 +13661,7 @@ public class JavaParser extends Parser {
             {
             root_0 = (Object)adaptor.nil();
 
-            pushFollow(FOLLOW_expression_in_constantExpression4481);
+            pushFollow(FOLLOW_expression_in_constantExpression4488);
             expression383=expression();
 
             state._fsp--;
@@ -13770,7 +13784,7 @@ public class JavaParser extends Parser {
             // jkit/java/Java.g:700:2: ( conditionalExpression ( '=' expression -> ^( ASSIGN conditionalExpression expression ) | i+= '+' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '-' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '*' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '/' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | '&=' expression -> ^( ASSIGN conditionalExpression ^( AND conditionalExpression expression ) ) | '|=' expression -> ^( ASSIGN conditionalExpression ^( OR conditionalExpression expression ) ) | '^=' expression -> ^( ASSIGN conditionalExpression ^( XOR conditionalExpression expression ) ) | i+= '%' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '<' '<' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '>' '>' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | '>' '>' '>' '=' expression -> ^( ASSIGN conditionalExpression ^( USHR conditionalExpression expression ) ) | -> conditionalExpression ) )
             // jkit/java/Java.g:700:4: conditionalExpression ( '=' expression -> ^( ASSIGN conditionalExpression expression ) | i+= '+' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '-' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '*' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '/' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | '&=' expression -> ^( ASSIGN conditionalExpression ^( AND conditionalExpression expression ) ) | '|=' expression -> ^( ASSIGN conditionalExpression ^( OR conditionalExpression expression ) ) | '^=' expression -> ^( ASSIGN conditionalExpression ^( XOR conditionalExpression expression ) ) | i+= '%' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '<' '<' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | i+= '>' '>' '=' expression -> ^( ASSIGN conditionalExpression ^( LABINOP conditionalExpression $i expression ) ) | '>' '>' '>' '=' expression -> ^( ASSIGN conditionalExpression ^( USHR conditionalExpression expression ) ) | -> conditionalExpression )
             {
-            pushFollow(FOLLOW_conditionalExpression_in_expression4493);
+            pushFollow(FOLLOW_conditionalExpression_in_expression4500);
             conditionalExpression384=conditionalExpression();
 
             state._fsp--;
@@ -13783,10 +13797,10 @@ public class JavaParser extends Parser {
                 case 1 :
                     // jkit/java/Java.g:702:4: '=' expression
                     {
-                    char_literal385=(Token)match(input,135,FOLLOW_135_in_expression4503); if (state.failed) return retval; 
+                    char_literal385=(Token)match(input,135,FOLLOW_135_in_expression4510); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_135.add(char_literal385);
 
-                    pushFollow(FOLLOW_expression_in_expression4505);
+                    pushFollow(FOLLOW_expression_in_expression4512);
                     expression386=expression();
 
                     state._fsp--;
@@ -13826,16 +13840,16 @@ public class JavaParser extends Parser {
                 case 2 :
                     // jkit/java/Java.g:703:6: i+= '+' '=' expression
                     {
-                    i=(Token)match(input,180,FOLLOW_180_in_expression4524); if (state.failed) return retval; 
+                    i=(Token)match(input,180,FOLLOW_180_in_expression4531); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_180.add(i);
 
                     if (list_i==null) list_i=new ArrayList();
                     list_i.add(i);
 
-                    char_literal387=(Token)match(input,135,FOLLOW_135_in_expression4526); if (state.failed) return retval; 
+                    char_literal387=(Token)match(input,135,FOLLOW_135_in_expression4533); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_135.add(char_literal387);
 
-                    pushFollow(FOLLOW_expression_in_expression4528);
+                    pushFollow(FOLLOW_expression_in_expression4535);
                     expression388=expression();
 
                     state._fsp--;
@@ -13886,16 +13900,16 @@ public class JavaParser extends Parser {
                 case 3 :
                     // jkit/java/Java.g:704:6: i+= '-' '=' expression
                     {
-                    i=(Token)match(input,181,FOLLOW_181_in_expression4556); if (state.failed) return retval; 
+                    i=(Token)match(input,181,FOLLOW_181_in_expression4563); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_181.add(i);
 
                     if (list_i==null) list_i=new ArrayList();
                     list_i.add(i);
 
-                    char_literal389=(Token)match(input,135,FOLLOW_135_in_expression4558); if (state.failed) return retval; 
+                    char_literal389=(Token)match(input,135,FOLLOW_135_in_expression4565); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_135.add(char_literal389);
 
-                    pushFollow(FOLLOW_expression_in_expression4560);
+                    pushFollow(FOLLOW_expression_in_expression4567);
                     expression390=expression();
 
                     state._fsp--;
@@ -13904,7 +13918,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: conditionalExpression, i, conditionalExpression, expression
+                    // elements: expression, conditionalExpression, conditionalExpression, i
                     // token labels: 
                     // rule labels: retval
                     // token list labels: i
@@ -13946,16 +13960,16 @@ public class JavaParser extends Parser {
                 case 4 :
                     // jkit/java/Java.g:705:6: i+= '*' '=' expression
                     {
-                    i=(Token)match(input,120,FOLLOW_120_in_expression4588); if (state.failed) return retval; 
+                    i=(Token)match(input,120,FOLLOW_120_in_expression4595); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_120.add(i);
 
                     if (list_i==null) list_i=new ArrayList();
                     list_i.add(i);
 
-                    char_literal391=(Token)match(input,135,FOLLOW_135_in_expression4590); if (state.failed) return retval; 
+                    char_literal391=(Token)match(input,135,FOLLOW_135_in_expression4597); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_135.add(char_literal391);
 
-                    pushFollow(FOLLOW_expression_in_expression4592);
+                    pushFollow(FOLLOW_expression_in_expression4599);
                     expression392=expression();
 
                     state._fsp--;
@@ -13964,7 +13978,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: expression, conditionalExpression, i, conditionalExpression
+                    // elements: i, expression, conditionalExpression, conditionalExpression
                     // token labels: 
                     // rule labels: retval
                     // token list labels: i
@@ -14006,16 +14020,16 @@ public class JavaParser extends Parser {
                 case 5 :
                     // jkit/java/Java.g:706:6: i+= '/' '=' expression
                     {
-                    i=(Token)match(input,182,FOLLOW_182_in_expression4620); if (state.failed) return retval; 
+                    i=(Token)match(input,182,FOLLOW_182_in_expression4627); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_182.add(i);
 
                     if (list_i==null) list_i=new ArrayList();
                     list_i.add(i);
 
-                    char_literal393=(Token)match(input,135,FOLLOW_135_in_expression4622); if (state.failed) return retval; 
+                    char_literal393=(Token)match(input,135,FOLLOW_135_in_expression4629); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_135.add(char_literal393);
 
-                    pushFollow(FOLLOW_expression_in_expression4624);
+                    pushFollow(FOLLOW_expression_in_expression4631);
                     expression394=expression();
 
                     state._fsp--;
@@ -14024,7 +14038,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: conditionalExpression, expression, conditionalExpression, i
+                    // elements: i, conditionalExpression, expression, conditionalExpression
                     // token labels: 
                     // rule labels: retval
                     // token list labels: i
@@ -14066,10 +14080,10 @@ public class JavaParser extends Parser {
                 case 6 :
                     // jkit/java/Java.g:707:6: '&=' expression
                     {
-                    string_literal395=(Token)match(input,183,FOLLOW_183_in_expression4653); if (state.failed) return retval; 
+                    string_literal395=(Token)match(input,183,FOLLOW_183_in_expression4660); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_183.add(string_literal395);
 
-                    pushFollow(FOLLOW_expression_in_expression4655);
+                    pushFollow(FOLLOW_expression_in_expression4662);
                     expression396=expression();
 
                     state._fsp--;
@@ -14118,10 +14132,10 @@ public class JavaParser extends Parser {
                 case 7 :
                     // jkit/java/Java.g:708:6: '|=' expression
                     {
-                    string_literal397=(Token)match(input,184,FOLLOW_184_in_expression4678); if (state.failed) return retval; 
+                    string_literal397=(Token)match(input,184,FOLLOW_184_in_expression4685); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_184.add(string_literal397);
 
-                    pushFollow(FOLLOW_expression_in_expression4680);
+                    pushFollow(FOLLOW_expression_in_expression4687);
                     expression398=expression();
 
                     state._fsp--;
@@ -14130,7 +14144,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: conditionalExpression, expression, conditionalExpression
+                    // elements: expression, conditionalExpression, conditionalExpression
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -14170,10 +14184,10 @@ public class JavaParser extends Parser {
                 case 8 :
                     // jkit/java/Java.g:709:6: '^=' expression
                     {
-                    string_literal399=(Token)match(input,185,FOLLOW_185_in_expression4703); if (state.failed) return retval; 
+                    string_literal399=(Token)match(input,185,FOLLOW_185_in_expression4710); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_185.add(string_literal399);
 
-                    pushFollow(FOLLOW_expression_in_expression4705);
+                    pushFollow(FOLLOW_expression_in_expression4712);
                     expression400=expression();
 
                     state._fsp--;
@@ -14222,16 +14236,16 @@ public class JavaParser extends Parser {
                 case 9 :
                     // jkit/java/Java.g:710:6: i+= '%' '=' expression
                     {
-                    i=(Token)match(input,186,FOLLOW_186_in_expression4733); if (state.failed) return retval; 
+                    i=(Token)match(input,186,FOLLOW_186_in_expression4740); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_186.add(i);
 
                     if (list_i==null) list_i=new ArrayList();
                     list_i.add(i);
 
-                    char_literal401=(Token)match(input,135,FOLLOW_135_in_expression4735); if (state.failed) return retval; 
+                    char_literal401=(Token)match(input,135,FOLLOW_135_in_expression4742); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_135.add(char_literal401);
 
-                    pushFollow(FOLLOW_expression_in_expression4737);
+                    pushFollow(FOLLOW_expression_in_expression4744);
                     expression402=expression();
 
                     state._fsp--;
@@ -14240,7 +14254,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: conditionalExpression, expression, i, conditionalExpression
+                    // elements: conditionalExpression, i, conditionalExpression, expression
                     // token labels: 
                     // rule labels: retval
                     // token list labels: i
@@ -14282,19 +14296,19 @@ public class JavaParser extends Parser {
                 case 10 :
                     // jkit/java/Java.g:711:6: i+= '<' '<' '=' expression
                     {
-                    i=(Token)match(input,124,FOLLOW_124_in_expression4765); if (state.failed) return retval; 
+                    i=(Token)match(input,124,FOLLOW_124_in_expression4772); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_124.add(i);
 
                     if (list_i==null) list_i=new ArrayList();
                     list_i.add(i);
 
-                    char_literal403=(Token)match(input,124,FOLLOW_124_in_expression4767); if (state.failed) return retval; 
+                    char_literal403=(Token)match(input,124,FOLLOW_124_in_expression4774); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_124.add(char_literal403);
 
-                    char_literal404=(Token)match(input,135,FOLLOW_135_in_expression4769); if (state.failed) return retval; 
+                    char_literal404=(Token)match(input,135,FOLLOW_135_in_expression4776); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_135.add(char_literal404);
 
-                    pushFollow(FOLLOW_expression_in_expression4771);
+                    pushFollow(FOLLOW_expression_in_expression4778);
                     expression405=expression();
 
                     state._fsp--;
@@ -14303,7 +14317,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: expression, i, conditionalExpression, conditionalExpression
+                    // elements: i, conditionalExpression, expression, conditionalExpression
                     // token labels: 
                     // rule labels: retval
                     // token list labels: i
@@ -14345,19 +14359,19 @@ public class JavaParser extends Parser {
                 case 11 :
                     // jkit/java/Java.g:712:6: i+= '>' '>' '=' expression
                     {
-                    i=(Token)match(input,126,FOLLOW_126_in_expression4799); if (state.failed) return retval; 
+                    i=(Token)match(input,126,FOLLOW_126_in_expression4806); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_126.add(i);
 
                     if (list_i==null) list_i=new ArrayList();
                     list_i.add(i);
 
-                    char_literal406=(Token)match(input,126,FOLLOW_126_in_expression4801); if (state.failed) return retval; 
+                    char_literal406=(Token)match(input,126,FOLLOW_126_in_expression4808); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_126.add(char_literal406);
 
-                    char_literal407=(Token)match(input,135,FOLLOW_135_in_expression4803); if (state.failed) return retval; 
+                    char_literal407=(Token)match(input,135,FOLLOW_135_in_expression4810); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_135.add(char_literal407);
 
-                    pushFollow(FOLLOW_expression_in_expression4805);
+                    pushFollow(FOLLOW_expression_in_expression4812);
                     expression408=expression();
 
                     state._fsp--;
@@ -14366,7 +14380,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: conditionalExpression, expression, conditionalExpression, i
+                    // elements: expression, i, conditionalExpression, conditionalExpression
                     // token labels: 
                     // rule labels: retval
                     // token list labels: i
@@ -14408,19 +14422,19 @@ public class JavaParser extends Parser {
                 case 12 :
                     // jkit/java/Java.g:713:6: '>' '>' '>' '=' expression
                     {
-                    char_literal409=(Token)match(input,126,FOLLOW_126_in_expression4831); if (state.failed) return retval; 
+                    char_literal409=(Token)match(input,126,FOLLOW_126_in_expression4838); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_126.add(char_literal409);
 
-                    char_literal410=(Token)match(input,126,FOLLOW_126_in_expression4833); if (state.failed) return retval; 
+                    char_literal410=(Token)match(input,126,FOLLOW_126_in_expression4840); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_126.add(char_literal410);
 
-                    char_literal411=(Token)match(input,126,FOLLOW_126_in_expression4835); if (state.failed) return retval; 
+                    char_literal411=(Token)match(input,126,FOLLOW_126_in_expression4842); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_126.add(char_literal411);
 
-                    char_literal412=(Token)match(input,135,FOLLOW_135_in_expression4837); if (state.failed) return retval; 
+                    char_literal412=(Token)match(input,135,FOLLOW_135_in_expression4844); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_135.add(char_literal412);
 
-                    pushFollow(FOLLOW_expression_in_expression4839);
+                    pushFollow(FOLLOW_expression_in_expression4846);
                     expression413=expression();
 
                     state._fsp--;
@@ -14429,7 +14443,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: conditionalExpression, conditionalExpression, expression
+                    // elements: conditionalExpression, expression, conditionalExpression
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -14548,7 +14562,7 @@ public class JavaParser extends Parser {
             // jkit/java/Java.g:719:5: ( conditionalOrExpression ( '?' expression ':' expression -> ^( CONDEXPR conditionalOrExpression expression expression ) | -> conditionalOrExpression ) )
             // jkit/java/Java.g:719:9: conditionalOrExpression ( '?' expression ':' expression -> ^( CONDEXPR conditionalOrExpression expression expression ) | -> conditionalOrExpression )
             {
-            pushFollow(FOLLOW_conditionalOrExpression_in_conditionalExpression4886);
+            pushFollow(FOLLOW_conditionalOrExpression_in_conditionalExpression4893);
             conditionalOrExpression414=conditionalOrExpression();
 
             state._fsp--;
@@ -14561,19 +14575,19 @@ public class JavaParser extends Parser {
                 case 1 :
                     // jkit/java/Java.g:721:7: '?' expression ':' expression
                     {
-                    char_literal415=(Token)match(input,154,FOLLOW_154_in_conditionalExpression4903); if (state.failed) return retval; 
+                    char_literal415=(Token)match(input,154,FOLLOW_154_in_conditionalExpression4910); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_154.add(char_literal415);
 
-                    pushFollow(FOLLOW_expression_in_conditionalExpression4905);
+                    pushFollow(FOLLOW_expression_in_conditionalExpression4912);
                     expression416=expression();
 
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_expression.add(expression416.getTree());
-                    char_literal417=(Token)match(input,165,FOLLOW_165_in_conditionalExpression4907); if (state.failed) return retval; 
+                    char_literal417=(Token)match(input,165,FOLLOW_165_in_conditionalExpression4914); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_165.add(char_literal417);
 
-                    pushFollow(FOLLOW_expression_in_conditionalExpression4909);
+                    pushFollow(FOLLOW_expression_in_conditionalExpression4916);
                     expression418=expression();
 
                     state._fsp--;
@@ -14582,7 +14596,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: expression, expression, conditionalOrExpression
+                    // elements: expression, conditionalOrExpression, expression
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -14688,7 +14702,7 @@ public class JavaParser extends Parser {
             // jkit/java/Java.g:727:5: ( conditionalAndExpression ( ( '||' conditionalOrExpression ) -> ^( LOR conditionalAndExpression conditionalOrExpression ) | -> conditionalAndExpression ) )
             // jkit/java/Java.g:727:9: conditionalAndExpression ( ( '||' conditionalOrExpression ) -> ^( LOR conditionalAndExpression conditionalOrExpression ) | -> conditionalAndExpression )
             {
-            pushFollow(FOLLOW_conditionalAndExpression_in_conditionalOrExpression4956);
+            pushFollow(FOLLOW_conditionalAndExpression_in_conditionalOrExpression4963);
             conditionalAndExpression419=conditionalAndExpression();
 
             state._fsp--;
@@ -14704,10 +14718,10 @@ public class JavaParser extends Parser {
                     // jkit/java/Java.g:729:7: ( '||' conditionalOrExpression )
                     // jkit/java/Java.g:729:8: '||' conditionalOrExpression
                     {
-                    string_literal420=(Token)match(input,187,FOLLOW_187_in_conditionalOrExpression4974); if (state.failed) return retval; 
+                    string_literal420=(Token)match(input,187,FOLLOW_187_in_conditionalOrExpression4981); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_187.add(string_literal420);
 
-                    pushFollow(FOLLOW_conditionalOrExpression_in_conditionalOrExpression4976);
+                    pushFollow(FOLLOW_conditionalOrExpression_in_conditionalOrExpression4983);
                     conditionalOrExpression421=conditionalOrExpression();
 
                     state._fsp--;
@@ -14824,7 +14838,7 @@ public class JavaParser extends Parser {
             // jkit/java/Java.g:735:5: ( inclusiveOrExpression ( ( '&&' conditionalAndExpression ) -> ^( LAND inclusiveOrExpression conditionalAndExpression ) | -> inclusiveOrExpression ) )
             // jkit/java/Java.g:735:9: inclusiveOrExpression ( ( '&&' conditionalAndExpression ) -> ^( LAND inclusiveOrExpression conditionalAndExpression ) | -> inclusiveOrExpression )
             {
-            pushFollow(FOLLOW_inclusiveOrExpression_in_conditionalAndExpression5022);
+            pushFollow(FOLLOW_inclusiveOrExpression_in_conditionalAndExpression5029);
             inclusiveOrExpression422=inclusiveOrExpression();
 
             state._fsp--;
@@ -14840,10 +14854,10 @@ public class JavaParser extends Parser {
                     // jkit/java/Java.g:737:7: ( '&&' conditionalAndExpression )
                     // jkit/java/Java.g:737:8: '&&' conditionalAndExpression
                     {
-                    string_literal423=(Token)match(input,188,FOLLOW_188_in_conditionalAndExpression5040); if (state.failed) return retval; 
+                    string_literal423=(Token)match(input,188,FOLLOW_188_in_conditionalAndExpression5047); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_188.add(string_literal423);
 
-                    pushFollow(FOLLOW_conditionalAndExpression_in_conditionalAndExpression5042);
+                    pushFollow(FOLLOW_conditionalAndExpression_in_conditionalAndExpression5049);
                     conditionalAndExpression424=conditionalAndExpression();
 
                     state._fsp--;
@@ -14855,7 +14869,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: conditionalAndExpression, inclusiveOrExpression
+                    // elements: inclusiveOrExpression, conditionalAndExpression
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -14960,7 +14974,7 @@ public class JavaParser extends Parser {
             // jkit/java/Java.g:743:5: ( exclusiveOrExpression ( ( '|' inclusiveOrExpression ) -> ^( OR exclusiveOrExpression inclusiveOrExpression ) | -> exclusiveOrExpression ) )
             // jkit/java/Java.g:743:9: exclusiveOrExpression ( ( '|' inclusiveOrExpression ) -> ^( OR exclusiveOrExpression inclusiveOrExpression ) | -> exclusiveOrExpression )
             {
-            pushFollow(FOLLOW_exclusiveOrExpression_in_inclusiveOrExpression5094);
+            pushFollow(FOLLOW_exclusiveOrExpression_in_inclusiveOrExpression5101);
             exclusiveOrExpression425=exclusiveOrExpression();
 
             state._fsp--;
@@ -14976,10 +14990,10 @@ public class JavaParser extends Parser {
                     // jkit/java/Java.g:745:10: ( '|' inclusiveOrExpression )
                     // jkit/java/Java.g:745:11: '|' inclusiveOrExpression
                     {
-                    char_literal426=(Token)match(input,189,FOLLOW_189_in_inclusiveOrExpression5116); if (state.failed) return retval; 
+                    char_literal426=(Token)match(input,189,FOLLOW_189_in_inclusiveOrExpression5123); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_189.add(char_literal426);
 
-                    pushFollow(FOLLOW_inclusiveOrExpression_in_inclusiveOrExpression5118);
+                    pushFollow(FOLLOW_inclusiveOrExpression_in_inclusiveOrExpression5125);
                     inclusiveOrExpression427=inclusiveOrExpression();
 
                     state._fsp--;
@@ -14991,7 +15005,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: inclusiveOrExpression, exclusiveOrExpression
+                    // elements: exclusiveOrExpression, inclusiveOrExpression
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -15096,7 +15110,7 @@ public class JavaParser extends Parser {
             // jkit/java/Java.g:751:5: ( andExpression ( ( '^' exclusiveOrExpression ) -> ^( XOR andExpression exclusiveOrExpression ) | -> andExpression ) )
             // jkit/java/Java.g:751:9: andExpression ( ( '^' exclusiveOrExpression ) -> ^( XOR andExpression exclusiveOrExpression ) | -> andExpression )
             {
-            pushFollow(FOLLOW_andExpression_in_exclusiveOrExpression5165);
+            pushFollow(FOLLOW_andExpression_in_exclusiveOrExpression5172);
             andExpression428=andExpression();
 
             state._fsp--;
@@ -15112,10 +15126,10 @@ public class JavaParser extends Parser {
                     // jkit/java/Java.g:753:6: ( '^' exclusiveOrExpression )
                     // jkit/java/Java.g:753:7: '^' exclusiveOrExpression
                     {
-                    char_literal429=(Token)match(input,190,FOLLOW_190_in_exclusiveOrExpression5181); if (state.failed) return retval; 
+                    char_literal429=(Token)match(input,190,FOLLOW_190_in_exclusiveOrExpression5188); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_190.add(char_literal429);
 
-                    pushFollow(FOLLOW_exclusiveOrExpression_in_exclusiveOrExpression5183);
+                    pushFollow(FOLLOW_exclusiveOrExpression_in_exclusiveOrExpression5190);
                     exclusiveOrExpression430=exclusiveOrExpression();
 
                     state._fsp--;
@@ -15127,7 +15141,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: andExpression, exclusiveOrExpression
+                    // elements: exclusiveOrExpression, andExpression
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -15232,7 +15246,7 @@ public class JavaParser extends Parser {
             // jkit/java/Java.g:759:5: ( equalityExpression ( ( '&' andExpression ) -> ^( AND equalityExpression andExpression ) | -> equalityExpression ) )
             // jkit/java/Java.g:759:9: equalityExpression ( ( '&' andExpression ) -> ^( AND equalityExpression andExpression ) | -> equalityExpression )
             {
-            pushFollow(FOLLOW_equalityExpression_in_andExpression5227);
+            pushFollow(FOLLOW_equalityExpression_in_andExpression5234);
             equalityExpression431=equalityExpression();
 
             state._fsp--;
@@ -15248,10 +15262,10 @@ public class JavaParser extends Parser {
                     // jkit/java/Java.g:761:6: ( '&' andExpression )
                     // jkit/java/Java.g:761:7: '&' andExpression
                     {
-                    char_literal432=(Token)match(input,127,FOLLOW_127_in_andExpression5243); if (state.failed) return retval; 
+                    char_literal432=(Token)match(input,127,FOLLOW_127_in_andExpression5250); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_127.add(char_literal432);
 
-                    pushFollow(FOLLOW_andExpression_in_andExpression5245);
+                    pushFollow(FOLLOW_andExpression_in_andExpression5252);
                     andExpression433=andExpression();
 
                     state._fsp--;
@@ -15372,7 +15386,7 @@ public class JavaParser extends Parser {
             // jkit/java/Java.g:767:5: ( instanceOfExpression ( ( '==' instanceOfExpression ) -> ^( EQ instanceOfExpression instanceOfExpression ) | ( '!=' instanceOfExpression ) -> ^( NEQ instanceOfExpression instanceOfExpression ) | -> instanceOfExpression ) )
             // jkit/java/Java.g:767:9: instanceOfExpression ( ( '==' instanceOfExpression ) -> ^( EQ instanceOfExpression instanceOfExpression ) | ( '!=' instanceOfExpression ) -> ^( NEQ instanceOfExpression instanceOfExpression ) | -> instanceOfExpression )
             {
-            pushFollow(FOLLOW_instanceOfExpression_in_equalityExpression5289);
+            pushFollow(FOLLOW_instanceOfExpression_in_equalityExpression5296);
             instanceOfExpression434=instanceOfExpression();
 
             state._fsp--;
@@ -15388,10 +15402,10 @@ public class JavaParser extends Parser {
                     // jkit/java/Java.g:769:6: ( '==' instanceOfExpression )
                     // jkit/java/Java.g:769:7: '==' instanceOfExpression
                     {
-                    string_literal435=(Token)match(input,191,FOLLOW_191_in_equalityExpression5305); if (state.failed) return retval; 
+                    string_literal435=(Token)match(input,191,FOLLOW_191_in_equalityExpression5312); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_191.add(string_literal435);
 
-                    pushFollow(FOLLOW_instanceOfExpression_in_equalityExpression5307);
+                    pushFollow(FOLLOW_instanceOfExpression_in_equalityExpression5314);
                     instanceOfExpression436=instanceOfExpression();
 
                     state._fsp--;
@@ -15437,10 +15451,10 @@ public class JavaParser extends Parser {
                     // jkit/java/Java.g:770:8: ( '!=' instanceOfExpression )
                     // jkit/java/Java.g:770:9: '!=' instanceOfExpression
                     {
-                    string_literal437=(Token)match(input,192,FOLLOW_192_in_equalityExpression5328); if (state.failed) return retval; 
+                    string_literal437=(Token)match(input,192,FOLLOW_192_in_equalityExpression5335); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_192.add(string_literal437);
 
-                    pushFollow(FOLLOW_instanceOfExpression_in_equalityExpression5330);
+                    pushFollow(FOLLOW_instanceOfExpression_in_equalityExpression5337);
                     instanceOfExpression438=instanceOfExpression();
 
                     state._fsp--;
@@ -15557,7 +15571,7 @@ public class JavaParser extends Parser {
             // jkit/java/Java.g:776:5: ( relationalExpression ( ( 'instanceof' type ) -> ^( INSTANCEOF relationalExpression type ) | -> relationalExpression ) )
             // jkit/java/Java.g:776:9: relationalExpression ( ( 'instanceof' type ) -> ^( INSTANCEOF relationalExpression type ) | -> relationalExpression )
             {
-            pushFollow(FOLLOW_relationalExpression_in_instanceOfExpression5374);
+            pushFollow(FOLLOW_relationalExpression_in_instanceOfExpression5381);
             relationalExpression439=relationalExpression();
 
             state._fsp--;
@@ -15573,10 +15587,10 @@ public class JavaParser extends Parser {
                     // jkit/java/Java.g:778:6: ( 'instanceof' type )
                     // jkit/java/Java.g:778:7: 'instanceof' type
                     {
-                    string_literal440=(Token)match(input,193,FOLLOW_193_in_instanceOfExpression5389); if (state.failed) return retval; 
+                    string_literal440=(Token)match(input,193,FOLLOW_193_in_instanceOfExpression5396); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_193.add(string_literal440);
 
-                    pushFollow(FOLLOW_type_in_instanceOfExpression5391);
+                    pushFollow(FOLLOW_type_in_instanceOfExpression5398);
                     type441=type();
 
                     state._fsp--;
@@ -15588,7 +15602,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: type, relationalExpression
+                    // elements: relationalExpression, type
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -15710,7 +15724,7 @@ public class JavaParser extends Parser {
             // jkit/java/Java.g:784:5: ( shiftExpression ( ( '<' '=' shiftExpression ) -> ^( LTEQ shiftExpression shiftExpression ) | ( '<' shiftExpression ) -> ^( LT shiftExpression shiftExpression ) | ( '>' '=' shiftExpression ) -> ^( GTEQ shiftExpression shiftExpression ) | ( '>' shiftExpression ) -> ^( GT shiftExpression shiftExpression ) | -> shiftExpression ) )
             // jkit/java/Java.g:784:9: shiftExpression ( ( '<' '=' shiftExpression ) -> ^( LTEQ shiftExpression shiftExpression ) | ( '<' shiftExpression ) -> ^( LT shiftExpression shiftExpression ) | ( '>' '=' shiftExpression ) -> ^( GTEQ shiftExpression shiftExpression ) | ( '>' shiftExpression ) -> ^( GT shiftExpression shiftExpression ) | -> shiftExpression )
             {
-            pushFollow(FOLLOW_shiftExpression_in_relationalExpression5435);
+            pushFollow(FOLLOW_shiftExpression_in_relationalExpression5442);
             shiftExpression442=shiftExpression();
 
             state._fsp--;
@@ -15726,13 +15740,13 @@ public class JavaParser extends Parser {
                     // jkit/java/Java.g:786:6: ( '<' '=' shiftExpression )
                     // jkit/java/Java.g:786:7: '<' '=' shiftExpression
                     {
-                    char_literal443=(Token)match(input,124,FOLLOW_124_in_relationalExpression5451); if (state.failed) return retval; 
+                    char_literal443=(Token)match(input,124,FOLLOW_124_in_relationalExpression5458); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_124.add(char_literal443);
 
-                    char_literal444=(Token)match(input,135,FOLLOW_135_in_relationalExpression5453); if (state.failed) return retval; 
+                    char_literal444=(Token)match(input,135,FOLLOW_135_in_relationalExpression5460); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_135.add(char_literal444);
 
-                    pushFollow(FOLLOW_shiftExpression_in_relationalExpression5455);
+                    pushFollow(FOLLOW_shiftExpression_in_relationalExpression5462);
                     shiftExpression445=shiftExpression();
 
                     state._fsp--;
@@ -15778,10 +15792,10 @@ public class JavaParser extends Parser {
                     // jkit/java/Java.g:787:8: ( '<' shiftExpression )
                     // jkit/java/Java.g:787:9: '<' shiftExpression
                     {
-                    char_literal446=(Token)match(input,124,FOLLOW_124_in_relationalExpression5476); if (state.failed) return retval; 
+                    char_literal446=(Token)match(input,124,FOLLOW_124_in_relationalExpression5483); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_124.add(char_literal446);
 
-                    pushFollow(FOLLOW_shiftExpression_in_relationalExpression5478);
+                    pushFollow(FOLLOW_shiftExpression_in_relationalExpression5485);
                     shiftExpression447=shiftExpression();
 
                     state._fsp--;
@@ -15827,13 +15841,13 @@ public class JavaParser extends Parser {
                     // jkit/java/Java.g:788:8: ( '>' '=' shiftExpression )
                     // jkit/java/Java.g:788:9: '>' '=' shiftExpression
                     {
-                    char_literal448=(Token)match(input,126,FOLLOW_126_in_relationalExpression5499); if (state.failed) return retval; 
+                    char_literal448=(Token)match(input,126,FOLLOW_126_in_relationalExpression5506); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_126.add(char_literal448);
 
-                    char_literal449=(Token)match(input,135,FOLLOW_135_in_relationalExpression5501); if (state.failed) return retval; 
+                    char_literal449=(Token)match(input,135,FOLLOW_135_in_relationalExpression5508); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_135.add(char_literal449);
 
-                    pushFollow(FOLLOW_shiftExpression_in_relationalExpression5503);
+                    pushFollow(FOLLOW_shiftExpression_in_relationalExpression5510);
                     shiftExpression450=shiftExpression();
 
                     state._fsp--;
@@ -15879,10 +15893,10 @@ public class JavaParser extends Parser {
                     // jkit/java/Java.g:789:8: ( '>' shiftExpression )
                     // jkit/java/Java.g:789:9: '>' shiftExpression
                     {
-                    char_literal451=(Token)match(input,126,FOLLOW_126_in_relationalExpression5524); if (state.failed) return retval; 
+                    char_literal451=(Token)match(input,126,FOLLOW_126_in_relationalExpression5531); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_126.add(char_literal451);
 
-                    pushFollow(FOLLOW_shiftExpression_in_relationalExpression5526);
+                    pushFollow(FOLLOW_shiftExpression_in_relationalExpression5533);
                     shiftExpression452=shiftExpression();
 
                     state._fsp--;
@@ -16012,7 +16026,7 @@ public class JavaParser extends Parser {
             // jkit/java/Java.g:795:5: ( additiveExpression ( ( (i+= '<' '<' | i+= '>' '>' ) additiveExpression )+ -> ^( LABINOP additiveExpression ( $i additiveExpression )+ ) | ( '>' '>' '>' additiveExpression )+ -> ^( USHR additiveExpression ( additiveExpression )+ ) | -> additiveExpression ) )
             // jkit/java/Java.g:795:9: additiveExpression ( ( (i+= '<' '<' | i+= '>' '>' ) additiveExpression )+ -> ^( LABINOP additiveExpression ( $i additiveExpression )+ ) | ( '>' '>' '>' additiveExpression )+ -> ^( USHR additiveExpression ( additiveExpression )+ ) | -> additiveExpression )
             {
-            pushFollow(FOLLOW_additiveExpression_in_shiftExpression5571);
+            pushFollow(FOLLOW_additiveExpression_in_shiftExpression5578);
             additiveExpression453=additiveExpression();
 
             state._fsp--;
@@ -16056,13 +16070,13 @@ public class JavaParser extends Parser {
                     	        case 1 :
                     	            // jkit/java/Java.g:797:8: i+= '<' '<'
                     	            {
-                    	            i=(Token)match(input,124,FOLLOW_124_in_shiftExpression5590); if (state.failed) return retval; 
+                    	            i=(Token)match(input,124,FOLLOW_124_in_shiftExpression5597); if (state.failed) return retval; 
                     	            if ( state.backtracking==0 ) stream_124.add(i);
 
                     	            if (list_i==null) list_i=new ArrayList();
                     	            list_i.add(i);
 
-                    	            char_literal454=(Token)match(input,124,FOLLOW_124_in_shiftExpression5592); if (state.failed) return retval; 
+                    	            char_literal454=(Token)match(input,124,FOLLOW_124_in_shiftExpression5599); if (state.failed) return retval; 
                     	            if ( state.backtracking==0 ) stream_124.add(char_literal454);
 
 
@@ -16071,13 +16085,13 @@ public class JavaParser extends Parser {
                     	        case 2 :
                     	            // jkit/java/Java.g:797:19: i+= '>' '>'
                     	            {
-                    	            i=(Token)match(input,126,FOLLOW_126_in_shiftExpression5596); if (state.failed) return retval; 
+                    	            i=(Token)match(input,126,FOLLOW_126_in_shiftExpression5603); if (state.failed) return retval; 
                     	            if ( state.backtracking==0 ) stream_126.add(i);
 
                     	            if (list_i==null) list_i=new ArrayList();
                     	            list_i.add(i);
 
-                    	            char_literal455=(Token)match(input,126,FOLLOW_126_in_shiftExpression5598); if (state.failed) return retval; 
+                    	            char_literal455=(Token)match(input,126,FOLLOW_126_in_shiftExpression5605); if (state.failed) return retval; 
                     	            if ( state.backtracking==0 ) stream_126.add(char_literal455);
 
 
@@ -16086,7 +16100,7 @@ public class JavaParser extends Parser {
 
                     	    }
 
-                    	    pushFollow(FOLLOW_additiveExpression_in_shiftExpression5601);
+                    	    pushFollow(FOLLOW_additiveExpression_in_shiftExpression5608);
                     	    additiveExpression456=additiveExpression();
 
                     	    state._fsp--;
@@ -16109,7 +16123,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: additiveExpression, additiveExpression, i
+                    // elements: additiveExpression, i, additiveExpression
                     // token labels: 
                     // rule labels: retval
                     // token list labels: i
@@ -16160,16 +16174,16 @@ public class JavaParser extends Parser {
                     	case 1 :
                     	    // jkit/java/Java.g:799:9: '>' '>' '>' additiveExpression
                     	    {
-                    	    char_literal457=(Token)match(input,126,FOLLOW_126_in_shiftExpression5635); if (state.failed) return retval; 
+                    	    char_literal457=(Token)match(input,126,FOLLOW_126_in_shiftExpression5642); if (state.failed) return retval; 
                     	    if ( state.backtracking==0 ) stream_126.add(char_literal457);
 
-                    	    char_literal458=(Token)match(input,126,FOLLOW_126_in_shiftExpression5637); if (state.failed) return retval; 
+                    	    char_literal458=(Token)match(input,126,FOLLOW_126_in_shiftExpression5644); if (state.failed) return retval; 
                     	    if ( state.backtracking==0 ) stream_126.add(char_literal458);
 
-                    	    char_literal459=(Token)match(input,126,FOLLOW_126_in_shiftExpression5639); if (state.failed) return retval; 
+                    	    char_literal459=(Token)match(input,126,FOLLOW_126_in_shiftExpression5646); if (state.failed) return retval; 
                     	    if ( state.backtracking==0 ) stream_126.add(char_literal459);
 
-                    	    pushFollow(FOLLOW_additiveExpression_in_shiftExpression5641);
+                    	    pushFollow(FOLLOW_additiveExpression_in_shiftExpression5648);
                     	    additiveExpression460=additiveExpression();
 
                     	    state._fsp--;
@@ -16305,7 +16319,7 @@ public class JavaParser extends Parser {
             // jkit/java/Java.g:805:5: ( multiplicativeExpression ( ( (i+= '+' | i+= '-' ) multiplicativeExpression )+ -> ^( LABINOP multiplicativeExpression ( $i multiplicativeExpression )+ ) | -> multiplicativeExpression ) )
             // jkit/java/Java.g:805:9: multiplicativeExpression ( ( (i+= '+' | i+= '-' ) multiplicativeExpression )+ -> ^( LABINOP multiplicativeExpression ( $i multiplicativeExpression )+ ) | -> multiplicativeExpression )
             {
-            pushFollow(FOLLOW_multiplicativeExpression_in_additiveExpression5684);
+            pushFollow(FOLLOW_multiplicativeExpression_in_additiveExpression5691);
             multiplicativeExpression461=multiplicativeExpression();
 
             state._fsp--;
@@ -16349,7 +16363,7 @@ public class JavaParser extends Parser {
                     	        case 1 :
                     	            // jkit/java/Java.g:807:8: i+= '+'
                     	            {
-                    	            i=(Token)match(input,180,FOLLOW_180_in_additiveExpression5703); if (state.failed) return retval; 
+                    	            i=(Token)match(input,180,FOLLOW_180_in_additiveExpression5710); if (state.failed) return retval; 
                     	            if ( state.backtracking==0 ) stream_180.add(i);
 
                     	            if (list_i==null) list_i=new ArrayList();
@@ -16361,7 +16375,7 @@ public class JavaParser extends Parser {
                     	        case 2 :
                     	            // jkit/java/Java.g:807:15: i+= '-'
                     	            {
-                    	            i=(Token)match(input,181,FOLLOW_181_in_additiveExpression5707); if (state.failed) return retval; 
+                    	            i=(Token)match(input,181,FOLLOW_181_in_additiveExpression5714); if (state.failed) return retval; 
                     	            if ( state.backtracking==0 ) stream_181.add(i);
 
                     	            if (list_i==null) list_i=new ArrayList();
@@ -16373,7 +16387,7 @@ public class JavaParser extends Parser {
 
                     	    }
 
-                    	    pushFollow(FOLLOW_multiplicativeExpression_in_additiveExpression5710);
+                    	    pushFollow(FOLLOW_multiplicativeExpression_in_additiveExpression5717);
                     	    multiplicativeExpression462=multiplicativeExpression();
 
                     	    state._fsp--;
@@ -16396,7 +16410,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: i, multiplicativeExpression, multiplicativeExpression
+                    // elements: multiplicativeExpression, i, multiplicativeExpression
                     // token labels: 
                     // rule labels: retval
                     // token list labels: i
@@ -16513,7 +16527,7 @@ public class JavaParser extends Parser {
             // jkit/java/Java.g:813:5: ( unaryExpression ( ( (i+= '*' | i+= '/' | i+= '%' ) unaryExpression )+ -> ^( LABINOP unaryExpression ( $i unaryExpression )+ ) | -> unaryExpression ) )
             // jkit/java/Java.g:813:9: unaryExpression ( ( (i+= '*' | i+= '/' | i+= '%' ) unaryExpression )+ -> ^( LABINOP unaryExpression ( $i unaryExpression )+ ) | -> unaryExpression )
             {
-            pushFollow(FOLLOW_unaryExpression_in_multiplicativeExpression5761);
+            pushFollow(FOLLOW_unaryExpression_in_multiplicativeExpression5768);
             unaryExpression463=unaryExpression();
 
             state._fsp--;
@@ -16566,7 +16580,7 @@ public class JavaParser extends Parser {
                     	        case 1 :
                     	            // jkit/java/Java.g:815:9: i+= '*'
                     	            {
-                    	            i=(Token)match(input,120,FOLLOW_120_in_multiplicativeExpression5781); if (state.failed) return retval; 
+                    	            i=(Token)match(input,120,FOLLOW_120_in_multiplicativeExpression5788); if (state.failed) return retval; 
                     	            if ( state.backtracking==0 ) stream_120.add(i);
 
                     	            if (list_i==null) list_i=new ArrayList();
@@ -16578,7 +16592,7 @@ public class JavaParser extends Parser {
                     	        case 2 :
                     	            // jkit/java/Java.g:815:16: i+= '/'
                     	            {
-                    	            i=(Token)match(input,182,FOLLOW_182_in_multiplicativeExpression5785); if (state.failed) return retval; 
+                    	            i=(Token)match(input,182,FOLLOW_182_in_multiplicativeExpression5792); if (state.failed) return retval; 
                     	            if ( state.backtracking==0 ) stream_182.add(i);
 
                     	            if (list_i==null) list_i=new ArrayList();
@@ -16590,7 +16604,7 @@ public class JavaParser extends Parser {
                     	        case 3 :
                     	            // jkit/java/Java.g:815:23: i+= '%'
                     	            {
-                    	            i=(Token)match(input,186,FOLLOW_186_in_multiplicativeExpression5789); if (state.failed) return retval; 
+                    	            i=(Token)match(input,186,FOLLOW_186_in_multiplicativeExpression5796); if (state.failed) return retval; 
                     	            if ( state.backtracking==0 ) stream_186.add(i);
 
                     	            if (list_i==null) list_i=new ArrayList();
@@ -16602,7 +16616,7 @@ public class JavaParser extends Parser {
 
                     	    }
 
-                    	    pushFollow(FOLLOW_unaryExpression_in_multiplicativeExpression5792);
+                    	    pushFollow(FOLLOW_unaryExpression_in_multiplicativeExpression5799);
                     	    unaryExpression464=unaryExpression();
 
                     	    state._fsp--;
@@ -16625,7 +16639,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: i, unaryExpression, unaryExpression
+                    // elements: unaryExpression, unaryExpression, i
                     // token labels: 
                     // rule labels: retval
                     // token list labels: i
@@ -16644,16 +16658,16 @@ public class JavaParser extends Parser {
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(LABINOP, "LABINOP"), root_1);
 
                         adaptor.addChild(root_1, stream_unaryExpression.nextTree());
-                        if ( !(stream_i.hasNext()||stream_unaryExpression.hasNext()) ) {
+                        if ( !(stream_unaryExpression.hasNext()||stream_i.hasNext()) ) {
                             throw new RewriteEarlyExitException();
                         }
-                        while ( stream_i.hasNext()||stream_unaryExpression.hasNext() ) {
+                        while ( stream_unaryExpression.hasNext()||stream_i.hasNext() ) {
                             adaptor.addChild(root_1, stream_i.nextNode());
                             adaptor.addChild(root_1, stream_unaryExpression.nextTree());
 
                         }
-                        stream_i.reset();
                         stream_unaryExpression.reset();
+                        stream_i.reset();
 
                         adaptor.addChild(root_0, root_1);
                         }
@@ -16759,10 +16773,10 @@ public class JavaParser extends Parser {
                 case 1 :
                     // jkit/java/Java.g:821:9: '+' unaryExpression
                     {
-                    char_literal465=(Token)match(input,180,FOLLOW_180_in_unaryExpression5844); if (state.failed) return retval; 
+                    char_literal465=(Token)match(input,180,FOLLOW_180_in_unaryExpression5851); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_180.add(char_literal465);
 
-                    pushFollow(FOLLOW_unaryExpression_in_unaryExpression5846);
+                    pushFollow(FOLLOW_unaryExpression_in_unaryExpression5853);
                     unaryExpression466=unaryExpression();
 
                     state._fsp--;
@@ -16793,10 +16807,10 @@ public class JavaParser extends Parser {
                 case 2 :
                     // jkit/java/Java.g:822:7: '-' unaryExpression
                     {
-                    char_literal467=(Token)match(input,181,FOLLOW_181_in_unaryExpression5858); if (state.failed) return retval; 
+                    char_literal467=(Token)match(input,181,FOLLOW_181_in_unaryExpression5865); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_181.add(char_literal467);
 
-                    pushFollow(FOLLOW_unaryExpression_in_unaryExpression5860);
+                    pushFollow(FOLLOW_unaryExpression_in_unaryExpression5867);
                     unaryExpression468=unaryExpression();
 
                     state._fsp--;
@@ -16835,10 +16849,10 @@ public class JavaParser extends Parser {
                 case 3 :
                     // jkit/java/Java.g:823:9: '++' unaryExpression
                     {
-                    string_literal469=(Token)match(input,194,FOLLOW_194_in_unaryExpression5878); if (state.failed) return retval; 
+                    string_literal469=(Token)match(input,194,FOLLOW_194_in_unaryExpression5885); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_194.add(string_literal469);
 
-                    pushFollow(FOLLOW_unaryExpression_in_unaryExpression5880);
+                    pushFollow(FOLLOW_unaryExpression_in_unaryExpression5887);
                     unaryExpression470=unaryExpression();
 
                     state._fsp--;
@@ -16877,10 +16891,10 @@ public class JavaParser extends Parser {
                 case 4 :
                     // jkit/java/Java.g:824:9: '--' unaryExpression
                     {
-                    string_literal471=(Token)match(input,195,FOLLOW_195_in_unaryExpression5898); if (state.failed) return retval; 
+                    string_literal471=(Token)match(input,195,FOLLOW_195_in_unaryExpression5905); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_195.add(string_literal471);
 
-                    pushFollow(FOLLOW_unaryExpression_in_unaryExpression5900);
+                    pushFollow(FOLLOW_unaryExpression_in_unaryExpression5907);
                     unaryExpression472=unaryExpression();
 
                     state._fsp--;
@@ -16919,7 +16933,7 @@ public class JavaParser extends Parser {
                 case 5 :
                     // jkit/java/Java.g:825:9: unaryExpressionNotPlusMinus
                     {
-                    pushFollow(FOLLOW_unaryExpressionNotPlusMinus_in_unaryExpression5918);
+                    pushFollow(FOLLOW_unaryExpressionNotPlusMinus_in_unaryExpression5925);
                     unaryExpressionNotPlusMinus473=unaryExpressionNotPlusMinus();
 
                     state._fsp--;
@@ -17020,10 +17034,10 @@ public class JavaParser extends Parser {
                 case 1 :
                     // jkit/java/Java.g:829:9: '~' unaryExpression
                     {
-                    char_literal474=(Token)match(input,196,FOLLOW_196_in_unaryExpressionNotPlusMinus5949); if (state.failed) return retval; 
+                    char_literal474=(Token)match(input,196,FOLLOW_196_in_unaryExpressionNotPlusMinus5956); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_196.add(char_literal474);
 
-                    pushFollow(FOLLOW_unaryExpression_in_unaryExpressionNotPlusMinus5951);
+                    pushFollow(FOLLOW_unaryExpression_in_unaryExpressionNotPlusMinus5958);
                     unaryExpression475=unaryExpression();
 
                     state._fsp--;
@@ -17062,10 +17076,10 @@ public class JavaParser extends Parser {
                 case 2 :
                     // jkit/java/Java.g:830:8: '!' unaryExpression
                     {
-                    char_literal476=(Token)match(input,197,FOLLOW_197_in_unaryExpressionNotPlusMinus5968); if (state.failed) return retval; 
+                    char_literal476=(Token)match(input,197,FOLLOW_197_in_unaryExpressionNotPlusMinus5975); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_197.add(char_literal476);
 
-                    pushFollow(FOLLOW_unaryExpression_in_unaryExpressionNotPlusMinus5970);
+                    pushFollow(FOLLOW_unaryExpression_in_unaryExpressionNotPlusMinus5977);
                     unaryExpression477=unaryExpression();
 
                     state._fsp--;
@@ -17106,7 +17120,7 @@ public class JavaParser extends Parser {
                     {
                     root_0 = (Object)adaptor.nil();
 
-                    pushFollow(FOLLOW_castExpression_in_unaryExpressionNotPlusMinus5988);
+                    pushFollow(FOLLOW_castExpression_in_unaryExpressionNotPlusMinus5995);
                     castExpression478=castExpression();
 
                     state._fsp--;
@@ -17118,7 +17132,7 @@ public class JavaParser extends Parser {
                 case 4 :
                     // jkit/java/Java.g:832:6: primary ( ( selector )+ ( '++' -> ^( POSTINC ^( SELECTOR primary ( selector )+ ) ) | '--' -> ^( POSTDEC ^( SELECTOR primary ( selector )+ ) ) | -> ^( SELECTOR primary ( selector )+ ) ) | '++' -> ^( POSTINC primary ) | '--' -> ^( POSTDEC primary ) | -> primary )
                     {
-                    pushFollow(FOLLOW_primary_in_unaryExpressionNotPlusMinus5995);
+                    pushFollow(FOLLOW_primary_in_unaryExpressionNotPlusMinus6002);
                     primary479=primary();
 
                     state._fsp--;
@@ -17141,7 +17155,7 @@ public class JavaParser extends Parser {
                             	case 1 :
                             	    // jkit/java/Java.g:0:0: selector
                             	    {
-                            	    pushFollow(FOLLOW_selector_in_unaryExpressionNotPlusMinus6005);
+                            	    pushFollow(FOLLOW_selector_in_unaryExpressionNotPlusMinus6012);
                             	    selector480=selector();
 
                             	    state._fsp--;
@@ -17168,13 +17182,13 @@ public class JavaParser extends Parser {
                                 case 1 :
                                     // jkit/java/Java.g:836:5: '++'
                                     {
-                                    string_literal481=(Token)match(input,194,FOLLOW_194_in_unaryExpressionNotPlusMinus6018); if (state.failed) return retval; 
+                                    string_literal481=(Token)match(input,194,FOLLOW_194_in_unaryExpressionNotPlusMinus6025); if (state.failed) return retval; 
                                     if ( state.backtracking==0 ) stream_194.add(string_literal481);
 
 
 
                                     // AST REWRITE
-                                    // elements: selector, primary
+                                    // elements: primary, selector
                                     // token labels: 
                                     // rule labels: retval
                                     // token list labels: 
@@ -17220,7 +17234,7 @@ public class JavaParser extends Parser {
                                 case 2 :
                                     // jkit/java/Java.g:837:6: '--'
                                     {
-                                    string_literal482=(Token)match(input,195,FOLLOW_195_in_unaryExpressionNotPlusMinus6040); if (state.failed) return retval; 
+                                    string_literal482=(Token)match(input,195,FOLLOW_195_in_unaryExpressionNotPlusMinus6047); if (state.failed) return retval; 
                                     if ( state.backtracking==0 ) stream_195.add(string_literal482);
 
 
@@ -17274,7 +17288,7 @@ public class JavaParser extends Parser {
                                     {
 
                                     // AST REWRITE
-                                    // elements: primary, selector
+                                    // elements: selector, primary
                                     // token labels: 
                                     // rule labels: retval
                                     // token list labels: 
@@ -17318,7 +17332,7 @@ public class JavaParser extends Parser {
                         case 2 :
                             // jkit/java/Java.g:840:6: '++'
                             {
-                            string_literal483=(Token)match(input,194,FOLLOW_194_in_unaryExpressionNotPlusMinus6084); if (state.failed) return retval; 
+                            string_literal483=(Token)match(input,194,FOLLOW_194_in_unaryExpressionNotPlusMinus6091); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_194.add(string_literal483);
 
 
@@ -17354,7 +17368,7 @@ public class JavaParser extends Parser {
                         case 3 :
                             // jkit/java/Java.g:841:6: '--'
                             {
-                            string_literal484=(Token)match(input,195,FOLLOW_195_in_unaryExpressionNotPlusMinus6099); if (state.failed) return retval; 
+                            string_literal484=(Token)match(input,195,FOLLOW_195_in_unaryExpressionNotPlusMinus6106); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_195.add(string_literal484);
 
 
@@ -17492,19 +17506,19 @@ public class JavaParser extends Parser {
                 case 1 :
                     // jkit/java/Java.g:847:8: '(' primitiveType ')' unaryExpression
                     {
-                    char_literal485=(Token)match(input,156,FOLLOW_156_in_castExpression6138); if (state.failed) return retval; 
+                    char_literal485=(Token)match(input,156,FOLLOW_156_in_castExpression6145); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_156.add(char_literal485);
 
-                    pushFollow(FOLLOW_primitiveType_in_castExpression6140);
+                    pushFollow(FOLLOW_primitiveType_in_castExpression6147);
                     primitiveType486=primitiveType();
 
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_primitiveType.add(primitiveType486.getTree());
-                    char_literal487=(Token)match(input,157,FOLLOW_157_in_castExpression6142); if (state.failed) return retval; 
+                    char_literal487=(Token)match(input,157,FOLLOW_157_in_castExpression6149); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_157.add(char_literal487);
 
-                    pushFollow(FOLLOW_unaryExpression_in_castExpression6144);
+                    pushFollow(FOLLOW_unaryExpression_in_castExpression6151);
                     unaryExpression488=unaryExpression();
 
                     state._fsp--;
@@ -17513,7 +17527,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: primitiveType, unaryExpression
+                    // elements: unaryExpression, primitiveType
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -17552,19 +17566,19 @@ public class JavaParser extends Parser {
                 case 2 :
                     // jkit/java/Java.g:848:8: '(' type ')' unaryExpressionNotPlusMinus
                     {
-                    char_literal489=(Token)match(input,156,FOLLOW_156_in_castExpression6167); if (state.failed) return retval; 
+                    char_literal489=(Token)match(input,156,FOLLOW_156_in_castExpression6174); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_156.add(char_literal489);
 
-                    pushFollow(FOLLOW_type_in_castExpression6169);
+                    pushFollow(FOLLOW_type_in_castExpression6176);
                     type490=type();
 
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_type.add(type490.getTree());
-                    char_literal491=(Token)match(input,157,FOLLOW_157_in_castExpression6171); if (state.failed) return retval; 
+                    char_literal491=(Token)match(input,157,FOLLOW_157_in_castExpression6178); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_157.add(char_literal491);
 
-                    pushFollow(FOLLOW_unaryExpressionNotPlusMinus_in_castExpression6173);
+                    pushFollow(FOLLOW_unaryExpressionNotPlusMinus_in_castExpression6180);
                     unaryExpressionNotPlusMinus492=unaryExpressionNotPlusMinus();
 
                     state._fsp--;
@@ -17573,7 +17587,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: unaryExpressionNotPlusMinus, type
+                    // elements: type, unaryExpressionNotPlusMinus
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -17604,19 +17618,19 @@ public class JavaParser extends Parser {
                 case 3 :
                     // jkit/java/Java.g:849:8: '(' expression ')' unaryExpressionNotPlusMinus
                     {
-                    char_literal493=(Token)match(input,156,FOLLOW_156_in_castExpression6192); if (state.failed) return retval; 
+                    char_literal493=(Token)match(input,156,FOLLOW_156_in_castExpression6199); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_156.add(char_literal493);
 
-                    pushFollow(FOLLOW_expression_in_castExpression6194);
+                    pushFollow(FOLLOW_expression_in_castExpression6201);
                     expression494=expression();
 
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_expression.add(expression494.getTree());
-                    char_literal495=(Token)match(input,157,FOLLOW_157_in_castExpression6196); if (state.failed) return retval; 
+                    char_literal495=(Token)match(input,157,FOLLOW_157_in_castExpression6203); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_157.add(char_literal495);
 
-                    pushFollow(FOLLOW_unaryExpressionNotPlusMinus_in_castExpression6198);
+                    pushFollow(FOLLOW_unaryExpressionNotPlusMinus_in_castExpression6205);
                     unaryExpressionNotPlusMinus496=unaryExpressionNotPlusMinus();
 
                     state._fsp--;
@@ -17781,7 +17795,7 @@ public class JavaParser extends Parser {
                     {
                     root_0 = (Object)adaptor.nil();
 
-                    pushFollow(FOLLOW_parExpression_in_primary6218);
+                    pushFollow(FOLLOW_parExpression_in_primary6225);
                     parExpression497=parExpression();
 
                     state._fsp--;
@@ -17793,13 +17807,13 @@ public class JavaParser extends Parser {
                 case 2 :
                     // jkit/java/Java.g:854:6: nonWildcardTypeArguments explicitGenericInvocationSuffix
                     {
-                    pushFollow(FOLLOW_nonWildcardTypeArguments_in_primary6225);
+                    pushFollow(FOLLOW_nonWildcardTypeArguments_in_primary6232);
                     nonWildcardTypeArguments498=nonWildcardTypeArguments();
 
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_nonWildcardTypeArguments.add(nonWildcardTypeArguments498.getTree());
-                    pushFollow(FOLLOW_explicitGenericInvocationSuffix_in_primary6227);
+                    pushFollow(FOLLOW_explicitGenericInvocationSuffix_in_primary6234);
                     explicitGenericInvocationSuffix499=explicitGenericInvocationSuffix();
 
                     state._fsp--;
@@ -17808,7 +17822,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: explicitGenericInvocationSuffix, nonWildcardTypeArguments
+                    // elements: nonWildcardTypeArguments, explicitGenericInvocationSuffix
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -17849,7 +17863,7 @@ public class JavaParser extends Parser {
                     {
                     root_0 = (Object)adaptor.nil();
 
-                    pushFollow(FOLLOW_literal_in_primary6251);
+                    pushFollow(FOLLOW_literal_in_primary6258);
                     literal500=literal();
 
                     state._fsp--;
@@ -17861,7 +17875,7 @@ public class JavaParser extends Parser {
                 case 4 :
                     // jkit/java/Java.g:856:9: 'new' ( nonWildcardTypeArguments )? primitiveType ( ( '[' expression ']' )+ ( '[' ']' )* -> ^( NEW ^( TYPE primitiveType ( '[' )* ) ( expression )* ) | ( '[' ']' )+ arrayInitializer -> ^( ARRAYINIT ^( TYPE primitiveType ( '[' )* ) arrayInitializer ) )
                     {
-                    string_literal501=(Token)match(input,198,FOLLOW_198_in_primary6261); if (state.failed) return retval; 
+                    string_literal501=(Token)match(input,198,FOLLOW_198_in_primary6268); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_198.add(string_literal501);
 
                     // jkit/java/Java.g:856:15: ( nonWildcardTypeArguments )?
@@ -17875,7 +17889,7 @@ public class JavaParser extends Parser {
                         case 1 :
                             // jkit/java/Java.g:0:0: nonWildcardTypeArguments
                             {
-                            pushFollow(FOLLOW_nonWildcardTypeArguments_in_primary6263);
+                            pushFollow(FOLLOW_nonWildcardTypeArguments_in_primary6270);
                             nonWildcardTypeArguments502=nonWildcardTypeArguments();
 
                             state._fsp--;
@@ -17887,7 +17901,7 @@ public class JavaParser extends Parser {
 
                     }
 
-                    pushFollow(FOLLOW_primitiveType_in_primary6266);
+                    pushFollow(FOLLOW_primitiveType_in_primary6273);
                     primitiveType503=primitiveType();
 
                     state._fsp--;
@@ -17910,16 +17924,16 @@ public class JavaParser extends Parser {
                             	case 1 :
                             	    // jkit/java/Java.g:858:8: '[' expression ']'
                             	    {
-                            	    char_literal504=(Token)match(input,133,FOLLOW_133_in_primary6282); if (state.failed) return retval; 
+                            	    char_literal504=(Token)match(input,133,FOLLOW_133_in_primary6289); if (state.failed) return retval; 
                             	    if ( state.backtracking==0 ) stream_133.add(char_literal504);
 
-                            	    pushFollow(FOLLOW_expression_in_primary6284);
+                            	    pushFollow(FOLLOW_expression_in_primary6291);
                             	    expression505=expression();
 
                             	    state._fsp--;
                             	    if (state.failed) return retval;
                             	    if ( state.backtracking==0 ) stream_expression.add(expression505.getTree());
-                            	    char_literal506=(Token)match(input,134,FOLLOW_134_in_primary6286); if (state.failed) return retval; 
+                            	    char_literal506=(Token)match(input,134,FOLLOW_134_in_primary6293); if (state.failed) return retval; 
                             	    if ( state.backtracking==0 ) stream_134.add(char_literal506);
 
 
@@ -17945,10 +17959,10 @@ public class JavaParser extends Parser {
                             	case 1 :
                             	    // jkit/java/Java.g:858:30: '[' ']'
                             	    {
-                            	    char_literal507=(Token)match(input,133,FOLLOW_133_in_primary6291); if (state.failed) return retval; 
+                            	    char_literal507=(Token)match(input,133,FOLLOW_133_in_primary6298); if (state.failed) return retval; 
                             	    if ( state.backtracking==0 ) stream_133.add(char_literal507);
 
-                            	    char_literal508=(Token)match(input,134,FOLLOW_134_in_primary6293); if (state.failed) return retval; 
+                            	    char_literal508=(Token)match(input,134,FOLLOW_134_in_primary6300); if (state.failed) return retval; 
                             	    if ( state.backtracking==0 ) stream_134.add(char_literal508);
 
 
@@ -17963,7 +17977,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: primitiveType, expression, 133
+                            // elements: expression, 133, primitiveType
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -18029,10 +18043,10 @@ public class JavaParser extends Parser {
                             	case 1 :
                             	    // jkit/java/Java.g:859:10: '[' ']'
                             	    {
-                            	    char_literal509=(Token)match(input,133,FOLLOW_133_in_primary6324); if (state.failed) return retval; 
+                            	    char_literal509=(Token)match(input,133,FOLLOW_133_in_primary6331); if (state.failed) return retval; 
                             	    if ( state.backtracking==0 ) stream_133.add(char_literal509);
 
-                            	    char_literal510=(Token)match(input,134,FOLLOW_134_in_primary6326); if (state.failed) return retval; 
+                            	    char_literal510=(Token)match(input,134,FOLLOW_134_in_primary6333); if (state.failed) return retval; 
                             	    if ( state.backtracking==0 ) stream_134.add(char_literal510);
 
 
@@ -18049,7 +18063,7 @@ public class JavaParser extends Parser {
                                 cnt152++;
                             } while (true);
 
-                            pushFollow(FOLLOW_arrayInitializer_in_primary6330);
+                            pushFollow(FOLLOW_arrayInitializer_in_primary6337);
                             arrayInitializer511=arrayInitializer();
 
                             state._fsp--;
@@ -18058,7 +18072,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: primitiveType, arrayInitializer, 133
+                            // elements: arrayInitializer, 133, primitiveType
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -18109,7 +18123,7 @@ public class JavaParser extends Parser {
                 case 5 :
                     // jkit/java/Java.g:861:9: 'new' ( nonWildcardTypeArguments )? (i+= refComponent ( '.' i+= refComponent )* ) ( ( '[' expression ']' )+ ( '[' ']' )* -> ^( NEW ^( TYPE ( $i)+ ( '[' )* ) ( expression )* ) | ( '[' ']' )+ arrayInitializer -> ^( ARRAYINIT ^( TYPE ( $i)+ ( '[' )* ) arrayInitializer ) | classCreatorRest -> ^( NEW ^( TYPE ( $i)+ ) ( classCreatorRest )? ) )
                     {
-                    string_literal512=(Token)match(input,198,FOLLOW_198_in_primary6362); if (state.failed) return retval; 
+                    string_literal512=(Token)match(input,198,FOLLOW_198_in_primary6369); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_198.add(string_literal512);
 
                     // jkit/java/Java.g:861:15: ( nonWildcardTypeArguments )?
@@ -18123,7 +18137,7 @@ public class JavaParser extends Parser {
                         case 1 :
                             // jkit/java/Java.g:0:0: nonWildcardTypeArguments
                             {
-                            pushFollow(FOLLOW_nonWildcardTypeArguments_in_primary6364);
+                            pushFollow(FOLLOW_nonWildcardTypeArguments_in_primary6371);
                             nonWildcardTypeArguments513=nonWildcardTypeArguments();
 
                             state._fsp--;
@@ -18138,7 +18152,7 @@ public class JavaParser extends Parser {
                     // jkit/java/Java.g:861:41: (i+= refComponent ( '.' i+= refComponent )* )
                     // jkit/java/Java.g:861:42: i+= refComponent ( '.' i+= refComponent )*
                     {
-                    pushFollow(FOLLOW_refComponent_in_primary6370);
+                    pushFollow(FOLLOW_refComponent_in_primary6377);
                     i=refComponent();
 
                     state._fsp--;
@@ -18162,10 +18176,10 @@ public class JavaParser extends Parser {
                     	case 1 :
                     	    // jkit/java/Java.g:861:59: '.' i+= refComponent
                     	    {
-                    	    char_literal514=(Token)match(input,119,FOLLOW_119_in_primary6373); if (state.failed) return retval; 
+                    	    char_literal514=(Token)match(input,119,FOLLOW_119_in_primary6380); if (state.failed) return retval; 
                     	    if ( state.backtracking==0 ) stream_119.add(char_literal514);
 
-                    	    pushFollow(FOLLOW_refComponent_in_primary6377);
+                    	    pushFollow(FOLLOW_refComponent_in_primary6384);
                     	    i=refComponent();
 
                     	    state._fsp--;
@@ -18203,16 +18217,16 @@ public class JavaParser extends Parser {
                             	case 1 :
                             	    // jkit/java/Java.g:863:8: '[' expression ']'
                             	    {
-                            	    char_literal515=(Token)match(input,133,FOLLOW_133_in_primary6396); if (state.failed) return retval; 
+                            	    char_literal515=(Token)match(input,133,FOLLOW_133_in_primary6403); if (state.failed) return retval; 
                             	    if ( state.backtracking==0 ) stream_133.add(char_literal515);
 
-                            	    pushFollow(FOLLOW_expression_in_primary6398);
+                            	    pushFollow(FOLLOW_expression_in_primary6405);
                             	    expression516=expression();
 
                             	    state._fsp--;
                             	    if (state.failed) return retval;
                             	    if ( state.backtracking==0 ) stream_expression.add(expression516.getTree());
-                            	    char_literal517=(Token)match(input,134,FOLLOW_134_in_primary6400); if (state.failed) return retval; 
+                            	    char_literal517=(Token)match(input,134,FOLLOW_134_in_primary6407); if (state.failed) return retval; 
                             	    if ( state.backtracking==0 ) stream_134.add(char_literal517);
 
 
@@ -18238,10 +18252,10 @@ public class JavaParser extends Parser {
                             	case 1 :
                             	    // jkit/java/Java.g:863:30: '[' ']'
                             	    {
-                            	    char_literal518=(Token)match(input,133,FOLLOW_133_in_primary6405); if (state.failed) return retval; 
+                            	    char_literal518=(Token)match(input,133,FOLLOW_133_in_primary6412); if (state.failed) return retval; 
                             	    if ( state.backtracking==0 ) stream_133.add(char_literal518);
 
-                            	    char_literal519=(Token)match(input,134,FOLLOW_134_in_primary6407); if (state.failed) return retval; 
+                            	    char_literal519=(Token)match(input,134,FOLLOW_134_in_primary6414); if (state.failed) return retval; 
                             	    if ( state.backtracking==0 ) stream_134.add(char_literal519);
 
 
@@ -18256,7 +18270,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: expression, 133, i
+                            // elements: 133, expression, i
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -18329,10 +18343,10 @@ public class JavaParser extends Parser {
                             	case 1 :
                             	    // jkit/java/Java.g:864:10: '[' ']'
                             	    {
-                            	    char_literal520=(Token)match(input,133,FOLLOW_133_in_primary6440); if (state.failed) return retval; 
+                            	    char_literal520=(Token)match(input,133,FOLLOW_133_in_primary6447); if (state.failed) return retval; 
                             	    if ( state.backtracking==0 ) stream_133.add(char_literal520);
 
-                            	    char_literal521=(Token)match(input,134,FOLLOW_134_in_primary6442); if (state.failed) return retval; 
+                            	    char_literal521=(Token)match(input,134,FOLLOW_134_in_primary6449); if (state.failed) return retval; 
                             	    if ( state.backtracking==0 ) stream_134.add(char_literal521);
 
 
@@ -18349,7 +18363,7 @@ public class JavaParser extends Parser {
                                 cnt158++;
                             } while (true);
 
-                            pushFollow(FOLLOW_arrayInitializer_in_primary6446);
+                            pushFollow(FOLLOW_arrayInitializer_in_primary6453);
                             arrayInitializer522=arrayInitializer();
 
                             state._fsp--;
@@ -18358,7 +18372,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: arrayInitializer, i, 133
+                            // elements: arrayInitializer, 133, i
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -18410,7 +18424,7 @@ public class JavaParser extends Parser {
                         case 3 :
                             // jkit/java/Java.g:865:9: classCreatorRest
                             {
-                            pushFollow(FOLLOW_classCreatorRest_in_primary6475);
+                            pushFollow(FOLLOW_classCreatorRest_in_primary6482);
                             classCreatorRest523=classCreatorRest();
 
                             state._fsp--;
@@ -18476,16 +18490,16 @@ public class JavaParser extends Parser {
                 case 6 :
                     // jkit/java/Java.g:867:9: type '.' 'class'
                     {
-                    pushFollow(FOLLOW_type_in_primary6507);
+                    pushFollow(FOLLOW_type_in_primary6514);
                     type524=type();
 
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_type.add(type524.getTree());
-                    char_literal525=(Token)match(input,119,FOLLOW_119_in_primary6509); if (state.failed) return retval; 
+                    char_literal525=(Token)match(input,119,FOLLOW_119_in_primary6516); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_119.add(char_literal525);
 
-                    string_literal526=(Token)match(input,121,FOLLOW_121_in_primary6511); if (state.failed) return retval; 
+                    string_literal526=(Token)match(input,121,FOLLOW_121_in_primary6518); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_121.add(string_literal526);
 
 
@@ -18521,13 +18535,13 @@ public class JavaParser extends Parser {
                 case 7 :
                     // jkit/java/Java.g:868:9: 'void' '.' 'class'
                     {
-                    string_literal527=(Token)match(input,131,FOLLOW_131_in_primary6533); if (state.failed) return retval; 
+                    string_literal527=(Token)match(input,131,FOLLOW_131_in_primary6540); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_131.add(string_literal527);
 
-                    char_literal528=(Token)match(input,119,FOLLOW_119_in_primary6535); if (state.failed) return retval; 
+                    char_literal528=(Token)match(input,119,FOLLOW_119_in_primary6542); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_119.add(char_literal528);
 
-                    string_literal529=(Token)match(input,121,FOLLOW_121_in_primary6537); if (state.failed) return retval; 
+                    string_literal529=(Token)match(input,121,FOLLOW_121_in_primary6544); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_121.add(string_literal529);
 
 
@@ -18571,7 +18585,7 @@ public class JavaParser extends Parser {
                 case 8 :
                     // jkit/java/Java.g:869:8: 'super' ( arguments -> ^( INVOKE 'super' ( arguments )? ) | -> ^( VAR 'super' ) )
                     {
-                    string_literal530=(Token)match(input,155,FOLLOW_155_in_primary6558); if (state.failed) return retval; 
+                    string_literal530=(Token)match(input,155,FOLLOW_155_in_primary6565); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_155.add(string_literal530);
 
                     // jkit/java/Java.g:870:3: ( arguments -> ^( INVOKE 'super' ( arguments )? ) | -> ^( VAR 'super' ) )
@@ -18581,7 +18595,7 @@ public class JavaParser extends Parser {
                         case 1 :
                             // jkit/java/Java.g:871:4: arguments
                             {
-                            pushFollow(FOLLOW_arguments_in_primary6568);
+                            pushFollow(FOLLOW_arguments_in_primary6575);
                             arguments531=arguments();
 
                             state._fsp--;
@@ -18590,7 +18604,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: arguments, 155
+                            // elements: 155, arguments
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -18664,7 +18678,7 @@ public class JavaParser extends Parser {
                 case 9 :
                     // jkit/java/Java.g:874:9: Identifier ( arguments -> ^( INVOKE Identifier ( arguments )? ) | -> ^( VAR Identifier ) )
                     {
-                    Identifier532=(Token)match(input,Identifier,FOLLOW_Identifier_in_primary6606); if (state.failed) return retval; 
+                    Identifier532=(Token)match(input,Identifier,FOLLOW_Identifier_in_primary6613); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_Identifier.add(Identifier532);
 
                     // jkit/java/Java.g:875:6: ( arguments -> ^( INVOKE Identifier ( arguments )? ) | -> ^( VAR Identifier ) )
@@ -18674,7 +18688,7 @@ public class JavaParser extends Parser {
                         case 1 :
                             // jkit/java/Java.g:876:7: arguments
                             {
-                            pushFollow(FOLLOW_arguments_in_primary6622);
+                            pushFollow(FOLLOW_arguments_in_primary6629);
                             arguments533=arguments();
 
                             state._fsp--;
@@ -18683,7 +18697,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: arguments, Identifier
+                            // elements: Identifier, arguments
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -18800,10 +18814,10 @@ public class JavaParser extends Parser {
             // jkit/java/Java.g:882:2: ( Identifier classCreatorRest -> ^( TYPE Identifier ) ( classCreatorRest )? )
             // jkit/java/Java.g:882:4: Identifier classCreatorRest
             {
-            Identifier534=(Token)match(input,Identifier,FOLLOW_Identifier_in_innerCreator6667); if (state.failed) return retval; 
+            Identifier534=(Token)match(input,Identifier,FOLLOW_Identifier_in_innerCreator6674); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_Identifier.add(Identifier534);
 
-            pushFollow(FOLLOW_classCreatorRest_in_innerCreator6669);
+            pushFollow(FOLLOW_classCreatorRest_in_innerCreator6676);
             classCreatorRest535=classCreatorRest();
 
             state._fsp--;
@@ -18812,7 +18826,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: Identifier, classCreatorRest
+            // elements: classCreatorRest, Identifier
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -18889,7 +18903,7 @@ public class JavaParser extends Parser {
             // jkit/java/Java.g:886:2: ( arguments ( classBody )? -> ( arguments )? ( classBody )? )
             // jkit/java/Java.g:886:4: arguments ( classBody )?
             {
-            pushFollow(FOLLOW_arguments_in_classCreatorRest6691);
+            pushFollow(FOLLOW_arguments_in_classCreatorRest6698);
             arguments536=arguments();
 
             state._fsp--;
@@ -18902,7 +18916,7 @@ public class JavaParser extends Parser {
                 case 1 :
                     // jkit/java/Java.g:0:0: classBody
                     {
-                    pushFollow(FOLLOW_classBody_in_classCreatorRest6693);
+                    pushFollow(FOLLOW_classBody_in_classCreatorRest6700);
                     classBody537=classBody();
 
                     state._fsp--;
@@ -18992,13 +19006,13 @@ public class JavaParser extends Parser {
             {
             root_0 = (Object)adaptor.nil();
 
-            pushFollow(FOLLOW_nonWildcardTypeArguments_in_explicitGenericInvocation6714);
+            pushFollow(FOLLOW_nonWildcardTypeArguments_in_explicitGenericInvocation6721);
             nonWildcardTypeArguments538=nonWildcardTypeArguments();
 
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) adaptor.addChild(root_0, nonWildcardTypeArguments538.getTree());
-            pushFollow(FOLLOW_explicitGenericInvocationSuffix_in_explicitGenericInvocation6716);
+            pushFollow(FOLLOW_explicitGenericInvocationSuffix_in_explicitGenericInvocation6723);
             explicitGenericInvocationSuffix539=explicitGenericInvocationSuffix();
 
             state._fsp--;
@@ -19054,16 +19068,16 @@ public class JavaParser extends Parser {
             // jkit/java/Java.g:894:2: ( '<' typeList '>' -> typeList )
             // jkit/java/Java.g:894:4: '<' typeList '>'
             {
-            char_literal540=(Token)match(input,124,FOLLOW_124_in_nonWildcardTypeArguments6728); if (state.failed) return retval; 
+            char_literal540=(Token)match(input,124,FOLLOW_124_in_nonWildcardTypeArguments6735); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_124.add(char_literal540);
 
-            pushFollow(FOLLOW_typeList_in_nonWildcardTypeArguments6730);
+            pushFollow(FOLLOW_typeList_in_nonWildcardTypeArguments6737);
             typeList541=typeList();
 
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_typeList.add(typeList541.getTree());
-            char_literal542=(Token)match(input,126,FOLLOW_126_in_nonWildcardTypeArguments6732); if (state.failed) return retval; 
+            char_literal542=(Token)match(input,126,FOLLOW_126_in_nonWildcardTypeArguments6739); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_126.add(char_literal542);
 
 
@@ -19156,10 +19170,10 @@ public class JavaParser extends Parser {
                 case 1 :
                     // jkit/java/Java.g:898:4: 'super' superSuffix
                     {
-                    string_literal543=(Token)match(input,155,FOLLOW_155_in_explicitGenericInvocationSuffix6748); if (state.failed) return retval; 
+                    string_literal543=(Token)match(input,155,FOLLOW_155_in_explicitGenericInvocationSuffix6755); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_155.add(string_literal543);
 
-                    pushFollow(FOLLOW_superSuffix_in_explicitGenericInvocationSuffix6750);
+                    pushFollow(FOLLOW_superSuffix_in_explicitGenericInvocationSuffix6757);
                     superSuffix544=superSuffix();
 
                     state._fsp--;
@@ -19168,7 +19182,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: superSuffix, 155
+                    // elements: 155, superSuffix
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -19196,10 +19210,10 @@ public class JavaParser extends Parser {
                 case 2 :
                     // jkit/java/Java.g:899:6: Identifier arguments
                     {
-                    Identifier545=(Token)match(input,Identifier,FOLLOW_Identifier_in_explicitGenericInvocationSuffix6764); if (state.failed) return retval; 
+                    Identifier545=(Token)match(input,Identifier,FOLLOW_Identifier_in_explicitGenericInvocationSuffix6771); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_Identifier.add(Identifier545);
 
-                    pushFollow(FOLLOW_arguments_in_explicitGenericInvocationSuffix6766);
+                    pushFollow(FOLLOW_arguments_in_explicitGenericInvocationSuffix6773);
                     arguments546=arguments();
 
                     state._fsp--;
@@ -19208,7 +19222,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: arguments, Identifier
+                    // elements: Identifier, arguments
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -19300,7 +19314,7 @@ public class JavaParser extends Parser {
                 case 1 :
                     // jkit/java/Java.g:903:4: arguments
                     {
-                    pushFollow(FOLLOW_arguments_in_superSuffix6785);
+                    pushFollow(FOLLOW_arguments_in_superSuffix6792);
                     arguments547=arguments();
 
                     state._fsp--;
@@ -19338,12 +19352,12 @@ public class JavaParser extends Parser {
                     {
                     root_0 = (Object)adaptor.nil();
 
-                    char_literal548=(Token)match(input,119,FOLLOW_119_in_superSuffix6797); if (state.failed) return retval;
+                    char_literal548=(Token)match(input,119,FOLLOW_119_in_superSuffix6804); if (state.failed) return retval;
                     if ( state.backtracking==0 ) {
                     char_literal548_tree = (Object)adaptor.create(char_literal548);
                     adaptor.addChild(root_0, char_literal548_tree);
                     }
-                    Identifier549=(Token)match(input,Identifier,FOLLOW_Identifier_in_superSuffix6799); if (state.failed) return retval;
+                    Identifier549=(Token)match(input,Identifier,FOLLOW_Identifier_in_superSuffix6806); if (state.failed) return retval;
                     if ( state.backtracking==0 ) {
                     Identifier549_tree = (Object)adaptor.create(Identifier549);
                     adaptor.addChild(root_0, Identifier549_tree);
@@ -19355,7 +19369,7 @@ public class JavaParser extends Parser {
                         case 1 :
                             // jkit/java/Java.g:904:22: arguments
                             {
-                            pushFollow(FOLLOW_arguments_in_superSuffix6802);
+                            pushFollow(FOLLOW_arguments_in_superSuffix6809);
                             arguments550=arguments();
 
                             state._fsp--;
@@ -19499,13 +19513,13 @@ public class JavaParser extends Parser {
                 case 1 :
                     // jkit/java/Java.g:908:4: '.' 'super' arguments
                     {
-                    char_literal551=(Token)match(input,119,FOLLOW_119_in_selector6816); if (state.failed) return retval; 
+                    char_literal551=(Token)match(input,119,FOLLOW_119_in_selector6823); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_119.add(char_literal551);
 
-                    string_literal552=(Token)match(input,155,FOLLOW_155_in_selector6818); if (state.failed) return retval; 
+                    string_literal552=(Token)match(input,155,FOLLOW_155_in_selector6825); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_155.add(string_literal552);
 
-                    pushFollow(FOLLOW_arguments_in_selector6820);
+                    pushFollow(FOLLOW_arguments_in_selector6827);
                     arguments553=arguments();
 
                     state._fsp--;
@@ -19550,10 +19564,10 @@ public class JavaParser extends Parser {
                 case 2 :
                     // jkit/java/Java.g:909:6: '.' 'new' ( nonWildcardTypeArguments )? innerCreator
                     {
-                    char_literal554=(Token)match(input,119,FOLLOW_119_in_selector6838); if (state.failed) return retval; 
+                    char_literal554=(Token)match(input,119,FOLLOW_119_in_selector6845); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_119.add(char_literal554);
 
-                    string_literal555=(Token)match(input,198,FOLLOW_198_in_selector6840); if (state.failed) return retval; 
+                    string_literal555=(Token)match(input,198,FOLLOW_198_in_selector6847); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_198.add(string_literal555);
 
                     // jkit/java/Java.g:909:16: ( nonWildcardTypeArguments )?
@@ -19567,7 +19581,7 @@ public class JavaParser extends Parser {
                         case 1 :
                             // jkit/java/Java.g:909:17: nonWildcardTypeArguments
                             {
-                            pushFollow(FOLLOW_nonWildcardTypeArguments_in_selector6843);
+                            pushFollow(FOLLOW_nonWildcardTypeArguments_in_selector6850);
                             nonWildcardTypeArguments556=nonWildcardTypeArguments();
 
                             state._fsp--;
@@ -19579,7 +19593,7 @@ public class JavaParser extends Parser {
 
                     }
 
-                    pushFollow(FOLLOW_innerCreator_in_selector6847);
+                    pushFollow(FOLLOW_innerCreator_in_selector6854);
                     innerCreator557=innerCreator();
 
                     state._fsp--;
@@ -19618,16 +19632,16 @@ public class JavaParser extends Parser {
                 case 3 :
                     // jkit/java/Java.g:910:5: '.' nonWildcardTypeArguments explicitGenericInvocationSuffix
                     {
-                    char_literal558=(Token)match(input,119,FOLLOW_119_in_selector6862); if (state.failed) return retval; 
+                    char_literal558=(Token)match(input,119,FOLLOW_119_in_selector6869); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_119.add(char_literal558);
 
-                    pushFollow(FOLLOW_nonWildcardTypeArguments_in_selector6864);
+                    pushFollow(FOLLOW_nonWildcardTypeArguments_in_selector6871);
                     nonWildcardTypeArguments559=nonWildcardTypeArguments();
 
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_nonWildcardTypeArguments.add(nonWildcardTypeArguments559.getTree());
-                    pushFollow(FOLLOW_explicitGenericInvocationSuffix_in_selector6866);
+                    pushFollow(FOLLOW_explicitGenericInvocationSuffix_in_selector6873);
                     explicitGenericInvocationSuffix560=explicitGenericInvocationSuffix();
 
                     state._fsp--;
@@ -19636,7 +19650,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: nonWildcardTypeArguments, explicitGenericInvocationSuffix
+                    // elements: explicitGenericInvocationSuffix, nonWildcardTypeArguments
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -19675,10 +19689,10 @@ public class JavaParser extends Parser {
                 case 4 :
                     // jkit/java/Java.g:911:4: '.' Identifier ( arguments -> ^( INVOKE Identifier ( arguments )? ) | -> ^( DEREF Identifier ) )
                     {
-                    char_literal561=(Token)match(input,119,FOLLOW_119_in_selector6885); if (state.failed) return retval; 
+                    char_literal561=(Token)match(input,119,FOLLOW_119_in_selector6892); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_119.add(char_literal561);
 
-                    Identifier562=(Token)match(input,Identifier,FOLLOW_Identifier_in_selector6887); if (state.failed) return retval; 
+                    Identifier562=(Token)match(input,Identifier,FOLLOW_Identifier_in_selector6894); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_Identifier.add(Identifier562);
 
                     // jkit/java/Java.g:912:3: ( arguments -> ^( INVOKE Identifier ( arguments )? ) | -> ^( DEREF Identifier ) )
@@ -19688,7 +19702,7 @@ public class JavaParser extends Parser {
                         case 1 :
                             // jkit/java/Java.g:913:4: arguments
                             {
-                            pushFollow(FOLLOW_arguments_in_selector6897);
+                            pushFollow(FOLLOW_arguments_in_selector6904);
                             arguments563=arguments();
 
                             state._fsp--;
@@ -19697,7 +19711,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: Identifier, arguments
+                            // elements: arguments, Identifier
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -19771,16 +19785,16 @@ public class JavaParser extends Parser {
                 case 5 :
                     // jkit/java/Java.g:916:6: '[' expression ']'
                     {
-                    char_literal564=(Token)match(input,133,FOLLOW_133_in_selector6932); if (state.failed) return retval; 
+                    char_literal564=(Token)match(input,133,FOLLOW_133_in_selector6939); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_133.add(char_literal564);
 
-                    pushFollow(FOLLOW_expression_in_selector6934);
+                    pushFollow(FOLLOW_expression_in_selector6941);
                     expression565=expression();
 
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_expression.add(expression565.getTree());
-                    char_literal566=(Token)match(input,134,FOLLOW_134_in_selector6936); if (state.failed) return retval; 
+                    char_literal566=(Token)match(input,134,FOLLOW_134_in_selector6943); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_134.add(char_literal566);
 
 
@@ -19862,7 +19876,7 @@ public class JavaParser extends Parser {
             {
             root_0 = (Object)adaptor.nil();
 
-            char_literal567=(Token)match(input,156,FOLLOW_156_in_arguments6955); if (state.failed) return retval;
+            char_literal567=(Token)match(input,156,FOLLOW_156_in_arguments6962); if (state.failed) return retval;
             // jkit/java/Java.g:920:9: ( expressionList )?
             int alt170=2;
             alt170 = dfa170.predict(input);
@@ -19870,7 +19884,7 @@ public class JavaParser extends Parser {
                 case 1 :
                     // jkit/java/Java.g:0:0: expressionList
                     {
-                    pushFollow(FOLLOW_expressionList_in_arguments6958);
+                    pushFollow(FOLLOW_expressionList_in_arguments6965);
                     expressionList568=expressionList();
 
                     state._fsp--;
@@ -19882,7 +19896,7 @@ public class JavaParser extends Parser {
 
             }
 
-            char_literal569=(Token)match(input,157,FOLLOW_157_in_arguments6961); if (state.failed) return retval;
+            char_literal569=(Token)match(input,157,FOLLOW_157_in_arguments6968); if (state.failed) return retval;
 
             }
 
@@ -20085,7 +20099,7 @@ public class JavaParser extends Parser {
         // jkit/java/Java.g:523:4: ( annotation )
         // jkit/java/Java.g:523:4: annotation
         {
-        pushFollow(FOLLOW_annotation_in_synpred118_Java3138);
+        pushFollow(FOLLOW_annotation_in_synpred118_Java3145);
         annotation();
 
         state._fsp--;
@@ -20100,7 +20114,7 @@ public class JavaParser extends Parser {
         // jkit/java/Java.g:571:6: ( interfaceDeclaration ( ';' )? )
         // jkit/java/Java.g:571:6: interfaceDeclaration ( ';' )?
         {
-        pushFollow(FOLLOW_interfaceDeclaration_in_synpred135_Java3386);
+        pushFollow(FOLLOW_interfaceDeclaration_in_synpred135_Java3393);
         interfaceDeclaration();
 
         state._fsp--;
@@ -20116,7 +20130,7 @@ public class JavaParser extends Parser {
             case 1 :
                 // jkit/java/Java.g:0:0: ';'
                 {
-                match(input,116,FOLLOW_116_in_synpred135_Java3388); if (state.failed) return ;
+                match(input,116,FOLLOW_116_in_synpred135_Java3395); if (state.failed) return ;
 
                 }
                 break;
@@ -20133,7 +20147,7 @@ public class JavaParser extends Parser {
         // jkit/java/Java.g:600:4: ( localVariableDeclaration )
         // jkit/java/Java.g:600:4: localVariableDeclaration
         {
-        pushFollow(FOLLOW_localVariableDeclaration_in_synpred142_Java3522);
+        pushFollow(FOLLOW_localVariableDeclaration_in_synpred142_Java3529);
         localVariableDeclaration();
 
         state._fsp--;
@@ -20148,7 +20162,7 @@ public class JavaParser extends Parser {
         // jkit/java/Java.g:601:4: ( classOrInterfaceDeclaration )
         // jkit/java/Java.g:601:4: classOrInterfaceDeclaration
         {
-        pushFollow(FOLLOW_classOrInterfaceDeclaration_in_synpred143_Java3527);
+        pushFollow(FOLLOW_classOrInterfaceDeclaration_in_synpred143_Java3534);
         classOrInterfaceDeclaration();
 
         state._fsp--;
@@ -20163,8 +20177,8 @@ public class JavaParser extends Parser {
         // jkit/java/Java.g:612:55: ( 'else' statement )
         // jkit/java/Java.g:612:55: 'else' statement
         {
-        match(input,167,FOLLOW_167_in_synpred148_Java3640); if (state.failed) return ;
-        pushFollow(FOLLOW_statement_in_synpred148_Java3642);
+        match(input,167,FOLLOW_167_in_synpred148_Java3647); if (state.failed) return ;
+        pushFollow(FOLLOW_statement_in_synpred148_Java3649);
         statement();
 
         state._fsp--;
@@ -20179,13 +20193,13 @@ public class JavaParser extends Parser {
         // jkit/java/Java.g:617:9: ( catches 'finally' block )
         // jkit/java/Java.g:617:9: catches 'finally' block
         {
-        pushFollow(FOLLOW_catches_in_synpred153_Java3771);
+        pushFollow(FOLLOW_catches_in_synpred153_Java3778);
         catches();
 
         state._fsp--;
         if (state.failed) return ;
-        match(input,172,FOLLOW_172_in_synpred153_Java3775); if (state.failed) return ;
-        pushFollow(FOLLOW_block_in_synpred153_Java3777);
+        match(input,172,FOLLOW_172_in_synpred153_Java3782); if (state.failed) return ;
+        pushFollow(FOLLOW_block_in_synpred153_Java3784);
         block();
 
         state._fsp--;
@@ -20200,7 +20214,7 @@ public class JavaParser extends Parser {
         // jkit/java/Java.g:618:9: ( catches )
         // jkit/java/Java.g:618:9: catches
         {
-        pushFollow(FOLLOW_catches_in_synpred154_Java3805);
+        pushFollow(FOLLOW_catches_in_synpred154_Java3812);
         catches();
 
         state._fsp--;
@@ -20215,13 +20229,13 @@ public class JavaParser extends Parser {
         // jkit/java/Java.g:653:4: ( 'case' constantExpression ':' )
         // jkit/java/Java.g:653:4: 'case' constantExpression ':'
         {
-        match(input,179,FOLLOW_179_in_synpred171_Java4187); if (state.failed) return ;
-        pushFollow(FOLLOW_constantExpression_in_synpred171_Java4189);
+        match(input,179,FOLLOW_179_in_synpred171_Java4194); if (state.failed) return ;
+        pushFollow(FOLLOW_constantExpression_in_synpred171_Java4196);
         constantExpression();
 
         state._fsp--;
         if (state.failed) return ;
-        match(input,165,FOLLOW_165_in_synpred171_Java4191); if (state.failed) return ;
+        match(input,165,FOLLOW_165_in_synpred171_Java4198); if (state.failed) return ;
 
         }
     }
@@ -20232,13 +20246,13 @@ public class JavaParser extends Parser {
         // jkit/java/Java.g:654:4: ( 'case' enumConstantName ':' )
         // jkit/java/Java.g:654:4: 'case' enumConstantName ':'
         {
-        match(input,179,FOLLOW_179_in_synpred172_Java4207); if (state.failed) return ;
-        pushFollow(FOLLOW_enumConstantName_in_synpred172_Java4209);
+        match(input,179,FOLLOW_179_in_synpred172_Java4214); if (state.failed) return ;
+        pushFollow(FOLLOW_enumConstantName_in_synpred172_Java4216);
         enumConstantName();
 
         state._fsp--;
         if (state.failed) return ;
-        match(input,165,FOLLOW_165_in_synpred172_Java4211); if (state.failed) return ;
+        match(input,165,FOLLOW_165_in_synpred172_Java4218); if (state.failed) return ;
 
         }
     }
@@ -20249,7 +20263,7 @@ public class JavaParser extends Parser {
         // jkit/java/Java.g:664:4: ( forVarControl )
         // jkit/java/Java.g:664:4: forVarControl
         {
-        pushFollow(FOLLOW_forVarControl_in_synpred174_Java4271);
+        pushFollow(FOLLOW_forVarControl_in_synpred174_Java4278);
         forVarControl();
 
         state._fsp--;
@@ -20279,7 +20293,7 @@ public class JavaParser extends Parser {
         	case 1 :
         	    // jkit/java/Java.g:0:0: variableModifier
         	    {
-        	    pushFollow(FOLLOW_variableModifier_in_synpred179_Java4333);
+        	    pushFollow(FOLLOW_variableModifier_in_synpred179_Java4340);
         	    variableModifier();
 
         	    state._fsp--;
@@ -20293,12 +20307,12 @@ public class JavaParser extends Parser {
             }
         } while (true);
 
-        pushFollow(FOLLOW_type_in_synpred179_Java4336);
+        pushFollow(FOLLOW_type_in_synpred179_Java4343);
         type();
 
         state._fsp--;
         if (state.failed) return ;
-        pushFollow(FOLLOW_variableDeclarators_in_synpred179_Java4338);
+        pushFollow(FOLLOW_variableDeclarators_in_synpred179_Java4345);
         variableDeclarators();
 
         state._fsp--;
@@ -20313,8 +20327,8 @@ public class JavaParser extends Parser {
         // jkit/java/Java.g:702:4: ( '=' expression )
         // jkit/java/Java.g:702:4: '=' expression
         {
-        match(input,135,FOLLOW_135_in_synpred182_Java4503); if (state.failed) return ;
-        pushFollow(FOLLOW_expression_in_synpred182_Java4505);
+        match(input,135,FOLLOW_135_in_synpred182_Java4510); if (state.failed) return ;
+        pushFollow(FOLLOW_expression_in_synpred182_Java4512);
         expression();
 
         state._fsp--;
@@ -20329,9 +20343,9 @@ public class JavaParser extends Parser {
         // jkit/java/Java.g:703:6: ( '+' '=' expression )
         // jkit/java/Java.g:703:6: '+' '=' expression
         {
-        match(input,180,FOLLOW_180_in_synpred183_Java4524); if (state.failed) return ;
-        match(input,135,FOLLOW_135_in_synpred183_Java4526); if (state.failed) return ;
-        pushFollow(FOLLOW_expression_in_synpred183_Java4528);
+        match(input,180,FOLLOW_180_in_synpred183_Java4531); if (state.failed) return ;
+        match(input,135,FOLLOW_135_in_synpred183_Java4533); if (state.failed) return ;
+        pushFollow(FOLLOW_expression_in_synpred183_Java4535);
         expression();
 
         state._fsp--;
@@ -20346,9 +20360,9 @@ public class JavaParser extends Parser {
         // jkit/java/Java.g:704:6: ( '-' '=' expression )
         // jkit/java/Java.g:704:6: '-' '=' expression
         {
-        match(input,181,FOLLOW_181_in_synpred184_Java4556); if (state.failed) return ;
-        match(input,135,FOLLOW_135_in_synpred184_Java4558); if (state.failed) return ;
-        pushFollow(FOLLOW_expression_in_synpred184_Java4560);
+        match(input,181,FOLLOW_181_in_synpred184_Java4563); if (state.failed) return ;
+        match(input,135,FOLLOW_135_in_synpred184_Java4565); if (state.failed) return ;
+        pushFollow(FOLLOW_expression_in_synpred184_Java4567);
         expression();
 
         state._fsp--;
@@ -20363,9 +20377,9 @@ public class JavaParser extends Parser {
         // jkit/java/Java.g:705:6: ( '*' '=' expression )
         // jkit/java/Java.g:705:6: '*' '=' expression
         {
-        match(input,120,FOLLOW_120_in_synpred185_Java4588); if (state.failed) return ;
-        match(input,135,FOLLOW_135_in_synpred185_Java4590); if (state.failed) return ;
-        pushFollow(FOLLOW_expression_in_synpred185_Java4592);
+        match(input,120,FOLLOW_120_in_synpred185_Java4595); if (state.failed) return ;
+        match(input,135,FOLLOW_135_in_synpred185_Java4597); if (state.failed) return ;
+        pushFollow(FOLLOW_expression_in_synpred185_Java4599);
         expression();
 
         state._fsp--;
@@ -20380,9 +20394,9 @@ public class JavaParser extends Parser {
         // jkit/java/Java.g:706:6: ( '/' '=' expression )
         // jkit/java/Java.g:706:6: '/' '=' expression
         {
-        match(input,182,FOLLOW_182_in_synpred186_Java4620); if (state.failed) return ;
-        match(input,135,FOLLOW_135_in_synpred186_Java4622); if (state.failed) return ;
-        pushFollow(FOLLOW_expression_in_synpred186_Java4624);
+        match(input,182,FOLLOW_182_in_synpred186_Java4627); if (state.failed) return ;
+        match(input,135,FOLLOW_135_in_synpred186_Java4629); if (state.failed) return ;
+        pushFollow(FOLLOW_expression_in_synpred186_Java4631);
         expression();
 
         state._fsp--;
@@ -20397,8 +20411,8 @@ public class JavaParser extends Parser {
         // jkit/java/Java.g:707:6: ( '&=' expression )
         // jkit/java/Java.g:707:6: '&=' expression
         {
-        match(input,183,FOLLOW_183_in_synpred187_Java4653); if (state.failed) return ;
-        pushFollow(FOLLOW_expression_in_synpred187_Java4655);
+        match(input,183,FOLLOW_183_in_synpred187_Java4660); if (state.failed) return ;
+        pushFollow(FOLLOW_expression_in_synpred187_Java4662);
         expression();
 
         state._fsp--;
@@ -20413,8 +20427,8 @@ public class JavaParser extends Parser {
         // jkit/java/Java.g:708:6: ( '|=' expression )
         // jkit/java/Java.g:708:6: '|=' expression
         {
-        match(input,184,FOLLOW_184_in_synpred188_Java4678); if (state.failed) return ;
-        pushFollow(FOLLOW_expression_in_synpred188_Java4680);
+        match(input,184,FOLLOW_184_in_synpred188_Java4685); if (state.failed) return ;
+        pushFollow(FOLLOW_expression_in_synpred188_Java4687);
         expression();
 
         state._fsp--;
@@ -20429,8 +20443,8 @@ public class JavaParser extends Parser {
         // jkit/java/Java.g:709:6: ( '^=' expression )
         // jkit/java/Java.g:709:6: '^=' expression
         {
-        match(input,185,FOLLOW_185_in_synpred189_Java4703); if (state.failed) return ;
-        pushFollow(FOLLOW_expression_in_synpred189_Java4705);
+        match(input,185,FOLLOW_185_in_synpred189_Java4710); if (state.failed) return ;
+        pushFollow(FOLLOW_expression_in_synpred189_Java4712);
         expression();
 
         state._fsp--;
@@ -20445,9 +20459,9 @@ public class JavaParser extends Parser {
         // jkit/java/Java.g:710:6: ( '%' '=' expression )
         // jkit/java/Java.g:710:6: '%' '=' expression
         {
-        match(input,186,FOLLOW_186_in_synpred190_Java4733); if (state.failed) return ;
-        match(input,135,FOLLOW_135_in_synpred190_Java4735); if (state.failed) return ;
-        pushFollow(FOLLOW_expression_in_synpred190_Java4737);
+        match(input,186,FOLLOW_186_in_synpred190_Java4740); if (state.failed) return ;
+        match(input,135,FOLLOW_135_in_synpred190_Java4742); if (state.failed) return ;
+        pushFollow(FOLLOW_expression_in_synpred190_Java4744);
         expression();
 
         state._fsp--;
@@ -20462,10 +20476,10 @@ public class JavaParser extends Parser {
         // jkit/java/Java.g:711:6: ( '<' '<' '=' expression )
         // jkit/java/Java.g:711:6: '<' '<' '=' expression
         {
-        match(input,124,FOLLOW_124_in_synpred191_Java4765); if (state.failed) return ;
-        match(input,124,FOLLOW_124_in_synpred191_Java4767); if (state.failed) return ;
-        match(input,135,FOLLOW_135_in_synpred191_Java4769); if (state.failed) return ;
-        pushFollow(FOLLOW_expression_in_synpred191_Java4771);
+        match(input,124,FOLLOW_124_in_synpred191_Java4772); if (state.failed) return ;
+        match(input,124,FOLLOW_124_in_synpred191_Java4774); if (state.failed) return ;
+        match(input,135,FOLLOW_135_in_synpred191_Java4776); if (state.failed) return ;
+        pushFollow(FOLLOW_expression_in_synpred191_Java4778);
         expression();
 
         state._fsp--;
@@ -20480,10 +20494,10 @@ public class JavaParser extends Parser {
         // jkit/java/Java.g:712:6: ( '>' '>' '=' expression )
         // jkit/java/Java.g:712:6: '>' '>' '=' expression
         {
-        match(input,126,FOLLOW_126_in_synpred192_Java4799); if (state.failed) return ;
-        match(input,126,FOLLOW_126_in_synpred192_Java4801); if (state.failed) return ;
-        match(input,135,FOLLOW_135_in_synpred192_Java4803); if (state.failed) return ;
-        pushFollow(FOLLOW_expression_in_synpred192_Java4805);
+        match(input,126,FOLLOW_126_in_synpred192_Java4806); if (state.failed) return ;
+        match(input,126,FOLLOW_126_in_synpred192_Java4808); if (state.failed) return ;
+        match(input,135,FOLLOW_135_in_synpred192_Java4810); if (state.failed) return ;
+        pushFollow(FOLLOW_expression_in_synpred192_Java4812);
         expression();
 
         state._fsp--;
@@ -20498,11 +20512,11 @@ public class JavaParser extends Parser {
         // jkit/java/Java.g:713:6: ( '>' '>' '>' '=' expression )
         // jkit/java/Java.g:713:6: '>' '>' '>' '=' expression
         {
-        match(input,126,FOLLOW_126_in_synpred193_Java4831); if (state.failed) return ;
-        match(input,126,FOLLOW_126_in_synpred193_Java4833); if (state.failed) return ;
-        match(input,126,FOLLOW_126_in_synpred193_Java4835); if (state.failed) return ;
-        match(input,135,FOLLOW_135_in_synpred193_Java4837); if (state.failed) return ;
-        pushFollow(FOLLOW_expression_in_synpred193_Java4839);
+        match(input,126,FOLLOW_126_in_synpred193_Java4838); if (state.failed) return ;
+        match(input,126,FOLLOW_126_in_synpred193_Java4840); if (state.failed) return ;
+        match(input,126,FOLLOW_126_in_synpred193_Java4842); if (state.failed) return ;
+        match(input,135,FOLLOW_135_in_synpred193_Java4844); if (state.failed) return ;
+        pushFollow(FOLLOW_expression_in_synpred193_Java4846);
         expression();
 
         state._fsp--;
@@ -20520,8 +20534,8 @@ public class JavaParser extends Parser {
         // jkit/java/Java.g:787:8: ( '<' shiftExpression )
         // jkit/java/Java.g:787:9: '<' shiftExpression
         {
-        match(input,124,FOLLOW_124_in_synpred204_Java5476); if (state.failed) return ;
-        pushFollow(FOLLOW_shiftExpression_in_synpred204_Java5478);
+        match(input,124,FOLLOW_124_in_synpred204_Java5483); if (state.failed) return ;
+        pushFollow(FOLLOW_shiftExpression_in_synpred204_Java5485);
         shiftExpression();
 
         state._fsp--;
@@ -20560,23 +20574,23 @@ public class JavaParser extends Parser {
             case 1 :
                 // jkit/java/Java.g:797:8: '<' '<'
                 {
-                match(input,124,FOLLOW_124_in_synpred208_Java5590); if (state.failed) return ;
-                match(input,124,FOLLOW_124_in_synpred208_Java5592); if (state.failed) return ;
+                match(input,124,FOLLOW_124_in_synpred208_Java5597); if (state.failed) return ;
+                match(input,124,FOLLOW_124_in_synpred208_Java5599); if (state.failed) return ;
 
                 }
                 break;
             case 2 :
                 // jkit/java/Java.g:797:19: '>' '>'
                 {
-                match(input,126,FOLLOW_126_in_synpred208_Java5596); if (state.failed) return ;
-                match(input,126,FOLLOW_126_in_synpred208_Java5598); if (state.failed) return ;
+                match(input,126,FOLLOW_126_in_synpred208_Java5603); if (state.failed) return ;
+                match(input,126,FOLLOW_126_in_synpred208_Java5605); if (state.failed) return ;
 
                 }
                 break;
 
         }
 
-        pushFollow(FOLLOW_additiveExpression_in_synpred208_Java5601);
+        pushFollow(FOLLOW_additiveExpression_in_synpred208_Java5608);
         additiveExpression();
 
         state._fsp--;
@@ -20628,23 +20642,23 @@ public class JavaParser extends Parser {
         	        case 1 :
         	            // jkit/java/Java.g:797:8: '<' '<'
         	            {
-        	            match(input,124,FOLLOW_124_in_synpred209_Java5590); if (state.failed) return ;
-        	            match(input,124,FOLLOW_124_in_synpred209_Java5592); if (state.failed) return ;
+        	            match(input,124,FOLLOW_124_in_synpred209_Java5597); if (state.failed) return ;
+        	            match(input,124,FOLLOW_124_in_synpred209_Java5599); if (state.failed) return ;
 
         	            }
         	            break;
         	        case 2 :
         	            // jkit/java/Java.g:797:19: '>' '>'
         	            {
-        	            match(input,126,FOLLOW_126_in_synpred209_Java5596); if (state.failed) return ;
-        	            match(input,126,FOLLOW_126_in_synpred209_Java5598); if (state.failed) return ;
+        	            match(input,126,FOLLOW_126_in_synpred209_Java5603); if (state.failed) return ;
+        	            match(input,126,FOLLOW_126_in_synpred209_Java5605); if (state.failed) return ;
 
         	            }
         	            break;
 
         	    }
 
-        	    pushFollow(FOLLOW_additiveExpression_in_synpred209_Java5601);
+        	    pushFollow(FOLLOW_additiveExpression_in_synpred209_Java5608);
         	    additiveExpression();
 
         	    state._fsp--;
@@ -20673,10 +20687,10 @@ public class JavaParser extends Parser {
         // jkit/java/Java.g:799:9: ( '>' '>' '>' additiveExpression )
         // jkit/java/Java.g:799:9: '>' '>' '>' additiveExpression
         {
-        match(input,126,FOLLOW_126_in_synpred210_Java5635); if (state.failed) return ;
-        match(input,126,FOLLOW_126_in_synpred210_Java5637); if (state.failed) return ;
-        match(input,126,FOLLOW_126_in_synpred210_Java5639); if (state.failed) return ;
-        pushFollow(FOLLOW_additiveExpression_in_synpred210_Java5641);
+        match(input,126,FOLLOW_126_in_synpred210_Java5642); if (state.failed) return ;
+        match(input,126,FOLLOW_126_in_synpred210_Java5644); if (state.failed) return ;
+        match(input,126,FOLLOW_126_in_synpred210_Java5646); if (state.failed) return ;
+        pushFollow(FOLLOW_additiveExpression_in_synpred210_Java5648);
         additiveExpression();
 
         state._fsp--;
@@ -20707,10 +20721,10 @@ public class JavaParser extends Parser {
         	case 1 :
         	    // jkit/java/Java.g:799:9: '>' '>' '>' additiveExpression
         	    {
-        	    match(input,126,FOLLOW_126_in_synpred211_Java5635); if (state.failed) return ;
-        	    match(input,126,FOLLOW_126_in_synpred211_Java5637); if (state.failed) return ;
-        	    match(input,126,FOLLOW_126_in_synpred211_Java5639); if (state.failed) return ;
-        	    pushFollow(FOLLOW_additiveExpression_in_synpred211_Java5641);
+        	    match(input,126,FOLLOW_126_in_synpred211_Java5642); if (state.failed) return ;
+        	    match(input,126,FOLLOW_126_in_synpred211_Java5644); if (state.failed) return ;
+        	    match(input,126,FOLLOW_126_in_synpred211_Java5646); if (state.failed) return ;
+        	    pushFollow(FOLLOW_additiveExpression_in_synpred211_Java5648);
         	    additiveExpression();
 
         	    state._fsp--;
@@ -20739,7 +20753,7 @@ public class JavaParser extends Parser {
         // jkit/java/Java.g:831:9: ( castExpression )
         // jkit/java/Java.g:831:9: castExpression
         {
-        pushFollow(FOLLOW_castExpression_in_synpred225_Java5988);
+        pushFollow(FOLLOW_castExpression_in_synpred225_Java5995);
         castExpression();
 
         state._fsp--;
@@ -20754,14 +20768,14 @@ public class JavaParser extends Parser {
         // jkit/java/Java.g:847:8: ( '(' primitiveType ')' unaryExpression )
         // jkit/java/Java.g:847:8: '(' primitiveType ')' unaryExpression
         {
-        match(input,156,FOLLOW_156_in_synpred232_Java6138); if (state.failed) return ;
-        pushFollow(FOLLOW_primitiveType_in_synpred232_Java6140);
+        match(input,156,FOLLOW_156_in_synpred232_Java6145); if (state.failed) return ;
+        pushFollow(FOLLOW_primitiveType_in_synpred232_Java6147);
         primitiveType();
 
         state._fsp--;
         if (state.failed) return ;
-        match(input,157,FOLLOW_157_in_synpred232_Java6142); if (state.failed) return ;
-        pushFollow(FOLLOW_unaryExpression_in_synpred232_Java6144);
+        match(input,157,FOLLOW_157_in_synpred232_Java6149); if (state.failed) return ;
+        pushFollow(FOLLOW_unaryExpression_in_synpred232_Java6151);
         unaryExpression();
 
         state._fsp--;
@@ -20776,14 +20790,14 @@ public class JavaParser extends Parser {
         // jkit/java/Java.g:848:8: ( '(' type ')' unaryExpressionNotPlusMinus )
         // jkit/java/Java.g:848:8: '(' type ')' unaryExpressionNotPlusMinus
         {
-        match(input,156,FOLLOW_156_in_synpred233_Java6167); if (state.failed) return ;
-        pushFollow(FOLLOW_type_in_synpred233_Java6169);
+        match(input,156,FOLLOW_156_in_synpred233_Java6174); if (state.failed) return ;
+        pushFollow(FOLLOW_type_in_synpred233_Java6176);
         type();
 
         state._fsp--;
         if (state.failed) return ;
-        match(input,157,FOLLOW_157_in_synpred233_Java6171); if (state.failed) return ;
-        pushFollow(FOLLOW_unaryExpressionNotPlusMinus_in_synpred233_Java6173);
+        match(input,157,FOLLOW_157_in_synpred233_Java6178); if (state.failed) return ;
+        pushFollow(FOLLOW_unaryExpressionNotPlusMinus_in_synpred233_Java6180);
         unaryExpressionNotPlusMinus();
 
         state._fsp--;
@@ -20798,13 +20812,13 @@ public class JavaParser extends Parser {
         // jkit/java/Java.g:858:8: ( '[' expression ']' )
         // jkit/java/Java.g:858:8: '[' expression ']'
         {
-        match(input,133,FOLLOW_133_in_synpred238_Java6282); if (state.failed) return ;
-        pushFollow(FOLLOW_expression_in_synpred238_Java6284);
+        match(input,133,FOLLOW_133_in_synpred238_Java6289); if (state.failed) return ;
+        pushFollow(FOLLOW_expression_in_synpred238_Java6291);
         expression();
 
         state._fsp--;
         if (state.failed) return ;
-        match(input,134,FOLLOW_134_in_synpred238_Java6286); if (state.failed) return ;
+        match(input,134,FOLLOW_134_in_synpred238_Java6293); if (state.failed) return ;
 
         }
     }
@@ -20815,7 +20829,7 @@ public class JavaParser extends Parser {
         // jkit/java/Java.g:856:9: ( 'new' ( nonWildcardTypeArguments )? primitiveType ( ( '[' expression ']' )+ ( '[' ']' )* | ( '[' ']' )+ arrayInitializer ) )
         // jkit/java/Java.g:856:9: 'new' ( nonWildcardTypeArguments )? primitiveType ( ( '[' expression ']' )+ ( '[' ']' )* | ( '[' ']' )+ arrayInitializer )
         {
-        match(input,198,FOLLOW_198_in_synpred242_Java6261); if (state.failed) return ;
+        match(input,198,FOLLOW_198_in_synpred242_Java6268); if (state.failed) return ;
         // jkit/java/Java.g:856:15: ( nonWildcardTypeArguments )?
         int alt204=2;
         int LA204_0 = input.LA(1);
@@ -20827,7 +20841,7 @@ public class JavaParser extends Parser {
             case 1 :
                 // jkit/java/Java.g:0:0: nonWildcardTypeArguments
                 {
-                pushFollow(FOLLOW_nonWildcardTypeArguments_in_synpred242_Java6263);
+                pushFollow(FOLLOW_nonWildcardTypeArguments_in_synpred242_Java6270);
                 nonWildcardTypeArguments();
 
                 state._fsp--;
@@ -20838,7 +20852,7 @@ public class JavaParser extends Parser {
 
         }
 
-        pushFollow(FOLLOW_primitiveType_in_synpred242_Java6266);
+        pushFollow(FOLLOW_primitiveType_in_synpred242_Java6273);
         primitiveType();
 
         state._fsp--;
@@ -20860,13 +20874,13 @@ public class JavaParser extends Parser {
                 	case 1 :
                 	    // jkit/java/Java.g:858:8: '[' expression ']'
                 	    {
-                	    match(input,133,FOLLOW_133_in_synpred242_Java6282); if (state.failed) return ;
-                	    pushFollow(FOLLOW_expression_in_synpred242_Java6284);
+                	    match(input,133,FOLLOW_133_in_synpred242_Java6289); if (state.failed) return ;
+                	    pushFollow(FOLLOW_expression_in_synpred242_Java6291);
                 	    expression();
 
                 	    state._fsp--;
                 	    if (state.failed) return ;
-                	    match(input,134,FOLLOW_134_in_synpred242_Java6286); if (state.failed) return ;
+                	    match(input,134,FOLLOW_134_in_synpred242_Java6293); if (state.failed) return ;
 
                 	    }
                 	    break;
@@ -20896,8 +20910,8 @@ public class JavaParser extends Parser {
                 	case 1 :
                 	    // jkit/java/Java.g:858:30: '[' ']'
                 	    {
-                	    match(input,133,FOLLOW_133_in_synpred242_Java6291); if (state.failed) return ;
-                	    match(input,134,FOLLOW_134_in_synpred242_Java6293); if (state.failed) return ;
+                	    match(input,133,FOLLOW_133_in_synpred242_Java6298); if (state.failed) return ;
+                	    match(input,134,FOLLOW_134_in_synpred242_Java6300); if (state.failed) return ;
 
                 	    }
                 	    break;
@@ -20929,8 +20943,8 @@ public class JavaParser extends Parser {
                 	case 1 :
                 	    // jkit/java/Java.g:859:10: '[' ']'
                 	    {
-                	    match(input,133,FOLLOW_133_in_synpred242_Java6324); if (state.failed) return ;
-                	    match(input,134,FOLLOW_134_in_synpred242_Java6326); if (state.failed) return ;
+                	    match(input,133,FOLLOW_133_in_synpred242_Java6331); if (state.failed) return ;
+                	    match(input,134,FOLLOW_134_in_synpred242_Java6333); if (state.failed) return ;
 
                 	    }
                 	    break;
@@ -20945,7 +20959,7 @@ public class JavaParser extends Parser {
                     cnt207++;
                 } while (true);
 
-                pushFollow(FOLLOW_arrayInitializer_in_synpred242_Java6330);
+                pushFollow(FOLLOW_arrayInitializer_in_synpred242_Java6337);
                 arrayInitializer();
 
                 state._fsp--;
@@ -20966,13 +20980,13 @@ public class JavaParser extends Parser {
         // jkit/java/Java.g:863:8: ( '[' expression ']' )
         // jkit/java/Java.g:863:8: '[' expression ']'
         {
-        match(input,133,FOLLOW_133_in_synpred245_Java6396); if (state.failed) return ;
-        pushFollow(FOLLOW_expression_in_synpred245_Java6398);
+        match(input,133,FOLLOW_133_in_synpred245_Java6403); if (state.failed) return ;
+        pushFollow(FOLLOW_expression_in_synpred245_Java6405);
         expression();
 
         state._fsp--;
         if (state.failed) return ;
-        match(input,134,FOLLOW_134_in_synpred245_Java6400); if (state.failed) return ;
+        match(input,134,FOLLOW_134_in_synpred245_Java6407); if (state.failed) return ;
 
         }
     }
@@ -20983,7 +20997,7 @@ public class JavaParser extends Parser {
         // jkit/java/Java.g:861:9: ( 'new' ( nonWildcardTypeArguments )? ( refComponent ( '.' refComponent )* ) ( ( '[' expression ']' )+ ( '[' ']' )* | ( '[' ']' )+ arrayInitializer | classCreatorRest ) )
         // jkit/java/Java.g:861:9: 'new' ( nonWildcardTypeArguments )? ( refComponent ( '.' refComponent )* ) ( ( '[' expression ']' )+ ( '[' ']' )* | ( '[' ']' )+ arrayInitializer | classCreatorRest )
         {
-        match(input,198,FOLLOW_198_in_synpred250_Java6362); if (state.failed) return ;
+        match(input,198,FOLLOW_198_in_synpred250_Java6369); if (state.failed) return ;
         // jkit/java/Java.g:861:15: ( nonWildcardTypeArguments )?
         int alt212=2;
         int LA212_0 = input.LA(1);
@@ -20995,7 +21009,7 @@ public class JavaParser extends Parser {
             case 1 :
                 // jkit/java/Java.g:0:0: nonWildcardTypeArguments
                 {
-                pushFollow(FOLLOW_nonWildcardTypeArguments_in_synpred250_Java6364);
+                pushFollow(FOLLOW_nonWildcardTypeArguments_in_synpred250_Java6371);
                 nonWildcardTypeArguments();
 
                 state._fsp--;
@@ -21009,7 +21023,7 @@ public class JavaParser extends Parser {
         // jkit/java/Java.g:861:41: ( refComponent ( '.' refComponent )* )
         // jkit/java/Java.g:861:42: refComponent ( '.' refComponent )*
         {
-        pushFollow(FOLLOW_refComponent_in_synpred250_Java6370);
+        pushFollow(FOLLOW_refComponent_in_synpred250_Java6377);
         refComponent();
 
         state._fsp--;
@@ -21029,8 +21043,8 @@ public class JavaParser extends Parser {
         	case 1 :
         	    // jkit/java/Java.g:861:59: '.' refComponent
         	    {
-        	    match(input,119,FOLLOW_119_in_synpred250_Java6373); if (state.failed) return ;
-        	    pushFollow(FOLLOW_refComponent_in_synpred250_Java6377);
+        	    match(input,119,FOLLOW_119_in_synpred250_Java6380); if (state.failed) return ;
+        	    pushFollow(FOLLOW_refComponent_in_synpred250_Java6384);
         	    refComponent();
 
         	    state._fsp--;
@@ -21064,13 +21078,13 @@ public class JavaParser extends Parser {
                 	case 1 :
                 	    // jkit/java/Java.g:863:8: '[' expression ']'
                 	    {
-                	    match(input,133,FOLLOW_133_in_synpred250_Java6396); if (state.failed) return ;
-                	    pushFollow(FOLLOW_expression_in_synpred250_Java6398);
+                	    match(input,133,FOLLOW_133_in_synpred250_Java6403); if (state.failed) return ;
+                	    pushFollow(FOLLOW_expression_in_synpred250_Java6405);
                 	    expression();
 
                 	    state._fsp--;
                 	    if (state.failed) return ;
-                	    match(input,134,FOLLOW_134_in_synpred250_Java6400); if (state.failed) return ;
+                	    match(input,134,FOLLOW_134_in_synpred250_Java6407); if (state.failed) return ;
 
                 	    }
                 	    break;
@@ -21100,8 +21114,8 @@ public class JavaParser extends Parser {
                 	case 1 :
                 	    // jkit/java/Java.g:863:30: '[' ']'
                 	    {
-                	    match(input,133,FOLLOW_133_in_synpred250_Java6405); if (state.failed) return ;
-                	    match(input,134,FOLLOW_134_in_synpred250_Java6407); if (state.failed) return ;
+                	    match(input,133,FOLLOW_133_in_synpred250_Java6412); if (state.failed) return ;
+                	    match(input,134,FOLLOW_134_in_synpred250_Java6414); if (state.failed) return ;
 
                 	    }
                 	    break;
@@ -21133,8 +21147,8 @@ public class JavaParser extends Parser {
                 	case 1 :
                 	    // jkit/java/Java.g:864:10: '[' ']'
                 	    {
-                	    match(input,133,FOLLOW_133_in_synpred250_Java6440); if (state.failed) return ;
-                	    match(input,134,FOLLOW_134_in_synpred250_Java6442); if (state.failed) return ;
+                	    match(input,133,FOLLOW_133_in_synpred250_Java6447); if (state.failed) return ;
+                	    match(input,134,FOLLOW_134_in_synpred250_Java6449); if (state.failed) return ;
 
                 	    }
                 	    break;
@@ -21149,7 +21163,7 @@ public class JavaParser extends Parser {
                     cnt216++;
                 } while (true);
 
-                pushFollow(FOLLOW_arrayInitializer_in_synpred250_Java6446);
+                pushFollow(FOLLOW_arrayInitializer_in_synpred250_Java6453);
                 arrayInitializer();
 
                 state._fsp--;
@@ -21160,7 +21174,7 @@ public class JavaParser extends Parser {
             case 3 :
                 // jkit/java/Java.g:865:9: classCreatorRest
                 {
-                pushFollow(FOLLOW_classCreatorRest_in_synpred250_Java6475);
+                pushFollow(FOLLOW_classCreatorRest_in_synpred250_Java6482);
                 classCreatorRest();
 
                 state._fsp--;
@@ -21181,13 +21195,13 @@ public class JavaParser extends Parser {
         // jkit/java/Java.g:867:9: ( type '.' 'class' )
         // jkit/java/Java.g:867:9: type '.' 'class'
         {
-        pushFollow(FOLLOW_type_in_synpred251_Java6507);
+        pushFollow(FOLLOW_type_in_synpred251_Java6514);
         type();
 
         state._fsp--;
         if (state.failed) return ;
-        match(input,119,FOLLOW_119_in_synpred251_Java6509); if (state.failed) return ;
-        match(input,121,FOLLOW_121_in_synpred251_Java6511); if (state.failed) return ;
+        match(input,119,FOLLOW_119_in_synpred251_Java6516); if (state.failed) return ;
+        match(input,121,FOLLOW_121_in_synpred251_Java6518); if (state.failed) return ;
 
         }
     }
@@ -32031,389 +32045,389 @@ public class JavaParser extends Parser {
     public static final BitSet FOLLOW_formalParameterDecls_in_formalParameterDecls2840 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_158_in_formalParameterDecls2874 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L});
     public static final BitSet FOLLOW_variableDeclaratorId_in_formalParameterDecls2876 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_block_in_methodBody2912 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_Identifier_in_qualifiedName2930 = new BitSet(new long[]{0x0000000000000002L,0x0080000000000000L});
-    public static final BitSet FOLLOW_119_in_qualifiedName2933 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L});
+    public static final BitSet FOLLOW_block_in_methodBody2919 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_Identifier_in_qualifiedName2937 = new BitSet(new long[]{0x0000000000000002L,0x0080000000000000L});
-    public static final BitSet FOLLOW_integerLiteral_in_literal2960 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_FloatingPointLiteral_in_literal2978 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_CharacterLiteral_in_literal2996 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_StringLiteral_in_literal3014 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_booleanLiteral_in_literal3032 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_159_in_literal3050 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_119_in_qualifiedName2940 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L});
+    public static final BitSet FOLLOW_Identifier_in_qualifiedName2944 = new BitSet(new long[]{0x0000000000000002L,0x0080000000000000L});
+    public static final BitSet FOLLOW_integerLiteral_in_literal2967 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_FloatingPointLiteral_in_literal2985 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_CharacterLiteral_in_literal3003 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_StringLiteral_in_literal3021 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_booleanLiteral_in_literal3039 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_159_in_literal3057 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_set_in_integerLiteral0 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_set_in_booleanLiteral0 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_annotation_in_annotations3138 = new BitSet(new long[]{0x0000000000000002L,0x0000000100000000L,0x0000000403FC1000L});
-    public static final BitSet FOLLOW_162_in_annotation3150 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L});
-    public static final BitSet FOLLOW_annotationName_in_annotation3152 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000010000000L});
-    public static final BitSet FOLLOW_156_in_annotation3155 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x00300007BBFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_elementValuePairs_in_annotation3157 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000020000000L});
-    public static final BitSet FOLLOW_157_in_annotation3160 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_Identifier_in_annotationName3182 = new BitSet(new long[]{0x0000000000000002L,0x0080000000000000L});
-    public static final BitSet FOLLOW_119_in_annotationName3185 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L});
-    public static final BitSet FOLLOW_Identifier_in_annotationName3187 = new BitSet(new long[]{0x0000000000000002L,0x0080000000000000L});
-    public static final BitSet FOLLOW_elementValuePair_in_elementValuePairs3201 = new BitSet(new long[]{0x0000000000000002L,0x2000000000000000L});
-    public static final BitSet FOLLOW_125_in_elementValuePairs3204 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_elementValuePair_in_elementValuePairs3206 = new BitSet(new long[]{0x0000000000000002L,0x2000000000000000L});
-    public static final BitSet FOLLOW_Identifier_in_elementValuePair3221 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
-    public static final BitSet FOLLOW_135_in_elementValuePair3223 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_elementValue_in_elementValuePair3227 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_conditionalExpression_in_elementValue3239 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_annotation_in_elementValue3246 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_elementValueArrayInitializer_in_elementValue3253 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_128_in_elementValueArrayInitializer3265 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC100BL,0x000000000000007CL});
-    public static final BitSet FOLLOW_elementValue_in_elementValueArrayInitializer3268 = new BitSet(new long[]{0x0000000000000000L,0x2000000000000000L,0x0000000000000002L});
-    public static final BitSet FOLLOW_125_in_elementValueArrayInitializer3271 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_elementValue_in_elementValueArrayInitializer3273 = new BitSet(new long[]{0x0000000000000000L,0x2000000000000000L,0x0000000000000002L});
-    public static final BitSet FOLLOW_129_in_elementValueArrayInitializer3280 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_162_in_annotationTypeDeclaration3292 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000004L});
-    public static final BitSet FOLLOW_130_in_annotationTypeDeclaration3294 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L});
-    public static final BitSet FOLLOW_Identifier_in_annotationTypeDeclaration3296 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000001L});
-    public static final BitSet FOLLOW_annotationTypeBody_in_annotationTypeDeclaration3298 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_128_in_annotationTypeBody3310 = new BitSet(new long[]{0x0000000000000200L,0x1250000100000000L,0x0000000403FFFF0FL});
-    public static final BitSet FOLLOW_annotationTypeElementDeclarations_in_annotationTypeBody3313 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000002L});
-    public static final BitSet FOLLOW_129_in_annotationTypeBody3317 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_annotationTypeElementDeclaration_in_annotationTypeElementDeclarations3330 = new BitSet(new long[]{0x0000000000000202L,0x1250000100000000L,0x0000000403FFFF0DL});
-    public static final BitSet FOLLOW_annotationTypeElementDeclaration_in_annotationTypeElementDeclarations3334 = new BitSet(new long[]{0x0000000000000202L,0x1250000100000000L,0x0000000403FFFF0DL});
-    public static final BitSet FOLLOW_modifier_in_annotationTypeElementDeclaration3349 = new BitSet(new long[]{0x0000000000000200L,0x1250000100000000L,0x0000000403FFFF0DL});
-    public static final BitSet FOLLOW_annotationTypeElementRest_in_annotationTypeElementDeclaration3353 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_type_in_annotationTypeElementRest3365 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L});
-    public static final BitSet FOLLOW_annotationMethodOrConstantRest_in_annotationTypeElementRest3367 = new BitSet(new long[]{0x0000000000000000L,0x0010000000000000L});
-    public static final BitSet FOLLOW_116_in_annotationTypeElementRest3369 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_classDeclaration_in_annotationTypeElementRest3376 = new BitSet(new long[]{0x0000000000000002L,0x0010000000000000L});
-    public static final BitSet FOLLOW_116_in_annotationTypeElementRest3378 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_interfaceDeclaration_in_annotationTypeElementRest3386 = new BitSet(new long[]{0x0000000000000002L,0x0010000000000000L});
-    public static final BitSet FOLLOW_116_in_annotationTypeElementRest3388 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_enumDeclaration_in_annotationTypeElementRest3396 = new BitSet(new long[]{0x0000000000000002L,0x0010000000000000L});
-    public static final BitSet FOLLOW_116_in_annotationTypeElementRest3398 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_annotationTypeDeclaration_in_annotationTypeElementRest3406 = new BitSet(new long[]{0x0000000000000002L,0x0010000000000000L});
-    public static final BitSet FOLLOW_116_in_annotationTypeElementRest3408 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_annotationMethodRest_in_annotationMethodOrConstantRest3421 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_annotationConstantRest_in_annotationMethodOrConstantRest3428 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_Identifier_in_annotationMethodRest3441 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000010000000L});
-    public static final BitSet FOLLOW_156_in_annotationMethodRest3443 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000020000000L});
-    public static final BitSet FOLLOW_157_in_annotationMethodRest3445 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000800000000L});
-    public static final BitSet FOLLOW_defaultValue_in_annotationMethodRest3448 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_variableDeclarators_in_annotationConstantRest3465 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_163_in_defaultValue3480 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_elementValue_in_defaultValue3482 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_128_in_block3496 = new BitSet(new long[]{0x0000000000000200L,0x1250007F00000000L,0x0033EF579BFFFF1FL,0x000000000000007CL});
-    public static final BitSet FOLLOW_blockStatement_in_block3498 = new BitSet(new long[]{0x0000000000000200L,0x1250007F00000000L,0x0033EF579BFFFF1FL,0x000000000000007CL});
-    public static final BitSet FOLLOW_129_in_block3501 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_localVariableDeclaration_in_blockStatement3522 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_classOrInterfaceDeclaration_in_blockStatement3527 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_statement_in_blockStatement3535 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_variableModifier_in_localVariableDeclaration3547 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L,0x0000000403FC1000L});
-    public static final BitSet FOLLOW_type_in_localVariableDeclaration3550 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L});
-    public static final BitSet FOLLOW_variableDeclarators_in_localVariableDeclaration3552 = new BitSet(new long[]{0x0000000000000000L,0x0010000000000000L});
-    public static final BitSet FOLLOW_116_in_localVariableDeclaration3554 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_block_in_statement3583 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_164_in_statement3593 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000039BFC0009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_statement3595 = new BitSet(new long[]{0x0000000000000000L,0x0010000000000000L,0x0000002000000000L});
-    public static final BitSet FOLLOW_165_in_statement3598 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000039BFC0009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_statement3600 = new BitSet(new long[]{0x0000000000000000L,0x0010000000000000L});
-    public static final BitSet FOLLOW_116_in_statement3604 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_166_in_statement3626 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000010000000L});
-    public static final BitSet FOLLOW_parExpression_in_statement3628 = new BitSet(new long[]{0x0000000000000200L,0x1250007F00000000L,0x0033EF579BFFFF1FL,0x000000000000007CL});
-    public static final BitSet FOLLOW_statement_in_statement3630 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000008000000000L});
-    public static final BitSet FOLLOW_167_in_statement3640 = new BitSet(new long[]{0x0000000000000200L,0x1250007F00000000L,0x0033EF579BFFFF1FL,0x000000000000007CL});
-    public static final BitSet FOLLOW_statement_in_statement3642 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_168_in_statement3668 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000010000000L});
-    public static final BitSet FOLLOW_156_in_statement3670 = new BitSet(new long[]{0x0000000000000000L,0x1010007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_forControl_in_statement3672 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000020000000L});
-    public static final BitSet FOLLOW_157_in_statement3674 = new BitSet(new long[]{0x0000000000000200L,0x1250007F00000000L,0x0033EF579BFFFF1FL,0x000000000000007CL});
-    public static final BitSet FOLLOW_statement_in_statement3676 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_169_in_statement3697 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000010000000L});
-    public static final BitSet FOLLOW_parExpression_in_statement3699 = new BitSet(new long[]{0x0000000000000200L,0x1250007F00000000L,0x0033EF579BFFFF1FL,0x000000000000007CL});
-    public static final BitSet FOLLOW_statement_in_statement3701 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_170_in_statement3726 = new BitSet(new long[]{0x0000000000000200L,0x1250007F00000000L,0x0033EF579BFFFF1FL,0x000000000000007CL});
-    public static final BitSet FOLLOW_statement_in_statement3728 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000020000000000L});
-    public static final BitSet FOLLOW_169_in_statement3730 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000010000000L});
-    public static final BitSet FOLLOW_parExpression_in_statement3732 = new BitSet(new long[]{0x0000000000000000L,0x0010000000000000L});
-    public static final BitSet FOLLOW_116_in_statement3734 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_171_in_statement3759 = new BitSet(new long[]{0x0000000000000000L,0x0040000000000000L,0x0000000000000011L});
-    public static final BitSet FOLLOW_block_in_statement3761 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0004100000000000L});
-    public static final BitSet FOLLOW_catches_in_statement3771 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000100000000000L});
-    public static final BitSet FOLLOW_172_in_statement3775 = new BitSet(new long[]{0x0000000000000000L,0x0040000000000000L,0x0000000000000011L});
-    public static final BitSet FOLLOW_block_in_statement3777 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_catches_in_statement3805 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_172_in_statement3828 = new BitSet(new long[]{0x0000000000000000L,0x0040000000000000L,0x0000000000000011L});
-    public static final BitSet FOLLOW_block_in_statement3830 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_173_in_statement3864 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000010000000L});
-    public static final BitSet FOLLOW_parExpression_in_statement3866 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000001L});
-    public static final BitSet FOLLOW_128_in_statement3868 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0008000800000002L});
-    public static final BitSet FOLLOW_switchBlockStatementGroups_in_statement3870 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000002L});
-    public static final BitSet FOLLOW_129_in_statement3872 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_142_in_statement3893 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000010000000L});
-    public static final BitSet FOLLOW_parExpression_in_statement3895 = new BitSet(new long[]{0x0000000000000000L,0x0040000000000000L,0x0000000000000011L});
-    public static final BitSet FOLLOW_block_in_statement3897 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_174_in_statement3918 = new BitSet(new long[]{0x0000000000000000L,0x1010007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_statement3920 = new BitSet(new long[]{0x0000000000000000L,0x0010000000000000L});
-    public static final BitSet FOLLOW_116_in_statement3923 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_175_in_statement3943 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_statement3945 = new BitSet(new long[]{0x0000000000000000L,0x0010000000000000L});
-    public static final BitSet FOLLOW_116_in_statement3947 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_176_in_statement3966 = new BitSet(new long[]{0x0000000000000000L,0x0010000100000000L});
-    public static final BitSet FOLLOW_Identifier_in_statement3968 = new BitSet(new long[]{0x0000000000000000L,0x0010000000000000L});
-    public static final BitSet FOLLOW_116_in_statement3971 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_177_in_statement3991 = new BitSet(new long[]{0x0000000000000000L,0x0010000100000000L});
-    public static final BitSet FOLLOW_Identifier_in_statement3993 = new BitSet(new long[]{0x0000000000000000L,0x0010000000000000L});
-    public static final BitSet FOLLOW_116_in_statement3996 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_116_in_statement4014 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_statementExpression_in_statement4029 = new BitSet(new long[]{0x0000000000000000L,0x0010000000000000L});
-    public static final BitSet FOLLOW_116_in_statement4031 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_Identifier_in_statement4045 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000002000000000L});
-    public static final BitSet FOLLOW_165_in_statement4047 = new BitSet(new long[]{0x0000000000000200L,0x1250007F00000000L,0x0033EF579BFFFF1FL,0x000000000000007CL});
-    public static final BitSet FOLLOW_statement_in_statement4049 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_catchClause_in_catches4071 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0004000000000000L});
-    public static final BitSet FOLLOW_catchClause_in_catches4074 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0004000000000000L});
-    public static final BitSet FOLLOW_178_in_catchClause4090 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000010000000L});
-    public static final BitSet FOLLOW_156_in_catchClause4092 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L,0x0000000403FC1000L});
-    public static final BitSet FOLLOW_formalParameter_in_catchClause4094 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000020000000L});
-    public static final BitSet FOLLOW_157_in_catchClause4096 = new BitSet(new long[]{0x0000000000000000L,0x0040000000000000L,0x0000000000000011L});
-    public static final BitSet FOLLOW_block_in_catchClause4098 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_variableModifier_in_formalParameter4124 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L,0x0000000403FC1000L});
-    public static final BitSet FOLLOW_type_in_formalParameter4127 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L});
-    public static final BitSet FOLLOW_variableDeclaratorId_in_formalParameter4129 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_switchBlockStatementGroup_in_switchBlockStatementGroups4143 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0008000800000000L});
-    public static final BitSet FOLLOW_switchLabel_in_switchBlockStatementGroup4157 = new BitSet(new long[]{0x0000000000000202L,0x1250007F00000000L,0x0033EF579BFFFF1FL,0x000000000000007CL});
-    public static final BitSet FOLLOW_blockStatement_in_switchBlockStatementGroup4159 = new BitSet(new long[]{0x0000000000000202L,0x1250007F00000000L,0x0033EF579BFFFF1FL,0x000000000000007CL});
-    public static final BitSet FOLLOW_179_in_switchLabel4187 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_constantExpression_in_switchLabel4189 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000002000000000L});
-    public static final BitSet FOLLOW_165_in_switchLabel4191 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_179_in_switchLabel4207 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L});
-    public static final BitSet FOLLOW_enumConstantName_in_switchLabel4209 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000002000000000L});
-    public static final BitSet FOLLOW_165_in_switchLabel4211 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_163_in_switchLabel4227 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000002000000000L});
-    public static final BitSet FOLLOW_165_in_switchLabel4229 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_125_in_moreStatementExpressions4248 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_statementExpression_in_moreStatementExpressions4250 = new BitSet(new long[]{0x0000000000000002L,0x2000000000000000L});
-    public static final BitSet FOLLOW_forVarControl_in_forControl4271 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_forInit_in_forControl4284 = new BitSet(new long[]{0x0000000000000000L,0x0010000000000000L});
-    public static final BitSet FOLLOW_116_in_forControl4287 = new BitSet(new long[]{0x0000000000000000L,0x1010007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_forControl4291 = new BitSet(new long[]{0x0000000000000000L,0x0010000000000000L});
-    public static final BitSet FOLLOW_116_in_forControl4294 = new BitSet(new long[]{0x0000000000000002L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_forUpdate_in_forControl4298 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_variableModifier_in_forInit4333 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L,0x0000000403FC1000L});
-    public static final BitSet FOLLOW_type_in_forInit4336 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L});
-    public static final BitSet FOLLOW_variableDeclarators_in_forInit4338 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_expressionList_in_forInit4360 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_variableModifier_in_forVarControl4372 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L,0x0000000403FC1000L});
-    public static final BitSet FOLLOW_type_in_forVarControl4375 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L});
-    public static final BitSet FOLLOW_Identifier_in_forVarControl4377 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000002000000000L});
-    public static final BitSet FOLLOW_165_in_forVarControl4379 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_forVarControl4381 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_expressionList_in_forUpdate4411 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_156_in_parExpression4424 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_parExpression4427 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000020000000L});
-    public static final BitSet FOLLOW_157_in_parExpression4429 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_expression_in_expressionList4447 = new BitSet(new long[]{0x0000000000000002L,0x2000000000000000L});
-    public static final BitSet FOLLOW_125_in_expressionList4450 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_expressionList4453 = new BitSet(new long[]{0x0000000000000002L,0x2000000000000000L});
-    public static final BitSet FOLLOW_expression_in_statementExpression4469 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_expression_in_constantExpression4481 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_conditionalExpression_in_expression4493 = new BitSet(new long[]{0x0000000000000002L,0x5100000000000000L,0x07F0000000000080L});
-    public static final BitSet FOLLOW_135_in_expression4503 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_expression4505 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_180_in_expression4524 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
-    public static final BitSet FOLLOW_135_in_expression4526 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_expression4528 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_181_in_expression4556 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
-    public static final BitSet FOLLOW_135_in_expression4558 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_expression4560 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_120_in_expression4588 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
-    public static final BitSet FOLLOW_135_in_expression4590 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_expression4592 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_182_in_expression4620 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
-    public static final BitSet FOLLOW_135_in_expression4622 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_expression4624 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_183_in_expression4653 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_expression4655 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_184_in_expression4678 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_expression4680 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_185_in_expression4703 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_expression4705 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_186_in_expression4733 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
-    public static final BitSet FOLLOW_135_in_expression4735 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_expression4737 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_124_in_expression4765 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L});
-    public static final BitSet FOLLOW_124_in_expression4767 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
-    public static final BitSet FOLLOW_135_in_expression4769 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_expression4771 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_126_in_expression4799 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
-    public static final BitSet FOLLOW_126_in_expression4801 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
-    public static final BitSet FOLLOW_135_in_expression4803 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_expression4805 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_126_in_expression4831 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
-    public static final BitSet FOLLOW_126_in_expression4833 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
-    public static final BitSet FOLLOW_126_in_expression4835 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
-    public static final BitSet FOLLOW_135_in_expression4837 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_expression4839 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_conditionalOrExpression_in_conditionalExpression4886 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000004000000L});
-    public static final BitSet FOLLOW_154_in_conditionalExpression4903 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_conditionalExpression4905 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000002000000000L});
-    public static final BitSet FOLLOW_165_in_conditionalExpression4907 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_conditionalExpression4909 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_conditionalAndExpression_in_conditionalOrExpression4956 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0800000000000000L});
-    public static final BitSet FOLLOW_187_in_conditionalOrExpression4974 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_conditionalOrExpression_in_conditionalOrExpression4976 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_inclusiveOrExpression_in_conditionalAndExpression5022 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x1000000000000000L});
-    public static final BitSet FOLLOW_188_in_conditionalAndExpression5040 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_conditionalAndExpression_in_conditionalAndExpression5042 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_exclusiveOrExpression_in_inclusiveOrExpression5094 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x2000000000000000L});
-    public static final BitSet FOLLOW_189_in_inclusiveOrExpression5116 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_inclusiveOrExpression_in_inclusiveOrExpression5118 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_andExpression_in_exclusiveOrExpression5165 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x4000000000000000L});
-    public static final BitSet FOLLOW_190_in_exclusiveOrExpression5181 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_exclusiveOrExpression_in_exclusiveOrExpression5183 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_equalityExpression_in_andExpression5227 = new BitSet(new long[]{0x0000000000000002L,0x8000000000000000L});
-    public static final BitSet FOLLOW_127_in_andExpression5243 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_andExpression_in_andExpression5245 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_instanceOfExpression_in_equalityExpression5289 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x8000000000000000L,0x0000000000000001L});
-    public static final BitSet FOLLOW_191_in_equalityExpression5305 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_instanceOfExpression_in_equalityExpression5307 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_192_in_equalityExpression5328 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_instanceOfExpression_in_equalityExpression5330 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_relationalExpression_in_instanceOfExpression5374 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000000L,0x0000000000000002L});
-    public static final BitSet FOLLOW_193_in_instanceOfExpression5389 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L,0x0000000403FC1000L});
-    public static final BitSet FOLLOW_type_in_instanceOfExpression5391 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_shiftExpression_in_relationalExpression5435 = new BitSet(new long[]{0x0000000000000002L,0x5000000000000000L});
-    public static final BitSet FOLLOW_124_in_relationalExpression5451 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
-    public static final BitSet FOLLOW_135_in_relationalExpression5453 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_shiftExpression_in_relationalExpression5455 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_124_in_relationalExpression5476 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_shiftExpression_in_relationalExpression5478 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_126_in_relationalExpression5499 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
-    public static final BitSet FOLLOW_135_in_relationalExpression5501 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_shiftExpression_in_relationalExpression5503 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_126_in_relationalExpression5524 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_shiftExpression_in_relationalExpression5526 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_additiveExpression_in_shiftExpression5571 = new BitSet(new long[]{0x0000000000000002L,0x5000000000000000L});
-    public static final BitSet FOLLOW_124_in_shiftExpression5590 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L});
-    public static final BitSet FOLLOW_124_in_shiftExpression5592 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_126_in_shiftExpression5596 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
-    public static final BitSet FOLLOW_126_in_shiftExpression5598 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_additiveExpression_in_shiftExpression5601 = new BitSet(new long[]{0x0000000000000002L,0x5000000000000000L});
-    public static final BitSet FOLLOW_126_in_shiftExpression5635 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
-    public static final BitSet FOLLOW_126_in_shiftExpression5637 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
-    public static final BitSet FOLLOW_126_in_shiftExpression5639 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_additiveExpression_in_shiftExpression5641 = new BitSet(new long[]{0x0000000000000002L,0x4000000000000000L});
-    public static final BitSet FOLLOW_multiplicativeExpression_in_additiveExpression5684 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0030000000000000L});
-    public static final BitSet FOLLOW_180_in_additiveExpression5703 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_181_in_additiveExpression5707 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_multiplicativeExpression_in_additiveExpression5710 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0030000000000000L});
-    public static final BitSet FOLLOW_unaryExpression_in_multiplicativeExpression5761 = new BitSet(new long[]{0x0000000000000002L,0x0100000000000000L,0x0440000000000000L});
-    public static final BitSet FOLLOW_120_in_multiplicativeExpression5781 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_182_in_multiplicativeExpression5785 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_186_in_multiplicativeExpression5789 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_unaryExpression_in_multiplicativeExpression5792 = new BitSet(new long[]{0x0000000000000002L,0x0100000000000000L,0x0440000000000000L});
-    public static final BitSet FOLLOW_180_in_unaryExpression5844 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_unaryExpression_in_unaryExpression5846 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_181_in_unaryExpression5858 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_unaryExpression_in_unaryExpression5860 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_194_in_unaryExpression5878 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_unaryExpression_in_unaryExpression5880 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_195_in_unaryExpression5898 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_unaryExpression_in_unaryExpression5900 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_unaryExpressionNotPlusMinus_in_unaryExpression5918 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_196_in_unaryExpressionNotPlusMinus5949 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_unaryExpression_in_unaryExpressionNotPlusMinus5951 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_197_in_unaryExpressionNotPlusMinus5968 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_unaryExpression_in_unaryExpressionNotPlusMinus5970 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_castExpression_in_unaryExpressionNotPlusMinus5988 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_primary_in_unaryExpressionNotPlusMinus5995 = new BitSet(new long[]{0x0000000000000002L,0x0080000000000000L,0x0000000000000020L,0x000000000000000CL});
-    public static final BitSet FOLLOW_selector_in_unaryExpressionNotPlusMinus6005 = new BitSet(new long[]{0x0000000000000002L,0x0080000000000000L,0x0000000000000020L,0x000000000000000CL});
-    public static final BitSet FOLLOW_194_in_unaryExpressionNotPlusMinus6018 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_195_in_unaryExpressionNotPlusMinus6040 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_194_in_unaryExpressionNotPlusMinus6084 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_195_in_unaryExpressionNotPlusMinus6099 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_156_in_castExpression6138 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L,0x0000000403FC1000L});
-    public static final BitSet FOLLOW_primitiveType_in_castExpression6140 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000020000000L});
-    public static final BitSet FOLLOW_157_in_castExpression6142 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_unaryExpression_in_castExpression6144 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_156_in_castExpression6167 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L,0x0000000403FC1000L});
-    public static final BitSet FOLLOW_type_in_castExpression6169 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000020000000L});
-    public static final BitSet FOLLOW_157_in_castExpression6171 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_unaryExpressionNotPlusMinus_in_castExpression6173 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_156_in_castExpression6192 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_castExpression6194 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000020000000L});
-    public static final BitSet FOLLOW_157_in_castExpression6196 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_unaryExpressionNotPlusMinus_in_castExpression6198 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_parExpression_in_primary6218 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_nonWildcardTypeArguments_in_primary6225 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L,0x0000000008000000L});
-    public static final BitSet FOLLOW_explicitGenericInvocationSuffix_in_primary6227 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_literal_in_primary6251 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_198_in_primary6261 = new BitSet(new long[]{0x0000000000000000L,0x1000000100000000L,0x0000000403FC1000L});
-    public static final BitSet FOLLOW_nonWildcardTypeArguments_in_primary6263 = new BitSet(new long[]{0x0000000000000000L,0x1000000100000000L,0x0000000403FC1000L});
-    public static final BitSet FOLLOW_primitiveType_in_primary6266 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000020L});
-    public static final BitSet FOLLOW_133_in_primary6282 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_primary6284 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000040L});
-    public static final BitSet FOLLOW_134_in_primary6286 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000020L});
-    public static final BitSet FOLLOW_133_in_primary6291 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000040L});
+    public static final BitSet FOLLOW_annotation_in_annotations3145 = new BitSet(new long[]{0x0000000000000002L,0x0000000100000000L,0x0000000403FC1000L});
+    public static final BitSet FOLLOW_162_in_annotation3157 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L});
+    public static final BitSet FOLLOW_annotationName_in_annotation3159 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000010000000L});
+    public static final BitSet FOLLOW_156_in_annotation3162 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x00300007BBFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_elementValuePairs_in_annotation3164 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000020000000L});
+    public static final BitSet FOLLOW_157_in_annotation3167 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_Identifier_in_annotationName3189 = new BitSet(new long[]{0x0000000000000002L,0x0080000000000000L});
+    public static final BitSet FOLLOW_119_in_annotationName3192 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L});
+    public static final BitSet FOLLOW_Identifier_in_annotationName3194 = new BitSet(new long[]{0x0000000000000002L,0x0080000000000000L});
+    public static final BitSet FOLLOW_elementValuePair_in_elementValuePairs3208 = new BitSet(new long[]{0x0000000000000002L,0x2000000000000000L});
+    public static final BitSet FOLLOW_125_in_elementValuePairs3211 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_elementValuePair_in_elementValuePairs3213 = new BitSet(new long[]{0x0000000000000002L,0x2000000000000000L});
+    public static final BitSet FOLLOW_Identifier_in_elementValuePair3228 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
+    public static final BitSet FOLLOW_135_in_elementValuePair3230 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_elementValue_in_elementValuePair3234 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_conditionalExpression_in_elementValue3246 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_annotation_in_elementValue3253 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_elementValueArrayInitializer_in_elementValue3260 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_128_in_elementValueArrayInitializer3272 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC100BL,0x000000000000007CL});
+    public static final BitSet FOLLOW_elementValue_in_elementValueArrayInitializer3275 = new BitSet(new long[]{0x0000000000000000L,0x2000000000000000L,0x0000000000000002L});
+    public static final BitSet FOLLOW_125_in_elementValueArrayInitializer3278 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_elementValue_in_elementValueArrayInitializer3280 = new BitSet(new long[]{0x0000000000000000L,0x2000000000000000L,0x0000000000000002L});
+    public static final BitSet FOLLOW_129_in_elementValueArrayInitializer3287 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_162_in_annotationTypeDeclaration3299 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000004L});
+    public static final BitSet FOLLOW_130_in_annotationTypeDeclaration3301 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L});
+    public static final BitSet FOLLOW_Identifier_in_annotationTypeDeclaration3303 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000001L});
+    public static final BitSet FOLLOW_annotationTypeBody_in_annotationTypeDeclaration3305 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_128_in_annotationTypeBody3317 = new BitSet(new long[]{0x0000000000000200L,0x1250000100000000L,0x0000000403FFFF0FL});
+    public static final BitSet FOLLOW_annotationTypeElementDeclarations_in_annotationTypeBody3320 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000002L});
+    public static final BitSet FOLLOW_129_in_annotationTypeBody3324 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_annotationTypeElementDeclaration_in_annotationTypeElementDeclarations3337 = new BitSet(new long[]{0x0000000000000202L,0x1250000100000000L,0x0000000403FFFF0DL});
+    public static final BitSet FOLLOW_annotationTypeElementDeclaration_in_annotationTypeElementDeclarations3341 = new BitSet(new long[]{0x0000000000000202L,0x1250000100000000L,0x0000000403FFFF0DL});
+    public static final BitSet FOLLOW_modifier_in_annotationTypeElementDeclaration3356 = new BitSet(new long[]{0x0000000000000200L,0x1250000100000000L,0x0000000403FFFF0DL});
+    public static final BitSet FOLLOW_annotationTypeElementRest_in_annotationTypeElementDeclaration3360 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_type_in_annotationTypeElementRest3372 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L});
+    public static final BitSet FOLLOW_annotationMethodOrConstantRest_in_annotationTypeElementRest3374 = new BitSet(new long[]{0x0000000000000000L,0x0010000000000000L});
+    public static final BitSet FOLLOW_116_in_annotationTypeElementRest3376 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_classDeclaration_in_annotationTypeElementRest3383 = new BitSet(new long[]{0x0000000000000002L,0x0010000000000000L});
+    public static final BitSet FOLLOW_116_in_annotationTypeElementRest3385 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_interfaceDeclaration_in_annotationTypeElementRest3393 = new BitSet(new long[]{0x0000000000000002L,0x0010000000000000L});
+    public static final BitSet FOLLOW_116_in_annotationTypeElementRest3395 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_enumDeclaration_in_annotationTypeElementRest3403 = new BitSet(new long[]{0x0000000000000002L,0x0010000000000000L});
+    public static final BitSet FOLLOW_116_in_annotationTypeElementRest3405 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_annotationTypeDeclaration_in_annotationTypeElementRest3413 = new BitSet(new long[]{0x0000000000000002L,0x0010000000000000L});
+    public static final BitSet FOLLOW_116_in_annotationTypeElementRest3415 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_annotationMethodRest_in_annotationMethodOrConstantRest3428 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_annotationConstantRest_in_annotationMethodOrConstantRest3435 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_Identifier_in_annotationMethodRest3448 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000010000000L});
+    public static final BitSet FOLLOW_156_in_annotationMethodRest3450 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000020000000L});
+    public static final BitSet FOLLOW_157_in_annotationMethodRest3452 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000800000000L});
+    public static final BitSet FOLLOW_defaultValue_in_annotationMethodRest3455 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_variableDeclarators_in_annotationConstantRest3472 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_163_in_defaultValue3487 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_elementValue_in_defaultValue3489 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_128_in_block3503 = new BitSet(new long[]{0x0000000000000200L,0x1250007F00000000L,0x0033EF579BFFFF1FL,0x000000000000007CL});
+    public static final BitSet FOLLOW_blockStatement_in_block3505 = new BitSet(new long[]{0x0000000000000200L,0x1250007F00000000L,0x0033EF579BFFFF1FL,0x000000000000007CL});
+    public static final BitSet FOLLOW_129_in_block3508 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_localVariableDeclaration_in_blockStatement3529 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_classOrInterfaceDeclaration_in_blockStatement3534 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_statement_in_blockStatement3542 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_variableModifier_in_localVariableDeclaration3554 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L,0x0000000403FC1000L});
+    public static final BitSet FOLLOW_type_in_localVariableDeclaration3557 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L});
+    public static final BitSet FOLLOW_variableDeclarators_in_localVariableDeclaration3559 = new BitSet(new long[]{0x0000000000000000L,0x0010000000000000L});
+    public static final BitSet FOLLOW_116_in_localVariableDeclaration3561 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_block_in_statement3590 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_164_in_statement3600 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000039BFC0009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_statement3602 = new BitSet(new long[]{0x0000000000000000L,0x0010000000000000L,0x0000002000000000L});
+    public static final BitSet FOLLOW_165_in_statement3605 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000039BFC0009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_statement3607 = new BitSet(new long[]{0x0000000000000000L,0x0010000000000000L});
+    public static final BitSet FOLLOW_116_in_statement3611 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_166_in_statement3633 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000010000000L});
+    public static final BitSet FOLLOW_parExpression_in_statement3635 = new BitSet(new long[]{0x0000000000000200L,0x1250007F00000000L,0x0033EF579BFFFF1FL,0x000000000000007CL});
+    public static final BitSet FOLLOW_statement_in_statement3637 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000008000000000L});
+    public static final BitSet FOLLOW_167_in_statement3647 = new BitSet(new long[]{0x0000000000000200L,0x1250007F00000000L,0x0033EF579BFFFF1FL,0x000000000000007CL});
+    public static final BitSet FOLLOW_statement_in_statement3649 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_168_in_statement3675 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000010000000L});
+    public static final BitSet FOLLOW_156_in_statement3677 = new BitSet(new long[]{0x0000000000000000L,0x1010007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_forControl_in_statement3679 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000020000000L});
+    public static final BitSet FOLLOW_157_in_statement3681 = new BitSet(new long[]{0x0000000000000200L,0x1250007F00000000L,0x0033EF579BFFFF1FL,0x000000000000007CL});
+    public static final BitSet FOLLOW_statement_in_statement3683 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_169_in_statement3704 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000010000000L});
+    public static final BitSet FOLLOW_parExpression_in_statement3706 = new BitSet(new long[]{0x0000000000000200L,0x1250007F00000000L,0x0033EF579BFFFF1FL,0x000000000000007CL});
+    public static final BitSet FOLLOW_statement_in_statement3708 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_170_in_statement3733 = new BitSet(new long[]{0x0000000000000200L,0x1250007F00000000L,0x0033EF579BFFFF1FL,0x000000000000007CL});
+    public static final BitSet FOLLOW_statement_in_statement3735 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000020000000000L});
+    public static final BitSet FOLLOW_169_in_statement3737 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000010000000L});
+    public static final BitSet FOLLOW_parExpression_in_statement3739 = new BitSet(new long[]{0x0000000000000000L,0x0010000000000000L});
+    public static final BitSet FOLLOW_116_in_statement3741 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_171_in_statement3766 = new BitSet(new long[]{0x0000000000000000L,0x0040000000000000L,0x0000000000000011L});
+    public static final BitSet FOLLOW_block_in_statement3768 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0004100000000000L});
+    public static final BitSet FOLLOW_catches_in_statement3778 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000100000000000L});
+    public static final BitSet FOLLOW_172_in_statement3782 = new BitSet(new long[]{0x0000000000000000L,0x0040000000000000L,0x0000000000000011L});
+    public static final BitSet FOLLOW_block_in_statement3784 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_catches_in_statement3812 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_172_in_statement3835 = new BitSet(new long[]{0x0000000000000000L,0x0040000000000000L,0x0000000000000011L});
+    public static final BitSet FOLLOW_block_in_statement3837 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_173_in_statement3871 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000010000000L});
+    public static final BitSet FOLLOW_parExpression_in_statement3873 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000001L});
+    public static final BitSet FOLLOW_128_in_statement3875 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0008000800000002L});
+    public static final BitSet FOLLOW_switchBlockStatementGroups_in_statement3877 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000002L});
+    public static final BitSet FOLLOW_129_in_statement3879 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_142_in_statement3900 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000010000000L});
+    public static final BitSet FOLLOW_parExpression_in_statement3902 = new BitSet(new long[]{0x0000000000000000L,0x0040000000000000L,0x0000000000000011L});
+    public static final BitSet FOLLOW_block_in_statement3904 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_174_in_statement3925 = new BitSet(new long[]{0x0000000000000000L,0x1010007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_statement3927 = new BitSet(new long[]{0x0000000000000000L,0x0010000000000000L});
+    public static final BitSet FOLLOW_116_in_statement3930 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_175_in_statement3950 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_statement3952 = new BitSet(new long[]{0x0000000000000000L,0x0010000000000000L});
+    public static final BitSet FOLLOW_116_in_statement3954 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_176_in_statement3973 = new BitSet(new long[]{0x0000000000000000L,0x0010000100000000L});
+    public static final BitSet FOLLOW_Identifier_in_statement3975 = new BitSet(new long[]{0x0000000000000000L,0x0010000000000000L});
+    public static final BitSet FOLLOW_116_in_statement3978 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_177_in_statement3998 = new BitSet(new long[]{0x0000000000000000L,0x0010000100000000L});
+    public static final BitSet FOLLOW_Identifier_in_statement4000 = new BitSet(new long[]{0x0000000000000000L,0x0010000000000000L});
+    public static final BitSet FOLLOW_116_in_statement4003 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_116_in_statement4021 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_statementExpression_in_statement4036 = new BitSet(new long[]{0x0000000000000000L,0x0010000000000000L});
+    public static final BitSet FOLLOW_116_in_statement4038 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_Identifier_in_statement4052 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000002000000000L});
+    public static final BitSet FOLLOW_165_in_statement4054 = new BitSet(new long[]{0x0000000000000200L,0x1250007F00000000L,0x0033EF579BFFFF1FL,0x000000000000007CL});
+    public static final BitSet FOLLOW_statement_in_statement4056 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_catchClause_in_catches4078 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0004000000000000L});
+    public static final BitSet FOLLOW_catchClause_in_catches4081 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0004000000000000L});
+    public static final BitSet FOLLOW_178_in_catchClause4097 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000010000000L});
+    public static final BitSet FOLLOW_156_in_catchClause4099 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L,0x0000000403FC1000L});
+    public static final BitSet FOLLOW_formalParameter_in_catchClause4101 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000020000000L});
+    public static final BitSet FOLLOW_157_in_catchClause4103 = new BitSet(new long[]{0x0000000000000000L,0x0040000000000000L,0x0000000000000011L});
+    public static final BitSet FOLLOW_block_in_catchClause4105 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_variableModifier_in_formalParameter4131 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L,0x0000000403FC1000L});
+    public static final BitSet FOLLOW_type_in_formalParameter4134 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L});
+    public static final BitSet FOLLOW_variableDeclaratorId_in_formalParameter4136 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_switchBlockStatementGroup_in_switchBlockStatementGroups4150 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0008000800000000L});
+    public static final BitSet FOLLOW_switchLabel_in_switchBlockStatementGroup4164 = new BitSet(new long[]{0x0000000000000202L,0x1250007F00000000L,0x0033EF579BFFFF1FL,0x000000000000007CL});
+    public static final BitSet FOLLOW_blockStatement_in_switchBlockStatementGroup4166 = new BitSet(new long[]{0x0000000000000202L,0x1250007F00000000L,0x0033EF579BFFFF1FL,0x000000000000007CL});
+    public static final BitSet FOLLOW_179_in_switchLabel4194 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_constantExpression_in_switchLabel4196 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000002000000000L});
+    public static final BitSet FOLLOW_165_in_switchLabel4198 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_179_in_switchLabel4214 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L});
+    public static final BitSet FOLLOW_enumConstantName_in_switchLabel4216 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000002000000000L});
+    public static final BitSet FOLLOW_165_in_switchLabel4218 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_163_in_switchLabel4234 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000002000000000L});
+    public static final BitSet FOLLOW_165_in_switchLabel4236 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_125_in_moreStatementExpressions4255 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_statementExpression_in_moreStatementExpressions4257 = new BitSet(new long[]{0x0000000000000002L,0x2000000000000000L});
+    public static final BitSet FOLLOW_forVarControl_in_forControl4278 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_forInit_in_forControl4291 = new BitSet(new long[]{0x0000000000000000L,0x0010000000000000L});
+    public static final BitSet FOLLOW_116_in_forControl4294 = new BitSet(new long[]{0x0000000000000000L,0x1010007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_forControl4298 = new BitSet(new long[]{0x0000000000000000L,0x0010000000000000L});
+    public static final BitSet FOLLOW_116_in_forControl4301 = new BitSet(new long[]{0x0000000000000002L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_forUpdate_in_forControl4305 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_variableModifier_in_forInit4340 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L,0x0000000403FC1000L});
+    public static final BitSet FOLLOW_type_in_forInit4343 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L});
+    public static final BitSet FOLLOW_variableDeclarators_in_forInit4345 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_expressionList_in_forInit4367 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_variableModifier_in_forVarControl4379 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L,0x0000000403FC1000L});
+    public static final BitSet FOLLOW_type_in_forVarControl4382 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L});
+    public static final BitSet FOLLOW_Identifier_in_forVarControl4384 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000002000000000L});
+    public static final BitSet FOLLOW_165_in_forVarControl4386 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_forVarControl4388 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_expressionList_in_forUpdate4418 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_156_in_parExpression4431 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_parExpression4434 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000020000000L});
+    public static final BitSet FOLLOW_157_in_parExpression4436 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_expression_in_expressionList4454 = new BitSet(new long[]{0x0000000000000002L,0x2000000000000000L});
+    public static final BitSet FOLLOW_125_in_expressionList4457 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_expressionList4460 = new BitSet(new long[]{0x0000000000000002L,0x2000000000000000L});
+    public static final BitSet FOLLOW_expression_in_statementExpression4476 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_expression_in_constantExpression4488 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_conditionalExpression_in_expression4500 = new BitSet(new long[]{0x0000000000000002L,0x5100000000000000L,0x07F0000000000080L});
+    public static final BitSet FOLLOW_135_in_expression4510 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_expression4512 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_180_in_expression4531 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
+    public static final BitSet FOLLOW_135_in_expression4533 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_expression4535 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_181_in_expression4563 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
+    public static final BitSet FOLLOW_135_in_expression4565 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_expression4567 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_120_in_expression4595 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
+    public static final BitSet FOLLOW_135_in_expression4597 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_expression4599 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_182_in_expression4627 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
+    public static final BitSet FOLLOW_135_in_expression4629 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_expression4631 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_183_in_expression4660 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_expression4662 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_184_in_expression4685 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_expression4687 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_185_in_expression4710 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_expression4712 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_186_in_expression4740 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
+    public static final BitSet FOLLOW_135_in_expression4742 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_expression4744 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_124_in_expression4772 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L});
+    public static final BitSet FOLLOW_124_in_expression4774 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
+    public static final BitSet FOLLOW_135_in_expression4776 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_expression4778 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_126_in_expression4806 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
+    public static final BitSet FOLLOW_126_in_expression4808 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
+    public static final BitSet FOLLOW_135_in_expression4810 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_expression4812 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_126_in_expression4838 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
+    public static final BitSet FOLLOW_126_in_expression4840 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
+    public static final BitSet FOLLOW_126_in_expression4842 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
+    public static final BitSet FOLLOW_135_in_expression4844 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_expression4846 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_conditionalOrExpression_in_conditionalExpression4893 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000004000000L});
+    public static final BitSet FOLLOW_154_in_conditionalExpression4910 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_conditionalExpression4912 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000002000000000L});
+    public static final BitSet FOLLOW_165_in_conditionalExpression4914 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_conditionalExpression4916 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_conditionalAndExpression_in_conditionalOrExpression4963 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0800000000000000L});
+    public static final BitSet FOLLOW_187_in_conditionalOrExpression4981 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_conditionalOrExpression_in_conditionalOrExpression4983 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_inclusiveOrExpression_in_conditionalAndExpression5029 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x1000000000000000L});
+    public static final BitSet FOLLOW_188_in_conditionalAndExpression5047 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_conditionalAndExpression_in_conditionalAndExpression5049 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_exclusiveOrExpression_in_inclusiveOrExpression5101 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x2000000000000000L});
+    public static final BitSet FOLLOW_189_in_inclusiveOrExpression5123 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_inclusiveOrExpression_in_inclusiveOrExpression5125 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_andExpression_in_exclusiveOrExpression5172 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x4000000000000000L});
+    public static final BitSet FOLLOW_190_in_exclusiveOrExpression5188 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_exclusiveOrExpression_in_exclusiveOrExpression5190 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_equalityExpression_in_andExpression5234 = new BitSet(new long[]{0x0000000000000002L,0x8000000000000000L});
+    public static final BitSet FOLLOW_127_in_andExpression5250 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_andExpression_in_andExpression5252 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_instanceOfExpression_in_equalityExpression5296 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x8000000000000000L,0x0000000000000001L});
+    public static final BitSet FOLLOW_191_in_equalityExpression5312 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_instanceOfExpression_in_equalityExpression5314 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_192_in_equalityExpression5335 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_instanceOfExpression_in_equalityExpression5337 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_relationalExpression_in_instanceOfExpression5381 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000000L,0x0000000000000002L});
+    public static final BitSet FOLLOW_193_in_instanceOfExpression5396 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L,0x0000000403FC1000L});
+    public static final BitSet FOLLOW_type_in_instanceOfExpression5398 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_shiftExpression_in_relationalExpression5442 = new BitSet(new long[]{0x0000000000000002L,0x5000000000000000L});
+    public static final BitSet FOLLOW_124_in_relationalExpression5458 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
+    public static final BitSet FOLLOW_135_in_relationalExpression5460 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_shiftExpression_in_relationalExpression5462 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_124_in_relationalExpression5483 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_shiftExpression_in_relationalExpression5485 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_126_in_relationalExpression5506 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
+    public static final BitSet FOLLOW_135_in_relationalExpression5508 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_shiftExpression_in_relationalExpression5510 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_126_in_relationalExpression5531 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_shiftExpression_in_relationalExpression5533 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_additiveExpression_in_shiftExpression5578 = new BitSet(new long[]{0x0000000000000002L,0x5000000000000000L});
+    public static final BitSet FOLLOW_124_in_shiftExpression5597 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L});
+    public static final BitSet FOLLOW_124_in_shiftExpression5599 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_126_in_shiftExpression5603 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
+    public static final BitSet FOLLOW_126_in_shiftExpression5605 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_additiveExpression_in_shiftExpression5608 = new BitSet(new long[]{0x0000000000000002L,0x5000000000000000L});
+    public static final BitSet FOLLOW_126_in_shiftExpression5642 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
+    public static final BitSet FOLLOW_126_in_shiftExpression5644 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
+    public static final BitSet FOLLOW_126_in_shiftExpression5646 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_additiveExpression_in_shiftExpression5648 = new BitSet(new long[]{0x0000000000000002L,0x4000000000000000L});
+    public static final BitSet FOLLOW_multiplicativeExpression_in_additiveExpression5691 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0030000000000000L});
+    public static final BitSet FOLLOW_180_in_additiveExpression5710 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_181_in_additiveExpression5714 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_multiplicativeExpression_in_additiveExpression5717 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0030000000000000L});
+    public static final BitSet FOLLOW_unaryExpression_in_multiplicativeExpression5768 = new BitSet(new long[]{0x0000000000000002L,0x0100000000000000L,0x0440000000000000L});
+    public static final BitSet FOLLOW_120_in_multiplicativeExpression5788 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_182_in_multiplicativeExpression5792 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_186_in_multiplicativeExpression5796 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_unaryExpression_in_multiplicativeExpression5799 = new BitSet(new long[]{0x0000000000000002L,0x0100000000000000L,0x0440000000000000L});
+    public static final BitSet FOLLOW_180_in_unaryExpression5851 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_unaryExpression_in_unaryExpression5853 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_181_in_unaryExpression5865 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_unaryExpression_in_unaryExpression5867 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_194_in_unaryExpression5885 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_unaryExpression_in_unaryExpression5887 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_195_in_unaryExpression5905 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_unaryExpression_in_unaryExpression5907 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_unaryExpressionNotPlusMinus_in_unaryExpression5925 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_196_in_unaryExpressionNotPlusMinus5956 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_unaryExpression_in_unaryExpressionNotPlusMinus5958 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_197_in_unaryExpressionNotPlusMinus5975 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_unaryExpression_in_unaryExpressionNotPlusMinus5977 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_castExpression_in_unaryExpressionNotPlusMinus5995 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_primary_in_unaryExpressionNotPlusMinus6002 = new BitSet(new long[]{0x0000000000000002L,0x0080000000000000L,0x0000000000000020L,0x000000000000000CL});
+    public static final BitSet FOLLOW_selector_in_unaryExpressionNotPlusMinus6012 = new BitSet(new long[]{0x0000000000000002L,0x0080000000000000L,0x0000000000000020L,0x000000000000000CL});
+    public static final BitSet FOLLOW_194_in_unaryExpressionNotPlusMinus6025 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_195_in_unaryExpressionNotPlusMinus6047 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_194_in_unaryExpressionNotPlusMinus6091 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_195_in_unaryExpressionNotPlusMinus6106 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_156_in_castExpression6145 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L,0x0000000403FC1000L});
+    public static final BitSet FOLLOW_primitiveType_in_castExpression6147 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000020000000L});
+    public static final BitSet FOLLOW_157_in_castExpression6149 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_unaryExpression_in_castExpression6151 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_156_in_castExpression6174 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L,0x0000000403FC1000L});
+    public static final BitSet FOLLOW_type_in_castExpression6176 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000020000000L});
+    public static final BitSet FOLLOW_157_in_castExpression6178 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_unaryExpressionNotPlusMinus_in_castExpression6180 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_156_in_castExpression6199 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_castExpression6201 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000020000000L});
+    public static final BitSet FOLLOW_157_in_castExpression6203 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_unaryExpressionNotPlusMinus_in_castExpression6205 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_parExpression_in_primary6225 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_nonWildcardTypeArguments_in_primary6232 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L,0x0000000008000000L});
+    public static final BitSet FOLLOW_explicitGenericInvocationSuffix_in_primary6234 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_literal_in_primary6258 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_198_in_primary6268 = new BitSet(new long[]{0x0000000000000000L,0x1000000100000000L,0x0000000403FC1000L});
+    public static final BitSet FOLLOW_nonWildcardTypeArguments_in_primary6270 = new BitSet(new long[]{0x0000000000000000L,0x1000000100000000L,0x0000000403FC1000L});
+    public static final BitSet FOLLOW_primitiveType_in_primary6273 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000020L});
+    public static final BitSet FOLLOW_133_in_primary6289 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_primary6291 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000040L});
     public static final BitSet FOLLOW_134_in_primary6293 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000020L});
-    public static final BitSet FOLLOW_133_in_primary6324 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000040L});
-    public static final BitSet FOLLOW_134_in_primary6326 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000021L});
-    public static final BitSet FOLLOW_arrayInitializer_in_primary6330 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_198_in_primary6362 = new BitSet(new long[]{0x0000000000000000L,0x1000000100000000L});
-    public static final BitSet FOLLOW_nonWildcardTypeArguments_in_primary6364 = new BitSet(new long[]{0x0000000000000000L,0x1000000100000000L});
-    public static final BitSet FOLLOW_refComponent_in_primary6370 = new BitSet(new long[]{0x0000000000000000L,0x0080000000000000L,0x0000000010000020L});
-    public static final BitSet FOLLOW_119_in_primary6373 = new BitSet(new long[]{0x0000000000000000L,0x1000000100000000L});
+    public static final BitSet FOLLOW_133_in_primary6298 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000040L});
+    public static final BitSet FOLLOW_134_in_primary6300 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000020L});
+    public static final BitSet FOLLOW_133_in_primary6331 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000040L});
+    public static final BitSet FOLLOW_134_in_primary6333 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000021L});
+    public static final BitSet FOLLOW_arrayInitializer_in_primary6337 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_198_in_primary6369 = new BitSet(new long[]{0x0000000000000000L,0x1000000100000000L});
+    public static final BitSet FOLLOW_nonWildcardTypeArguments_in_primary6371 = new BitSet(new long[]{0x0000000000000000L,0x1000000100000000L});
     public static final BitSet FOLLOW_refComponent_in_primary6377 = new BitSet(new long[]{0x0000000000000000L,0x0080000000000000L,0x0000000010000020L});
-    public static final BitSet FOLLOW_133_in_primary6396 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_primary6398 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000040L});
-    public static final BitSet FOLLOW_134_in_primary6400 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000020L});
-    public static final BitSet FOLLOW_133_in_primary6405 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000040L});
+    public static final BitSet FOLLOW_119_in_primary6380 = new BitSet(new long[]{0x0000000000000000L,0x1000000100000000L});
+    public static final BitSet FOLLOW_refComponent_in_primary6384 = new BitSet(new long[]{0x0000000000000000L,0x0080000000000000L,0x0000000010000020L});
+    public static final BitSet FOLLOW_133_in_primary6403 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_primary6405 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000040L});
     public static final BitSet FOLLOW_134_in_primary6407 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000020L});
-    public static final BitSet FOLLOW_133_in_primary6440 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000040L});
-    public static final BitSet FOLLOW_134_in_primary6442 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000021L});
-    public static final BitSet FOLLOW_arrayInitializer_in_primary6446 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_classCreatorRest_in_primary6475 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_type_in_primary6507 = new BitSet(new long[]{0x0000000000000000L,0x0080000000000000L});
-    public static final BitSet FOLLOW_119_in_primary6509 = new BitSet(new long[]{0x0000000000000000L,0x0200000000000000L});
-    public static final BitSet FOLLOW_121_in_primary6511 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_131_in_primary6533 = new BitSet(new long[]{0x0000000000000000L,0x0080000000000000L});
-    public static final BitSet FOLLOW_119_in_primary6535 = new BitSet(new long[]{0x0000000000000000L,0x0200000000000000L});
-    public static final BitSet FOLLOW_121_in_primary6537 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_155_in_primary6558 = new BitSet(new long[]{0x0000000000000002L,0x0080000000000000L,0x0000000010000020L});
-    public static final BitSet FOLLOW_arguments_in_primary6568 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_Identifier_in_primary6606 = new BitSet(new long[]{0x0000000000000002L,0x0080000000000000L,0x0000000010000020L});
-    public static final BitSet FOLLOW_arguments_in_primary6622 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_Identifier_in_innerCreator6667 = new BitSet(new long[]{0x0000000000000000L,0x0080000000000000L,0x0000000010000020L});
-    public static final BitSet FOLLOW_classCreatorRest_in_innerCreator6669 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_arguments_in_classCreatorRest6691 = new BitSet(new long[]{0x0000000000000002L,0x1C00000000000000L,0x0000000000000001L});
-    public static final BitSet FOLLOW_classBody_in_classCreatorRest6693 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_nonWildcardTypeArguments_in_explicitGenericInvocation6714 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L,0x0000000008000000L});
-    public static final BitSet FOLLOW_explicitGenericInvocationSuffix_in_explicitGenericInvocation6716 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_124_in_nonWildcardTypeArguments6728 = new BitSet(new long[]{0x0000000000000000L,0x1000000100000000L,0x0000000403FC1000L});
-    public static final BitSet FOLLOW_typeList_in_nonWildcardTypeArguments6730 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
-    public static final BitSet FOLLOW_126_in_nonWildcardTypeArguments6732 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_155_in_explicitGenericInvocationSuffix6748 = new BitSet(new long[]{0x0000000000000000L,0x0080000000000000L,0x0000000010000020L});
-    public static final BitSet FOLLOW_superSuffix_in_explicitGenericInvocationSuffix6750 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_Identifier_in_explicitGenericInvocationSuffix6764 = new BitSet(new long[]{0x0000000000000000L,0x0080000000000000L,0x0000000010000020L});
-    public static final BitSet FOLLOW_arguments_in_explicitGenericInvocationSuffix6766 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_arguments_in_superSuffix6785 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_119_in_superSuffix6797 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L});
-    public static final BitSet FOLLOW_Identifier_in_superSuffix6799 = new BitSet(new long[]{0x0000000000000002L,0x0080000000000000L,0x0000000010000020L});
-    public static final BitSet FOLLOW_arguments_in_superSuffix6802 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_119_in_selector6816 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000008000000L});
-    public static final BitSet FOLLOW_155_in_selector6818 = new BitSet(new long[]{0x0000000000000000L,0x0080000000000000L,0x0000000010000020L});
-    public static final BitSet FOLLOW_arguments_in_selector6820 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_119_in_selector6838 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000040L});
-    public static final BitSet FOLLOW_198_in_selector6840 = new BitSet(new long[]{0x0000000000000000L,0x1000000100000000L});
-    public static final BitSet FOLLOW_nonWildcardTypeArguments_in_selector6843 = new BitSet(new long[]{0x0000000000000000L,0x1000000100000000L});
-    public static final BitSet FOLLOW_innerCreator_in_selector6847 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_119_in_selector6862 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L});
-    public static final BitSet FOLLOW_nonWildcardTypeArguments_in_selector6864 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L,0x0000000008000000L});
-    public static final BitSet FOLLOW_explicitGenericInvocationSuffix_in_selector6866 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_119_in_selector6885 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L});
-    public static final BitSet FOLLOW_Identifier_in_selector6887 = new BitSet(new long[]{0x0000000000000002L,0x0080000000000000L,0x0000000010000020L});
-    public static final BitSet FOLLOW_arguments_in_selector6897 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_133_in_selector6932 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_selector6934 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000040L});
-    public static final BitSet FOLLOW_134_in_selector6936 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_156_in_arguments6955 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x00300007BBFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expressionList_in_arguments6958 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000020000000L});
-    public static final BitSet FOLLOW_157_in_arguments6961 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_133_in_primary6412 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000040L});
+    public static final BitSet FOLLOW_134_in_primary6414 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000020L});
+    public static final BitSet FOLLOW_133_in_primary6447 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000040L});
+    public static final BitSet FOLLOW_134_in_primary6449 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000021L});
+    public static final BitSet FOLLOW_arrayInitializer_in_primary6453 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_classCreatorRest_in_primary6482 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_type_in_primary6514 = new BitSet(new long[]{0x0000000000000000L,0x0080000000000000L});
+    public static final BitSet FOLLOW_119_in_primary6516 = new BitSet(new long[]{0x0000000000000000L,0x0200000000000000L});
+    public static final BitSet FOLLOW_121_in_primary6518 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_131_in_primary6540 = new BitSet(new long[]{0x0000000000000000L,0x0080000000000000L});
+    public static final BitSet FOLLOW_119_in_primary6542 = new BitSet(new long[]{0x0000000000000000L,0x0200000000000000L});
+    public static final BitSet FOLLOW_121_in_primary6544 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_155_in_primary6565 = new BitSet(new long[]{0x0000000000000002L,0x0080000000000000L,0x0000000010000020L});
+    public static final BitSet FOLLOW_arguments_in_primary6575 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_Identifier_in_primary6613 = new BitSet(new long[]{0x0000000000000002L,0x0080000000000000L,0x0000000010000020L});
+    public static final BitSet FOLLOW_arguments_in_primary6629 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_Identifier_in_innerCreator6674 = new BitSet(new long[]{0x0000000000000000L,0x0080000000000000L,0x0000000010000020L});
+    public static final BitSet FOLLOW_classCreatorRest_in_innerCreator6676 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_arguments_in_classCreatorRest6698 = new BitSet(new long[]{0x0000000000000002L,0x1C00000000000000L,0x0000000000000001L});
+    public static final BitSet FOLLOW_classBody_in_classCreatorRest6700 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_nonWildcardTypeArguments_in_explicitGenericInvocation6721 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L,0x0000000008000000L});
+    public static final BitSet FOLLOW_explicitGenericInvocationSuffix_in_explicitGenericInvocation6723 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_124_in_nonWildcardTypeArguments6735 = new BitSet(new long[]{0x0000000000000000L,0x1000000100000000L,0x0000000403FC1000L});
+    public static final BitSet FOLLOW_typeList_in_nonWildcardTypeArguments6737 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
+    public static final BitSet FOLLOW_126_in_nonWildcardTypeArguments6739 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_155_in_explicitGenericInvocationSuffix6755 = new BitSet(new long[]{0x0000000000000000L,0x0080000000000000L,0x0000000010000020L});
+    public static final BitSet FOLLOW_superSuffix_in_explicitGenericInvocationSuffix6757 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_Identifier_in_explicitGenericInvocationSuffix6771 = new BitSet(new long[]{0x0000000000000000L,0x0080000000000000L,0x0000000010000020L});
+    public static final BitSet FOLLOW_arguments_in_explicitGenericInvocationSuffix6773 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_arguments_in_superSuffix6792 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_119_in_superSuffix6804 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L});
+    public static final BitSet FOLLOW_Identifier_in_superSuffix6806 = new BitSet(new long[]{0x0000000000000002L,0x0080000000000000L,0x0000000010000020L});
+    public static final BitSet FOLLOW_arguments_in_superSuffix6809 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_119_in_selector6823 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000008000000L});
+    public static final BitSet FOLLOW_155_in_selector6825 = new BitSet(new long[]{0x0000000000000000L,0x0080000000000000L,0x0000000010000020L});
+    public static final BitSet FOLLOW_arguments_in_selector6827 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_119_in_selector6845 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000040L});
+    public static final BitSet FOLLOW_198_in_selector6847 = new BitSet(new long[]{0x0000000000000000L,0x1000000100000000L});
+    public static final BitSet FOLLOW_nonWildcardTypeArguments_in_selector6850 = new BitSet(new long[]{0x0000000000000000L,0x1000000100000000L});
+    public static final BitSet FOLLOW_innerCreator_in_selector6854 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_119_in_selector6869 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L});
+    public static final BitSet FOLLOW_nonWildcardTypeArguments_in_selector6871 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L,0x0000000008000000L});
+    public static final BitSet FOLLOW_explicitGenericInvocationSuffix_in_selector6873 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_119_in_selector6892 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L});
+    public static final BitSet FOLLOW_Identifier_in_selector6894 = new BitSet(new long[]{0x0000000000000002L,0x0080000000000000L,0x0000000010000020L});
+    public static final BitSet FOLLOW_arguments_in_selector6904 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_133_in_selector6939 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_selector6941 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000040L});
+    public static final BitSet FOLLOW_134_in_selector6943 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_156_in_arguments6962 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x00300007BBFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expressionList_in_arguments6965 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000020000000L});
+    public static final BitSet FOLLOW_157_in_arguments6968 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_annotations_in_synpred1_Java449 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_118_in_synpred34_Java1102 = new BitSet(new long[]{0x0000000000000000L,0x0040000000000000L,0x0000000000000011L});
     public static final BitSet FOLLOW_block_in_synpred34_Java1104 = new BitSet(new long[]{0x0000000000000002L});
@@ -32429,125 +32443,125 @@ public class JavaParser extends Parser {
     public static final BitSet FOLLOW_Identifier_in_synpred84_Java2397 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_122_in_synpred102_Java2699 = new BitSet(new long[]{0x0000000000000000L,0x1000000100000000L,0x0000000403FC1000L});
     public static final BitSet FOLLOW_type_in_synpred102_Java2701 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_annotation_in_synpred118_Java3138 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_interfaceDeclaration_in_synpred135_Java3386 = new BitSet(new long[]{0x0000000000000002L,0x0010000000000000L});
-    public static final BitSet FOLLOW_116_in_synpred135_Java3388 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_localVariableDeclaration_in_synpred142_Java3522 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_classOrInterfaceDeclaration_in_synpred143_Java3527 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_167_in_synpred148_Java3640 = new BitSet(new long[]{0x0000000000000200L,0x1250007F00000000L,0x0033EF579BFFFF1FL,0x000000000000007CL});
-    public static final BitSet FOLLOW_statement_in_synpred148_Java3642 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_catches_in_synpred153_Java3771 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000100000000000L});
-    public static final BitSet FOLLOW_172_in_synpred153_Java3775 = new BitSet(new long[]{0x0000000000000000L,0x0040000000000000L,0x0000000000000011L});
-    public static final BitSet FOLLOW_block_in_synpred153_Java3777 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_catches_in_synpred154_Java3805 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_179_in_synpred171_Java4187 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_constantExpression_in_synpred171_Java4189 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000002000000000L});
-    public static final BitSet FOLLOW_165_in_synpred171_Java4191 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_179_in_synpred172_Java4207 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L});
-    public static final BitSet FOLLOW_enumConstantName_in_synpred172_Java4209 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000002000000000L});
-    public static final BitSet FOLLOW_165_in_synpred172_Java4211 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_forVarControl_in_synpred174_Java4271 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_variableModifier_in_synpred179_Java4333 = new BitSet(new long[]{0x0000000000000000L,0x1000000100000000L,0x0000000403FC1000L});
-    public static final BitSet FOLLOW_type_in_synpred179_Java4336 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L});
-    public static final BitSet FOLLOW_variableDeclarators_in_synpred179_Java4338 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_135_in_synpred182_Java4503 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_synpred182_Java4505 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_180_in_synpred183_Java4524 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
-    public static final BitSet FOLLOW_135_in_synpred183_Java4526 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_synpred183_Java4528 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_181_in_synpred184_Java4556 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
-    public static final BitSet FOLLOW_135_in_synpred184_Java4558 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_synpred184_Java4560 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_120_in_synpred185_Java4588 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
-    public static final BitSet FOLLOW_135_in_synpred185_Java4590 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_synpred185_Java4592 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_182_in_synpred186_Java4620 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
-    public static final BitSet FOLLOW_135_in_synpred186_Java4622 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_synpred186_Java4624 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_183_in_synpred187_Java4653 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_synpred187_Java4655 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_184_in_synpred188_Java4678 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_synpred188_Java4680 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_185_in_synpred189_Java4703 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_synpred189_Java4705 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_186_in_synpred190_Java4733 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
-    public static final BitSet FOLLOW_135_in_synpred190_Java4735 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_synpred190_Java4737 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_124_in_synpred191_Java4765 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L});
-    public static final BitSet FOLLOW_124_in_synpred191_Java4767 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
-    public static final BitSet FOLLOW_135_in_synpred191_Java4769 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_synpred191_Java4771 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_126_in_synpred192_Java4799 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
-    public static final BitSet FOLLOW_126_in_synpred192_Java4801 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
-    public static final BitSet FOLLOW_135_in_synpred192_Java4803 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_synpred192_Java4805 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_126_in_synpred193_Java4831 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
-    public static final BitSet FOLLOW_126_in_synpred193_Java4833 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
-    public static final BitSet FOLLOW_126_in_synpred193_Java4835 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
-    public static final BitSet FOLLOW_135_in_synpred193_Java4837 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_synpred193_Java4839 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_124_in_synpred204_Java5476 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_shiftExpression_in_synpred204_Java5478 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_124_in_synpred208_Java5590 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L});
-    public static final BitSet FOLLOW_124_in_synpred208_Java5592 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_126_in_synpred208_Java5596 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
-    public static final BitSet FOLLOW_126_in_synpred208_Java5598 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_additiveExpression_in_synpred208_Java5601 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_124_in_synpred209_Java5590 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L});
-    public static final BitSet FOLLOW_124_in_synpred209_Java5592 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_126_in_synpred209_Java5596 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
-    public static final BitSet FOLLOW_126_in_synpred209_Java5598 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_additiveExpression_in_synpred209_Java5601 = new BitSet(new long[]{0x0000000000000002L,0x5000000000000000L});
-    public static final BitSet FOLLOW_126_in_synpred210_Java5635 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
-    public static final BitSet FOLLOW_126_in_synpred210_Java5637 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
-    public static final BitSet FOLLOW_126_in_synpred210_Java5639 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_additiveExpression_in_synpred210_Java5641 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_126_in_synpred211_Java5635 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
-    public static final BitSet FOLLOW_126_in_synpred211_Java5637 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
-    public static final BitSet FOLLOW_126_in_synpred211_Java5639 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_additiveExpression_in_synpred211_Java5641 = new BitSet(new long[]{0x0000000000000002L,0x4000000000000000L});
-    public static final BitSet FOLLOW_castExpression_in_synpred225_Java5988 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_156_in_synpred232_Java6138 = new BitSet(new long[]{0x0000000000000000L,0x1000000100000000L,0x0000000403FC1000L});
-    public static final BitSet FOLLOW_primitiveType_in_synpred232_Java6140 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000020000000L});
-    public static final BitSet FOLLOW_157_in_synpred232_Java6142 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_unaryExpression_in_synpred232_Java6144 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_156_in_synpred233_Java6167 = new BitSet(new long[]{0x0000000000000000L,0x1000000100000000L,0x0000000403FC1000L});
-    public static final BitSet FOLLOW_type_in_synpred233_Java6169 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000020000000L});
-    public static final BitSet FOLLOW_157_in_synpred233_Java6171 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_unaryExpressionNotPlusMinus_in_synpred233_Java6173 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_133_in_synpred238_Java6282 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_synpred238_Java6284 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000040L});
-    public static final BitSet FOLLOW_134_in_synpred238_Java6286 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_198_in_synpred242_Java6261 = new BitSet(new long[]{0x0000000000000000L,0x1000000100000000L,0x0000000403FC1000L});
-    public static final BitSet FOLLOW_nonWildcardTypeArguments_in_synpred242_Java6263 = new BitSet(new long[]{0x0000000000000000L,0x1000000100000000L,0x0000000403FC1000L});
-    public static final BitSet FOLLOW_primitiveType_in_synpred242_Java6266 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000020L});
-    public static final BitSet FOLLOW_133_in_synpred242_Java6282 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_synpred242_Java6284 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000040L});
-    public static final BitSet FOLLOW_134_in_synpred242_Java6286 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000020L});
-    public static final BitSet FOLLOW_133_in_synpred242_Java6291 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000040L});
+    public static final BitSet FOLLOW_annotation_in_synpred118_Java3145 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_interfaceDeclaration_in_synpred135_Java3393 = new BitSet(new long[]{0x0000000000000002L,0x0010000000000000L});
+    public static final BitSet FOLLOW_116_in_synpred135_Java3395 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_localVariableDeclaration_in_synpred142_Java3529 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_classOrInterfaceDeclaration_in_synpred143_Java3534 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_167_in_synpred148_Java3647 = new BitSet(new long[]{0x0000000000000200L,0x1250007F00000000L,0x0033EF579BFFFF1FL,0x000000000000007CL});
+    public static final BitSet FOLLOW_statement_in_synpred148_Java3649 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_catches_in_synpred153_Java3778 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000100000000000L});
+    public static final BitSet FOLLOW_172_in_synpred153_Java3782 = new BitSet(new long[]{0x0000000000000000L,0x0040000000000000L,0x0000000000000011L});
+    public static final BitSet FOLLOW_block_in_synpred153_Java3784 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_catches_in_synpred154_Java3812 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_179_in_synpred171_Java4194 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_constantExpression_in_synpred171_Java4196 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000002000000000L});
+    public static final BitSet FOLLOW_165_in_synpred171_Java4198 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_179_in_synpred172_Java4214 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L});
+    public static final BitSet FOLLOW_enumConstantName_in_synpred172_Java4216 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000002000000000L});
+    public static final BitSet FOLLOW_165_in_synpred172_Java4218 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_forVarControl_in_synpred174_Java4278 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_variableModifier_in_synpred179_Java4340 = new BitSet(new long[]{0x0000000000000000L,0x1000000100000000L,0x0000000403FC1000L});
+    public static final BitSet FOLLOW_type_in_synpred179_Java4343 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L});
+    public static final BitSet FOLLOW_variableDeclarators_in_synpred179_Java4345 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_135_in_synpred182_Java4510 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_synpred182_Java4512 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_180_in_synpred183_Java4531 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
+    public static final BitSet FOLLOW_135_in_synpred183_Java4533 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_synpred183_Java4535 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_181_in_synpred184_Java4563 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
+    public static final BitSet FOLLOW_135_in_synpred184_Java4565 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_synpred184_Java4567 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_120_in_synpred185_Java4595 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
+    public static final BitSet FOLLOW_135_in_synpred185_Java4597 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_synpred185_Java4599 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_182_in_synpred186_Java4627 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
+    public static final BitSet FOLLOW_135_in_synpred186_Java4629 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_synpred186_Java4631 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_183_in_synpred187_Java4660 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_synpred187_Java4662 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_184_in_synpred188_Java4685 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_synpred188_Java4687 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_185_in_synpred189_Java4710 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_synpred189_Java4712 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_186_in_synpred190_Java4740 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
+    public static final BitSet FOLLOW_135_in_synpred190_Java4742 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_synpred190_Java4744 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_124_in_synpred191_Java4772 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L});
+    public static final BitSet FOLLOW_124_in_synpred191_Java4774 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
+    public static final BitSet FOLLOW_135_in_synpred191_Java4776 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_synpred191_Java4778 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_126_in_synpred192_Java4806 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
+    public static final BitSet FOLLOW_126_in_synpred192_Java4808 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
+    public static final BitSet FOLLOW_135_in_synpred192_Java4810 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_synpred192_Java4812 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_126_in_synpred193_Java4838 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
+    public static final BitSet FOLLOW_126_in_synpred193_Java4840 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
+    public static final BitSet FOLLOW_126_in_synpred193_Java4842 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000080L});
+    public static final BitSet FOLLOW_135_in_synpred193_Java4844 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_synpred193_Java4846 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_124_in_synpred204_Java5483 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_shiftExpression_in_synpred204_Java5485 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_124_in_synpred208_Java5597 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L});
+    public static final BitSet FOLLOW_124_in_synpred208_Java5599 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_126_in_synpred208_Java5603 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
+    public static final BitSet FOLLOW_126_in_synpred208_Java5605 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_additiveExpression_in_synpred208_Java5608 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_124_in_synpred209_Java5597 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L});
+    public static final BitSet FOLLOW_124_in_synpred209_Java5599 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_126_in_synpred209_Java5603 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
+    public static final BitSet FOLLOW_126_in_synpred209_Java5605 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_additiveExpression_in_synpred209_Java5608 = new BitSet(new long[]{0x0000000000000002L,0x5000000000000000L});
+    public static final BitSet FOLLOW_126_in_synpred210_Java5642 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
+    public static final BitSet FOLLOW_126_in_synpred210_Java5644 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
+    public static final BitSet FOLLOW_126_in_synpred210_Java5646 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_additiveExpression_in_synpred210_Java5648 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_126_in_synpred211_Java5642 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
+    public static final BitSet FOLLOW_126_in_synpred211_Java5644 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
+    public static final BitSet FOLLOW_126_in_synpred211_Java5646 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_additiveExpression_in_synpred211_Java5648 = new BitSet(new long[]{0x0000000000000002L,0x4000000000000000L});
+    public static final BitSet FOLLOW_castExpression_in_synpred225_Java5995 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_156_in_synpred232_Java6145 = new BitSet(new long[]{0x0000000000000000L,0x1000000100000000L,0x0000000403FC1000L});
+    public static final BitSet FOLLOW_primitiveType_in_synpred232_Java6147 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000020000000L});
+    public static final BitSet FOLLOW_157_in_synpred232_Java6149 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_unaryExpression_in_synpred232_Java6151 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_156_in_synpred233_Java6174 = new BitSet(new long[]{0x0000000000000000L,0x1000000100000000L,0x0000000403FC1000L});
+    public static final BitSet FOLLOW_type_in_synpred233_Java6176 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000020000000L});
+    public static final BitSet FOLLOW_157_in_synpred233_Java6178 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_unaryExpressionNotPlusMinus_in_synpred233_Java6180 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_133_in_synpred238_Java6289 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_synpred238_Java6291 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000040L});
+    public static final BitSet FOLLOW_134_in_synpred238_Java6293 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_198_in_synpred242_Java6268 = new BitSet(new long[]{0x0000000000000000L,0x1000000100000000L,0x0000000403FC1000L});
+    public static final BitSet FOLLOW_nonWildcardTypeArguments_in_synpred242_Java6270 = new BitSet(new long[]{0x0000000000000000L,0x1000000100000000L,0x0000000403FC1000L});
+    public static final BitSet FOLLOW_primitiveType_in_synpred242_Java6273 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000020L});
+    public static final BitSet FOLLOW_133_in_synpred242_Java6289 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_synpred242_Java6291 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000040L});
     public static final BitSet FOLLOW_134_in_synpred242_Java6293 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000020L});
-    public static final BitSet FOLLOW_133_in_synpred242_Java6324 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000040L});
-    public static final BitSet FOLLOW_134_in_synpred242_Java6326 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000021L});
-    public static final BitSet FOLLOW_arrayInitializer_in_synpred242_Java6330 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_133_in_synpred245_Java6396 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_synpred245_Java6398 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000040L});
-    public static final BitSet FOLLOW_134_in_synpred245_Java6400 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_198_in_synpred250_Java6362 = new BitSet(new long[]{0x0000000000000000L,0x1000000100000000L});
-    public static final BitSet FOLLOW_nonWildcardTypeArguments_in_synpred250_Java6364 = new BitSet(new long[]{0x0000000000000000L,0x1000000100000000L});
-    public static final BitSet FOLLOW_refComponent_in_synpred250_Java6370 = new BitSet(new long[]{0x0000000000000000L,0x0080000000000000L,0x0000000010000020L});
-    public static final BitSet FOLLOW_119_in_synpred250_Java6373 = new BitSet(new long[]{0x0000000000000000L,0x1000000100000000L});
+    public static final BitSet FOLLOW_133_in_synpred242_Java6298 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000040L});
+    public static final BitSet FOLLOW_134_in_synpred242_Java6300 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000020L});
+    public static final BitSet FOLLOW_133_in_synpred242_Java6331 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000040L});
+    public static final BitSet FOLLOW_134_in_synpred242_Java6333 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000021L});
+    public static final BitSet FOLLOW_arrayInitializer_in_synpred242_Java6337 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_133_in_synpred245_Java6403 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_synpred245_Java6405 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000040L});
+    public static final BitSet FOLLOW_134_in_synpred245_Java6407 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_198_in_synpred250_Java6369 = new BitSet(new long[]{0x0000000000000000L,0x1000000100000000L});
+    public static final BitSet FOLLOW_nonWildcardTypeArguments_in_synpred250_Java6371 = new BitSet(new long[]{0x0000000000000000L,0x1000000100000000L});
     public static final BitSet FOLLOW_refComponent_in_synpred250_Java6377 = new BitSet(new long[]{0x0000000000000000L,0x0080000000000000L,0x0000000010000020L});
-    public static final BitSet FOLLOW_133_in_synpred250_Java6396 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
-    public static final BitSet FOLLOW_expression_in_synpred250_Java6398 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000040L});
-    public static final BitSet FOLLOW_134_in_synpred250_Java6400 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000020L});
-    public static final BitSet FOLLOW_133_in_synpred250_Java6405 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000040L});
+    public static final BitSet FOLLOW_119_in_synpred250_Java6380 = new BitSet(new long[]{0x0000000000000000L,0x1000000100000000L});
+    public static final BitSet FOLLOW_refComponent_in_synpred250_Java6384 = new BitSet(new long[]{0x0000000000000000L,0x0080000000000000L,0x0000000010000020L});
+    public static final BitSet FOLLOW_133_in_synpred250_Java6403 = new BitSet(new long[]{0x0000000000000000L,0x1000007F00000000L,0x003000079BFC1009L,0x000000000000007CL});
+    public static final BitSet FOLLOW_expression_in_synpred250_Java6405 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000040L});
     public static final BitSet FOLLOW_134_in_synpred250_Java6407 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000020L});
-    public static final BitSet FOLLOW_133_in_synpred250_Java6440 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000040L});
-    public static final BitSet FOLLOW_134_in_synpred250_Java6442 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000021L});
-    public static final BitSet FOLLOW_arrayInitializer_in_synpred250_Java6446 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_classCreatorRest_in_synpred250_Java6475 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_type_in_synpred251_Java6507 = new BitSet(new long[]{0x0000000000000000L,0x0080000000000000L});
-    public static final BitSet FOLLOW_119_in_synpred251_Java6509 = new BitSet(new long[]{0x0000000000000000L,0x0200000000000000L});
-    public static final BitSet FOLLOW_121_in_synpred251_Java6511 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_133_in_synpred250_Java6412 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000040L});
+    public static final BitSet FOLLOW_134_in_synpred250_Java6414 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000020L});
+    public static final BitSet FOLLOW_133_in_synpred250_Java6447 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000040L});
+    public static final BitSet FOLLOW_134_in_synpred250_Java6449 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000021L});
+    public static final BitSet FOLLOW_arrayInitializer_in_synpred250_Java6453 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_classCreatorRest_in_synpred250_Java6482 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_type_in_synpred251_Java6514 = new BitSet(new long[]{0x0000000000000000L,0x0080000000000000L});
+    public static final BitSet FOLLOW_119_in_synpred251_Java6516 = new BitSet(new long[]{0x0000000000000000L,0x0200000000000000L});
+    public static final BitSet FOLLOW_121_in_synpred251_Java6518 = new BitSet(new long[]{0x0000000000000002L});
 
 }
