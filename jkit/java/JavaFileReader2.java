@@ -74,7 +74,7 @@ public class JavaFileReader2 {
 
 		try {
 			ast = (Tree) parser.compilationUnit().getTree();
-			printTree(ast, 0, -1);
+			// printTree(ast, 0, -1);
 		} catch (RecognitionException e) {
 		}
 	}
@@ -177,6 +177,12 @@ public class JavaFileReader2 {
 		if (decl.getType() == INTERFACE) {
 			modifiers |= Modifier.INTERFACE;
 		}
+		
+		ArrayList<JavaFile.VariableType> typeArgs = new ArrayList<JavaFile.VariableType>();
+		for(int i=0;i!=decl.getChild(idx).getChildCount();++i) {			
+			typeArgs.add(parseVariableType(decl.getChild(idx).getChild(i)));
+		}		
+		
 		String name = decl.getChild(idx++).getText();
 		
 		// ====================================================================
@@ -225,7 +231,7 @@ public class JavaFileReader2 {
 			}				
 		}
 		
-		return new JavaFile.Clazz(modifiers,name,superclass,interfaces,declarations);
+		return new JavaFile.Clazz(modifiers,name,typeArgs,superclass,interfaces,declarations);
 	}
 	
 	protected JavaFile.Method parseMethod(Tree method) {

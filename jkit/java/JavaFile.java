@@ -138,14 +138,17 @@ public class JavaFile {
 	public static class Clazz extends Declaration {
 		private int modifiers;
 		private String name;
+		private List<VariableType> typeParameters;
 		private ClassType superclass;
 		private List<ClassType> interfaces;
 		private List<Declaration> declarations;		
 				
-		public Clazz(int modifiers, String name, ClassType superclass,
+		public Clazz(int modifiers, String name,
+				List<VariableType> typeParameters, ClassType superclass,
 				List<ClassType> interfaces, List<Declaration> declarations) {
 			this.modifiers = modifiers;
 			this.name = name;
+			this.typeParameters = typeParameters;
 			this.superclass = superclass;
 			this.interfaces = interfaces;
 			this.declarations = declarations;			
@@ -159,6 +162,10 @@ public class JavaFile {
 			return name;
 		}
 
+		public List<VariableType> typeParameters() {
+			return typeParameters;
+		}
+		
 		public ClassType superclass() {
 			return superclass;
 		}

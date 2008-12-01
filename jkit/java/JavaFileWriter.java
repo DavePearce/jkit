@@ -48,6 +48,14 @@ public class JavaFileWriter {
 		
 		write(decl.name());				
 		
+		if(decl.typeParameters().size() > 0) {
+			write("<");
+			for(JavaFile.VariableType vt : decl.typeParameters()) {
+				writeVariableType(vt);
+			}
+			write(">");
+		}
+		
 		if(decl.isInterface()) {
 			if(decl.interfaces().size() > 0) {
 				write(" extends ");
