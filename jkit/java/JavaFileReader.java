@@ -687,10 +687,10 @@ public class JavaFileReader implements ClassReader {
 		while (idx < method.getChildCount()
 				&& method.getChild(idx).getType() == PARAMETER) {
 			Tree c = method.getChild(idx);
-			Type t = parseType(c.getChild(0));
-			String n = c.getChild(1).getText();
+			Type t = parseType(c.getChild(c.getChild(0).getType() == MODIFIERS ? 1 : 0));
+			String n = c.getChild(c.getChild(0).getType() == MODIFIERS ? 2 : 1).getText();
 
-			for (int i = 2; i < c.getChildCount(); i = i + 2) {
+			for (int i = c.getChild(0).getType() == MODIFIERS ? 3 : 2; i < c.getChildCount(); i = i + 2) {
 				t = Type.arrayType(t);
 			}
 
