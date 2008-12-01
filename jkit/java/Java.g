@@ -483,7 +483,7 @@ formalParameters
 	
 formalParameterDecls
 	:	variableModifier* type (
-        variableDeclaratorId (',' formalParameterDecls)? -> ^(PARAMETER type variableDeclaratorId) formalParameterDecls?
+        variableDeclaratorId (',' formalParameterDecls)? -> ^(PARAMETER ^(MODIFIERS variableModifier*) type variableDeclaratorId) formalParameterDecls?
         | '...' variableDeclaratorId -> ^(VARARGS type variableDeclaratorId)
         )
     ;

@@ -75,7 +75,7 @@ public class JavaFileReader2 {
 
 		try {
 			ast = (Tree) parser.compilationUnit().getTree();
-			// printTree(ast, 0, -1);
+			printTree(ast, 0, -1);
 		} catch (RecognitionException e) {
 		}
 	}
@@ -271,19 +271,20 @@ public class JavaFileReader2 {
 		
 		// === FORMAL PARAMETERS ===
 
-		ArrayList<Pair<String,JavaFile.Type> > params = new ArrayList<Pair<String,JavaFile.Type>>();
+		ArrayList<Triple<String,Integer,JavaFile.Type> > params = new ArrayList<Triple<String,Integer,JavaFile.Type>>();
 		
 		while (idx < method.getChildCount()
 				&& method.getChild(idx).getType() == PARAMETER) {
 			Tree c = method.getChild(idx);
-			JavaFile.Type t = parseType(c.getChild(0));
-			String n = c.getChild(1).getText();
+			int pModifiers = parseModifiers(c.getChild(0));
+			JavaFile.Type t = parseType(c.getChild(1));
+			String n = c.getChild(2).getText();
 
 			for (int i = 2; i < c.getChildCount(); i = i + 2) {
 				t = new JavaFile.ArrayType(t);
 			}
 
-			params.add(new Pair(n,t));
+			params.add(new Triple(n,pModifiers,t));
 			idx++;
 		}
 		
@@ -292,9 +293,10 @@ public class JavaFileReader2 {
 		if (idx < method.getChildCount()
 				&& method.getChild(idx).getType() == VARARGS) {
 			Tree c = method.getChild(idx);
-			JavaFile.Type t = parseType(c.getChild(0));
-			String n = c.getChild(1).getText();
-			params.add(new Pair(n,t));			
+			int pModifiers = parseModifiers(c.getChild(0));
+			JavaFile.Type t = parseType(c.getChild(1));
+			String n = c.getChild(2).getText();
+			params.add(new Triple(n,pModifiers,t));			
 			idx++;
 			varargs = true;
 		}
@@ -413,8 +415,11 @@ public class JavaFileReader2 {
 				return parseTry(stmt);
 			case SYNCHRONIZED :
 				return parseSynchronisedBlock(stmt);
+			case CLASS:
+				// this is a strange case for inner classes
+				return parseClass(stmt);
 			default :
-				throw new SyntaxError("Unknown expression encountered ("
+				throw new SyntaxError("Unknown statement encountered ("
 						+ stmt.getText() + ")", stmt.getLine(),
 						stmt.getCharPositionInLine(), stmt.getText()
 								.length());

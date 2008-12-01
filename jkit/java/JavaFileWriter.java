@@ -137,12 +137,13 @@ public class JavaFileWriter {
 		write("(");
 		boolean firstTime=true;
 		int va_count = 1; // to detect varargs 
-		for(Pair<String,JavaFile.Type> p : m.parameters()) {
+		for(Triple<String,Integer,JavaFile.Type> p : m.parameters()) {
 			if(!firstTime) {
 				write(", ");				
 			}
 			firstTime=false;
-			writeType(p.second());
+			writeModifiers(p.second());
+			writeType(p.third());
 			
 			if(m.varargs() && va_count == m.parameters().size()) {
 				write("...");
@@ -248,6 +249,8 @@ public class JavaFileWriter {
 			writeInvoke((JavaFile.Invoke) e);
 		} else if(e instanceof JavaFile.New) {
 			writeNew((JavaFile.New) e);
+		} else if(e instanceof JavaFile.Clazz) {
+			writeClass((JavaFile.Clazz)e);
 		} else {
 			throw new RuntimeException("Invalid statement encountered: "
 					+ e.getClass());

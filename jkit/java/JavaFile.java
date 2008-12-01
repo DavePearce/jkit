@@ -135,7 +135,7 @@ public class JavaFile {
 		
 	}
 	
-	public static class Clazz implements Declaration {
+	public static class Clazz implements Declaration, Statement {
 		private int modifiers;
 		private String name;
 		private List<VariableType> typeParameters;
@@ -216,7 +216,7 @@ public class JavaFile {
 		private int modifiers;
 		private String name;
 		private Type returnType;
-		private List<Pair<String,Type>> parameters;
+		private List<Triple<String,Integer,Type>> parameters;
 		private boolean varargs;
 		private List<VariableType> typeParameters;
 		private List<ClassType> exceptions;
@@ -225,7 +225,7 @@ public class JavaFile {
 		public Method(int modifiers, 
 				String name, 
 				Type returnType,
-				List<Pair<String,Type>> parameters,
+				List<Triple<String,Integer,Type>> parameters,
 				boolean varargs,
 				List<VariableType> typeParameters,
 				List<ClassType> exceptions,
@@ -252,7 +252,13 @@ public class JavaFile {
 			return returnType;
 		}
 		
-		public List<Pair<String,Type>> parameters() {
+		/**
+         * List of triples (n,m,t), where n is the parameter name, m are the
+         * modifiers and t is the type.
+         * 
+         * @return
+         */
+		public List<Triple<String,Integer,Type>> parameters() {
 			return parameters;
 		}
 		
@@ -287,7 +293,7 @@ public class JavaFile {
 	 */
 	public static class Constructor extends Method {
 		public Constructor(int modifiers, String name,
-				List<Pair<String, Type>> parameters, boolean varargs,
+				List<Triple<String, Integer, Type>> parameters, boolean varargs,
 				List<VariableType> typeParameters,
 				List<ClassType> exceptions,
 				JavaFile.Block block) {
