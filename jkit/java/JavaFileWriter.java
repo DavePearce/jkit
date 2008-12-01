@@ -534,7 +534,7 @@ public class JavaFileWriter {
 	}
 	
 	protected void writeDeref(JavaFile.Deref e) {
-		writeExpression(e.target());
+		writeExpressionWithBracketsIfNecessary(e.target());
 		write(".");
 		write(e.name());		
 	}
@@ -645,7 +645,7 @@ public class JavaFileWriter {
 		write("(");
 		writeType(e.type());
 		write(") ");
-		writeExpression(e.expr());
+		writeExpressionWithBracketsIfNecessary(e.expr());
 	}
 	
 	protected void writeBoolVal(JavaFile.BoolVal e) {
@@ -749,7 +749,8 @@ public class JavaFileWriter {
 	}
 	
 	protected void writeExpressionWithBracketsIfNecessary(JavaFile.Expression e) {
-		if (e instanceof JavaFile.BinOp || e instanceof JavaFile.InstanceOf) {
+		if (e instanceof JavaFile.BinOp || e instanceof JavaFile.InstanceOf
+				|| e instanceof JavaFile.Cast) {
 			write("(");
 			writeExpression(e);
 			write(")");

@@ -75,7 +75,7 @@ public class JavaFileReader2 {
 
 		try {
 			ast = (Tree) parser.compilationUnit().getTree();
-			printTree(ast, 0, -1);
+			// printTree(ast, 0, -1);
 		} catch (RecognitionException e) {
 		}
 	}
@@ -844,7 +844,7 @@ public class JavaFileReader2 {
 		// figure out which class.
 
 		int idx = 1;
-		JavaFile.Expression expr = new JavaFile.Variable(target.getChild(0).getText());
+		JavaFile.Expression expr = parseExpression(target);
 		
 		for (int i = idx; i != selector.getChildCount(); ++i) {
 			Tree child = selector.getChild(i);
