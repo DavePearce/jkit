@@ -185,13 +185,13 @@ public class JavaFile {
 	public static class Method extends Declaration {
 		private int modifiers;
 		private String name;
-		private ReferenceType returnType;
-		private List<Pair<String,ReferenceType>> parameters;		
+		private Type returnType;
+		private List<Pair<String,Type>> parameters;		
 		private List<ReferenceType> exceptions;
 		private JavaFile.Block block;
 
-		public Method(int modifiers, String name, ReferenceType returnType,
-				List<Pair<String,ReferenceType>> parameters,List<ReferenceType> exceptions,
+		public Method(int modifiers, String name, Type returnType,
+				List<Pair<String,Type>> parameters,List<ReferenceType> exceptions,
 				JavaFile.Block block) {
 			this.modifiers = modifiers;
 			this.returnType = returnType;
@@ -209,11 +209,11 @@ public class JavaFile {
 			return name;
 		}
 
-		public ReferenceType returnType() {
+		public Type returnType() {
 			return returnType;
 		}
 		
-		public List<Pair<String,ReferenceType>> parameters() {
+		public List<Pair<String,Type>> parameters() {
 			return parameters;
 		}
 		
@@ -234,7 +234,7 @@ public class JavaFile {
 	 */
 	public static class Constructor extends Method {
 		public Constructor(int modifiers, String name,
-				List<Pair<String, ReferenceType>> parameters, List<ReferenceType> exceptions,
+				List<Pair<String, Type>> parameters, List<ReferenceType> exceptions,
 				JavaFile.Block block) {
 			super(modifiers, name, null, parameters, exceptions, block);
 		}
@@ -243,10 +243,10 @@ public class JavaFile {
 	public static class Field extends Declaration {
 		private int modifiers;
 		private String name;
-		private ReferenceType type;
+		private Type type;
 		private Expression initialiser;
 		
-		public Field(int modifiers, String name, ReferenceType type,
+		public Field(int modifiers, String name, Type type,
 				Expression initialiser) {
 			this.modifiers = modifiers;
 			this.name = name;
@@ -262,7 +262,7 @@ public class JavaFile {
 			return name;
 		}
 
-		public ReferenceType type() {
+		public Type type() {
 			return type;
 		}
 		
