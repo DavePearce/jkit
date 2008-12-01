@@ -177,6 +177,7 @@ tokens {
  ARGS;
  LABINOP; // left-associative binary operator
  NONE; // to indicate the absence of a type (for constructors)
+ STATIC;
 }
 
 @lexer::members {
@@ -286,7 +287,8 @@ interfaceBody
 
 classBodyDeclaration
 	:	';'!
-	|	'static'? block
+	|	'static' block -> ^(STATIC block)
+	|	'static'? block -> block
 	|	modifier* (
 	    genericMethodOrConstructorDecl -> ^(METHOD ^(MODIFIERS modifier*)? genericMethodOrConstructorDecl)
      	|	methodDeclaration -> ^(METHOD ^(MODIFIERS modifier*)? methodDeclaration)

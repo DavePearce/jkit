@@ -101,6 +101,10 @@ public class JavaFileWriter {
 				writeField((JavaFile.Field) d);
 			} else if(d instanceof JavaFile.Method) {
 				writeMethod((JavaFile.Method) d);
+			} else if(d instanceof JavaFile.StaticInitialiserBlock) {
+				writeStaticInitialiserBlock((JavaFile.StaticInitialiserBlock)d);
+			} else if(d instanceof JavaFile.InitialiserBlock) {
+				writeInitialiserBlock((JavaFile.InitialiserBlock)d);
 			}
 		}
 		
@@ -180,6 +184,15 @@ public class JavaFileWriter {
 			writeExpression(f.initialiser());
 		}
 		write(";");
+	}
+	
+	protected void writeStaticInitialiserBlock(JavaFile.StaticInitialiserBlock e) {
+		write("static ");
+		writeBlock(e);
+	}
+	
+	protected void writeInitialiserBlock(JavaFile.InitialiserBlock e) {		
+		writeBlock(e);
 	}
 	
 	protected void writeSubStatement(JavaFile.Statement e) {
@@ -498,6 +511,8 @@ public class JavaFileWriter {
 			writeStringVal((JavaFile.StringVal)e);
 		} else if(e instanceof JavaFile.NullVal) {
 			writeNullVal((JavaFile.NullVal)e);
+		} else if(e instanceof JavaFile.TypedArrayVal) {
+			writeTypedArrayVal((JavaFile.TypedArrayVal)e);
 		} else if(e instanceof JavaFile.ArrayVal) {
 			writeArrayVal((JavaFile.ArrayVal)e);
 		} else if(e instanceof JavaFile.ClassVal) {
@@ -605,7 +620,7 @@ public class JavaFileWriter {
 	
 	protected void writeInvoke(JavaFile.Invoke e) {
 		if(e.target() != null) {
-			writeExpression(e.target());
+			writeExpressionWithBracketsIfNecessary(e.target());
 			write(".");
 		}
 		write(e.name());
@@ -636,7 +651,7 @@ public class JavaFileWriter {
 	}
 	
 	protected void writeInstanceOf(JavaFile.InstanceOf e) {		
-		writeExpression(e.lhs());
+		writeExpressionWithBracketsIfNecessary(e.lhs());
 		write(" instanceof ");
 		writeType(e.rhs());		
 	}
@@ -686,6 +701,22 @@ public class JavaFileWriter {
 	
 	protected void writeNullVal(JavaFile.NullVal e) {		
 		write("null");
+	}
+	
+	protected void writeTypedArrayVal(JavaFile.TypedArrayVal e) {		
+		boolean firstTime = true;
+		write("new ");
+		writeType(e.type());
+		output.write("{");		
+		for(JavaFile.Expression i : e.values()) {
+			if(!firstTime) {
+				write(", ");
+			} else {
+				firstTime = false;
+			}
+			writeExpression(i);
+		}
+		output.write("}");
 	}
 	
 	protected void writeArrayVal(JavaFile.ArrayVal e) {		
@@ -750,7 +781,7 @@ public class JavaFileWriter {
 	
 	protected void writeExpressionWithBracketsIfNecessary(JavaFile.Expression e) {
 		if (e instanceof JavaFile.BinOp || e instanceof JavaFile.InstanceOf
-				|| e instanceof JavaFile.Cast) {
+				|| e instanceof JavaFile.TernOp || e instanceof JavaFile.Cast) {
 			write("(");
 			writeExpression(e);
 			write(")");

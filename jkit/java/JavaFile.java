@@ -131,11 +131,11 @@ public class JavaFile {
 	// DECLARATIONS
 	// ====================================================
 	
-	public static abstract class Declaration {
+	public static interface Declaration {
 		
 	}
 	
-	public static class Clazz extends Declaration {
+	public static class Clazz implements Declaration {
 		private int modifiers;
 		private String name;
 		private List<VariableType> typeParameters;
@@ -212,7 +212,7 @@ public class JavaFile {
 	 * @author djp
 	 * 
 	 */
-	public static class Method extends Declaration {
+	public static class Method implements Declaration {
 		private int modifiers;
 		private String name;
 		private Type returnType;
@@ -296,7 +296,7 @@ public class JavaFile {
 		}
 	}
 	
-	public static class Field extends Declaration {
+	public static class Field implements Declaration {
 		private int modifiers;
 		private String name;
 		private Type type;
@@ -351,6 +351,17 @@ public class JavaFile {
 		 */
 		public boolean isPublic() { return (modifiers&Modifier.PUBLIC)!=0; }
 			
+	}
+	
+	public static class InitialiserBlock extends Block implements Declaration {
+		public InitialiserBlock(List<Statement> statements) {
+			super(statements);
+		}
+	}
+	public static class StaticInitialiserBlock extends Block implements Declaration {
+		public StaticInitialiserBlock(List<Statement> statements) {
+			super(statements);
+		}
 	}
 	
 	// ====================================================

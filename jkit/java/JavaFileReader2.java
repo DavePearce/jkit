@@ -75,7 +75,7 @@ public class JavaFileReader2 {
 
 		try {
 			ast = (Tree) parser.compilationUnit().getTree();
-			// printTree(ast, 0, -1);
+			printTree(ast, 0, -1);
 		} catch (RecognitionException e) {
 		}
 	}
@@ -226,8 +226,14 @@ public class JavaFileReader2 {
 			case CLASS:				
 			case INTERFACE:
 				declarations.add(parseClass(child));
-				break;				
+				break;
+			case STATIC:
+				// static initialiser block
+				declarations.add(new JavaFile.StaticInitialiserBlock(parseBlock(child.getChild(0)).statements()));
+				break;
 			case BLOCK:
+				// non-static initialiser block
+				declarations.add(new JavaFile.InitialiserBlock(parseBlock(child).statements()));
 				break;
 			}				
 		}
@@ -1597,4 +1603,6 @@ public class JavaFileReader2 {
 	protected static final int ARRAYINIT = JavaParser.ARRAYINIT;
 
 	protected static final int LABINOP = JavaParser.LABINOP;
+	
+	protected static final int STATIC = JavaParser.STATIC;
 }
