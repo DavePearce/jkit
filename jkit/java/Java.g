@@ -174,7 +174,7 @@ tokens {
  CASE;
  DEFAULT;
  ARRAYINIT;
- ARGS;
+ ARGUMENTS;
  LABINOP; // left-associative binary operator
  NONE; // to indicate the absence of a type (for constructors)
  STATIC;
@@ -250,7 +250,7 @@ enumDeclaration
 	;
 	
 enumBody
-	:	'{' enumConstants? ','? enumBodyDeclarations? '}' -> enumConstants?
+	:	'{' enumConstants? enumBodyDeclarations? '}' -> enumConstants? enumBodyDeclarations?
 	;
 
 enumConstants
@@ -258,11 +258,11 @@ enumConstants
 	;
 	
 enumConstant
-	:	annotations? Identifier (arguments)? (classBody)? -> ^(ENUM_CONSTANT annotations? Identifier (arguments?)? (classBody?)?)
+	:	annotations? Identifier (arguments)? (classBody)? -> ^(ENUM_CONSTANT annotations? Identifier (arguments)? (classBody)?)
 	;
 	
 enumBodyDeclarations
-	:	';' (classBodyDeclaration)*
+	:	';' (classBodyDeclaration)* -> classBodyDeclaration*
 	;
 	
 interfaceDeclaration

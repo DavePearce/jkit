@@ -30,10 +30,26 @@ public class JavaFileWriter {
 			output.println("");
 		}
 		for(JavaFile.Clazz decl : jf.classes()) {
-			writeClass(decl);
+			writeDeclaration(decl);			
 		}
 		
 		output.flush();
+	}
+	
+	public void writeDeclaration(JavaFile.Declaration d) {
+		if(d instanceof JavaFile.Enum) {
+			writeEnum((JavaFile.Enum) d);
+		} else if(d instanceof JavaFile.Clazz) {
+			writeClass((JavaFile.Clazz) d);
+		} else if(d instanceof JavaFile.Field) {
+			writeField((JavaFile.Field) d);
+		} else if(d instanceof JavaFile.Method) {
+			writeMethod((JavaFile.Method) d);
+		} else if(d instanceof JavaFile.StaticInitialiserBlock) {
+			writeStaticInitialiserBlock((JavaFile.StaticInitialiserBlock)d);
+		} else if(d instanceof JavaFile.InitialiserBlock) {
+			writeInitialiserBlock((JavaFile.InitialiserBlock)d);
+		}		
 	}
 	
 	public void writeClass(JavaFile.Clazz decl) {
@@ -95,20 +111,79 @@ public class JavaFileWriter {
 		write("{");
 		
 		for(JavaFile.Declaration d : decl.declarations()) {
-			if(d instanceof JavaFile.Clazz) {
-				writeClass((JavaFile.Clazz) d);
-			} else if(d instanceof JavaFile.Field) {
-				writeField((JavaFile.Field) d);
-			} else if(d instanceof JavaFile.Method) {
-				writeMethod((JavaFile.Method) d);
-			} else if(d instanceof JavaFile.StaticInitialiserBlock) {
-				writeStaticInitialiserBlock((JavaFile.StaticInitialiserBlock)d);
-			} else if(d instanceof JavaFile.InitialiserBlock) {
-				writeInitialiserBlock((JavaFile.InitialiserBlock)d);
-			}
+			writeDeclaration(d);			
 		}
 		
 		write("}");
+	}
+	
+	protected void writeEnum(JavaFile.Enum decl) {
+		writeModifiers(decl.modifiers());
+		write("enum ");
+		write(decl.name());
+		
+		if(decl.interfaces().size() > 0) {
+			write(" implements ");
+			boolean firstTime = true;
+			for(JavaFile.ClassType i : decl.interfaces()) {
+				if(!firstTime) {
+					write(", ");
+				} else { firstTime = false; }
+				writeType(i);
+				write(" ");
+			}
+		}
+		
+		write("{");
+		
+		boolean firstTime = true;
+		for(JavaFile.EnumConstant c : decl.constants()) {
+			if(!firstTime) {
+				write(",");
+				write("\n");
+			}
+			firstTime=false;
+			writeEnumConstant(c);
+		}
+		
+		if(decl.declarations().size() > 0) {
+			write(";");			
+			for(JavaFile.Declaration d : decl.declarations()) {				
+				writeDeclaration(d);
+			}
+		}
+		
+		write("\n");
+		write("}");
+	}
+	
+	protected void writeEnumConstant(JavaFile.EnumConstant c) {
+		write(c.name());
+		if(c.arguments().size() > 0) {
+			write("(");
+			boolean firstTime = true;
+			for(JavaFile.Expression e : c.arguments()) {
+				if(!firstTime) {
+					write(",");
+				}
+				firstTime=false;
+				writeExpression(e);
+			}
+			write(")");
+		}
+		
+		if(c.declarations().size() > 0) {
+			write("{");
+			boolean firstTime = true;
+			for(JavaFile.Declaration d : c.declarations()) {
+				if(!firstTime) {
+					write(",");
+				}
+				firstTime=false;
+				writeDeclaration(d);
+			}
+			write("}");
+		}
 	}
 	
 	protected void writeMethod(JavaFile.Method m) {
@@ -615,7 +690,7 @@ public class JavaFileWriter {
 						writeField((JavaFile.Field) d);
 					} else if(d instanceof JavaFile.Method) {
 						writeMethod((JavaFile.Method) d);
-					} else {
+					} else {					
 						throw new RuntimeException(
 						"Support required for methods in anonymous inner classes");
 					}

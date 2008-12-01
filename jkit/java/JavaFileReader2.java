@@ -75,7 +75,7 @@ public class JavaFileReader2 {
 
 		try {
 			ast = (Tree) parser.compilationUnit().getTree();
-			printTree(ast, 0, -1);
+			// printTree(ast, 0, -1);
 		} catch (RecognitionException e) {
 		}
 	}
@@ -161,11 +161,46 @@ public class JavaFileReader2 {
 				case CLASS :
 				case INTERFACE :
 					classes.add(parseClass(c));
-					break;				
+					break;
+				case ENUM:
+					classes.add(parseEnum(c));
+					break;
 			}
 		}
 		
 		return new JavaFile(pkg,imports,classes);
+	}
+	
+	protected List<JavaFile.Declaration> parseDeclaration(Tree decl) {
+		ArrayList<JavaFile.Declaration> declarations = new ArrayList<JavaFile.Declaration>();
+
+		switch (decl.getType()) {
+			case FIELD :
+				declarations.addAll(parseField(decl));
+				break;
+			case METHOD :
+				declarations.add(parseMethod(decl));
+				break;
+			case CLASS :
+			case INTERFACE :
+				declarations.add(parseClass(decl));
+				break;
+			case ENUM :
+				declarations.add(parseEnum(decl));
+				break;
+			case STATIC :
+				// static initialiser block
+				declarations.add(new JavaFile.StaticInitialiserBlock(
+						parseBlock(decl.getChild(0)).statements()));
+				break;
+			case BLOCK :
+				// non-static initialiser block
+				declarations.add(new JavaFile.InitialiserBlock(parseBlock(decl)
+						.statements()));
+				break;
+		}
+
+		return declarations;
 	}
 	
 	protected JavaFile.Clazz parseClass(Tree decl) {
@@ -215,30 +250,83 @@ public class JavaFileReader2 {
 		ArrayList<JavaFile.Declaration> declarations = new ArrayList<JavaFile.Declaration>();
 
 		for (int i = idx; i < decl.getChildCount(); ++i) {
-			Tree child = decl.getChild(i);
-			switch(child.getType()) {
-			case FIELD:
-				declarations.addAll(parseField(child));
-				break;
-			case METHOD:
-				declarations.add(parseMethod(child));
-				break;
-			case CLASS:				
-			case INTERFACE:
-				declarations.add(parseClass(child));
-				break;
-			case STATIC:
-				// static initialiser block
-				declarations.add(new JavaFile.StaticInitialiserBlock(parseBlock(child.getChild(0)).statements()));
-				break;
-			case BLOCK:
-				// non-static initialiser block
-				declarations.add(new JavaFile.InitialiserBlock(parseBlock(child).statements()));
-				break;
-			}				
+			declarations.addAll(parseDeclaration(decl.getChild(i)));						
 		}
 		
 		return new JavaFile.Clazz(modifiers,name,typeArgs,superclass,interfaces,declarations);
+	}
+	
+	protected JavaFile.Enum parseEnum(Tree decl) {
+		int idx = 0;
+		int modifiers = 0;
+		if (decl.getChild(idx).getType() == MODIFIERS) {
+			modifiers = parseModifiers(decl.getChild(0));
+			idx++;
+		}
+		
+		String name = decl.getChild(idx++).getText();
+		
+		// ====================================================================
+		// ===================== PARSE IMPLEMENTS CLAUSE ======================
+		// ====================================================================
+
+		ArrayList<JavaFile.ClassType> interfaces = new ArrayList<JavaFile.ClassType>();
+		if (idx < decl.getChildCount()
+				&& decl.getChild(idx).getType() == IMPLEMENTS) {
+			Tree ch = decl.getChild(idx++);
+			for (int i = 0; i != ch.getChildCount(); ++i) {
+				interfaces.add(parseClassType(ch.getChild(i)));
+			}
+		}
+				
+		// ====================================================================
+		// ========================= PARSE CONSTANTS ==========================
+		// ====================================================================
+		ArrayList<JavaFile.EnumConstant> constants = new ArrayList<JavaFile.EnumConstant>();
+		while(idx < decl.getChildCount()
+				&& decl.getChild(idx).getType() == ENUM_CONSTANT) {
+			constants.add(parseEnumConstant(decl.getChild(idx)));
+			idx = idx + 1;
+		}
+		
+		// ====================================================================
+		// ======================== PARSE DECLARATIONS ========================
+		// ====================================================================
+		
+		ArrayList<JavaFile.Declaration> declarations = new ArrayList<JavaFile.Declaration>();
+		for(;idx < decl.getChildCount();++idx) {
+			declarations.addAll(parseDeclaration(decl.getChild(idx)));
+		}
+		
+		return new JavaFile.Enum(modifiers,name,interfaces,constants,declarations);
+	}
+	
+	protected JavaFile.EnumConstant parseEnumConstant(Tree decl) {
+		// annotation support is required.
+		String name = decl.getChild(0).getText();
+		
+		ArrayList<JavaFile.Expression> arguments = new ArrayList<JavaFile.Expression>();
+		ArrayList<JavaFile.Declaration> declarations = new ArrayList<JavaFile.Declaration>();
+		for(int i=1;i!=decl.getChildCount();++i) {
+			Tree child = decl.getChild(i);
+			switch(child.getType()) {
+			case FIELD:				
+			case METHOD:				
+			case CLASS:				
+			case INTERFACE:				
+			case ENUM:				
+			case STATIC:
+			case BLOCK:
+				declarations.addAll(parseDeclaration(child));
+				break;
+			default:
+				// in the default case, we must have an expression which is actually an argument.
+				arguments.add(parseExpression(child));
+			}				
+		}
+		
+		
+		return new JavaFile.EnumConstant(name,arguments,declarations);
 	}
 	
 	protected JavaFile.Method parseMethod(Tree method) {
@@ -1614,4 +1702,6 @@ public class JavaFileReader2 {
 	protected static final int LABINOP = JavaParser.LABINOP;
 	
 	protected static final int STATIC = JavaParser.STATIC;
+	
+	protected static final int ENUM_CONSTANT = JavaParser.ENUM_CONSTANT;
 }

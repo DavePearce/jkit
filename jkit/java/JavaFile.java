@@ -204,6 +204,45 @@ public class JavaFile {
 		public boolean isPublic() { return (modifiers&Modifier.PUBLIC)!=0; }
 	}
 	
+	public static class Enum extends Clazz {
+		private List<EnumConstant> constants;
+
+		public Enum(int modifiers, String name, List<ClassType> interfaces,
+				List<EnumConstant> constants, List<Declaration> declarations) {
+			super(modifiers, name, new ArrayList<VariableType>(), null,
+					interfaces, declarations);
+			this.constants=constants;
+		}
+
+		public List<EnumConstant> constants() {
+			return constants;
+		}
+	}
+	
+	public static class EnumConstant {
+		private String name;
+		private List<Expression> arguments;
+		private List<Declaration> declarations;
+		
+		public EnumConstant(String name, List<Expression> arguments, List<Declaration> declarations) {
+			this.name = name;
+			this.arguments = arguments;
+			this.declarations = declarations;
+		}
+		
+		public String name() {
+			return name;
+		}
+		
+		public List<Expression> arguments() {
+			return arguments;
+		}
+		
+		public List<Declaration> declarations() {
+			return declarations;
+		}
+	}
+	
 	/**
 	 * This class stores all known information about a method, including it's
 	 * full (possibly generic) type, its name, its modifiers (e.g. public/private
