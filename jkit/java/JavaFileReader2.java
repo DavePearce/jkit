@@ -16,6 +16,7 @@ import jkit.jkil.Clazz;
 import jkit.jkil.Field;
 import jkit.jkil.FlowGraph;
 import jkit.jkil.Type;
+import jkit.jkil.TypeElement;
 import jkit.jkil.FlowGraph.ArrayIndex;
 import jkit.jkil.FlowGraph.ArrayVal;
 import jkit.jkil.FlowGraph.Assign;
@@ -182,7 +183,7 @@ public class JavaFileReader2 {
 		// ====================== PARSE EXTENDS CLAUSE ========================
 		// ====================================================================
 
-		JavaFile.Type superclass = null;
+		JavaFile.ReferenceType superclass = null;
 		if (idx < decl.getChildCount() && decl.getChild(idx).getType() == EXTENDS) {
 			superclass = parseType(decl.getChild(idx++).getChild(0));
 		}
@@ -191,7 +192,7 @@ public class JavaFileReader2 {
 		// ===================== PARSE IMPLEMENTS CLAUSE ======================
 		// ====================================================================
 
-		ArrayList<JavaFile.Type> interfaces = new ArrayList<JavaFile.Type>();
+		ArrayList<JavaFile.ReferenceType> interfaces = new ArrayList<JavaFile.ReferenceType>();
 		if (idx < decl.getChildCount()
 				&& decl.getChild(idx).getType() == IMPLEMENTS) {
 			Tree ch = decl.getChild(idx++);
@@ -240,14 +241,14 @@ public class JavaFileReader2 {
 
 		// === TYPE ARGUMENTS ===
 
-		ArrayList<JavaFile.Type> typeArgs = new ArrayList<JavaFile.Type>();
+		ArrayList<JavaFile.ReferenceType> typeArgs = new ArrayList<JavaFile.ReferenceType>();
 		while (method.getChild(idx).getType() == TYPE_PARAMETER) {			
 			typeArgs.add(parseType(method.getChild(idx++)));			
 		}
 
 		String name = method.getChild(idx++).getText();
 		
-		JavaFile.Type returnType = null;
+		JavaFile.ReferenceType returnType = null;
 		
 		// if no return type, then is a constructor
 		if(method.getChild(idx).getType() == TYPE) {
@@ -257,12 +258,12 @@ public class JavaFileReader2 {
 		
 		// === FORMAL PARAMETERS ===
 
-		ArrayList<Pair<String,JavaFile.Type> > params = new ArrayList<Pair<String,JavaFile.Type>>();
+		ArrayList<Pair<String,JavaFile.ReferenceType> > params = new ArrayList<Pair<String,JavaFile.ReferenceType>>();
 		
 		while (idx < method.getChildCount()
 				&& method.getChild(idx).getType() == PARAMETER) {
 			Tree c = method.getChild(idx);
-			JavaFile.Type t = parseType(c.getChild(0));
+			JavaFile.ReferenceType t = parseType(c.getChild(0));
 			String n = c.getChild(1).getText();
 
 			for (int i = 2; i < c.getChildCount(); i = i + 2) {
@@ -275,7 +276,7 @@ public class JavaFileReader2 {
 		
 		// === THROWS CLAUSE ===
 
-		ArrayList<JavaFile.Type> exceptions = new ArrayList<JavaFile.Type>();
+		ArrayList<JavaFile.ReferenceType> exceptions = new ArrayList<JavaFile.ReferenceType>();
 
 		if (idx < method.getChildCount()
 				&& method.getChild(idx).getType() == THROWS) {
@@ -316,7 +317,7 @@ public class JavaFileReader2 {
 		}
 
 		// === FIELD TYPE ===
-		JavaFile.Type type = parseType(field.getChild(idx++));
+		JavaFile.ReferenceType type = parseType(field.getChild(idx++));
 
 		// === FIELD NAME(S) ===
 
@@ -458,7 +459,7 @@ public class JavaFileReader2 {
 			
 			if(child.getType() == CATCH) {
 				Tree cb = child.getChild(0);			
-				JavaFile.Type type = parseType(cb.getChild(0));
+				JavaFile.ReferenceType type = parseType(cb.getChild(0));
 				Tree cbb = child.getChild(1);
 				for (int j = 0; j != cbb.getChildCount(); ++j) {
 					JavaFile.Statement stmt = parseStatement(cbb.getChild(j));
@@ -484,7 +485,7 @@ public class JavaFileReader2 {
      * @return
      */
 	protected JavaFile.Statement parseVarDef(Tree stmt) {
-		ArrayList<Triple<String, JavaFile.Type, JavaFile.Expression>> vardefs = new ArrayList<Triple<String, JavaFile.Type, JavaFile.Expression>>();
+		ArrayList<Triple<String, JavaFile.ReferenceType, JavaFile.Expression>> vardefs = new ArrayList<Triple<String, JavaFile.ReferenceType, JavaFile.Expression>>();
 
 		// === MODIFIERS ===
 		int modifiers = parseModifiers(stmt.getChild(0));
@@ -494,7 +495,7 @@ public class JavaFileReader2 {
 		for (int i = 2; i < stmt.getChildCount(); i = i + 1) {
 			Tree nameTree = stmt.getChild(i);
 			String myName = nameTree.getText();
-			JavaFile.Type myType = parseType(stmt.getChild(1));
+			JavaFile.ReferenceType myType = parseType(stmt.getChild(1));
 			JavaFile.Expression myInitialiser = null;
 			// Parse array type modifiers (if there are any)
 			for (int j = 0; j < nameTree.getChildCount(); j = j + 1) {
@@ -651,7 +652,7 @@ public class JavaFileReader2 {
 
 		Tree varDef = stmt.getChild(0);
 		int varMods = parseModifiers(varDef.getChild(0));
-		JavaFile.Type varType = parseType(varDef.getChild(1));
+		JavaFile.ReferenceType varType = parseType(varDef.getChild(1));
 		String varName = varDef.getChild(2).getText();
 		JavaFile.Expression src = parseExpression(stmt.getChild(1));
 		JavaFile.Statement loopBody = parseStatement(body);
@@ -848,7 +849,7 @@ public class JavaFileReader2 {
 							start+1, child.getChildCount(), child);
 					
 					expr = new JavaFile.Invoke(expr, method, params,
-							new ArrayList<JavaFile.Type>());
+							new ArrayList<JavaFile.ReferenceType>());
 					break;
 				}
 				case NEW :
@@ -922,7 +923,7 @@ public class JavaFileReader2 {
 		// Need to do something with type parameters.
 		
 		return new JavaFile.Invoke(null, method, params,
-				new ArrayList<JavaFile.Type>());
+				new ArrayList<JavaFile.ReferenceType>());
 	}
 	
 	public JavaFile.Expression parseGetClass(Tree expr) {		
@@ -1278,6 +1279,33 @@ public class JavaFileReader2 {
 	protected static JavaFile.Type parseType(Tree type) {
 		assert type.getType() == TYPE;
 
+		
+		if(type.getChild(0).getText() == "?") {
+			// special case to deal with wildcards
+			Tree child = type.getChild(0);
+			
+			JavaFile.ReferenceType lowerBound = null;
+			JavaFile.ReferenceType upperBound = null;
+			
+			if (child.getChildCount() > 0
+					&& child.getChild(0).getType() == EXTENDS) {			
+				lowerBound = parseReferenceType(child.getChild(0).getChild(0));
+				
+			} else if (child.getChildCount() > 0
+					&& child.getChild(0).getType() == SUPER) {
+				
+				upperBound = parseReferenceType(child.getChild(0).getChild(0));				
+			}
+			// Ok, all done!
+			return new JavaFile.WildcardType(lowerBound, upperBound);					
+		} else {
+			// check primitives here.
+			return parseReferenceType(type);
+		}
+	}
+	
+	protected static JavaFile.ReferenceType parseReferenceType(Tree type) {
+		assert type.getType() == TYPE;
 		// === ARRAY DIMENSIONS ===
 
 		int dims = 0;
@@ -1291,21 +1319,30 @@ public class JavaFileReader2 {
 
 		// === COMPONENTS ===
 
-		ArrayList<Pair<String, List<JavaFile.Type>>> components = new ArrayList<Pair<String, List<JavaFile.Type>>>();
+		ArrayList<Pair<String, List<JavaFile.ReferenceType>>> components = new ArrayList<Pair<String, List<JavaFile.ReferenceType>>>();
+
 		for (int i = 0; i != (type.getChildCount() - dims); ++i) {
 			Tree child = type.getChild(i);
+
 			String text = child.getText();
 			if (text.equals("VOID")) {
 				text = "void"; // hack!
 			}
-			ArrayList<JavaFile.Type> genArgs = new ArrayList<JavaFile.Type>();
+			ArrayList<JavaFile.ReferenceType> genArgs = new ArrayList<JavaFile.ReferenceType>();				
+
 			for (int j = 0; j != child.getChildCount(); ++j) {
-				genArgs.add(parseType(child.getChild(j)));
+				Tree childchild = child.getChild(j);
+				if(childchild.getType() == EXTENDS) {
+					// this is a lower bound, not a generic argument.
+				} else {
+					genArgs.add(parseReferenceType(childchild));
+				}
 			}
-			components.add(new Pair(text, genArgs));
+
+			components.add(new Pair(text, genArgs));				
 		}
-		
-		return new JavaFile.Type(components,dims);
+
+		return new JavaFile.ReferenceType(components,dims);			
 	}
 	
 	public static void printTree(Tree ast, int n, int line) {

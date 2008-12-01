@@ -236,7 +236,7 @@ typeParameters
 	;
 
 typeParameter
-	:	Identifier ('extends' bound)? -> ^(TYPE_PARAMETER Identifier ^(EXTENDS bound)?)
+	:	Identifier ('extends' bound)? -> ^(TYPE_PARAMETER ^(Identifier ^(EXTENDS bound)?))
 	;
 		
 bound
@@ -466,8 +466,8 @@ typeArguments
 typeArgument
 	:	type
 	|	'?' ( 
-			('extends' type)? -> ^(TYPE '?' ^(EXTENDS type)?)
-	        | ('super' type)? -> ^(TYPE '?' ^(SUPER type)?)
+			('extends' type)? -> ^(TYPE ^('?' ^(EXTENDS type)?))
+	        | ('super' type)? -> ^(TYPE ^('?' ^(SUPER type)?))
 	        )
 	;
 	
