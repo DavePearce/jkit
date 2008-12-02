@@ -996,7 +996,11 @@ public class JavaFileWriter {
 							write(",");
 						}
 						firstTime=false;
-						writeExpression(e);
+						if(e instanceof JavaFile.Assignment) {
+							writeStatement((JavaFile.Assignment)e);
+						} else {
+							writeExpression(e);
+						}
 					}
 					write(")");
 				}

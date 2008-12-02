@@ -548,7 +548,7 @@ elementValuePairs
 	;
 	
 elementValuePair
-	: (Identifier '=') elementValue -> ^(ASSIGN Identifier elementValue)
+	: (Identifier '=') elementValue -> ^(ASSIGN ^(VAR Identifier) elementValue)
 	| elementValue -> elementValue
 	;
 	
