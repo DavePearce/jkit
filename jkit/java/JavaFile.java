@@ -3,9 +3,8 @@ package jkit.java;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
-import jkit.jkil.FlowGraph;
-import jkit.jkil.SourceLocation;
-import jkit.jkil.Type;
+import jkit.jkil.SyntacticElement;
+import jkit.jkil.SyntacticElementImpl;
 import jkit.util.*;
 
 public class JavaFile {
@@ -43,15 +42,14 @@ public class JavaFile {
 	public List<Declaration> declarations() { 
 		return declarations;
 	}
-	
-	
+			
 	/**
      * Represents the class of imperative statements allowed.
      * 
      * @author djp
      * 
      */		
-	public static interface Statement {		
+	public static interface Statement extends SyntacticElement {		
 	}
 
 	public static interface SimpleStatement extends Statement {		
@@ -61,9 +59,9 @@ public class JavaFile {
 	// Type
 	// ====================================================
 
-	public static interface Type {}
+	public static interface Type extends SyntacticElement {}
 	
-	public static class ArrayType implements Type {		
+	public static class ArrayType extends SyntacticElementImpl implements Type {		
 		private Type element;
 		
 		public ArrayType(Type element) {
@@ -75,7 +73,7 @@ public class JavaFile {
 		}		
 	}
 	
-	public static class ClassType implements Type {
+	public static class ClassType extends SyntacticElementImpl  implements Type {
 		
 		private List<Pair<String, List<Type>>> components;
 		public ClassType(
@@ -91,7 +89,7 @@ public class JavaFile {
 		}
 	}
 	
-	public static class WildcardType implements Type {
+	public static class WildcardType extends SyntacticElementImpl  implements Type {
 		private Type lowerBound;
 		private Type upperBound;
 
@@ -109,7 +107,7 @@ public class JavaFile {
 		}
 	}
 	
-	public static class VariableType implements Type {
+	public static class VariableType extends SyntacticElementImpl  implements Type {
 		private String variable;
 		private List<Type> lowerBounds;
 
@@ -131,11 +129,11 @@ public class JavaFile {
 	// MODIFIERS
 	// ====================================================
 	
-	public interface Modifier {
+	public interface Modifier extends SyntacticElement {
 		
 	}
 	
-	public static class BaseModifier implements Modifier {
+	public static class BaseModifier extends SyntacticElementImpl  implements Modifier {
 		private int modifier;
 		public BaseModifier(int modifier) {
 			this.modifier = modifier;
@@ -145,7 +143,7 @@ public class JavaFile {
 		}
 	}
 	
-	public static class Annotation implements Modifier {
+	public static class Annotation extends SyntacticElementImpl  implements Modifier {
 		private String name;
 		private List<Expression> arguments;
 		
@@ -165,11 +163,11 @@ public class JavaFile {
 	// DECLARATIONS
 	// ====================================================
 	
-	public static interface Declaration {
+	public static interface Declaration extends SyntacticElement {
 		
 	}
 	
-	public static class Clazz implements Declaration, Statement {
+	public static class Clazz extends SyntacticElementImpl  implements Declaration, Statement {
 		private List<Modifier> modifiers;
 		private String name;
 		private List<VariableType> typeParameters;
@@ -260,7 +258,7 @@ public class JavaFile {
 		}
 	}
 	
-	public static class AnnotationInterface implements Declaration {
+	public static class AnnotationInterface extends SyntacticElementImpl  implements Declaration {
 		private List<Modifier> modifiers;
 		private String name;
 		private List<Triple<JavaFile.Type, String, JavaFile.Value>> methods; 
@@ -291,7 +289,7 @@ public class JavaFile {
 	 * @author djp
 	 * 
 	 */
-	public static class Method implements Declaration {
+	public static class Method extends SyntacticElementImpl  implements Declaration {
 		private List<Modifier> modifiers;
 		private String name;
 		private Type returnType;
@@ -381,7 +379,7 @@ public class JavaFile {
 		}
 	}
 	
-	public static class Field implements Declaration {
+	public static class Field extends SyntacticElementImpl  implements Declaration {
 		private List<Modifier> modifiers;
 		private String name;
 		private Type type;
@@ -427,7 +425,7 @@ public class JavaFile {
 	// STATEMENTS
 	// ====================================================
 
-	public static class Block implements Statement {
+	public static class Block extends SyntacticElementImpl  implements Statement {
 		private List<Statement> statements;
 		public Block(List<Statement> statements) {
 			
@@ -488,7 +486,7 @@ public class JavaFile {
 			return finallyBlk;
 		}
 	}
-	public static class Assignment implements SimpleStatement, Expression {
+	public static class Assignment extends SyntacticElementImpl  implements SimpleStatement, Expression {
 		private Expression lhs,rhs;
 		public Assignment(Expression lhs, Expression rhs) {
 			
@@ -499,7 +497,7 @@ public class JavaFile {
 		public Expression rhs() { return rhs; }
 	}
 	
-	public static class Return implements SimpleStatement {
+	public static class Return extends SyntacticElementImpl  implements SimpleStatement {
 		private Expression expr;
 		public Return(Expression expr) {
 			
@@ -508,7 +506,7 @@ public class JavaFile {
 		public Expression expr() { return expr; }		
 	}
 	
-	public static class Throw implements SimpleStatement {
+	public static class Throw extends SyntacticElementImpl  implements SimpleStatement {
 		private Expression expr;
 		public Throw(Expression expr) {
 			
@@ -517,7 +515,7 @@ public class JavaFile {
 		public Expression expr() { return expr; }		
 	}
 	
-	public static class Assert implements SimpleStatement {
+	public static class Assert extends SyntacticElementImpl  implements SimpleStatement {
 		private Expression expr;
 		public Assert(Expression expr) {
 			
@@ -526,7 +524,7 @@ public class JavaFile {
 		public Expression expr() { return expr; }		
 	}
 	
-	public static class Break implements SimpleStatement {
+	public static class Break extends SyntacticElementImpl  implements SimpleStatement {
 		private String label;
 		public Break(String label) {
 			
@@ -535,7 +533,7 @@ public class JavaFile {
 		public String label() { return label; }		
 	}
 	
-	public static class Label implements Statement {
+	public static class Label extends SyntacticElementImpl  implements Statement {
 		private String label;
 		private Statement statement;
 		public Label(String label, Statement statement) {
@@ -551,7 +549,7 @@ public class JavaFile {
 		}
 	}
 	
-	public static class Continue implements SimpleStatement {
+	public static class Continue extends SyntacticElementImpl  implements SimpleStatement {
 		private String label;
 		public Continue(String label) {
 			
@@ -560,7 +558,7 @@ public class JavaFile {
 		public String label() { return label; }		
 	}
 	
-	public static class If implements Statement {
+	public static class If extends SyntacticElementImpl  implements Statement {
 		private Expression condition;
 		private Statement trueStatement;
 		private Statement falseStatement;
@@ -584,7 +582,7 @@ public class JavaFile {
 		}
 	}
 	
-	public static class While implements Statement {
+	public static class While extends SyntacticElementImpl  implements Statement {
 		private Expression condition;
 		private Statement body;		
 
@@ -602,7 +600,7 @@ public class JavaFile {
 		}
 	}		
 	
-	public static class DoWhile implements Statement {
+	public static class DoWhile extends SyntacticElementImpl  implements Statement {
 		private Expression condition;
 		private Statement body;		
 
@@ -620,7 +618,7 @@ public class JavaFile {
 		}
 	}
 	
-	public static class For implements Statement {
+	public static class For extends SyntacticElementImpl  implements Statement {
 		private Statement initialiser;
 		private Expression condition;
 		private Statement increment;
@@ -649,7 +647,7 @@ public class JavaFile {
 		}
 	}	
 	
-	public static class ForEach implements Statement {
+	public static class ForEach extends SyntacticElementImpl  implements Statement {
 		private String var;
 		private List<Modifier> modifiers; // for variable
 		private Type type; // for variable
@@ -726,7 +724,7 @@ public class JavaFile {
      * 
      * @author djp
      */
-	public static class VarDef implements SimpleStatement {		
+	public static class VarDef extends SyntacticElementImpl  implements SimpleStatement {		
 		private List<Modifier> modifiers;
 		private Type type;
 		private List<Triple<String,Integer,Expression> > definitions;
@@ -784,7 +782,7 @@ public class JavaFile {
 		}
 	}
 	
-	public static class Switch implements Statement {
+	public static class Switch extends SyntacticElementImpl  implements Statement {
 		private Expression condition;
 		private List<Case> cases;
 		
@@ -811,7 +809,7 @@ public class JavaFile {
      * @author djp
      * 
      */	
-	public static interface Expression {
+	public static interface Expression extends SyntacticElement {
 		
 	}
 	
@@ -821,7 +819,7 @@ public class JavaFile {
      * @author djp
      * 
      */
-	public static class Variable implements Expression {
+	public static class Variable extends SyntacticElementImpl  implements Expression {
 		private String value;
 		
 		public Variable(String value) {			
@@ -839,7 +837,7 @@ public class JavaFile {
 	 * @author djp
 	 *
 	 */
-	public static class Cast implements Expression {		
+	public static class Cast extends SyntacticElementImpl  implements Expression {		
 		protected Expression expr;
 		protected Type type;
 		
@@ -863,7 +861,7 @@ public class JavaFile {
      * @author djp
      * 
      */
-	public static class InstanceOf implements Expression {
+	public static class InstanceOf extends SyntacticElementImpl  implements Expression {
 		protected Expression lhs;		
 		protected Type rhs;		
 		
@@ -889,7 +887,7 @@ public class JavaFile {
      * @author djp
      * 
      */
-	public static class UnOp implements Expression {
+	public static class UnOp extends SyntacticElementImpl  implements Expression {
 		public static final int NOT = 0;
 		public static final int INV = 1;
 		public static final int NEG = 2;
@@ -921,7 +919,7 @@ public class JavaFile {
      * @author djp
      * 
      */
-	public static class BinOp implements Expression {
+	public static class BinOp extends SyntacticElementImpl  implements Expression {
 		// BinOp Constants
 		public static final int ADD = 0;
 		public static final int SUB = 1;
@@ -969,7 +967,7 @@ public class JavaFile {
 		}
 	}
 	
-	public static class TernOp implements Expression {
+	public static class TernOp extends SyntacticElementImpl  implements Expression {
 		
 		protected Expression cond;
 		protected Expression toption;
@@ -1003,7 +1001,7 @@ public class JavaFile {
 	 * @author djp
 	 * 
 	 */
-	public static class Invoke implements Expression, SimpleStatement {
+	public static class Invoke extends SyntacticElementImpl  implements Expression, SimpleStatement {
 		private Expression target;
 		private String name;		
 		private List<Expression> parameters;
@@ -1045,7 +1043,7 @@ public class JavaFile {
      * @author djp
      * 
      */
-	public static class New implements Expression, SimpleStatement {
+	public static class New extends SyntacticElementImpl  implements Expression, SimpleStatement {
 		private Type type;
 		private Expression context;
 		private List<Expression> parameters;
@@ -1116,7 +1114,7 @@ public class JavaFile {
      * @author djp
      * 
      */
-	public static class Deref implements Expression {
+	public static class Deref extends SyntacticElementImpl  implements Expression {
 		private Expression target;
 		private String name;
 		
@@ -1141,7 +1139,7 @@ public class JavaFile {
      * @author djp
      * 
      */
-	public static class ArrayIndex implements Expression {
+	public static class ArrayIndex extends SyntacticElementImpl  implements Expression {
 		private Expression array;
 		private Expression idx;
 
@@ -1163,7 +1161,7 @@ public class JavaFile {
 	// Values
 	// ====================================================
 	
-	public static abstract class Value implements Expression {
+	public static interface Value extends Expression {
 		
 	}
 		
@@ -1173,7 +1171,7 @@ public class JavaFile {
 	 * @author djp
 	 *
 	 */
-	public static class Number extends Value {
+	public static class Number extends SyntacticElementImpl implements Value {
 		protected int value;
 		
 		public Number(int value) {	
@@ -1266,7 +1264,7 @@ public class JavaFile {
      * @author djp
      * 
      */
-	public static class LongVal extends Value {
+	public static class LongVal extends SyntacticElementImpl implements Value {
 		private long value;
 		
 		public LongVal(long value) {
@@ -1284,7 +1282,7 @@ public class JavaFile {
      * @author djp
      * 
      */
-	public static class FloatVal extends Value {
+	public static class FloatVal extends SyntacticElementImpl implements Value {
 		private float value;
 		
 		public FloatVal(float value) {
@@ -1302,7 +1300,7 @@ public class JavaFile {
      * @author djp
      * 
      */
-	public static class DoubleVal extends Value {
+	public static class DoubleVal extends SyntacticElementImpl implements Value {
 		private double value;
 		
 		public DoubleVal(double value) {			
@@ -1320,7 +1318,7 @@ public class JavaFile {
      * @author djp
      * 
      */
-	public static class StringVal extends Value {
+	public static class StringVal extends SyntacticElementImpl implements Value {
 		private String value;
 		
 		public StringVal(String value) {			
@@ -1338,7 +1336,7 @@ public class JavaFile {
      * @author djp
      * 
      */
-	public static class NullVal extends Value {	}
+	public static class NullVal extends SyntacticElementImpl implements Value {	}
 			
 	/**
      * An array constant (used for array initialisers only).
@@ -1346,7 +1344,7 @@ public class JavaFile {
      * @author djp
      * 
      */
-	public static class ArrayVal extends Value {
+	public static class ArrayVal extends SyntacticElementImpl implements Value {
 		private List<Expression> values;
 		
 		public ArrayVal(List<Expression> values) {			
@@ -1387,7 +1385,7 @@ public class JavaFile {
 	 * Represents a Class Constant
 	 * 
 	 */
-	public static class ClassVal extends Value {
+	public static class ClassVal extends SyntacticElementImpl implements Value {
 		private ClassType classType;
 
 		public ClassVal(ClassType type) {			
