@@ -983,8 +983,27 @@ public class JavaFileWriter {
 				if((mod & Modifier.SYNCHRONIZED)!=0) { write("synchronized "); }
 				if((mod & Modifier.TRANSIENT)!=0) { write("transient "); }
 				if((mod & Modifier.VOLATILE)!=0) { write("volatile "); }
+			} else if(x instanceof JavaFile.Annotation){
+				JavaFile.Annotation a = (JavaFile.Annotation) x;
+				write("@");
+				write(a.name());
+				
+				if(a.arguments().size() > 0) {
+					write("(");
+					boolean firstTime=true;
+					for(JavaFile.Expression e : a.arguments()) {
+						if(!firstTime) {
+							write(",");
+						}
+						firstTime=false;
+						writeExpression(e);
+					}
+					write(")");
+				}
+				
+				write(" ");
 			} else {
-				// annotations go here.
+				// do nothing
 			}
 		}					
 	}

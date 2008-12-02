@@ -1430,7 +1430,12 @@ public class JavaFileReader2 {
 			} else if (m.equals("strictfp")) {
 				mods.add(new JavaFile.BaseModifier(Modifier.STRICT));
 			} else if (mc.getType() == ANNOTATION) {
-				// ignore annotations for now.
+				String name = mc.getChild(0).getText();
+				ArrayList<JavaFile.Expression> arguments = new ArrayList<JavaFile.Expression>();
+				for(int j=1;j!=mc.getChildCount();++j) {
+					arguments.add(parseExpression(mc.getChild(j)));
+				}				
+				mods.add(new JavaFile.Annotation(name,arguments));
 			} else {
 				throw new SyntaxError("not expecting " + m, mc.getLine(), mc
 						.getCharPositionInLine());

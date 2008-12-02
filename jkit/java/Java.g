@@ -536,7 +536,7 @@ annotations
 	;
 
 annotation
-	:	'@' annotationName ('(' elementValuePairs? ')')? -> ^(ANNOTATION annotationName)
+	:	'@' annotationName ('(' elementValuePairs? ')')? -> ^(ANNOTATION annotationName elementValuePairs?)
 	;
 	
 annotationName
@@ -548,7 +548,8 @@ elementValuePairs
 	;
 	
 elementValuePair
-	: (Identifier '=')? elementValue
+	: (Identifier '=') elementValue -> ^(ASSIGN Identifier elementValue)
+	| elementValue -> elementValue
 	;
 	
 elementValue
@@ -558,7 +559,7 @@ elementValue
 	;
 	
 elementValueArrayInitializer
-	:	'{' (elementValue (',' elementValue )*)? '}'
+	:	'{' (elementValue (',' elementValue )*)? '}' -> ^(ARRAYVAL elementValue+)
 	;
 	
 annotationTypeDeclaration

@@ -145,6 +145,22 @@ public class JavaFile {
 		}
 	}
 	
+	public static class Annotation implements Modifier {
+		private String name;
+		private List<Expression> arguments;
+		
+		public Annotation(String name, List<Expression> arguments) {
+			this.name = name;
+			this.arguments = arguments;
+		}
+		public String name() {
+			return name;
+		}
+		public List<Expression> arguments() {
+			return arguments;
+		}
+	}
+	
 	// ====================================================
 	// DECLARATIONS
 	// ====================================================
