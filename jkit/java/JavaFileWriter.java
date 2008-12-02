@@ -23,8 +23,12 @@ public class JavaFileWriter {
 			output.println("package " + jf.pkg() + ";\n");
 		}				
 		
-		for(String imp : jf.imports()) {
-			output.println("import " + imp + ";");
+		for(Pair<Boolean,String> imp : jf.imports()) {
+			if(imp.first()) {
+				output.println("import static " + imp.second() + ";");
+			} else {
+				output.println("import " + imp.second() + ";");
+			}
 		}				
 		if(jf.imports().size() > 0) {
 			output.println("");

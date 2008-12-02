@@ -10,10 +10,10 @@ import jkit.util.*;
 
 public class JavaFile {
 	private String pkg;
-	private List<String> imports;
+	private List<Pair<Boolean,String> > imports;
 	private List<Clazz> classes; 
 	
-	public JavaFile(String pkg, List<String> imports, List<Clazz> classes) {
+	public JavaFile(String pkg, List<Pair<Boolean, String> > imports, List<Clazz> classes) {
 		this.pkg = pkg;
 		this.imports = imports;
 		this.classes = classes;
@@ -31,7 +31,7 @@ public class JavaFile {
 	 * 
 	 * @return
 	 */
-	public List<String> imports() { 
+	public List<Pair<Boolean,String> > imports() { 
 		return imports;
 	}
 	

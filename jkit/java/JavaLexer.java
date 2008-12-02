@@ -1,4 +1,4 @@
-// $ANTLR 3.1 jkit/java/Java.g 2008-12-02 11:41:02
+// $ANTLR 3.1 jkit/java/Java.g 2008-12-02 15:08:31
 
 package jkit.java;
 import jkit.compiler.SyntaxError;
@@ -12,200 +12,201 @@ import java.util.ArrayList;
 public class JavaLexer extends Lexer {
     public static final int T__197=197;
     public static final int T__139=139;
-    public static final int SYNCHRONIZED=77;
+    public static final int SYNCHRONIZED=78;
     public static final int T__174=174;
-    public static final int HexDigit=104;
+    public static final int HexDigit=105;
     public static final int T__196=196;
     public static final int T__144=144;
     public static final int T__122=122;
-    public static final int METHOD=14;
+    public static final int METHOD=15;
     public static final int T__137=137;
     public static final int T__140=140;
     public static final int IMPORT=6;
     public static final int PACKAGE=5;
-    public static final int CONTINUE=40;
-    public static final int Letter=111;
+    public static final int CONTINUE=41;
+    public static final int Letter=112;
     public static final int T__138=138;
     public static final int T__173=173;
     public static final int T__119=119;
-    public static final int ASSERT=32;
+    public static final int ASSERT=33;
     public static final int T__198=198;
     public static final int T__142=142;
     public static final int T__176=176;
-    public static final int FloatTypeSuffix=107;
+    public static final int FloatTypeSuffix=108;
     public static final int T__118=118;
     public static final int T__135=135;
-    public static final int EXTENDS=11;
-    public static final int POSTDEC=68;
-    public static final int ARRAYVAL=87;
-    public static final int SUPER=22;
-    public static final int IntegerTypeSuffix=105;
-    public static final int ARGUMENTS=92;
+    public static final int EXTENDS=12;
+    public static final int POSTDEC=69;
+    public static final int ARRAYVAL=88;
+    public static final int SUPER=23;
+    public static final int IntegerTypeSuffix=106;
+    public static final int ARGUMENTS=93;
     public static final int T__156=156;
-    public static final int WS=113;
-    public static final int NONE=94;
+    public static final int WS=114;
+    public static final int NONE=95;
     public static final int T__159=159;
     public static final int T__177=177;
     public static final int T__158=158;
-    public static final int FIELD=13;
-    public static final int POSTINC=65;
-    public static final int LAND=45;
-    public static final int STATIC=95;
-    public static final int CATCH=84;
-    public static final int MUL=61;
+    public static final int FIELD=14;
+    public static final int POSTINC=66;
+    public static final int LAND=46;
+    public static final int STATIC=96;
+    public static final int CATCH=85;
+    public static final int MUL=62;
     public static final int T__157=157;
-    public static final int UnicodeEscape=109;
-    public static final int MODIFIERS=10;
-    public static final int CONDEXPR=86;
+    public static final int UnicodeEscape=110;
+    public static final int MODIFIERS=11;
+    public static final int CONDEXPR=87;
     public static final int T__143=143;
-    public static final int XOR=47;
+    public static final int XOR=48;
     public static final int T__193=193;
     public static final int T__141=141;
-    public static final int ADD=58;
-    public static final int FOREACH=82;
-    public static final int TYPE=17;
-    public static final int SHL=55;
-    public static final int LOR=43;
-    public static final int OctalLiteral=102;
+    public static final int ADD=59;
+    public static final int FOREACH=83;
+    public static final int TYPE=18;
+    public static final int SHL=56;
+    public static final int LOR=44;
+    public static final int OctalLiteral=103;
     public static final int T__167=167;
-    public static final int SELECTOR=72;
+    public static final int SELECTOR=73;
     public static final int T__194=194;
-    public static final int CAST=71;
-    public static final int THROWS=20;
-    public static final int LABEL=81;
-    public static final int MOD=62;
+    public static final int CAST=72;
+    public static final int THROWS=21;
+    public static final int LABEL=82;
+    public static final int MOD=63;
     public static final int T__191=191;
-    public static final int OR=44;
-    public static final int DOWHILE=36;
-    public static final int BLOCK=30;
+    public static final int OR=45;
+    public static final int DOWHILE=37;
+    public static final int BLOCK=31;
     public static final int T__192=192;
-    public static final int EscapeSequence=108;
-    public static final int INSTANCEOF=50;
-    public static final int FloatingPointLiteral=98;
-    public static final int NEQ=49;
+    public static final int EscapeSequence=109;
+    public static final int INSTANCEOF=51;
+    public static final int FloatingPointLiteral=99;
+    public static final int NEQ=50;
     public static final int T__175=175;
     public static final int T__117=117;
-    public static final int WHILE=35;
-    public static final int INVOKE=73;
-    public static final int COMMENT=114;
+    public static final int WHILE=36;
+    public static final int INVOKE=74;
+    public static final int COMMENT=115;
     public static final int T__172=172;
     public static final int T__199=199;
-    public static final int GTEQ=52;
-    public static final int LABINOP=93;
+    public static final int GTEQ=53;
+    public static final int LABINOP=94;
     public static final int UNIT=4;
-    public static final int JavaIDDigit=112;
+    public static final int JavaIDDigit=113;
     public static final int T__170=170;
-    public static final int RETURN=37;
+    public static final int RETURN=38;
     public static final int T__136=136;
-    public static final int IF=33;
-    public static final int T__116=116;
+    public static final int IF=34;
     public static final int T__171=171;
-    public static final int GETCLASS=76;
-    public static final int FOR=34;
+    public static final int GETCLASS=77;
+    public static final int FOR=35;
     public static final int T__189=189;
-    public static final int DEFAULT=90;
-    public static final int OctalEscape=110;
-    public static final int STRINGVAL=27;
+    public static final int DEFAULT=91;
+    public static final int OctalEscape=111;
+    public static final int STRINGVAL=28;
     public static final int T__134=134;
     public static final int T__195=195;
-    public static final int NEG=64;
-    public static final int DEREF=63;
-    public static final int SUB=59;
-    public static final int NOT=69;
-    public static final int TRY=83;
+    public static final int NEG=65;
+    public static final int DEREF=64;
+    public static final int SUB=60;
+    public static final int NOT=70;
+    public static final int TRY=84;
     public static final int T__162=162;
     public static final int T__160=160;
     public static final int T__123=123;
-    public static final int STEP=80;
+    public static final int STEP=81;
     public static final int T__145=145;
     public static final int T__187=187;
-    public static final int INTVAL=23;
-    public static final int SHR=56;
-    public static final int PREDEC=67;
-    public static final int ARRAYINIT=91;
+    public static final int INTVAL=24;
+    public static final int SHR=57;
+    public static final int PREDEC=68;
+    public static final int ARRAYINIT=92;
+    public static final int STATIC_IMPORT=7;
     public static final int T__186=186;
-    public static final int AND=46;
+    public static final int AND=47;
     public static final int T__181=181;
     public static final int T__128=128;
-    public static final int NULLVAL=29;
-    public static final int PREINC=66;
+    public static final int NULLVAL=30;
+    public static final int PREINC=67;
     public static final int T__161=161;
-    public static final int FINALLY=85;
+    public static final int FINALLY=86;
     public static final int T__168=168;
     public static final int T__150=150;
-    public static final int Identifier=97;
-    public static final int ENUM_CONSTANT=96;
+    public static final int Identifier=98;
+    public static final int ENUM_CONSTANT=97;
     public static final int T__182=182;
-    public static final int EQ=48;
-    public static final int NEW=75;
-    public static final int BOOLVAL=28;
-    public static final int LT=53;
+    public static final int EQ=49;
+    public static final int NEW=76;
+    public static final int BOOLVAL=29;
+    public static final int LT=54;
     public static final int T__165=165;
     public static final int T__130=130;
     public static final int T__151=151;
-    public static final int LINE_COMMENT=115;
-    public static final int CASE=89;
-    public static final int INTERFACE=8;
-    public static final int CHARVAL=26;
-    public static final int HexLiteral=101;
-    public static final int INV=70;
+    public static final int LINE_COMMENT=116;
+    public static final int CASE=90;
+    public static final int INTERFACE=9;
+    public static final int CHARVAL=27;
+    public static final int HexLiteral=102;
+    public static final int INV=71;
     public static final int T__125=125;
     public static final int T__149=149;
-    public static final int LTEQ=51;
+    public static final int LTEQ=52;
+    public static final int DecimalLiteral=104;
     public static final int T__166=166;
-    public static final int BREAK=39;
-    public static final int DecimalLiteral=103;
+    public static final int BREAK=40;
     public static final int T__132=132;
-    public static final int ANNOTATION=21;
-    public static final int DIV=60;
+    public static final int ANNOTATION=22;
+    public static final int DIV=61;
     public static final int T__190=190;
     public static final int T__131=131;
     public static final int T__124=124;
     public static final int T__169=169;
-    public static final int THROW=38;
+    public static final int THROW=39;
     public static final int T__126=126;
     public static final int T__148=148;
-    public static final int INIT=78;
+    public static final int INIT=79;
     public static final int T__188=188;
-    public static final int VARDEF=31;
-    public static final int DOUBLEVAL=25;
-    public static final int TYPE_PARAMETER=19;
-    public static final int ARRAYINDEX=74;
-    public static final int ASSIGN=41;
+    public static final int T__200=200;
+    public static final int VARDEF=32;
+    public static final int DOUBLEVAL=26;
+    public static final int TYPE_PARAMETER=20;
+    public static final int ARRAYINDEX=75;
+    public static final int ASSIGN=42;
     public static final int T__127=127;
-    public static final int VOID=18;
+    public static final int VOID=19;
     public static final int T__183=183;
     public static final int T__133=133;
-    public static final int FLOATVAL=24;
-    public static final int VARARGS=16;
+    public static final int FLOATVAL=25;
+    public static final int VARARGS=17;
     public static final int T__164=164;
     public static final int T__120=120;
-    public static final int USHR=57;
-    public static final int ENUM=9;
+    public static final int USHR=58;
+    public static final int ENUM=10;
     public static final int T__163=163;
-    public static final int Exponent=106;
+    public static final int Exponent=107;
     public static final int T__153=153;
-    public static final int IMPLEMENTS=12;
-    public static final int SWITCH=88;
+    public static final int IMPLEMENTS=13;
+    public static final int SWITCH=89;
     public static final int T__185=185;
-    public static final int CharacterLiteral=99;
+    public static final int CharacterLiteral=100;
     public static final int T__178=178;
-    public static final int GT=54;
-    public static final int StringLiteral=100;
+    public static final int GT=55;
+    public static final int StringLiteral=101;
     public static final int T__129=129;
     public static final int T__180=180;
     public static final int T__152=152;
     public static final int T__121=121;
-    public static final int VAR=42;
-    public static final int CLASS=7;
+    public static final int VAR=43;
+    public static final int CLASS=8;
     public static final int T__147=147;
     public static final int T__179=179;
     public static final int EOF=-1;
     public static final int T__154=154;
-    public static final int PARAMETER=15;
+    public static final int PARAMETER=16;
     public static final int T__184=184;
     public static final int T__155=155;
-    public static final int TEST=79;
+    public static final int TEST=80;
     public static final int T__146=146;
 
     protected boolean enumIsKeyword = true;
@@ -224,36 +225,16 @@ public class JavaLexer extends Lexer {
     }
     public String getGrammarFileName() { return "jkit/java/Java.g"; }
 
-    // $ANTLR start "T__116"
-    public final void mT__116() throws RecognitionException {
+    // $ANTLR start "T__117"
+    public final void mT__117() throws RecognitionException {
         try {
-            int _type = T__116;
+            int _type = T__117;
             int _channel = DEFAULT_TOKEN_CHANNEL;
             // jkit/java/Java.g:11:8: ( 'package' )
             // jkit/java/Java.g:11:10: 'package'
             {
             match("package"); 
 
-
-            }
-
-            state.type = _type;
-            state.channel = _channel;
-        }
-        finally {
-        }
-    }
-    // $ANTLR end "T__116"
-
-    // $ANTLR start "T__117"
-    public final void mT__117() throws RecognitionException {
-        try {
-            int _type = T__117;
-            int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:12:8: ( ';' )
-            // jkit/java/Java.g:12:10: ';'
-            {
-            match(';'); 
 
             }
 
@@ -270,11 +251,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__118;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:13:8: ( 'import' )
-            // jkit/java/Java.g:13:10: 'import'
+            // jkit/java/Java.g:12:8: ( ';' )
+            // jkit/java/Java.g:12:10: ';'
             {
-            match("import"); 
-
+            match(';'); 
 
             }
 
@@ -291,10 +271,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__119;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:14:8: ( 'static' )
-            // jkit/java/Java.g:14:10: 'static'
+            // jkit/java/Java.g:13:8: ( 'import' )
+            // jkit/java/Java.g:13:10: 'import'
             {
-            match("static"); 
+            match("import"); 
 
 
             }
@@ -312,10 +292,11 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__120;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:15:8: ( '.' )
-            // jkit/java/Java.g:15:10: '.'
+            // jkit/java/Java.g:14:8: ( 'static' )
+            // jkit/java/Java.g:14:10: 'static'
             {
-            match('.'); 
+            match("static"); 
+
 
             }
 
@@ -332,10 +313,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__121;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:16:8: ( '*' )
-            // jkit/java/Java.g:16:10: '*'
+            // jkit/java/Java.g:15:8: ( '.' )
+            // jkit/java/Java.g:15:10: '.'
             {
-            match('*'); 
+            match('.'); 
 
             }
 
@@ -352,11 +333,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__122;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:17:8: ( 'class' )
-            // jkit/java/Java.g:17:10: 'class'
+            // jkit/java/Java.g:16:8: ( '*' )
+            // jkit/java/Java.g:16:10: '*'
             {
-            match("class"); 
-
+            match('*'); 
 
             }
 
@@ -373,10 +353,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__123;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:18:8: ( 'extends' )
-            // jkit/java/Java.g:18:10: 'extends'
+            // jkit/java/Java.g:17:8: ( 'class' )
+            // jkit/java/Java.g:17:10: 'class'
             {
-            match("extends"); 
+            match("class"); 
 
 
             }
@@ -394,10 +374,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__124;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:19:8: ( 'implements' )
-            // jkit/java/Java.g:19:10: 'implements'
+            // jkit/java/Java.g:18:8: ( 'extends' )
+            // jkit/java/Java.g:18:10: 'extends'
             {
-            match("implements"); 
+            match("extends"); 
 
 
             }
@@ -415,10 +395,11 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__125;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:20:8: ( '<' )
-            // jkit/java/Java.g:20:10: '<'
+            // jkit/java/Java.g:19:8: ( 'implements' )
+            // jkit/java/Java.g:19:10: 'implements'
             {
-            match('<'); 
+            match("implements"); 
+
 
             }
 
@@ -435,10 +416,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__126;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:21:8: ( ',' )
-            // jkit/java/Java.g:21:10: ','
+            // jkit/java/Java.g:20:8: ( '<' )
+            // jkit/java/Java.g:20:10: '<'
             {
-            match(','); 
+            match('<'); 
 
             }
 
@@ -455,10 +436,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__127;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:22:8: ( '>' )
-            // jkit/java/Java.g:22:10: '>'
+            // jkit/java/Java.g:21:8: ( ',' )
+            // jkit/java/Java.g:21:10: ','
             {
-            match('>'); 
+            match(','); 
 
             }
 
@@ -475,10 +456,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__128;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:23:8: ( '&' )
-            // jkit/java/Java.g:23:10: '&'
+            // jkit/java/Java.g:22:8: ( '>' )
+            // jkit/java/Java.g:22:10: '>'
             {
-            match('&'); 
+            match('>'); 
 
             }
 
@@ -495,10 +476,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__129;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:24:8: ( '{' )
-            // jkit/java/Java.g:24:10: '{'
+            // jkit/java/Java.g:23:8: ( '&' )
+            // jkit/java/Java.g:23:10: '&'
             {
-            match('{'); 
+            match('&'); 
 
             }
 
@@ -515,10 +496,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__130;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:25:8: ( '}' )
-            // jkit/java/Java.g:25:10: '}'
+            // jkit/java/Java.g:24:8: ( '{' )
+            // jkit/java/Java.g:24:10: '{'
             {
-            match('}'); 
+            match('{'); 
 
             }
 
@@ -535,11 +516,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__131;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:26:8: ( 'interface' )
-            // jkit/java/Java.g:26:10: 'interface'
+            // jkit/java/Java.g:25:8: ( '}' )
+            // jkit/java/Java.g:25:10: '}'
             {
-            match("interface"); 
-
+            match('}'); 
 
             }
 
@@ -556,10 +536,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__132;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:27:8: ( 'void' )
-            // jkit/java/Java.g:27:10: 'void'
+            // jkit/java/Java.g:26:8: ( 'interface' )
+            // jkit/java/Java.g:26:10: 'interface'
             {
-            match("void"); 
+            match("interface"); 
 
 
             }
@@ -577,10 +557,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__133;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:28:8: ( 'throws' )
-            // jkit/java/Java.g:28:10: 'throws'
+            // jkit/java/Java.g:27:8: ( 'void' )
+            // jkit/java/Java.g:27:10: 'void'
             {
-            match("throws"); 
+            match("void"); 
 
 
             }
@@ -598,10 +578,11 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__134;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:29:8: ( '[' )
-            // jkit/java/Java.g:29:10: '['
+            // jkit/java/Java.g:28:8: ( 'throws' )
+            // jkit/java/Java.g:28:10: 'throws'
             {
-            match('['); 
+            match("throws"); 
+
 
             }
 
@@ -618,10 +599,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__135;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:30:8: ( ']' )
-            // jkit/java/Java.g:30:10: ']'
+            // jkit/java/Java.g:29:8: ( '[' )
+            // jkit/java/Java.g:29:10: '['
             {
-            match(']'); 
+            match('['); 
 
             }
 
@@ -638,10 +619,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__136;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:31:8: ( '=' )
-            // jkit/java/Java.g:31:10: '='
+            // jkit/java/Java.g:30:8: ( ']' )
+            // jkit/java/Java.g:30:10: ']'
             {
-            match('='); 
+            match(']'); 
 
             }
 
@@ -658,11 +639,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__137;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:32:8: ( 'public' )
-            // jkit/java/Java.g:32:10: 'public'
+            // jkit/java/Java.g:31:8: ( '=' )
+            // jkit/java/Java.g:31:10: '='
             {
-            match("public"); 
-
+            match('='); 
 
             }
 
@@ -679,10 +659,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__138;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:33:8: ( 'protected' )
-            // jkit/java/Java.g:33:10: 'protected'
+            // jkit/java/Java.g:32:8: ( 'public' )
+            // jkit/java/Java.g:32:10: 'public'
             {
-            match("protected"); 
+            match("public"); 
 
 
             }
@@ -700,10 +680,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__139;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:34:8: ( 'private' )
-            // jkit/java/Java.g:34:10: 'private'
+            // jkit/java/Java.g:33:8: ( 'protected' )
+            // jkit/java/Java.g:33:10: 'protected'
             {
-            match("private"); 
+            match("protected"); 
 
 
             }
@@ -721,10 +701,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__140;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:35:8: ( 'abstract' )
-            // jkit/java/Java.g:35:10: 'abstract'
+            // jkit/java/Java.g:34:8: ( 'private' )
+            // jkit/java/Java.g:34:10: 'private'
             {
-            match("abstract"); 
+            match("private"); 
 
 
             }
@@ -742,10 +722,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__141;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:36:8: ( 'final' )
-            // jkit/java/Java.g:36:10: 'final'
+            // jkit/java/Java.g:35:8: ( 'abstract' )
+            // jkit/java/Java.g:35:10: 'abstract'
             {
-            match("final"); 
+            match("abstract"); 
 
 
             }
@@ -763,10 +743,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__142;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:37:8: ( 'native' )
-            // jkit/java/Java.g:37:10: 'native'
+            // jkit/java/Java.g:36:8: ( 'final' )
+            // jkit/java/Java.g:36:10: 'final'
             {
-            match("native"); 
+            match("final"); 
 
 
             }
@@ -784,10 +764,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__143;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:38:8: ( 'synchronized' )
-            // jkit/java/Java.g:38:10: 'synchronized'
+            // jkit/java/Java.g:37:8: ( 'native' )
+            // jkit/java/Java.g:37:10: 'native'
             {
-            match("synchronized"); 
+            match("native"); 
 
 
             }
@@ -805,10 +785,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__144;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:39:8: ( 'transient' )
-            // jkit/java/Java.g:39:10: 'transient'
+            // jkit/java/Java.g:38:8: ( 'synchronized' )
+            // jkit/java/Java.g:38:10: 'synchronized'
             {
-            match("transient"); 
+            match("synchronized"); 
 
 
             }
@@ -826,10 +806,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__145;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:40:8: ( 'volatile' )
-            // jkit/java/Java.g:40:10: 'volatile'
+            // jkit/java/Java.g:39:8: ( 'transient' )
+            // jkit/java/Java.g:39:10: 'transient'
             {
-            match("volatile"); 
+            match("transient"); 
 
 
             }
@@ -847,10 +827,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__146;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:41:8: ( 'strictfp' )
-            // jkit/java/Java.g:41:10: 'strictfp'
+            // jkit/java/Java.g:40:8: ( 'volatile' )
+            // jkit/java/Java.g:40:10: 'volatile'
             {
-            match("strictfp"); 
+            match("volatile"); 
 
 
             }
@@ -868,10 +848,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__147;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:42:8: ( 'boolean' )
-            // jkit/java/Java.g:42:10: 'boolean'
+            // jkit/java/Java.g:41:8: ( 'strictfp' )
+            // jkit/java/Java.g:41:10: 'strictfp'
             {
-            match("boolean"); 
+            match("strictfp"); 
 
 
             }
@@ -889,10 +869,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__148;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:43:8: ( 'char' )
-            // jkit/java/Java.g:43:10: 'char'
+            // jkit/java/Java.g:42:8: ( 'boolean' )
+            // jkit/java/Java.g:42:10: 'boolean'
             {
-            match("char"); 
+            match("boolean"); 
 
 
             }
@@ -910,10 +890,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__149;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:44:8: ( 'byte' )
-            // jkit/java/Java.g:44:10: 'byte'
+            // jkit/java/Java.g:43:8: ( 'char' )
+            // jkit/java/Java.g:43:10: 'char'
             {
-            match("byte"); 
+            match("char"); 
 
 
             }
@@ -931,10 +911,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__150;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:45:8: ( 'short' )
-            // jkit/java/Java.g:45:10: 'short'
+            // jkit/java/Java.g:44:8: ( 'byte' )
+            // jkit/java/Java.g:44:10: 'byte'
             {
-            match("short"); 
+            match("byte"); 
 
 
             }
@@ -952,10 +932,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__151;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:46:8: ( 'int' )
-            // jkit/java/Java.g:46:10: 'int'
+            // jkit/java/Java.g:45:8: ( 'short' )
+            // jkit/java/Java.g:45:10: 'short'
             {
-            match("int"); 
+            match("short"); 
 
 
             }
@@ -973,10 +953,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__152;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:47:8: ( 'long' )
-            // jkit/java/Java.g:47:10: 'long'
+            // jkit/java/Java.g:46:8: ( 'int' )
+            // jkit/java/Java.g:46:10: 'int'
             {
-            match("long"); 
+            match("int"); 
 
 
             }
@@ -994,10 +974,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__153;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:48:8: ( 'float' )
-            // jkit/java/Java.g:48:10: 'float'
+            // jkit/java/Java.g:47:8: ( 'long' )
+            // jkit/java/Java.g:47:10: 'long'
             {
-            match("float"); 
+            match("long"); 
 
 
             }
@@ -1015,10 +995,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__154;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:49:8: ( 'double' )
-            // jkit/java/Java.g:49:10: 'double'
+            // jkit/java/Java.g:48:8: ( 'float' )
+            // jkit/java/Java.g:48:10: 'float'
             {
-            match("double"); 
+            match("float"); 
 
 
             }
@@ -1036,10 +1016,11 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__155;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:50:8: ( '?' )
-            // jkit/java/Java.g:50:10: '?'
+            // jkit/java/Java.g:49:8: ( 'double' )
+            // jkit/java/Java.g:49:10: 'double'
             {
-            match('?'); 
+            match("double"); 
+
 
             }
 
@@ -1056,11 +1037,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__156;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:51:8: ( 'super' )
-            // jkit/java/Java.g:51:10: 'super'
+            // jkit/java/Java.g:50:8: ( '?' )
+            // jkit/java/Java.g:50:10: '?'
             {
-            match("super"); 
-
+            match('?'); 
 
             }
 
@@ -1077,10 +1057,11 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__157;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:52:8: ( '(' )
-            // jkit/java/Java.g:52:10: '('
+            // jkit/java/Java.g:51:8: ( 'super' )
+            // jkit/java/Java.g:51:10: 'super'
             {
-            match('('); 
+            match("super"); 
+
 
             }
 
@@ -1097,10 +1078,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__158;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:53:8: ( ')' )
-            // jkit/java/Java.g:53:10: ')'
+            // jkit/java/Java.g:52:8: ( '(' )
+            // jkit/java/Java.g:52:10: '('
             {
-            match(')'); 
+            match('('); 
 
             }
 
@@ -1117,11 +1098,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__159;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:54:8: ( '...' )
-            // jkit/java/Java.g:54:10: '...'
+            // jkit/java/Java.g:53:8: ( ')' )
+            // jkit/java/Java.g:53:10: ')'
             {
-            match("..."); 
-
+            match(')'); 
 
             }
 
@@ -1138,10 +1118,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__160;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:55:8: ( 'null' )
-            // jkit/java/Java.g:55:10: 'null'
+            // jkit/java/Java.g:54:8: ( '...' )
+            // jkit/java/Java.g:54:10: '...'
             {
-            match("null"); 
+            match("..."); 
 
 
             }
@@ -1159,10 +1139,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__161;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:56:8: ( 'true' )
-            // jkit/java/Java.g:56:10: 'true'
+            // jkit/java/Java.g:55:8: ( 'null' )
+            // jkit/java/Java.g:55:10: 'null'
             {
-            match("true"); 
+            match("null"); 
 
 
             }
@@ -1180,10 +1160,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__162;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:57:8: ( 'false' )
-            // jkit/java/Java.g:57:10: 'false'
+            // jkit/java/Java.g:56:8: ( 'true' )
+            // jkit/java/Java.g:56:10: 'true'
             {
-            match("false"); 
+            match("true"); 
 
 
             }
@@ -1201,10 +1181,11 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__163;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:58:8: ( '@' )
-            // jkit/java/Java.g:58:10: '@'
+            // jkit/java/Java.g:57:8: ( 'false' )
+            // jkit/java/Java.g:57:10: 'false'
             {
-            match('@'); 
+            match("false"); 
+
 
             }
 
@@ -1221,11 +1202,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__164;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:59:8: ( 'default' )
-            // jkit/java/Java.g:59:10: 'default'
+            // jkit/java/Java.g:58:8: ( '@' )
+            // jkit/java/Java.g:58:10: '@'
             {
-            match("default"); 
-
+            match('@'); 
 
             }
 
@@ -1242,10 +1222,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__165;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:60:8: ( 'assert' )
-            // jkit/java/Java.g:60:10: 'assert'
+            // jkit/java/Java.g:59:8: ( 'default' )
+            // jkit/java/Java.g:59:10: 'default'
             {
-            match("assert"); 
+            match("default"); 
 
 
             }
@@ -1263,10 +1243,11 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__166;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:61:8: ( ':' )
-            // jkit/java/Java.g:61:10: ':'
+            // jkit/java/Java.g:60:8: ( 'assert' )
+            // jkit/java/Java.g:60:10: 'assert'
             {
-            match(':'); 
+            match("assert"); 
+
 
             }
 
@@ -1283,11 +1264,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__167;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:62:8: ( 'if' )
-            // jkit/java/Java.g:62:10: 'if'
+            // jkit/java/Java.g:61:8: ( ':' )
+            // jkit/java/Java.g:61:10: ':'
             {
-            match("if"); 
-
+            match(':'); 
 
             }
 
@@ -1304,10 +1284,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__168;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:63:8: ( 'else' )
-            // jkit/java/Java.g:63:10: 'else'
+            // jkit/java/Java.g:62:8: ( 'if' )
+            // jkit/java/Java.g:62:10: 'if'
             {
-            match("else"); 
+            match("if"); 
 
 
             }
@@ -1325,10 +1305,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__169;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:64:8: ( 'for' )
-            // jkit/java/Java.g:64:10: 'for'
+            // jkit/java/Java.g:63:8: ( 'else' )
+            // jkit/java/Java.g:63:10: 'else'
             {
-            match("for"); 
+            match("else"); 
 
 
             }
@@ -1346,10 +1326,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__170;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:65:8: ( 'while' )
-            // jkit/java/Java.g:65:10: 'while'
+            // jkit/java/Java.g:64:8: ( 'for' )
+            // jkit/java/Java.g:64:10: 'for'
             {
-            match("while"); 
+            match("for"); 
 
 
             }
@@ -1367,10 +1347,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__171;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:66:8: ( 'do' )
-            // jkit/java/Java.g:66:10: 'do'
+            // jkit/java/Java.g:65:8: ( 'while' )
+            // jkit/java/Java.g:65:10: 'while'
             {
-            match("do"); 
+            match("while"); 
 
 
             }
@@ -1388,10 +1368,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__172;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:67:8: ( 'try' )
-            // jkit/java/Java.g:67:10: 'try'
+            // jkit/java/Java.g:66:8: ( 'do' )
+            // jkit/java/Java.g:66:10: 'do'
             {
-            match("try"); 
+            match("do"); 
 
 
             }
@@ -1409,10 +1389,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__173;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:68:8: ( 'finally' )
-            // jkit/java/Java.g:68:10: 'finally'
+            // jkit/java/Java.g:67:8: ( 'try' )
+            // jkit/java/Java.g:67:10: 'try'
             {
-            match("finally"); 
+            match("try"); 
 
 
             }
@@ -1430,10 +1410,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__174;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:69:8: ( 'switch' )
-            // jkit/java/Java.g:69:10: 'switch'
+            // jkit/java/Java.g:68:8: ( 'finally' )
+            // jkit/java/Java.g:68:10: 'finally'
             {
-            match("switch"); 
+            match("finally"); 
 
 
             }
@@ -1451,10 +1431,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__175;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:70:8: ( 'return' )
-            // jkit/java/Java.g:70:10: 'return'
+            // jkit/java/Java.g:69:8: ( 'switch' )
+            // jkit/java/Java.g:69:10: 'switch'
             {
-            match("return"); 
+            match("switch"); 
 
 
             }
@@ -1472,10 +1452,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__176;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:71:8: ( 'throw' )
-            // jkit/java/Java.g:71:10: 'throw'
+            // jkit/java/Java.g:70:8: ( 'return' )
+            // jkit/java/Java.g:70:10: 'return'
             {
-            match("throw"); 
+            match("return"); 
 
 
             }
@@ -1493,10 +1473,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__177;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:72:8: ( 'break' )
-            // jkit/java/Java.g:72:10: 'break'
+            // jkit/java/Java.g:71:8: ( 'throw' )
+            // jkit/java/Java.g:71:10: 'throw'
             {
-            match("break"); 
+            match("throw"); 
 
 
             }
@@ -1514,10 +1494,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__178;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:73:8: ( 'continue' )
-            // jkit/java/Java.g:73:10: 'continue'
+            // jkit/java/Java.g:72:8: ( 'break' )
+            // jkit/java/Java.g:72:10: 'break'
             {
-            match("continue"); 
+            match("break"); 
 
 
             }
@@ -1535,10 +1515,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__179;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:74:8: ( 'catch' )
-            // jkit/java/Java.g:74:10: 'catch'
+            // jkit/java/Java.g:73:8: ( 'continue' )
+            // jkit/java/Java.g:73:10: 'continue'
             {
-            match("catch"); 
+            match("continue"); 
 
 
             }
@@ -1556,10 +1536,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__180;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:75:8: ( 'case' )
-            // jkit/java/Java.g:75:10: 'case'
+            // jkit/java/Java.g:74:8: ( 'catch' )
+            // jkit/java/Java.g:74:10: 'catch'
             {
-            match("case"); 
+            match("catch"); 
 
 
             }
@@ -1577,10 +1557,11 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__181;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:76:8: ( '+' )
-            // jkit/java/Java.g:76:10: '+'
+            // jkit/java/Java.g:75:8: ( 'case' )
+            // jkit/java/Java.g:75:10: 'case'
             {
-            match('+'); 
+            match("case"); 
+
 
             }
 
@@ -1597,10 +1578,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__182;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:77:8: ( '-' )
-            // jkit/java/Java.g:77:10: '-'
+            // jkit/java/Java.g:76:8: ( '+' )
+            // jkit/java/Java.g:76:10: '+'
             {
-            match('-'); 
+            match('+'); 
 
             }
 
@@ -1617,10 +1598,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__183;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:78:8: ( '/' )
-            // jkit/java/Java.g:78:10: '/'
+            // jkit/java/Java.g:77:8: ( '-' )
+            // jkit/java/Java.g:77:10: '-'
             {
-            match('/'); 
+            match('-'); 
 
             }
 
@@ -1637,11 +1618,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__184;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:79:8: ( '&=' )
-            // jkit/java/Java.g:79:10: '&='
+            // jkit/java/Java.g:78:8: ( '/' )
+            // jkit/java/Java.g:78:10: '/'
             {
-            match("&="); 
-
+            match('/'); 
 
             }
 
@@ -1658,10 +1638,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__185;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:80:8: ( '|=' )
-            // jkit/java/Java.g:80:10: '|='
+            // jkit/java/Java.g:79:8: ( '&=' )
+            // jkit/java/Java.g:79:10: '&='
             {
-            match("|="); 
+            match("&="); 
 
 
             }
@@ -1679,10 +1659,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__186;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:81:8: ( '^=' )
-            // jkit/java/Java.g:81:10: '^='
+            // jkit/java/Java.g:80:8: ( '|=' )
+            // jkit/java/Java.g:80:10: '|='
             {
-            match("^="); 
+            match("|="); 
 
 
             }
@@ -1700,10 +1680,11 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__187;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:82:8: ( '%' )
-            // jkit/java/Java.g:82:10: '%'
+            // jkit/java/Java.g:81:8: ( '^=' )
+            // jkit/java/Java.g:81:10: '^='
             {
-            match('%'); 
+            match("^="); 
+
 
             }
 
@@ -1720,11 +1701,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__188;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:83:8: ( '||' )
-            // jkit/java/Java.g:83:10: '||'
+            // jkit/java/Java.g:82:8: ( '%' )
+            // jkit/java/Java.g:82:10: '%'
             {
-            match("||"); 
-
+            match('%'); 
 
             }
 
@@ -1741,10 +1721,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__189;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:84:8: ( '&&' )
-            // jkit/java/Java.g:84:10: '&&'
+            // jkit/java/Java.g:83:8: ( '||' )
+            // jkit/java/Java.g:83:10: '||'
             {
-            match("&&"); 
+            match("||"); 
 
 
             }
@@ -1762,10 +1742,11 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__190;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:85:8: ( '|' )
-            // jkit/java/Java.g:85:10: '|'
+            // jkit/java/Java.g:84:8: ( '&&' )
+            // jkit/java/Java.g:84:10: '&&'
             {
-            match('|'); 
+            match("&&"); 
+
 
             }
 
@@ -1782,10 +1763,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__191;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:86:8: ( '^' )
-            // jkit/java/Java.g:86:10: '^'
+            // jkit/java/Java.g:85:8: ( '|' )
+            // jkit/java/Java.g:85:10: '|'
             {
-            match('^'); 
+            match('|'); 
 
             }
 
@@ -1802,11 +1783,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__192;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:87:8: ( '==' )
-            // jkit/java/Java.g:87:10: '=='
+            // jkit/java/Java.g:86:8: ( '^' )
+            // jkit/java/Java.g:86:10: '^'
             {
-            match("=="); 
-
+            match('^'); 
 
             }
 
@@ -1823,10 +1803,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__193;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:88:8: ( '!=' )
-            // jkit/java/Java.g:88:10: '!='
+            // jkit/java/Java.g:87:8: ( '==' )
+            // jkit/java/Java.g:87:10: '=='
             {
-            match("!="); 
+            match("=="); 
 
 
             }
@@ -1844,10 +1824,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__194;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:89:8: ( 'instanceof' )
-            // jkit/java/Java.g:89:10: 'instanceof'
+            // jkit/java/Java.g:88:8: ( '!=' )
+            // jkit/java/Java.g:88:10: '!='
             {
-            match("instanceof"); 
+            match("!="); 
 
 
             }
@@ -1865,10 +1845,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__195;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:90:8: ( '++' )
-            // jkit/java/Java.g:90:10: '++'
+            // jkit/java/Java.g:89:8: ( 'instanceof' )
+            // jkit/java/Java.g:89:10: 'instanceof'
             {
-            match("++"); 
+            match("instanceof"); 
 
 
             }
@@ -1886,10 +1866,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__196;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:91:8: ( '--' )
-            // jkit/java/Java.g:91:10: '--'
+            // jkit/java/Java.g:90:8: ( '++' )
+            // jkit/java/Java.g:90:10: '++'
             {
-            match("--"); 
+            match("++"); 
 
 
             }
@@ -1907,10 +1887,11 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__197;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:92:8: ( '~' )
-            // jkit/java/Java.g:92:10: '~'
+            // jkit/java/Java.g:91:8: ( '--' )
+            // jkit/java/Java.g:91:10: '--'
             {
-            match('~'); 
+            match("--"); 
+
 
             }
 
@@ -1927,10 +1908,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__198;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:93:8: ( '!' )
-            // jkit/java/Java.g:93:10: '!'
+            // jkit/java/Java.g:92:8: ( '~' )
+            // jkit/java/Java.g:92:10: '~'
             {
-            match('!'); 
+            match('~'); 
 
             }
 
@@ -1947,6 +1928,26 @@ public class JavaLexer extends Lexer {
         try {
             int _type = T__199;
             int _channel = DEFAULT_TOKEN_CHANNEL;
+            // jkit/java/Java.g:93:8: ( '!' )
+            // jkit/java/Java.g:93:10: '!'
+            {
+            match('!'); 
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__199"
+
+    // $ANTLR start "T__200"
+    public final void mT__200() throws RecognitionException {
+        try {
+            int _type = T__200;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
             // jkit/java/Java.g:94:8: ( 'new' )
             // jkit/java/Java.g:94:10: 'new'
             {
@@ -1961,15 +1962,15 @@ public class JavaLexer extends Lexer {
         finally {
         }
     }
-    // $ANTLR end "T__199"
+    // $ANTLR end "T__200"
 
     // $ANTLR start "HexLiteral"
     public final void mHexLiteral() throws RecognitionException {
         try {
             int _type = HexLiteral;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:928:12: ( '0' ( 'x' | 'X' ) ( HexDigit )+ ( IntegerTypeSuffix )? )
-            // jkit/java/Java.g:928:14: '0' ( 'x' | 'X' ) ( HexDigit )+ ( IntegerTypeSuffix )?
+            // jkit/java/Java.g:932:12: ( '0' ( 'x' | 'X' ) ( HexDigit )+ ( IntegerTypeSuffix )? )
+            // jkit/java/Java.g:932:14: '0' ( 'x' | 'X' ) ( HexDigit )+ ( IntegerTypeSuffix )?
             {
             match('0'); 
             if ( input.LA(1)=='X'||input.LA(1)=='x' ) {
@@ -1981,7 +1982,7 @@ public class JavaLexer extends Lexer {
                 recover(mse);
                 throw mse;}
 
-            // jkit/java/Java.g:928:28: ( HexDigit )+
+            // jkit/java/Java.g:932:28: ( HexDigit )+
             int cnt1=0;
             loop1:
             do {
@@ -1995,7 +1996,7 @@ public class JavaLexer extends Lexer {
 
                 switch (alt1) {
             	case 1 :
-            	    // jkit/java/Java.g:928:28: HexDigit
+            	    // jkit/java/Java.g:932:28: HexDigit
             	    {
             	    mHexDigit(); 
 
@@ -2011,7 +2012,7 @@ public class JavaLexer extends Lexer {
                 cnt1++;
             } while (true);
 
-            // jkit/java/Java.g:928:38: ( IntegerTypeSuffix )?
+            // jkit/java/Java.g:932:38: ( IntegerTypeSuffix )?
             int alt2=2;
             int LA2_0 = input.LA(1);
 
@@ -2020,7 +2021,7 @@ public class JavaLexer extends Lexer {
             }
             switch (alt2) {
                 case 1 :
-                    // jkit/java/Java.g:928:38: IntegerTypeSuffix
+                    // jkit/java/Java.g:932:38: IntegerTypeSuffix
                     {
                     mIntegerTypeSuffix(); 
 
@@ -2045,10 +2046,10 @@ public class JavaLexer extends Lexer {
         try {
             int _type = DecimalLiteral;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:930:16: ( ( '0' | '1' .. '9' ( '0' .. '9' )* ) ( IntegerTypeSuffix )? )
-            // jkit/java/Java.g:930:18: ( '0' | '1' .. '9' ( '0' .. '9' )* ) ( IntegerTypeSuffix )?
+            // jkit/java/Java.g:934:16: ( ( '0' | '1' .. '9' ( '0' .. '9' )* ) ( IntegerTypeSuffix )? )
+            // jkit/java/Java.g:934:18: ( '0' | '1' .. '9' ( '0' .. '9' )* ) ( IntegerTypeSuffix )?
             {
-            // jkit/java/Java.g:930:18: ( '0' | '1' .. '9' ( '0' .. '9' )* )
+            // jkit/java/Java.g:934:18: ( '0' | '1' .. '9' ( '0' .. '9' )* )
             int alt4=2;
             int LA4_0 = input.LA(1);
 
@@ -2066,17 +2067,17 @@ public class JavaLexer extends Lexer {
             }
             switch (alt4) {
                 case 1 :
-                    // jkit/java/Java.g:930:19: '0'
+                    // jkit/java/Java.g:934:19: '0'
                     {
                     match('0'); 
 
                     }
                     break;
                 case 2 :
-                    // jkit/java/Java.g:930:25: '1' .. '9' ( '0' .. '9' )*
+                    // jkit/java/Java.g:934:25: '1' .. '9' ( '0' .. '9' )*
                     {
                     matchRange('1','9'); 
-                    // jkit/java/Java.g:930:34: ( '0' .. '9' )*
+                    // jkit/java/Java.g:934:34: ( '0' .. '9' )*
                     loop3:
                     do {
                         int alt3=2;
@@ -2089,7 +2090,7 @@ public class JavaLexer extends Lexer {
 
                         switch (alt3) {
                     	case 1 :
-                    	    // jkit/java/Java.g:930:34: '0' .. '9'
+                    	    // jkit/java/Java.g:934:34: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -2107,7 +2108,7 @@ public class JavaLexer extends Lexer {
 
             }
 
-            // jkit/java/Java.g:930:45: ( IntegerTypeSuffix )?
+            // jkit/java/Java.g:934:45: ( IntegerTypeSuffix )?
             int alt5=2;
             int LA5_0 = input.LA(1);
 
@@ -2116,7 +2117,7 @@ public class JavaLexer extends Lexer {
             }
             switch (alt5) {
                 case 1 :
-                    // jkit/java/Java.g:930:45: IntegerTypeSuffix
+                    // jkit/java/Java.g:934:45: IntegerTypeSuffix
                     {
                     mIntegerTypeSuffix(); 
 
@@ -2141,11 +2142,11 @@ public class JavaLexer extends Lexer {
         try {
             int _type = OctalLiteral;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:932:14: ( '0' ( '0' .. '7' )+ ( IntegerTypeSuffix )? )
-            // jkit/java/Java.g:932:16: '0' ( '0' .. '7' )+ ( IntegerTypeSuffix )?
+            // jkit/java/Java.g:936:14: ( '0' ( '0' .. '7' )+ ( IntegerTypeSuffix )? )
+            // jkit/java/Java.g:936:16: '0' ( '0' .. '7' )+ ( IntegerTypeSuffix )?
             {
             match('0'); 
-            // jkit/java/Java.g:932:20: ( '0' .. '7' )+
+            // jkit/java/Java.g:936:20: ( '0' .. '7' )+
             int cnt6=0;
             loop6:
             do {
@@ -2159,7 +2160,7 @@ public class JavaLexer extends Lexer {
 
                 switch (alt6) {
             	case 1 :
-            	    // jkit/java/Java.g:932:21: '0' .. '7'
+            	    // jkit/java/Java.g:936:21: '0' .. '7'
             	    {
             	    matchRange('0','7'); 
 
@@ -2175,7 +2176,7 @@ public class JavaLexer extends Lexer {
                 cnt6++;
             } while (true);
 
-            // jkit/java/Java.g:932:32: ( IntegerTypeSuffix )?
+            // jkit/java/Java.g:936:32: ( IntegerTypeSuffix )?
             int alt7=2;
             int LA7_0 = input.LA(1);
 
@@ -2184,7 +2185,7 @@ public class JavaLexer extends Lexer {
             }
             switch (alt7) {
                 case 1 :
-                    // jkit/java/Java.g:932:32: IntegerTypeSuffix
+                    // jkit/java/Java.g:936:32: IntegerTypeSuffix
                     {
                     mIntegerTypeSuffix(); 
 
@@ -2207,8 +2208,8 @@ public class JavaLexer extends Lexer {
     // $ANTLR start "HexDigit"
     public final void mHexDigit() throws RecognitionException {
         try {
-            // jkit/java/Java.g:935:10: ( ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' ) )
-            // jkit/java/Java.g:935:12: ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' )
+            // jkit/java/Java.g:939:10: ( ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' ) )
+            // jkit/java/Java.g:939:12: ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' )
             {
             if ( (input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='F')||(input.LA(1)>='a' && input.LA(1)<='f') ) {
                 input.consume();
@@ -2231,8 +2232,8 @@ public class JavaLexer extends Lexer {
     // $ANTLR start "IntegerTypeSuffix"
     public final void mIntegerTypeSuffix() throws RecognitionException {
         try {
-            // jkit/java/Java.g:938:19: ( ( 'l' | 'L' ) )
-            // jkit/java/Java.g:938:21: ( 'l' | 'L' )
+            // jkit/java/Java.g:942:19: ( ( 'l' | 'L' ) )
+            // jkit/java/Java.g:942:21: ( 'l' | 'L' )
             {
             if ( input.LA(1)=='L'||input.LA(1)=='l' ) {
                 input.consume();
@@ -2257,14 +2258,14 @@ public class JavaLexer extends Lexer {
         try {
             int _type = FloatingPointLiteral;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:941:5: ( ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( Exponent )? ( FloatTypeSuffix )? | '.' ( '0' .. '9' )+ ( Exponent )? ( FloatTypeSuffix )? | ( '0' .. '9' )+ Exponent | ( '0' .. '9' )+ FloatTypeSuffix | ( '0' .. '9' )+ Exponent FloatTypeSuffix )
+            // jkit/java/Java.g:945:5: ( ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( Exponent )? ( FloatTypeSuffix )? | '.' ( '0' .. '9' )+ ( Exponent )? ( FloatTypeSuffix )? | ( '0' .. '9' )+ Exponent | ( '0' .. '9' )+ FloatTypeSuffix | ( '0' .. '9' )+ Exponent FloatTypeSuffix )
             int alt18=5;
             alt18 = dfa18.predict(input);
             switch (alt18) {
                 case 1 :
-                    // jkit/java/Java.g:941:9: ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( Exponent )? ( FloatTypeSuffix )?
+                    // jkit/java/Java.g:945:9: ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( Exponent )? ( FloatTypeSuffix )?
                     {
-                    // jkit/java/Java.g:941:9: ( '0' .. '9' )+
+                    // jkit/java/Java.g:945:9: ( '0' .. '9' )+
                     int cnt8=0;
                     loop8:
                     do {
@@ -2278,7 +2279,7 @@ public class JavaLexer extends Lexer {
 
                         switch (alt8) {
                     	case 1 :
-                    	    // jkit/java/Java.g:941:10: '0' .. '9'
+                    	    // jkit/java/Java.g:945:10: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -2295,7 +2296,7 @@ public class JavaLexer extends Lexer {
                     } while (true);
 
                     match('.'); 
-                    // jkit/java/Java.g:941:25: ( '0' .. '9' )*
+                    // jkit/java/Java.g:945:25: ( '0' .. '9' )*
                     loop9:
                     do {
                         int alt9=2;
@@ -2308,7 +2309,7 @@ public class JavaLexer extends Lexer {
 
                         switch (alt9) {
                     	case 1 :
-                    	    // jkit/java/Java.g:941:26: '0' .. '9'
+                    	    // jkit/java/Java.g:945:26: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -2320,7 +2321,7 @@ public class JavaLexer extends Lexer {
                         }
                     } while (true);
 
-                    // jkit/java/Java.g:941:37: ( Exponent )?
+                    // jkit/java/Java.g:945:37: ( Exponent )?
                     int alt10=2;
                     int LA10_0 = input.LA(1);
 
@@ -2329,7 +2330,7 @@ public class JavaLexer extends Lexer {
                     }
                     switch (alt10) {
                         case 1 :
-                            // jkit/java/Java.g:941:37: Exponent
+                            // jkit/java/Java.g:945:37: Exponent
                             {
                             mExponent(); 
 
@@ -2338,7 +2339,7 @@ public class JavaLexer extends Lexer {
 
                     }
 
-                    // jkit/java/Java.g:941:47: ( FloatTypeSuffix )?
+                    // jkit/java/Java.g:945:47: ( FloatTypeSuffix )?
                     int alt11=2;
                     int LA11_0 = input.LA(1);
 
@@ -2347,7 +2348,7 @@ public class JavaLexer extends Lexer {
                     }
                     switch (alt11) {
                         case 1 :
-                            // jkit/java/Java.g:941:47: FloatTypeSuffix
+                            // jkit/java/Java.g:945:47: FloatTypeSuffix
                             {
                             mFloatTypeSuffix(); 
 
@@ -2360,10 +2361,10 @@ public class JavaLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // jkit/java/Java.g:942:9: '.' ( '0' .. '9' )+ ( Exponent )? ( FloatTypeSuffix )?
+                    // jkit/java/Java.g:946:9: '.' ( '0' .. '9' )+ ( Exponent )? ( FloatTypeSuffix )?
                     {
                     match('.'); 
-                    // jkit/java/Java.g:942:13: ( '0' .. '9' )+
+                    // jkit/java/Java.g:946:13: ( '0' .. '9' )+
                     int cnt12=0;
                     loop12:
                     do {
@@ -2377,7 +2378,7 @@ public class JavaLexer extends Lexer {
 
                         switch (alt12) {
                     	case 1 :
-                    	    // jkit/java/Java.g:942:14: '0' .. '9'
+                    	    // jkit/java/Java.g:946:14: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -2393,7 +2394,7 @@ public class JavaLexer extends Lexer {
                         cnt12++;
                     } while (true);
 
-                    // jkit/java/Java.g:942:25: ( Exponent )?
+                    // jkit/java/Java.g:946:25: ( Exponent )?
                     int alt13=2;
                     int LA13_0 = input.LA(1);
 
@@ -2402,7 +2403,7 @@ public class JavaLexer extends Lexer {
                     }
                     switch (alt13) {
                         case 1 :
-                            // jkit/java/Java.g:942:25: Exponent
+                            // jkit/java/Java.g:946:25: Exponent
                             {
                             mExponent(); 
 
@@ -2411,7 +2412,7 @@ public class JavaLexer extends Lexer {
 
                     }
 
-                    // jkit/java/Java.g:942:35: ( FloatTypeSuffix )?
+                    // jkit/java/Java.g:946:35: ( FloatTypeSuffix )?
                     int alt14=2;
                     int LA14_0 = input.LA(1);
 
@@ -2420,7 +2421,7 @@ public class JavaLexer extends Lexer {
                     }
                     switch (alt14) {
                         case 1 :
-                            // jkit/java/Java.g:942:35: FloatTypeSuffix
+                            // jkit/java/Java.g:946:35: FloatTypeSuffix
                             {
                             mFloatTypeSuffix(); 
 
@@ -2433,9 +2434,9 @@ public class JavaLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // jkit/java/Java.g:943:9: ( '0' .. '9' )+ Exponent
+                    // jkit/java/Java.g:947:9: ( '0' .. '9' )+ Exponent
                     {
-                    // jkit/java/Java.g:943:9: ( '0' .. '9' )+
+                    // jkit/java/Java.g:947:9: ( '0' .. '9' )+
                     int cnt15=0;
                     loop15:
                     do {
@@ -2449,7 +2450,7 @@ public class JavaLexer extends Lexer {
 
                         switch (alt15) {
                     	case 1 :
-                    	    // jkit/java/Java.g:943:10: '0' .. '9'
+                    	    // jkit/java/Java.g:947:10: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -2470,9 +2471,9 @@ public class JavaLexer extends Lexer {
                     }
                     break;
                 case 4 :
-                    // jkit/java/Java.g:944:7: ( '0' .. '9' )+ FloatTypeSuffix
+                    // jkit/java/Java.g:948:7: ( '0' .. '9' )+ FloatTypeSuffix
                     {
-                    // jkit/java/Java.g:944:7: ( '0' .. '9' )+
+                    // jkit/java/Java.g:948:7: ( '0' .. '9' )+
                     int cnt16=0;
                     loop16:
                     do {
@@ -2486,7 +2487,7 @@ public class JavaLexer extends Lexer {
 
                         switch (alt16) {
                     	case 1 :
-                    	    // jkit/java/Java.g:944:8: '0' .. '9'
+                    	    // jkit/java/Java.g:948:8: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -2507,9 +2508,9 @@ public class JavaLexer extends Lexer {
                     }
                     break;
                 case 5 :
-                    // jkit/java/Java.g:945:9: ( '0' .. '9' )+ Exponent FloatTypeSuffix
+                    // jkit/java/Java.g:949:9: ( '0' .. '9' )+ Exponent FloatTypeSuffix
                     {
-                    // jkit/java/Java.g:945:9: ( '0' .. '9' )+
+                    // jkit/java/Java.g:949:9: ( '0' .. '9' )+
                     int cnt17=0;
                     loop17:
                     do {
@@ -2523,7 +2524,7 @@ public class JavaLexer extends Lexer {
 
                         switch (alt17) {
                     	case 1 :
-                    	    // jkit/java/Java.g:945:10: '0' .. '9'
+                    	    // jkit/java/Java.g:949:10: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -2557,8 +2558,8 @@ public class JavaLexer extends Lexer {
     // $ANTLR start "Exponent"
     public final void mExponent() throws RecognitionException {
         try {
-            // jkit/java/Java.g:949:10: ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )
-            // jkit/java/Java.g:949:12: ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
+            // jkit/java/Java.g:953:10: ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )
+            // jkit/java/Java.g:953:12: ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
             {
             if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                 input.consume();
@@ -2569,7 +2570,7 @@ public class JavaLexer extends Lexer {
                 recover(mse);
                 throw mse;}
 
-            // jkit/java/Java.g:949:22: ( '+' | '-' )?
+            // jkit/java/Java.g:953:22: ( '+' | '-' )?
             int alt19=2;
             int LA19_0 = input.LA(1);
 
@@ -2595,7 +2596,7 @@ public class JavaLexer extends Lexer {
 
             }
 
-            // jkit/java/Java.g:949:33: ( '0' .. '9' )+
+            // jkit/java/Java.g:953:33: ( '0' .. '9' )+
             int cnt20=0;
             loop20:
             do {
@@ -2609,7 +2610,7 @@ public class JavaLexer extends Lexer {
 
                 switch (alt20) {
             	case 1 :
-            	    // jkit/java/Java.g:949:34: '0' .. '9'
+            	    // jkit/java/Java.g:953:34: '0' .. '9'
             	    {
             	    matchRange('0','9'); 
 
@@ -2637,8 +2638,8 @@ public class JavaLexer extends Lexer {
     // $ANTLR start "FloatTypeSuffix"
     public final void mFloatTypeSuffix() throws RecognitionException {
         try {
-            // jkit/java/Java.g:952:17: ( ( 'f' | 'F' | 'd' | 'D' ) )
-            // jkit/java/Java.g:952:19: ( 'f' | 'F' | 'd' | 'D' )
+            // jkit/java/Java.g:956:17: ( ( 'f' | 'F' | 'd' | 'D' ) )
+            // jkit/java/Java.g:956:19: ( 'f' | 'F' | 'd' | 'D' )
             {
             if ( input.LA(1)=='D'||input.LA(1)=='F'||input.LA(1)=='d'||input.LA(1)=='f' ) {
                 input.consume();
@@ -2663,11 +2664,11 @@ public class JavaLexer extends Lexer {
         try {
             int _type = CharacterLiteral;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:955:5: ( '\\'' ( EscapeSequence | ~ ( '\\'' | '\\\\' ) ) '\\'' )
-            // jkit/java/Java.g:955:9: '\\'' ( EscapeSequence | ~ ( '\\'' | '\\\\' ) ) '\\''
+            // jkit/java/Java.g:959:5: ( '\\'' ( EscapeSequence | ~ ( '\\'' | '\\\\' ) ) '\\'' )
+            // jkit/java/Java.g:959:9: '\\'' ( EscapeSequence | ~ ( '\\'' | '\\\\' ) ) '\\''
             {
             match('\''); 
-            // jkit/java/Java.g:955:14: ( EscapeSequence | ~ ( '\\'' | '\\\\' ) )
+            // jkit/java/Java.g:959:14: ( EscapeSequence | ~ ( '\\'' | '\\\\' ) )
             int alt21=2;
             int LA21_0 = input.LA(1);
 
@@ -2685,14 +2686,14 @@ public class JavaLexer extends Lexer {
             }
             switch (alt21) {
                 case 1 :
-                    // jkit/java/Java.g:955:16: EscapeSequence
+                    // jkit/java/Java.g:959:16: EscapeSequence
                     {
                     mEscapeSequence(); 
 
                     }
                     break;
                 case 2 :
-                    // jkit/java/Java.g:955:33: ~ ( '\\'' | '\\\\' )
+                    // jkit/java/Java.g:959:33: ~ ( '\\'' | '\\\\' )
                     {
                     if ( (input.LA(1)>='\u0000' && input.LA(1)<='&')||(input.LA(1)>='(' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFE') ) {
                         input.consume();
@@ -2726,11 +2727,11 @@ public class JavaLexer extends Lexer {
         try {
             int _type = StringLiteral;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:959:5: ( '\"' ( EscapeSequence | ~ ( '\\\\' | '\"' ) )* '\"' )
-            // jkit/java/Java.g:959:8: '\"' ( EscapeSequence | ~ ( '\\\\' | '\"' ) )* '\"'
+            // jkit/java/Java.g:963:5: ( '\"' ( EscapeSequence | ~ ( '\\\\' | '\"' ) )* '\"' )
+            // jkit/java/Java.g:963:8: '\"' ( EscapeSequence | ~ ( '\\\\' | '\"' ) )* '\"'
             {
             match('\"'); 
-            // jkit/java/Java.g:959:12: ( EscapeSequence | ~ ( '\\\\' | '\"' ) )*
+            // jkit/java/Java.g:963:12: ( EscapeSequence | ~ ( '\\\\' | '\"' ) )*
             loop22:
             do {
                 int alt22=3;
@@ -2746,14 +2747,14 @@ public class JavaLexer extends Lexer {
 
                 switch (alt22) {
             	case 1 :
-            	    // jkit/java/Java.g:959:14: EscapeSequence
+            	    // jkit/java/Java.g:963:14: EscapeSequence
             	    {
             	    mEscapeSequence(); 
 
             	    }
             	    break;
             	case 2 :
-            	    // jkit/java/Java.g:959:31: ~ ( '\\\\' | '\"' )
+            	    // jkit/java/Java.g:963:31: ~ ( '\\\\' | '\"' )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFE') ) {
             	        input.consume();
@@ -2788,7 +2789,7 @@ public class JavaLexer extends Lexer {
     // $ANTLR start "EscapeSequence"
     public final void mEscapeSequence() throws RecognitionException {
         try {
-            // jkit/java/Java.g:964:5: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\\"' | '\\'' | '\\\\' ) | UnicodeEscape | OctalEscape )
+            // jkit/java/Java.g:968:5: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\\"' | '\\'' | '\\\\' ) | UnicodeEscape | OctalEscape )
             int alt23=3;
             int LA23_0 = input.LA(1);
 
@@ -2839,7 +2840,7 @@ public class JavaLexer extends Lexer {
             }
             switch (alt23) {
                 case 1 :
-                    // jkit/java/Java.g:964:9: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\\"' | '\\'' | '\\\\' )
+                    // jkit/java/Java.g:968:9: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\\"' | '\\'' | '\\\\' )
                     {
                     match('\\'); 
                     if ( input.LA(1)=='\"'||input.LA(1)=='\''||input.LA(1)=='\\'||input.LA(1)=='b'||input.LA(1)=='f'||input.LA(1)=='n'||input.LA(1)=='r'||input.LA(1)=='t' ) {
@@ -2855,14 +2856,14 @@ public class JavaLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // jkit/java/Java.g:965:9: UnicodeEscape
+                    // jkit/java/Java.g:969:9: UnicodeEscape
                     {
                     mUnicodeEscape(); 
 
                     }
                     break;
                 case 3 :
-                    // jkit/java/Java.g:966:9: OctalEscape
+                    // jkit/java/Java.g:970:9: OctalEscape
                     {
                     mOctalEscape(); 
 
@@ -2879,7 +2880,7 @@ public class JavaLexer extends Lexer {
     // $ANTLR start "OctalEscape"
     public final void mOctalEscape() throws RecognitionException {
         try {
-            // jkit/java/Java.g:971:5: ( '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) )
+            // jkit/java/Java.g:975:5: ( '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) )
             int alt24=3;
             int LA24_0 = input.LA(1);
 
@@ -2925,25 +2926,25 @@ public class JavaLexer extends Lexer {
             }
             switch (alt24) {
                 case 1 :
-                    // jkit/java/Java.g:971:9: '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' )
+                    // jkit/java/Java.g:975:9: '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' )
                     {
                     match('\\'); 
-                    // jkit/java/Java.g:971:14: ( '0' .. '3' )
-                    // jkit/java/Java.g:971:15: '0' .. '3'
+                    // jkit/java/Java.g:975:14: ( '0' .. '3' )
+                    // jkit/java/Java.g:975:15: '0' .. '3'
                     {
                     matchRange('0','3'); 
 
                     }
 
-                    // jkit/java/Java.g:971:25: ( '0' .. '7' )
-                    // jkit/java/Java.g:971:26: '0' .. '7'
+                    // jkit/java/Java.g:975:25: ( '0' .. '7' )
+                    // jkit/java/Java.g:975:26: '0' .. '7'
                     {
                     matchRange('0','7'); 
 
                     }
 
-                    // jkit/java/Java.g:971:36: ( '0' .. '7' )
-                    // jkit/java/Java.g:971:37: '0' .. '7'
+                    // jkit/java/Java.g:975:36: ( '0' .. '7' )
+                    // jkit/java/Java.g:975:37: '0' .. '7'
                     {
                     matchRange('0','7'); 
 
@@ -2953,18 +2954,18 @@ public class JavaLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // jkit/java/Java.g:972:9: '\\\\' ( '0' .. '7' ) ( '0' .. '7' )
+                    // jkit/java/Java.g:976:9: '\\\\' ( '0' .. '7' ) ( '0' .. '7' )
                     {
                     match('\\'); 
-                    // jkit/java/Java.g:972:14: ( '0' .. '7' )
-                    // jkit/java/Java.g:972:15: '0' .. '7'
+                    // jkit/java/Java.g:976:14: ( '0' .. '7' )
+                    // jkit/java/Java.g:976:15: '0' .. '7'
                     {
                     matchRange('0','7'); 
 
                     }
 
-                    // jkit/java/Java.g:972:25: ( '0' .. '7' )
-                    // jkit/java/Java.g:972:26: '0' .. '7'
+                    // jkit/java/Java.g:976:25: ( '0' .. '7' )
+                    // jkit/java/Java.g:976:26: '0' .. '7'
                     {
                     matchRange('0','7'); 
 
@@ -2974,11 +2975,11 @@ public class JavaLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // jkit/java/Java.g:973:9: '\\\\' ( '0' .. '7' )
+                    // jkit/java/Java.g:977:9: '\\\\' ( '0' .. '7' )
                     {
                     match('\\'); 
-                    // jkit/java/Java.g:973:14: ( '0' .. '7' )
-                    // jkit/java/Java.g:973:15: '0' .. '7'
+                    // jkit/java/Java.g:977:14: ( '0' .. '7' )
+                    // jkit/java/Java.g:977:15: '0' .. '7'
                     {
                     matchRange('0','7'); 
 
@@ -2998,8 +2999,8 @@ public class JavaLexer extends Lexer {
     // $ANTLR start "UnicodeEscape"
     public final void mUnicodeEscape() throws RecognitionException {
         try {
-            // jkit/java/Java.g:978:5: ( '\\\\' 'u' HexDigit HexDigit HexDigit HexDigit )
-            // jkit/java/Java.g:978:9: '\\\\' 'u' HexDigit HexDigit HexDigit HexDigit
+            // jkit/java/Java.g:982:5: ( '\\\\' 'u' HexDigit HexDigit HexDigit HexDigit )
+            // jkit/java/Java.g:982:9: '\\\\' 'u' HexDigit HexDigit HexDigit HexDigit
             {
             match('\\'); 
             match('u'); 
@@ -3021,8 +3022,8 @@ public class JavaLexer extends Lexer {
         try {
             int _type = ENUM;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:981:5: ( 'enum' )
-            // jkit/java/Java.g:981:7: 'enum'
+            // jkit/java/Java.g:985:5: ( 'enum' )
+            // jkit/java/Java.g:985:7: 'enum'
             {
             match("enum"); 
 
@@ -3043,11 +3044,11 @@ public class JavaLexer extends Lexer {
         try {
             int _type = Identifier;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:985:5: ( Letter ( Letter | JavaIDDigit )* )
-            // jkit/java/Java.g:985:9: Letter ( Letter | JavaIDDigit )*
+            // jkit/java/Java.g:989:5: ( Letter ( Letter | JavaIDDigit )* )
+            // jkit/java/Java.g:989:9: Letter ( Letter | JavaIDDigit )*
             {
             mLetter(); 
-            // jkit/java/Java.g:985:16: ( Letter | JavaIDDigit )*
+            // jkit/java/Java.g:989:16: ( Letter | JavaIDDigit )*
             loop25:
             do {
                 int alt25=2;
@@ -3094,7 +3095,7 @@ public class JavaLexer extends Lexer {
     // $ANTLR start "Letter"
     public final void mLetter() throws RecognitionException {
         try {
-            // jkit/java/Java.g:993:5: ( '\\u0024' | '\\u0041' .. '\\u005a' | '\\u005f' | '\\u0061' .. '\\u007a' | '\\u00c0' .. '\\u00d6' | '\\u00d8' .. '\\u00f6' | '\\u00f8' .. '\\u00ff' | '\\u0100' .. '\\u1fff' | '\\u3040' .. '\\u318f' | '\\u3300' .. '\\u337f' | '\\u3400' .. '\\u3d2d' | '\\u4e00' .. '\\u9fff' | '\\uf900' .. '\\ufaff' )
+            // jkit/java/Java.g:997:5: ( '\\u0024' | '\\u0041' .. '\\u005a' | '\\u005f' | '\\u0061' .. '\\u007a' | '\\u00c0' .. '\\u00d6' | '\\u00d8' .. '\\u00f6' | '\\u00f8' .. '\\u00ff' | '\\u0100' .. '\\u1fff' | '\\u3040' .. '\\u318f' | '\\u3300' .. '\\u337f' | '\\u3400' .. '\\u3d2d' | '\\u4e00' .. '\\u9fff' | '\\uf900' .. '\\ufaff' )
             // jkit/java/Java.g:
             {
             if ( input.LA(1)=='$'||(input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z')||(input.LA(1)>='\u00C0' && input.LA(1)<='\u00D6')||(input.LA(1)>='\u00D8' && input.LA(1)<='\u00F6')||(input.LA(1)>='\u00F8' && input.LA(1)<='\u1FFF')||(input.LA(1)>='\u3040' && input.LA(1)<='\u318F')||(input.LA(1)>='\u3300' && input.LA(1)<='\u337F')||(input.LA(1)>='\u3400' && input.LA(1)<='\u3D2D')||(input.LA(1)>='\u4E00' && input.LA(1)<='\u9FFF')||(input.LA(1)>='\uF900' && input.LA(1)<='\uFAFF') ) {
@@ -3118,7 +3119,7 @@ public class JavaLexer extends Lexer {
     // $ANTLR start "JavaIDDigit"
     public final void mJavaIDDigit() throws RecognitionException {
         try {
-            // jkit/java/Java.g:1010:5: ( '\\u0030' .. '\\u0039' | '\\u0660' .. '\\u0669' | '\\u06f0' .. '\\u06f9' | '\\u0966' .. '\\u096f' | '\\u09e6' .. '\\u09ef' | '\\u0a66' .. '\\u0a6f' | '\\u0ae6' .. '\\u0aef' | '\\u0b66' .. '\\u0b6f' | '\\u0be7' .. '\\u0bef' | '\\u0c66' .. '\\u0c6f' | '\\u0ce6' .. '\\u0cef' | '\\u0d66' .. '\\u0d6f' | '\\u0e50' .. '\\u0e59' | '\\u0ed0' .. '\\u0ed9' | '\\u1040' .. '\\u1049' )
+            // jkit/java/Java.g:1014:5: ( '\\u0030' .. '\\u0039' | '\\u0660' .. '\\u0669' | '\\u06f0' .. '\\u06f9' | '\\u0966' .. '\\u096f' | '\\u09e6' .. '\\u09ef' | '\\u0a66' .. '\\u0a6f' | '\\u0ae6' .. '\\u0aef' | '\\u0b66' .. '\\u0b6f' | '\\u0be7' .. '\\u0bef' | '\\u0c66' .. '\\u0c6f' | '\\u0ce6' .. '\\u0cef' | '\\u0d66' .. '\\u0d6f' | '\\u0e50' .. '\\u0e59' | '\\u0ed0' .. '\\u0ed9' | '\\u1040' .. '\\u1049' )
             // jkit/java/Java.g:
             {
             if ( (input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='\u0660' && input.LA(1)<='\u0669')||(input.LA(1)>='\u06F0' && input.LA(1)<='\u06F9')||(input.LA(1)>='\u0966' && input.LA(1)<='\u096F')||(input.LA(1)>='\u09E6' && input.LA(1)<='\u09EF')||(input.LA(1)>='\u0A66' && input.LA(1)<='\u0A6F')||(input.LA(1)>='\u0AE6' && input.LA(1)<='\u0AEF')||(input.LA(1)>='\u0B66' && input.LA(1)<='\u0B6F')||(input.LA(1)>='\u0BE7' && input.LA(1)<='\u0BEF')||(input.LA(1)>='\u0C66' && input.LA(1)<='\u0C6F')||(input.LA(1)>='\u0CE6' && input.LA(1)<='\u0CEF')||(input.LA(1)>='\u0D66' && input.LA(1)<='\u0D6F')||(input.LA(1)>='\u0E50' && input.LA(1)<='\u0E59')||(input.LA(1)>='\u0ED0' && input.LA(1)<='\u0ED9')||(input.LA(1)>='\u1040' && input.LA(1)<='\u1049') ) {
@@ -3144,8 +3145,8 @@ public class JavaLexer extends Lexer {
         try {
             int _type = WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:1027:5: ( ( ' ' | '\\r' | '\\t' | '\\u000C' | '\\n' ) )
-            // jkit/java/Java.g:1027:8: ( ' ' | '\\r' | '\\t' | '\\u000C' | '\\n' )
+            // jkit/java/Java.g:1031:5: ( ( ' ' | '\\r' | '\\t' | '\\u000C' | '\\n' ) )
+            // jkit/java/Java.g:1031:8: ( ' ' | '\\r' | '\\t' | '\\u000C' | '\\n' )
             {
             if ( (input.LA(1)>='\t' && input.LA(1)<='\n')||(input.LA(1)>='\f' && input.LA(1)<='\r')||input.LA(1)==' ' ) {
                 input.consume();
@@ -3173,12 +3174,12 @@ public class JavaLexer extends Lexer {
         try {
             int _type = COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:1031:5: ( '/*' ( options {greedy=false; } : . )* '*/' )
-            // jkit/java/Java.g:1031:9: '/*' ( options {greedy=false; } : . )* '*/'
+            // jkit/java/Java.g:1035:5: ( '/*' ( options {greedy=false; } : . )* '*/' )
+            // jkit/java/Java.g:1035:9: '/*' ( options {greedy=false; } : . )* '*/'
             {
             match("/*"); 
 
-            // jkit/java/Java.g:1031:14: ( options {greedy=false; } : . )*
+            // jkit/java/Java.g:1035:14: ( options {greedy=false; } : . )*
             loop26:
             do {
                 int alt26=2;
@@ -3203,7 +3204,7 @@ public class JavaLexer extends Lexer {
 
                 switch (alt26) {
             	case 1 :
-            	    // jkit/java/Java.g:1031:42: .
+            	    // jkit/java/Java.g:1035:42: .
             	    {
             	    matchAny(); 
 
@@ -3234,12 +3235,12 @@ public class JavaLexer extends Lexer {
         try {
             int _type = LINE_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/Java.g:1035:5: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? '\\n' )
-            // jkit/java/Java.g:1035:7: '//' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? '\\n'
+            // jkit/java/Java.g:1039:5: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? '\\n' )
+            // jkit/java/Java.g:1039:7: '//' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? '\\n'
             {
             match("//"); 
 
-            // jkit/java/Java.g:1035:12: (~ ( '\\n' | '\\r' ) )*
+            // jkit/java/Java.g:1039:12: (~ ( '\\n' | '\\r' ) )*
             loop27:
             do {
                 int alt27=2;
@@ -3252,7 +3253,7 @@ public class JavaLexer extends Lexer {
 
                 switch (alt27) {
             	case 1 :
-            	    // jkit/java/Java.g:1035:12: ~ ( '\\n' | '\\r' )
+            	    // jkit/java/Java.g:1039:12: ~ ( '\\n' | '\\r' )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFE') ) {
             	        input.consume();
@@ -3272,7 +3273,7 @@ public class JavaLexer extends Lexer {
                 }
             } while (true);
 
-            // jkit/java/Java.g:1035:26: ( '\\r' )?
+            // jkit/java/Java.g:1039:26: ( '\\r' )?
             int alt28=2;
             int LA28_0 = input.LA(1);
 
@@ -3281,7 +3282,7 @@ public class JavaLexer extends Lexer {
             }
             switch (alt28) {
                 case 1 :
-                    // jkit/java/Java.g:1035:26: '\\r'
+                    // jkit/java/Java.g:1039:26: '\\r'
                     {
                     match('\r'); 
 
@@ -3304,595 +3305,595 @@ public class JavaLexer extends Lexer {
     // $ANTLR end "LINE_COMMENT"
 
     public void mTokens() throws RecognitionException {
-        // jkit/java/Java.g:1:8: ( T__116 | T__117 | T__118 | T__119 | T__120 | T__121 | T__122 | T__123 | T__124 | T__125 | T__126 | T__127 | T__128 | T__129 | T__130 | T__131 | T__132 | T__133 | T__134 | T__135 | T__136 | T__137 | T__138 | T__139 | T__140 | T__141 | T__142 | T__143 | T__144 | T__145 | T__146 | T__147 | T__148 | T__149 | T__150 | T__151 | T__152 | T__153 | T__154 | T__155 | T__156 | T__157 | T__158 | T__159 | T__160 | T__161 | T__162 | T__163 | T__164 | T__165 | T__166 | T__167 | T__168 | T__169 | T__170 | T__171 | T__172 | T__173 | T__174 | T__175 | T__176 | T__177 | T__178 | T__179 | T__180 | T__181 | T__182 | T__183 | T__184 | T__185 | T__186 | T__187 | T__188 | T__189 | T__190 | T__191 | T__192 | T__193 | T__194 | T__195 | T__196 | T__197 | T__198 | T__199 | HexLiteral | DecimalLiteral | OctalLiteral | FloatingPointLiteral | CharacterLiteral | StringLiteral | ENUM | Identifier | WS | COMMENT | LINE_COMMENT )
+        // jkit/java/Java.g:1:8: ( T__117 | T__118 | T__119 | T__120 | T__121 | T__122 | T__123 | T__124 | T__125 | T__126 | T__127 | T__128 | T__129 | T__130 | T__131 | T__132 | T__133 | T__134 | T__135 | T__136 | T__137 | T__138 | T__139 | T__140 | T__141 | T__142 | T__143 | T__144 | T__145 | T__146 | T__147 | T__148 | T__149 | T__150 | T__151 | T__152 | T__153 | T__154 | T__155 | T__156 | T__157 | T__158 | T__159 | T__160 | T__161 | T__162 | T__163 | T__164 | T__165 | T__166 | T__167 | T__168 | T__169 | T__170 | T__171 | T__172 | T__173 | T__174 | T__175 | T__176 | T__177 | T__178 | T__179 | T__180 | T__181 | T__182 | T__183 | T__184 | T__185 | T__186 | T__187 | T__188 | T__189 | T__190 | T__191 | T__192 | T__193 | T__194 | T__195 | T__196 | T__197 | T__198 | T__199 | T__200 | HexLiteral | DecimalLiteral | OctalLiteral | FloatingPointLiteral | CharacterLiteral | StringLiteral | ENUM | Identifier | WS | COMMENT | LINE_COMMENT )
         int alt29=95;
         alt29 = dfa29.predict(input);
         switch (alt29) {
             case 1 :
-                // jkit/java/Java.g:1:10: T__116
-                {
-                mT__116(); 
-
-                }
-                break;
-            case 2 :
-                // jkit/java/Java.g:1:17: T__117
+                // jkit/java/Java.g:1:10: T__117
                 {
                 mT__117(); 
 
                 }
                 break;
-            case 3 :
-                // jkit/java/Java.g:1:24: T__118
+            case 2 :
+                // jkit/java/Java.g:1:17: T__118
                 {
                 mT__118(); 
 
                 }
                 break;
-            case 4 :
-                // jkit/java/Java.g:1:31: T__119
+            case 3 :
+                // jkit/java/Java.g:1:24: T__119
                 {
                 mT__119(); 
 
                 }
                 break;
-            case 5 :
-                // jkit/java/Java.g:1:38: T__120
+            case 4 :
+                // jkit/java/Java.g:1:31: T__120
                 {
                 mT__120(); 
 
                 }
                 break;
-            case 6 :
-                // jkit/java/Java.g:1:45: T__121
+            case 5 :
+                // jkit/java/Java.g:1:38: T__121
                 {
                 mT__121(); 
 
                 }
                 break;
-            case 7 :
-                // jkit/java/Java.g:1:52: T__122
+            case 6 :
+                // jkit/java/Java.g:1:45: T__122
                 {
                 mT__122(); 
 
                 }
                 break;
-            case 8 :
-                // jkit/java/Java.g:1:59: T__123
+            case 7 :
+                // jkit/java/Java.g:1:52: T__123
                 {
                 mT__123(); 
 
                 }
                 break;
-            case 9 :
-                // jkit/java/Java.g:1:66: T__124
+            case 8 :
+                // jkit/java/Java.g:1:59: T__124
                 {
                 mT__124(); 
 
                 }
                 break;
-            case 10 :
-                // jkit/java/Java.g:1:73: T__125
+            case 9 :
+                // jkit/java/Java.g:1:66: T__125
                 {
                 mT__125(); 
 
                 }
                 break;
-            case 11 :
-                // jkit/java/Java.g:1:80: T__126
+            case 10 :
+                // jkit/java/Java.g:1:73: T__126
                 {
                 mT__126(); 
 
                 }
                 break;
-            case 12 :
-                // jkit/java/Java.g:1:87: T__127
+            case 11 :
+                // jkit/java/Java.g:1:80: T__127
                 {
                 mT__127(); 
 
                 }
                 break;
-            case 13 :
-                // jkit/java/Java.g:1:94: T__128
+            case 12 :
+                // jkit/java/Java.g:1:87: T__128
                 {
                 mT__128(); 
 
                 }
                 break;
-            case 14 :
-                // jkit/java/Java.g:1:101: T__129
+            case 13 :
+                // jkit/java/Java.g:1:94: T__129
                 {
                 mT__129(); 
 
                 }
                 break;
-            case 15 :
-                // jkit/java/Java.g:1:108: T__130
+            case 14 :
+                // jkit/java/Java.g:1:101: T__130
                 {
                 mT__130(); 
 
                 }
                 break;
-            case 16 :
-                // jkit/java/Java.g:1:115: T__131
+            case 15 :
+                // jkit/java/Java.g:1:108: T__131
                 {
                 mT__131(); 
 
                 }
                 break;
-            case 17 :
-                // jkit/java/Java.g:1:122: T__132
+            case 16 :
+                // jkit/java/Java.g:1:115: T__132
                 {
                 mT__132(); 
 
                 }
                 break;
-            case 18 :
-                // jkit/java/Java.g:1:129: T__133
+            case 17 :
+                // jkit/java/Java.g:1:122: T__133
                 {
                 mT__133(); 
 
                 }
                 break;
-            case 19 :
-                // jkit/java/Java.g:1:136: T__134
+            case 18 :
+                // jkit/java/Java.g:1:129: T__134
                 {
                 mT__134(); 
 
                 }
                 break;
-            case 20 :
-                // jkit/java/Java.g:1:143: T__135
+            case 19 :
+                // jkit/java/Java.g:1:136: T__135
                 {
                 mT__135(); 
 
                 }
                 break;
-            case 21 :
-                // jkit/java/Java.g:1:150: T__136
+            case 20 :
+                // jkit/java/Java.g:1:143: T__136
                 {
                 mT__136(); 
 
                 }
                 break;
-            case 22 :
-                // jkit/java/Java.g:1:157: T__137
+            case 21 :
+                // jkit/java/Java.g:1:150: T__137
                 {
                 mT__137(); 
 
                 }
                 break;
-            case 23 :
-                // jkit/java/Java.g:1:164: T__138
+            case 22 :
+                // jkit/java/Java.g:1:157: T__138
                 {
                 mT__138(); 
 
                 }
                 break;
-            case 24 :
-                // jkit/java/Java.g:1:171: T__139
+            case 23 :
+                // jkit/java/Java.g:1:164: T__139
                 {
                 mT__139(); 
 
                 }
                 break;
-            case 25 :
-                // jkit/java/Java.g:1:178: T__140
+            case 24 :
+                // jkit/java/Java.g:1:171: T__140
                 {
                 mT__140(); 
 
                 }
                 break;
-            case 26 :
-                // jkit/java/Java.g:1:185: T__141
+            case 25 :
+                // jkit/java/Java.g:1:178: T__141
                 {
                 mT__141(); 
 
                 }
                 break;
-            case 27 :
-                // jkit/java/Java.g:1:192: T__142
+            case 26 :
+                // jkit/java/Java.g:1:185: T__142
                 {
                 mT__142(); 
 
                 }
                 break;
-            case 28 :
-                // jkit/java/Java.g:1:199: T__143
+            case 27 :
+                // jkit/java/Java.g:1:192: T__143
                 {
                 mT__143(); 
 
                 }
                 break;
-            case 29 :
-                // jkit/java/Java.g:1:206: T__144
+            case 28 :
+                // jkit/java/Java.g:1:199: T__144
                 {
                 mT__144(); 
 
                 }
                 break;
-            case 30 :
-                // jkit/java/Java.g:1:213: T__145
+            case 29 :
+                // jkit/java/Java.g:1:206: T__145
                 {
                 mT__145(); 
 
                 }
                 break;
-            case 31 :
-                // jkit/java/Java.g:1:220: T__146
+            case 30 :
+                // jkit/java/Java.g:1:213: T__146
                 {
                 mT__146(); 
 
                 }
                 break;
-            case 32 :
-                // jkit/java/Java.g:1:227: T__147
+            case 31 :
+                // jkit/java/Java.g:1:220: T__147
                 {
                 mT__147(); 
 
                 }
                 break;
-            case 33 :
-                // jkit/java/Java.g:1:234: T__148
+            case 32 :
+                // jkit/java/Java.g:1:227: T__148
                 {
                 mT__148(); 
 
                 }
                 break;
-            case 34 :
-                // jkit/java/Java.g:1:241: T__149
+            case 33 :
+                // jkit/java/Java.g:1:234: T__149
                 {
                 mT__149(); 
 
                 }
                 break;
-            case 35 :
-                // jkit/java/Java.g:1:248: T__150
+            case 34 :
+                // jkit/java/Java.g:1:241: T__150
                 {
                 mT__150(); 
 
                 }
                 break;
-            case 36 :
-                // jkit/java/Java.g:1:255: T__151
+            case 35 :
+                // jkit/java/Java.g:1:248: T__151
                 {
                 mT__151(); 
 
                 }
                 break;
-            case 37 :
-                // jkit/java/Java.g:1:262: T__152
+            case 36 :
+                // jkit/java/Java.g:1:255: T__152
                 {
                 mT__152(); 
 
                 }
                 break;
-            case 38 :
-                // jkit/java/Java.g:1:269: T__153
+            case 37 :
+                // jkit/java/Java.g:1:262: T__153
                 {
                 mT__153(); 
 
                 }
                 break;
-            case 39 :
-                // jkit/java/Java.g:1:276: T__154
+            case 38 :
+                // jkit/java/Java.g:1:269: T__154
                 {
                 mT__154(); 
 
                 }
                 break;
-            case 40 :
-                // jkit/java/Java.g:1:283: T__155
+            case 39 :
+                // jkit/java/Java.g:1:276: T__155
                 {
                 mT__155(); 
 
                 }
                 break;
-            case 41 :
-                // jkit/java/Java.g:1:290: T__156
+            case 40 :
+                // jkit/java/Java.g:1:283: T__156
                 {
                 mT__156(); 
 
                 }
                 break;
-            case 42 :
-                // jkit/java/Java.g:1:297: T__157
+            case 41 :
+                // jkit/java/Java.g:1:290: T__157
                 {
                 mT__157(); 
 
                 }
                 break;
-            case 43 :
-                // jkit/java/Java.g:1:304: T__158
+            case 42 :
+                // jkit/java/Java.g:1:297: T__158
                 {
                 mT__158(); 
 
                 }
                 break;
-            case 44 :
-                // jkit/java/Java.g:1:311: T__159
+            case 43 :
+                // jkit/java/Java.g:1:304: T__159
                 {
                 mT__159(); 
 
                 }
                 break;
-            case 45 :
-                // jkit/java/Java.g:1:318: T__160
+            case 44 :
+                // jkit/java/Java.g:1:311: T__160
                 {
                 mT__160(); 
 
                 }
                 break;
-            case 46 :
-                // jkit/java/Java.g:1:325: T__161
+            case 45 :
+                // jkit/java/Java.g:1:318: T__161
                 {
                 mT__161(); 
 
                 }
                 break;
-            case 47 :
-                // jkit/java/Java.g:1:332: T__162
+            case 46 :
+                // jkit/java/Java.g:1:325: T__162
                 {
                 mT__162(); 
 
                 }
                 break;
-            case 48 :
-                // jkit/java/Java.g:1:339: T__163
+            case 47 :
+                // jkit/java/Java.g:1:332: T__163
                 {
                 mT__163(); 
 
                 }
                 break;
-            case 49 :
-                // jkit/java/Java.g:1:346: T__164
+            case 48 :
+                // jkit/java/Java.g:1:339: T__164
                 {
                 mT__164(); 
 
                 }
                 break;
-            case 50 :
-                // jkit/java/Java.g:1:353: T__165
+            case 49 :
+                // jkit/java/Java.g:1:346: T__165
                 {
                 mT__165(); 
 
                 }
                 break;
-            case 51 :
-                // jkit/java/Java.g:1:360: T__166
+            case 50 :
+                // jkit/java/Java.g:1:353: T__166
                 {
                 mT__166(); 
 
                 }
                 break;
-            case 52 :
-                // jkit/java/Java.g:1:367: T__167
+            case 51 :
+                // jkit/java/Java.g:1:360: T__167
                 {
                 mT__167(); 
 
                 }
                 break;
-            case 53 :
-                // jkit/java/Java.g:1:374: T__168
+            case 52 :
+                // jkit/java/Java.g:1:367: T__168
                 {
                 mT__168(); 
 
                 }
                 break;
-            case 54 :
-                // jkit/java/Java.g:1:381: T__169
+            case 53 :
+                // jkit/java/Java.g:1:374: T__169
                 {
                 mT__169(); 
 
                 }
                 break;
-            case 55 :
-                // jkit/java/Java.g:1:388: T__170
+            case 54 :
+                // jkit/java/Java.g:1:381: T__170
                 {
                 mT__170(); 
 
                 }
                 break;
-            case 56 :
-                // jkit/java/Java.g:1:395: T__171
+            case 55 :
+                // jkit/java/Java.g:1:388: T__171
                 {
                 mT__171(); 
 
                 }
                 break;
-            case 57 :
-                // jkit/java/Java.g:1:402: T__172
+            case 56 :
+                // jkit/java/Java.g:1:395: T__172
                 {
                 mT__172(); 
 
                 }
                 break;
-            case 58 :
-                // jkit/java/Java.g:1:409: T__173
+            case 57 :
+                // jkit/java/Java.g:1:402: T__173
                 {
                 mT__173(); 
 
                 }
                 break;
-            case 59 :
-                // jkit/java/Java.g:1:416: T__174
+            case 58 :
+                // jkit/java/Java.g:1:409: T__174
                 {
                 mT__174(); 
 
                 }
                 break;
-            case 60 :
-                // jkit/java/Java.g:1:423: T__175
+            case 59 :
+                // jkit/java/Java.g:1:416: T__175
                 {
                 mT__175(); 
 
                 }
                 break;
-            case 61 :
-                // jkit/java/Java.g:1:430: T__176
+            case 60 :
+                // jkit/java/Java.g:1:423: T__176
                 {
                 mT__176(); 
 
                 }
                 break;
-            case 62 :
-                // jkit/java/Java.g:1:437: T__177
+            case 61 :
+                // jkit/java/Java.g:1:430: T__177
                 {
                 mT__177(); 
 
                 }
                 break;
-            case 63 :
-                // jkit/java/Java.g:1:444: T__178
+            case 62 :
+                // jkit/java/Java.g:1:437: T__178
                 {
                 mT__178(); 
 
                 }
                 break;
-            case 64 :
-                // jkit/java/Java.g:1:451: T__179
+            case 63 :
+                // jkit/java/Java.g:1:444: T__179
                 {
                 mT__179(); 
 
                 }
                 break;
-            case 65 :
-                // jkit/java/Java.g:1:458: T__180
+            case 64 :
+                // jkit/java/Java.g:1:451: T__180
                 {
                 mT__180(); 
 
                 }
                 break;
-            case 66 :
-                // jkit/java/Java.g:1:465: T__181
+            case 65 :
+                // jkit/java/Java.g:1:458: T__181
                 {
                 mT__181(); 
 
                 }
                 break;
-            case 67 :
-                // jkit/java/Java.g:1:472: T__182
+            case 66 :
+                // jkit/java/Java.g:1:465: T__182
                 {
                 mT__182(); 
 
                 }
                 break;
-            case 68 :
-                // jkit/java/Java.g:1:479: T__183
+            case 67 :
+                // jkit/java/Java.g:1:472: T__183
                 {
                 mT__183(); 
 
                 }
                 break;
-            case 69 :
-                // jkit/java/Java.g:1:486: T__184
+            case 68 :
+                // jkit/java/Java.g:1:479: T__184
                 {
                 mT__184(); 
 
                 }
                 break;
-            case 70 :
-                // jkit/java/Java.g:1:493: T__185
+            case 69 :
+                // jkit/java/Java.g:1:486: T__185
                 {
                 mT__185(); 
 
                 }
                 break;
-            case 71 :
-                // jkit/java/Java.g:1:500: T__186
+            case 70 :
+                // jkit/java/Java.g:1:493: T__186
                 {
                 mT__186(); 
 
                 }
                 break;
-            case 72 :
-                // jkit/java/Java.g:1:507: T__187
+            case 71 :
+                // jkit/java/Java.g:1:500: T__187
                 {
                 mT__187(); 
 
                 }
                 break;
-            case 73 :
-                // jkit/java/Java.g:1:514: T__188
+            case 72 :
+                // jkit/java/Java.g:1:507: T__188
                 {
                 mT__188(); 
 
                 }
                 break;
-            case 74 :
-                // jkit/java/Java.g:1:521: T__189
+            case 73 :
+                // jkit/java/Java.g:1:514: T__189
                 {
                 mT__189(); 
 
                 }
                 break;
-            case 75 :
-                // jkit/java/Java.g:1:528: T__190
+            case 74 :
+                // jkit/java/Java.g:1:521: T__190
                 {
                 mT__190(); 
 
                 }
                 break;
-            case 76 :
-                // jkit/java/Java.g:1:535: T__191
+            case 75 :
+                // jkit/java/Java.g:1:528: T__191
                 {
                 mT__191(); 
 
                 }
                 break;
-            case 77 :
-                // jkit/java/Java.g:1:542: T__192
+            case 76 :
+                // jkit/java/Java.g:1:535: T__192
                 {
                 mT__192(); 
 
                 }
                 break;
-            case 78 :
-                // jkit/java/Java.g:1:549: T__193
+            case 77 :
+                // jkit/java/Java.g:1:542: T__193
                 {
                 mT__193(); 
 
                 }
                 break;
-            case 79 :
-                // jkit/java/Java.g:1:556: T__194
+            case 78 :
+                // jkit/java/Java.g:1:549: T__194
                 {
                 mT__194(); 
 
                 }
                 break;
-            case 80 :
-                // jkit/java/Java.g:1:563: T__195
+            case 79 :
+                // jkit/java/Java.g:1:556: T__195
                 {
                 mT__195(); 
 
                 }
                 break;
-            case 81 :
-                // jkit/java/Java.g:1:570: T__196
+            case 80 :
+                // jkit/java/Java.g:1:563: T__196
                 {
                 mT__196(); 
 
                 }
                 break;
-            case 82 :
-                // jkit/java/Java.g:1:577: T__197
+            case 81 :
+                // jkit/java/Java.g:1:570: T__197
                 {
                 mT__197(); 
 
                 }
                 break;
-            case 83 :
-                // jkit/java/Java.g:1:584: T__198
+            case 82 :
+                // jkit/java/Java.g:1:577: T__198
                 {
                 mT__198(); 
 
                 }
                 break;
-            case 84 :
-                // jkit/java/Java.g:1:591: T__199
+            case 83 :
+                // jkit/java/Java.g:1:584: T__199
                 {
                 mT__199(); 
+
+                }
+                break;
+            case 84 :
+                // jkit/java/Java.g:1:591: T__200
+                {
+                mT__200(); 
 
                 }
                 break;
@@ -4036,7 +4037,7 @@ public class JavaLexer extends Lexer {
             this.transition = DFA18_transition;
         }
         public String getDescription() {
-            return "940:1: FloatingPointLiteral : ( ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( Exponent )? ( FloatTypeSuffix )? | '.' ( '0' .. '9' )+ ( Exponent )? ( FloatTypeSuffix )? | ( '0' .. '9' )+ Exponent | ( '0' .. '9' )+ FloatTypeSuffix | ( '0' .. '9' )+ Exponent FloatTypeSuffix );";
+            return "944:1: FloatingPointLiteral : ( ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( Exponent )? ( FloatTypeSuffix )? | '.' ( '0' .. '9' )+ ( Exponent )? ( FloatTypeSuffix )? | ( '0' .. '9' )+ Exponent | ( '0' .. '9' )+ FloatTypeSuffix | ( '0' .. '9' )+ Exponent FloatTypeSuffix );";
         }
     }
     static final String DFA29_eotS =
@@ -4673,7 +4674,7 @@ public class JavaLexer extends Lexer {
             this.transition = DFA29_transition;
         }
         public String getDescription() {
-            return "1:1: Tokens : ( T__116 | T__117 | T__118 | T__119 | T__120 | T__121 | T__122 | T__123 | T__124 | T__125 | T__126 | T__127 | T__128 | T__129 | T__130 | T__131 | T__132 | T__133 | T__134 | T__135 | T__136 | T__137 | T__138 | T__139 | T__140 | T__141 | T__142 | T__143 | T__144 | T__145 | T__146 | T__147 | T__148 | T__149 | T__150 | T__151 | T__152 | T__153 | T__154 | T__155 | T__156 | T__157 | T__158 | T__159 | T__160 | T__161 | T__162 | T__163 | T__164 | T__165 | T__166 | T__167 | T__168 | T__169 | T__170 | T__171 | T__172 | T__173 | T__174 | T__175 | T__176 | T__177 | T__178 | T__179 | T__180 | T__181 | T__182 | T__183 | T__184 | T__185 | T__186 | T__187 | T__188 | T__189 | T__190 | T__191 | T__192 | T__193 | T__194 | T__195 | T__196 | T__197 | T__198 | T__199 | HexLiteral | DecimalLiteral | OctalLiteral | FloatingPointLiteral | CharacterLiteral | StringLiteral | ENUM | Identifier | WS | COMMENT | LINE_COMMENT );";
+            return "1:1: Tokens : ( T__117 | T__118 | T__119 | T__120 | T__121 | T__122 | T__123 | T__124 | T__125 | T__126 | T__127 | T__128 | T__129 | T__130 | T__131 | T__132 | T__133 | T__134 | T__135 | T__136 | T__137 | T__138 | T__139 | T__140 | T__141 | T__142 | T__143 | T__144 | T__145 | T__146 | T__147 | T__148 | T__149 | T__150 | T__151 | T__152 | T__153 | T__154 | T__155 | T__156 | T__157 | T__158 | T__159 | T__160 | T__161 | T__162 | T__163 | T__164 | T__165 | T__166 | T__167 | T__168 | T__169 | T__170 | T__171 | T__172 | T__173 | T__174 | T__175 | T__176 | T__177 | T__178 | T__179 | T__180 | T__181 | T__182 | T__183 | T__184 | T__185 | T__186 | T__187 | T__188 | T__189 | T__190 | T__191 | T__192 | T__193 | T__194 | T__195 | T__196 | T__197 | T__198 | T__199 | T__200 | HexLiteral | DecimalLiteral | OctalLiteral | FloatingPointLiteral | CharacterLiteral | StringLiteral | ENUM | Identifier | WS | COMMENT | LINE_COMMENT );";
         }
     }
  

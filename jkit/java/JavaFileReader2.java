@@ -75,7 +75,7 @@ public class JavaFileReader2 {
 
 		try {
 			ast = (Tree) parser.compilationUnit().getTree();
-			// printTree(ast, 0, -1);
+			printTree(ast, 0, -1);
 		} catch (RecognitionException e) {
 		}
 	}
@@ -120,13 +120,16 @@ public class JavaFileReader2 {
 	public JavaFile read() {
 		
 		ArrayList<JavaFile.Clazz> classes = new ArrayList<JavaFile.Clazz>();
-		ArrayList<String> imports = new ArrayList<String>();
+		ArrayList<Pair<Boolean,String> > imports = new ArrayList<Pair<Boolean,String> >();
 		String pkg = null;
 		
 		// Read top declarations first.
 		outer : for (int i = 0; i != ast.getChildCount(); ++i) {
+			boolean static_import = false;
 			Tree c = ast.getChild(i);
 			switch (c.getType()) {
+				case STATIC_IMPORT :
+					static_import = true;
 				case IMPORT : {
 					// rebuild import string
 					String filter = "";
@@ -138,7 +141,7 @@ public class JavaFileReader2 {
 					}
 					// make sure later imports get higher priority
 					// in the search.
-					imports.add(0, filter);
+					imports.add(0, new Pair(static_import,filter));
 					break;
 				}
 				case PACKAGE :
@@ -1542,6 +1545,8 @@ public class JavaFileReader2 {
 	protected static final int MOD = JavaParser.MOD;
 
 	protected static final int IMPORT = JavaParser.IMPORT;
+	
+	protected static final int STATIC_IMPORT = JavaParser.STATIC_IMPORT;
 
 	protected static final int INTVAL = JavaParser.INTVAL;
 

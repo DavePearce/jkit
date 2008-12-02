@@ -89,6 +89,7 @@ tokens {
  UNIT; 
  PACKAGE;
  IMPORT;
+ STATIC_IMPORT;
  CLASS;
  INTERFACE;
  ENUM;
@@ -210,7 +211,10 @@ packageDeclaration
 	;
 	
 importDeclaration
-	:	'import' 'static'? i+=Identifier ('.' i+=Identifier)* ('.' i+='*')? ';' -> ^(IMPORT $i+)
+	:	'import' (
+			'static' i+=Identifier ('.' i+=Identifier)* ('.' i+='*')? ';' -> ^(STATIC_IMPORT $i+)
+			| i+=Identifier ('.' i+=Identifier)* ('.' i+='*')? ';' -> ^(IMPORT $i+)
+			)
 	;
 	
 typeDeclaration
