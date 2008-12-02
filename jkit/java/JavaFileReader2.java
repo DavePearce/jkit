@@ -75,7 +75,7 @@ public class JavaFileReader2 {
 
 		try {
 			ast = (Tree) parser.compilationUnit().getTree();
-			// printTree(ast, 0, -1);
+			printTree(ast, 0, -1);
 		} catch (RecognitionException e) {
 		}
 	}
@@ -202,7 +202,7 @@ public class JavaFileReader2 {
 	
 	protected JavaFile.Clazz parseClass(Tree decl) {
 		int idx = 0;
-		int modifiers = 0;
+		List<Modifier> modifiers = new ArrayList<Modifier>();
 		if (decl.getChild(idx).getType() == MODIFIERS) {
 			modifiers = parseModifiers(decl.getChild(0));
 			idx++;

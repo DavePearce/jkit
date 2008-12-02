@@ -128,6 +128,24 @@ public class JavaFile {
 	}
 	
 	// ====================================================
+	// MODIFIERS
+	// ====================================================
+	
+	public interface Modifier {
+		
+	}
+	
+	public class BaseModifier implements Modifier {
+		private int modifier;
+		public BaseModifier(int modifier) {
+			this.modifier = modifier;
+		}
+		public int modifier() {
+			return modifier;
+		}
+	}
+	
+	// ====================================================
 	// DECLARATIONS
 	// ====================================================
 	
@@ -136,14 +154,14 @@ public class JavaFile {
 	}
 	
 	public static class Clazz implements Declaration, Statement {
-		private int modifiers;
+		private List<Modifier> modifiers;
 		private String name;
 		private List<VariableType> typeParameters;
 		private ClassType superclass;
 		private List<ClassType> interfaces;
 		private List<Declaration> declarations;		
 				
-		public Clazz(int modifiers, String name,
+		public Clazz(List<Modifier> modifiers, String name,
 				List<VariableType> typeParameters, ClassType superclass,
 				List<ClassType> interfaces, List<Declaration> declarations) {
 			this.modifiers = modifiers;
@@ -154,7 +172,7 @@ public class JavaFile {
 			this.declarations = declarations;			
 		}
 		
-		public int modifiers() {
+		public List<Modifier> modifiers() {
 			return modifiers;
 		}
 		
@@ -177,37 +195,20 @@ public class JavaFile {
 		public List<Declaration> declarations() { 
 			return declarations;
 		}		
-				
-		/**
-		 * Check whether this is an interface
-		 */
-		public boolean isInterface() { return (modifiers&Modifier.INTERFACE)!=0; } 
-
-		/**
-		 * Check whether this class or interface is abstract
-		 */
-		public boolean isAbstract() { return (modifiers&Modifier.ABSTRACT)!=0; }
-		
-		/**
-		 * Check whether this class or interface is final
-		 */
-		public boolean isFinal() { return (modifiers&Modifier.FINAL)!=0; }
-		
-		/**
-		 * Check whether this class or interface is static
-		 */
-		public boolean isStatic() { return (modifiers&Modifier.STATIC)!=0; }
-		
-		/**
-		 * Check whether this class or interface is static
-		 */
-		public boolean isPublic() { return (modifiers&Modifier.PUBLIC)!=0; }
+	}
+	
+	public static class Interface extends Clazz {
+		public Interface(List<Modifier> modifiers, String name,
+				List<VariableType> typeParameters, ClassType superclass,
+				List<ClassType> interfaces, List<Declaration> declarations) {
+			super(modifiers,name,typeParameters,superclass,interfaces,declarations);
+		}
 	}
 	
 	public static class Enum extends Clazz {
 		private List<EnumConstant> constants;
 
-		public Enum(int modifiers, String name, List<ClassType> interfaces,
+		public Enum(List<Modifier> modifiers, String name, List<ClassType> interfaces,
 				List<EnumConstant> constants, List<Declaration> declarations) {
 			super(modifiers, name, new ArrayList<VariableType>(), null,
 					interfaces, declarations);
@@ -244,18 +245,18 @@ public class JavaFile {
 	}
 	
 	public static class AnnotationInterface implements Declaration {
-		private int modifiers;
+		private List<Modifier> modifiers;
 		private String name;
 		private List<Triple<JavaFile.Type, String, JavaFile.Value>> methods; 
 						
-		public AnnotationInterface(int modifiers, String name,
+		public AnnotationInterface(List<Modifier> modifiers, String name,
 				List<Triple<JavaFile.Type, String, JavaFile.Value>> methods) {
 			this.modifiers = modifiers;
 			this.name = name;
 			this.methods = methods;
 		}
 		
-		public int modifiers() {
+		public List<Modifier> modifiers() {
 			return modifiers;
 		}
 		public String name() {
@@ -275,7 +276,7 @@ public class JavaFile {
 	 * 
 	 */
 	public static class Method implements Declaration {
-		private int modifiers;
+		private List<Modifier> modifiers;
 		private String name;
 		private Type returnType;
 		private List<Triple<String,Integer,Type>> parameters;
@@ -284,7 +285,7 @@ public class JavaFile {
 		private List<ClassType> exceptions;
 		private JavaFile.Block block;
 
-		public Method(int modifiers, 
+		public Method(List<Modifier> modifiers, 
 				String name, 
 				Type returnType,
 				List<Triple<String,Integer,Type>> parameters,
@@ -302,7 +303,7 @@ public class JavaFile {
 			this.block = block;
 		}
 		
-		public int modifiers() {
+		public List<Modifier> modifiers() {
 			return modifiers;
 		}
 		
@@ -354,7 +355,7 @@ public class JavaFile {
 	 * 
 	 */
 	public static class Constructor extends Method {
-		public Constructor(int modifiers, String name,
+		public Constructor(List<Modifier> modifiers, String name,
 				List<Triple<String, Integer, Type>> parameters, boolean varargs,
 				List<VariableType> typeParameters,
 				List<ClassType> exceptions,
@@ -365,12 +366,12 @@ public class JavaFile {
 	}
 	
 	public static class Field implements Declaration {
-		private int modifiers;
+		private List<Modifier> modifiers;
 		private String name;
 		private Type type;
 		private Expression initialiser;
 		
-		public Field(int modifiers, String name, Type type,
+		public Field(List<Modifier> modifiers, String name, Type type,
 				Expression initialiser) {
 			this.modifiers = modifiers;
 			this.name = name;
@@ -378,7 +379,7 @@ public class JavaFile {
 			this.initialiser = initialiser;
 		}
 		
-		public int modifiers() {
+		public List<Modifier> modifiers() {
 			return modifiers;
 		}
 		
@@ -392,33 +393,7 @@ public class JavaFile {
 		
 		public Expression initialiser() {
 			return initialiser;
-		}
-		
-		/**
-		 * Check whether this is an interface
-		 */
-		public boolean isInterface() { return (modifiers&Modifier.INTERFACE)!=0; } 
-
-		/**
-		 * Check whether this class or interface is abstract
-		 */
-		public boolean isAbstract() { return (modifiers&Modifier.ABSTRACT)!=0; }
-		
-		/**
-		 * Check whether this class or interface is final
-		 */
-		public boolean isFinal() { return (modifiers&Modifier.FINAL)!=0; }
-		
-		/**
-		 * Check whether this class or interface is static
-		 */
-		public boolean isStatic() { return (modifiers&Modifier.STATIC)!=0; }
-		
-		/**
-		 * Check whether this class or interface is static
-		 */
-		public boolean isPublic() { return (modifiers&Modifier.PUBLIC)!=0; }
-			
+		}		
 	}
 	
 	public static class InitialiserBlock extends Block implements Declaration {
@@ -660,12 +635,12 @@ public class JavaFile {
 	
 	public static class ForEach implements Statement {
 		private String var;
-		private int modifiers; // for variable
+		private List<Modifier> modifiers; // for variable
 		private Type type; // for variable
 		private Expression source; 
 		private Statement body;
 		
-		public ForEach(int modifiers, String var, Type type, Expression source, Statement body) {
+		public ForEach(List<Modifier> modifiers, String var, Type type, Expression source, Statement body) {
 			this.modifiers = modifiers;
 			this.var = var;
 			this.type = type;
@@ -679,14 +654,14 @@ public class JavaFile {
 		 * 
 		 * @param type
 		 */
-		public void setModifiers(int modifiers) { this.modifiers = modifiers; }
+		public void setModifiers(List<Modifier> modifiers) { this.modifiers = modifiers; }
 		
 		/**
 		 * Get modifiers of this local variable
 		 * 
 		 * @return
 		 */
-		public int modifiers() { return modifiers; }	
+		public List<Modifier> modifiers() { return modifiers; }	
 		
 		/**
 		 * Get type of variable declared in for-each statement.
@@ -736,11 +711,11 @@ public class JavaFile {
      * @author djp
      */
 	public static class VarDef implements SimpleStatement {		
-		private int modifiers;
+		private List<Modifier> modifiers;
 		private Type type;
 		private List<Triple<String,Integer,Expression> > definitions;
 		
-		public VarDef(int modifiers, Type type, List<Triple<String,Integer,Expression> > definitions) {
+		public VarDef(List<Modifier> modifiers, Type type, List<Triple<String,Integer,Expression> > definitions) {
 			
 			this.modifiers = modifiers;
 			this.definitions = definitions;
@@ -753,14 +728,14 @@ public class JavaFile {
          * 
          * @param type
          */
-		public void setModifiers(int modifiers) { this.modifiers = modifiers; }
+		public void setModifiers(List<Modifier> modifiers) { this.modifiers = modifiers; }
 		
 		/**
 		 * Get modifiers of this local variable
 		 * 
 		 * @return
 		 */
-		public int modifiers() { return modifiers; }		
+		public List<Modifier> modifiers() { return modifiers; }		
 		
 		public List<Triple<String,Integer,Expression> > definitions() {
 			return definitions;
