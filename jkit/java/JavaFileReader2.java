@@ -1391,6 +1391,8 @@ public class JavaFileReader2 {
 				mods |= Modifier.TRANSIENT;
 			} else if (m.equals("volatile")) {
 				mods |= Modifier.VOLATILE;
+			} else if (m.equals("strictfp")) {
+				mods |= Modifier.STRICT;
 			} else if (mc.getType() == ANNOTATION) {
 				// ignore annotations for now.
 			} else {

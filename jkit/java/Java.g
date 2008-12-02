@@ -200,10 +200,17 @@ import jkit.compiler.SyntaxError;
  }
 }
 
+@members {
+    public void displayRecognitionError(String[] tokenNames,
+                                        RecognitionException e) {
+	  throw new SyntaxError("error on \"" + e.token.getText()+"\"",e.line,e.charPositionInLine,e.token.getText().length());
+    }
+}
+
 // starting point for parsing a java file
 compilationUnit 
-	:	annotations? packageDeclaration? importDeclaration* typeDeclaration+     
-		-> ^(UNIT packageDeclaration? importDeclaration* typeDeclaration+)
+	:	annotations? packageDeclaration? importDeclaration* typeDeclaration*     
+		-> ^(UNIT packageDeclaration? importDeclaration* typeDeclaration*)
 	;
 
 packageDeclaration
@@ -254,7 +261,7 @@ enumDeclaration
 	;
 	
 enumBody
-	:	'{' enumConstants? enumBodyDeclarations? '}' -> enumConstants? enumBodyDeclarations?
+	:	'{' enumConstants? ','? enumBodyDeclarations? '}' -> enumConstants? enumBodyDeclarations?
 	;
 
 enumConstants

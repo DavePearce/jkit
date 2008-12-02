@@ -955,10 +955,10 @@ public class JavaFileWriter {
 		if((modifiers & Modifier.ABSTRACT)!=0) { write("abstract "); }
 		if((modifiers & Modifier.FINAL)!=0) { write("final "); }
 		if((modifiers & Modifier.NATIVE)!=0) { write("native "); }				
-		if((modifiers & Modifier.STRICT)!=0) { write("strict "); }
+		if((modifiers & Modifier.STRICT)!=0) { write("strictfp "); }
 		if((modifiers & Modifier.SYNCHRONIZED)!=0) { write("synchronized "); }
 		if((modifiers & Modifier.TRANSIENT)!=0) { write("transient "); }
-		if((modifiers & Modifier.VOLATILE)!=0) { write("volatile "); }
+		if((modifiers & Modifier.VOLATILE)!=0) { write("volatile "); }		
 	}
 	
 	protected void writeWithEscapes(String s) {
