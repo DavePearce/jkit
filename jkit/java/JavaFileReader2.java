@@ -119,7 +119,7 @@ public class JavaFileReader2 {
 	
 	public JavaFile read() {
 		
-		ArrayList<JavaFile.Clazz> classes = new ArrayList<JavaFile.Clazz>();
+		ArrayList<JavaFile.Declaration> classes = new ArrayList<JavaFile.Declaration>();
 		ArrayList<Pair<Boolean,String> > imports = new ArrayList<Pair<Boolean,String> >();
 		String pkg = null;
 		
@@ -159,16 +159,7 @@ public class JavaFileReader2 {
 		}
 		
 		for (int i = 0; i != ast.getChildCount(); ++i) {
-			Tree c = ast.getChild(i);
-			switch (c.getType()) {
-				case CLASS :
-				case INTERFACE :
-					classes.add(parseClass(c));
-					break;
-				case ENUM:
-					classes.add(parseEnum(c));
-					break;
-			}
+			classes.addAll(parseDeclaration(ast.getChild(i)));			
 		}
 		
 		return new JavaFile(pkg,imports,classes);
@@ -200,6 +191,9 @@ public class JavaFileReader2 {
 				// non-static initialiser block
 				declarations.add(new JavaFile.InitialiserBlock(parseBlock(decl)
 						.statements()));
+				break;
+			case ANNOTATION:
+				declarations.add(parseAnnotation(decl));
 				break;
 		}
 
@@ -330,6 +324,37 @@ public class JavaFileReader2 {
 		
 		
 		return new JavaFile.EnumConstant(name,arguments,declarations);
+	}
+	
+	protected JavaFile.AnnotationInterface parseAnnotation(Tree decl) {
+		// === TYPE MODIFIERS ===
+
+		int modifiers = 0;
+		int idx = 0;
+		if (decl.getChild(idx).getType() == MODIFIERS) {
+			modifiers = parseModifiers(decl.getChild(0));
+			idx++;
+		}
+		
+		String name = decl.getChild(idx++).getText();
+		
+		ArrayList<Triple<JavaFile.Type, String, JavaFile.Value>> methods = new ArrayList<Triple<JavaFile.Type, String, JavaFile.Value>>();
+		
+		for(;idx < decl.getChildCount();++idx) {
+			Tree child = decl.getChild(idx);
+			if(child.getType() == METHOD) {
+				JavaFile.Type t = parseType(child.getChild(0));
+				String n = child.getChild(1).getText();
+				JavaFile.Value v = null;
+				if(child.getChildCount() > 2) {
+					v = (JavaFile.Value) parseExpression(child.getChild(2));
+				}
+				
+				methods.add(new Triple(t,n,v));
+			}
+		}
+		
+		return new JavaFile.AnnotationInterface(modifiers,name,methods);
 	}
 	
 	protected JavaFile.Method parseMethod(Tree method) {

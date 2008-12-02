@@ -11,12 +11,12 @@ import jkit.util.*;
 public class JavaFile {
 	private String pkg;
 	private List<Pair<Boolean,String> > imports;
-	private List<Clazz> classes; 
+	private List<Declaration> declarations; 
 	
-	public JavaFile(String pkg, List<Pair<Boolean, String> > imports, List<Clazz> classes) {
+	public JavaFile(String pkg, List<Pair<Boolean, String> > imports, List<Declaration> declarations) {
 		this.pkg = pkg;
 		this.imports = imports;
-		this.classes = classes;
+		this.declarations = declarations;
 	}
 	
 	/**
@@ -40,8 +40,8 @@ public class JavaFile {
 	 * 
 	 * @return
 	 */
-	public List<Clazz> classes() { 
-		return classes;
+	public List<Declaration> declarations() { 
+		return declarations;
 	}
 	
 	
@@ -240,6 +240,29 @@ public class JavaFile {
 		
 		public List<Declaration> declarations() {
 			return declarations;
+		}
+	}
+	
+	public static class AnnotationInterface implements Declaration {
+		private int modifiers;
+		private String name;
+		private List<Triple<JavaFile.Type, String, JavaFile.Value>> methods; 
+						
+		public AnnotationInterface(int modifiers, String name,
+				List<Triple<JavaFile.Type, String, JavaFile.Value>> methods) {
+			this.modifiers = modifiers;
+			this.name = name;
+			this.methods = methods;
+		}
+		
+		public int modifiers() {
+			return modifiers;
+		}
+		public String name() {
+			return name;
+		}
+		public List<Triple<JavaFile.Type, String, JavaFile.Value>> methods() {
+			return methods;
 		}
 	}
 	

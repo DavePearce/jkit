@@ -233,7 +233,8 @@ classOrInterfaceDeclaration
 	:	modifier* (
 		classDeclaration -> ^(CLASS ^(MODIFIERS modifier*)? classDeclaration)
 		| enumDeclaration -> ^(ENUM ^(MODIFIERS modifier*)? enumDeclaration)
-		| interfaceDeclaration -> ^(INTERFACE ^(MODIFIERS modifier*)? interfaceDeclaration)
+		| normalInterfaceDeclaration -> ^(INTERFACE ^(MODIFIERS modifier*)? normalInterfaceDeclaration)
+		| annotationTypeDeclaration -> ^(ANNOTATION ^(MODIFIERS modifier*)? annotationTypeDeclaration)
 		) 
 	;
 	
@@ -276,11 +277,6 @@ enumBodyDeclarations
 	:	';' (classBodyDeclaration)* -> classBodyDeclaration*
 	;
 	
-interfaceDeclaration
-	: normalInterfaceDeclaration
-	| annotationTypeDeclaration
-	;
-	
 normalInterfaceDeclaration
 	:	'interface' Identifier typeParameters? ('extends' typeList)? interfaceBody -> ^(Identifier typeParameters?) ^(IMPLEMENTS typeList)? interfaceBody?
 	;
@@ -307,7 +303,8 @@ classBodyDeclaration
      	|	fieldDeclaration -> ^(FIELD ^(MODIFIERS modifier*)? fieldDeclaration)
     	|	'void' Identifier voidMethodDeclaratorRest -> ^(METHOD ^(MODIFIERS modifier*)? Identifier ^(TYPE VOID) voidMethodDeclaratorRest?)
     	|	Identifier constructorDeclaratorRest -> ^(METHOD ^(MODIFIERS modifier*)? Identifier ^(NONE) constructorDeclaratorRest)
-    	|	interfaceDeclaration -> ^(INTERFACE ^(MODIFIERS modifier*)? interfaceDeclaration)
+    	|	normalInterfaceDeclaration -> ^(INTERFACE ^(MODIFIERS modifier*)? normalInterfaceDeclaration)
+      	|	annotationTypeDeclaration -> ^(ANNOTATION ^(MODIFIERS modifier*)? annotationTypeDeclaration)
     	|	classDeclaration -> ^(CLASS ^(MODIFIERS modifier*)? classDeclaration)
     	|   enumDeclaration -> ^(ENUM ^(MODIFIERS modifier*)? enumDeclaration)
     )
@@ -337,7 +334,8 @@ interfaceBodyDeclaration
 		| type Identifier interfaceMethodDeclaratorRest -> ^(METHOD ^(MODIFIERS modifier*)? Identifier type interfaceMethodDeclaratorRest?)
 		| interfaceGenericMethodDecl -> ^(METHOD ^(MODIFIERS modifier*)? interfaceGenericMethodDecl)
 		| 'void' Identifier voidInterfaceMethodDeclaratorRest -> ^(METHOD ^(MODIFIERS modifier*)? Identifier ^(TYPE VOID) voidInterfaceMethodDeclaratorRest?)
-		| interfaceDeclaration -> ^(INTERFACE ^(MODIFIERS modifier*)? interfaceDeclaration) 
+		| normalInterfaceDeclaration -> ^(INTERFACE ^(MODIFIERS modifier*)? normalInterfaceDeclaration) 
+      	| annotationTypeDeclaration -> ^(ANNOTATION ^(MODIFIERS modifier*)? annotationTypeDeclaration)
 		| classDeclaration -> ^(CLASS ^(MODIFIERS modifier*)? classDeclaration)
     	|   enumDeclaration -> ^(ENUM ^(MODIFIERS modifier*)? enumDeclaration)
 		)
@@ -564,36 +562,34 @@ elementValueArrayInitializer
 	;
 	
 annotationTypeDeclaration
-	:	'@' 'interface' Identifier annotationTypeBody
+	:	'@' 'interface' Identifier annotationTypeBody -> Identifier annotationTypeBody?
 	;
 	
 annotationTypeBody
-	:	'{' (annotationTypeElementDeclarations)? '}'
+	:	'{'! (annotationTypeElementDeclarations)? '}'!
 	;
 	
 annotationTypeElementDeclarations
-	:	(annotationTypeElementDeclaration) (annotationTypeElementDeclaration)*
+	:	(annotationTypeElementDeclaration)*
 	;
 	
 annotationTypeElementDeclaration
-	:	(modifier)* annotationTypeElementRest
-	;
-	
-annotationTypeElementRest
-	:	type annotationMethodOrConstantRest ';'
-	|   classDeclaration ';'?
-	|   interfaceDeclaration ';'?
-	|   enumDeclaration ';'?
-	|   annotationTypeDeclaration ';'?
-	;
-	
-annotationMethodOrConstantRest
-	:	annotationMethodRest
-	|   annotationConstantRest
+	:	(modifier)* 
+		(
+			type 
+			(
+				annotationMethodRest ';' -> ^(METHOD ^(MODIFIERS modifier*)? type annotationMethodRest)
+				| annotationConstantRest ';' -> ^(FIELD ^(MODIFIERS modifier*)? type annotationConstantRest)
+			)
+			| classDeclaration ';'? -> ^(CLASS ^(MODIFIERS modifier*)? classDeclaration)
+			| enumDeclaration ';'? -> ^(ENUM ^(MODIFIERS modifier*)? enumDeclaration)
+			| normalInterfaceDeclaration ';'? -> ^(INTERFACE ^(MODIFIERS modifier*)? normalInterfaceDeclaration)
+			| annotationTypeDeclaration ';'? -> ^(ANNOTATION ^(MODIFIERS modifier*)? annotationTypeDeclaration)
+		)
 	;
 	
 annotationMethodRest
- 	:	Identifier '(' ')' (defaultValue)?
+ 	:	Identifier '('! ')'! (defaultValue)?
  	;
  	
 annotationConstantRest
@@ -601,7 +597,7 @@ annotationConstantRest
  	;
  	
 defaultValue
- 	:	'default' elementValue
+ 	:	'default'! elementValue
  	;
 
 // STATEMENTS / BLOCKS

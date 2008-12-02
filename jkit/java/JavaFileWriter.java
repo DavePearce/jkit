@@ -33,7 +33,7 @@ public class JavaFileWriter {
 		if(jf.imports().size() > 0) {
 			output.println("");
 		}
-		for(JavaFile.Clazz decl : jf.classes()) {
+		for(JavaFile.Declaration decl : jf.declarations()) {
 			writeDeclaration(decl);			
 		}
 		
@@ -53,7 +53,9 @@ public class JavaFileWriter {
 			writeStaticInitialiserBlock((JavaFile.StaticInitialiserBlock)d);
 		} else if(d instanceof JavaFile.InitialiserBlock) {
 			writeInitialiserBlock((JavaFile.InitialiserBlock)d);
-		}		
+		} else if(d instanceof JavaFile.AnnotationInterface) {
+			writeAnnotationInterface((JavaFile.AnnotationInterface)d);
+		}
 	}
 	
 	public void writeClass(JavaFile.Clazz decl) {
@@ -186,8 +188,27 @@ public class JavaFileWriter {
 				firstTime=false;
 				writeDeclaration(d);
 			}
-			write("}");
+			write("}");			
 		}
+	}
+	
+	protected void writeAnnotationInterface(JavaFile.AnnotationInterface e) {
+		writeModifiers(e.modifiers());
+		write("@interface ");
+		write(e.name());
+		write("{");
+		for(Triple<JavaFile.Type, String, JavaFile.Value> m : e.methods()) {
+			writeType(m.first());
+			write(" ");
+			write(m.second());
+			write("()");
+			if(m.third() != null) {
+				write(" default ");
+				writeExpression(m.third());
+			}
+			write(";");			
+		}
+		write("}");
 	}
 	
 	protected void writeMethod(JavaFile.Method m) {
