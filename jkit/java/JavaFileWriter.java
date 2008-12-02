@@ -729,8 +729,7 @@ public class JavaFileWriter {
 		if(e.target() != null) {
 			writeExpressionWithBracketsIfNecessary(e.target());
 			write(".");
-		}
-		write(e.name());
+		}		
 		if(e.typeParameters().size() > 0) {
 			write("<");
 			boolean firstTime=true;
@@ -744,6 +743,7 @@ public class JavaFileWriter {
 			}	
 			write(">");
 		}
+		write(e.name());
 		write("(");
 		boolean firstTime=true;
 		for(JavaFile.Expression i : e.parameters()) {

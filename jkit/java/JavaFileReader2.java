@@ -986,16 +986,22 @@ public class JavaFileReader2 {
 				}
 				case INVOKE : {
 					int start = 0;
+					ArrayList<JavaFile.Type> typeParameters = new ArrayList<JavaFile.Type>();
 					if(child.getChild(0).getType() == TYPE_PARAMETER) {		
+						Tree c = child.getChild(0);
+						for(int j=0;j!=c.getChildCount();++j) {		
+							typeParameters.add(parseType(c.getChild(j)));
+						}
 						start++;
 					} 
+					 
 					String method = child.getChild(start).getText();
 					
 					List<JavaFile.Expression> params = parseExpressionList(
 							start+1, child.getChildCount(), child);
 					
 					expr = new JavaFile.Invoke(expr, method, params,
-							new ArrayList<JavaFile.Type>());
+							typeParameters);
 					break;
 				}
 				case NEW : {
@@ -1061,7 +1067,13 @@ public class JavaFileReader2 {
 		// First, check for type parameters. These are present for
         // method invocations which explicitly indicate the type
         // parameters to use. For example, x.<K>someMethod();
+		ArrayList<JavaFile.Type> typeParameters = new ArrayList<JavaFile.Type>();
+		
 		if(expr.getChild(0).getType() == TYPE_PARAMETER) {		
+			Tree child = expr.getChild(0);
+			for(int i=0;i!=child.getChildCount();++i) {		
+				typeParameters.add(parseType(child.getChild(i)));
+			}
 			start++;
 		} 
 
@@ -1070,10 +1082,8 @@ public class JavaFileReader2 {
 		List<JavaFile.Expression> params = parseExpressionList(start+1, expr
 				.getChildCount(), expr);
 
-		// Need to do something with type parameters.
-		
 		return new JavaFile.Invoke(null, method, params,
-				new ArrayList<JavaFile.Type>());
+				typeParameters);
 	}
 	
 	public JavaFile.Expression parseGetClass(Tree expr) {		
