@@ -202,15 +202,12 @@ public class JavaFileReader2 {
 	
 	protected JavaFile.Clazz parseClass(Tree decl) {
 		int idx = 0;
-		List<Modifier> modifiers = new ArrayList<Modifier>();
+		List<JavaFile.Modifier> modifiers = new ArrayList<JavaFile.Modifier>();
 		if (decl.getChild(idx).getType() == MODIFIERS) {
 			modifiers = parseModifiers(decl.getChild(0));
 			idx++;
 		}
-		if (decl.getType() == INTERFACE) {
-			modifiers |= Modifier.INTERFACE;
-		}
-		
+				
 		ArrayList<JavaFile.VariableType> typeArgs = new ArrayList<JavaFile.VariableType>();
 		for(int i=0;i!=decl.getChild(idx).getChildCount();++i) {			
 			typeArgs.add(parseVariableType(decl.getChild(idx).getChild(i)));
@@ -250,12 +247,16 @@ public class JavaFileReader2 {
 			declarations.addAll(parseDeclaration(decl.getChild(i)));						
 		}
 		
-		return new JavaFile.Clazz(modifiers,name,typeArgs,superclass,interfaces,declarations);
+		if (decl.getType() == INTERFACE) {
+			return new JavaFile.Interface(modifiers,name,typeArgs,superclass,interfaces,declarations);
+		} else {
+			return new JavaFile.Clazz(modifiers,name,typeArgs,superclass,interfaces,declarations);
+		}
 	}
 	
 	protected JavaFile.Enum parseEnum(Tree decl) {
 		int idx = 0;
-		int modifiers = 0;
+		List<JavaFile.Modifier> modifiers = new ArrayList<JavaFile.Modifier>();
 		if (decl.getChild(idx).getType() == MODIFIERS) {
 			modifiers = parseModifiers(decl.getChild(0));
 			idx++;
@@ -329,7 +330,7 @@ public class JavaFileReader2 {
 	protected JavaFile.AnnotationInterface parseAnnotation(Tree decl) {
 		// === TYPE MODIFIERS ===
 
-		int modifiers = 0;
+		List<JavaFile.Modifier> modifiers = new ArrayList<JavaFile.Modifier>();
 		int idx = 0;
 		if (decl.getChild(idx).getType() == MODIFIERS) {
 			modifiers = parseModifiers(decl.getChild(0));
@@ -361,7 +362,7 @@ public class JavaFileReader2 {
 		
 		// === TYPE MODIFIERS ===
 
-		int modifiers = 0;
+		List<JavaFile.Modifier> modifiers = new ArrayList<JavaFile.Modifier>();
 		int idx = 0;
 		if (method.getChild(idx).getType() == MODIFIERS) {
 			modifiers = parseModifiers(method.getChild(0));
@@ -387,12 +388,12 @@ public class JavaFileReader2 {
 		
 		// === FORMAL PARAMETERS ===
 
-		ArrayList<Triple<String,Integer,JavaFile.Type> > params = new ArrayList<Triple<String,Integer,JavaFile.Type>>();
+		ArrayList<Triple<String, List<JavaFile.Modifier>, JavaFile.Type>> params = new ArrayList<Triple<String, List<JavaFile.Modifier>, JavaFile.Type>>();
 		
 		while (idx < method.getChildCount()
 				&& method.getChild(idx).getType() == PARAMETER) {
 			Tree c = method.getChild(idx);
-			int pModifiers = parseModifiers(c.getChild(0));
+			List<JavaFile.Modifier> pModifiers = parseModifiers(c.getChild(0));
 			JavaFile.Type t = parseType(c.getChild(1));
 			String n = c.getChild(2).getText();
 
@@ -409,7 +410,7 @@ public class JavaFileReader2 {
 		if (idx < method.getChildCount()
 				&& method.getChild(idx).getType() == VARARGS) {
 			Tree c = method.getChild(idx);
-			int pModifiers = parseModifiers(c.getChild(0));
+			List<JavaFile.Modifier> pModifiers = parseModifiers(c.getChild(0));
 			JavaFile.Type t = parseType(c.getChild(1));
 			String n = c.getChild(2).getText();
 			params.add(new Triple(n,pModifiers,t));			
@@ -452,7 +453,7 @@ public class JavaFileReader2 {
 		ArrayList<JavaFile.Field> fields = new ArrayList<JavaFile.Field>();
 
 		// === MODIFIERS ===
-		int modifiers = 0;
+		List<JavaFile.Modifier> modifiers = new ArrayList<JavaFile.Modifier>();
 		int idx = 0;
 		if (field.getChild(idx).getType() == MODIFIERS) {
 			modifiers = parseModifiers(field.getChild(0));
@@ -634,7 +635,7 @@ public class JavaFileReader2 {
 		ArrayList<Triple<String, Integer, JavaFile.Expression>> vardefs = new ArrayList<Triple<String, Integer, JavaFile.Expression>>();
 
 		// === MODIFIERS ===
-		int modifiers = parseModifiers(stmt.getChild(0));
+		List<JavaFile.Modifier> modifiers = parseModifiers(stmt.getChild(0));
 
 		JavaFile.Type type = parseType(stmt.getChild(1));
 		
@@ -797,7 +798,7 @@ public class JavaFileReader2 {
 	protected JavaFile.Statement parseForEach(Tree stmt, Tree body) {
 
 		Tree varDef = stmt.getChild(0);
-		int varMods = parseModifiers(varDef.getChild(0));
+		List<JavaFile.Modifier> varMods = parseModifiers(varDef.getChild(0));
 		JavaFile.Type varType = parseType(varDef.getChild(1));
 		String varName = varDef.getChild(2).getText();
 		JavaFile.Expression src = parseExpression(stmt.getChild(1));
@@ -1401,33 +1402,33 @@ public class JavaFileReader2 {
 		return es;
 	}
 	
-	protected int parseModifiers(Tree ms) {
-		int mods = 0;
+	protected List<JavaFile.Modifier> parseModifiers(Tree ms) {
+		ArrayList<JavaFile.Modifier> mods = new ArrayList<JavaFile.Modifier>(); 
 		for (int i = 0; i != ms.getChildCount(); ++i) {
 			Tree mc = ms.getChild(i);
 			String m = mc.getText();
 			if (m.equals("public")) {
-				mods |= Modifier.PUBLIC;
+				mods.add(new JavaFile.BaseModifier(Modifier.PUBLIC));				
 			} else if (m.equals("private")) {
-				mods |= Modifier.PRIVATE;
+				mods.add(new JavaFile.BaseModifier(Modifier.PRIVATE));
 			} else if (m.equals("protected")) {
-				mods |= Modifier.PROTECTED;
+				mods.add(new JavaFile.BaseModifier(Modifier.PROTECTED));
 			} else if (m.equals("static")) {
-				mods |= Modifier.STATIC;
+				mods.add(new JavaFile.BaseModifier(Modifier.STATIC));
 			} else if (m.equals("abstract")) {
-				mods |= Modifier.ABSTRACT;
+				mods.add(new JavaFile.BaseModifier(Modifier.ABSTRACT));
 			} else if (m.equals("final")) {
-				mods |= Modifier.FINAL;
+				mods.add(new JavaFile.BaseModifier(Modifier.FINAL));
 			} else if (m.equals("native")) {
-				mods |= Modifier.NATIVE;
+				mods.add(new JavaFile.BaseModifier(Modifier.NATIVE));
 			} else if (m.equals("synchronized")) {
-				mods |= Modifier.SYNCHRONIZED;
+				mods.add(new JavaFile.BaseModifier(Modifier.SYNCHRONIZED));
 			} else if (m.equals("transient")) {
-				mods |= Modifier.TRANSIENT;
+				mods.add(new JavaFile.BaseModifier(Modifier.TRANSIENT));
 			} else if (m.equals("volatile")) {
-				mods |= Modifier.VOLATILE;
+				mods.add(new JavaFile.BaseModifier(Modifier.VOLATILE));
 			} else if (m.equals("strictfp")) {
-				mods |= Modifier.STRICT;
+				mods.add(new JavaFile.BaseModifier(Modifier.STRICT));
 			} else if (mc.getType() == ANNOTATION) {
 				// ignore annotations for now.
 			} else {

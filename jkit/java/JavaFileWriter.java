@@ -62,7 +62,7 @@ public class JavaFileWriter {
 		
 		writeModifiers(decl.modifiers());
 		
-		if(decl.isInterface()) {
+		if(decl instanceof JavaFile.Interface) {
 			write("interface ");
 		} else {
 			write("class ");
@@ -83,7 +83,7 @@ public class JavaFileWriter {
 			write(">");
 		}
 		
-		if(decl.isInterface()) {
+		if(decl instanceof JavaFile.Interface) {
 			if(decl.interfaces().size() > 0) {
 				write(" extends ");
 				boolean firstTime = true;
@@ -237,7 +237,7 @@ public class JavaFileWriter {
 		write("(");
 		boolean firstTime=true;
 		int va_count = 1; // to detect varargs 
-		for(Triple<String,Integer,JavaFile.Type> p : m.parameters()) {
+		for(Triple<String,List<JavaFile.Modifier>,JavaFile.Type> p : m.parameters()) {
 			if(!firstTime) {
 				write(", ");				
 			}
@@ -968,18 +968,25 @@ public class JavaFileWriter {
 		}			
 	}
 	
-	protected void writeModifiers(int modifiers) {
-		if((modifiers & Modifier.PRIVATE)!=0) { write("private "); }
-		if((modifiers & Modifier.PROTECTED)!=0) { write("protected "); }
-		if((modifiers & Modifier.PUBLIC)!=0) { write("public "); }
-		if((modifiers & Modifier.STATIC)!=0) { write("static "); }
-		if((modifiers & Modifier.ABSTRACT)!=0) { write("abstract "); }
-		if((modifiers & Modifier.FINAL)!=0) { write("final "); }
-		if((modifiers & Modifier.NATIVE)!=0) { write("native "); }				
-		if((modifiers & Modifier.STRICT)!=0) { write("strictfp "); }
-		if((modifiers & Modifier.SYNCHRONIZED)!=0) { write("synchronized "); }
-		if((modifiers & Modifier.TRANSIENT)!=0) { write("transient "); }
-		if((modifiers & Modifier.VOLATILE)!=0) { write("volatile "); }		
+	protected void writeModifiers(List<JavaFile.Modifier> modifiers) {
+		for(JavaFile.Modifier x : modifiers) {
+			if(x instanceof JavaFile.BaseModifier) {
+				int mod = ((JavaFile.BaseModifier)x).modifier();
+				if((mod & Modifier.PRIVATE)!=0) { write("private "); }
+				if((mod & Modifier.PROTECTED)!=0) { write("protected "); }
+				if((mod & Modifier.PUBLIC)!=0) { write("public "); }
+				if((mod & Modifier.STATIC)!=0) { write("static "); }
+				if((mod & Modifier.ABSTRACT)!=0) { write("abstract "); }
+				if((mod & Modifier.FINAL)!=0) { write("final "); }
+				if((mod & Modifier.NATIVE)!=0) { write("native "); }				
+				if((mod & Modifier.STRICT)!=0) { write("strictfp "); }
+				if((mod & Modifier.SYNCHRONIZED)!=0) { write("synchronized "); }
+				if((mod & Modifier.TRANSIENT)!=0) { write("transient "); }
+				if((mod & Modifier.VOLATILE)!=0) { write("volatile "); }
+			} else {
+				// annotations go here.
+			}
+		}					
 	}
 	
 	protected void writeWithEscapes(String s) {

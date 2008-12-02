@@ -135,7 +135,7 @@ public class JavaFile {
 		
 	}
 	
-	public class BaseModifier implements Modifier {
+	public static class BaseModifier implements Modifier {
 		private int modifier;
 		public BaseModifier(int modifier) {
 			this.modifier = modifier;
@@ -279,7 +279,7 @@ public class JavaFile {
 		private List<Modifier> modifiers;
 		private String name;
 		private Type returnType;
-		private List<Triple<String,Integer,Type>> parameters;
+		private List<Triple<String,List<Modifier>,Type>> parameters;
 		private boolean varargs;
 		private List<VariableType> typeParameters;
 		private List<ClassType> exceptions;
@@ -288,7 +288,7 @@ public class JavaFile {
 		public Method(List<Modifier> modifiers, 
 				String name, 
 				Type returnType,
-				List<Triple<String,Integer,Type>> parameters,
+				List<Triple<String,List<Modifier>,Type>> parameters,
 				boolean varargs,
 				List<VariableType> typeParameters,
 				List<ClassType> exceptions,
@@ -321,7 +321,7 @@ public class JavaFile {
          * 
          * @return
          */
-		public List<Triple<String,Integer,Type>> parameters() {
+		public List<Triple<String,List<Modifier>,Type>> parameters() {
 			return parameters;
 		}
 		
@@ -356,7 +356,7 @@ public class JavaFile {
 	 */
 	public static class Constructor extends Method {
 		public Constructor(List<Modifier> modifiers, String name,
-				List<Triple<String, Integer, Type>> parameters, boolean varargs,
+				List<Triple<String, List<Modifier>, Type>> parameters, boolean varargs,
 				List<VariableType> typeParameters,
 				List<ClassType> exceptions,
 				JavaFile.Block block) {
