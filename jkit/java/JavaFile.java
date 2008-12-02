@@ -5,6 +5,7 @@ import java.util.*;
 
 import jkit.jkil.SyntacticElement;
 import jkit.jkil.SyntacticElementImpl;
+import jkit.jkil.Attribute;
 import jkit.util.*;
 
 public class JavaFile {
@@ -64,7 +65,7 @@ public class JavaFile {
 	public static class ArrayType extends SyntacticElementImpl implements Type {		
 		private Type element;
 		
-		public ArrayType(Type element) {
+		public ArrayType(Type element, Attribute... attributes) {
 			this.element = element;			
 		}
 		
@@ -76,9 +77,9 @@ public class JavaFile {
 	public static class ClassType extends SyntacticElementImpl  implements Type {
 		
 		private List<Pair<String, List<Type>>> components;
-		public ClassType(
-				List<Pair<String, List<Type>>> components) {
-			this.components = components;			
+		public ClassType(List<Pair<String, List<Type>>> components,
+				Attribute... attributes) {
+			this.components = components;
 		}		
 		public List<Pair<String, List<Type>>> components() {
 			return components;
@@ -93,7 +94,8 @@ public class JavaFile {
 		private Type lowerBound;
 		private Type upperBound;
 
-		public WildcardType(Type lowerBound, Type upperBound) {
+		public WildcardType(Type lowerBound, Type upperBound,
+				Attribute... attributes) {
 			this.lowerBound = lowerBound;
 			this.upperBound = upperBound;
 		}
@@ -111,9 +113,10 @@ public class JavaFile {
 		private String variable;
 		private List<Type> lowerBounds;
 
-		public VariableType(String variable, List<Type> lowerBounds) {
+		public VariableType(String variable, List<Type> lowerBounds,
+				Attribute... attributes) {
 			this.variable = variable;
-			this.lowerBounds = lowerBounds;			
+			this.lowerBounds = lowerBounds;
 		}
 
 		public String variable() {
@@ -133,9 +136,9 @@ public class JavaFile {
 		
 	}
 	
-	public static class BaseModifier extends SyntacticElementImpl  implements Modifier {
+	public static class BaseModifier extends SyntacticElementImpl implements Modifier {
 		private int modifier;
-		public BaseModifier(int modifier) {
+		public BaseModifier(int modifier, Attribute... attributes) {
 			this.modifier = modifier;
 		}
 		public int modifier() {
@@ -147,7 +150,8 @@ public class JavaFile {
 		private String name;
 		private List<Expression> arguments;
 		
-		public Annotation(String name, List<Expression> arguments) {
+		public Annotation(String name, List<Expression> arguments,
+				Attribute... attributes) {
 			this.name = name;
 			this.arguments = arguments;
 		}
@@ -177,7 +181,8 @@ public class JavaFile {
 				
 		public Clazz(List<Modifier> modifiers, String name,
 				List<VariableType> typeParameters, ClassType superclass,
-				List<ClassType> interfaces, List<Declaration> declarations) {
+				List<ClassType> interfaces, List<Declaration> declarations,
+				Attribute... attributes) {
 			this.modifiers = modifiers;
 			this.name = name;
 			this.typeParameters = typeParameters;
@@ -214,19 +219,22 @@ public class JavaFile {
 	public static class Interface extends Clazz {
 		public Interface(List<Modifier> modifiers, String name,
 				List<VariableType> typeParameters, ClassType superclass,
-				List<ClassType> interfaces, List<Declaration> declarations) {
-			super(modifiers,name,typeParameters,superclass,interfaces,declarations);
+				List<ClassType> interfaces, List<Declaration> declarations,
+				Attribute... attributes) {
+			super(modifiers, name, typeParameters, superclass, interfaces,
+					declarations, attributes);
 		}
 	}
 	
 	public static class Enum extends Clazz {
 		private List<EnumConstant> constants;
 
-		public Enum(List<Modifier> modifiers, String name, List<ClassType> interfaces,
-				List<EnumConstant> constants, List<Declaration> declarations) {
+		public Enum(List<Modifier> modifiers, String name,
+				List<ClassType> interfaces, List<EnumConstant> constants,
+				List<Declaration> declarations, Attribute... attributes) {
 			super(modifiers, name, new ArrayList<VariableType>(), null,
-					interfaces, declarations);
-			this.constants=constants;
+					interfaces, declarations, attributes);
+			this.constants = constants;
 		}
 
 		public List<EnumConstant> constants() {
@@ -239,7 +247,8 @@ public class JavaFile {
 		private List<Expression> arguments;
 		private List<Declaration> declarations;
 		
-		public EnumConstant(String name, List<Expression> arguments, List<Declaration> declarations) {
+		public EnumConstant(String name, List<Expression> arguments,
+				List<Declaration> declarations, Attribute... attributes) {
 			this.name = name;
 			this.arguments = arguments;
 			this.declarations = declarations;
@@ -264,7 +273,8 @@ public class JavaFile {
 		private List<Triple<JavaFile.Type, String, JavaFile.Value>> methods; 
 						
 		public AnnotationInterface(List<Modifier> modifiers, String name,
-				List<Triple<JavaFile.Type, String, JavaFile.Value>> methods) {
+				List<Triple<JavaFile.Type, String, JavaFile.Value>> methods,
+				Attribute... attributes) {
 			this.modifiers = modifiers;
 			this.name = name;
 			this.methods = methods;
@@ -299,14 +309,11 @@ public class JavaFile {
 		private List<ClassType> exceptions;
 		private JavaFile.Block block;
 
-		public Method(List<Modifier> modifiers, 
-				String name, 
-				Type returnType,
-				List<Triple<String,List<Modifier>,Type>> parameters,
-				boolean varargs,
-				List<VariableType> typeParameters,
-				List<ClassType> exceptions,
-				JavaFile.Block block) {
+		public Method(List<Modifier> modifiers, String name, Type returnType,
+				List<Triple<String, List<Modifier>, Type>> parameters,
+				boolean varargs, List<VariableType> typeParameters,
+				List<ClassType> exceptions, JavaFile.Block block,
+				Attribute... attributes) {
 			this.modifiers = modifiers;
 			this.returnType = returnType;
 			this.name = name;
@@ -373,9 +380,9 @@ public class JavaFile {
 				List<Triple<String, List<Modifier>, Type>> parameters, boolean varargs,
 				List<VariableType> typeParameters,
 				List<ClassType> exceptions,
-				JavaFile.Block block) {
+				JavaFile.Block block, Attribute... attributes) {
 			super(modifiers, name, null, parameters, varargs, typeParameters,
-					exceptions, block);
+					exceptions, block,attributes);
 		}
 	}
 	
@@ -386,7 +393,7 @@ public class JavaFile {
 		private Expression initialiser;
 		
 		public Field(List<Modifier> modifiers, String name, Type type,
-				Expression initialiser) {
+				Expression initialiser, Attribute... attributes) {
 			this.modifiers = modifiers;
 			this.name = name;
 			this.type = type;
@@ -411,13 +418,13 @@ public class JavaFile {
 	}
 	
 	public static class InitialiserBlock extends Block implements Declaration {
-		public InitialiserBlock(List<Statement> statements) {
-			super(statements);
+		public InitialiserBlock(List<Statement> statements, Attribute... attributes) {
+			super(statements,attributes);
 		}
 	}
 	public static class StaticInitialiserBlock extends Block implements Declaration {
-		public StaticInitialiserBlock(List<Statement> statements) {
-			super(statements);
+		public StaticInitialiserBlock(List<Statement> statements, Attribute... attributes) {
+			super(statements,attributes);
 		}
 	}
 	
@@ -427,9 +434,9 @@ public class JavaFile {
 
 	public static class Block extends SyntacticElementImpl  implements Statement {
 		private List<Statement> statements;
-		public Block(List<Statement> statements) {
-			
-			this.statements = statements; 
+		
+		public Block(List<Statement> statements, Attribute... attributes) {
+			this.statements = statements;
 		}
 		
 		public List<Statement> statements() {
@@ -439,9 +446,11 @@ public class JavaFile {
 	
 	public static class SynchronisedBlock extends Block {
 		private Expression expr;
-		public SynchronisedBlock(Expression expr, List<Statement> statements) {
-			super(statements);
-			this.expr = expr; 
+		
+		public SynchronisedBlock(Expression expr, List<Statement> statements,
+				Attribute... attributes) {
+			super(statements, attributes);
+			this.expr = expr;
 		}
 		
 		public Expression expr() {
@@ -452,8 +461,10 @@ public class JavaFile {
 	public static class CatchBlock extends Block {
 		private ClassType type;
 		private String variable;
-		public CatchBlock(ClassType type, String variable, List<Statement> statements) {
-			super(statements);
+		
+		public CatchBlock(ClassType type, String variable,
+				List<Statement> statements, Attribute... attributes) {
+			super(statements, attributes);
 			this.type = type;
 			this.variable = variable;
 		}
@@ -472,8 +483,8 @@ public class JavaFile {
 		private Block finallyBlk;
 
 		public TryCatchBlock(List<CatchBlock> handlers, Block finallyBlk,
-				List<Statement> statements) {
-			super(statements);
+				List<Statement> statements, Attribute... attributes) {
+			super(statements, attributes);
 			this.handlers = handlers;
 			this.finallyBlk = finallyBlk;
 		}
@@ -486,10 +497,10 @@ public class JavaFile {
 			return finallyBlk;
 		}
 	}
+	
 	public static class Assignment extends SyntacticElementImpl  implements SimpleStatement, Expression {
 		private Expression lhs,rhs;
-		public Assignment(Expression lhs, Expression rhs) {
-			
+		public Assignment(Expression lhs, Expression rhs, Attribute... attributes) {			
 			this.lhs=lhs;
 			this.rhs=rhs;
 		}
@@ -499,7 +510,7 @@ public class JavaFile {
 	
 	public static class Return extends SyntacticElementImpl  implements SimpleStatement {
 		private Expression expr;
-		public Return(Expression expr) {
+		public Return(Expression expr, Attribute... attributes) {
 			
 			this.expr = expr;			
 		}
@@ -508,7 +519,7 @@ public class JavaFile {
 	
 	public static class Throw extends SyntacticElementImpl  implements SimpleStatement {
 		private Expression expr;
-		public Throw(Expression expr) {
+		public Throw(Expression expr, Attribute... attributes) {
 			
 			this.expr = expr;			
 		}
@@ -517,7 +528,7 @@ public class JavaFile {
 	
 	public static class Assert extends SyntacticElementImpl  implements SimpleStatement {
 		private Expression expr;
-		public Assert(Expression expr) {
+		public Assert(Expression expr, Attribute... attributes) {
 			
 			this.expr = expr;			
 		}
@@ -526,7 +537,7 @@ public class JavaFile {
 	
 	public static class Break extends SyntacticElementImpl  implements SimpleStatement {
 		private String label;
-		public Break(String label) {
+		public Break(String label, Attribute... attributes) {
 			
 			this.label = label;	
 		}
@@ -536,7 +547,7 @@ public class JavaFile {
 	public static class Label extends SyntacticElementImpl  implements Statement {
 		private String label;
 		private Statement statement;
-		public Label(String label, Statement statement) {
+		public Label(String label, Statement statement, Attribute... attributes) {
 			
 			this.label = label;
 			this.statement = statement;
@@ -551,7 +562,7 @@ public class JavaFile {
 	
 	public static class Continue extends SyntacticElementImpl  implements SimpleStatement {
 		private String label;
-		public Continue(String label) {
+		public Continue(String label, Attribute... attributes) {
 			
 			this.label = label;	
 		}
@@ -564,7 +575,7 @@ public class JavaFile {
 		private Statement falseStatement;
 
 		public If(Expression condition, Statement trueStatement,
-				Statement falseStatement) {
+				Statement falseStatement, Attribute... attributes) {
 			
 			this.condition = condition;
 			this.trueStatement = trueStatement;
@@ -586,7 +597,7 @@ public class JavaFile {
 		private Expression condition;
 		private Statement body;		
 
-		public While(Expression condition, Statement body) {
+		public While(Expression condition, Statement body, Attribute... attributes) {
 			
 			this.condition = condition;
 			this.body = body;
@@ -604,7 +615,7 @@ public class JavaFile {
 		private Expression condition;
 		private Statement body;		
 
-		public DoWhile(Expression condition, Statement body) {
+		public DoWhile(Expression condition, Statement body, Attribute... attributes) {
 			
 			this.condition = condition;
 			this.body = body;
@@ -625,7 +636,7 @@ public class JavaFile {
 		private Statement body;		
 
 		public For(Statement initialiser, Expression condition,
-				Statement increment, Statement body) {
+				Statement increment, Statement body, Attribute... attributes) {
 			
 			this.initialiser = initialiser;
 			this.condition = condition;
@@ -654,7 +665,8 @@ public class JavaFile {
 		private Expression source; 
 		private Statement body;
 		
-		public ForEach(List<Modifier> modifiers, String var, Type type, Expression source, Statement body) {
+		public ForEach(List<Modifier> modifiers, String var, Type type,
+				Expression source, Statement body, Attribute... attributes) {
 			this.modifiers = modifiers;
 			this.var = var;
 			this.type = type;
@@ -729,8 +741,10 @@ public class JavaFile {
 		private Type type;
 		private List<Triple<String,Integer,Expression> > definitions;
 		
-		public VarDef(List<Modifier> modifiers, Type type, List<Triple<String,Integer,Expression> > definitions) {
-			
+		public VarDef(List<Modifier> modifiers, Type type,
+				List<Triple<String, Integer, Expression>> definitions,
+				Attribute... attributes) {
+
 			this.modifiers = modifiers;
 			this.definitions = definitions;
 			this.type = type;
@@ -762,7 +776,8 @@ public class JavaFile {
 		private Expression condition;
 		private List<Statement> statements;
 		
-		public Case(Expression condition, List<Statement> statements) {
+		public Case(Expression condition, List<Statement> statements,
+				Attribute... attributes) {
 			this.condition = condition;
 			this.statements = statements;
 		}
@@ -777,27 +792,30 @@ public class JavaFile {
 	}
 	
 	public static class DefaultCase extends Case {
-		public DefaultCase(List<Statement> statements) {
-			super(null,statements);
+		public DefaultCase(List<Statement> statements, Attribute... attributes) {
+			super(null, statements, attributes);
 		}
 	}
 	
-	public static class Switch extends SyntacticElementImpl  implements Statement {
+	public static class Switch extends SyntacticElementImpl
+			implements
+				Statement {
 		private Expression condition;
 		private List<Case> cases;
-		
-		public Switch(Expression condition, List<Case> cases) {
+
+		public Switch(Expression condition, List<Case> cases,
+				Attribute... attributes) {
 			this.condition = condition;
 			this.cases = cases;
 		}
-		
+
 		public Expression condition() {
 			return condition;
 		}
-		
+
 		public List<Case> cases() {
 			return cases;
-		}		
+		}
 	}
 	
 	// ====================================================
@@ -822,7 +840,7 @@ public class JavaFile {
 	public static class Variable extends SyntacticElementImpl  implements Expression {
 		private String value;
 		
-		public Variable(String value) {			
+		public Variable(String value, Attribute... attributes) {			
 			this.value=value;
 		}
 		
@@ -841,7 +859,7 @@ public class JavaFile {
 		protected Expression expr;
 		protected Type type;
 		
-		public Cast(Type type,  Expression expr) {			
+		public Cast(Type type,  Expression expr, Attribute... attributes) {			
 			this.expr = expr;
 			this.type = type;
 		}
@@ -865,7 +883,7 @@ public class JavaFile {
 		protected Expression lhs;		
 		protected Type rhs;		
 		
-		public InstanceOf(Expression lhs, Type rhs) {
+		public InstanceOf(Expression lhs, Type rhs, Attribute... attributes) {
 			this.lhs = lhs;
 			this.rhs = rhs;
 		}
@@ -899,7 +917,7 @@ public class JavaFile {
 		protected final Expression expr;		
 		protected final int op;
 		
-		public UnOp(int op, Expression expr) {
+		public UnOp(int op, Expression expr, Attribute... attributes) {
 			this.expr = expr;
 			this.op=op;
 		}		
@@ -973,7 +991,7 @@ public class JavaFile {
 		protected Expression toption;
 		protected Expression foption;
 		
-		public TernOp(Expression con, Expression tOption, Expression fOption) {		
+		public TernOp(Expression con, Expression tOption, Expression fOption, Attribute... attributes) {		
 			cond = con;
 			toption = tOption;
 			foption = fOption;
@@ -1018,7 +1036,7 @@ public class JavaFile {
 		 *            The parameters of the method
 		 */
 		public Invoke(Expression target, String name, List<Expression> parameters,
-				List<Type> typeParameters) {			
+				List<Type> typeParameters, Attribute... attributes) {			
 			this.target = target;
 			this.name = name;
 			this.parameters = parameters;
@@ -1068,7 +1086,7 @@ public class JavaFile {
          *            anonymous class.
          */
 		public New(Type type, Expression context, List<Expression> parameters,
-				List<Declaration> declarations) {
+				List<Declaration> declarations, Attribute... attributes) {
 			this.type = type;
 			this.context = context;
 			this.parameters = parameters;
@@ -1114,20 +1132,21 @@ public class JavaFile {
      * @author djp
      * 
      */
-	public static class Deref extends SyntacticElementImpl  implements Expression {
+	public static class Deref extends SyntacticElementImpl
+			implements
+				Expression {
 		private Expression target;
 		private String name;
-		
-		
-		public Deref(Expression lhs, String rhs) {
+
+		public Deref(Expression lhs, String rhs, Attribute... attributes) {
 			this.target = lhs;
 			this.name = rhs;
 		}
-		
-		public Expression target() { 
+
+		public Expression target() {
 			return target;
 		}
-		
+
 		public String name() {
 			return name;
 		}
@@ -1139,11 +1158,14 @@ public class JavaFile {
      * @author djp
      * 
      */
-	public static class ArrayIndex extends SyntacticElementImpl  implements Expression {
+	public static class ArrayIndex extends SyntacticElementImpl
+			implements
+				Expression {
 		private Expression array;
 		private Expression idx;
 
-		public ArrayIndex(Expression array, Expression idx) {
+		public ArrayIndex(Expression array, Expression idx,
+				Attribute... attributes) {
 			this.array = array;
 			this.idx = idx;
 		}
@@ -1174,7 +1196,7 @@ public class JavaFile {
 	public static class Number extends SyntacticElementImpl implements Value {
 		protected int value;
 		
-		public Number(int value) {	
+		public Number(int value, Attribute... attributes) {	
 			this.value = value;
 		}
 	}
@@ -1186,7 +1208,7 @@ public class JavaFile {
 	 *
 	 */
 	public static class BoolVal extends Number {
-		public BoolVal(boolean value) {
+		public BoolVal(boolean value, Attribute... attributes) {
 			super(value?1:0);
 		}
 		
@@ -1202,7 +1224,7 @@ public class JavaFile {
 	 *
 	 */
 	public static class CharVal extends Number {
-		public CharVal(char value) {
+		public CharVal(char value, Attribute... attributes) {
 			super(value);
 		}
 		
@@ -1218,7 +1240,7 @@ public class JavaFile {
 	 *
 	 */
 	public static class ByteVal extends Number {
-		public ByteVal(byte value) {
+		public ByteVal(byte value, Attribute... attributes) {
 			super(value);
 		}
 		
@@ -1233,7 +1255,7 @@ public class JavaFile {
 	 *
 	 */
 	public static class ShortVal extends Number {
-		public ShortVal(short value) {
+		public ShortVal(short value, Attribute... attributes) {
 			super(value);
 		}
 		
@@ -1249,7 +1271,7 @@ public class JavaFile {
      * 
      */	
 	public static class IntVal extends Number {
-		public IntVal(int value) {
+		public IntVal(int value, Attribute... attributes) {
 			super(value);
 		}
 		
@@ -1267,7 +1289,7 @@ public class JavaFile {
 	public static class LongVal extends SyntacticElementImpl implements Value {
 		private long value;
 		
-		public LongVal(long value) {
+		public LongVal(long value, Attribute... attributes) {
 			this.value=value;
 		}
 		
@@ -1285,7 +1307,7 @@ public class JavaFile {
 	public static class FloatVal extends SyntacticElementImpl implements Value {
 		private float value;
 		
-		public FloatVal(float value) {
+		public FloatVal(float value, Attribute... attributes) {
 			this.value=value;
 		}
 		
@@ -1303,7 +1325,7 @@ public class JavaFile {
 	public static class DoubleVal extends SyntacticElementImpl implements Value {
 		private double value;
 		
-		public DoubleVal(double value) {			
+		public DoubleVal(double value, Attribute... attributes) {			
 			this.value=value;
 		}
 		
@@ -1321,7 +1343,7 @@ public class JavaFile {
 	public static class StringVal extends SyntacticElementImpl implements Value {
 		private String value;
 		
-		public StringVal(String value) {			
+		public StringVal(String value, Attribute... attributes) {			
 			this.value=value;
 		}
 		
@@ -1347,7 +1369,7 @@ public class JavaFile {
 	public static class ArrayVal extends SyntacticElementImpl implements Value {
 		private List<Expression> values;
 		
-		public ArrayVal(List<Expression> values) {			
+		public ArrayVal(List<Expression> values, Attribute... attributes) {			
 			this.values = values;
 		}
 		
@@ -1370,12 +1392,13 @@ public class JavaFile {
 	 */
 	public static class TypedArrayVal extends ArrayVal {
 		private Type type;
-		
-		public TypedArrayVal(Type type, List<Expression> values) {			
+
+		public TypedArrayVal(Type type, List<Expression> values,
+				Attribute... attributes) {
 			super(values);
 			this.type = type;
 		}
-		
+
 		public Type type() {
 			return type;
 		}
@@ -1388,10 +1411,10 @@ public class JavaFile {
 	public static class ClassVal extends SyntacticElementImpl implements Value {
 		private ClassType classType;
 
-		public ClassVal(ClassType type) {			
+		public ClassVal(ClassType type, Attribute... attributes) {
 			this.classType = type;
 		}
-		
+
 		public ClassType value() {
 			return classType;
 		}
