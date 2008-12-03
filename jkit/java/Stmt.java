@@ -5,8 +5,6 @@ import java.util.List;
 import jkit.jil.*;
 import jkit.util.Triple;
 
-import jkit.java.JavaFile.Expression;
-
 public interface Stmt extends SyntacticElement {
 
 	/**
@@ -63,15 +61,15 @@ public interface Stmt extends SyntacticElement {
 	 *
 	 */
 	public static class SynchronisedBlock extends Block {
-		private Expression expr;
+		private Expr expr;
 
-		public SynchronisedBlock(Expression expr, List<Stmt> statements,
+		public SynchronisedBlock(Expr expr, List<Stmt> statements,
 				Attribute... attributes) {
 			super(statements, attributes);
 			this.expr = expr;
 		}
 
-		public Expression expr() {
+		public Expr expr() {
 			return expr;
 		}
 	}
@@ -155,61 +153,60 @@ public interface Stmt extends SyntacticElement {
 		}
 	}
 
-	public static class Assignment extends SyntacticElementImpl implements
-			Stmt, JavaFile.Expression {
-		private Expression lhs, rhs;
+	public static class Assignment extends SyntacticElementImpl implements Stmt, Expr {
+		private Expr lhs, rhs;
 
-		public Assignment(Expression lhs, Expression rhs,
+		public Assignment(Expr lhs, Expr rhs,
 				Attribute... attributes) {
 			super(attributes);
 			this.lhs = lhs;
 			this.rhs = rhs;
 		}
 
-		public Expression lhs() {
+		public Expr lhs() {
 			return lhs;
 		}
 
-		public Expression rhs() {
+		public Expr rhs() {
 			return rhs;
 		}
 	}
 
 	public static class Return extends SyntacticElementImpl implements Stmt {
-		private Expression expr;
+		private Expr expr;
 
-		public Return(Expression expr, Attribute... attributes) {
+		public Return(Expr expr, Attribute... attributes) {
 			super(attributes);
 			this.expr = expr;
 		}
 
-		public Expression expr() {
+		public Expr expr() {
 			return expr;
 		}
 	}
 
 	public static class Throw extends SyntacticElementImpl implements Stmt {
-		private Expression expr;
+		private Expr expr;
 
-		public Throw(Expression expr, Attribute... attributes) {
+		public Throw(Expr expr, Attribute... attributes) {
 			super(attributes);
 			this.expr = expr;
 		}
 
-		public Expression expr() {
+		public Expr expr() {
 			return expr;
 		}
 	}
 
 	public static class Assert extends SyntacticElementImpl implements Stmt {
-		private Expression expr;
+		private Expr expr;
 
-		public Assert(Expression expr, Attribute... attributes) {
+		public Assert(Expr expr, Attribute... attributes) {
 			super(attributes);
 			this.expr = expr;
 		}
 
-		public Expression expr() {
+		public Expr expr() {
 			return expr;
 		}
 	}
@@ -241,11 +238,11 @@ public interface Stmt extends SyntacticElement {
 	}
 
 	public static class If extends SyntacticElementImpl implements Stmt {
-		private Expression condition;
+		private Expr condition;
 		private Stmt trueStatement;
 		private Stmt falseStatement;
 
-		public If(Expression condition, Stmt trueStatement,
+		public If(Expr condition, Stmt trueStatement,
 				Stmt falseStatement, Attribute... attributes) {
 			super(attributes);
 			this.condition = condition;
@@ -253,7 +250,7 @@ public interface Stmt extends SyntacticElement {
 			this.falseStatement = falseStatement;
 		}
 
-		public Expression condition() {
+		public Expr condition() {
 			return condition;
 		}
 
@@ -267,16 +264,16 @@ public interface Stmt extends SyntacticElement {
 	}
 
 	public static class While extends SyntacticElementImpl implements Stmt {
-		private Expression condition;
+		private Expr condition;
 		private Stmt body;
 
-		public While(Expression condition, Stmt body, Attribute... attributes) {
+		public While(Expr condition, Stmt body, Attribute... attributes) {
 			super(attributes);
 			this.condition = condition;
 			this.body = body;
 		}
 
-		public Expression condition() {
+		public Expr condition() {
 			return condition;
 		}
 
@@ -286,16 +283,16 @@ public interface Stmt extends SyntacticElement {
 	}
 
 	public static class DoWhile extends SyntacticElementImpl implements Stmt {
-		private Expression condition;
+		private Expr condition;
 		private Stmt body;
 
-		public DoWhile(Expression condition, Stmt body, Attribute... attributes) {
+		public DoWhile(Expr condition, Stmt body, Attribute... attributes) {
 			super(attributes);
 			this.condition = condition;
 			this.body = body;
 		}
 
-		public Expression condition() {
+		public Expr condition() {
 			return condition;
 		}
 
@@ -306,11 +303,11 @@ public interface Stmt extends SyntacticElement {
 
 	public static class For extends SyntacticElementImpl implements Stmt {
 		private Stmt initialiser;
-		private Expression condition;
+		private Expr condition;
 		private Stmt increment;
 		private Stmt body;
 
-		public For(Stmt initialiser, Expression condition, Stmt increment,
+		public For(Stmt initialiser, Expr condition, Stmt increment,
 				Stmt body, Attribute... attributes) {
 			super(attributes);
 			this.initialiser = initialiser;
@@ -323,7 +320,7 @@ public interface Stmt extends SyntacticElement {
 			return initialiser;
 		}
 
-		public Expression condition() {
+		public Expr condition() {
 			return condition;
 		}
 
@@ -340,11 +337,11 @@ public interface Stmt extends SyntacticElement {
 		private String var;
 		private List<Modifier> modifiers; // for variable
 		private Type type; // for variable
-		private Expression source;
+		private Expr source;
 		private Stmt body;
 
 		public ForEach(List<Modifier> modifiers, String var, Type type,
-				Expression source, Stmt body, Attribute... attributes) {
+				Expr source, Stmt body, Attribute... attributes) {
 			super(attributes);
 			this.modifiers = modifiers;
 			this.var = var;
@@ -396,7 +393,7 @@ public interface Stmt extends SyntacticElement {
 		 * 
 		 * @return
 		 */
-		public Expression source() {
+		public Expr source() {
 			return source;
 		}
 
@@ -421,10 +418,10 @@ public interface Stmt extends SyntacticElement {
 	public static class VarDef extends SyntacticElementImpl implements Simple {
 		private List<Modifier> modifiers;
 		private Type type;
-		private List<Triple<String, Integer, Expression>> definitions;
+		private List<Triple<String, Integer, Expr>> definitions;
 
 		public VarDef(List<Modifier> modifiers, Type type,
-				List<Triple<String, Integer, Expression>> definitions,
+				List<Triple<String, Integer, Expr>> definitions,
 				Attribute... attributes) {
 			super(attributes);
 			this.modifiers = modifiers;
@@ -451,7 +448,7 @@ public interface Stmt extends SyntacticElement {
 			return modifiers;
 		}
 
-		public List<Triple<String, Integer, Expression>> definitions() {
+		public List<Triple<String, Integer, Expr>> definitions() {
 			return definitions;
 		}
 
@@ -461,17 +458,17 @@ public interface Stmt extends SyntacticElement {
 	}
 
 	public static class Case extends SyntacticElementImpl {
-		private Expression condition;
+		private Expr condition;
 		private List<Stmt> statements;
 
-		public Case(Expression condition, List<Stmt> statements,
+		public Case(Expr condition, List<Stmt> statements,
 				Attribute... attributes) {
 			super(attributes);
 			this.condition = condition;
 			this.statements = statements;
 		}
 
-		public Expression condition() {
+		public Expr condition() {
 			return condition;
 		}
 
@@ -487,17 +484,17 @@ public interface Stmt extends SyntacticElement {
 	}
 
 	public static class Switch extends SyntacticElementImpl implements Stmt {
-		private Expression condition;
+		private Expr condition;
 		private List<Case> cases;
 
-		public Switch(Expression condition, List<Case> cases,
+		public Switch(Expr condition, List<Case> cases,
 				Attribute... attributes) {
 			super(attributes);
 			this.condition = condition;
 			this.cases = cases;
 		}
 
-		public Expression condition() {
+		public Expr condition() {
 			return condition;
 		}
 

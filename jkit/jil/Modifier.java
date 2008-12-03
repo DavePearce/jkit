@@ -2,7 +2,7 @@ package jkit.jil;
 
 import java.util.List;
 
-import jkit.java.JavaFile.Expression;
+import jkit.java.Expr;
 
 /**
  * A modifier represents a flag (e.g. public/final/static) which can be used in
@@ -41,9 +41,9 @@ public interface Modifier extends SyntacticElement {
 	 */
 	public static class Annotation extends SyntacticElementImpl  implements Modifier {
 		private String name;
-		private List<Expression> arguments;
+		private List<Expr> arguments;
 		
-		public Annotation(String name, List<Expression> arguments,
+		public Annotation(String name, List<Expr> arguments,
 				Attribute... attributes) {
 			super(attributes);
 			this.name = name;
@@ -52,7 +52,7 @@ public interface Modifier extends SyntacticElement {
 		public String name() {
 			return name;
 		}
-		public List<Expression> arguments() {
+		public List<Expr> arguments() {
 			return arguments;
 		}
 	}

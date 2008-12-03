@@ -272,7 +272,7 @@ public class JavaFileReader2 {
 		// annotation support is required.
 		String name = decl.getChild(0).getText();
 
-		ArrayList<JavaFile.Expression> arguments = new ArrayList<JavaFile.Expression>();
+		ArrayList<Expr> arguments = new ArrayList<Expr>();
 		ArrayList<JavaFile.Declaration> declarations = new ArrayList<JavaFile.Declaration>();
 		for (int i = 1; i != decl.getChildCount(); ++i) {
 			Tree child = decl.getChild(i);
@@ -449,7 +449,7 @@ public class JavaFileReader2 {
 		for (int i = idx; i < tree.getChildCount(); ++i) {
 			Tree child = tree.getChild(i);
 			String name = child.getText();
-			JavaFile.Expression initialiser = null;
+			Expr initialiser = null;
 			// A single "[" indicates an array
 			int aindx = 0;
 			while (aindx < child.getChildCount()
@@ -559,7 +559,7 @@ public class JavaFileReader2 {
      */
 	protected Stmt parseSynchronisedBlock(Tree tree) {
 		ArrayList<Stmt> stmts = new ArrayList<Stmt>();
-		JavaFile.Expression e = parseExpression(tree.getChild(0));
+		Expr e = parseExpression(tree.getChild(0));
 
 		// === ITERATE STATEMENTS ===
 		Tree child = tree.getChild(1);
@@ -621,7 +621,7 @@ public class JavaFileReader2 {
      * @return
      */
 	protected Stmt parseVarDef(Tree tree) {
-		ArrayList<Triple<String, Integer, JavaFile.Expression>> vardefs = new ArrayList<Triple<String, Integer, JavaFile.Expression>>();
+		ArrayList<Triple<String, Integer, Expr>> vardefs = new ArrayList<Triple<String, Integer, Expr>>();
 
 		// === MODIFIERS ===
 		List<Modifier> modifiers = parseModifiers(tree.getChild(0));
@@ -632,7 +632,7 @@ public class JavaFileReader2 {
 			Tree nameTree = tree.getChild(i);
 			String myName = nameTree.getText();
 
-			JavaFile.Expression myInitialiser = null;
+			Expr myInitialiser = null;
 			// Parse array type modifiers (if there are any)
 			int dims = 0;
 			for (int j = 0; j < nameTree.getChildCount(); j = j + 1) {
@@ -644,7 +644,7 @@ public class JavaFileReader2 {
 					myInitialiser = parseExpression(am);
 				}
 			}
-			vardefs.add(new Triple<String, Integer, JavaFile.Expression>(
+			vardefs.add(new Triple<String, Integer, Expr>(
 					myName, dims, myInitialiser));
 		}
 
@@ -662,8 +662,8 @@ public class JavaFileReader2 {
      * @return
      */
 	protected Stmt.Assignment parseAssign(Tree tree) {
-		JavaFile.Expression lhs = parseExpression(tree.getChild(0));
-		JavaFile.Expression rhs = parseExpression(tree.getChild(1));
+		Expr lhs = parseExpression(tree.getChild(0));
+		Expr rhs = parseExpression(tree.getChild(1));
 		return new Stmt.Assignment(lhs, rhs, new SourceLocation(tree
 				.getLine(), tree.getCharPositionInLine()));
 	}
@@ -686,7 +686,7 @@ public class JavaFileReader2 {
 	}
 
 	protected Stmt parseAssert(Tree tree) {
-		JavaFile.Expression expr = parseExpression(tree.getChild(0));
+		Expr expr = parseExpression(tree.getChild(0));
 		return new Stmt.Assert(expr, new SourceLocation(tree.getLine(),
 				tree.getCharPositionInLine()));
 	}
@@ -748,7 +748,7 @@ public class JavaFileReader2 {
 	}
 
 	protected Stmt parseIf(Tree stmt) {
-		JavaFile.Expression condition = parseExpression(stmt.getChild(0));
+		Expr condition = parseExpression(stmt.getChild(0));
 		Stmt trueStmt = parseStatement(stmt.getChild(1));
 		Stmt falseStmt = stmt.getChildCount() < 3
 				? null
@@ -761,7 +761,7 @@ public class JavaFileReader2 {
 	}
 
 	protected Stmt parseWhile(Tree stmt) {
-		JavaFile.Expression condition = parseExpression(stmt.getChild(0)
+		Expr condition = parseExpression(stmt.getChild(0)
 				.getChild(0));
 		Stmt body = parseStatement(stmt.getChild(1));
 		return new Stmt.While(condition, body, new SourceLocation(stmt
@@ -769,7 +769,7 @@ public class JavaFileReader2 {
 	}
 
 	protected Stmt parseDoWhile(Tree stmt) {
-		JavaFile.Expression condition = parseExpression(stmt.getChild(0)
+		Expr condition = parseExpression(stmt.getChild(0)
 				.getChild(0));
 		Stmt body = parseStatement(stmt.getChild(1));
 		return new Stmt.DoWhile(condition, body, new SourceLocation(stmt
@@ -778,7 +778,7 @@ public class JavaFileReader2 {
 
 	protected Stmt parseFor(Tree stmt) {
 		Stmt initialiser = null;
-		JavaFile.Expression condition = null;
+		Expr condition = null;
 		Stmt increment = null;
 		Stmt body = null;
 
@@ -824,7 +824,7 @@ public class JavaFileReader2 {
 		List<Modifier> varMods = parseModifiers(varDef.getChild(0));
 		Type varType = parseType(varDef.getChild(1));
 		String varName = varDef.getChild(2).getText();
-		JavaFile.Expression src = parseExpression(stmt.getChild(1));
+		Expr src = parseExpression(stmt.getChild(1));
 		Stmt loopBody = parseStatement(body);
 
 		return new Stmt.ForEach(
@@ -838,13 +838,13 @@ public class JavaFileReader2 {
 
 	protected Stmt parseSwitch(Tree stmt) {
 		// Second, process the expression to switch on
-		JavaFile.Expression condition = parseExpression(stmt.getChild(0));
+		Expr condition = parseExpression(stmt.getChild(0));
 		ArrayList<Stmt.Case> cases = new ArrayList<Stmt.Case>();
 
 		for (int i = 1; i < stmt.getChildCount(); i++) {
 			Tree child = stmt.getChild(i);
 			if (child.getType() == CASE) {
-				JavaFile.Expression c = parseExpression(child.getChild(0));
+				Expr c = parseExpression(child.getChild(0));
 				List<Stmt> stmts = null;
 				if (child.getChild(1) != null) {
 					Stmt.Block b = parseBlock(child.getChild(1));
@@ -874,25 +874,25 @@ public class JavaFileReader2 {
      * @return
      */
 	public Stmt parseIncDec(Tree stmt) {
-		JavaFile.UnOp lhs = (JavaFile.UnOp) parseExpression(stmt);
-		JavaFile.Expression lval = lhs.expr();
+		Expr.UnOp lhs = (Expr.UnOp) parseExpression(stmt);
+		Expr lval = lhs.expr();
 		SourceLocation loc = new SourceLocation(stmt.getLine(), stmt
 				.getCharPositionInLine());
-		if (lhs.op() == JavaFile.UnOp.POSTDEC
-				|| lhs.op() == JavaFile.UnOp.PREDEC) {
+		if (lhs.op() == Expr.UnOp.POSTDEC
+				|| lhs.op() == Expr.UnOp.PREDEC) {
 			return new Stmt.Assignment(lval,
-					new JavaFile.BinOp(JavaFile.BinOp.SUB, lval,
+					new Expr.BinOp(Expr.BinOp.SUB, lval,
 							new JavaFile.IntVal(1, loc), loc), loc);
 		} else {
 			// must be preinc or postinc
 			return new Stmt.Assignment(lval,
-					new JavaFile.BinOp(JavaFile.BinOp.ADD, lval,
+					new Expr.BinOp(Expr.BinOp.ADD, lval,
 							new JavaFile.IntVal(1, loc), loc), loc);
 		}
 	}
 
 	public Stmt parseSelectorStmt(Tree stmt) {
-		JavaFile.Expression e = parseExpression(stmt);
+		Expr e = parseExpression(stmt);
 		if (e instanceof Stmt) {
 			return (Stmt) e;
 		} else {
@@ -900,7 +900,7 @@ public class JavaFileReader2 {
 		}
 	}
 
-	protected JavaFile.Expression parseExpression(Tree expr) {
+	protected Expr parseExpression(Tree expr) {
 		switch (expr.getType()) {
 			case CHARVAL :
 				return parseCharVal(expr);
@@ -929,47 +929,47 @@ public class JavaFileReader2 {
 			case GETCLASS :
 				return parseGetClass(expr);
 			case PREINC :
-				return parseUnOp(UnOp.PREINC, expr);
+				return parseUnOp(Expr.UnOp.PREINC, expr);
 			case PREDEC :
-				return parseUnOp(UnOp.PREDEC, expr);
+				return parseUnOp(Expr.UnOp.PREDEC, expr);
 			case POSTINC :
-				return parseUnOp(UnOp.POSTINC, expr);
+				return parseUnOp(Expr.UnOp.POSTINC, expr);
 			case POSTDEC :
-				return parseUnOp(UnOp.POSTDEC, expr);
+				return parseUnOp(Expr.UnOp.POSTDEC, expr);
 			case NEG :
-				return parseUnOp(UnOp.NEG, expr);
+				return parseUnOp(Expr.UnOp.NEG, expr);
 			case NOT :
-				return parseUnOp(UnOp.NOT, expr);
+				return parseUnOp(Expr.UnOp.NOT, expr);
 			case INV :
-				return parseUnOp(UnOp.INV, expr);
+				return parseUnOp(Expr.UnOp.INV, expr);
 			case CAST :
 				return parseCast(expr);
 			case LABINOP :
 				return parseLeftAssociativeBinOp(expr);
 			case USHR :
-				return parseBinOp(BinOp.USHR, expr);
+				return parseBinOp(Expr.BinOp.USHR, expr);
 			case LAND :
-				return parseBinOp(BinOp.LAND, expr);
+				return parseBinOp(Expr.BinOp.LAND, expr);
 			case LOR :
-				return parseBinOp(BinOp.LOR, expr);
+				return parseBinOp(Expr.BinOp.LOR, expr);
 			case AND :
-				return parseBinOp(BinOp.AND, expr);
+				return parseBinOp(Expr.BinOp.AND, expr);
 			case OR :
-				return parseBinOp(BinOp.OR, expr);
+				return parseBinOp(Expr.BinOp.OR, expr);
 			case XOR :
-				return parseBinOp(BinOp.XOR, expr);
+				return parseBinOp(Expr.BinOp.XOR, expr);
 			case EQ :
-				return parseBinOp(BinOp.EQ, expr);
+				return parseBinOp(Expr.BinOp.EQ, expr);
 			case NEQ :
-				return parseBinOp(BinOp.NEQ, expr);
+				return parseBinOp(Expr.BinOp.NEQ, expr);
 			case LT :
-				return parseBinOp(BinOp.LT, expr);
+				return parseBinOp(Expr.BinOp.LT, expr);
 			case LTEQ :
-				return parseBinOp(BinOp.LTEQ, expr);
+				return parseBinOp(Expr.BinOp.LTEQ, expr);
 			case GT :
-				return parseBinOp(BinOp.GT, expr);
+				return parseBinOp(Expr.BinOp.GT, expr);
 			case GTEQ :
-				return parseBinOp(BinOp.GTEQ, expr);
+				return parseBinOp(Expr.BinOp.GTEQ, expr);
 			case INSTANCEOF :
 				return parseInstanceOf(expr);
 			case TERNOP :
@@ -983,7 +983,7 @@ public class JavaFileReader2 {
 		}
 	}
 
-	protected JavaFile.Expression parseSelector(Tree selector) {
+	protected Expr parseSelector(Tree selector) {
 		Tree target = selector.getChild(0);
 
 		// The following is basically dealing with an awkward situation. For
@@ -1008,7 +1008,7 @@ public class JavaFileReader2 {
 		// figure out which class.
 
 		int idx = 1;
-		JavaFile.Expression expr = parseExpression(target);
+		Expr expr = parseExpression(target);
 
 		for (int i = idx; i != selector.getChildCount(); ++i) {
 			Tree child = selector.getChild(i);
@@ -1016,11 +1016,11 @@ public class JavaFileReader2 {
 					.getCharPositionInLine());
 			switch (child.getType()) {
 				case DEREF :
-					expr = new JavaFile.Deref(expr,
+					expr = new Expr.Deref(expr,
 							child.getChild(0).getText(), loc);
 					break;
 				case ARRAYINDEX : {
-					expr = new JavaFile.ArrayIndex(expr, parseExpression(child
+					expr = new Expr.ArrayIndex(expr, parseExpression(child
 							.getChild(0)), loc);
 					break;
 				}
@@ -1037,15 +1037,15 @@ public class JavaFileReader2 {
 
 					String method = child.getChild(start).getText();
 
-					List<JavaFile.Expression> params = parseExpressionList(
+					List<Expr> params = parseExpressionList(
 							start + 1, child.getChildCount(), child);
 
-					expr = new JavaFile.Invoke(expr, method, params,
+					expr = new Expr.Invoke(expr, method, params,
 							typeParameters, loc);
 					break;
 				}
 				case NEW : {
-					JavaFile.New tmp = parseNew(child);
+					Expr.New tmp = parseNew(child);
 					tmp.setContext(expr);
 					expr = tmp;
 					break;
@@ -1067,7 +1067,7 @@ public class JavaFileReader2 {
      * @param expr
      * @return
      */
-	protected JavaFile.New parseNew(Tree expr) {
+	protected Expr.New parseNew(Tree expr) {
 		// first, parse any parameters supplied
 		ArrayList<JavaFile.Declaration> declarations = new ArrayList<JavaFile.Declaration>();
 
@@ -1084,9 +1084,9 @@ public class JavaFileReader2 {
 			}
 		}
 
-		List<JavaFile.Expression> params = parseExpressionList(1, end, expr);
+		List<Expr> params = parseExpressionList(1, end, expr);
 
-		return new JavaFile.New(parseType(expr.getChild(0)), null, params,
+		return new Expr.New(parseType(expr.getChild(0)), null, params,
 				declarations, new SourceLocation(expr.getLine(), expr
 						.getCharPositionInLine()));
 	}
@@ -1098,7 +1098,7 @@ public class JavaFileReader2 {
      * @param expr
      * @return
      */
-	public JavaFile.Invoke parseInvoke(Tree expr) {
+	public Expr.Invoke parseInvoke(Tree expr) {
 
 		// =================================================
 		// ======== PARSE TYPE PARAMETERS (IF ANY) =========
@@ -1120,10 +1120,10 @@ public class JavaFileReader2 {
 
 		String method = expr.getChild(start).getText();
 
-		List<JavaFile.Expression> params = parseExpressionList(start + 1, expr
+		List<Expr> params = parseExpressionList(start + 1, expr
 				.getChildCount(), expr);
 
-		return new JavaFile.Invoke(
+		return new Expr.Invoke(
 				null,
 				method,
 				params,
@@ -1131,34 +1131,34 @@ public class JavaFileReader2 {
 				new SourceLocation(expr.getLine(), expr.getCharPositionInLine()));
 	}
 
-	public JavaFile.Expression parseGetClass(Tree expr) {
+	public Expr parseGetClass(Tree expr) {
 		return new JavaFile.ClassVal(parseClassType(expr.getChild(0)));
 	}
 
-	protected JavaFile.Expression parseTernOp(Tree expr) {
-		JavaFile.Expression cond = parseExpression(expr.getChild(0));
-		JavaFile.Expression tbranch = parseExpression(expr.getChild(1));
-		JavaFile.Expression fbranch = parseExpression(expr.getChild(2));
-		return new JavaFile.TernOp(cond, tbranch, fbranch, new SourceLocation(
+	protected Expr parseTernOp(Tree expr) {
+		Expr cond = parseExpression(expr.getChild(0));
+		Expr tbranch = parseExpression(expr.getChild(1));
+		Expr fbranch = parseExpression(expr.getChild(2));
+		return new Expr.TernOp(cond, tbranch, fbranch, new SourceLocation(
 				expr.getLine(), expr.getCharPositionInLine()));
 	}
 
-	protected JavaFile.Expression parseInstanceOf(Tree expr) {
-		JavaFile.Expression e = parseExpression(expr.getChild(0));
-		return new JavaFile.InstanceOf(
+	protected Expr parseInstanceOf(Tree expr) {
+		Expr e = parseExpression(expr.getChild(0));
+		return new Expr.InstanceOf(
 				e,
 				parseType(expr.getChild(1)),
 				new SourceLocation(expr.getLine(), expr.getCharPositionInLine()));
 	}
 
-	protected JavaFile.Expression parseCast(Tree expr) {
-		return new JavaFile.Cast(parseType(expr.getChild(0)),
+	protected Expr parseCast(Tree expr) {
+		return new Expr.Cast(parseType(expr.getChild(0)),
 				parseExpression(expr.getChild(1)), new SourceLocation(expr
 						.getLine(), expr.getCharPositionInLine()));
 	}
 
-	protected JavaFile.Expression parseUnOp(int uop, Tree expr) {
-		return new JavaFile.UnOp(
+	protected Expr parseUnOp(int uop, Tree expr) {
+		return new Expr.UnOp(
 				uop,
 				parseExpression(expr.getChild(0)),
 				new SourceLocation(expr.getLine(), expr.getCharPositionInLine()));
@@ -1166,13 +1166,13 @@ public class JavaFileReader2 {
 
 	// Binary operations which can be left associative are more complex and have
 	// to be delt with using a special LABINOP operator.
-	protected JavaFile.Expression parseLeftAssociativeBinOp(Tree expr) {
-		JavaFile.Expression lhs = parseExpression(expr.getChild(0));
+	protected Expr parseLeftAssociativeBinOp(Tree expr) {
+		Expr lhs = parseExpression(expr.getChild(0));
 
 		for (int i = 1; i < expr.getChildCount(); i = i + 2) {
 			Tree child = expr.getChild(i + 1);
 			int bop = parseBinOpOp(expr.getChild(i).getText(), expr);
-			lhs = new JavaFile.BinOp(bop, lhs, parseExpression(child),
+			lhs = new Expr.BinOp(bop, lhs, parseExpression(child),
 					new SourceLocation(child.getLine(), child
 							.getCharPositionInLine()));
 		}
@@ -1180,29 +1180,29 @@ public class JavaFileReader2 {
 		return lhs;
 	}
 
-	protected JavaFile.Expression parseBinOp(int bop, Tree expr) {
-		JavaFile.Expression lhs = parseExpression(expr.getChild(0));
-		JavaFile.Expression rhs = parseExpression(expr.getChild(1));
+	protected Expr parseBinOp(int bop, Tree expr) {
+		Expr lhs = parseExpression(expr.getChild(0));
+		Expr rhs = parseExpression(expr.getChild(1));
 
-		return new JavaFile.BinOp(bop, lhs, rhs, new SourceLocation(expr
+		return new Expr.BinOp(bop, lhs, rhs, new SourceLocation(expr
 				.getLine(), expr.getCharPositionInLine()));
 	}
 
 	protected int parseBinOpOp(String op, Tree expr) {
 		if (op.equals("+")) {
-			return BinOp.ADD;
+			return Expr.BinOp.ADD;
 		} else if (op.equals("-")) {
-			return BinOp.SUB;
+			return Expr.BinOp.SUB;
 		} else if (op.equals("/")) {
-			return BinOp.DIV;
+			return Expr.BinOp.DIV;
 		} else if (op.equals("*")) {
-			return BinOp.MUL;
+			return Expr.BinOp.MUL;
 		} else if (op.equals("%")) {
-			return BinOp.MOD;
+			return Expr.BinOp.MOD;
 		} else if (op.equals("<")) {
-			return BinOp.SHL;
+			return Expr.BinOp.SHL;
 		} else if (op.equals(">")) {
-			return BinOp.SHR;
+			return Expr.BinOp.SHR;
 		} else {
 			throw new SyntaxError(
 					"Unknown left-associative binary operator encountered ('"
@@ -1211,13 +1211,13 @@ public class JavaFileReader2 {
 		}
 	}
 
-	protected JavaFile.Expression parseVariable(Tree expr) {
+	protected Expr parseVariable(Tree expr) {
 		String name = expr.getChild(0).getText();
-		return new JavaFile.Variable(name, new SourceLocation(expr.getLine(),
+		return new Expr.Variable(name, new SourceLocation(expr.getLine(),
 				expr.getCharPositionInLine()));
 	}
 
-	protected JavaFile.Expression parseCharVal(Tree expr) {
+	protected Expr parseCharVal(Tree expr) {
 		String charv = expr.getChild(0).getText();
 		JavaFile.CharVal v = null;
 		SourceLocation loc = new SourceLocation(expr.getLine(), expr
@@ -1260,14 +1260,14 @@ public class JavaFileReader2 {
 		return v;
 	}
 
-	protected JavaFile.Expression parseBoolVal(Tree expr) {
+	protected Expr parseBoolVal(Tree expr) {
 		JavaFile.BoolVal v = new JavaFile.BoolVal(Boolean.parseBoolean(expr
 				.getChild(0).getText()), new SourceLocation(expr.getLine(),
 				expr.getCharPositionInLine()));
 		return v;
 	}
 
-	protected JavaFile.Expression parseIntVal(Tree expr) {
+	protected Expr parseIntVal(Tree expr) {
 		int radix = 10;
 		String value = expr.getChild(0).getText();
 		if (value.startsWith("0x")) {
@@ -1310,7 +1310,7 @@ public class JavaFileReader2 {
 		return out;
 	}
 
-	protected JavaFile.Expression parseStringVal(Tree expr) {
+	protected Expr parseStringVal(Tree expr) {
 		String v = expr.getChild(0).getText();
 
 		/*
@@ -1398,7 +1398,7 @@ public class JavaFileReader2 {
 		return new JavaFile.StringVal(v,new SourceLocation(expr.getLine(),expr.getCharPositionInLine()));
 	}
 
-	protected JavaFile.Expression parseNullVal(Tree expr) {
+	protected Expr parseNullVal(Tree expr) {
 		return new JavaFile.NullVal(new SourceLocation(expr.getLine(),expr.getCharPositionInLine()));
 	}
 
@@ -1406,11 +1406,11 @@ public class JavaFileReader2 {
      * This parses a floating point value. Note that this may correspond to a
      * Java float, or a Java double!
      */
-	protected JavaFile.Expression parseFloatVal(Tree expr) {
+	protected Expr parseFloatVal(Tree expr) {
 		String val = expr.getChild(0).getText();
 
 		char lc = val.charAt(val.length() - 1);
-		JavaFile.Expression r;
+		Expr r;
 		if (lc == 'f' || lc == 'F') {
 			r = new JavaFile.FloatVal(Float.parseFloat(val),
 					new SourceLocation(expr.getLine(), expr
@@ -1433,8 +1433,8 @@ public class JavaFileReader2 {
      * @param expr
      * @return
      */
-	protected JavaFile.Expression parseArrayVal(Tree expr) {
-		List<JavaFile.Expression> values = parseExpressionList(0, expr
+	protected Expr parseArrayVal(Tree expr) {
+		List<Expr> values = parseExpressionList(0, expr
 				.getChildCount(), expr);
 		
 		return new JavaFile.ArrayVal(values, new SourceLocation(expr.getLine(),
@@ -1454,20 +1454,20 @@ public class JavaFileReader2 {
      * @param expr
      * @return
      */
-	protected JavaFile.Expression parseTypedArrayVal(Tree expr) {
+	protected Expr parseTypedArrayVal(Tree expr) {
 		Type type = parseType(expr.getChild(0));
 		Tree aval = expr.getChild(1);
-		List<JavaFile.Expression> values = parseExpressionList(0, aval
+		List<Expr> values = parseExpressionList(0, aval
 				.getChildCount(), aval);
 		
 		return new TypedArrayVal(type, values, new SourceLocation(expr
 				.getLine(), expr.getCharPositionInLine()));
 	}
 
-	protected List<JavaFile.Expression> parseExpressionList(int start, int end,
+	protected List<Expr> parseExpressionList(int start, int end,
 			Tree expr) {
 
-		ArrayList<JavaFile.Expression> es = new ArrayList<JavaFile.Expression>();
+		ArrayList<Expr> es = new ArrayList<Expr>();
 
 		for (int i = start; i < end; i++) {
 			es.add(parseExpression(expr.getChild(i)));
@@ -1506,7 +1506,7 @@ public class JavaFileReader2 {
 				mods.add(new Modifier.Base(java.lang.reflect.Modifier.STRICT,loc));
 			} else if (mc.getType() == ANNOTATION) {
 				String name = mc.getChild(0).getText();
-				ArrayList<JavaFile.Expression> arguments = new ArrayList<JavaFile.Expression>();
+				ArrayList<Expr> arguments = new ArrayList<Expr>();
 				for (int j = 1; j != mc.getChildCount(); ++j) {
 					arguments.add(parseExpression(mc.getChild(j)));
 				}

@@ -168,7 +168,7 @@ public class JavaFileWriter {
 		if(c.arguments().size() > 0) {
 			write("(");
 			boolean firstTime = true;
-			for(JavaFile.Expression e : c.arguments()) {
+			for(Expr e : c.arguments()) {
 				if(!firstTime) {
 					write(",");
 				}
@@ -345,10 +345,10 @@ public class JavaFileWriter {
 			writeDoWhile((Stmt.DoWhile) e);
 		} else if(e instanceof Stmt.Switch) {
 			writeSwitch((Stmt.Switch) e);
-		} else if(e instanceof JavaFile.Invoke) {
-			writeInvoke((JavaFile.Invoke) e);
-		} else if(e instanceof JavaFile.New) {
-			writeNew((JavaFile.New) e);
+		} else if(e instanceof Expr.Invoke) {
+			writeInvoke((Expr.Invoke) e);
+		} else if(e instanceof Expr.New) {
+			writeNew((Expr.New) e);
 		} else if(e instanceof JavaFile.Clazz) {
 			writeClass((JavaFile.Clazz)e);
 		} else {
@@ -422,7 +422,7 @@ public class JavaFileWriter {
 		writeType(def.type());
 		write(" ");
 		boolean firstTime=true;
-		for(Triple<String,Integer,JavaFile.Expression> d : def.definitions()) {
+		for(Triple<String,Integer,Expr> d : def.definitions()) {
 			if(!firstTime) {
 				write(", ");				
 			}
@@ -596,7 +596,7 @@ public class JavaFileWriter {
 		write("}");
 	}
 	
-	protected void writeExpression(JavaFile.Expression e) {
+	protected void writeExpression(Expr e) {
 		
 		if(e instanceof JavaFile.BoolVal) {
 			writeBoolVal((JavaFile.BoolVal)e);
@@ -620,26 +620,26 @@ public class JavaFileWriter {
 			writeArrayVal((JavaFile.ArrayVal)e);
 		} else if(e instanceof JavaFile.ClassVal) {
 			writeClassVal((JavaFile.ClassVal) e);
-		} else if(e instanceof JavaFile.Variable) {
-			writeVariable((JavaFile.Variable)e);
-		} else if(e instanceof JavaFile.UnOp) {
-			writeUnOp((JavaFile.UnOp)e);
-		} else if(e instanceof JavaFile.BinOp) {
-			writeBinOp((JavaFile.BinOp)e);
-		} else if(e instanceof JavaFile.TernOp) {
-			writeTernOp((JavaFile.TernOp)e);
-		} else if(e instanceof JavaFile.Cast) {
-			writeCast((JavaFile.Cast)e);
-		} else if(e instanceof JavaFile.InstanceOf) {
-			writeInstanceOf((JavaFile.InstanceOf)e);
-		} else if(e instanceof JavaFile.Invoke) {
-			writeInvoke((JavaFile.Invoke) e);
-		} else if(e instanceof JavaFile.New) {
-			writeNew((JavaFile.New) e);
-		} else if(e instanceof JavaFile.ArrayIndex) {
-			writeArrayIndex((JavaFile.ArrayIndex) e);
-		} else if(e instanceof JavaFile.Deref) {
-			writeDeref((JavaFile.Deref) e);
+		} else if(e instanceof Expr.Variable) {
+			writeVariable((Expr.Variable)e);
+		} else if(e instanceof Expr.UnOp) {
+			writeUnOp((Expr.UnOp)e);
+		} else if(e instanceof Expr.BinOp) {
+			writeBinOp((Expr.BinOp)e);
+		} else if(e instanceof Expr.TernOp) {
+			writeTernOp((Expr.TernOp)e);
+		} else if(e instanceof Expr.Cast) {
+			writeCast((Expr.Cast)e);
+		} else if(e instanceof Expr.InstanceOf) {
+			writeInstanceOf((Expr.InstanceOf)e);
+		} else if(e instanceof Expr.Invoke) {
+			writeInvoke((Expr.Invoke) e);
+		} else if(e instanceof Expr.New) {
+			writeNew((Expr.New) e);
+		} else if(e instanceof Expr.ArrayIndex) {
+			writeArrayIndex((Expr.ArrayIndex) e);
+		} else if(e instanceof Expr.Deref) {
+			writeDeref((Expr.Deref) e);
 		} else if(e instanceof Stmt.Assignment) {
 			// force brackets
 			write("(");
@@ -651,20 +651,20 @@ public class JavaFileWriter {
 		}
 	}
 	
-	protected void writeDeref(JavaFile.Deref e) {
+	protected void writeDeref(Expr.Deref e) {
 		writeExpressionWithBracketsIfNecessary(e.target());
 		write(".");
 		write(e.name());		
 	}
 	
-	protected void writeArrayIndex(JavaFile.ArrayIndex e) {
+	protected void writeArrayIndex(Expr.ArrayIndex e) {
 		writeExpression(e.target());
 		write("[");
 		writeExpression(e.index());
 		write("]");
 	}
 	
-	protected void writeNew(JavaFile.New e) {
+	protected void writeNew(Expr.New e) {
 		if(e.context() != null) {
 			writeExpressionWithBracketsIfNecessary(e.context());
 			write(".");
@@ -672,7 +672,7 @@ public class JavaFileWriter {
 		write("new ");
 		if(e.type() instanceof Type.Array) {
 			// array initialiser
-			List<JavaFile.Expression> ps = e.parameters();
+			List<Expr> ps = e.parameters();
 			Type type =  e.type();
 			int dims = 0;
 			
@@ -696,7 +696,7 @@ public class JavaFileWriter {
 			writeType(e.type());
 			write("(");
 			boolean firstTime=true;
-			for(JavaFile.Expression i : e.parameters()) {
+			for(Expr i : e.parameters()) {
 				if(!firstTime) {
 					write(", ");
 				} else {
@@ -725,7 +725,7 @@ public class JavaFileWriter {
 		}
 	}
 	
-	protected void writeInvoke(JavaFile.Invoke e) {
+	protected void writeInvoke(Expr.Invoke e) {
 		if(e.target() != null) {
 			writeExpressionWithBracketsIfNecessary(e.target());
 			write(".");
@@ -746,7 +746,7 @@ public class JavaFileWriter {
 		write(e.name());
 		write("(");
 		boolean firstTime=true;
-		for(JavaFile.Expression i : e.parameters()) {
+		for(Expr i : e.parameters()) {
 			if(!firstTime) {
 				write(", ");
 			} else {
@@ -757,13 +757,13 @@ public class JavaFileWriter {
 		write(")");
 	}
 	
-	protected void writeInstanceOf(JavaFile.InstanceOf e) {		
+	protected void writeInstanceOf(Expr.InstanceOf e) {		
 		writeExpressionWithBracketsIfNecessary(e.lhs());
 		write(" instanceof ");
 		writeType(e.rhs());		
 	}
 	
-	protected void writeCast(JavaFile.Cast e) {
+	protected void writeCast(Expr.Cast e) {
 		write("(");
 		writeType(e.type());
 		write(") ");
@@ -815,7 +815,7 @@ public class JavaFileWriter {
 		write("new ");
 		writeType(e.type());
 		output.write("{");		
-		for(JavaFile.Expression i : e.values()) {
+		for(Expr i : e.values()) {
 			if(!firstTime) {
 				write(", ");
 			} else {
@@ -829,7 +829,7 @@ public class JavaFileWriter {
 	protected void writeArrayVal(JavaFile.ArrayVal e) {		
 		boolean firstTime = true;
 		write("{");
-		for(JavaFile.Expression i : e.values()) {
+		for(Expr i : e.values()) {
 			if(!firstTime) {
 				write(", ");
 			} else {
@@ -845,21 +845,21 @@ public class JavaFileWriter {
 		write(".class");
 	}
 	
-	protected void writeVariable(JavaFile.Variable e) {			
+	protected void writeVariable(Expr.Variable e) {			
 		write(e.value());		
 	}
 	
 	public static final String[] unopstr={"!","~","-","++","--","++","--"};
 	
-	protected void writeUnOp(JavaFile.UnOp e) {		
+	protected void writeUnOp(Expr.UnOp e) {		
 		
-		if(e.op() != JavaFile.UnOp.POSTDEC && e.op() != JavaFile.UnOp.POSTINC) {
+		if(e.op() != Expr.UnOp.POSTDEC && e.op() != Expr.UnOp.POSTINC) {
 			write(unopstr[e.op()]);
 		}
 				
 		writeExpressionWithBracketsIfNecessary(e.expr());					
 		
-		if (e.op() == JavaFile.UnOp.POSTDEC || e.op() == JavaFile.UnOp.POSTINC) {
+		if (e.op() == Expr.UnOp.POSTDEC || e.op() == Expr.UnOp.POSTINC) {
 			write(unopstr[e.op()]);
 		}
 	}
@@ -870,7 +870,7 @@ public class JavaFileWriter {
 			"||", "++"};
 	
 	
-	protected void writeBinOp(JavaFile.BinOp e) {				
+	protected void writeBinOp(Expr.BinOp e) {				
 		writeExpressionWithBracketsIfNecessary(e.lhs());					
 		write(" ");
 		write(binopstr[e.op()]);
@@ -878,7 +878,7 @@ public class JavaFileWriter {
 		writeExpressionWithBracketsIfNecessary(e.rhs());						
 	}
 	
-	protected void writeTernOp(JavaFile.TernOp e) {		
+	protected void writeTernOp(Expr.TernOp e) {		
 		writeExpressionWithBracketsIfNecessary(e.condition());		
 		write(" ? ");
 		writeExpressionWithBracketsIfNecessary(e.trueBranch());
@@ -886,9 +886,9 @@ public class JavaFileWriter {
 		writeExpressionWithBracketsIfNecessary(e.falseBranch());
 	}
 	
-	protected void writeExpressionWithBracketsIfNecessary(JavaFile.Expression e) {
-		if (e instanceof JavaFile.BinOp || e instanceof JavaFile.InstanceOf
-				|| e instanceof JavaFile.TernOp || e instanceof JavaFile.Cast) {
+	protected void writeExpressionWithBracketsIfNecessary(Expr e) {
+		if (e instanceof Expr.BinOp || e instanceof Expr.InstanceOf
+				|| e instanceof Expr.TernOp || e instanceof Expr.Cast) {
 			write("(");
 			writeExpression(e);
 			write(")");
@@ -991,7 +991,7 @@ public class JavaFileWriter {
 				if(a.arguments().size() > 0) {
 					write("(");
 					boolean firstTime=true;
-					for(JavaFile.Expression e : a.arguments()) {
+					for(Expr e : a.arguments()) {
 						if(!firstTime) {
 							write(",");
 						}

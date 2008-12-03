@@ -127,10 +127,10 @@ public class JavaFile {
 	
 	public static class EnumConstant extends SyntacticElementImpl{
 		private String name;
-		private List<Expression> arguments;
+		private List<Expr> arguments;
 		private List<Declaration> declarations;
 		
-		public EnumConstant(String name, List<Expression> arguments,
+		public EnumConstant(String name, List<Expr> arguments,
 				List<Declaration> declarations, Attribute... attributes) {
 			super(attributes);
 			this.name = name;
@@ -142,7 +142,7 @@ public class JavaFile {
 			return name;
 		}
 		
-		public List<Expression> arguments() {
+		public List<Expr> arguments() {
 			return arguments;
 		}
 		
@@ -272,14 +272,14 @@ public class JavaFile {
 		}
 	}
 	
-	public static class Field extends SyntacticElementImpl  implements Declaration {
+	public static class Field extends SyntacticElementImpl implements Declaration {
 		private List<Modifier> modifiers;
 		private String name;
 		private Type type;
-		private Expression initialiser;
+		private Expr initialiser;
 		
 		public Field(List<Modifier> modifiers, String name, Type type,
-				Expression initialiser, Attribute... attributes) {
+				Expr initialiser, Attribute... attributes) {
 			super(attributes);
 			this.modifiers = modifiers;
 			this.name = name;
@@ -299,7 +299,7 @@ public class JavaFile {
 			return type;
 		}
 		
-		public Expression initialiser() {
+		public Expr initialiser() {
 			return initialiser;
 		}		
 	}
@@ -319,384 +319,13 @@ public class JavaFile {
 	// STATEMENTS
 	// ====================================================
 
-	
-	
-	// ====================================================
-	// EXPRESSIONS
-	// ====================================================
-	/**
-     * Represents all expressions in the code
-     * 
-     * @author djp
-     * 
-     */	
-	public static interface Expression extends SyntacticElement {
-		
-	}
-	
-	/**
-     * An (unresolved) variable
-     * 
-     * @author djp
-     * 
-     */
-	public static class Variable extends SyntacticElementImpl  implements Expression {
-		private String value;
-		
-		public Variable(String value, Attribute... attributes) {
-			super(attributes);
-			this.value=value;
-		}
-		
-		public String value() {
-			return value;
-		}
-	}		
-	
-	/**
-	 * Represents an explicit cast.
-	 * 
-	 * @author djp
-	 *
-	 */
-	public static class Cast extends SyntacticElementImpl  implements Expression {		
-		protected Expression expr;
-		protected Type type;
-		
-		public Cast(Type type,  Expression expr, Attribute... attributes) {
-			super(attributes);
-			this.expr = expr;
-			this.type = type;
-		}
 
-		public Expression expr() {
-			return expr;
-		}
-		
-		public Type type() {
-			return type;
-		}
-	}
-	
-	/**
-     * Represents an InstanceOf binary operation.
-     * 
-     * @author djp
-     * 
-     */
-	public static class InstanceOf extends SyntacticElementImpl  implements Expression {
-		protected Expression lhs;		
-		protected Type rhs;		
-		
-		public InstanceOf(Expression lhs, Type rhs, Attribute... attributes) {
-			super(attributes);
-			this.lhs = lhs;
-			this.rhs = rhs;
-		}
-		
-
-		public Expression lhs() {
-			return lhs;
-		}
-		
-		public Type rhs() {
-			return rhs;
-		}
-	}
-
-	
-	/**
-     * Represents Unary Arithmetic Operators
-     * 
-     * @author djp
-     * 
-     */
-	public static class UnOp extends SyntacticElementImpl  implements Expression {
-		public static final int NOT = 0;
-		public static final int INV = 1;
-		public static final int NEG = 2;
-		public static final int PREINC = 3;
-		public static final int PREDEC = 4;
-		public static final int POSTINC = 5;
-		public static final int POSTDEC = 6;
-				
-		protected final Expression expr;		
-		protected final int op;
-		
-		public UnOp(int op, Expression expr, Attribute... attributes) {
-			super(attributes);
-			this.expr = expr;
-			this.op=op;
-		}		
-		
-		public int op() {
-			return op;
-		}
-		
-		public Expression expr() {
-			return expr;
-		}
-	}
-	
-	/**
-     * A Binary Operator.  E.g. +.-,*,/,<,<=,>,?=,==,!=, etc.
-     * 
-     * @author djp
-     * 
-     */
-	public static class BinOp extends SyntacticElementImpl  implements Expression {
-		// BinOp Constants
-		public static final int ADD = 0;
-		public static final int SUB = 1;
-		public static final int MUL = 2;
-		public static final int DIV = 3;
-		public static final int MOD = 4;
-		public static final int SHL = 5;
-		public static final int SHR = 6;
-		public static final int USHR = 7;
-		public static final int AND = 8;
-		public static final int OR = 9;
-		public static final int XOR = 10;
-		
-		public static final int LT = 11;
-		public static final int LTEQ = 12;
-		public static final int GT = 13;
-		public static final int GTEQ = 14;
-		public static final int EQ = 15;
-		public static final int NEQ = 16;
-		public static final int LAND = 17;
-		public static final int LOR = 18;
-		
-		public static final int CONCAT = 19; // string concatenation
-				
-		protected Expression lhs;
-		protected Expression rhs;
-		protected int op;				
-		
-		public BinOp(int op, Expression lhs, Expression rhs, Attribute... attributes) {
-			super(attributes);
-			this.lhs = lhs;
-			this.rhs = rhs;
-			this.op=op;
-		}
-		
-		public int op() {
-			return op;
-		}
-		
-		public Expression lhs() {
-			return lhs;
-		}
-		
-		public Expression rhs() {
-			return rhs;
-		}
-	}
-	
-	public static class TernOp extends SyntacticElementImpl  implements Expression {
-		
-		protected Expression cond;
-		protected Expression toption;
-		protected Expression foption;
-		
-		public TernOp(Expression con, Expression tOption, Expression fOption, Attribute... attributes) {		
-			super(attributes);
-			cond = con;
-			toption = tOption;
-			foption = fOption;
-		}
-		
-		public Expression trueBranch() {
-			return toption;
-		}
-		
-		public Expression falseBranch() {
-			return foption;
-		}
-		
-		public Expression condition() {
-			return cond;
-		}
-	}	
-	
-	/**
-	 * Represents a method call. The method call be either "polymorphic", or
-	 * "non-polymorphic". The former means the method will be called on the
-	 * dynamic type of the received, whilst the latter means that the method
-	 * will be called directly on the static type of the receiver.
-	 * 
-	 * @author djp
-	 * 
-	 */
-	public static class Invoke extends SyntacticElementImpl implements Expression, Stmt.Simple {
-		private Expression target;
-		private String name;		
-		private List<Expression> parameters;
-		private List<Type> typeParameters;		
-						
-		/**
-		 * Construct a method which may, or may not be polymorphic.
-		 * 
-		 * @param target
-		 *            The expression from which the receiver is determined
-		 * @param name
-		 *            The name of the method
-		 * @param parameters
-		 *            The parameters of the method
-		 */
-		public Invoke(Expression target, String name, List<Expression> parameters,
-				List<Type> typeParameters, Attribute... attributes) {			
-			super(attributes);
-			this.target = target;
-			this.name = name;
-			this.parameters = parameters;
-			this.typeParameters = typeParameters;										
-		}
-		
-		public Expression target() { return target; }
-		
-		public String name() { return name; }
-		
-		public List<Expression> parameters() { return parameters; }
-		
-		public List<Type> typeParameters() { return typeParameters; }
-	}
-	
-	/**
-     * Represents the new operator. The parameters provided are either passed to
-     * that object's constructor, or are used to determine the necessary array
-     * dimensions (e.g. in new array[x+1]). Observe that, if this new operator
-     * declares an anonymous class, then this can include various declarations.
-     * 
-     * @author djp
-     * 
-     */
-	public static class New extends SyntacticElementImpl  implements Expression, Stmt.Simple {
-		private Type type;
-		private Expression context;
-		private List<Expression> parameters;
-		private List<Declaration> declarations;
-
-		/**
-         * Create an AST node represent a new statement or expression.
-         * 
-         * @param type -
-         *            the type being constructed e.g. java.lang.String or
-         *            Integer[]
-         * @param Context -
-         *            the context in which the type is constructed. This is only
-         *            required for non-static classes which are created outside
-         *            of their enclosing class's scope. For example, i = o.new
-         *            Inner();
-         * @param parameters -
-         *            The parameters (if any) supplied to the constructor.
-         * @param declarations -
-         *            the list of field/method/class declarations contained in
-         *            this statement. These arise only when constructing a new
-         *            anonymous class.
-         */
-		public New(Type type, Expression context, List<Expression> parameters,
-				List<Declaration> declarations, Attribute... attributes) {
-			super(attributes);
-			this.type = type;
-			this.context = context;
-			this.parameters = parameters;
-			this.declarations = declarations;
-		}
-
-		public Type type() {
-			return type;
-		}
-
-		public void setType(Type type) {
-			this.type = type;
-		}
-		
-		public List<Expression> parameters() {
-			return parameters;
-		}
-
-		public void setParameters(List<Expression> parameters) {
-			this.parameters = parameters;
-		}
-		
-		public List<Declaration> declarations() {
-			return declarations;
-		}
-		
-		public void setDeclarations(List<Declaration> declarations) {
-			this.declarations = declarations;
-		}
-		
-		public Expression context() {
-			return context;
-		}
-		
-		public void setContext(Expression context) {
-			this.context = context;
-		}
-	}
-	
-	/**
-     * Represents the act of derefencing a field.
-     * 
-     * @author djp
-     * 
-     */
-	public static class Deref extends SyntacticElementImpl
-			implements
-				Expression {
-		private Expression target;
-		private String name;
-
-		public Deref(Expression lhs, String rhs, Attribute... attributes) {
-			super(attributes);
-			this.target = lhs;
-			this.name = rhs;
-		}
-
-		public Expression target() {
-			return target;
-		}
-
-		public String name() {
-			return name;
-		}
-	}
-	
-	/**
-     * Represents an index into an array. E.g. A[i] is an index into array A.
-     * 
-     * @author djp
-     * 
-     */
-	public static class ArrayIndex extends SyntacticElementImpl
-			implements
-				Expression {
-		private Expression array;
-		private Expression idx;
-
-		public ArrayIndex(Expression array, Expression idx,
-				Attribute... attributes) {
-			super(attributes);
-			this.array = array;
-			this.idx = idx;
-		}
-
-		public Expression target() {
-			return array;
-		}
-
-		public Expression index() {
-			return idx;
-		}
-	}
 	
 	// ====================================================
 	// Values
 	// ====================================================
 	
-	public static interface Value extends Expression {
+	public static interface Value extends Expr {
 		
 	}
 		
@@ -888,14 +517,14 @@ public class JavaFile {
      * 
      */
 	public static class ArrayVal extends SyntacticElementImpl implements Value {
-		private List<Expression> values;
+		private List<Expr> values;
 		
-		public ArrayVal(List<Expression> values, Attribute... attributes) {
+		public ArrayVal(List<Expr> values, Attribute... attributes) {
 			super(attributes);
 			this.values = values;
 		}
 		
-		public List<Expression> values() {
+		public List<Expr> values() {
 			return values;
 		}
 	}
@@ -914,7 +543,7 @@ public class JavaFile {
 	public static class TypedArrayVal extends ArrayVal {
 		private Type type;
 
-		public TypedArrayVal(Type type, List<Expression> values,
+		public TypedArrayVal(Type type, List<Expr> values,
 				Attribute... attributes) {
 			super(values,attributes);
 			this.type = type;
