@@ -882,12 +882,12 @@ public class JavaFileReader2 {
 				|| lhs.op() == Expr.UnOp.PREDEC) {
 			return new Stmt.Assignment(lval,
 					new Expr.BinOp(Expr.BinOp.SUB, lval,
-							new Value.IntVal(1, loc), loc), loc);
+							new Value.Int(1, loc), loc), loc);
 		} else {
 			// must be preinc or postinc
 			return new Stmt.Assignment(lval,
 					new Expr.BinOp(Expr.BinOp.ADD, lval,
-							new Value.IntVal(1, loc), loc), loc);
+							new Value.Int(1, loc), loc), loc);
 		}
 	}
 
@@ -1132,7 +1132,7 @@ public class JavaFileReader2 {
 	}
 
 	public Expr parseGetClass(Tree expr) {
-		return new Value.ClassVal(parseClassType(expr.getChild(0)));
+		return new Value.Class(parseClassType(expr.getChild(0)));
 	}
 
 	protected Expr parseTernOp(Tree expr) {
@@ -1219,37 +1219,37 @@ public class JavaFileReader2 {
 
 	protected Expr parseCharVal(Tree expr) {
 		String charv = expr.getChild(0).getText();
-		Value.CharVal v = null;
+		Value.Char v = null;
 		SourceLocation loc = new SourceLocation(expr.getLine(), expr
 				.getCharPositionInLine());
 		if (charv.length() == 3) {
-			v = new Value.CharVal(charv.charAt(1), loc);
+			v = new Value.Char(charv.charAt(1), loc);
 		} else {
 			String tmp = charv.substring(1, charv.length() - 1);
 			if (tmp.equals("\\b"))
-				v = new Value.CharVal('\b', loc);
+				v = new Value.Char('\b', loc);
 			else if (tmp.equals("\\t"))
-				v = new Value.CharVal('\t', loc);
+				v = new Value.Char('\t', loc);
 			else if (tmp.equals("\\f"))
-				v = new Value.CharVal('\f', loc);
+				v = new Value.Char('\f', loc);
 			else if (tmp.equals("\\n"))
-				v = new Value.CharVal('\n', loc);
+				v = new Value.Char('\n', loc);
 			else if (tmp.equals("\\r"))
-				v = new Value.CharVal('\r', loc);
+				v = new Value.Char('\r', loc);
 			else if (tmp.equals("\\\""))
-				v = new Value.CharVal('\"', loc);
+				v = new Value.Char('\"', loc);
 			else if (tmp.equals("\\\\"))
-				v = new Value.CharVal('\\', loc);
+				v = new Value.Char('\\', loc);
 			else if (tmp.equals("\\'"))
-				v = new Value.CharVal('\'', loc);
+				v = new Value.Char('\'', loc);
 			else if (Character.isDigit(tmp.charAt(1))) {
 				int octal_val = Integer.parseInt(
 						tmp.substring(1, tmp.length()), 8);
-				v = new Value.CharVal((char) octal_val);
+				v = new Value.Char((char) octal_val);
 			} else if (tmp.startsWith("\\u")) {
 				// including "slash u"
 				String unicode = tmp.substring(2, 6);
-				v = new Value.CharVal((char) Integer.parseInt(unicode, 16),
+				v = new Value.Char((char) Integer.parseInt(unicode, 16),
 						loc);
 			} else {
 				throw new SyntaxError("Unable to parse character constant: "
@@ -1261,7 +1261,7 @@ public class JavaFileReader2 {
 	}
 
 	protected Expr parseBoolVal(Tree expr) {
-		Value.BoolVal v = new Value.BoolVal(Boolean.parseBoolean(expr
+		Value.Bool v = new Value.Bool(Boolean.parseBoolean(expr
 				.getChild(0).getText()), new SourceLocation(expr.getLine(),
 				expr.getCharPositionInLine()));
 		return v;
@@ -1284,15 +1284,15 @@ public class JavaFileReader2 {
 		if (lc == 'l' || lc == 'L') {
 			// return new LongVal(Long.parseLong(value.substring(0,
 			// value.length() - 1), radix));
-			return new Value.LongVal(val, loc);
+			return new Value.Long(val, loc);
 		} else if (radix == 10 && (lc == 'f' || lc == 'F')) {
-			return new Value.FloatVal(val, loc);
+			return new Value.Float(val, loc);
 		} else if (radix == 10 && (lc == 'd' || lc == 'D')) {
-			return new Value.DoubleVal(val,loc);
+			return new Value.Double(val,loc);
 		}
 
 		val = parseLongVal(value, radix);
-		return new Value.IntVal((int) val, loc);
+		return new Value.Int((int) val, loc);
 	}
 
 	/**
@@ -1395,11 +1395,11 @@ public class JavaFileReader2 {
 			}
 		}
 		// finally, construct a new string in the FlowGraph
-		return new Value.StringVal(v,new SourceLocation(expr.getLine(),expr.getCharPositionInLine()));
+		return new Value.String(v,new SourceLocation(expr.getLine(),expr.getCharPositionInLine()));
 	}
 
 	protected Expr parseNullVal(Tree expr) {
-		return new Value.NullVal(new SourceLocation(expr.getLine(),expr.getCharPositionInLine()));
+		return new Value.Null(new SourceLocation(expr.getLine(),expr.getCharPositionInLine()));
 	}
 
 	/**
@@ -1412,11 +1412,11 @@ public class JavaFileReader2 {
 		char lc = val.charAt(val.length() - 1);
 		Expr r;
 		if (lc == 'f' || lc == 'F') {
-			r = new Value.FloatVal(Float.parseFloat(val),
+			r = new Value.Float(Float.parseFloat(val),
 					new SourceLocation(expr.getLine(), expr
 							.getCharPositionInLine()));
 		} else {
-			r = new Value.DoubleVal(Double.parseDouble(val),
+			r = new Value.Double(Double.parseDouble(val),
 					new SourceLocation(expr.getLine(), expr
 							.getCharPositionInLine()));
 		}
@@ -1437,7 +1437,7 @@ public class JavaFileReader2 {
 		List<Expr> values = parseExpressionList(0, expr
 				.getChildCount(), expr);
 		
-		return new Value.ArrayVal(values, new SourceLocation(expr.getLine(),
+		return new Value.Array(values, new SourceLocation(expr.getLine(),
 				expr.getCharPositionInLine()));
 	}
 
@@ -1460,7 +1460,7 @@ public class JavaFileReader2 {
 		List<Expr> values = parseExpressionList(0, aval
 				.getChildCount(), aval);
 		
-		return new Value.TypedArrayVal(type, values, new SourceLocation(expr
+		return new Value.TypedArray(type, values, new SourceLocation(expr
 				.getLine(), expr.getCharPositionInLine()));
 	}
 

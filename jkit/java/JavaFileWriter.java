@@ -598,28 +598,28 @@ public class JavaFileWriter {
 	
 	protected void writeExpression(Expr e) {
 		
-		if(e instanceof Value.BoolVal) {
-			writeBoolVal((Value.BoolVal)e);
-		} else if(e instanceof Value.CharVal) {
-			writeCharVal((Value.CharVal)e);
-		} else if(e instanceof Value.IntVal) {
-			writeIntVal((Value.IntVal)e);
-		} else if(e instanceof Value.LongVal) {
-			writeLongVal((Value.LongVal)e);
-		} else if(e instanceof Value.FloatVal) {
-			writeFloatVal((Value.FloatVal)e);
-		} else if(e instanceof Value.DoubleVal) {
-			writeDoubleVal((Value.DoubleVal)e);
-		} else if(e instanceof Value.StringVal) {
-			writeStringVal((Value.StringVal)e);
-		} else if(e instanceof Value.NullVal) {
-			writeNullVal((Value.NullVal)e);
-		} else if(e instanceof Value.TypedArrayVal) {
-			writeTypedArrayVal((Value.TypedArrayVal)e);
-		} else if(e instanceof Value.ArrayVal) {
-			writeArrayVal((Value.ArrayVal)e);
-		} else if(e instanceof Value.ClassVal) {
-			writeClassVal((Value.ClassVal) e);
+		if(e instanceof Value.Bool) {
+			writeBoolVal((Value.Bool)e);
+		} else if(e instanceof Value.Char) {
+			writeCharVal((Value.Char)e);
+		} else if(e instanceof Value.Int) {
+			writeIntVal((Value.Int)e);
+		} else if(e instanceof Value.Long) {
+			writeLongVal((Value.Long)e);
+		} else if(e instanceof Value.Float) {
+			writeFloatVal((Value.Float)e);
+		} else if(e instanceof Value.Double) {
+			writeDoubleVal((Value.Double)e);
+		} else if(e instanceof Value.String) {
+			writeStringVal((Value.String)e);
+		} else if(e instanceof Value.Null) {
+			writeNullVal((Value.Null)e);
+		} else if(e instanceof Value.TypedArray) {
+			writeTypedArrayVal((Value.TypedArray)e);
+		} else if(e instanceof Value.Array) {
+			writeArrayVal((Value.Array)e);
+		} else if(e instanceof Value.Class) {
+			writeClassVal((Value.Class) e);
 		} else if(e instanceof Expr.Variable) {
 			writeVariable((Expr.Variable)e);
 		} else if(e instanceof Expr.UnOp) {
@@ -770,7 +770,7 @@ public class JavaFileWriter {
 		writeExpressionWithBracketsIfNecessary(e.expr());
 	}
 	
-	protected void writeBoolVal(Value.BoolVal e) {
+	protected void writeBoolVal(Value.Bool e) {
 		if(e.value()) {
 			write("true");
 		} else {
@@ -778,39 +778,39 @@ public class JavaFileWriter {
 		}
 	}
 	
-	protected void writeCharVal(Value.CharVal e) {
+	protected void writeCharVal(Value.Char e) {
 		write("'");
 		writeWithEscapes(Character.toString(e.value()));		
 		write("'");
 	}
 	
-	protected void writeIntVal(Value.IntVal e) {		
+	protected void writeIntVal(Value.Int e) {		
 		write(Integer.toString(e.value()));
 	}
 	
-	protected void writeLongVal(Value.LongVal e) {		
+	protected void writeLongVal(Value.Long e) {		
 		write(Long.toString(e.value()) + "L");
 	}
 	
-	protected void writeFloatVal(Value.FloatVal e) {		
+	protected void writeFloatVal(Value.Float e) {		
 		write(Float.toString(e.value()) + "F");
 	}
 	
-	protected void writeDoubleVal(Value.DoubleVal e) {		
+	protected void writeDoubleVal(Value.Double e) {		
 		write(Double.toString(e.value()));
 	}
 	
-	protected void writeStringVal(Value.StringVal e) {		
+	protected void writeStringVal(Value.String e) {		
 		write("\"");
 		writeWithEscapes(e.value());
 		write("\"");
 	}
 	
-	protected void writeNullVal(Value.NullVal e) {		
+	protected void writeNullVal(Value.Null e) {		
 		write("null");
 	}
 	
-	protected void writeTypedArrayVal(Value.TypedArrayVal e) {		
+	protected void writeTypedArrayVal(Value.TypedArray e) {		
 		boolean firstTime = true;
 		write("new ");
 		writeType(e.type());
@@ -826,7 +826,7 @@ public class JavaFileWriter {
 		output.write("}");
 	}
 	
-	protected void writeArrayVal(Value.ArrayVal e) {		
+	protected void writeArrayVal(Value.Array e) {		
 		boolean firstTime = true;
 		write("{");
 		for(Expr i : e.values()) {
@@ -840,7 +840,7 @@ public class JavaFileWriter {
 		write("}");
 	}
 	
-	protected void writeClassVal(Value.ClassVal e) {
+	protected void writeClassVal(Value.Class e) {
 		writeType(e.value());
 		write(".class");
 	}
