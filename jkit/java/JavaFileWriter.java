@@ -1,10 +1,9 @@
 package jkit.java;
 
 import java.io.*;
-import java.lang.reflect.Modifier;
 import java.util.*;
 
-import jkit.jil.Type;
+import jkit.jil.*;
 import jkit.util.*; 
 
 public class JavaFileWriter {
@@ -238,7 +237,7 @@ public class JavaFileWriter {
 		write("(");
 		boolean firstTime=true;
 		int va_count = 1; // to detect varargs 
-		for(Triple<String,List<JavaFile.Modifier>,Type> p : m.parameters()) {
+		for(Triple<String,List<Modifier>,Type> p : m.parameters()) {
 			if(!firstTime) {
 				write(", ");				
 			}
@@ -969,23 +968,23 @@ public class JavaFileWriter {
 		}			
 	}
 	
-	protected void writeModifiers(List<JavaFile.Modifier> modifiers) {
-		for(JavaFile.Modifier x : modifiers) {
-			if(x instanceof JavaFile.BaseModifier) {
-				int mod = ((JavaFile.BaseModifier)x).modifier();
-				if((mod & Modifier.PRIVATE)!=0) { write("private "); }
-				if((mod & Modifier.PROTECTED)!=0) { write("protected "); }
-				if((mod & Modifier.PUBLIC)!=0) { write("public "); }
-				if((mod & Modifier.STATIC)!=0) { write("static "); }
-				if((mod & Modifier.ABSTRACT)!=0) { write("abstract "); }
-				if((mod & Modifier.FINAL)!=0) { write("final "); }
-				if((mod & Modifier.NATIVE)!=0) { write("native "); }				
-				if((mod & Modifier.STRICT)!=0) { write("strictfp "); }
-				if((mod & Modifier.SYNCHRONIZED)!=0) { write("synchronized "); }
-				if((mod & Modifier.TRANSIENT)!=0) { write("transient "); }
-				if((mod & Modifier.VOLATILE)!=0) { write("volatile "); }
-			} else if(x instanceof JavaFile.Annotation){
-				JavaFile.Annotation a = (JavaFile.Annotation) x;
+	protected void writeModifiers(List<Modifier> modifiers) {
+		for(Modifier x : modifiers) {
+			if(x instanceof Modifier.Base) {
+				int mod = ((Modifier.Base)x).modifier();
+				if((mod & java.lang.reflect.Modifier.PRIVATE)!=0) { write("private "); }
+				if((mod & java.lang.reflect.Modifier.PROTECTED)!=0) { write("protected "); }
+				if((mod & java.lang.reflect.Modifier.PUBLIC)!=0) { write("public "); }
+				if((mod & java.lang.reflect.Modifier.STATIC)!=0) { write("static "); }
+				if((mod & java.lang.reflect.Modifier.ABSTRACT)!=0) { write("abstract "); }
+				if((mod & java.lang.reflect.Modifier.FINAL)!=0) { write("final "); }
+				if((mod & java.lang.reflect.Modifier.NATIVE)!=0) { write("native "); }				
+				if((mod & java.lang.reflect.Modifier.STRICT)!=0) { write("strictfp "); }
+				if((mod & java.lang.reflect.Modifier.SYNCHRONIZED)!=0) { write("synchronized "); }
+				if((mod & java.lang.reflect.Modifier.TRANSIENT)!=0) { write("transient "); }
+				if((mod & java.lang.reflect.Modifier.VOLATILE)!=0) { write("volatile "); }
+			} else if(x instanceof Modifier.Annotation){
+				Modifier.Annotation a = (Modifier.Annotation) x;
 				write("@");
 				write(a.name());
 				

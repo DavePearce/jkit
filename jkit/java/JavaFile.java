@@ -2,10 +2,7 @@ package jkit.java;
 
 import java.util.*;
 
-import jkit.jil.Attribute;
-import jkit.jil.SyntacticElement;
-import jkit.jil.SyntacticElementImpl;
-import jkit.jil.Type;
+import jkit.jil.*;
 import jkit.util.*;
 
 public class JavaFile {
@@ -60,39 +57,6 @@ public class JavaFile {
 	// ====================================================
 	// MODIFIERS
 	// ====================================================
-	
-	public interface Modifier extends SyntacticElement {
-		
-	}
-	
-	public static class BaseModifier extends SyntacticElementImpl implements Modifier {
-		private int modifier;
-		public BaseModifier(int modifier, Attribute... attributes) {
-			super(attributes);
-			this.modifier = modifier;
-		}
-		public int modifier() {
-			return modifier;
-		}
-	}
-	
-	public static class Annotation extends SyntacticElementImpl  implements Modifier {
-		private String name;
-		private List<Expression> arguments;
-		
-		public Annotation(String name, List<Expression> arguments,
-				Attribute... attributes) {
-			super(attributes);
-			this.name = name;
-			this.arguments = arguments;
-		}
-		public String name() {
-			return name;
-		}
-		public List<Expression> arguments() {
-			return arguments;
-		}
-	}
 	
 	// ====================================================
 	// DECLARATIONS
