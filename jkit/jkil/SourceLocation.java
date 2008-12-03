@@ -8,29 +8,13 @@ package jkit.jkil;
  * 
  */
 public class SourceLocation implements Attribute {
-	private String file;
 	private int line;
 	private int column;	
 
-	public SourceLocation(String file, int line, int column) {
-		this.file = file;
+	public SourceLocation(int line, int column) {
 		this.line = line;
 		this.column = column;		
 	}
-
-	/**
-	 * Get source file where this source location originates from.
-	 * 
-	 * @return 
-	 */
-	public String source() { return file; }
-
-	/**
-	 * Set originating source file.
-	 * 
-	 * @param src
-	 */
-	public void setSource(String src) { file = src; }
 
 	/**
 	 * Get line number in originating source file for this source location.
@@ -61,7 +45,7 @@ public class SourceLocation implements Attribute {
 	public void setColumn(int column) { this.column = column; }
 
 	public String toString() {
-		return file + ":" + Integer.toString(line) + ":"
+		return Integer.toString(line) + ":"
 				+ Integer.toString(column);					
 	}				
 }

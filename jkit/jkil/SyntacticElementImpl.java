@@ -18,6 +18,10 @@ public class SyntacticElementImpl  implements SyntacticElement {
 		this.attributes = attributes;			
 	}
 	
+	public SyntacticElementImpl(Attribute[] attributes) {
+		this.attributes = Arrays.asList(attributes);			
+	}
+	
 	public List<Attribute> attributes() { return attributes; }
 	
 	public Attribute getFirst(Class c) {
