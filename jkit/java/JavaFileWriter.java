@@ -73,12 +73,12 @@ public class JavaFileWriter {
 		if(decl.typeParameters().size() > 0) {
 			write("<");
 			boolean firstTime = true;
-			for(JavaFile.VariableType vt : decl.typeParameters()) {
+			for(Type.Variable vt : decl.typeParameters()) {
 				if(!firstTime) {
 					write(",");
 				}
 				firstTime=false;
-				writeVariableType(vt);
+				writeType(vt);
 			}
 			write(">");
 		}
@@ -87,7 +87,7 @@ public class JavaFileWriter {
 			if(decl.interfaces().size() > 0) {
 				write(" extends ");
 				boolean firstTime = true;
-				for(JavaFile.ClassType i : decl.interfaces()) {
+				for(Type.Clazz i : decl.interfaces()) {
 					if(!firstTime) {
 						write(", ");
 					} else { firstTime = false; }
@@ -104,7 +104,7 @@ public class JavaFileWriter {
 			if(decl.interfaces().size() > 0) {
 				write(" implements ");
 				boolean firstTime = true;
-				for(JavaFile.ClassType i : decl.interfaces()) {
+				for(Type.Clazz i : decl.interfaces()) {
 					if(!firstTime) {
 						write(", ");
 					} else { firstTime = false; }
@@ -131,7 +131,7 @@ public class JavaFileWriter {
 		if(decl.interfaces().size() > 0) {
 			write(" implements ");
 			boolean firstTime = true;
-			for(JavaFile.ClassType i : decl.interfaces()) {
+			for(Type.Clazz i : decl.interfaces()) {
 				if(!firstTime) {
 					write(", ");
 				} else { firstTime = false; }
@@ -197,7 +197,7 @@ public class JavaFileWriter {
 		write("@interface ");
 		write(e.name());
 		write("{");
-		for(Triple<JavaFile.Type, String, JavaFile.Value> m : e.methods()) {
+		for(Triple<Type, String, JavaFile.Value> m : e.methods()) {
 			writeType(m.first());
 			write(" ");
 			write(m.second());
@@ -218,7 +218,7 @@ public class JavaFileWriter {
 		if(m.typeParameters().size() > 0) {
 			write("<");
 			boolean firstTime=true;
-			for(JavaFile.Type t : m.typeParameters()) {
+			for(Type t : m.typeParameters()) {
 				if(!firstTime) {
 					write(",");
 				}
@@ -237,7 +237,7 @@ public class JavaFileWriter {
 		write("(");
 		boolean firstTime=true;
 		int va_count = 1; // to detect varargs 
-		for(Triple<String,List<JavaFile.Modifier>,JavaFile.Type> p : m.parameters()) {
+		for(Triple<String,List<JavaFile.Modifier>,Type> p : m.parameters()) {
 			if(!firstTime) {
 				write(", ");				
 			}
@@ -258,7 +258,7 @@ public class JavaFileWriter {
 		if(m.exceptions().size() > 0) {
 			write(" throws ");
 			firstTime=true;
-			for(JavaFile.ClassType t : m.exceptions()) {
+			for(Type.Clazz t : m.exceptions()) {
 				if(!firstTime) {
 					write(", ");				
 				}
@@ -670,14 +670,14 @@ public class JavaFileWriter {
 			write(".");
 		}
 		write("new ");
-		if(e.type() instanceof JavaFile.ArrayType) {
+		if(e.type() instanceof Type.Array) {
 			// array initialiser
 			List<JavaFile.Expression> ps = e.parameters();
-			JavaFile.Type type =  e.type();
+			Type type =  e.type();
 			int dims = 0;
 			
-			while(type instanceof JavaFile.ArrayType) {
-				type = ((JavaFile.ArrayType)type).element();
+			while(type instanceof Type.Array) {
+				type = ((Type.Array)type).element();
 				dims++;
 			}
 			
@@ -733,7 +733,7 @@ public class JavaFileWriter {
 		if(e.typeParameters().size() > 0) {
 			write("<");
 			boolean firstTime=true;
-			for(JavaFile.Type i : e.typeParameters()) {
+			for(Type i : e.typeParameters()) {
 				if(!firstTime) {
 					write(",");
 				} else {
@@ -897,24 +897,24 @@ public class JavaFileWriter {
 		}
 	}
 	
-	protected void writeType(JavaFile.Type t) {
-		if(t instanceof JavaFile.ClassType) {
-			writeClassType((JavaFile.ClassType)t);
-		} else if(t instanceof JavaFile.ArrayType) {
-			writeArrayType((JavaFile.ArrayType)t);
-		} else if(t instanceof JavaFile.WildcardType) {
-			writeWildcardType((JavaFile.WildcardType)t);
-		} else if(t instanceof JavaFile.VariableType) {
-			writeVariableType((JavaFile.VariableType)t);
+	protected void writeType(Type t) {
+		if(t instanceof Type.Clazz) {
+			writeClassType((Type.Clazz)t);
+		} else if(t instanceof Type.Array) {
+			writeArrayType((Type.Array)t);
+		} else if(t instanceof Type.Wildcard) {
+			writeWildcardType((Type.Wildcard)t);
+		} else if(t instanceof Type.Variable) {
+			writeVariableType((Type.Variable)t);
 		}
 	}
 	
-	protected void writeArrayType(JavaFile.ArrayType at) {
+	protected void writeArrayType(Type.Array at) {
 		writeType(at.element());
 		write("[]");
 	}
 	
-	protected void writeWildcardType(JavaFile.WildcardType wt) {
+	protected void writeWildcardType(Type.Wildcard wt) {
 		write("?");
 		
 		if(wt.lowerBound() != null) {
@@ -926,13 +926,13 @@ public class JavaFileWriter {
 		}		
 	}
 	
-	protected void writeVariableType(JavaFile.VariableType vt) {
+	protected void writeVariableType(Type.Variable vt) {
 		write(vt.variable());
 		
 		if(vt.lowerBounds().size() > 0) {
 			write(" extends ");
 			boolean firstTime = true;
-			for(JavaFile.Type lb : vt.lowerBounds()) {
+			for(Type lb : vt.lowerBounds()) {
 				if(!firstTime) {
 					write(" & ");
 				}
@@ -942,9 +942,9 @@ public class JavaFileWriter {
 		} 	
 	}
 	
-	protected void writeClassType(JavaFile.ClassType t) {		
+	protected void writeClassType(Type.Clazz t) {		
 		boolean firstTime=true;
-		for(Pair<String,List<JavaFile.Type>> c : t.components()) {
+		for(Pair<String,List<Type>> c : t.components()) {
 			if(!firstTime) {
 				write(".");
 			} else {
@@ -955,7 +955,7 @@ public class JavaFileWriter {
 				// yes, there are generic parameters as well.
 				write("<");
 				firstTime = true;
-				for (JavaFile.Type d : c.second()) {
+				for (Type d : c.second()) {
 					if (!firstTime) {
 						write(",");
 					} else {

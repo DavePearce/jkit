@@ -5,7 +5,6 @@ import java.util.*;
 import jkit.jkil.SyntacticElement;
 import jkit.jkil.SyntacticElementImpl;
 import jkit.jkil.Attribute;
-import jkit.jkil.Type;
 import jkit.util.*;
 
 public class JavaFile {
@@ -56,134 +55,6 @@ public class JavaFile {
 	public static interface SimpleStatement extends Statement {		
 	}
 	
-	// ====================================================
-	// Type
-	// ====================================================
-
-	public static interface Type extends SyntacticElement {}
-	
-	public static class BoolType extends SyntacticElementImpl implements Type {
-		public BoolType(Attribute... attributes) {
-			super(attributes);			
-		}		
-	}
-	
-	public static class ByteType extends SyntacticElementImpl implements Type {
-		public ByteType(Attribute... attributes) {
-			super(attributes);			
-		}		
-	}
-	
-	public static class CharType extends SyntacticElementImpl implements Type {
-		public CharType(Attribute... attributes) {
-			super(attributes);			
-		}		
-	}
-	
-	public static class ShortType extends SyntacticElementImpl implements Type {
-		public ShortType(Attribute... attributes) {
-			super(attributes);			
-		}		
-	}
-	
-	public static class IntType extends SyntacticElementImpl implements Type {
-		public IntType(Attribute... attributes) {
-			super(attributes);			
-		}		
-	}
-	
-	public static class LongType extends SyntacticElementImpl implements Type {
-		public LongType(Attribute... attributes) {
-			super(attributes);			
-		}		
-	}
-	
-	public static class FloatType extends SyntacticElementImpl implements Type {
-		public FloatType(Attribute... attributes) {
-			super(attributes);			
-		}		
-	}
-	
-	public static class DoubleType extends SyntacticElementImpl implements Type {
-		public DoubleType(Attribute... attributes) {
-			super(attributes);			
-		}		
-	}
-	
-	public static class ArrayType extends SyntacticElementImpl implements Type {		
-		private Type element;
-		
-		public ArrayType(Type element, Attribute... attributes) {
-			super(attributes);
-			this.element = element;			
-		}
-		
-		public Type element() {
-			return element;
-		}		
-	}
-	
-	public static class ClassType extends SyntacticElementImpl implements Type {		
-		private List<Pair<String, List<Type>>> components;
-		public ClassType(List<Pair<String, List<Type>>> components,
-				Attribute... attributes) {
-			super(attributes);
-			this.components = components;
-		}		
-		public List<Pair<String, List<Type>>> components() {
-			return components;
-		}
-		public void setComponents(
-				List<Pair<String, List<Type>>> components) {
-			this.components = components;
-		}
-	}
-	
-	public static class WildcardType extends SyntacticElementImpl implements Type {
-		private Type lowerBound;
-		private Type upperBound;
-
-		public WildcardType(Type lowerBound, Type upperBound,
-				Attribute... attributes) {
-			super(attributes);
-			this.lowerBound = lowerBound;
-			this.upperBound = upperBound;
-		}
-
-		public Type upperBound() {
-			return upperBound;
-		}
-
-		public Type lowerBound() {
-			return lowerBound;
-		}
-	}
-	
-	public static class VariableType extends SyntacticElementImpl implements Type {
-		private String variable;
-		private List<Type> lowerBounds;
-
-		public VariableType(String variable, List<Type> lowerBounds,
-				Attribute... attributes) {
-			super(attributes);
-			this.variable = variable;
-			this.lowerBounds = lowerBounds;
-		}
-
-		public String variable() {
-			return variable;
-		}
-
-		public List<Type> lowerBounds() {
-			return lowerBounds;
-		}		
-	}
-	
-	public static class FunctionType extends SyntacticElementImpl implements Type {
-		private final List<Type> parameters;
-		private final Type returnType;
-		private final List<Type> typeArgs;
-	}
 	
 	// ====================================================
 	// MODIFIERS
@@ -233,14 +104,14 @@ public class JavaFile {
 	public static class Clazz extends SyntacticElementImpl  implements Declaration, Statement {
 		private List<Modifier> modifiers;
 		private String name;
-		private List<VariableType> typeParameters;
-		private ClassType superclass;
-		private List<ClassType> interfaces;
+		private List<Type.Variable> typeParameters;
+		private Type.Clazz superclass;
+		private List<Type.Clazz> interfaces;
 		private List<Declaration> declarations;		
 				
 		public Clazz(List<Modifier> modifiers, String name,
-				List<VariableType> typeParameters, ClassType superclass,
-				List<ClassType> interfaces, List<Declaration> declarations,
+				List<Type.Variable> typeParameters, Type.Clazz superclass,
+				List<Type.Clazz> interfaces, List<Declaration> declarations,
 				Attribute... attributes) {
 			super(attributes);
 			this.modifiers = modifiers;
@@ -259,15 +130,15 @@ public class JavaFile {
 			return name;
 		}
 
-		public List<VariableType> typeParameters() {
+		public List<Type.Variable> typeParameters() {
 			return typeParameters;
 		}
 		
-		public ClassType superclass() {
+		public Type.Clazz superclass() {
 			return superclass;
 		}
 		
-		public List<ClassType> interfaces() {
+		public List<Type.Clazz> interfaces() {
 			return interfaces;
 		}
 		
@@ -278,8 +149,8 @@ public class JavaFile {
 	
 	public static class Interface extends Clazz {
 		public Interface(List<Modifier> modifiers, String name,
-				List<VariableType> typeParameters, ClassType superclass,
-				List<ClassType> interfaces, List<Declaration> declarations,
+				List<Type.Variable> typeParameters, Type.Clazz superclass,
+				List<Type.Clazz> interfaces, List<Declaration> declarations,
 				Attribute... attributes) {
 			super(modifiers, name, typeParameters, superclass, interfaces,
 					declarations, attributes);
@@ -290,9 +161,9 @@ public class JavaFile {
 		private List<EnumConstant> constants;
 
 		public Enum(List<Modifier> modifiers, String name,
-				List<ClassType> interfaces, List<EnumConstant> constants,
+				List<Type.Clazz> interfaces, List<EnumConstant> constants,
 				List<Declaration> declarations, Attribute... attributes) {
-			super(modifiers, name, new ArrayList<VariableType>(), null,
+			super(modifiers, name, new ArrayList<Type.Variable>(), null,
 					interfaces, declarations, attributes);
 			this.constants = constants;
 		}
@@ -331,10 +202,10 @@ public class JavaFile {
 	public static class AnnotationInterface extends SyntacticElementImpl  implements Declaration {
 		private List<Modifier> modifiers;
 		private String name;
-		private List<Triple<JavaFile.Type, String, JavaFile.Value>> methods; 
+		private List<Triple<Type, String, JavaFile.Value>> methods; 
 						
 		public AnnotationInterface(List<Modifier> modifiers, String name,
-				List<Triple<JavaFile.Type, String, JavaFile.Value>> methods,
+				List<Triple<Type, String, JavaFile.Value>> methods,
 				Attribute... attributes) {
 			super(attributes);
 			this.modifiers = modifiers;
@@ -348,7 +219,7 @@ public class JavaFile {
 		public String name() {
 			return name;
 		}
-		public List<Triple<JavaFile.Type, String, JavaFile.Value>> methods() {
+		public List<Triple<Type, String, JavaFile.Value>> methods() {
 			return methods;
 		}
 	}
@@ -367,14 +238,14 @@ public class JavaFile {
 		private Type returnType;
 		private List<Triple<String,List<Modifier>,Type>> parameters;
 		private boolean varargs;
-		private List<VariableType> typeParameters;
-		private List<ClassType> exceptions;
+		private List<Type.Variable> typeParameters;
+		private List<Type.Clazz> exceptions;
 		private JavaFile.Block block;
 
 		public Method(List<Modifier> modifiers, String name, Type returnType,
 				List<Triple<String, List<Modifier>, Type>> parameters,
-				boolean varargs, List<VariableType> typeParameters,
-				List<ClassType> exceptions, JavaFile.Block block,
+				boolean varargs, List<Type.Variable> typeParameters,
+				List<Type.Clazz> exceptions, JavaFile.Block block,
 				Attribute... attributes) {
 			super(attributes);
 			this.modifiers = modifiers;
@@ -419,11 +290,11 @@ public class JavaFile {
 			return varargs;
 		}
 		
-		public List<VariableType> typeParameters() {
+		public List<Type.Variable> typeParameters() {
 			return typeParameters;
 		}
 		
-		public List<ClassType> exceptions() {
+		public List<Type.Clazz> exceptions() {
 			return exceptions;
 		}
 		
@@ -441,8 +312,8 @@ public class JavaFile {
 	public static class Constructor extends Method {
 		public Constructor(List<Modifier> modifiers, String name,
 				List<Triple<String, List<Modifier>, Type>> parameters, boolean varargs,
-				List<VariableType> typeParameters,
-				List<ClassType> exceptions,
+				List<Type.Variable> typeParameters,
+				List<Type.Clazz> exceptions,
 				JavaFile.Block block, Attribute... attributes) {			
 			super(modifiers, name, null, parameters, varargs, typeParameters,
 					exceptions, block,attributes);
@@ -524,17 +395,17 @@ public class JavaFile {
 	}
 	
 	public static class CatchBlock extends Block {
-		private ClassType type;
+		private Type.Clazz type;
 		private String variable;
 		
-		public CatchBlock(ClassType type, String variable,
+		public CatchBlock(Type.Clazz type, String variable,
 				List<Statement> statements, Attribute... attributes) {
 			super(statements, attributes);
 			this.type = type;
 			this.variable = variable;
 		}
 		
-		public ClassType type() {
+		public Type.Clazz type() {
 			return type;
 		}
 		
@@ -1476,7 +1347,6 @@ public class JavaFile {
      * </pre>
      * 
 	 * @author djp
-	 * 
 	 */
 	public static class TypedArrayVal extends ArrayVal {
 		private Type type;
@@ -1497,15 +1367,15 @@ public class JavaFile {
 	 * 
 	 */
 	public static class ClassVal extends SyntacticElementImpl implements Value {
-		private ClassType classType;
+		private Type.Clazz type;
 
-		public ClassVal(ClassType type, Attribute... attributes) {
+		public ClassVal(Type.Clazz type, Attribute... attributes) {
 			super(attributes);
-			this.classType = type;
+			this.type = type;
 		}
 
-		public ClassType value() {
-			return classType;
+		public Type.Clazz value() {
+			return type;
 		}
 	}
 }

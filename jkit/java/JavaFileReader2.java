@@ -9,7 +9,6 @@ import jkit.java.JavaFile.*;
 import jkit.util.Pair;
 import jkit.util.Triple;
 import jkit.jkil.SourceLocation;
-import jkit.jkil.Type;
 
 import org.antlr.runtime.*;
 import org.antlr.runtime.tree.*;
@@ -171,7 +170,7 @@ public class JavaFileReader2 {
 			idx++;
 		}
 
-		ArrayList<JavaFile.VariableType> typeArgs = new ArrayList<JavaFile.VariableType>();
+		ArrayList<Type.Variable> typeArgs = new ArrayList<Type.Variable>();
 		for (int i = 0; i != decl.getChild(idx).getChildCount(); ++i) {
 			typeArgs.add(parseVariableType(decl.getChild(idx).getChild(i)));
 		}
@@ -182,7 +181,7 @@ public class JavaFileReader2 {
 		// ====================== PARSE EXTENDS CLAUSE ========================
 		// ====================================================================
 
-		JavaFile.ClassType superclass = null;
+		Type.Clazz superclass = null;
 		if (idx < decl.getChildCount()
 				&& decl.getChild(idx).getType() == EXTENDS) {
 			superclass = parseClassType(decl.getChild(idx++).getChild(0));
@@ -192,7 +191,7 @@ public class JavaFileReader2 {
 		// ===================== PARSE IMPLEMENTS CLAUSE ======================
 		// ====================================================================
 
-		ArrayList<JavaFile.ClassType> interfaces = new ArrayList<JavaFile.ClassType>();
+		ArrayList<Type.Clazz> interfaces = new ArrayList<Type.Clazz>();
 		if (idx < decl.getChildCount()
 				&& decl.getChild(idx).getType() == IMPLEMENTS) {
 			Tree ch = decl.getChild(idx++);
@@ -237,7 +236,7 @@ public class JavaFileReader2 {
 		// ===================== PARSE IMPLEMENTS CLAUSE ======================
 		// ====================================================================
 
-		ArrayList<JavaFile.ClassType> interfaces = new ArrayList<JavaFile.ClassType>();
+		ArrayList<Type.Clazz> interfaces = new ArrayList<Type.Clazz>();
 		if (idx < decl.getChildCount()
 				&& decl.getChild(idx).getType() == IMPLEMENTS) {
 			Tree ch = decl.getChild(idx++);
@@ -314,12 +313,12 @@ public class JavaFileReader2 {
 
 		String name = decl.getChild(idx++).getText();
 
-		ArrayList<Triple<JavaFile.Type, String, JavaFile.Value>> methods = new ArrayList<Triple<JavaFile.Type, String, JavaFile.Value>>();
+		ArrayList<Triple<Type, String, JavaFile.Value>> methods = new ArrayList<Triple<Type, String, JavaFile.Value>>();
 
 		for (; idx < decl.getChildCount(); ++idx) {
 			Tree child = decl.getChild(idx);
 			if (child.getType() == METHOD) {
-				JavaFile.Type t = parseType(child.getChild(0));
+				Type t = parseType(child.getChild(0));
 				String n = child.getChild(1).getText();
 				JavaFile.Value v = null;
 				if (child.getChildCount() > 2) {
@@ -350,14 +349,14 @@ public class JavaFileReader2 {
 
 		// === TYPE ARGUMENTS ===
 
-		ArrayList<JavaFile.VariableType> typeArgs = new ArrayList<JavaFile.VariableType>();
+		ArrayList<Type.Variable> typeArgs = new ArrayList<Type.Variable>();
 		while (method.getChild(idx).getType() == TYPE_PARAMETER) {
 			typeArgs.add(parseVariableType(method.getChild(idx++)));
 		}
 
 		String name = method.getChild(idx++).getText();
 
-		JavaFile.Type returnType = null;
+		Type returnType = null;
 
 		// if no return type, then is a constructor
 		if (method.getChild(idx).getType() == TYPE) {
@@ -367,17 +366,17 @@ public class JavaFileReader2 {
 
 		// === FORMAL PARAMETERS ===
 
-		ArrayList<Triple<String, List<JavaFile.Modifier>, JavaFile.Type>> params = new ArrayList<Triple<String, List<JavaFile.Modifier>, JavaFile.Type>>();
+		ArrayList<Triple<String, List<JavaFile.Modifier>, Type>> params = new ArrayList<Triple<String, List<JavaFile.Modifier>, Type>>();
 
 		while (idx < method.getChildCount()
 				&& method.getChild(idx).getType() == PARAMETER) {
 			Tree c = method.getChild(idx);
 			List<JavaFile.Modifier> pModifiers = parseModifiers(c.getChild(0));
-			JavaFile.Type t = parseType(c.getChild(1));
+			Type t = parseType(c.getChild(1));
 			String n = c.getChild(2).getText();
 
 			for (int i = 3; i < c.getChildCount(); i = i + 2) {
-				t = new JavaFile.ArrayType(t);
+				t = new Type.Array(t);
 			}
 
 			params.add(new Triple(n, pModifiers, t));
@@ -390,7 +389,7 @@ public class JavaFileReader2 {
 				&& method.getChild(idx).getType() == VARARGS) {
 			Tree c = method.getChild(idx);
 			List<JavaFile.Modifier> pModifiers = parseModifiers(c.getChild(0));
-			JavaFile.Type t = parseType(c.getChild(1));
+			Type t = parseType(c.getChild(1));
 			String n = c.getChild(2).getText();
 			params.add(new Triple(n, pModifiers, t));
 			idx++;
@@ -399,7 +398,7 @@ public class JavaFileReader2 {
 
 		// === THROWS CLAUSE ===
 
-		ArrayList<JavaFile.ClassType> exceptions = new ArrayList<JavaFile.ClassType>();
+		ArrayList<Type.Clazz> exceptions = new ArrayList<Type.Clazz>();
 
 		if (idx < method.getChildCount()
 				&& method.getChild(idx).getType() == THROWS) {
@@ -444,7 +443,7 @@ public class JavaFileReader2 {
 		}
 
 		// === FIELD TYPE ===
-		JavaFile.Type type = parseType(tree.getChild(idx++));
+		Type type = parseType(tree.getChild(idx++));
 
 		// === FIELD NAME(S) ===
 
@@ -456,7 +455,7 @@ public class JavaFileReader2 {
 			int aindx = 0;
 			while (aindx < child.getChildCount()
 					&& child.getChild(aindx).getText().equals("[")) {
-				type = new JavaFile.ArrayType(type);
+				type = new Type.Array(type);
 				aindx++;
 			}
 			if (aindx < child.getChildCount()) {
@@ -592,7 +591,7 @@ public class JavaFileReader2 {
 
 			if (child.getType() == CATCH) {
 				Tree cb = child.getChild(0);
-				JavaFile.ClassType type = parseClassType(cb.getChild(0));
+				Type.Clazz type = parseClassType(cb.getChild(0));
 				Tree cbb = child.getChild(1);
 				for (int j = 0; j != cbb.getChildCount(); ++j) {
 					JavaFile.Statement stmt = parseStatement(cbb.getChild(j));
@@ -628,7 +627,7 @@ public class JavaFileReader2 {
 		// === MODIFIERS ===
 		List<JavaFile.Modifier> modifiers = parseModifiers(tree.getChild(0));
 
-		JavaFile.Type type = parseType(tree.getChild(1));
+		Type type = parseType(tree.getChild(1));
 
 		for (int i = 2; i < tree.getChildCount(); i = i + 1) {
 			Tree nameTree = tree.getChild(i);
@@ -824,7 +823,7 @@ public class JavaFileReader2 {
 
 		Tree varDef = stmt.getChild(0);
 		List<JavaFile.Modifier> varMods = parseModifiers(varDef.getChild(0));
-		JavaFile.Type varType = parseType(varDef.getChild(1));
+		Type varType = parseType(varDef.getChild(1));
 		String varName = varDef.getChild(2).getText();
 		JavaFile.Expression src = parseExpression(stmt.getChild(1));
 		JavaFile.Statement loopBody = parseStatement(body);
@@ -1028,7 +1027,7 @@ public class JavaFileReader2 {
 				}
 				case INVOKE : {
 					int start = 0;
-					ArrayList<JavaFile.Type> typeParameters = new ArrayList<JavaFile.Type>();
+					ArrayList<Type> typeParameters = new ArrayList<Type>();
 					if (child.getChild(0).getType() == TYPE_PARAMETER) {
 						Tree c = child.getChild(0);
 						for (int j = 0; j != c.getChildCount(); ++j) {
@@ -1110,7 +1109,7 @@ public class JavaFileReader2 {
 		// First, check for type parameters. These are present for
 		// method invocations which explicitly indicate the type
 		// parameters to use. For example, x.<K>someMethod();
-		ArrayList<JavaFile.Type> typeParameters = new ArrayList<JavaFile.Type>();
+		ArrayList<Type> typeParameters = new ArrayList<Type>();
 
 		if (expr.getChild(0).getType() == TYPE_PARAMETER) {
 			Tree child = expr.getChild(0);
@@ -1457,12 +1456,12 @@ public class JavaFileReader2 {
      * @return
      */
 	protected JavaFile.Expression parseTypedArrayVal(Tree expr) {
-		JavaFile.Type type = parseType(expr.getChild(0));
+		Type type = parseType(expr.getChild(0));
 		Tree aval = expr.getChild(1);
 		List<JavaFile.Expression> values = parseExpressionList(0, aval
 				.getChildCount(), aval);
 		
-		return new JavaFile.TypedArrayVal(type, values, new SourceLocation(expr
+		return new TypedArrayVal(type, values, new SourceLocation(expr
 				.getLine(), expr.getCharPositionInLine()));
 	}
 
@@ -1521,7 +1520,7 @@ public class JavaFileReader2 {
 		return mods;
 	}
 
-	protected static JavaFile.Type parseType(Tree type) {
+	protected static Type parseType(Tree type) {
 		assert type.getType() == TYPE;
 
 		SourceLocation loc = new SourceLocation(type.getLine(), type
@@ -1531,8 +1530,8 @@ public class JavaFileReader2 {
 			// special case to deal with wildcards
 			Tree child = type.getChild(0);
 
-			JavaFile.ClassType lowerBound = null;
-			JavaFile.ClassType upperBound = null;
+			Type.Clazz lowerBound = null;
+			Type.Clazz upperBound = null;
 
 			if (child.getChildCount() > 0
 					&& child.getChild(0).getType() == EXTENDS) {
@@ -1544,7 +1543,7 @@ public class JavaFileReader2 {
 				upperBound = parseClassType(child.getChild(0).getChild(0));
 			}
 			// Ok, all done!
-			return new JavaFile.WildcardType(lowerBound, upperBound, loc);
+			return new Type.Wildcard(lowerBound, upperBound, loc);
 		} else {
 
 			// === ARRAY DIMENSIONS ===
@@ -1560,30 +1559,30 @@ public class JavaFileReader2 {
 
 			// === PRIMITIVE TYPES ===
 
-			JavaFile.Type r;
+			Type r;
 			
 			String ct = type.getText();
 			if (ct.equals("boolean")) {
-				r = new BoolType(loc);
+				r = new Type.Bool(loc);
 			} else if (ct.equals("byte")) {
-				r = new ByteType(loc);
+				r = new Type.Byte(loc);
 			} else if (ct.equals("char")) {
-				r = new CharType(loc);
+				r = new Type.Char(loc);
 			} else if (ct.equals("short")) {
-				r = new ShortType(loc);
+				r = new Type.Short(loc);
 			} else if (ct.equals("int")) {
-				r = new IntType(loc);
+				r = new Type.Int(loc);
 			} else if (ct.equals("long")) {
-				r = new LongType(loc);
+				r = new Type.Long(loc);
 			} else if (ct.equals("float")) {
-				r = new FloatType(loc);
+				r = new Type.Float(loc);
 			} else if (ct.equals("double")) {
-				r = new DoubleType(loc);
+				r = new Type.Double(loc);
 			} else {
 
 				// === NON-PRIMITIVE TYPES ===
 
-				ArrayList<Pair<String, List<JavaFile.Type>>> components = new ArrayList<Pair<String, List<JavaFile.Type>>>();
+				ArrayList<Pair<String, List<Type>>> components = new ArrayList<Pair<String, List<Type>>>();
 
 				for (int i = 0; i != (type.getChildCount() - dims); ++i) {
 					Tree child = type.getChild(i);
@@ -1592,35 +1591,35 @@ public class JavaFileReader2 {
 					if (text.equals("VOID")) {
 						text = "void"; // hack!
 					}
-					ArrayList<JavaFile.Type> genArgs = new ArrayList<JavaFile.Type>();
+					ArrayList<Type> genArgs = new ArrayList<Type>();
 
 					for (int j = 0; j != child.getChildCount(); ++j) {
 						Tree childchild = child.getChild(j);
 						genArgs.add(parseType(childchild));
 					}
 
-					components.add(new Pair<String, List<JavaFile.Type>>(text,
+					components.add(new Pair<String, List<Type>>(text,
 							genArgs));
 				}
 
-				r = new JavaFile.ClassType(components, loc);
+				r = new Type.Clazz(components, loc);
 
 			}
 			
 			for (int i = 0; i != dims; ++i) {
-				r = new JavaFile.ArrayType(r,loc);
+				r = new Type.Array(r,loc);
 			}
 			
 			return r;
 		}
 	}
 
-	protected static JavaFile.ClassType parseClassType(Tree type) {
+	protected static Type.Clazz parseClassType(Tree type) {
 		assert type.getType() == TYPE;
 
 		// === COMPONENTS ===
 
-		ArrayList<Pair<String, List<JavaFile.Type>>> components = new ArrayList<Pair<String, List<JavaFile.Type>>>();
+		ArrayList<Pair<String, List<Type>>> components = new ArrayList<Pair<String, List<Type>>>();
 
 		for (int i = 0; i != type.getChildCount(); ++i) {
 			Tree child = type.getChild(i);
@@ -1629,7 +1628,7 @@ public class JavaFileReader2 {
 			if (text.equals("VOID")) {
 				text = "void"; // hack!
 			}
-			ArrayList<JavaFile.Type> genArgs = new ArrayList<JavaFile.Type>();
+			ArrayList<Type> genArgs = new ArrayList<Type>();
 
 			for (int j = 0; j != child.getChildCount(); ++j) {
 				Tree childchild = child.getChild(j);
@@ -1641,17 +1640,17 @@ public class JavaFileReader2 {
 			}
 
 			components
-					.add(new Pair<String, List<JavaFile.Type>>(text, genArgs));
+					.add(new Pair<String, List<Type>>(text, genArgs));
 		}
 
-		return new JavaFile.ClassType(components, new SourceLocation(type
+		return new Type.Clazz(components, new SourceLocation(type
 				.getLine(), type.getCharPositionInLine()));
 	}
 
-	protected static JavaFile.VariableType parseVariableType(Tree type) {
+	protected static Type.Variable parseVariableType(Tree type) {
 		Tree child = type.getChild(0);
 		String text = child.getText();
-		List<JavaFile.Type> lowerBounds = new ArrayList<JavaFile.Type>();
+		List<Type> lowerBounds = new ArrayList<Type>();
 
 		if (child.getChildCount() > 0 && child.getChild(0).getType() == EXTENDS) {
 			Tree childchild = child.getChild(0);
@@ -1659,7 +1658,7 @@ public class JavaFileReader2 {
 				lowerBounds.add(parseType(childchild.getChild(i)));
 			}
 		}
-		return new JavaFile.VariableType(text, lowerBounds, new SourceLocation(
+		return new Type.Variable(text, lowerBounds, new SourceLocation(
 				type.getLine(), type.getCharPositionInLine()));
 	}
 
