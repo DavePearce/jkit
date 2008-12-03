@@ -9,6 +9,7 @@ import jkit.java.JavaFile.*;
 import jkit.util.Pair;
 import jkit.util.Triple;
 import jkit.jkil.SourceLocation;
+import jkit.jkil.Type;
 
 import org.antlr.runtime.*;
 import org.antlr.runtime.tree.*;
@@ -1550,8 +1551,6 @@ public class JavaFileReader2 {
 
 			int dims = 0;
 
-			// TODO: Extend this to support annotations in array reference
-            // position
 			for (int i = type.getChildCount() - 1; i > 0; --i) {
 				if (!type.getChild(i).getText().equals("[")) {
 					break;
@@ -1559,32 +1558,59 @@ public class JavaFileReader2 {
 				dims++;
 			}
 
-			// 
-			ArrayList<Pair<String, List<JavaFile.Type>>> components = new ArrayList<Pair<String, List<JavaFile.Type>>>();
+			// === PRIMITIVE TYPES ===
 
-			for (int i = 0; i != (type.getChildCount() - dims); ++i) {
-				Tree child = type.getChild(i);
+			JavaFile.Type r;
+			
+			String ct = type.getText();
+			if (ct.equals("boolean")) {
+				r = new BoolType(loc);
+			} else if (ct.equals("byte")) {
+				r = new ByteType(loc);
+			} else if (ct.equals("char")) {
+				r = new CharType(loc);
+			} else if (ct.equals("short")) {
+				r = new ShortType(loc);
+			} else if (ct.equals("int")) {
+				r = new IntType(loc);
+			} else if (ct.equals("long")) {
+				r = new LongType(loc);
+			} else if (ct.equals("float")) {
+				r = new FloatType(loc);
+			} else if (ct.equals("double")) {
+				r = new DoubleType(loc);
+			} else {
 
-				String text = child.getText();
-				if (text.equals("VOID")) {
-					text = "void"; // hack!
+				// === NON-PRIMITIVE TYPES ===
+
+				ArrayList<Pair<String, List<JavaFile.Type>>> components = new ArrayList<Pair<String, List<JavaFile.Type>>>();
+
+				for (int i = 0; i != (type.getChildCount() - dims); ++i) {
+					Tree child = type.getChild(i);
+
+					String text = child.getText();
+					if (text.equals("VOID")) {
+						text = "void"; // hack!
+					}
+					ArrayList<JavaFile.Type> genArgs = new ArrayList<JavaFile.Type>();
+
+					for (int j = 0; j != child.getChildCount(); ++j) {
+						Tree childchild = child.getChild(j);
+						genArgs.add(parseType(childchild));
+					}
+
+					components.add(new Pair<String, List<JavaFile.Type>>(text,
+							genArgs));
 				}
-				ArrayList<JavaFile.Type> genArgs = new ArrayList<JavaFile.Type>();
 
-				for (int j = 0; j != child.getChildCount(); ++j) {
-					Tree childchild = child.getChild(j);
-					genArgs.add(parseType(childchild));
-				}
+				r = new JavaFile.ClassType(components, loc);
 
-				components.add(new Pair<String, List<JavaFile.Type>>(text,
-						genArgs));
 			}
-
-			JavaFile.Type r = new JavaFile.ClassType(components, loc);
-
+			
 			for (int i = 0; i != dims; ++i) {
 				r = new JavaFile.ArrayType(r,loc);
 			}
+			
 			return r;
 		}
 	}

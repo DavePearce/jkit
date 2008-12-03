@@ -5,6 +5,7 @@ import java.util.*;
 import jkit.jkil.SyntacticElement;
 import jkit.jkil.SyntacticElementImpl;
 import jkit.jkil.Attribute;
+import jkit.jkil.Type;
 import jkit.util.*;
 
 public class JavaFile {
@@ -61,6 +62,54 @@ public class JavaFile {
 
 	public static interface Type extends SyntacticElement {}
 	
+	public static class BoolType extends SyntacticElementImpl implements Type {
+		public BoolType(Attribute... attributes) {
+			super(attributes);			
+		}		
+	}
+	
+	public static class ByteType extends SyntacticElementImpl implements Type {
+		public ByteType(Attribute... attributes) {
+			super(attributes);			
+		}		
+	}
+	
+	public static class CharType extends SyntacticElementImpl implements Type {
+		public CharType(Attribute... attributes) {
+			super(attributes);			
+		}		
+	}
+	
+	public static class ShortType extends SyntacticElementImpl implements Type {
+		public ShortType(Attribute... attributes) {
+			super(attributes);			
+		}		
+	}
+	
+	public static class IntType extends SyntacticElementImpl implements Type {
+		public IntType(Attribute... attributes) {
+			super(attributes);			
+		}		
+	}
+	
+	public static class LongType extends SyntacticElementImpl implements Type {
+		public LongType(Attribute... attributes) {
+			super(attributes);			
+		}		
+	}
+	
+	public static class FloatType extends SyntacticElementImpl implements Type {
+		public FloatType(Attribute... attributes) {
+			super(attributes);			
+		}		
+	}
+	
+	public static class DoubleType extends SyntacticElementImpl implements Type {
+		public DoubleType(Attribute... attributes) {
+			super(attributes);			
+		}		
+	}
+	
 	public static class ArrayType extends SyntacticElementImpl implements Type {		
 		private Type element;
 		
@@ -74,8 +123,7 @@ public class JavaFile {
 		}		
 	}
 	
-	public static class ClassType extends SyntacticElementImpl  implements Type {
-		
+	public static class ClassType extends SyntacticElementImpl implements Type {		
 		private List<Pair<String, List<Type>>> components;
 		public ClassType(List<Pair<String, List<Type>>> components,
 				Attribute... attributes) {
@@ -91,7 +139,7 @@ public class JavaFile {
 		}
 	}
 	
-	public static class WildcardType extends SyntacticElementImpl  implements Type {
+	public static class WildcardType extends SyntacticElementImpl implements Type {
 		private Type lowerBound;
 		private Type upperBound;
 
@@ -111,7 +159,7 @@ public class JavaFile {
 		}
 	}
 	
-	public static class VariableType extends SyntacticElementImpl  implements Type {
+	public static class VariableType extends SyntacticElementImpl implements Type {
 		private String variable;
 		private List<Type> lowerBounds;
 
@@ -129,6 +177,12 @@ public class JavaFile {
 		public List<Type> lowerBounds() {
 			return lowerBounds;
 		}		
+	}
+	
+	public static class FunctionType extends SyntacticElementImpl implements Type {
+		private final List<Type> parameters;
+		private final Type returnType;
+		private final List<Type> typeArgs;
 	}
 	
 	// ====================================================
