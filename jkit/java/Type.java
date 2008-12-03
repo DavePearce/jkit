@@ -255,6 +255,5 @@ public interface Type {
 		public List<Type> typeArguments() {
 			return typeArgs;
 		}
-	}
-	
+	}	
 }
