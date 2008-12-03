@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.*;
 
 import jkit.compiler.SyntaxError;
-import jkit.java.JavaFile.*;
+import jkit.java.Decl.*;
 import jkit.util.Pair;
 import jkit.util.Triple;
 import jkit.jil.*;
@@ -79,7 +79,7 @@ public class JavaFileReader2 {
 
 	public JavaFile read() {
 
-		ArrayList<JavaFile.Declaration> classes = new ArrayList<JavaFile.Declaration>();
+		ArrayList<Decl> classes = new ArrayList<Decl>();
 		ArrayList<Pair<Boolean, String>> imports = new ArrayList<Pair<Boolean, String>>();
 		String pkg = null;
 
@@ -125,8 +125,8 @@ public class JavaFileReader2 {
 		return new JavaFile(pkg, imports, classes);
 	}
 
-	protected List<JavaFile.Declaration> parseDeclaration(Tree decl) {
-		ArrayList<JavaFile.Declaration> declarations = new ArrayList<JavaFile.Declaration>();
+	protected List<Decl> parseDeclaration(Tree decl) {
+		ArrayList<Decl> declarations = new ArrayList<Decl>();
 
 		switch (decl.getType()) {
 			case FIELD :
@@ -144,12 +144,12 @@ public class JavaFileReader2 {
 				break;
 			case STATIC :
 				// static initialiser block
-				declarations.add(new JavaFile.StaticInitialiserBlock(
+				declarations.add(new Decl.StaticInitialiserBlock(
 						parseBlock(decl.getChild(0)).statements()));
 				break;
 			case BLOCK :
 				// non-static initialiser block
-				declarations.add(new JavaFile.InitialiserBlock(parseBlock(decl)
+				declarations.add(new Decl.InitialiserBlock(parseBlock(decl)
 						.statements(), new SourceLocation(decl.getLine(), decl
 						.getCharPositionInLine())));
 				break;
@@ -161,7 +161,7 @@ public class JavaFileReader2 {
 		return declarations;
 	}
 
-	protected JavaFile.Clazz parseClass(Tree decl) {
+	protected Decl.Clazz parseClass(Tree decl) {
 		int idx = 0;
 		List<Modifier> modifiers = new ArrayList<Modifier>();
 		if (decl.getChild(idx).getType() == MODIFIERS) {
@@ -203,7 +203,7 @@ public class JavaFileReader2 {
 		// ======================== PARSE DECLARATIONS ========================
 		// ====================================================================
 
-		ArrayList<JavaFile.Declaration> declarations = new ArrayList<JavaFile.Declaration>();
+		ArrayList<Decl> declarations = new ArrayList<Decl>();
 
 		for (int i = idx; i < decl.getChildCount(); ++i) {
 			declarations.addAll(parseDeclaration(decl.getChild(i)));
@@ -213,15 +213,15 @@ public class JavaFileReader2 {
 				.getCharPositionInLine());
 
 		if (decl.getType() == INTERFACE) {
-			return new JavaFile.Interface(modifiers, name, typeArgs,
+			return new Decl.Interface(modifiers, name, typeArgs,
 					superclass, interfaces, declarations, loc);
 		} else {
-			return new JavaFile.Clazz(modifiers, name, typeArgs, superclass,
+			return new Decl.Clazz(modifiers, name, typeArgs, superclass,
 					interfaces, declarations, loc);
 		}
 	}
 
-	protected JavaFile.Enum parseEnum(Tree decl) {
+	protected Decl.Enum parseEnum(Tree decl) {
 		int idx = 0;
 		List<Modifier> modifiers = new ArrayList<Modifier>();
 		if (decl.getChild(idx).getType() == MODIFIERS) {
@@ -247,7 +247,7 @@ public class JavaFileReader2 {
 		// ====================================================================
 		// ========================= PARSE CONSTANTS ==========================
 		// ====================================================================
-		ArrayList<JavaFile.EnumConstant> constants = new ArrayList<JavaFile.EnumConstant>();
+		ArrayList<Decl.EnumConstant> constants = new ArrayList<Decl.EnumConstant>();
 		while (idx < decl.getChildCount()
 				&& decl.getChild(idx).getType() == ENUM_CONSTANT) {
 			constants.add(parseEnumConstant(decl.getChild(idx)));
@@ -258,22 +258,22 @@ public class JavaFileReader2 {
 		// ======================== PARSE DECLARATIONS ========================
 		// ====================================================================
 
-		ArrayList<JavaFile.Declaration> declarations = new ArrayList<JavaFile.Declaration>();
+		ArrayList<Decl> declarations = new ArrayList<Decl>();
 		for (; idx < decl.getChildCount(); ++idx) {
 			declarations.addAll(parseDeclaration(decl.getChild(idx)));
 		}
 
-		return new JavaFile.Enum(modifiers, name, interfaces, constants,
+		return new Decl.Enum(modifiers, name, interfaces, constants,
 				declarations, new SourceLocation(decl.getLine(), decl
 						.getCharPositionInLine()));
 	}
 
-	protected JavaFile.EnumConstant parseEnumConstant(Tree decl) {
+	protected Decl.EnumConstant parseEnumConstant(Tree decl) {
 		// annotation support is required.
 		String name = decl.getChild(0).getText();
 
 		ArrayList<Expr> arguments = new ArrayList<Expr>();
-		ArrayList<JavaFile.Declaration> declarations = new ArrayList<JavaFile.Declaration>();
+		ArrayList<Decl> declarations = new ArrayList<Decl>();
 		for (int i = 1; i != decl.getChildCount(); ++i) {
 			Tree child = decl.getChild(i);
 			switch (child.getType()) {
@@ -293,14 +293,14 @@ public class JavaFileReader2 {
 			}
 		}
 
-		return new JavaFile.EnumConstant(
+		return new Decl.EnumConstant(
 				name,
 				arguments,
 				declarations,
 				new SourceLocation(decl.getLine(), decl.getCharPositionInLine()));
 	}
 
-	protected JavaFile.AnnotationInterface parseAnnotation(Tree decl) {
+	protected Decl.AnnotationInterface parseAnnotation(Tree decl) {
 		// === TYPE MODIFIERS ===
 
 		List<Modifier> modifiers = new ArrayList<Modifier>();
@@ -328,14 +328,14 @@ public class JavaFileReader2 {
 			}
 		}
 
-		return new JavaFile.AnnotationInterface(
+		return new Decl.AnnotationInterface(
 				modifiers,
 				name,
 				methods,
 				new SourceLocation(decl.getLine(), decl.getCharPositionInLine()));
 	}
 
-	protected JavaFile.Method parseMethod(Tree method) {
+	protected Decl.Method parseMethod(Tree method) {
 
 		// === TYPE MODIFIERS ===
 
@@ -418,20 +418,20 @@ public class JavaFileReader2 {
 		}
 
 		if (returnType == null) {
-			return new JavaFile.Constructor(modifiers, name, params, varargs,
+			return new Decl.Constructor(modifiers, name, params, varargs,
 					typeArgs, exceptions, block, new SourceLocation(method
 							.getLine(), method.getCharPositionInLine()));
 		} else {
-			return new JavaFile.Method(modifiers, name, returnType, params,
+			return new Decl.Method(modifiers, name, returnType, params,
 					varargs, typeArgs, exceptions, block, new SourceLocation(
 							method.getLine(), method.getCharPositionInLine()));
 		}
 	}
 
-	protected List<JavaFile.Field> parseField(Tree tree) {
+	protected List<Decl.Field> parseField(Tree tree) {
 		assert tree.getType() == FIELD;
 
-		ArrayList<JavaFile.Field> fields = new ArrayList<JavaFile.Field>();
+		ArrayList<Decl.Field> fields = new ArrayList<Decl.Field>();
 
 		// === MODIFIERS ===
 		List<Modifier> modifiers = new ArrayList<Modifier>();
@@ -463,7 +463,7 @@ public class JavaFileReader2 {
 				// constructors!
 				initialiser = parseExpression(child.getChild(aindx));
 			}
-			fields.add(new JavaFile.Field(modifiers, name, type, initialiser,
+			fields.add(new Decl.Field(modifiers, name, type, initialiser,
 					new SourceLocation(child.getLine(), child
 							.getCharPositionInLine())));
 		}
@@ -1069,7 +1069,7 @@ public class JavaFileReader2 {
      */
 	protected Expr.New parseNew(Tree expr) {
 		// first, parse any parameters supplied
-		ArrayList<JavaFile.Declaration> declarations = new ArrayList<JavaFile.Declaration>();
+		ArrayList<Decl> declarations = new ArrayList<Decl>();
 
 		int end = expr.getChildCount();
 		for (int i = 1; i < expr.getChildCount(); ++i) {

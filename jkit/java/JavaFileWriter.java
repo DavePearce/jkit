@@ -33,36 +33,36 @@ public class JavaFileWriter {
 		if(jf.imports().size() > 0) {
 			output.println("");
 		}
-		for(JavaFile.Declaration decl : jf.declarations()) {
+		for(Decl decl : jf.declarations()) {
 			writeDeclaration(decl);			
 		}
 		
 		output.flush();
 	}
 	
-	public void writeDeclaration(JavaFile.Declaration d) {
-		if(d instanceof JavaFile.Enum) {
-			writeEnum((JavaFile.Enum) d);
-		} else if(d instanceof JavaFile.Clazz) {
-			writeClass((JavaFile.Clazz) d);
-		} else if(d instanceof JavaFile.Field) {
-			writeField((JavaFile.Field) d);
-		} else if(d instanceof JavaFile.Method) {
-			writeMethod((JavaFile.Method) d);
-		} else if(d instanceof JavaFile.StaticInitialiserBlock) {
-			writeStaticInitialiserBlock((JavaFile.StaticInitialiserBlock)d);
-		} else if(d instanceof JavaFile.InitialiserBlock) {
-			writeInitialiserBlock((JavaFile.InitialiserBlock)d);
-		} else if(d instanceof JavaFile.AnnotationInterface) {
-			writeAnnotationInterface((JavaFile.AnnotationInterface)d);
+	public void writeDeclaration(Decl d) {
+		if(d instanceof Decl.Enum) {
+			writeEnum((Decl.Enum) d);
+		} else if(d instanceof Decl.Clazz) {
+			writeClass((Decl.Clazz) d);
+		} else if(d instanceof Decl.Field) {
+			writeField((Decl.Field) d);
+		} else if(d instanceof Decl.Method) {
+			writeMethod((Decl.Method) d);
+		} else if(d instanceof Decl.StaticInitialiserBlock) {
+			writeStaticInitialiserBlock((Decl.StaticInitialiserBlock)d);
+		} else if(d instanceof Decl.InitialiserBlock) {
+			writeInitialiserBlock((Decl.InitialiserBlock)d);
+		} else if(d instanceof Decl.AnnotationInterface) {
+			writeAnnotationInterface((Decl.AnnotationInterface)d);
 		}
 	}
 	
-	public void writeClass(JavaFile.Clazz decl) {
+	public void writeClass(Decl.Clazz decl) {
 		
 		writeModifiers(decl.modifiers());
 		
-		if(decl instanceof JavaFile.Interface) {
+		if(decl instanceof Decl.Interface) {
 			write("interface ");
 		} else {
 			write("class ");
@@ -83,7 +83,7 @@ public class JavaFileWriter {
 			write(">");
 		}
 		
-		if(decl instanceof JavaFile.Interface) {
+		if(decl instanceof Decl.Interface) {
 			if(decl.interfaces().size() > 0) {
 				write(" extends ");
 				boolean firstTime = true;
@@ -116,14 +116,14 @@ public class JavaFileWriter {
 		
 		write("{");
 		
-		for(JavaFile.Declaration d : decl.declarations()) {
+		for(Decl d : decl.declarations()) {
 			writeDeclaration(d);			
 		}
 		
 		write("}");
 	}
 	
-	protected void writeEnum(JavaFile.Enum decl) {
+	protected void writeEnum(Decl.Enum decl) {
 		writeModifiers(decl.modifiers());
 		write("enum ");
 		write(decl.name());
@@ -143,7 +143,7 @@ public class JavaFileWriter {
 		write("{");
 		
 		boolean firstTime = true;
-		for(JavaFile.EnumConstant c : decl.constants()) {
+		for(Decl.EnumConstant c : decl.constants()) {
 			if(!firstTime) {
 				write(",");
 				write("\n");
@@ -154,7 +154,7 @@ public class JavaFileWriter {
 		
 		if(decl.declarations().size() > 0) {
 			write(";");			
-			for(JavaFile.Declaration d : decl.declarations()) {				
+			for(Decl d : decl.declarations()) {				
 				writeDeclaration(d);
 			}
 		}
@@ -163,7 +163,7 @@ public class JavaFileWriter {
 		write("}");
 	}
 	
-	protected void writeEnumConstant(JavaFile.EnumConstant c) {
+	protected void writeEnumConstant(Decl.EnumConstant c) {
 		write(c.name());
 		if(c.arguments().size() > 0) {
 			write("(");
@@ -181,7 +181,7 @@ public class JavaFileWriter {
 		if(c.declarations().size() > 0) {
 			write("{");
 			boolean firstTime = true;
-			for(JavaFile.Declaration d : c.declarations()) {
+			for(Decl d : c.declarations()) {
 				if(!firstTime) {
 					write(",");
 				}
@@ -192,7 +192,7 @@ public class JavaFileWriter {
 		}
 	}
 	
-	protected void writeAnnotationInterface(JavaFile.AnnotationInterface e) {
+	protected void writeAnnotationInterface(Decl.AnnotationInterface e) {
 		writeModifiers(e.modifiers());
 		write("@interface ");
 		write(e.name());
@@ -211,7 +211,7 @@ public class JavaFileWriter {
 		write("}");
 	}
 	
-	protected void writeMethod(JavaFile.Method m) {
+	protected void writeMethod(Decl.Method m) {
 		write("\n");
 		writeModifiers(m.modifiers());
 		
@@ -274,7 +274,7 @@ public class JavaFileWriter {
 		}
 	}
 	
-	protected void writeField(JavaFile.Field f) {
+	protected void writeField(Decl.Field f) {
 		
 		writeModifiers(f.modifiers());		
 		writeType(f.type());
@@ -287,12 +287,12 @@ public class JavaFileWriter {
 		write(";");
 	}
 	
-	protected void writeStaticInitialiserBlock(JavaFile.StaticInitialiserBlock e) {
+	protected void writeStaticInitialiserBlock(Decl.StaticInitialiserBlock e) {
 		write("static ");
 		writeBlock(e);
 	}
 	
-	protected void writeInitialiserBlock(JavaFile.InitialiserBlock e) {		
+	protected void writeInitialiserBlock(Decl.InitialiserBlock e) {		
 		writeBlock(e);
 	}
 	
@@ -349,8 +349,8 @@ public class JavaFileWriter {
 			writeInvoke((Expr.Invoke) e);
 		} else if(e instanceof Expr.New) {
 			writeNew((Expr.New) e);
-		} else if(e instanceof JavaFile.Clazz) {
-			writeClass((JavaFile.Clazz)e);
+		} else if(e instanceof Decl.Clazz) {
+			writeClass((Decl.Clazz)e);
 		} else {
 			throw new RuntimeException("Invalid statement encountered: "
 					+ e.getClass());
@@ -708,13 +708,13 @@ public class JavaFileWriter {
 
 			if(e.declarations().size() > 0) {
 				write(" { ");
-				for(JavaFile.Declaration d : e.declarations()) {				
-					if(d instanceof JavaFile.Clazz) {
-						writeClass((JavaFile.Clazz) d);
-					} else if(d instanceof JavaFile.Field) {
-						writeField((JavaFile.Field) d);
-					} else if(d instanceof JavaFile.Method) {
-						writeMethod((JavaFile.Method) d);
+				for(Decl d : e.declarations()) {				
+					if(d instanceof Decl.Clazz) {
+						writeClass((Decl.Clazz) d);
+					} else if(d instanceof Decl.Field) {
+						writeField((Decl.Field) d);
+					} else if(d instanceof Decl.Method) {
+						writeMethod((Decl.Method) d);
 					} else {					
 						throw new RuntimeException(
 						"Support required for methods in anonymous inner classes");

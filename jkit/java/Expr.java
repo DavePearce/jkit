@@ -2,7 +2,6 @@ package jkit.java;
 
 import java.util.List;
 
-import jkit.java.JavaFile.Declaration;
 import jkit.jil.Attribute;
 import jkit.jil.SyntacticElement;
 import jkit.jil.SyntacticElementImpl;
@@ -259,7 +258,7 @@ public interface Expr extends SyntacticElement {
 		private Type type;
 		private Expr context;
 		private List<Expr> parameters;
-		private List<Declaration> declarations;
+		private List<Decl> declarations;
 
 		/**
 		 * Create an AST node represent a new statement or expression.
@@ -280,7 +279,7 @@ public interface Expr extends SyntacticElement {
 		 *            anonymous class.
 		 */
 		public New(Type type, Expr context, List<Expr> parameters,
-				List<Declaration> declarations, Attribute... attributes) {
+				List<Decl> declarations, Attribute... attributes) {
 			super(attributes);
 			this.type = type;
 			this.context = context;
@@ -304,11 +303,11 @@ public interface Expr extends SyntacticElement {
 			this.parameters = parameters;
 		}
 
-		public List<Declaration> declarations() {
+		public List<Decl> declarations() {
 			return declarations;
 		}
 
-		public void setDeclarations(List<Declaration> declarations) {
+		public void setDeclarations(List<Decl> declarations) {
 			this.declarations = declarations;
 		}
 
