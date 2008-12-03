@@ -1,0 +1,508 @@
+package jkit.java;
+
+import java.util.List;
+
+import jkit.jil.*;
+import jkit.util.Triple;
+
+import jkit.java.JavaFile.Expression;
+
+public interface Stmt extends SyntacticElement {
+
+	/**
+	 * A simple statement represents one which is not composed of other
+	 * statements. Examples include return, throw and assignment statements;
+	 * example of non-simple statements include if, while and for statements.
+	 */
+	public interface Simple extends Stmt {
+	}
+
+	/**
+	 * A block represents a list of statements contained between curly braces.
+	 * For example:
+	 * 
+	 * <pre>
+	 * public void f() {
+	 * 	int x;
+	 * 	x = 2;
+	 * 	{
+	 * 		int y = 2;
+	 * 	}
+	 * }
+	 * </pre>
+	 * 
+	 * This is made up of two blocks (and other statements: one for the body of
+	 * the method, and the other for the internal block.
+	 * 
+	 * @author djp
+	 * 
+	 */
+	public static class Block extends SyntacticElementImpl implements Stmt {
+		private List<Stmt> statements;
+
+		public Block(List<Stmt> statements, Attribute... attributes) {
+			super(attributes);
+			this.statements = statements;
+		}
+
+		public List<Stmt> statements() {
+			return statements;
+		}
+	}
+
+	/**
+	 * Represents a synchronised block of code.  For example:
+	 * <pre>
+	 * public void f(List<String> x) {
+	 *  synchronized(x) {
+	 *   ...
+	 *  }
+	 * }
+	 * </pre>
+	 * @author djp
+	 *
+	 */
+	public static class SynchronisedBlock extends Block {
+		private Expression expr;
+
+		public SynchronisedBlock(Expression expr, List<Stmt> statements,
+				Attribute... attributes) {
+			super(statements, attributes);
+			this.expr = expr;
+		}
+
+		public Expression expr() {
+			return expr;
+		}
+	}
+
+	/**
+	 * This represents a catch block, which is contained within a try-catch
+	 * block.
+	 * 
+	 * @author djp
+	 */
+	public static class CatchBlock extends Block {
+		private Type.Clazz type;
+		private String variable;
+
+		public CatchBlock(Type.Clazz type, String variable,
+				List<Stmt> statements, Attribute... attributes) {
+			super(statements, attributes);
+			this.type = type;
+			this.variable = variable;
+		}
+
+		public Type.Clazz type() {
+			return type;
+		}
+
+		public String variable() {
+			return variable;
+		}
+	}
+
+	/**
+	 * This represents a try-catch block.  For example:
+	 * <pre>
+	 * public void f(int x) {
+	 *  try {
+	 *   x = x / 0;
+	 *  } catch(ArithmeticException e) {
+	 *   ...
+	 *  }
+	 * }
+	 * </pre>
+	 * 
+	 * @author djp	 
+	 */
+	public static class TryCatchBlock extends Block {
+		private List<CatchBlock> handlers;
+		private Block finallyBlk;
+
+		public TryCatchBlock(List<CatchBlock> handlers, Block finallyBlk,
+				List<Stmt> statements, Attribute... attributes) {
+			super(statements, attributes);
+			this.handlers = handlers;
+			this.finallyBlk = finallyBlk;
+		}
+
+		public List<CatchBlock> handlers() {
+			return handlers;
+		}
+
+		public Block finaly() {
+			return finallyBlk;
+		}
+	}
+
+	public static class Label extends SyntacticElementImpl implements Stmt {
+		private String label;
+		private Stmt statement;
+
+		public Label(String label, Stmt statement, Attribute... attributes) {
+			super(attributes);
+			this.label = label;
+			this.statement = statement;
+		}
+
+		public String label() {
+			return label;
+		}
+
+		public Stmt statement() {
+			return statement;
+		}
+	}
+
+	public static class Assignment extends SyntacticElementImpl implements
+			Stmt, JavaFile.Expression {
+		private Expression lhs, rhs;
+
+		public Assignment(Expression lhs, Expression rhs,
+				Attribute... attributes) {
+			super(attributes);
+			this.lhs = lhs;
+			this.rhs = rhs;
+		}
+
+		public Expression lhs() {
+			return lhs;
+		}
+
+		public Expression rhs() {
+			return rhs;
+		}
+	}
+
+	public static class Return extends SyntacticElementImpl implements Stmt {
+		private Expression expr;
+
+		public Return(Expression expr, Attribute... attributes) {
+			super(attributes);
+			this.expr = expr;
+		}
+
+		public Expression expr() {
+			return expr;
+		}
+	}
+
+	public static class Throw extends SyntacticElementImpl implements Stmt {
+		private Expression expr;
+
+		public Throw(Expression expr, Attribute... attributes) {
+			super(attributes);
+			this.expr = expr;
+		}
+
+		public Expression expr() {
+			return expr;
+		}
+	}
+
+	public static class Assert extends SyntacticElementImpl implements Stmt {
+		private Expression expr;
+
+		public Assert(Expression expr, Attribute... attributes) {
+			super(attributes);
+			this.expr = expr;
+		}
+
+		public Expression expr() {
+			return expr;
+		}
+	}
+
+	public static class Break extends SyntacticElementImpl implements Stmt {
+		private String label;
+
+		public Break(String label, Attribute... attributes) {
+			super(attributes);
+			this.label = label;
+		}
+
+		public String label() {
+			return label;
+		}
+	}
+
+	public static class Continue extends SyntacticElementImpl implements Simple {
+		private String label;
+
+		public Continue(String label, Attribute... attributes) {
+			super(attributes);
+			this.label = label;
+		}
+
+		public String label() {
+			return label;
+		}
+	}
+
+	public static class If extends SyntacticElementImpl implements Stmt {
+		private Expression condition;
+		private Stmt trueStatement;
+		private Stmt falseStatement;
+
+		public If(Expression condition, Stmt trueStatement,
+				Stmt falseStatement, Attribute... attributes) {
+			super(attributes);
+			this.condition = condition;
+			this.trueStatement = trueStatement;
+			this.falseStatement = falseStatement;
+		}
+
+		public Expression condition() {
+			return condition;
+		}
+
+		public Stmt trueStatement() {
+			return trueStatement;
+		}
+
+		public Stmt falseStatement() {
+			return falseStatement;
+		}
+	}
+
+	public static class While extends SyntacticElementImpl implements Stmt {
+		private Expression condition;
+		private Stmt body;
+
+		public While(Expression condition, Stmt body, Attribute... attributes) {
+			super(attributes);
+			this.condition = condition;
+			this.body = body;
+		}
+
+		public Expression condition() {
+			return condition;
+		}
+
+		public Stmt body() {
+			return body;
+		}
+	}
+
+	public static class DoWhile extends SyntacticElementImpl implements Stmt {
+		private Expression condition;
+		private Stmt body;
+
+		public DoWhile(Expression condition, Stmt body, Attribute... attributes) {
+			super(attributes);
+			this.condition = condition;
+			this.body = body;
+		}
+
+		public Expression condition() {
+			return condition;
+		}
+
+		public Stmt body() {
+			return body;
+		}
+	}
+
+	public static class For extends SyntacticElementImpl implements Stmt {
+		private Stmt initialiser;
+		private Expression condition;
+		private Stmt increment;
+		private Stmt body;
+
+		public For(Stmt initialiser, Expression condition, Stmt increment,
+				Stmt body, Attribute... attributes) {
+			super(attributes);
+			this.initialiser = initialiser;
+			this.condition = condition;
+			this.increment = increment;
+			this.body = body;
+		}
+
+		public Stmt initialiser() {
+			return initialiser;
+		}
+
+		public Expression condition() {
+			return condition;
+		}
+
+		public Stmt body() {
+			return body;
+		}
+
+		public Stmt increment() {
+			return increment;
+		}
+	}
+
+	public static class ForEach extends SyntacticElementImpl implements Stmt {
+		private String var;
+		private List<Modifier> modifiers; // for variable
+		private Type type; // for variable
+		private Expression source;
+		private Stmt body;
+
+		public ForEach(List<Modifier> modifiers, String var, Type type,
+				Expression source, Stmt body, Attribute... attributes) {
+			super(attributes);
+			this.modifiers = modifiers;
+			this.var = var;
+			this.type = type;
+			this.source = source;
+			this.body = body;
+		}
+
+		/**
+		 * Set the modifiers of the variable declared in the for-each statement.
+		 * Use java.lang.reflect.Modifier for this.
+		 * 
+		 * @param type
+		 */
+		public void setModifiers(List<Modifier> modifiers) {
+			this.modifiers = modifiers;
+		}
+
+		/**
+		 * Get modifiers of this local variable
+		 * 
+		 * @return
+		 */
+		public List<Modifier> modifiers() {
+			return modifiers;
+		}
+
+		/**
+		 * Get type of variable declared in for-each statement.
+		 * 
+		 * @return
+		 */
+		public Type type() {
+			return type;
+		}
+
+		/**
+		 * Get name of variable declared in for-each statement.
+		 * 
+		 * @return
+		 */
+		public String var() {
+			return var;
+		}
+
+		/**
+		 * Get the source expression which corresponds to an array or collection
+		 * which the for-each statement is going to iterate over.
+		 * 
+		 * @return
+		 */
+		public Expression source() {
+			return source;
+		}
+
+		/**
+		 * Get the body of the for-each statement. Maybe null if there is no
+		 * body!
+		 * 
+		 * @return
+		 */
+		public Stmt body() {
+			return body;
+		}
+	}
+
+	/**
+	 * A VarDef is a symbol table entry for a local variable. It can be thought
+	 * of as a declaration for that variable, including its type, modifiers,
+	 * name and whether or not it is a parameter to the method.
+	 * 
+	 * @author djp
+	 */
+	public static class VarDef extends SyntacticElementImpl implements Simple {
+		private List<Modifier> modifiers;
+		private Type type;
+		private List<Triple<String, Integer, Expression>> definitions;
+
+		public VarDef(List<Modifier> modifiers, Type type,
+				List<Triple<String, Integer, Expression>> definitions,
+				Attribute... attributes) {
+			super(attributes);
+			this.modifiers = modifiers;
+			this.definitions = definitions;
+			this.type = type;
+		}
+
+		/**
+		 * Set the modifiers of this local variable. Use
+		 * java.lang.reflect.Modifier for this.
+		 * 
+		 * @param type
+		 */
+		public void setModifiers(List<Modifier> modifiers) {
+			this.modifiers = modifiers;
+		}
+
+		/**
+		 * Get modifiers of this local variable
+		 * 
+		 * @return
+		 */
+		public List<Modifier> modifiers() {
+			return modifiers;
+		}
+
+		public List<Triple<String, Integer, Expression>> definitions() {
+			return definitions;
+		}
+
+		public Type type() {
+			return type;
+		}
+	}
+
+	public static class Case extends SyntacticElementImpl {
+		private Expression condition;
+		private List<Stmt> statements;
+
+		public Case(Expression condition, List<Stmt> statements,
+				Attribute... attributes) {
+			super(attributes);
+			this.condition = condition;
+			this.statements = statements;
+		}
+
+		public Expression condition() {
+			return condition;
+		}
+
+		public List<Stmt> statements() {
+			return statements;
+		}
+	}
+
+	public static class DefaultCase extends Case {
+		public DefaultCase(List<Stmt> statements, Attribute... attributes) {
+			super(null, statements, attributes);
+		}
+	}
+
+	public static class Switch extends SyntacticElementImpl implements Stmt {
+		private Expression condition;
+		private List<Case> cases;
+
+		public Switch(Expression condition, List<Case> cases,
+				Attribute... attributes) {
+			super(attributes);
+			this.condition = condition;
+			this.cases = cases;
+		}
+
+		public Expression condition() {
+			return condition;
+		}
+
+		public List<Case> cases() {
+			return cases;
+		}
+	}
+}

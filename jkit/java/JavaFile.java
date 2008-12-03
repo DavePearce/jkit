@@ -39,21 +39,8 @@ public class JavaFile {
 	 */
 	public List<Declaration> declarations() { 
 		return declarations;
-	}
-			
-	/**
-     * Represents the class of imperative statements allowed.
-     * 
-     * @author djp
-     * 
-     */		
-	public static interface Statement extends SyntacticElement {		
-	}
-
-	public static interface SimpleStatement extends Statement {		
-	}
-	
-	
+	}	
+		
 	// ====================================================
 	// MODIFIERS
 	// ====================================================
@@ -66,7 +53,7 @@ public class JavaFile {
 		
 	}
 	
-	public static class Clazz extends SyntacticElementImpl  implements Declaration, Statement {
+	public static class Clazz extends SyntacticElementImpl implements Declaration, Stmt {
 		private List<Modifier> modifiers;
 		private String name;
 		private List<Type.Variable> typeParameters;
@@ -205,12 +192,12 @@ public class JavaFile {
 		private boolean varargs;
 		private List<Type.Variable> typeParameters;
 		private List<Type.Clazz> exceptions;
-		private JavaFile.Block block;
+		private Stmt.Block block;
 
 		public Method(List<Modifier> modifiers, String name, Type returnType,
 				List<Triple<String, List<Modifier>, Type>> parameters,
 				boolean varargs, List<Type.Variable> typeParameters,
-				List<Type.Clazz> exceptions, JavaFile.Block block,
+				List<Type.Clazz> exceptions, Stmt.Block block,
 				Attribute... attributes) {
 			super(attributes);
 			this.modifiers = modifiers;
@@ -263,7 +250,7 @@ public class JavaFile {
 			return exceptions;
 		}
 		
-		public Block block() {
+		public Stmt.Block block() {
 			return block;
 		}
 	}
@@ -279,7 +266,7 @@ public class JavaFile {
 				List<Triple<String, List<Modifier>, Type>> parameters, boolean varargs,
 				List<Type.Variable> typeParameters,
 				List<Type.Clazz> exceptions,
-				JavaFile.Block block, Attribute... attributes) {			
+				Stmt.Block block, Attribute... attributes) {			
 			super(modifiers, name, null, parameters, varargs, typeParameters,
 					exceptions, block,attributes);
 		}
@@ -317,13 +304,13 @@ public class JavaFile {
 		}		
 	}
 	
-	public static class InitialiserBlock extends Block implements Declaration {
-		public InitialiserBlock(List<Statement> statements, Attribute... attributes) {
+	public static class InitialiserBlock extends Stmt.Block implements Declaration {
+		public InitialiserBlock(List<Stmt> statements, Attribute... attributes) {
 			super(statements,attributes);
 		}
 	}
-	public static class StaticInitialiserBlock extends Block implements Declaration {
-		public StaticInitialiserBlock(List<Statement> statements, Attribute... attributes) {
+	public static class StaticInitialiserBlock extends Stmt.Block implements Declaration {
+		public StaticInitialiserBlock(List<Stmt> statements, Attribute... attributes) {
 			super(statements,attributes);
 		}
 	}
@@ -332,396 +319,7 @@ public class JavaFile {
 	// STATEMENTS
 	// ====================================================
 
-	public static class Block extends SyntacticElementImpl  implements Statement {
-		private List<Statement> statements;
-		
-		public Block(List<Statement> statements, Attribute... attributes) {
-			super(attributes);
-			this.statements = statements;
-		}
-		
-		public List<Statement> statements() {
-			return statements;
-		}
-	}
 	
-	public static class SynchronisedBlock extends Block {
-		private Expression expr;
-		
-		public SynchronisedBlock(Expression expr, List<Statement> statements,
-				Attribute... attributes) {
-			super(statements, attributes);
-			this.expr = expr;
-		}
-		
-		public Expression expr() {
-			return expr;
-		}
-	}
-	
-	public static class CatchBlock extends Block {
-		private Type.Clazz type;
-		private String variable;
-		
-		public CatchBlock(Type.Clazz type, String variable,
-				List<Statement> statements, Attribute... attributes) {
-			super(statements, attributes);
-			this.type = type;
-			this.variable = variable;
-		}
-		
-		public Type.Clazz type() {
-			return type;
-		}
-		
-		public String variable() {
-			return variable;
-		}
-	}
-	
-	public static class TryCatchBlock extends Block {
-		private List<CatchBlock> handlers;
-		private Block finallyBlk;
-
-		public TryCatchBlock(List<CatchBlock> handlers, Block finallyBlk,
-				List<Statement> statements, Attribute... attributes) {
-			super(statements, attributes);
-			this.handlers = handlers;
-			this.finallyBlk = finallyBlk;
-		}
-		
-		public List<CatchBlock> handlers() {
-			return handlers;
-		}
-		
-		public Block finaly() {
-			return finallyBlk;
-		}
-	}
-	
-	public static class Assignment extends SyntacticElementImpl  implements SimpleStatement, Expression {
-		private Expression lhs,rhs;
-		public Assignment(Expression lhs, Expression rhs, Attribute... attributes) {
-			super(attributes);
-			this.lhs=lhs;
-			this.rhs=rhs;
-		}
-		public Expression lhs() { return lhs; }
-		public Expression rhs() { return rhs; }
-	}
-	
-	public static class Return extends SyntacticElementImpl  implements SimpleStatement {
-		private Expression expr;
-		public Return(Expression expr, Attribute... attributes) {
-			super(attributes);
-			this.expr = expr;			
-		}
-		public Expression expr() { return expr; }		
-	}
-	
-	public static class Throw extends SyntacticElementImpl  implements SimpleStatement {
-		private Expression expr;
-		public Throw(Expression expr, Attribute... attributes) {
-			super(attributes);
-			this.expr = expr;			
-		}
-		public Expression expr() { return expr; }		
-	}
-	
-	public static class Assert extends SyntacticElementImpl  implements SimpleStatement {
-		private Expression expr;
-		public Assert(Expression expr, Attribute... attributes) {
-			super(attributes);
-			this.expr = expr;			
-		}
-		public Expression expr() { return expr; }		
-	}
-	
-	public static class Break extends SyntacticElementImpl  implements SimpleStatement {
-		private String label;
-		public Break(String label, Attribute... attributes) {
-			super(attributes);
-			this.label = label;	
-		}
-		public String label() { return label; }		
-	}
-	
-	public static class Label extends SyntacticElementImpl  implements Statement {
-		private String label;
-		private Statement statement;
-		public Label(String label, Statement statement, Attribute... attributes) {
-			super(attributes);
-			this.label = label;
-			this.statement = statement;
-		}
-		public String label() {
-			return label;
-		}
-		public Statement statement() {
-			return statement;
-		}
-	}
-	
-	public static class Continue extends SyntacticElementImpl  implements SimpleStatement {
-		private String label;
-		public Continue(String label, Attribute... attributes) {
-			super(attributes);
-			this.label = label;	
-		}
-		public String label() { return label; }		
-	}
-	
-	public static class If extends SyntacticElementImpl  implements Statement {
-		private Expression condition;
-		private Statement trueStatement;
-		private Statement falseStatement;
-
-		public If(Expression condition, Statement trueStatement,
-				Statement falseStatement, Attribute... attributes) {
-			super(attributes);			
-			this.condition = condition;
-			this.trueStatement = trueStatement;
-			this.falseStatement = falseStatement;
-		}
-
-		public Expression condition() {
-			return condition;
-		}
-		public Statement trueStatement() {
-			return trueStatement;
-		}
-		public Statement falseStatement() {
-			return falseStatement;
-		}
-	}
-	
-	public static class While extends SyntacticElementImpl  implements Statement {
-		private Expression condition;
-		private Statement body;		
-
-		public While(Expression condition, Statement body, Attribute... attributes) {
-			super(attributes);
-			this.condition = condition;
-			this.body = body;
-		}
-
-		public Expression condition() {
-			return condition;
-		}
-		public Statement body() {
-			return body;
-		}
-	}		
-	
-	public static class DoWhile extends SyntacticElementImpl  implements Statement {
-		private Expression condition;
-		private Statement body;		
-
-		public DoWhile(Expression condition, Statement body, Attribute... attributes) {
-			super(attributes);
-			this.condition = condition;
-			this.body = body;
-		}
-
-		public Expression condition() {
-			return condition;
-		}
-		public Statement body() {
-			return body;
-		}
-	}
-	
-	public static class For extends SyntacticElementImpl  implements Statement {
-		private Statement initialiser;
-		private Expression condition;
-		private Statement increment;
-		private Statement body;		
-
-		public For(Statement initialiser, Expression condition,
-				Statement increment, Statement body, Attribute... attributes) {
-			super(attributes);
-			this.initialiser = initialiser;
-			this.condition = condition;
-			this.increment = increment;
-			this.body = body;
-		}
-
-		public Statement initialiser() {
-			return initialiser;
-		}
-		public Expression condition() {
-			return condition;
-		}
-		public Statement body() {
-			return body;
-		}
-		public Statement increment() {
-			return increment;
-		}
-	}	
-	
-	public static class ForEach extends SyntacticElementImpl  implements Statement {
-		private String var;
-		private List<Modifier> modifiers; // for variable
-		private Type type; // for variable
-		private Expression source; 
-		private Statement body;
-		
-		public ForEach(List<Modifier> modifiers, String var, Type type,
-				Expression source, Statement body, Attribute... attributes) {
-			super(attributes);
-			this.modifiers = modifiers;
-			this.var = var;
-			this.type = type;
-			this.source = source;
-			this.body = body;
-		}
-		
-		/**
-		 * Set the modifiers of the variable declared in the for-each statement.
-		 * Use java.lang.reflect.Modifier for this.
-		 * 
-		 * @param type
-		 */
-		public void setModifiers(List<Modifier> modifiers) { this.modifiers = modifiers; }
-		
-		/**
-		 * Get modifiers of this local variable
-		 * 
-		 * @return
-		 */
-		public List<Modifier> modifiers() { return modifiers; }	
-		
-		/**
-		 * Get type of variable declared in for-each statement.
-		 * 
-		 * @return
-		 */
-		public Type type() {
-			return type;
-		}
-		
-		/**
-		 * Get name of variable declared in for-each statement.
-		 * 
-		 * @return
-		 */
-		public String var() { 
-			return var;
-		}
-		
-		/**
-		 * Get the source expression which corresponds to an array or collection
-		 * which the for-each statement is going to iterate over.
-		 * 
-		 * @return
-		 */
-		public Expression source() {
-			return source;
-		}
-		
-		
-		/**
-		 * Get the body of the for-each statement. Maybe null if there is no
-		 * body!
-		 * 
-		 * @return
-		 */
-		public Statement body() {
-			return body;
-		}
-	}
-	
-	/**
-     * A VarDef is a symbol table entry for a local variable. It can be thought
-     * of as a declaration for that variable, including its type, modifiers,
-     * name and whether or not it is a parameter to the method.
-     * 
-     * @author djp
-     */
-	public static class VarDef extends SyntacticElementImpl  implements SimpleStatement {		
-		private List<Modifier> modifiers;
-		private Type type;
-		private List<Triple<String,Integer,Expression> > definitions;
-		
-		public VarDef(List<Modifier> modifiers, Type type,
-				List<Triple<String, Integer, Expression>> definitions,
-				Attribute... attributes) {
-			super(attributes);
-			this.modifiers = modifiers;
-			this.definitions = definitions;
-			this.type = type;
-		}
-						
-		/**
-         * Set the modifiers of this local variable. Use
-         * java.lang.reflect.Modifier for this.
-         * 
-         * @param type
-         */
-		public void setModifiers(List<Modifier> modifiers) { this.modifiers = modifiers; }
-		
-		/**
-		 * Get modifiers of this local variable
-		 * 
-		 * @return
-		 */
-		public List<Modifier> modifiers() { return modifiers; }		
-		
-		public List<Triple<String,Integer,Expression> > definitions() {
-			return definitions;
-		}
-		
-		public Type type() { return type; }
-	}
-	
-	public static class Case extends SyntacticElementImpl {
-		private Expression condition;
-		private List<Statement> statements;
-		
-		public Case(Expression condition, List<Statement> statements,
-				Attribute... attributes) {
-			super(attributes);
-			this.condition = condition;
-			this.statements = statements;
-		}
-		
-		public Expression condition() {
-			return condition;
-		}
-
-		public List<Statement> statements() {
-			return statements;
-		}		
-	}
-	
-	public static class DefaultCase extends Case {
-		public DefaultCase(List<Statement> statements, Attribute... attributes) {
-			super(null, statements, attributes);
-		}
-	}
-	
-	public static class Switch extends SyntacticElementImpl
-			implements
-				Statement {
-		private Expression condition;
-		private List<Case> cases;
-
-		public Switch(Expression condition, List<Case> cases,
-				Attribute... attributes) {
-			super(attributes);
-			this.condition = condition;
-			this.cases = cases;
-		}
-
-		public Expression condition() {
-			return condition;
-		}
-
-		public List<Case> cases() {
-			return cases;
-		}
-	}
 	
 	// ====================================================
 	// EXPRESSIONS
@@ -930,7 +528,7 @@ public class JavaFile {
 	 * @author djp
 	 * 
 	 */
-	public static class Invoke extends SyntacticElementImpl  implements Expression, SimpleStatement {
+	public static class Invoke extends SyntacticElementImpl implements Expression, Stmt.Simple {
 		private Expression target;
 		private String name;		
 		private List<Expression> parameters;
@@ -973,7 +571,7 @@ public class JavaFile {
      * @author djp
      * 
      */
-	public static class New extends SyntacticElementImpl  implements Expression, SimpleStatement {
+	public static class New extends SyntacticElementImpl  implements Expression, Stmt.Simple {
 		private Type type;
 		private Expression context;
 		private List<Expression> parameters;

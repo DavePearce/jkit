@@ -296,55 +296,55 @@ public class JavaFileWriter {
 		writeBlock(e);
 	}
 	
-	protected void writeSubStatement(JavaFile.Statement e) {
-		if(e instanceof JavaFile.Block) {
+	protected void writeSubStatement(Stmt e) {
+		if(e instanceof Stmt.Block) {
 			writeStatement(e);
 		} else {
 			depth = depth + 1;
 			write("\n");
 			writeStatement(e);
 			depth = depth - 1;
-			if(e instanceof JavaFile.SimpleStatement) {
+			if(e instanceof Stmt.Simple) {
 				write(";");
 			}			
 		}
 	}
 	
-	protected void writeStatement(JavaFile.Statement e) {
-		if(e instanceof JavaFile.SynchronisedBlock) {
-			writeSynchronisedBlock((JavaFile.SynchronisedBlock)e);
-		} else if(e instanceof JavaFile.TryCatchBlock) {
-			writeTryCatchBlock((JavaFile.TryCatchBlock)e);
-		} else if(e instanceof JavaFile.Block) {
-			writeBlock((JavaFile.Block)e);
-		} else if(e instanceof JavaFile.VarDef) {
-			writeVarDef((JavaFile.VarDef) e);
-		} else if(e instanceof JavaFile.Assignment) {
-			writeAssignment((JavaFile.Assignment) e);
-		} else if(e instanceof JavaFile.Return) {
-			writeReturn((JavaFile.Return) e);
-		} else if(e instanceof JavaFile.Throw) {
-			writeThrow((JavaFile.Throw) e);
-		} else if(e instanceof JavaFile.Assert) {
-			writeAssert((JavaFile.Assert) e);
-		} else if(e instanceof JavaFile.Break) {
-			writeBreak((JavaFile.Break) e);
-		} else if(e instanceof JavaFile.Continue) {
-			writeContinue((JavaFile.Continue) e);
-		} else if(e instanceof JavaFile.Label) {
-			writeLabel((JavaFile.Label) e);
-		} else if(e instanceof JavaFile.If) {
-			writeIf((JavaFile.If) e);
-		} else if(e instanceof JavaFile.For) {
-			writeFor((JavaFile.For) e);
-		} else if(e instanceof JavaFile.ForEach) {
-			writeForEach((JavaFile.ForEach) e);
-		} else if(e instanceof JavaFile.While) {
-			writeWhile((JavaFile.While) e);
-		} else if(e instanceof JavaFile.DoWhile) {
-			writeDoWhile((JavaFile.DoWhile) e);
-		} else if(e instanceof JavaFile.Switch) {
-			writeSwitch((JavaFile.Switch) e);
+	protected void writeStatement(Stmt e) {
+		if(e instanceof Stmt.SynchronisedBlock) {
+			writeSynchronisedBlock((Stmt.SynchronisedBlock)e);
+		} else if(e instanceof Stmt.TryCatchBlock) {
+			writeTryCatchBlock((Stmt.TryCatchBlock)e);
+		} else if(e instanceof Stmt.Block) {
+			writeBlock((Stmt.Block)e);
+		} else if(e instanceof Stmt.VarDef) {
+			writeVarDef((Stmt.VarDef) e);
+		} else if(e instanceof Stmt.Assignment) {
+			writeAssignment((Stmt.Assignment) e);
+		} else if(e instanceof Stmt.Return) {
+			writeReturn((Stmt.Return) e);
+		} else if(e instanceof Stmt.Throw) {
+			writeThrow((Stmt.Throw) e);
+		} else if(e instanceof Stmt.Assert) {
+			writeAssert((Stmt.Assert) e);
+		} else if(e instanceof Stmt.Break) {
+			writeBreak((Stmt.Break) e);
+		} else if(e instanceof Stmt.Continue) {
+			writeContinue((Stmt.Continue) e);
+		} else if(e instanceof Stmt.Label) {
+			writeLabel((Stmt.Label) e);
+		} else if(e instanceof Stmt.If) {
+			writeIf((Stmt.If) e);
+		} else if(e instanceof Stmt.For) {
+			writeFor((Stmt.For) e);
+		} else if(e instanceof Stmt.ForEach) {
+			writeForEach((Stmt.ForEach) e);
+		} else if(e instanceof Stmt.While) {
+			writeWhile((Stmt.While) e);
+		} else if(e instanceof Stmt.DoWhile) {
+			writeDoWhile((Stmt.DoWhile) e);
+		} else if(e instanceof Stmt.Switch) {
+			writeSwitch((Stmt.Switch) e);
 		} else if(e instanceof JavaFile.Invoke) {
 			writeInvoke((JavaFile.Invoke) e);
 		} else if(e instanceof JavaFile.New) {
@@ -357,54 +357,54 @@ public class JavaFileWriter {
 		}
 	}
 	
-	protected void writeBlock(JavaFile.Block block) {		
+	protected void writeBlock(Stmt.Block block) {		
 		write("{");
-		for(JavaFile.Statement s : block.statements()) {
+		for(Stmt s : block.statements()) {
 			writeStatement(s);		
-			if(s instanceof JavaFile.SimpleStatement) {
+			if(s instanceof Stmt.Simple) {
 				write(";");
 			}
 		}
 		write("}");
 	}
 	
-	protected void writeSynchronisedBlock(JavaFile.SynchronisedBlock block) {
+	protected void writeSynchronisedBlock(Stmt.SynchronisedBlock block) {
 		
 		write("synchronized(");
 		writeExpression(block.expr());
 		write(")");
 		write("{");
-		for(JavaFile.Statement s : block.statements()) {
+		for(Stmt s : block.statements()) {
 			writeStatement(s);
-			if(s instanceof JavaFile.SimpleStatement) {
+			if(s instanceof Stmt.Simple) {
 				write(";");
 			}
 		}
 		write("}");
 	}
 	
-	protected void writeTryCatchBlock(JavaFile.TryCatchBlock block) {
+	protected void writeTryCatchBlock(Stmt.TryCatchBlock block) {
 		
 		write("try ");		
 		write("{");
-		for(JavaFile.Statement s : block.statements()) {
+		for(Stmt s : block.statements()) {
 			writeStatement(s);
-			if(s instanceof JavaFile.SimpleStatement) {
+			if(s instanceof Stmt.Simple) {
 				write(";");
 			}
 		}
 		write("}");
 		
-		for(JavaFile.CatchBlock c : block.handlers()) {
+		for(Stmt.CatchBlock c : block.handlers()) {
 			write(" catch(");
 			writeType(c.type());
 			write(" ");
 			write(c.variable());
 			write(")");
 			write("{");
-			for(JavaFile.Statement s : c.statements()) {
+			for(Stmt s : c.statements()) {
 				writeStatement(s);
-				if(s instanceof JavaFile.SimpleStatement) {
+				if(s instanceof Stmt.Simple) {
 					write(";");
 				}
 			}	
@@ -417,7 +417,7 @@ public class JavaFileWriter {
 		}
 	}
 	
-	protected void writeVarDef(JavaFile.VarDef def) {
+	protected void writeVarDef(Stmt.VarDef def) {
 		writeModifiers(def.modifiers());
 		writeType(def.type());
 		write(" ");
@@ -438,14 +438,14 @@ public class JavaFileWriter {
 		}
 	}
 	
-	protected void writeAssignment(JavaFile.Assignment def) {
+	protected void writeAssignment(Stmt.Assignment def) {
 		
 		writeExpression(def.lhs());
 		write(" = ");
 		writeExpression(def.rhs());		
 	}
 	
-	protected void writeReturn(JavaFile.Return ret) {
+	protected void writeReturn(Stmt.Return ret) {
 				
 		write("return");
 		if(ret.expr() != null) {
@@ -454,19 +454,19 @@ public class JavaFileWriter {
 		}
 	}
 	
-	protected void writeThrow(JavaFile.Throw ret) {
+	protected void writeThrow(Stmt.Throw ret) {
 				
 		write("throw ");				
 		writeExpression(ret.expr());		
 	}
 	
-	protected void writeAssert(JavaFile.Assert ret) {
+	protected void writeAssert(Stmt.Assert ret) {
 				
 		write("assert ");				
 		writeExpression(ret.expr());				
 	}
 	
-	protected void writeBreak(JavaFile.Break brk) {
+	protected void writeBreak(Stmt.Break brk) {
 				
 		write("break");
 		if(brk.label() != null) {
@@ -475,7 +475,7 @@ public class JavaFileWriter {
 		}		
 	}
 	
-	protected void writeContinue(JavaFile.Continue brk) {
+	protected void writeContinue(Stmt.Continue brk) {
 				
 		write("continue");
 		if(brk.label() != null) {
@@ -484,13 +484,13 @@ public class JavaFileWriter {
 		}		
 	}
 	
-	protected void writeLabel(JavaFile.Label lab) {				
+	protected void writeLabel(Stmt.Label lab) {				
 		write(lab.label());
 		write(": ");
 		writeStatement(lab.statement());
 	}
 	
-	protected void writeIf(JavaFile.If stmt) {
+	protected void writeIf(Stmt.If stmt) {
 		
 		write("if(");
 		writeExpression(stmt.condition());
@@ -498,7 +498,7 @@ public class JavaFileWriter {
 		writeSubStatement(stmt.trueStatement());		
 		
 		if (stmt.falseStatement() != null) {
-			if(!(stmt.trueStatement() instanceof JavaFile.Block)) {
+			if(!(stmt.trueStatement() instanceof Stmt.Block)) {
 				write("\n");
 			}
 			write("else");	
@@ -506,7 +506,7 @@ public class JavaFileWriter {
 		}
 	}
 	
-	protected void writeWhile(JavaFile.While stmt) {
+	protected void writeWhile(Stmt.While stmt) {
 		write("while(");
 		writeExpression(stmt.condition());
 		write(") ");
@@ -517,7 +517,7 @@ public class JavaFileWriter {
 		}		
 	}
 	
-	protected void writeDoWhile(JavaFile.DoWhile stmt) {
+	protected void writeDoWhile(Stmt.DoWhile stmt) {
 		
 		write("do ");
 		writeSubStatement(stmt.body());
@@ -526,7 +526,7 @@ public class JavaFileWriter {
 		write(");");
 	}
 	
-	protected void writeFor(JavaFile.For stmt) {
+	protected void writeFor(Stmt.For stmt) {
 		
 		write("for(");
 		if(stmt.initialiser() != null) {
@@ -553,7 +553,7 @@ public class JavaFileWriter {
 		}
 	}
 	
-	protected void writeForEach(JavaFile.ForEach stmt) {
+	protected void writeForEach(Stmt.ForEach stmt) {
 		write("for(");
 		writeModifiers(stmt.modifiers());
 		write(" ");
@@ -571,13 +571,13 @@ public class JavaFileWriter {
 		}
 	}
 	
-	protected void writeSwitch(JavaFile.Switch s) {
+	protected void writeSwitch(Stmt.Switch s) {
 		write("switch(");
 		writeExpression(s.condition());
 		write(")");
 		write("{");
-		for(JavaFile.Case c : s.cases()) {
-			if(c instanceof JavaFile.DefaultCase) {
+		for(Stmt.Case c : s.cases()) {
+			if(c instanceof Stmt.DefaultCase) {
 				write("default:");
 				write("\n");
 			} else {
@@ -586,9 +586,9 @@ public class JavaFileWriter {
 				write(":");
 				write("\n");
 			}			
-			for(JavaFile.Statement x : c.statements()) {
+			for(Stmt x : c.statements()) {
 				writeStatement(x);
-				if(x instanceof JavaFile.SimpleStatement) {
+				if(x instanceof Stmt.Simple) {
 					write(";");
 				}
 			}
@@ -640,10 +640,10 @@ public class JavaFileWriter {
 			writeArrayIndex((JavaFile.ArrayIndex) e);
 		} else if(e instanceof JavaFile.Deref) {
 			writeDeref((JavaFile.Deref) e);
-		} else if(e instanceof JavaFile.Assignment) {
+		} else if(e instanceof Stmt.Assignment) {
 			// force brackets
 			write("(");
-			writeAssignment((JavaFile.Assignment) e);
+			writeAssignment((Stmt.Assignment) e);
 			write(")");
 		} else {
 			throw new RuntimeException("Invalid expression encountered: "
@@ -996,8 +996,8 @@ public class JavaFileWriter {
 							write(",");
 						}
 						firstTime=false;
-						if(e instanceof JavaFile.Assignment) {
-							writeStatement((JavaFile.Assignment)e);
+						if(e instanceof Stmt.Assignment) {
+							writeStatement((Stmt.Assignment)e);
 						} else {
 							writeExpression(e);
 						}

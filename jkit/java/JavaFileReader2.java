@@ -409,7 +409,7 @@ public class JavaFileReader2 {
 
 		// === METHOD BODY ===
 
-		JavaFile.Block block = null;
+		Stmt.Block block = null;
 
 		if (idx < method.getChildCount()
 				&& method.getChild(idx).getType() == BLOCK) {
@@ -470,7 +470,7 @@ public class JavaFileReader2 {
 		return fields;
 	}
 
-	protected JavaFile.Statement parseStatement(Tree stmt) {
+	protected Stmt parseStatement(Tree stmt) {
 		switch (stmt.getType()) {
 			case BLOCK :
 				return parseBlock(stmt);
@@ -534,17 +534,17 @@ public class JavaFileReader2 {
      * @return A Block containing all the statements in this block
      * 
      */
-	protected JavaFile.Block parseBlock(Tree tree) {
-		ArrayList<JavaFile.Statement> stmts = new ArrayList<JavaFile.Statement>();
+	protected Stmt.Block parseBlock(Tree tree) {
+		ArrayList<Stmt> stmts = new ArrayList<Stmt>();
 
 		// === ITERATE STATEMENTS ===
 
 		for (int i = 0; i != tree.getChildCount(); ++i) {
-			JavaFile.Statement stmt = parseStatement(tree.getChild(i));
+			Stmt stmt = parseStatement(tree.getChild(i));
 			stmts.add(stmt);
 		}
 
-		return new JavaFile.Block(stmts, new SourceLocation(tree.getLine(),
+		return new Stmt.Block(stmts, new SourceLocation(tree.getLine(),
 				tree.getCharPositionInLine()));
 	}
 
@@ -557,35 +557,35 @@ public class JavaFileReader2 {
      * @return A Block containing all the statements in this block
      * 
      */
-	protected JavaFile.Statement parseSynchronisedBlock(Tree tree) {
-		ArrayList<JavaFile.Statement> stmts = new ArrayList<JavaFile.Statement>();
+	protected Stmt parseSynchronisedBlock(Tree tree) {
+		ArrayList<Stmt> stmts = new ArrayList<Stmt>();
 		JavaFile.Expression e = parseExpression(tree.getChild(0));
 
 		// === ITERATE STATEMENTS ===
 		Tree child = tree.getChild(1);
 		for (int i = 0; i != child.getChildCount(); ++i) {
-			JavaFile.Statement stmt = parseStatement(child.getChild(i));
+			Stmt stmt = parseStatement(child.getChild(i));
 			stmts.add(stmt);
 		}
 
-		return new JavaFile.SynchronisedBlock(e, stmts, new SourceLocation(tree
+		return new Stmt.SynchronisedBlock(e, stmts, new SourceLocation(tree
 				.getLine(), tree.getCharPositionInLine()));
 	}
 
-	protected JavaFile.Statement parseTry(Tree tree) {
-		ArrayList<JavaFile.Statement> stmts = new ArrayList<JavaFile.Statement>();
-		ArrayList<JavaFile.CatchBlock> handlers = new ArrayList<JavaFile.CatchBlock>();
-		JavaFile.Block finallyBlk = null;
+	protected Stmt parseTry(Tree tree) {
+		ArrayList<Stmt> stmts = new ArrayList<Stmt>();
+		ArrayList<Stmt.CatchBlock> handlers = new ArrayList<Stmt.CatchBlock>();
+		Stmt.Block finallyBlk = null;
 
 		// === ITERATE STATEMENTS ===
 		Tree child = tree.getChild(0);
 		for (int i = 0; i != child.getChildCount(); ++i) {
-			JavaFile.Statement stmt = parseStatement(child.getChild(i));
+			Stmt stmt = parseStatement(child.getChild(i));
 			stmts.add(stmt);
 		}
 
 		for (int i = 1; i < tree.getChildCount(); ++i) {
-			ArrayList<JavaFile.Statement> cbstmts = new ArrayList<JavaFile.Statement>();
+			ArrayList<Stmt> cbstmts = new ArrayList<Stmt>();
 			child = tree.getChild(i);
 
 			if (child.getType() == CATCH) {
@@ -593,10 +593,10 @@ public class JavaFileReader2 {
 				Type.Clazz type = parseClassType(cb.getChild(0));
 				Tree cbb = child.getChild(1);
 				for (int j = 0; j != cbb.getChildCount(); ++j) {
-					JavaFile.Statement stmt = parseStatement(cbb.getChild(j));
+					Stmt stmt = parseStatement(cbb.getChild(j));
 					cbstmts.add(stmt);
 				}
-				handlers.add(new JavaFile.CatchBlock(type, cb.getChild(1)
+				handlers.add(new Stmt.CatchBlock(type, cb.getChild(1)
 						.getText(), cbstmts, new SourceLocation(cb.getLine(),
 						cb.getCharPositionInLine())));
 			} else {
@@ -604,7 +604,7 @@ public class JavaFileReader2 {
 			}
 		}
 
-		return new JavaFile.TryCatchBlock(
+		return new Stmt.TryCatchBlock(
 				handlers,
 				finallyBlk,
 				stmts,
@@ -620,7 +620,7 @@ public class JavaFileReader2 {
      *            ANTLR if-statement tree
      * @return
      */
-	protected JavaFile.Statement parseVarDef(Tree tree) {
+	protected Stmt parseVarDef(Tree tree) {
 		ArrayList<Triple<String, Integer, JavaFile.Expression>> vardefs = new ArrayList<Triple<String, Integer, JavaFile.Expression>>();
 
 		// === MODIFIERS ===
@@ -648,7 +648,7 @@ public class JavaFileReader2 {
 					myName, dims, myInitialiser));
 		}
 
-		return new JavaFile.VarDef(
+		return new Stmt.VarDef(
 				modifiers,
 				type,
 				vardefs,
@@ -661,33 +661,33 @@ public class JavaFileReader2 {
      * @param tree
      * @return
      */
-	protected JavaFile.Assignment parseAssign(Tree tree) {
+	protected Stmt.Assignment parseAssign(Tree tree) {
 		JavaFile.Expression lhs = parseExpression(tree.getChild(0));
 		JavaFile.Expression rhs = parseExpression(tree.getChild(1));
-		return new JavaFile.Assignment(lhs, rhs, new SourceLocation(tree
+		return new Stmt.Assignment(lhs, rhs, new SourceLocation(tree
 				.getLine(), tree.getCharPositionInLine()));
 	}
 
-	protected JavaFile.Statement parseReturn(Tree tree) {
+	protected Stmt parseReturn(Tree tree) {
 		if (tree.getChildCount() > 0) {
-			return new JavaFile.Return(parseExpression(tree.getChild(0)),
+			return new Stmt.Return(parseExpression(tree.getChild(0)),
 					new SourceLocation(tree.getLine(), tree
 							.getCharPositionInLine()));
 		} else {
-			return new JavaFile.Return(null, new SourceLocation(tree.getLine(),
+			return new Stmt.Return(null, new SourceLocation(tree.getLine(),
 					tree.getCharPositionInLine()));
 		}
 	}
 
-	protected JavaFile.Statement parseThrow(Tree tree) {
-		return new JavaFile.Throw(
+	protected Stmt parseThrow(Tree tree) {
+		return new Stmt.Throw(
 				parseExpression(tree.getChild(0)),
 				new SourceLocation(tree.getLine(), tree.getCharPositionInLine()));
 	}
 
-	protected JavaFile.Statement parseAssert(Tree tree) {
+	protected Stmt parseAssert(Tree tree) {
 		JavaFile.Expression expr = parseExpression(tree.getChild(0));
-		return new JavaFile.Assert(expr, new SourceLocation(tree.getLine(),
+		return new Stmt.Assert(expr, new SourceLocation(tree.getLine(),
 				tree.getCharPositionInLine()));
 	}
 
@@ -699,14 +699,14 @@ public class JavaFileReader2 {
      * @param cfg
      * @return
      */
-	protected JavaFile.Statement parseBreak(Tree tree) {
+	protected Stmt parseBreak(Tree tree) {
 		if (tree.getChildCount() > 0) {
 			// this is a labelled break statement.
-			return new JavaFile.Break(tree.getChild(0).getText(),
+			return new Stmt.Break(tree.getChild(0).getText(),
 					new SourceLocation(tree.getLine(), tree
 							.getCharPositionInLine()));
 		} else {
-			return new JavaFile.Break(null, new SourceLocation(tree.getLine(),
+			return new Stmt.Break(null, new SourceLocation(tree.getLine(),
 					tree.getCharPositionInLine()));
 		}
 	}
@@ -719,14 +719,14 @@ public class JavaFileReader2 {
      * @param cfg
      * @return
      */
-	protected JavaFile.Statement parseContinue(Tree tree) {
+	protected Stmt parseContinue(Tree tree) {
 		if (tree.getChildCount() > 0) {
 			// this is a labelled continue statement.
-			return new JavaFile.Continue(tree.getChild(0).getText(),
+			return new Stmt.Continue(tree.getChild(0).getText(),
 					new SourceLocation(tree.getLine(), tree
 							.getCharPositionInLine()));
 		} else {
-			return new JavaFile.Continue(null, new SourceLocation(tree
+			return new Stmt.Continue(null, new SourceLocation(tree
 					.getLine(), tree.getCharPositionInLine()));
 		}
 	}
@@ -739,48 +739,48 @@ public class JavaFileReader2 {
      * @param cfg
      * @return
      */
-	protected JavaFile.Statement parseLabel(Tree stmt) {
+	protected Stmt parseLabel(Tree stmt) {
 		String label = stmt.getChild(0).getText();
-		JavaFile.Statement s = parseStatement(stmt.getChild(1));
+		Stmt s = parseStatement(stmt.getChild(1));
 
-		return new JavaFile.Label(label, s, new SourceLocation(stmt.getLine(),
+		return new Stmt.Label(label, s, new SourceLocation(stmt.getLine(),
 				stmt.getCharPositionInLine()));
 	}
 
-	protected JavaFile.Statement parseIf(Tree stmt) {
+	protected Stmt parseIf(Tree stmt) {
 		JavaFile.Expression condition = parseExpression(stmt.getChild(0));
-		JavaFile.Statement trueStmt = parseStatement(stmt.getChild(1));
-		JavaFile.Statement falseStmt = stmt.getChildCount() < 3
+		Stmt trueStmt = parseStatement(stmt.getChild(1));
+		Stmt falseStmt = stmt.getChildCount() < 3
 				? null
 				: parseStatement(stmt.getChild(2));
-		return new JavaFile.If(
+		return new Stmt.If(
 				condition,
 				trueStmt,
 				falseStmt,
 				new SourceLocation(stmt.getLine(), stmt.getCharPositionInLine()));
 	}
 
-	protected JavaFile.Statement parseWhile(Tree stmt) {
+	protected Stmt parseWhile(Tree stmt) {
 		JavaFile.Expression condition = parseExpression(stmt.getChild(0)
 				.getChild(0));
-		JavaFile.Statement body = parseStatement(stmt.getChild(1));
-		return new JavaFile.While(condition, body, new SourceLocation(stmt
+		Stmt body = parseStatement(stmt.getChild(1));
+		return new Stmt.While(condition, body, new SourceLocation(stmt
 				.getLine(), stmt.getCharPositionInLine()));
 	}
 
-	protected JavaFile.Statement parseDoWhile(Tree stmt) {
+	protected Stmt parseDoWhile(Tree stmt) {
 		JavaFile.Expression condition = parseExpression(stmt.getChild(0)
 				.getChild(0));
-		JavaFile.Statement body = parseStatement(stmt.getChild(1));
-		return new JavaFile.DoWhile(condition, body, new SourceLocation(stmt
+		Stmt body = parseStatement(stmt.getChild(1));
+		return new Stmt.DoWhile(condition, body, new SourceLocation(stmt
 				.getLine(), stmt.getCharPositionInLine()));
 	}
 
-	protected JavaFile.Statement parseFor(Tree stmt) {
-		JavaFile.Statement initialiser = null;
+	protected Stmt parseFor(Tree stmt) {
+		Stmt initialiser = null;
 		JavaFile.Expression condition = null;
-		JavaFile.Statement increment = null;
-		JavaFile.Statement body = null;
+		Stmt increment = null;
+		Stmt body = null;
 
 		if (stmt.getChild(0).getType() == FOREACH) {
 			return parseForEach(stmt.getChild(0), stmt.getChild(1));
@@ -799,7 +799,7 @@ public class JavaFileReader2 {
 			body = parseStatement(stmt.getChild(3));
 		}
 
-		return new JavaFile.For(
+		return new Stmt.For(
 				initialiser,
 				condition,
 				increment,
@@ -818,16 +818,16 @@ public class JavaFileReader2 {
      *            control-flow graph
      * @return
      */
-	protected JavaFile.Statement parseForEach(Tree stmt, Tree body) {
+	protected Stmt parseForEach(Tree stmt, Tree body) {
 
 		Tree varDef = stmt.getChild(0);
 		List<Modifier> varMods = parseModifiers(varDef.getChild(0));
 		Type varType = parseType(varDef.getChild(1));
 		String varName = varDef.getChild(2).getText();
 		JavaFile.Expression src = parseExpression(stmt.getChild(1));
-		JavaFile.Statement loopBody = parseStatement(body);
+		Stmt loopBody = parseStatement(body);
 
-		return new JavaFile.ForEach(
+		return new Stmt.ForEach(
 				varMods,
 				varName,
 				varType,
@@ -836,34 +836,34 @@ public class JavaFileReader2 {
 				new SourceLocation(stmt.getLine(), stmt.getCharPositionInLine()));
 	}
 
-	protected JavaFile.Statement parseSwitch(Tree stmt) {
+	protected Stmt parseSwitch(Tree stmt) {
 		// Second, process the expression to switch on
 		JavaFile.Expression condition = parseExpression(stmt.getChild(0));
-		ArrayList<JavaFile.Case> cases = new ArrayList<JavaFile.Case>();
+		ArrayList<Stmt.Case> cases = new ArrayList<Stmt.Case>();
 
 		for (int i = 1; i < stmt.getChildCount(); i++) {
 			Tree child = stmt.getChild(i);
 			if (child.getType() == CASE) {
 				JavaFile.Expression c = parseExpression(child.getChild(0));
-				List<JavaFile.Statement> stmts = null;
+				List<Stmt> stmts = null;
 				if (child.getChild(1) != null) {
-					JavaFile.Block b = parseBlock(child.getChild(1));
+					Stmt.Block b = parseBlock(child.getChild(1));
 					stmts = b.statements();
 				}
-				cases.add(new JavaFile.Case(c, stmts, new SourceLocation(child
+				cases.add(new Stmt.Case(c, stmts, new SourceLocation(child
 						.getLine(), child.getCharPositionInLine())));
 			} else {
 				// default label
-				List<JavaFile.Statement> stmts = new ArrayList<JavaFile.Statement>();
+				List<Stmt> stmts = new ArrayList<Stmt>();
 				if (child.getChild(0) != null) {
-					JavaFile.Block b = parseBlock(child.getChild(0));
+					Stmt.Block b = parseBlock(child.getChild(0));
 					stmts = b.statements();
 				}
-				cases.add(new JavaFile.DefaultCase(stmts, new SourceLocation(
+				cases.add(new Stmt.DefaultCase(stmts, new SourceLocation(
 						child.getLine(), child.getCharPositionInLine())));
 			}
 		}
-		return new JavaFile.Switch(condition, cases, new SourceLocation(stmt
+		return new Stmt.Switch(condition, cases, new SourceLocation(stmt
 				.getLine(), stmt.getCharPositionInLine()));
 	}
 
@@ -873,28 +873,28 @@ public class JavaFileReader2 {
      * @param stmt
      * @return
      */
-	public JavaFile.Statement parseIncDec(Tree stmt) {
+	public Stmt parseIncDec(Tree stmt) {
 		JavaFile.UnOp lhs = (JavaFile.UnOp) parseExpression(stmt);
 		JavaFile.Expression lval = lhs.expr();
 		SourceLocation loc = new SourceLocation(stmt.getLine(), stmt
 				.getCharPositionInLine());
 		if (lhs.op() == JavaFile.UnOp.POSTDEC
 				|| lhs.op() == JavaFile.UnOp.PREDEC) {
-			return new JavaFile.Assignment(lval,
+			return new Stmt.Assignment(lval,
 					new JavaFile.BinOp(JavaFile.BinOp.SUB, lval,
 							new JavaFile.IntVal(1, loc), loc), loc);
 		} else {
 			// must be preinc or postinc
-			return new JavaFile.Assignment(lval,
+			return new Stmt.Assignment(lval,
 					new JavaFile.BinOp(JavaFile.BinOp.ADD, lval,
 							new JavaFile.IntVal(1, loc), loc), loc);
 		}
 	}
 
-	public JavaFile.Statement parseSelectorStmt(Tree stmt) {
+	public Stmt parseSelectorStmt(Tree stmt) {
 		JavaFile.Expression e = parseExpression(stmt);
-		if (e instanceof JavaFile.Statement) {
-			return (JavaFile.Statement) e;
+		if (e instanceof Stmt) {
+			return (Stmt) e;
 		} else {
 			throw new RuntimeException("Syntax Error");
 		}
