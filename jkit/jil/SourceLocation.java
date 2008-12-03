@@ -1,4 +1,6 @@
-package jkit.jkil;
+package jkit.jil;
+
+import jkit.jil.Attribute;
 
 /**
  * A Source Location identifies a position within an originating source file.

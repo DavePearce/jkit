@@ -2,9 +2,10 @@ package jkit.java;
 
 import java.util.*;
 
-import jkit.jkil.SyntacticElement;
-import jkit.jkil.SyntacticElementImpl;
-import jkit.jkil.Attribute;
+import jkit.jil.Attribute;
+import jkit.jil.SyntacticElement;
+import jkit.jil.SyntacticElementImpl;
+import jkit.jil.Type;
 import jkit.util.*;
 
 public class JavaFile {

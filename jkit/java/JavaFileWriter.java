@@ -4,6 +4,7 @@ import java.io.*;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
+import jkit.jil.Type;
 import jkit.util.*; 
 
 public class JavaFileWriter {

@@ -1,10 +1,7 @@
-package jkit.java;
+package jkit.jil;
 
 import java.util.List;
 
-import jkit.jkil.Attribute;
-import jkit.jkil.SyntacticElement;
-import jkit.jkil.SyntacticElementImpl;
 import jkit.util.Pair;
 
 /**

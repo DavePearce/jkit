@@ -8,7 +8,8 @@ import jkit.compiler.SyntaxError;
 import jkit.java.JavaFile.*;
 import jkit.util.Pair;
 import jkit.util.Triple;
-import jkit.jkil.SourceLocation;
+import jkit.jil.SourceLocation;
+import jkit.jil.Type;
 
 import org.antlr.runtime.*;
 import org.antlr.runtime.tree.*;

@@ -1,4 +1,4 @@
-package jkit.jkil;
+package jkit.jil;
 
 /**
  * An attribute is simply a piece of information that we may wish to
