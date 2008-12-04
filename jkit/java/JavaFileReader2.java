@@ -1542,7 +1542,7 @@ public class JavaFileReader2 {
 				upperBound = parseClassType(child.getChild(0).getChild(0));
 			}
 			// Ok, all done!
-			return new Type.Wildcard(lowerBound, upperBound, loc);
+			return new Type.Wildcard(lowerBound, upperBound);
 		} else {
 
 			// === ARRAY DIMENSIONS ===
@@ -1562,21 +1562,21 @@ public class JavaFileReader2 {
 			
 			String ct = type.getText();
 			if (ct.equals("boolean")) {
-				r = new Type.Bool(loc);
+				r = new Type.Bool();
 			} else if (ct.equals("byte")) {
-				r = new Type.Byte(loc);
+				r = new Type.Byte();
 			} else if (ct.equals("char")) {
-				r = new Type.Char(loc);
+				r = new Type.Char();
 			} else if (ct.equals("short")) {
-				r = new Type.Short(loc);
+				r = new Type.Short();
 			} else if (ct.equals("int")) {
-				r = new Type.Int(loc);
+				r = new Type.Int();
 			} else if (ct.equals("long")) {
-				r = new Type.Long(loc);
+				r = new Type.Long();
 			} else if (ct.equals("float")) {
-				r = new Type.Float(loc);
+				r = new Type.Float();
 			} else if (ct.equals("double")) {
-				r = new Type.Double(loc);
+				r = new Type.Double();
 			} else {
 
 				// === NON-PRIMITIVE TYPES ===
@@ -1601,12 +1601,12 @@ public class JavaFileReader2 {
 							genArgs));
 				}
 
-				r = new Type.Clazz(components, loc);
+				r = new Type.Clazz(components);
 
 			}
 			
 			for (int i = 0; i != dims; ++i) {
-				r = new Type.Array(r,loc);
+				r = new Type.Array(r);
 			}
 			
 			return r;
@@ -1642,8 +1642,7 @@ public class JavaFileReader2 {
 					.add(new Pair<String, List<Type>>(text, genArgs));
 		}
 
-		return new Type.Clazz(components, new SourceLocation(type
-				.getLine(), type.getCharPositionInLine()));
+		return new Type.Clazz(components);
 	}
 
 	protected static Type.Variable parseVariableType(Tree type) {

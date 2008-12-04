@@ -30,12 +30,13 @@ public interface Type extends Attribute {
      * The Null type is a special type given to the null value. We require that
      * Null is a subtype of any Reference.
      */
-	public static class Null extends SyntacticElementImpl implements Primitive {
-		public Null(Attribute... attributes) {
-			super(attributes);			
-		}
+	public static class Null implements Primitive {		
 		public String toString() {
 			return "null";
+		}
+		
+		public boolean equals(Object o) {
+			return o instanceof Type.Null;
 		}
 	}
 	
@@ -44,12 +45,13 @@ public interface Type extends Attribute {
 	 * @author djp
 	 *
 	 */
-	public static class Bool extends SyntacticElementImpl implements Primitive {
-		public Bool(Attribute... attributes) {
-			super(attributes);			
-		}		
+	public static class Bool implements Primitive {		
 		public String toString() {
 			return "boolean";
+		}
+		
+		public boolean equals(Object o) {
+			return o instanceof Type.Bool;
 		}
 	}
 	
@@ -59,12 +61,13 @@ public interface Type extends Attribute {
 	 * @author djp
 	 *
 	 */
-	public static class Byte extends SyntacticElementImpl implements Primitive {
-		public Byte(Attribute... attributes) {
-			super(attributes);			
-		}
+	public static class Byte implements Primitive {
 		public String toString() {
 			return "byte";
+		}
+		
+		public boolean equals(Object o) {
+			return o instanceof Type.Byte;
 		}
 	}
 	
@@ -73,12 +76,13 @@ public interface Type extends Attribute {
 	 * @author djp
 	 *
 	 */
-	public static class Char extends SyntacticElementImpl implements Primitive {
-		public Char(Attribute... attributes) {
-			super(attributes);			
-		}
+	public static class Char implements Primitive {
 		public String toString() {
 			return "char";
+		}
+		
+		public boolean equals(Object o) {
+			return o instanceof Type.Char;
 		}
 	}
 	
@@ -87,12 +91,13 @@ public interface Type extends Attribute {
 	 * @author djp
 	 *
 	 */
-	public static class Short extends SyntacticElementImpl implements Primitive {
-		public Short(Attribute... attributes) {
-			super(attributes);			
-		}
+	public static class Short implements Primitive {
 		public String toString() {
 			return "short";
+		}
+		
+		public boolean equals(Object o) {
+			return o instanceof Type.Short;
 		}
 	}
 
@@ -101,12 +106,13 @@ public interface Type extends Attribute {
 	 * @author djp
 	 *
 	 */
-	public static class Int extends SyntacticElementImpl implements Primitive {
-		public Int(Attribute... attributes) {
-			super(attributes);			
-		}
+	public static class Int implements Primitive {
 		public String toString() {
 			return "int";
+		}
+		
+		public boolean equals(Object o) {
+			return o instanceof Type.Int;
 		}
 	}
 	
@@ -115,12 +121,13 @@ public interface Type extends Attribute {
 	 * @author djp
 	 *
 	 */
-	public static class Long extends SyntacticElementImpl implements Primitive {
-		public Long(Attribute... attributes) {
-			super(attributes);			
-		}
+	public static class Long implements Primitive {
 		public String toString() {
 			return "long";
+		}
+		
+		public boolean equals(Object o) {
+			return o instanceof Type.Long;
 		}
 	}
 	
@@ -129,12 +136,13 @@ public interface Type extends Attribute {
 	 * @author djp
 	 *
 	 */
-	public static class Float extends SyntacticElementImpl implements Primitive {
-		public Float(Attribute... attributes) {
-			super(attributes);			
-		}
+	public static class Float implements Primitive {
 		public String toString() {
 			return "float";
+		}
+		
+		public boolean equals(Object o) {
+			return o instanceof Type.Float;
 		}
 	}
 	
@@ -143,12 +151,13 @@ public interface Type extends Attribute {
 	 * @author djp
 	 *
 	 */
-	public static class Double extends SyntacticElementImpl implements Primitive {
-		public Double(Attribute... attributes) {
-			super(attributes);			
-		}
+	public static class Double implements Primitive {
 		public String toString() {
 			return "double";
+		}
+		
+		public boolean equals(Object o) {
+			return o instanceof Type.Double;
 		}
 	}
 	
@@ -159,11 +168,10 @@ public interface Type extends Attribute {
      * 
      * @author djp
      */
-	public static class Array extends SyntacticElementImpl implements Reference {		
+	public static class Array implements Reference {		
 		private Type element;
 		
-		public Array(Type element, Attribute... attributes) {
-			super(attributes);
+		public Array(Type element) {
 			this.element = element;			
 		}
 		
@@ -173,6 +181,14 @@ public interface Type extends Attribute {
 		public String toString() {
 			return element + "[]";
 		}
+		
+		public boolean equals(Object o) {
+			if(o instanceof Type.Array) {
+				Type.Array a = (Type.Array) o;
+				return element.equals(a.element);
+			}
+			return false;
+		}
 	}
 	
 	/**
@@ -181,19 +197,16 @@ public interface Type extends Attribute {
      * @author djp
      * 
      */
-	public static class Clazz extends SyntacticElementImpl implements Reference {		
+	public static class Clazz implements Reference {		
 		private String pkg;
 		private List<Pair<String, List<Type>>> components;
 		
-		public Clazz(List<Pair<String, List<Type>>> components,
-				Attribute... attributes) {
-			super(attributes);
+		public Clazz(List<Pair<String, List<Type>>> components) {
 			this.pkg = null;
 			this.components = components;
 		}		
 		
-		public Clazz(String pkg, String clazz, Attribute... attributes) {
-			super(attributes);
+		public Clazz(String pkg, String clazz) {
 			this.pkg = pkg;
 			components = new ArrayList<Pair<String,List<Type>>>();
 			components.add(new Pair(clazz,new ArrayList<Type>()));
@@ -237,6 +250,16 @@ public interface Type extends Attribute {
 			}
 			return r;
 		}
+		
+		public boolean equals(Object o) {
+			if(o instanceof Type.Clazz) {
+				Type.Clazz c = (Type.Clazz) o;
+				
+				return pkg.equals(c.pkg) &&
+					components.equals(c.components);
+			}
+			return false;
+		}
 	}
 	
 	/**
@@ -248,13 +271,11 @@ public interface Type extends Attribute {
      * @author djp
      * 
      */
-	public static class Wildcard extends SyntacticElementImpl implements Reference {
+	public static class Wildcard implements Reference {
 		private Type lowerBound;
 		private Type upperBound;
 
-		public Wildcard(Type lowerBound, Type upperBound,
-				Attribute... attributes) {
-			super(attributes);
+		public Wildcard(Type lowerBound, Type upperBound) {			
 			this.lowerBound = lowerBound;
 			this.upperBound = upperBound;
 		}
@@ -265,6 +286,15 @@ public interface Type extends Attribute {
 
 		public Type lowerBound() {
 			return lowerBound;
+		}
+		
+		public boolean equals(Object o) {
+			if (o instanceof Wildcard) {
+				Wildcard w = (Wildcard) o;
+				return lowerBound.equals(w.lowerBound)
+						&& upperBound.equals(w.upperBound);
+			}
+			return false;
 		}
 	}
 	
@@ -294,7 +324,14 @@ public interface Type extends Attribute {
 			return lowerBounds;
 		}		
 		
-		
+		public boolean equals(Object o) {
+			if (o instanceof Variable) {
+				Variable v = (Variable) o;
+				return variable.equals(v.variable)
+						&& lowerBounds.equals(v.lowerBounds);
+			}
+			return false;
+		}		
 	}
 	
 	/**
@@ -325,6 +362,16 @@ public interface Type extends Attribute {
 		
 		public List<Type> typeArguments() {
 			return typeArgs;
+		}
+		
+		public boolean equals(Object o) {
+			if (o instanceof Function) {
+				Function f = (Function) o;
+				return returnType.equals(f.returnType)
+						&& parameters.equals(f.parameters)
+						&& typeArgs.equals(f.typeArgs);
+			}
+			return false;
 		}
 	}	
 }

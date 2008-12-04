@@ -181,12 +181,24 @@ public interface Expr extends SyntacticElement {
 			return op;
 		}
 
+		public void setOp(int op) {
+			this.op = op;
+		}
+		
 		public Expr lhs() {
 			return lhs;
 		}
 
+		public void setLhs(Expr lhs) {
+			this.lhs = lhs;
+		}
+		
 		public Expr rhs() {
 			return rhs;
+		}
+		
+		public void setRhs(Expr rhs) {
+			this.rhs = rhs;
 		}
 	}
 

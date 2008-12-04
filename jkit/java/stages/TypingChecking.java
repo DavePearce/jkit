@@ -330,15 +330,16 @@ public class TypingChecking {
 			case Expr.BinOp.LTEQ:
 			case Expr.BinOp.GT:
 			case Expr.BinOp.GTEQ:
-			{				
-				if((lhs_t instanceof Type.Primitive || isWrapper(lhs_t)) && (rhs_t instanceof Type.Primitive || isWrapper(rhs_t))) {
-					Type rt = binaryNumericPromotion(lhs_t,rhs_t);	
-					e.setLhs(implicitCast(e.lhs(),rt));
-					e.setRhs(implicitCast(e.rhs(),rt));
-					e.attributes().add(new Type.Bool());					
-				} else if(bop.op == Expr.BinOp.EQ || bop.op == Expr.BinOp.NEQ) {
-					return new BinOp(bop.op,lhs,rhs,Type.booleanType());		
-				}				
+			{
+				if ((lhs_t instanceof Type.Primitive || isWrapper(lhs_t))
+						&& (rhs_t instanceof Type.Primitive || isWrapper(rhs_t))) {
+					Type rt = binaryNumericPromotion(lhs_t, rhs_t);
+					e.setLhs(implicitCast(e.lhs(), rt));
+					e.setRhs(implicitCast(e.rhs(), rt));
+					e.attributes().add(new Type.Bool());
+				} else if (e.op() == Expr.BinOp.EQ || e.op() == Expr.BinOp.NEQ) {
+					e.attributes().add(new Type.Bool());
+				}
 				break;
 			}
 			case Expr.BinOp.ADD:
@@ -347,11 +348,16 @@ public class TypingChecking {
 			case Expr.BinOp.DIV:
 			case Expr.BinOp.MOD:
 			{						
-				if((lhs_t instanceof Type.Primitive || isWrapper(lhs_t)) && (rhs_t instanceof Type.Primitive || isWrapper(rhs_t))) {					
-					Type rt = binaryNumericPromotion(lhs_t,rhs_t);					
-					return new BinOp(bop.op,implicitCast(lhs,rt),implicitCast(rhs,rt),rt);
-				} else if(bop.op == BinOp.ADD && (isString(lhs_t) || isString(rhs_t))) {
-					return new BinOp(Expr.BinOp.CONCAT,lhs,rhs,Type.referenceType("java.lang","String"));
+				if ((lhs_t instanceof Type.Primitive || isWrapper(lhs_t))
+						&& (rhs_t instanceof Type.Primitive || isWrapper(rhs_t))) {
+					Type rt = binaryNumericPromotion(lhs_t, rhs_t);
+					e.setLhs(implicitCast(e.lhs(), rt));
+					e.setRhs(implicitCast(e.rhs(), rt));
+					e.attributes().add(rt);
+				} else if (e.op() == Expr.BinOp.ADD
+						&& (isString(lhs_t) || isString(rhs_t))) {
+					e.attributes().add(new Type.Clazz("java.lang", "String"));
+					e.setOp(Expr.BinOp.CONCAT);
 				}
 				break;
 			}
@@ -359,26 +365,33 @@ public class TypingChecking {
 			case Expr.BinOp.SHR:
 			case Expr.BinOp.USHR:
 			{					
-				if((lhs_t instanceof Type.Primitive || isWrapper(lhs_t)) && (rhs_t instanceof Type.Primitive || isWrapper(rhs_t))) {
+				if ((lhs_t instanceof Type.Primitive || isWrapper(lhs_t))
+						&& (rhs_t instanceof Type.Primitive || isWrapper(rhs_t))) {
 					Type rt_left = unaryNumericPromotion(lhs_t);
-					Type rt_right = Type.intType();				
-					return new BinOp(bop.op,implicitCast(lhs,rt_left),implicitCast(rhs,rt_right),rt_left);
+					e.setLhs(implicitCast(e.lhs(), rt_left));
+					e.setRhs(implicitCast(e.rhs(), new Type.Int()));
+					e.attributes().add(rt_left);
 				}
 				break;
 			}
 			case Expr.BinOp.LAND:
 			case Expr.BinOp.LOR:
 			{
-				Type rt = Type.booleanType();
-				return new BinOp(bop.op,implicitCast(lhs,rt),implicitCast(rhs,rt),Type.booleanType());
+				Type rt = binaryNumericPromotion(lhs_t,rhs_t);
+				e.setLhs(implicitCast(e.lhs(),rt));
+				e.setRhs(implicitCast(e.rhs(),rt));
+				e.attributes().add(new Type.Bool());				
 			}
 			case Expr.BinOp.AND:
 			case Expr.BinOp.OR:
 			case Expr.BinOp.XOR:
 			{								
-				if((lhs_t instanceof Type.Primitive || isWrapper(lhs_t)) && (rhs_t instanceof Type.Primitive || isWrapper(rhs_t))) {
-					Type rt = binaryNumericPromotion(lhs_t,rhs_t);							
-					return new BinOp(bop.op,implicitCast(lhs,rt),implicitCast(rhs,rt),rt);					
+				if ((lhs_t instanceof Type.Primitive || isWrapper(lhs_t))
+						&& (rhs_t instanceof Type.Primitive || isWrapper(rhs_t))) {
+					Type rt = binaryNumericPromotion(lhs_t, rhs_t);
+					e.setLhs(implicitCast(e.lhs(),rt));
+					e.setRhs(implicitCast(e.rhs(),rt));
+					e.attributes().add(rt);						
 				} 
 				break;
 			}					
@@ -629,5 +642,20 @@ public class TypingChecking {
 		} 
 		
 		return e;
+	}
+	
+	/**
+     * Check wither a given type is a reference to java.lang.String or not.
+     * 
+     * @param t
+     * @return
+     */
+	private static boolean isString(Type t) {
+		if(t instanceof Type.Clazz) {
+			Type.Clazz c = (Type.Clazz) t;
+			 return c.pkg().equals("java.lang") && c.components().size() == 1
+					&& c.components().get(0).first().equals("String");			
+		}
+		return false;
 	}
 }

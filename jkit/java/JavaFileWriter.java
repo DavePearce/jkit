@@ -630,6 +630,8 @@ public class JavaFileWriter {
 			writeTernOp((Expr.TernOp)e);
 		} else if(e instanceof Expr.Cast) {
 			writeCast((Expr.Cast)e);
+		} else if(e instanceof Expr.Convert) {
+			writeConvert((Expr.Convert)e);
 		} else if(e instanceof Expr.InstanceOf) {
 			writeInstanceOf((Expr.InstanceOf)e);
 		} else if(e instanceof Expr.Invoke) {
@@ -767,6 +769,13 @@ public class JavaFileWriter {
 		write("(");
 		writeType(e.type());
 		write(") ");
+		writeExpressionWithBracketsIfNecessary(e.expr());
+	}
+	
+	protected void writeConvert(Expr.Convert e) {
+		write("[");
+		writeType(e.type());
+		write("] ");
 		writeExpressionWithBracketsIfNecessary(e.expr());
 	}
 	
