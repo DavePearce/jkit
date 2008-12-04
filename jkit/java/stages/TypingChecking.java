@@ -339,6 +339,8 @@ public class TypingChecking {
 					e.attributes().add(new Type.Bool());
 				} else if (e.op() == Expr.BinOp.EQ || e.op() == Expr.BinOp.NEQ) {
 					e.attributes().add(new Type.Bool());
+				} else {
+					// some kind of error here.
 				}
 				break;
 			}
