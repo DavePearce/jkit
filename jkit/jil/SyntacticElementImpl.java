@@ -19,14 +19,14 @@ public class SyntacticElementImpl  implements SyntacticElement {
 	}
 	
 	public SyntacticElementImpl(Attribute[] attributes) {
-		this.attributes = Arrays.asList(attributes);			
+		this.attributes = new ArrayList<Attribute>(Arrays.asList(attributes));			
 	}
 	
 	public List<Attribute> attributes() { return attributes; }
 	
-	public Attribute getFirst(Class c) {
+	public Attribute attribute(Class c) {
 		for(Attribute a : attributes) {
-			if(a.getClass() == c) {
+			if(c.isInstance(a)) {
 				return a;
 			}
 		}

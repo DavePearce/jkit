@@ -1,6 +1,7 @@
 package jkit;
 
 import jkit.java.*;
+import jkit.java.stages.*;
 import jkit.compiler.*;
 
 import java.io.*;
@@ -23,6 +24,9 @@ public class Test {
 
 		for (; i != args.length; ++i) {
 			try {
+				JavaFile f = new JavaFileReader2(args[i]).read();
+				new TypingChecking(null).apply(f);
+				
 				if(outputdir != null) {
 					File path = new File(outputdir + File.separatorChar + args[i])
 					.getParentFile();
@@ -30,12 +34,11 @@ public class Test {
 						path.mkdirs();
 					}
 					FileWriter writer = new FileWriter(outputdir
-							+ File.separatorChar + args[i]);				
-					new JavaFileWriter(writer).write(new JavaFileReader2(args[i])
-					.read());
+							+ File.separatorChar + args[i]);			
+					
+					new JavaFileWriter(writer).write(f);
 				} else {
-					new JavaFileWriter(System.out).write(new JavaFileReader2(args[i])
-					.read());
+					new JavaFileWriter(System.out).write(f);
 				}
 			} catch (IOException e) {
 				System.out.println("ERROR: " + e);

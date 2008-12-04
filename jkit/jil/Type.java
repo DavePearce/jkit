@@ -1,6 +1,6 @@
 package jkit.jil;
 
-import java.util.List;
+import java.util.*;
 
 import jkit.util.Pair;
 
@@ -14,7 +14,7 @@ import jkit.util.Pair;
  * <code>Type.Reference</code> represents general reference types, such as
  * <code>java.lang.String</code>.
  */
-public interface Type {		
+public interface Type extends Attribute {		
 	/**
      * The Primitive type abstracts all the primitive types.
      */
@@ -33,7 +33,10 @@ public interface Type {
 	public static class Null extends SyntacticElementImpl implements Primitive {
 		public Null(Attribute... attributes) {
 			super(attributes);			
-		}		
+		}
+		public String toString() {
+			return "null";
+		}
 	}
 	
 	/**
@@ -45,6 +48,9 @@ public interface Type {
 		public Bool(Attribute... attributes) {
 			super(attributes);			
 		}		
+		public String toString() {
+			return "boolean";
+		}
 	}
 	
 
@@ -56,7 +62,10 @@ public interface Type {
 	public static class Byte extends SyntacticElementImpl implements Primitive {
 		public Byte(Attribute... attributes) {
 			super(attributes);			
-		}		
+		}
+		public String toString() {
+			return "byte";
+		}
 	}
 	
 	/**
@@ -67,7 +76,10 @@ public interface Type {
 	public static class Char extends SyntacticElementImpl implements Primitive {
 		public Char(Attribute... attributes) {
 			super(attributes);			
-		}		
+		}
+		public String toString() {
+			return "char";
+		}
 	}
 	
 	/**
@@ -78,7 +90,10 @@ public interface Type {
 	public static class Short extends SyntacticElementImpl implements Primitive {
 		public Short(Attribute... attributes) {
 			super(attributes);			
-		}		
+		}
+		public String toString() {
+			return "short";
+		}
 	}
 
 	/**
@@ -89,7 +104,10 @@ public interface Type {
 	public static class Int extends SyntacticElementImpl implements Primitive {
 		public Int(Attribute... attributes) {
 			super(attributes);			
-		}		
+		}
+		public String toString() {
+			return "int";
+		}
 	}
 	
 	/**
@@ -100,7 +118,10 @@ public interface Type {
 	public static class Long extends SyntacticElementImpl implements Primitive {
 		public Long(Attribute... attributes) {
 			super(attributes);			
-		}		
+		}
+		public String toString() {
+			return "long";
+		}
 	}
 	
 	/**
@@ -111,7 +132,10 @@ public interface Type {
 	public static class Float extends SyntacticElementImpl implements Primitive {
 		public Float(Attribute... attributes) {
 			super(attributes);			
-		}		
+		}
+		public String toString() {
+			return "float";
+		}
 	}
 	
 	/**
@@ -122,7 +146,10 @@ public interface Type {
 	public static class Double extends SyntacticElementImpl implements Primitive {
 		public Double(Attribute... attributes) {
 			super(attributes);			
-		}		
+		}
+		public String toString() {
+			return "double";
+		}
 	}
 	
 	/**
@@ -142,7 +169,10 @@ public interface Type {
 		
 		public Type element() {
 			return element;
-		}		
+		}
+		public String toString() {
+			return element + "[]";
+		}
 	}
 	
 	/**
@@ -152,18 +182,60 @@ public interface Type {
      * 
      */
 	public static class Clazz extends SyntacticElementImpl implements Reference {		
+		private String pkg;
 		private List<Pair<String, List<Type>>> components;
+		
 		public Clazz(List<Pair<String, List<Type>>> components,
 				Attribute... attributes) {
 			super(attributes);
+			this.pkg = null;
 			this.components = components;
 		}		
+		
+		public Clazz(String pkg, String clazz, Attribute... attributes) {
+			super(attributes);
+			this.pkg = pkg;
+			components = new ArrayList<Pair<String,List<Type>>>();
+			components.add(new Pair(clazz,new ArrayList<Type>()));
+		}
+		
 		public List<Pair<String, List<Type>>> components() {
 			return components;
 		}
+		
 		public void setComponents(
 				List<Pair<String, List<Type>>> components) {
 			this.components = components;
+		}
+		
+		public String pkg() {
+			return pkg;
+		}
+		
+		public String toString() {
+			String r = pkg;			
+			boolean firstTime = pkg.length() == 0;
+			for (Pair<String, List<Type>> n : components) {
+				if (!firstTime) {
+					r += ".";
+				}
+				firstTime = false;
+				r += n.first();
+				List<Type> typeArgs = n.second();
+				if (typeArgs != null && typeArgs.size() > 0) {
+					r += "<";
+					boolean innerFirstTime = true;
+					for (Type t : typeArgs) {
+						if (!innerFirstTime) {
+							r += ", ";
+						}
+						innerFirstTime = false;
+						r += t;
+					}
+					r += ">";
+				}
+			}
+			return r;
 		}
 	}
 	
@@ -221,6 +293,8 @@ public interface Type {
 		public List<Type> lowerBounds() {
 			return lowerBounds;
 		}		
+		
+		
 	}
 	
 	/**

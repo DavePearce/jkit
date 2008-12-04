@@ -267,8 +267,8 @@ public class JavaFileWriter {
 			}
 		}
 				
-		if(m.block() != null) { 
-			writeBlock(m.block()); 
+		if(m.body() != null) { 
+			writeBlock(m.body()); 
 		} else {
 			write(";");
 		}

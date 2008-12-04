@@ -53,6 +53,31 @@ public interface Expr extends SyntacticElement {
 	}
 
 	/**
+	 * Represents an implicit type conversion between primitive types.
+	 * 
+	 * @author djp
+	 *
+	 */
+	public static class Convert extends SyntacticElementImpl implements Expr {
+		protected Expr expr;
+		protected Type.Primitive type;
+
+		public Convert(Type.Primitive type, Expr expr, Attribute... attributes) {
+			super(attributes);
+			this.expr = expr;
+			this.type = type;
+		}
+
+		public Expr expr() {
+			return expr;
+		}
+
+		public Type type() {
+			return type;
+		}
+	}
+	
+	/**
 	 * Represents an InstanceOf binary operation.
 	 * 
 	 * @author djp
@@ -270,13 +295,15 @@ public interface Expr extends SyntacticElement {
 		 *            the context in which the type is constructed. This is only
 		 *            required for non-static classes which are created outside
 		 *            of their enclosing class's scope. For example, i = o.new
-		 *            Inner();
+		 *            Inner(); Should be null if no context.
 		 * @param parameters -
 		 *            The parameters (if any) supplied to the constructor.
+		 *            Should be an empty (i.e. non-null) list .
 		 * @param declarations -
 		 *            the list of field/method/class declarations contained in
 		 *            this statement. These arise only when constructing a new
-		 *            anonymous class.
+		 *            anonymous class. Again, should be an empty (i.e. non-null)
+		 *            list.
 		 */
 		public New(Type type, Expr context, List<Expr> parameters,
 				List<Decl> declarations, Attribute... attributes) {

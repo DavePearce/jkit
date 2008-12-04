@@ -209,7 +209,7 @@ public interface Decl extends SyntacticElement {
 			return exceptions;
 		}
 
-		public Stmt.Block block() {
+		public Stmt.Block body() {
 			return block;
 		}
 	}

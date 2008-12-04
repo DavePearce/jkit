@@ -25,5 +25,5 @@ public interface SyntacticElement {
      * @param c
      * @return
      */
-	public Attribute getFirst(Class c);
+	public Attribute attribute(Class c);
 }

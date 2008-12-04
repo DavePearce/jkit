@@ -153,7 +153,7 @@ public interface Stmt extends SyntacticElement {
 		}
 	}
 
-	public static class Assignment extends SyntacticElementImpl implements Stmt, Expr {
+	public static class Assignment extends SyntacticElementImpl implements Simple, Expr {
 		private Expr lhs, rhs;
 
 		public Assignment(Expr lhs, Expr rhs,
