@@ -566,7 +566,7 @@ public class TypingChecking {
 		// insert implicit casts for primitive types.
 		if (!e_t.equals(t)
 				&& (t instanceof Type.Primitive && e_t instanceof Type.Primitive)) {			
-			e = new Expr.Convert((Type.Primitive)t, e);
+			e = new Expr.Convert((Type.Primitive)t, e, t);
 		} else if(t instanceof Type.Primitive && e_t instanceof Type.Clazz) {
 			Type.Clazz r = (Type.Clazz) e_t;
 			if (r.pkg().equals("java.lang") && r.components().size() == 1) {

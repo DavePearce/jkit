@@ -897,7 +897,8 @@ public class JavaFileWriter {
 	
 	protected void writeExpressionWithBracketsIfNecessary(Expr e) {
 		if (e instanceof Expr.BinOp || e instanceof Expr.InstanceOf
-				|| e instanceof Expr.TernOp || e instanceof Expr.Cast) {
+				|| e instanceof Expr.TernOp || e instanceof Expr.Cast
+				|| e instanceof Expr.Convert) {
 			write("(");
 			writeExpression(e);
 			write(")");
@@ -915,7 +916,13 @@ public class JavaFileWriter {
 			writeWildcardType((Type.Wildcard)t);
 		} else if(t instanceof Type.Variable) {
 			writeVariableType((Type.Variable)t);
+		} else if(t instanceof Type.Primitive) {
+			writePrimitiveType((Type.Primitive)t);
 		}
+	}
+	
+	protected void writePrimitiveType(Type.Primitive at) {
+		write(at.toString());
 	}
 	
 	protected void writeArrayType(Type.Array at) {
