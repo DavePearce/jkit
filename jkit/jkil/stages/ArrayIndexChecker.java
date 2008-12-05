@@ -49,14 +49,15 @@ public class ArrayIndexChecker extends BackwardAnalysis<UnionFlowSet<String>> im
 		arrays = new HashMap<String, Set<String>>();
 		System.out.println("method = " + method.name());
 		FlowGraph cfg = method.code();
+		//System.out.println(cfg);
 		
 		UnionFlowSet<String> initStore = new UnionFlowSet<String>();
 		// should we do this so we can ignore in method var's
-//		for(LocalVarDef v : cfg.localVariables()) {
-//			if(!v.isParameter()) {				
-//				initStore.add(v.name());
-//			}
-//		}
+		for(LocalVarDef v : cfg.localVariables()) {
+			if(v.isParameter()) {				
+				initStore.add(v.name());
+			}
+		}
 		
 		start(cfg, initStore);//cfg.entry(),initStore);
 		for (LocalVarDef v : cfg.localVariables()) {
@@ -69,6 +70,10 @@ public class ArrayIndexChecker extends BackwardAnalysis<UnionFlowSet<String>> im
 
 	public void transfer(Point p, UnionFlowSet<String> in) {
 		Stmt stmt = p.statement();
+		transfer(p, stmt, in);
+	}
+	
+	private void transfer(Point p, Stmt stmt, UnionFlowSet<String> in) {
 		//System.out.println("stmt = " + stmt + " at point " + p);
 		//System.out.println("in (*)= " + in);
 		if(stmt instanceof Assign) {
@@ -90,34 +95,44 @@ public class ArrayIndexChecker extends BackwardAnalysis<UnionFlowSet<String>> im
 		} else if(stmt != null){
 			throw new InternalException("Unknown statement encountered: " + stmt,p,null,null);
 		}		
-
 	}
 
 	private void transfer(Point p, Unlock stmt, UnionFlowSet<String> in) {
-		
+		// don't need
 	}
 
 	private void transfer(Point p, Lock stmt, UnionFlowSet<String> in) {
-		
+		// don't need
 	}
 
 	private void transfer(Point p, Throw stmt, UnionFlowSet<String> in) {
-		
+		System.out.println("throw " + stmt.expr);
+		getRange(stmt.expr, p, null);
 	}
 
 	private void transfer(Point p, Return stmt, UnionFlowSet<String> in) {
-
+		System.out.println("return " + stmt.expr);
+		getRange(stmt.expr, p, null);
 	}
 	
 	private void transfer(Point p, New stmt, UnionFlowSet<String> in) {
-		
+		System.out.println("New " + stmt.parameters);
+		for (Expr e : stmt.parameters) {
+			getRange(e, p, null);
+		}
 	}
 	
 	private void transfer(Point p, Invoke stmt, UnionFlowSet<String> in) {
-		
+		System.out.println("invoke " + stmt.target + ", " + stmt.parameters + " " + stmt.polymorphic);
+		System.out.println(stmt.name);
+		getRange(stmt.target, p, null);
+		for (Expr e : stmt.parameters) {
+			getRange(e, p, null);
+		}
 	}
 
 	private void transfer(Point p, Assign stmt, UnionFlowSet<String> in) {
+		// TODO fix up a bit
 		//System.out.println("Assign = " + stmt.lhs + "=" + stmt.rhs);
 		Range rhs = getRange(stmt.rhs, p, null);
 		if (stmt.lhs instanceof ArrayIndex) {
@@ -138,22 +153,39 @@ public class ArrayIndexChecker extends BackwardAnalysis<UnionFlowSet<String>> im
 				}
 			}
 		}
+		if ((stmt.lhs instanceof LocalVar) && (stmt.lhs.type instanceof Type.Array)
+				&& ((stmt.rhs instanceof LocalVar) || (stmt.rhs instanceof Deref))
+				&& (stmt.rhs.type instanceof Type.Array)) {
+			String lh = ((LocalVar)stmt.lhs).name;
+			String rh = (stmt.rhs instanceof LocalVar) ? ((LocalVar)stmt.rhs).name 
+					: ((Deref)stmt.rhs).name;
+			if (in.contains(rh) || (stmt.rhs instanceof Deref)) {
+				Set<String> vars = arrays.remove(lh);
+				if (vars != null) {
+					for (String s : vars) {
+						Range r = ranges.get(s);
+						r.setVariable(lh + ".length", new LocalVar(rh + ".length", Type.intType(new TypeElement[0])));
+					}
+				}
+				arrays.put(rh, vars);
+			}
+		}
 		if ((stmt.lhs instanceof LocalVar) && (stmt.rhs.type instanceof Type.Array) &&
-				((stmt.rhs instanceof New) || (stmt.rhs instanceof ArrayVal))) {
-			//System.out.println("HERE");
+				(((stmt.rhs instanceof New) && ((New)stmt.rhs).parameters.size() > 0)
+						|| (stmt.rhs instanceof ArrayVal))) {
 			String arrayname = ((LocalVar)stmt.lhs).name;
-			int length = 0;
+			Expr length = null;
 			if (stmt.rhs instanceof New) {
-				// TODO multidimensional 
-				length = ((FlowGraph.Number)((New)stmt.rhs).parameters.get(0)).value;
+				// TODO multidimensional
+				length = ((New)stmt.rhs).parameters.get(0);
 			} else if (stmt.rhs instanceof ArrayVal) {
-				length = ((ArrayVal)stmt.rhs).values.size();
+				length = new IntVal(((ArrayVal)stmt.rhs).values.size());
 			}
 			Set<String> vars = arrays.remove(arrayname);
+			System.out.println(vars + " + " + length);
 			if (vars != null) {
 				for (String s : vars) {
 					Range r = ranges.get(s);
-					System.out.println(arrayname);
 					r.setVariable(arrayname + ".length", length);
 				}
 			}
@@ -162,6 +194,7 @@ public class ArrayIndexChecker extends BackwardAnalysis<UnionFlowSet<String>> im
 
 	public void transfer(Expr e, UnionFlowSet<String> in) {
 		//System.out.println("in = " + in);
+		// this is where conditionals are done
 		System.out.println("expr == == " + e);
 		
 	}
@@ -210,36 +243,17 @@ public class ArrayIndexChecker extends BackwardAnalysis<UnionFlowSet<String>> im
 	
 	// TODO remove arrayname, not used since the revamp
 	private Range getRange(Expr expr, Point point, String arrayname) {
-		//System.out.println("Get range called on " + expr);
+		if (expr == null) return null;
+		System.out.println("Get range called on " + expr + " " + expr.getClass().getCanonicalName());
 		if (expr instanceof ArrayIndex) {
-			if (((ArrayIndex)expr).array instanceof LocalVar) {
-				arrayname = ((LocalVar)((ArrayIndex)expr).array).name;
-			} else if (((ArrayIndex)expr).array instanceof Deref) {
-				arrayname = ((Deref)((ArrayIndex)expr).array).name;
-			}
-			Range tmp = new Range(0, Integer.MAX_VALUE);
-			String var = containsVariable(((ArrayIndex)expr).idx); 
-			if (var != null) {
-				Set<String> l = arrays.get(arrayname);
-				if (l == null) {
-					l = new HashSet<String>();
-					arrays.put(arrayname, l);
-				}
-				l.add(var);
-				tmp.addHighVariable(arrayname + ".length", 
-						new FlowGraph.BinOp(BinOp.SUB,
-								new FlowGraph.LocalVar(arrayname + ".length", Type.intType(new TypeElement[0])),
-								new FlowGraph.IntVal(1), Type.intType(new TypeElement[0])));
-				Range ret = new Equation(tmp, ((ArrayIndex)expr).idx).rearrange();
-				return ret;
-			}
-			// index doesn't contain a variable, not much we can do
-			return null;
-			//return getRange(((ArrayIndex)expr).idx, point, arrayname);
+			return getRange((ArrayIndex)expr, point, arrayname);
 		} else if (expr instanceof Number) {
 			return new Range(((Number)expr).value, ((Number)expr).value);
 		} else if (expr instanceof LocalVar) {
 			return getRange((LocalVar)expr, point, arrayname);
+		} else if (expr instanceof Deref) {
+			System.out.println("deref" + expr);
+			return null;
 		} else if (expr instanceof UnOp) {
 			Range r = getRange(((UnOp)expr).expr, point, arrayname);
 			// make a tmp variable
@@ -261,9 +275,42 @@ public class ArrayIndexChecker extends BackwardAnalysis<UnionFlowSet<String>> im
 		} else if (expr instanceof ArrayVal) {
 			getRanges((Value)expr, point, false);
 			return new Range(0,0);
+		} else if (expr instanceof Stmt) {
+			transfer(point, (Stmt)expr, null);
+			return null;
+		} else if (expr instanceof ClassAccess) {
+			return null;
+		} else if (expr instanceof Cast) {
+			return null;
 		} else {
 			throw new InternalException("Unknown expression \"" + expr + "\" encoutered",point,null,null);
 		}
+	}
+	
+	private Range getRange(ArrayIndex expr, Point point, String arrayname) {
+		if (((ArrayIndex)expr).array instanceof LocalVar) {
+			arrayname = ((LocalVar)((ArrayIndex)expr).array).name;
+		} else if (((ArrayIndex)expr).array instanceof Deref) {
+			arrayname = ((Deref)((ArrayIndex)expr).array).name;
+		}
+		Range tmp = new Range(0, Integer.MAX_VALUE);
+		String var = containsVariable(((ArrayIndex)expr).idx); 
+		if (var != null) {
+			Set<String> l = arrays.get(arrayname);
+			if (l == null) {
+				l = new HashSet<String>();
+				arrays.put(arrayname, l);
+			}
+			l.add(var);
+			tmp.addHighVariable(arrayname + ".length", 
+					new FlowGraph.BinOp(BinOp.SUB,
+							new FlowGraph.LocalVar(arrayname + ".length", Type.intType(new TypeElement[0])),
+							new FlowGraph.IntVal(1), Type.intType(new TypeElement[0])));
+			Range ret = new Equation(tmp, ((ArrayIndex)expr).idx).rearrange();
+			return ret;
+		}
+		// index doesn't contain a variable, not much we can do
+		return null;
 	}
 	
 	
@@ -520,24 +567,24 @@ public class ArrayIndexChecker extends BackwardAnalysis<UnionFlowSet<String>> im
 		return e;
 	}
 	
-	Expr setVariableExpr(Expr e, String variable, int i) {
+	Expr setVariableExpr(Expr e, String variable, Expr set) {
 		//System.out.println("Setting " + variable + " to " + i + " in " + e);
 		// not using deref, this was made by this class
 		if (e instanceof LocalVar && ((LocalVar)e).name.equals(variable)) {
-			System.out.println ("Found " + variable);
-			return new FlowGraph.IntVal(i);
+			//System.out.println ("Found " + variable);
+			return set;
 		} else if (e instanceof UnOp && ((UnOp)e).op == UnOp.NEG) {
 			Expr expr = ((UnOp)e).expr;
-			expr = setVariableExpr(expr, variable, i);
+			expr = setVariableExpr(expr, variable, set);
 			if (!(expr instanceof Number)) return e;
 			return new FlowGraph.IntVal(-((Number)expr).value);
 		} else if (e instanceof BinOp) {
 			Expr lhs = ((BinOp)e).lhs;
 			Expr rhs = ((BinOp)e).rhs;
-			lhs = setVariableExpr(lhs, variable, i);
+			lhs = setVariableExpr(lhs, variable, set);
 			// do this unconditionally, may have var in twice
 			//if (lhs == ((BinOp)e).lhs)
-				rhs = setVariableExpr(rhs, variable, i);
+				rhs = setVariableExpr(rhs, variable, set);
 			return simplifyExpr(new FlowGraph.BinOp(((BinOp)e).op, lhs, rhs, Type.intType(new TypeElement[0])));
 		}
 		return e;
@@ -566,11 +613,11 @@ public class ArrayIndexChecker extends BackwardAnalysis<UnionFlowSet<String>> im
 			highVar.put(variable, e);
 		}
 		
-		public void setVariable(String variable, int i) {
-			//System.out.println("Setting " + variable + " to " + i + " in " + this);
+		public void setVariable(String variable, Expr set) {
+			//System.out.println("Setting " + variable + " to " + set + " in " + this);
 			Expr e = lowVar.remove(variable);
 			if (e != null) {
-				e = setVariableExpr(e, variable, i);
+				e = setVariableExpr(e, variable, set);
 				if (e instanceof Number) {
 					//System.out.println("Got number " + e);
 					low = Math.max(low, ((Number)e).value);
@@ -580,7 +627,7 @@ public class ArrayIndexChecker extends BackwardAnalysis<UnionFlowSet<String>> im
 			}
 			e = highVar.remove(variable);
 			if (e != null) {
-				e = setVariableExpr(e, variable, i);
+				e = setVariableExpr(e, variable, set);
 				if (e instanceof Number) {
 					//System.out.println("Got number " + e);
 					high = Math.min(high, ((Number)e).value);
@@ -588,6 +635,7 @@ public class ArrayIndexChecker extends BackwardAnalysis<UnionFlowSet<String>> im
 					highVar.put(containsVariable(e), e);
 				}
 			}
+			//System.out.println("Set " + variable + " to " + set + " in " + this);
 		}
 		
 		public void doUnOp(int op) {
@@ -686,6 +734,18 @@ public class ArrayIndexChecker extends BackwardAnalysis<UnionFlowSet<String>> im
 				IntVal hval = new FlowGraph.IntVal(r.high);
 				e.setValue(simplifyExpr(new FlowGraph.BinOp(BinOp.ADD, e.getValue(), hval)));
 			}
+			
+			// ones we don't know about
+			for (Map.Entry<String, Expr> e : r.lowVar.entrySet()) {
+				if (lowVar.containsKey(e.getKey())) continue;
+				IntVal lval = new FlowGraph.IntVal(low);
+				lowVar.put(e.getKey(), simplifyExpr(new FlowGraph.BinOp(BinOp.ADD, e.getValue(), lval)));
+			}
+			for (Map.Entry<String, Expr> e : r.highVar.entrySet()) {
+				if (highVar.containsKey(e.getKey())) continue;
+				IntVal hval = new FlowGraph.IntVal(high);
+				highVar.put(e.getKey(), simplifyExpr(new FlowGraph.BinOp(BinOp.ADD, e.getValue(), hval)));
+			}
 			// add expr's together, gets a bit complex, might need to optimize
 		}
 		
@@ -712,6 +772,19 @@ public class ArrayIndexChecker extends BackwardAnalysis<UnionFlowSet<String>> im
 				IntVal hval = new FlowGraph.IntVal(r.low);
 				e.setValue(simplifyExpr(new FlowGraph.BinOp(BinOp.SUB, e.getValue(), hval)));
 			}
+			
+			// ones we don't know about
+			for (Map.Entry<String, Expr> e : r.lowVar.entrySet()) {
+				if (highVar.containsKey(e.getKey())) continue;
+				IntVal hval = new FlowGraph.IntVal(high);
+				highVar.put(e.getKey(), simplifyExpr(new FlowGraph.BinOp(BinOp.SUB, e.getValue(), hval)));
+			}
+			for (Map.Entry<String, Expr> e : r.highVar.entrySet()) {
+				if (lowVar.containsKey(e.getKey())) continue;
+				IntVal lval = new FlowGraph.IntVal(low);
+				lowVar.put(e.getKey(), simplifyExpr(new FlowGraph.BinOp(BinOp.SUB, e.getValue(), lval)));
+			}
+
 			// sub expr's, gets a bit complex, might need to optimize
 		}
 		
