@@ -1,10 +1,13 @@
 package jkit.java.stages;
 
+import jkit.compiler.SyntaxError;
 import jkit.java.*;
 import jkit.java.Decl.*;
 import jkit.java.Expr.*;
 import jkit.java.Stmt.*;
 import jkit.jil.Type;
+import jkit.jil.SourceLocation;
+import jkit.jkil.Type.Primitive;
 
 /**
  * The purpose of this class is to type check the statements and expressions
@@ -128,10 +131,16 @@ public class TypeChecking {
 	
 	protected void checkAssignment(Stmt.Assignment def) {
 		checkExpression(def.lhs());	
-		checkExpression(def.rhs());			
+		checkExpression(def.rhs());					
 		
-		System.out.println("LHS: " + def.lhs().attribute(Type.class));
-		System.out.println("RHS: " + def.rhs().attribute(Type.class));
+		Type lhs_t = (Type) def.lhs().attribute(Type.class);
+		Type rhs_t = (Type) def.rhs().attribute(Type.class);
+					
+		if (!subtype(lhs_t, rhs_t)) {
+			SourceLocation loc = (SourceLocation) def.attribute(SourceLocation.class);
+			throw new SyntaxError("Required type \"" + lhs_t
+					+ "\", found type \"" + rhs_t + "\"", loc.line(), loc.column());
+		} 		
 	}
 	
 	protected void checkReturn(Stmt.Return ret) {
@@ -215,6 +224,8 @@ public class TypeChecking {
 			checkTernOp((Expr.TernOp)e);
 		} else if(e instanceof Expr.Cast) {
 			checkCast((Expr.Cast)e);
+		} else if(e instanceof Expr.Convert) {
+			checkConvert((Expr.Convert)e);
 		} else if(e instanceof Expr.InstanceOf) {
 			checkInstanceOf((Expr.InstanceOf)e);
 		} else if(e instanceof Expr.Invoke) {
@@ -256,6 +267,18 @@ public class TypeChecking {
 	
 	protected void checkCast(Expr.Cast e) {
 	
+	}
+	
+	protected void checkConvert(Expr.Convert e) {
+		Type rhs_t = (Type) e.expr().attribute(Type.class);
+		if(!subtype(e.type(),rhs_t)) {
+			SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
+			if(rhs_t instanceof Type.Primitive) {
+				throw new SyntaxError("possible loss of precision",loc.line(),loc.column());
+			} else {
+				throw new SyntaxError("incompatible types",loc.line(),loc.column());
+			}
+		}
 	}
 	
 	protected void checkBoolVal(Value.Bool e) {
@@ -311,10 +334,59 @@ public class TypeChecking {
 	}
 		
 	protected void checkBinOp(Expr.BinOp e) {				
-		
+		checkExpression(e.lhs());
+		checkExpression(e.rhs());
 	}
 	
 	protected void checkTernOp(Expr.TernOp e) {		
 		
+	}
+	
+	/**
+     * This method determines wether t2 is a (non-strict) subtype of t2. In the
+     * case of primitive types, this is relatively easy to determine. However,
+     * in the case of reference types it is harder as we must navigate the class
+     * heirarchy to determine this.
+     * 
+     * JLS 4.10.1 states that subtyping between primitives looks like this:
+     * 
+     * <pre>
+     *   double :&gt; float 
+     *   float :&gt; long
+     *   long :&gt; int
+     *   int :&gt; char 
+     *   int :&gt; short 
+     *   short :&gt; byte
+     * </pre>
+     * 
+     * @param t1
+     * @param t2
+     * @return
+     */
+	protected boolean subtype(Type t1, Type t2) {		
+		if (t1.equals(t2)) return true;
+		
+		// First, do all (non-trivial) primitive subtyping options
+		
+		if(t1 instanceof Primitive && t2 instanceof Primitive) {
+			if(t1 instanceof Type.Double && subtype(new Type.Float(),t2)) { 
+				return true;
+			} else if(t1 instanceof Type.Float && subtype(new Type.Long(),t2)) {
+				return true;
+			} else if(t1 instanceof Type.Long && subtype(new Type.Int(),t2)) {
+				return true;
+			} else if(t1 instanceof Type.Int && subtype(new Type.Short(),t2)) {
+				return true;
+			} else if(t1 instanceof Type.Int && t2 instanceof Type.Char) {
+				return true;
+			} else if (t1 instanceof Type.Short && t2 instanceof Type.Byte) {
+				return true;
+			}					
+		} else {
+			
+		}
+		
+		
+		return false;
 	}
 }

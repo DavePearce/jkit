@@ -448,6 +448,13 @@ public interface Stmt extends SyntacticElement {
 			return modifiers;
 		}
 
+		/**
+         * The list of variable definitions declared. Each is a triple of the
+         * form (s,i,e), where s is the variable name, i is the number of array
+         * braces provided and e is a (possibly null) initialiser.
+         * 
+         * @return
+         */
 		public List<Triple<String, Integer, Expr>> definitions() {
 			return definitions;
 		}

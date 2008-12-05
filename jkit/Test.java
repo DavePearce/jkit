@@ -26,6 +26,7 @@ public class Test {
 			try {
 				JavaFile f = new JavaFileReader2(args[i]).read();
 				new TypingChecking(null).apply(f);
+				new TypeChecking(null).apply(f);
 				
 				if(outputdir != null) {
 					File path = new File(outputdir + File.separatorChar + args[i])

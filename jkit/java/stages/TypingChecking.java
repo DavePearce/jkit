@@ -3,12 +3,14 @@ package jkit.java.stages;
 import java.util.*;
 
 import jkit.compiler.ClassLoader;
+import jkit.compiler.SyntaxError;
 import jkit.java.*;
 import jkit.java.Decl.*;
 import jkit.util.*;
 import jkit.jil.Type;
 import jkit.jil.Modifier;
-
+import jkit.jil.SourceLocation;
+import jkit.jkil.FlowGraph.ArrayVal;
 
 /**
  * This class goes through a JavaFile and propagate type attributes
@@ -67,7 +69,7 @@ public class TypingChecking {
 
 	}
 	
-	protected void doStatement(Stmt e, Map<String,Type> environment) {
+	protected void doStatement(Stmt e, HashMap<String,Type> environment) {
 		if(e instanceof Stmt.SynchronisedBlock) {
 			doSynchronisedBlock((Stmt.SynchronisedBlock)e, environment);
 		} else if(e instanceof Stmt.TryCatchBlock) {
@@ -114,81 +116,108 @@ public class TypingChecking {
 		}		
 	}
 	
-	protected void doBlock(Stmt.Block block, Map<String,Type> environment) {		
+	protected void doBlock(Stmt.Block block, HashMap<String,Type> environment) {
+		// The following clone is required, so that any additions to the
+        // environment via local variable defintions in this block are
+        // preserved.
+		HashMap<String,Type> newEnv = (HashMap<String,Type>) environment.clone();
+		
+		// now process every statement in this block.
 		for(Stmt s : block.statements()) {
 			doStatement(s,environment);
 		}
 	}
 	
-	protected void doSynchronisedBlock(Stmt.SynchronisedBlock block, Map<String,Type> environment) {
+	protected void doSynchronisedBlock(Stmt.SynchronisedBlock block, HashMap<String,Type> environment) {
+		// The following clone is required, so that any additions to the
+        // environment via local variable defintions in this block are
+        // preserved.
+		HashMap<String,Type> newEnv = (HashMap<String,Type>) environment.clone();
+		
+		// now process every statement in this block.
+		for(Stmt s : block.statements()) {
+			doStatement(s,environment);
+		}
+	}
+	
+	protected void doTryCatchBlock(Stmt.TryCatchBlock block, HashMap<String,Type> environment) {
 		
 	}
 	
-	protected void doTryCatchBlock(Stmt.TryCatchBlock block, Map<String,Type> environment) {
+	protected void doVarDef(Stmt.VarDef def, HashMap<String,Type> environment) {
+		Type t = def.type();
 		
+		for(Triple<String, Integer, Expr> d : def.definitions()) {
+			Type nt = t;
+			if(d.third() != null) {
+				doExpression(d.third(),environment);
+			}
+			for(int i=0;i!=d.second();++i) {
+				nt = new Type.Array(nt);
+			}									
+			environment.put(d.first(),nt);
+		}
 	}
 	
-	protected void doVarDef(Stmt.VarDef def, Map<String,Type> environment) {
-		
-	}
-	
-	protected void doAssignment(Stmt.Assignment def, Map<String,Type> environment) {
+	protected void doAssignment(Stmt.Assignment def, HashMap<String,Type> environment) {
 		doExpression(def.lhs(),environment);	
 		doExpression(def.rhs(),environment);			
+
+		// stuff needs to go here. 
 		
 		System.out.println("LHS: " + def.lhs().attribute(Type.class));
 		System.out.println("RHS: " + def.rhs().attribute(Type.class));
 	}
 	
-	protected void doReturn(Stmt.Return ret, Map<String,Type> environment) {
+	protected void doReturn(Stmt.Return ret, HashMap<String,Type> environment) {
 		
 	}
 	
-	protected void doThrow(Stmt.Throw ret, Map<String,Type> environment) {
+	protected void doThrow(Stmt.Throw ret, HashMap<String,Type> environment) {
 						
 	}
 	
-	protected void doAssert(Stmt.Assert ret, Map<String,Type> environment) {
+	protected void doAssert(Stmt.Assert ret, HashMap<String,Type> environment) {
 								
 	}
 	
-	protected void doBreak(Stmt.Break brk, Map<String,Type> environment) {
+	protected void doBreak(Stmt.Break brk, HashMap<String,Type> environment) {
 			
 	}
 	
-	protected void doContinue(Stmt.Continue brk, Map<String,Type> environment) {
+	protected void doContinue(Stmt.Continue brk, HashMap<String,Type> environment) {
 			
 	}
 	
-	protected void doLabel(Stmt.Label lab, Map<String,Type> environment) {				
+	protected void doLabel(Stmt.Label lab, HashMap<String,Type> environment) {				
 
 	}
 	
-	protected void doIf(Stmt.If stmt, Map<String,Type> environment) {
+	protected void doIf(Stmt.If stmt, HashMap<String,Type> environment) {
 		
 	}
 	
-	protected void doWhile(Stmt.While stmt, Map<String,Type> environment) {
+	protected void doWhile(Stmt.While stmt, HashMap<String,Type> environment) {
 			
 	}
 	
-	protected void doDoWhile(Stmt.DoWhile stmt, Map<String,Type> environment) {
+	protected void doDoWhile(Stmt.DoWhile stmt, HashMap<String,Type> environment) {
 		
 	}
 	
-	protected void doFor(Stmt.For stmt, Map<String,Type> environment) {
+	protected void doFor(Stmt.For stmt, HashMap<String,Type> environment) {
 		
 	}
 	
-	protected void doForEach(Stmt.ForEach stmt, Map<String,Type> environment) {
+	protected void doForEach(Stmt.ForEach stmt, HashMap<String,Type> environment) {
 		
 	}
 	
-	protected void doSwitch(Stmt.Switch s, Map<String,Type> environment) {
+	protected void doSwitch(Stmt.Switch s, HashMap<String,Type> environment) {
 		
 	}
 	
-	protected void doExpression(Expr e, Map<String,Type> environment) {	
+	protected void doExpression(Expr e, HashMap<String,Type> environment) {	
 		if(e instanceof Value.Bool) {
 			doBoolVal((Value.Bool)e,environment);
 		} else if(e instanceof Value.Char) {
@@ -240,83 +269,90 @@ public class TypingChecking {
 		}
 	}
 	
-	protected void doDeref(Expr.Deref e, Map<String,Type> environment) {
+	protected void doDeref(Expr.Deref e, HashMap<String,Type> environment) {
 			
 	}
 	
-	protected void doArrayIndex(Expr.ArrayIndex e, Map<String,Type> environment) {
+	protected void doArrayIndex(Expr.ArrayIndex e, HashMap<String,Type> environment) {
 		
 	}
 	
-	protected void doNew(Expr.New e, Map<String,Type> environment) {
+	protected void doNew(Expr.New e, HashMap<String,Type> environment) {
 		
 	}
 	
-	protected void doInvoke(Expr.Invoke e, Map<String,Type> environment) {
+	protected void doInvoke(Expr.Invoke e, HashMap<String,Type> environment) {
 		
 	}
 	
-	protected void doInstanceOf(Expr.InstanceOf e, Map<String,Type> environment) {		
+	protected void doInstanceOf(Expr.InstanceOf e, HashMap<String,Type> environment) {		
 			
 	}
 	
-	protected void doCast(Expr.Cast e, Map<String,Type> environment) {
+	protected void doCast(Expr.Cast e, HashMap<String,Type> environment) {
 	
 	}
 	
-	protected void doBoolVal(Value.Bool e, Map<String,Type> environment) {
+	protected void doBoolVal(Value.Bool e, HashMap<String,Type> environment) {
 		e.attributes().add(new Type.Bool());
 	}
 	
-	protected void doCharVal(Value.Char e, Map<String,Type> environment) {
+	protected void doCharVal(Value.Char e, HashMap<String,Type> environment) {
 		e.attributes().add(new Type.Char());
 	}
 	
-	protected void doIntVal(Value.Int e, Map<String,Type> environment) {
+	protected void doIntVal(Value.Int e, HashMap<String,Type> environment) {
 		e.attributes().add(new Type.Int());
 	}
 	
-	protected void doLongVal(Value.Long e, Map<String,Type> environment) {		
+	protected void doLongVal(Value.Long e, HashMap<String,Type> environment) {		
 		e.attributes().add(new Type.Long());
 	}
 	
-	protected void doFloatVal(Value.Float e, Map<String,Type> environment) {		
+	protected void doFloatVal(Value.Float e, HashMap<String,Type> environment) {		
 		e.attributes().add(new Type.Float());
 	}
 	
-	protected void doDoubleVal(Value.Double e, Map<String,Type> environment) {		
+	protected void doDoubleVal(Value.Double e, HashMap<String,Type> environment) {		
 		e.attributes().add(new Type.Double());
 	}
 	
-	protected void doStringVal(Value.String e, Map<String,Type> environment) {		
+	protected void doStringVal(Value.String e, HashMap<String,Type> environment) {		
 		e.attributes().add(new Type.Clazz("java.lang","String"));
 	}
 	
-	protected void doNullVal(Value.Null e, Map<String,Type> environment) {		
+	protected void doNullVal(Value.Null e, HashMap<String,Type> environment) {		
 		e.attributes().add(new Type.Null());
 	}
 	
-	protected void doTypedArrayVal(Value.TypedArray e, Map<String,Type> environment) {		
+	protected void doTypedArrayVal(Value.TypedArray e, HashMap<String,Type> environment) {		
 		e.attributes().add(e.type());
 	}
 	
-	protected void doArrayVal(Value.Array e, Map<String,Type> environment) {		
+	protected void doArrayVal(Value.Array e, HashMap<String,Type> environment) {		
 		// not sure what to do here.
 	}
 	
-	protected void doClassVal(Value.Class e, Map<String,Type> environment) {
+	protected void doClassVal(Value.Class e, HashMap<String,Type> environment) {
 		
 	}
 	
-	protected void doVariable(Expr.Variable e, Map<String,Type> environment) {			
-		e.attributes().add(environment.get(e.value()));
+	protected void doVariable(Expr.Variable e, HashMap<String,Type> environment) {			
+		Type t = environment.get(e.value());
+		if(t == null) {
+			SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
+			throw new SyntaxError("Cannot find symbol - variable \""
+					+ e.value() + "\"", loc.line(), loc.column());
+		} else {
+			e.attributes().add(t);
+		}
 	}
 
-	protected void doUnOp(Expr.UnOp e, Map<String,Type> environment) {		
+	protected void doUnOp(Expr.UnOp e, HashMap<String,Type> environment) {		
 		
 	}
 		
-	protected void doBinOp(Expr.BinOp e, Map<String,Type> environment) {				
+	protected void doBinOp(Expr.BinOp e, HashMap<String,Type> environment) {				
 		doExpression(e.lhs(),environment);
 		doExpression(e.rhs(),environment);
 		
@@ -400,7 +436,7 @@ public class TypingChecking {
 		}
 	}
 	
-	protected void doTernOp(Expr.TernOp e, Map<String,Type> environment) {		
+	protected void doTernOp(Expr.TernOp e, HashMap<String,Type> environment) {		
 		
 	}
 	
@@ -661,3 +697,4 @@ public class TypingChecking {
 		return false;
 	}
 }
+

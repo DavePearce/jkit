@@ -202,7 +202,7 @@ public interface Type extends Attribute {
 		private List<Pair<String, List<Type>>> components;
 		
 		public Clazz(List<Pair<String, List<Type>>> components) {
-			this.pkg = null;
+			this.pkg = "";
 			this.components = components;
 		}		
 		
@@ -221,6 +221,12 @@ public interface Type extends Attribute {
 			this.components = components;
 		}
 		
+		/**
+         * Return the package. If no package, then the value is simply "",
+         * rather than null.
+         * 
+         * @return
+         */
 		public String pkg() {
 			return pkg;
 		}
