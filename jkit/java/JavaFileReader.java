@@ -47,6 +47,8 @@ import jkit.jkil.Method;
 import jkit.jkil.Type;
 import jkit.jkil.TypeElement;
 import jkit.jkil.FlowGraph.*;
+import jkit.jkil.FlowGraph.Expr;
+import jkit.jkil.FlowGraph.Stmt;
 import jkit.jkil.Type.Reference;
 import jkit.util.Pair;
 import jkit.util.Triple;
@@ -3517,7 +3519,7 @@ public class JavaFileReader implements ClassReader {
 			int end, Tree expr, FlowGraph cfg) {
 
 		if (end - start == 1
-				&& expr.getChild(start).getType() == JavaParser.ARGS) {
+				&& expr.getChild(start).getType() == JavaParser.ARGUMENTS) {
 			Tree args = expr.getChild(start);
 			return parseExpressionList(0, args.getChildCount(), args, cfg);
 		}
