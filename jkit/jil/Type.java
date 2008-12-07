@@ -40,7 +40,24 @@ public interface Type extends Attribute {
 			return o instanceof Type.Null;
 		}
 	}
+	 
 	
+	/**
+     * The Void type is used to represent "void" types, found in method
+     * declarations.
+     * 
+     * @author djp
+     * 
+     */
+	public static class Void implements Primitive {		
+		public String toString() {
+			return "void";
+		}
+		
+		public boolean equals(Object o) {
+			return o instanceof Type.Void;
+		}
+	}
 	/**
 	 * Represents the Java type "boolean"
 	 * @author djp

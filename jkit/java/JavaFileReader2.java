@@ -1562,7 +1562,9 @@ public class JavaFileReader2 {
 			
 			String ct = type.getChild(0).getText();						
 			
-			if (ct.equals("boolean")) {
+			if (ct.equals("void")) {
+				r = new Type.Void();
+			} else if (ct.equals("boolean")) {
 				r = new Type.Bool();
 			} else if (ct.equals("byte")) {
 				r = new Type.Byte();

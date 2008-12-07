@@ -1,6 +1,6 @@
 package jkit.java.stages;
 
-import jkit.compiler.InternalException;
+import java.util.*;
 import jkit.compiler.SyntaxError;
 import jkit.java.*;
 import jkit.java.Decl.*;
@@ -25,6 +25,7 @@ import jkit.jkil.Type.Primitive;
 
 public class TypeChecking {
 	private ClassLoader loader;
+	private Stack<Decl> enclosingScopes = new Stack<Decl>();
 	
 	public TypeChecking(ClassLoader loader) {
 		this.loader = loader; 
@@ -53,13 +54,21 @@ public class TypeChecking {
 	}
 	
 	protected void checkClass(Clazz c) {
+		enclosingScopes.push(c);
+		
 		for(Decl d : c.declarations()) {
 			checkDeclaration(d);
 		}
+		
+		enclosingScopes.pop();
 	}
 
 	protected void checkMethod(Method d) {
+		enclosingScopes.push(d);
+		
 		checkStatement(d.body());
+		
+		enclosingScopes.pop();
 	}
 
 	protected void checkField(Field d) {
@@ -139,14 +148,35 @@ public class TypeChecking {
 		Type rhs_t = (Type) def.rhs().attribute(Type.class);
 					
 		if (!subtype(lhs_t, rhs_t)) {
-			SourceLocation loc = (SourceLocation) def.attribute(SourceLocation.class);
+			SourceLocation loc = (SourceLocation) def
+					.attribute(SourceLocation.class);
+			
 			throw new SyntaxError("Required type \"" + lhs_t
-					+ "\", found type \"" + rhs_t + "\"", loc.line(), loc.column());
+					+ "\", found type \"" + rhs_t + "\"", loc.line(), loc
+					.column());
 		} 		
 	}
 	
 	protected void checkReturn(Stmt.Return ret) {
+		SourceLocation loc = (SourceLocation) ret
+				.attribute(SourceLocation.class);
 		
+		Method method = (Method) getEnclosingScope(Method.class);
+		
+		if(ret.expr() != null) { 
+			checkExpression(ret.expr());						
+			
+			Type ret_t = (Type) ret.expr().attribute(Type.class);
+			
+			if(!subtype(method.returnType(),ret_t)) {
+				throw new SyntaxError("Required return type \"" + method.returnType()
+					+ "\",  found type \"" + ret_t + "\"", loc.line(),loc.column());	
+			}
+			
+		} else if(!(method.returnType() instanceof Type.Void)) {
+			throw new SyntaxError("Return value required!", loc.line(), loc
+					.column());
+		}
 	}
 	
 	protected void checkThrow(Stmt.Throw ret) {
@@ -394,11 +424,15 @@ public class TypeChecking {
 				case BinOp.SHR:
 				case BinOp.USHR:
 				{										
-					//bit-shift operations always take an int as their rhs, so make sure we have an int type								
-					if(lhs_t instanceof Type.Float || lhs_t instanceof Type.Double) {						
-						throw new SyntaxError("Invalid operation on type \"" + lhs_t+ "\"",loc.line(),loc.column());	
-					} else if (!(rhs_t instanceof Type.Int)) {						
-						throw new SyntaxError("Invalid operation on type \"" + rhs_t+ "\"",loc.line(),loc.column());
+					// bit-shift operations always take an int as their rhs, so
+                    // make sure we have an int type
+					if (lhs_t instanceof Type.Float
+							|| lhs_t instanceof Type.Double) {
+						throw new SyntaxError("Invalid operation on type \""
+								+ lhs_t + "\"", loc.line(), loc.column());
+					} else if (!(rhs_t instanceof Type.Int)) {
+						throw new SyntaxError("Invalid operation on type \""
+								+ rhs_t + "\"", loc.line(), loc.column());
 					} 
 					break;
 				}
@@ -406,8 +440,10 @@ public class TypeChecking {
 				case BinOp.OR:
 				case BinOp.XOR:
 				{														
-					if(rhs_t instanceof Type.Float || rhs_t instanceof Type.Double) {
-						throw new SyntaxError("Invalid operation on type \"" + rhs_t+ "\"",loc.line(),loc.column());						
+					if (rhs_t instanceof Type.Float
+							|| rhs_t instanceof Type.Double) {
+						throw new SyntaxError("Invalid operation on type \""
+								+ rhs_t + "\"", loc.line(), loc.column());
 					} 
 				}					
 			}
@@ -466,5 +502,15 @@ public class TypeChecking {
 		
 		
 		return false;
+	}
+	
+	protected Decl getEnclosingScope(Class c) {
+		for(int i=enclosingScopes.size()-1;i>=0;--i) {
+			Decl d = enclosingScopes.get(i);
+			if(c.isInstance(d)) {
+				return d;
+			}
+		}
+		return null;
 	}
 }
