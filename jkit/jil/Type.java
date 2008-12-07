@@ -14,7 +14,8 @@ import jkit.util.Pair;
  * <code>Type.Reference</code> represents general reference types, such as
  * <code>java.lang.String</code>.
  */
-public interface Type extends Attribute {		
+public interface Type extends Attribute {
+	
 	/**
      * The Primitive type abstracts all the primitive types.
      */

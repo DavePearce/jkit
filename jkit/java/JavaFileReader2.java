@@ -1560,7 +1560,8 @@ public class JavaFileReader2 {
 
 			Type r;
 			
-			String ct = type.getText();
+			String ct = type.getChild(0).getText();						
+			
 			if (ct.equals("boolean")) {
 				r = new Type.Bool();
 			} else if (ct.equals("byte")) {
@@ -1569,7 +1570,7 @@ public class JavaFileReader2 {
 				r = new Type.Char();
 			} else if (ct.equals("short")) {
 				r = new Type.Short();
-			} else if (ct.equals("int")) {
+			} else if (ct.equals("int")) {								
 				r = new Type.Int();
 			} else if (ct.equals("long")) {
 				r = new Type.Long();

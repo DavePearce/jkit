@@ -1,5 +1,6 @@
 package jkit.java.stages;
 
+import jkit.compiler.InternalException;
 import jkit.compiler.SyntaxError;
 import jkit.java.*;
 import jkit.java.Decl.*;
@@ -7,6 +8,7 @@ import jkit.java.Expr.*;
 import jkit.java.Stmt.*;
 import jkit.jil.Type;
 import jkit.jil.SourceLocation;
+import jkit.jkil.FlowGraph.BinOp;
 import jkit.jkil.Type.Primitive;
 
 /**
@@ -336,6 +338,80 @@ public class TypeChecking {
 	protected void checkBinOp(Expr.BinOp e) {				
 		checkExpression(e.lhs());
 		checkExpression(e.rhs());
+		
+		Type lhs_t = (Type) e.lhs().attribute(Type.class);
+		Type rhs_t = (Type) e.rhs().attribute(Type.class);
+		Type e_t = (Type) e.attribute(Type.class);
+		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
+		
+		if ((lhs_t instanceof Type.Primitive || rhs_t instanceof Type.Primitive)
+				&& !lhs_t.equals(rhs_t)) {
+			if ((lhs_t instanceof Type.Long
+					|| lhs_t instanceof Type.Int
+					|| lhs_t instanceof Type.Short
+					|| lhs_t instanceof Type.Char || lhs_t instanceof Type.Byte)
+					&& rhs_t instanceof Type.Int
+					&& (e.op() == BinOp.SHL || e.op() == BinOp.SHR || e.op() == BinOp.USHR)) {
+				// Ok!
+			} else throw new SyntaxError("Operand types do not go together: "
+					+ rhs_t + " and " + lhs_t,loc.line(),loc.column());			
+		}
+		
+		if((lhs_t instanceof Type.Char || lhs_t instanceof Type.Byte 
+				|| lhs_t instanceof Type.Int || lhs_t instanceof Type.Long 
+				|| lhs_t instanceof Type.Short || lhs_t instanceof Type.Float
+				|| lhs_t instanceof Type.Double) && 
+				
+				(rhs_t instanceof Type.Char || rhs_t instanceof Type.Byte
+						|| rhs_t instanceof Type.Int || rhs_t instanceof Type.Long 
+						|| rhs_t instanceof Type.Short || rhs_t instanceof Type.Float
+						|| rhs_t instanceof Type.Double)) {
+			
+			switch(e.op()) {
+				// easy cases first
+				case BinOp.EQ:
+				case BinOp.NEQ:
+				case BinOp.LT:
+				case BinOp.LTEQ:
+				case BinOp.GT:
+				case BinOp.GTEQ:
+					// need more checks here
+					if(!(e_t instanceof Type.Bool)) {
+						throw new SyntaxError("Required type \"boolean\", found "
+								+ rhs_t,loc.line(),loc.column());								
+					}
+					break;
+				case BinOp.ADD:
+				case BinOp.SUB:
+				case BinOp.MUL:
+				case BinOp.DIV:
+				case BinOp.MOD:
+				{
+					// hmmmm ?
+					break;
+				}
+				case BinOp.SHL:
+				case BinOp.SHR:
+				case BinOp.USHR:
+				{										
+					//bit-shift operations always take an int as their rhs, so make sure we have an int type								
+					if(lhs_t instanceof Type.Float || lhs_t instanceof Type.Double) {						
+						throw new SyntaxError("Invalid operation on type \"" + lhs_t+ "\"",loc.line(),loc.column());	
+					} else if (!(rhs_t instanceof Type.Int)) {						
+						throw new SyntaxError("Invalid operation on type \"" + rhs_t+ "\"",loc.line(),loc.column());
+					} 
+					break;
+				}
+				case BinOp.AND:
+				case BinOp.OR:
+				case BinOp.XOR:
+				{														
+					if(rhs_t instanceof Type.Float || rhs_t instanceof Type.Double) {
+						throw new SyntaxError("Invalid operation on type \"" + rhs_t+ "\"",loc.line(),loc.column());						
+					} 
+				}					
+			}
+		}
 	}
 	
 	protected void checkTernOp(Expr.TernOp e) {		
@@ -363,12 +439,14 @@ public class TypeChecking {
      * @param t2
      * @return
      */
-	protected boolean subtype(Type t1, Type t2) {		
-		if (t1.equals(t2)) return true;
+	protected boolean subtype(Type t1, Type t2) {				
+		if (t1.equals(t2)) { return true; }
 		
-		// First, do all (non-trivial) primitive subtyping options
+		System.out.println(t1 + ", " + t2 + " NOT EQUAL?");
 		
 		if(t1 instanceof Primitive && t2 instanceof Primitive) {
+			// First, do all (non-trivial) primitive subtyping options
+			
 			if(t1 instanceof Type.Double && subtype(new Type.Float(),t2)) { 
 				return true;
 			} else if(t1 instanceof Type.Float && subtype(new Type.Long(),t2)) {
@@ -383,7 +461,7 @@ public class TypeChecking {
 				return true;
 			}					
 		} else {
-			
+			// Second, consider subtyping relationships between references			
 		}
 		
 		
