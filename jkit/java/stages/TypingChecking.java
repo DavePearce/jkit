@@ -604,7 +604,7 @@ public class TypingChecking {
 		// insert implicit casts for primitive types.
 		if (!e_t.equals(t)
 				&& (t instanceof Type.Primitive && e_t instanceof Type.Primitive)) {			
-			e = new Expr.Convert((Type.Primitive)t, e, t);
+			e = new Expr.Convert((Type.Primitive)t, e, t, e.attribute(SourceLocation.class));
 		} else if(t instanceof Type.Primitive && e_t instanceof Type.Clazz) {
 			Type.Clazz r = (Type.Clazz) e_t;
 			if (r.pkg().equals("java.lang") && r.components().size() == 1) {
@@ -649,31 +649,31 @@ public class TypingChecking {
 			if (isWrapper(t) && unboxedType((Type.Clazz) t) instanceof Type.Byte && e_t instanceof Type.Byte) {
 				ArrayList<Expr> params = new ArrayList<Expr>();
 				params.add(e);
-				return new Expr.New(boxedType((Type.Primitive)e_t),null,params,new ArrayList<Decl>(), e_t);
+				return new Expr.New(boxedType((Type.Primitive)e_t),null,params,new ArrayList<Decl>(), e_t, e.attribute(SourceLocation.class));
 			} else if (isWrapper(t) && unboxedType((Type.Clazz) t) instanceof Type.Char && e_t instanceof Type.Char) {
 				ArrayList<Expr> params = new ArrayList<Expr>();
 				params.add(e);
-				return new Expr.New(boxedType((Type.Primitive)e_t),null,params,new ArrayList<Decl>(), e_t);
+				return new Expr.New(boxedType((Type.Primitive)e_t),null,params,new ArrayList<Decl>(), e_t, e.attribute(SourceLocation.class));
 			} else if (isWrapper(t) && unboxedType((Type.Clazz) t) instanceof Type.Short && e_t instanceof Type.Short) {
 				ArrayList<Expr> params = new ArrayList<Expr>();
 				params.add(e);
-				return new Expr.New(boxedType((Type.Primitive)e_t),null,params,new ArrayList<Decl>(), e_t);
+				return new Expr.New(boxedType((Type.Primitive)e_t),null,params,new ArrayList<Decl>(), e_t, e.attribute(SourceLocation.class));
 			} else if (isWrapper(t) && unboxedType((Type.Clazz) t) instanceof Type.Int && e_t instanceof Type.Int) {
 				ArrayList<Expr> params = new ArrayList<Expr>();
 				params.add(e);
-				return new Expr.New(boxedType((Type.Primitive)e_t),null,params,new ArrayList<Decl>(), new Type.Byte());
+				return new Expr.New(boxedType((Type.Primitive)e_t),null,params,new ArrayList<Decl>(), e_t, e.attribute(SourceLocation.class));
 			} else if (isWrapper(t) && unboxedType((Type.Clazz) t) instanceof Type.Long && e_t instanceof Type.Long) {
 				ArrayList<Expr> params = new ArrayList<Expr>();
 				params.add(e);
-				return new Expr.New(boxedType((Type.Primitive)e_t),null,params,new ArrayList<Decl>(), e_t);
+				return new Expr.New(boxedType((Type.Primitive)e_t),null,params,new ArrayList<Decl>(), e_t, e.attribute(SourceLocation.class));
 			} else if (isWrapper(t) && unboxedType((Type.Clazz) t) instanceof Type.Float && e_t instanceof Type.Float) {
 				ArrayList<Expr> params = new ArrayList<Expr>();
 				params.add(e);
-				return new Expr.New(boxedType((Type.Primitive)e_t),null,params,new ArrayList<Decl>(), new Type.Byte());
+				return new Expr.New(boxedType((Type.Primitive)e_t),null,params,new ArrayList<Decl>(), e_t, e.attribute(SourceLocation.class));
 			} else if (isWrapper(t) && unboxedType((Type.Clazz) t) instanceof Type.Double && e_t instanceof Type.Double) {
 				ArrayList<Expr> params = new ArrayList<Expr>();
 				params.add(e);
-				return new Expr.New(boxedType((Type.Primitive)e_t),null,params,new ArrayList<Decl>(), e_t);
+				return new Expr.New(boxedType((Type.Primitive)e_t),null,params,new ArrayList<Decl>(), e_t, e.attribute(SourceLocation.class));
 			} else {
 				throw new RuntimeException("Unreachable code reached! (" + e_t + ", " + t + ")");
 			}			
