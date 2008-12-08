@@ -168,13 +168,17 @@ public class TypeChecking {
 			
 			Type ret_t = (Type) ret.expr().attribute(Type.class);
 			
-			if(!subtype(method.returnType(),ret_t)) {
+			if(ret_t.equals(new Type.Void())) {
+				throw new SyntaxError(
+						"cannot return a value from method whose result type is void",
+						loc.line(), loc.column());	
+			} else if(!subtype(method.returnType(),ret_t)) {
 				throw new SyntaxError("Required return type \"" + method.returnType()
 					+ "\",  found type \"" + ret_t + "\"", loc.line(),loc.column());	
 			}
 			
 		} else if(!(method.returnType() instanceof Type.Void)) {
-			throw new SyntaxError("Return value required!", loc.line(), loc
+			throw new SyntaxError("missing return value", loc.line(), loc
 					.column());
 		}
 	}
