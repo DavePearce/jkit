@@ -110,7 +110,7 @@ public class TypingChecking {
 			doNew((Expr.New) e, environment);
 		} else if(e instanceof Decl.Clazz) {
 			doClass((Decl.Clazz)e);
-		} else {
+		} else if(e != null) {
 			throw new RuntimeException("Invalid statement encountered: "
 					+ e.getClass());
 		}		
@@ -163,10 +163,7 @@ public class TypingChecking {
 		doExpression(def.lhs(),environment);	
 		doExpression(def.rhs(),environment);			
 
-		// stuff needs to go here. 
-		
-		System.out.println("LHS: " + def.lhs().attribute(Type.class));
-		System.out.println("RHS: " + def.rhs().attribute(Type.class));
+		// type inference stuff goes here. 
 	}
 	
 	protected void doReturn(Stmt.Return ret, HashMap<String,Type> environment) {
@@ -194,7 +191,9 @@ public class TypingChecking {
 	}
 	
 	protected void doIf(Stmt.If stmt, HashMap<String,Type> environment) {
-		
+		doExpression(stmt.condition(),environment);
+		doStatement(stmt.trueStatement(),environment);
+		doStatement(stmt.falseStatement(),environment);
 	}
 	
 	protected void doWhile(Stmt.While stmt, HashMap<String,Type> environment) {
@@ -263,7 +262,7 @@ public class TypingChecking {
 		} else if(e instanceof Stmt.Assignment) {
 			// force brackets			
 			doAssignment((Stmt.Assignment) e,environment);			
-		} else {
+		} else if(e != null) {
 			throw new RuntimeException("Invalid expression encountered: "
 					+ e.getClass());
 		}

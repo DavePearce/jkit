@@ -116,7 +116,7 @@ public class TypeChecking {
 			checkNew((Expr.New) e);
 		} else if(e instanceof Decl.Clazz) {
 			checkClass((Decl.Clazz)e);
-		} else {
+		} else if(e != null) {
 			throw new RuntimeException("Invalid statement encountered: "
 					+ e.getClass());
 		}		
@@ -184,27 +184,40 @@ public class TypeChecking {
 	}
 	
 	protected void checkThrow(Stmt.Throw ret) {
-						
+		checkExpression(ret.expr());
 	}
 	
 	protected void checkAssert(Stmt.Assert ret) {
-								
+		checkExpression(ret.expr());
 	}
 	
 	protected void checkBreak(Stmt.Break brk) {
-			
+		// could check break label exists (if there is one)
 	}
 	
 	protected void checkContinue(Stmt.Continue brk) {
-			
+		// could check continue label exists (if there is one)			
 	}
 	
 	protected void checkLabel(Stmt.Label lab) {				
-
+		// do nothing
 	}
 	
 	protected void checkIf(Stmt.If stmt) {
+		SourceLocation loc = (SourceLocation) stmt
+				.attribute(SourceLocation.class);
 		
+		checkExpression(stmt.condition());
+		checkStatement(stmt.trueStatement());		
+		checkStatement(stmt.falseStatement());		
+				
+		Type c_t = (Type) stmt.condition().attribute(Type.class);
+		
+		// need more checks here
+		if(!(c_t instanceof Type.Bool)) {
+			throw new SyntaxError("Required type \"boolean\", found "
+					+ c_t,loc.line(),loc.column());								
+		}
 	}
 	
 	protected void checkWhile(Stmt.While stmt) {
@@ -275,7 +288,7 @@ public class TypeChecking {
 		} else if(e instanceof Stmt.Assignment) {
 			// force brackets			
 			checkAssignment((Stmt.Assignment) e);			
-		} else {
+		} else if(e != null) {
 			throw new RuntimeException("Invalid expression encountered: "
 					+ e.getClass());
 		}
