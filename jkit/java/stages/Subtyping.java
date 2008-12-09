@@ -23,7 +23,7 @@ import jkit.util.*;
  * String y = x;  <--- error!
  * f(x);          <--- error!
  * </pre>
- * <p>The above errors are check for by this stage.</p>
+ * <p>The above errors are checked for by this stage.</p>
  * @author djp
  * 
  */

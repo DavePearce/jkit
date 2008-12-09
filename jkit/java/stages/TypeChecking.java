@@ -7,8 +7,8 @@ import jkit.java.Decl.*;
 import jkit.java.Expr.*;
 import jkit.java.Stmt.*;
 import jkit.jil.Type;
+import jkit.jil.SyntacticElement;
 import jkit.jil.SourceLocation;
-import jkit.jkil.FlowGraph.BinOp;
 import jkit.jkil.Type.Primitive;
 
 /**
@@ -49,8 +49,14 @@ public class TypeChecking {
 		}
 	}
 	
-	protected void checkInterface(Interface d) {
+	protected void checkInterface(Interface c) {
+		enclosingScopes.push(c);
 		
+		for(Decl d : c.declarations()) {
+			checkDeclaration(d);
+		}
+		
+		enclosingScopes.pop();
 	}
 	
 	protected void checkClass(Clazz c) {
@@ -148,19 +154,12 @@ public class TypeChecking {
 		Type rhs_t = (Type) def.rhs().attribute(Type.class);
 					
 		if (!subtype(lhs_t, rhs_t)) {
-			SourceLocation loc = (SourceLocation) def
-					.attribute(SourceLocation.class);
-			
-			throw new SyntaxError("Required type \"" + lhs_t
-					+ "\", found type \"" + rhs_t + "\"", loc.line(), loc
-					.column());
+			syntax_error("required type \"" + lhs_t + "\", found type \""
+					+ rhs_t + "\"", def);
 		} 		
 	}
 	
-	protected void checkReturn(Stmt.Return ret) {
-		SourceLocation loc = (SourceLocation) ret
-				.attribute(SourceLocation.class);
-		
+	protected void checkReturn(Stmt.Return ret) {		
 		Method method = (Method) getEnclosingScope(Method.class);
 		
 		if(ret.expr() != null) { 
@@ -169,17 +168,16 @@ public class TypeChecking {
 			Type ret_t = (Type) ret.expr().attribute(Type.class);
 			
 			if(ret_t.equals(new Type.Void())) {
-				throw new SyntaxError(
+				syntax_error(
 						"cannot return a value from method whose result type is void",
-						loc.line(), loc.column());	
+						ret);	
 			} else if(!subtype(method.returnType(),ret_t)) {
-				throw new SyntaxError("Required return type \"" + method.returnType()
-					+ "\",  found type \"" + ret_t + "\"", loc.line(),loc.column());	
+				syntax_error("required return type \"" + method.returnType()
+						+ "\",  found type \"" + ret_t + "\"", ret);	
 			}
 			
 		} else if(!(method.returnType() instanceof Type.Void)) {
-			throw new SyntaxError("missing return value", loc.line(), loc
-					.column());
+			syntax_error("missing return value", ret);
 		}
 	}
 	
@@ -203,41 +201,75 @@ public class TypeChecking {
 		// do nothing
 	}
 	
-	protected void checkIf(Stmt.If stmt) {
-		SourceLocation loc = (SourceLocation) stmt
-				.attribute(SourceLocation.class);
-		
+	protected void checkIf(Stmt.If stmt) {		
 		checkExpression(stmt.condition());
 		checkStatement(stmt.trueStatement());		
 		checkStatement(stmt.falseStatement());		
 				
 		Type c_t = (Type) stmt.condition().attribute(Type.class);
 		
-		// need more checks here
 		if(!(c_t instanceof Type.Bool)) {
-			throw new SyntaxError("Required type \"boolean\", found "
-					+ c_t,loc.line(),loc.column());								
+			syntax_error("required type \"boolean\", found " + c_t, stmt);								
 		}
 	}
 	
 	protected void checkWhile(Stmt.While stmt) {
-			
+		checkExpression(stmt.condition());
+		checkStatement(stmt.body());
+
+		Type c_t = (Type) stmt.condition().attribute(Type.class);
+
+		if (!(c_t instanceof Type.Bool)) {
+			syntax_error("required type \"boolean\", found " + c_t, stmt);
+		}
 	}
 	
 	protected void checkDoWhile(Stmt.DoWhile stmt) {
-		
+				checkExpression(stmt.condition());
+		checkStatement(stmt.body());
+
+		Type c_t = (Type) stmt.condition().attribute(Type.class);
+
+		if (!(c_t instanceof Type.Bool)) {
+			syntax_error("required type \"boolean\", found " + c_t, stmt);			
+		}
 	}
 	
 	protected void checkFor(Stmt.For stmt) {
-		
+
+		checkStatement(stmt.initialiser());
+		checkExpression(stmt.condition());
+		checkStatement(stmt.increment());
+		checkStatement(stmt.body());
+
+		Type c_t = (Type) stmt.condition().attribute(Type.class);
+
+		if (!(c_t instanceof Type.Bool)) {
+			syntax_error("required type \"boolean\", found " + c_t, stmt);			
+		}
 	}
 	
-	protected void checkForEach(Stmt.ForEach stmt) {
-		
+	protected void checkForEach(Stmt.ForEach stmt) {		
+		checkExpression(stmt.source());
+		checkStatement(stmt.body());
+
+		// need to check that the static type of the source expression
+		// implements java.lang.iterable
+		Type s_t = (Type) stmt.source().attribute(Type.class);
+
+		if (!subtype(new Type.Clazz("java.lang", "Iterable"), s_t)) {
+			syntax_error("foreach not applicable to expression type",stmt);
+		}
 	}
 	
-	protected void checkSwitch(Stmt.Switch s) {
-		
+	protected void checkSwitch(Stmt.Switch sw) {
+		checkExpression(sw.condition());
+		for(Case c : sw.cases()) {
+			checkExpression(c.condition());
+			for(Stmt s : c.statements()) {
+				checkStatement(s);
+			}
+		}
 	}
 	
 	protected void checkExpression(Expr e) {	
@@ -424,7 +456,7 @@ public class TypeChecking {
 				case BinOp.GTEQ:
 					// need more checks here
 					if(!(e_t instanceof Type.Bool)) {
-						throw new SyntaxError("Required type \"boolean\", found "
+						throw new SyntaxError("required type \"boolean\", found "
 								+ rhs_t,loc.line(),loc.column());								
 					}
 					break;
@@ -494,9 +526,7 @@ public class TypeChecking {
      */
 	protected boolean subtype(Type t1, Type t2) {				
 		if (t1.equals(t2)) { return true; }
-		
-		System.out.println(t1 + ", " + t2 + " NOT EQUAL?");
-		
+						
 		if(t1 instanceof Primitive && t2 instanceof Primitive) {
 			// First, do all (non-trivial) primitive subtyping options
 			
@@ -529,5 +559,17 @@ public class TypeChecking {
 			}
 		}
 		return null;
+	}
+	
+	/**
+     * This method is just to factor out the code for looking up the source
+     * location and throwing an exception based on that.
+     * 
+     * @param msg --- the error message
+     * @param e --- the syntactic element causing the error
+     */
+	protected void syntax_error(String msg, SyntacticElement e) {
+		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
+		throw new SyntaxError(msg,loc.line(),loc.column());
 	}
 }
