@@ -407,5 +407,13 @@ public interface Expr extends SyntacticElement {
 		public Expr index() {
 			return idx;
 		}
+		
+		public void setIndex(Expr e) {
+			idx = e;
+		}
+		
+		public void setTarget(Expr e) {
+			array = e;
+		}
 	}
 }

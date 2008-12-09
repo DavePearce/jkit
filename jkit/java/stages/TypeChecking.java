@@ -1,6 +1,8 @@
 package jkit.java.stages;
 
 import java.util.*;
+
+import jkit.compiler.InternalException;
 import jkit.compiler.SyntaxError;
 import jkit.java.*;
 import jkit.java.Decl.*;
@@ -9,6 +11,7 @@ import jkit.java.Stmt.*;
 import jkit.jil.Type;
 import jkit.jil.SyntacticElement;
 import jkit.jil.SourceLocation;
+import jkit.jkil.FlowGraph.UnOp;
 import jkit.jkil.Type.Primitive;
 
 /**
@@ -154,8 +157,8 @@ public class TypeChecking {
 		Type rhs_t = (Type) def.rhs().attribute(Type.class);
 					
 		if (!subtype(lhs_t, rhs_t)) {
-			syntax_error("required type \"" + lhs_t + "\", found type \""
-					+ rhs_t + "\"", def);
+			syntax_error("required type " + lhs_t + ", found type "
+					+ rhs_t, def);
 		} 		
 	}
 	
@@ -172,8 +175,8 @@ public class TypeChecking {
 						"cannot return a value from method whose result type is void",
 						ret);	
 			} else if(!subtype(method.returnType(),ret_t)) {
-				syntax_error("required return type \"" + method.returnType()
-						+ "\",  found type \"" + ret_t + "\"", ret);	
+				syntax_error("required return type " + method.returnType()
+						+ ",  found type " + ret_t , ret);	
 			}
 			
 		} else if(!(method.returnType() instanceof Type.Void)) {
@@ -209,7 +212,7 @@ public class TypeChecking {
 		Type c_t = (Type) stmt.condition().attribute(Type.class);
 		
 		if(!(c_t instanceof Type.Bool)) {
-			syntax_error("required type \"boolean\", found " + c_t, stmt);								
+			syntax_error("required type boolean, found " + c_t, stmt);								
 		}
 	}
 	
@@ -220,23 +223,22 @@ public class TypeChecking {
 		Type c_t = (Type) stmt.condition().attribute(Type.class);
 
 		if (!(c_t instanceof Type.Bool)) {
-			syntax_error("required type \"boolean\", found " + c_t, stmt);
+			syntax_error("required type boolean, found " + c_t, stmt);
 		}
 	}
 	
 	protected void checkDoWhile(Stmt.DoWhile stmt) {
-				checkExpression(stmt.condition());
+		checkExpression(stmt.condition());
 		checkStatement(stmt.body());
 
 		Type c_t = (Type) stmt.condition().attribute(Type.class);
 
 		if (!(c_t instanceof Type.Bool)) {
-			syntax_error("required type \"boolean\", found " + c_t, stmt);			
+			syntax_error("required type boolean, found " + c_t, stmt);			
 		}
 	}
 	
 	protected void checkFor(Stmt.For stmt) {
-
 		checkStatement(stmt.initialiser());
 		checkExpression(stmt.condition());
 		checkStatement(stmt.increment());
@@ -245,7 +247,7 @@ public class TypeChecking {
 		Type c_t = (Type) stmt.condition().attribute(Type.class);
 
 		if (!(c_t instanceof Type.Bool)) {
-			syntax_error("required type \"boolean\", found " + c_t, stmt);			
+			syntax_error("required type boolean, found " + c_t, stmt);			
 		}
 	}
 	
@@ -318,7 +320,6 @@ public class TypeChecking {
 		} else if(e instanceof Expr.Deref) {
 			checkDeref((Expr.Deref) e);
 		} else if(e instanceof Stmt.Assignment) {
-			// force brackets			
 			checkAssignment((Stmt.Assignment) e);			
 		} else if(e != null) {
 			throw new RuntimeException("Invalid expression encountered: "
@@ -327,27 +328,55 @@ public class TypeChecking {
 	}
 	
 	protected void checkDeref(Expr.Deref e) {
-			
+		checkExpression(e.target());
+		
+		// here, we need to check that the field in question actually exists!
 	}
 	
 	protected void checkArrayIndex(Expr.ArrayIndex e) {
+		checkExpression(e.index());
+		checkExpression(e.target());
 		
+		Type i_t = (Type) e.index().attribute(Type.class);
+		
+		if(!(i_t instanceof Type.Int)) {
+			syntax_error("required type int, found type " + i_t, e);
+		}
+		
+		Type t_t = (Type) e.target().attribute(Type.class);		
+		if(!(t_t instanceof Type.Array)) {			
+			syntax_error("array required, but " + t_t + " found", e);
+		}
 	}
 	
 	protected void checkNew(Expr.New e) {
-		
+		for(Decl d : e.declarations()) {
+			checkDeclaration(d);
+		}
 	}
 	
 	protected void checkInvoke(Expr.Invoke e) {
-		
+		for(Expr p : e.parameters()) {
+			checkExpression(p);
+		}
 	}
 	
 	protected void checkInstanceOf(Expr.InstanceOf e) {		
-			
+		checkExpression(e.lhs());
+		
+		Type lhs_t = (Type) e.lhs().attribute(Type.class);
+		
+		if(lhs_t instanceof Type.Primitive) {
+			syntax_error("required reference type, found " + lhs_t , e);			
+		}
 	}
 	
 	protected void checkCast(Expr.Cast e) {
-	
+		Type e_t = (Type) e.expr().attribute(Type.class);
+		
+		if(!subtype(e.type(),e_t)) {
+			syntax_error("inconvertible types: " + e_t + ", " + e.type(), e);
+		}
 	}
 	
 	protected void checkConvert(Expr.Convert e) {
@@ -363,39 +392,39 @@ public class TypeChecking {
 	}
 	
 	protected void checkBoolVal(Value.Bool e) {
-		
+		// do nothing!
 	}
 	
 	protected void checkCharVal(Value.Char e) {
-		
+		// do nothing!		
 	}
 	
 	protected void checkIntVal(Value.Int e) {
-		
+		// do nothing!
 	}
 	
 	protected void checkLongVal(Value.Long e) {		
-		
+		// do nothing!
 	}
 	
 	protected void checkFloatVal(Value.Float e) {		
-		
+		// do nothing!
 	}
 	
 	protected void checkDoubleVal(Value.Double e) {		
-		
+		// do nothing!
 	}
 	
 	protected void checkStringVal(Value.String e) {		
-		
+		// do nothing!
 	}
 	
 	protected void checkNullVal(Value.Null e) {		
-		
+		// do nothing!
 	}
 	
 	protected void checkTypedArrayVal(Value.TypedArray e) {		
-		
+		// do nothing!
 	}
 	
 	protected void checkArrayVal(Value.Array e) {		
@@ -403,15 +432,45 @@ public class TypeChecking {
 	}
 	
 	protected void checkClassVal(Value.Class e) {
-		
+		// do nothing!	
 	}
 	
 	protected void checkVariable(Expr.Variable e) {			
-		
+		// do nothing!
 	}
 
-	protected void checkUnOp(Expr.UnOp e) {		
+	protected void checkUnOp(Expr.UnOp uop) {		
+		checkExpression(uop.expr());
 		
+		Type e_t = (Type) uop.expr().attribute(Type.class);
+		
+		switch(uop.op()) {
+			case UnOp.NEG:
+				if (!(e_t instanceof Type.Byte 
+						|| e_t instanceof Type.Char
+						|| e_t instanceof Type.Short 
+						|| e_t instanceof Type.Int
+						|| e_t instanceof Type.Long
+						|| e_t instanceof Type.Float
+						|| e_t instanceof Type.Double)) {	
+					syntax_error("cannot negate type " + e_t, uop);					
+				}
+				break;
+			case UnOp.NOT:
+				if (!(e_t instanceof Type.Bool)) {				
+					syntax_error("required type boolean, found " + e_t, uop);					
+				}
+				break;
+			case UnOp.INV:
+				if (!(e_t instanceof Type.Byte 
+						|| e_t instanceof Type.Char
+						|| e_t instanceof Type.Short 
+						|| e_t instanceof Type.Int
+						|| e_t instanceof Type.Long)) {
+					syntax_error("cannot invert type " + e_t, uop);					
+				}
+				break;								
+			}	
 	}
 		
 	protected void checkBinOp(Expr.BinOp e) {				
@@ -456,7 +515,7 @@ public class TypeChecking {
 				case BinOp.GTEQ:
 					// need more checks here
 					if(!(e_t instanceof Type.Bool)) {
-						throw new SyntaxError("required type \"boolean\", found "
+						throw new SyntaxError("required type boolean, found "
 								+ rhs_t,loc.line(),loc.column());								
 					}
 					break;
@@ -477,11 +536,11 @@ public class TypeChecking {
                     // make sure we have an int type
 					if (lhs_t instanceof Type.Float
 							|| lhs_t instanceof Type.Double) {
-						throw new SyntaxError("Invalid operation on type \""
-								+ lhs_t + "\"", loc.line(), loc.column());
+						throw new SyntaxError("Invalid operation on type "
+								+ lhs_t , loc.line(), loc.column());
 					} else if (!(rhs_t instanceof Type.Int)) {
-						throw new SyntaxError("Invalid operation on type \""
-								+ rhs_t + "\"", loc.line(), loc.column());
+						throw new SyntaxError("Invalid operation on type "
+								+ rhs_t , loc.line(), loc.column());
 					} 
 					break;
 				}
@@ -491,8 +550,8 @@ public class TypeChecking {
 				{														
 					if (rhs_t instanceof Type.Float
 							|| rhs_t instanceof Type.Double) {
-						throw new SyntaxError("Invalid operation on type \""
-								+ rhs_t + "\"", loc.line(), loc.column());
+						throw new SyntaxError("Invalid operation on type "
+								+ rhs_t , loc.line(), loc.column());
 					} 
 				}					
 			}
@@ -500,7 +559,15 @@ public class TypeChecking {
 	}
 	
 	protected void checkTernOp(Expr.TernOp e) {		
+		checkExpression(e.condition());
+		checkExpression(e.trueBranch());
+		checkExpression(e.falseBranch());
 		
+		Type c_t = (Type) e.condition().attribute(Type.class);
+
+		if (!(c_t instanceof Type.Bool)) {
+			syntax_error("required type boolean, found " + c_t, e);
+		}		
 	}
 	
 	/**

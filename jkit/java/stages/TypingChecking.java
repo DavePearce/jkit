@@ -6,7 +6,9 @@ import jkit.compiler.ClassLoader;
 import jkit.compiler.SyntaxError;
 import jkit.java.*;
 import jkit.java.Decl.*;
+import jkit.java.Stmt.Case;
 import jkit.util.*;
+import jkit.jil.SyntacticElement;
 import jkit.jil.Type;
 import jkit.jil.Modifier;
 import jkit.jil.SourceLocation;
@@ -66,7 +68,7 @@ public class TypingChecking {
 	}
 
 	protected void doField(Field d) {
-
+		doExpression(d.initialiser(), new HashMap<String,Type>());
 	}
 	
 	protected void doStatement(Stmt e, HashMap<String,Type> environment) {
@@ -129,19 +131,15 @@ public class TypingChecking {
 	}
 	
 	protected void doSynchronisedBlock(Stmt.SynchronisedBlock block, HashMap<String,Type> environment) {
-		// The following clone is required, so that any additions to the
-        // environment via local variable defintions in this block are
-        // preserved.
-		HashMap<String,Type> newEnv = (HashMap<String,Type>) environment.clone();
-		
-		// now process every statement in this block.
-		for(Stmt s : block.statements()) {
-			doStatement(s,environment);
-		}
+		doBlock(block,environment);
 	}
 	
 	protected void doTryCatchBlock(Stmt.TryCatchBlock block, HashMap<String,Type> environment) {
+		doBlock(block,environment);
 		
+		for(Stmt.CatchBlock cb : block.handlers()) {
+			doBlock(cb, environment);
+		}
 	}
 	
 	protected void doVarDef(Stmt.VarDef def, HashMap<String,Type> environment) {
@@ -167,27 +165,30 @@ public class TypingChecking {
 	}
 	
 	protected void doReturn(Stmt.Return ret, HashMap<String,Type> environment) {
-		
+		doExpression(ret.expr(), environment);
 	}
 	
 	protected void doThrow(Stmt.Throw ret, HashMap<String,Type> environment) {
-						
+		doExpression(ret.expr(), environment);
+
+		// should check whether enclosing method declares checked exceptions
+        // appropriately.
 	}
 	
 	protected void doAssert(Stmt.Assert ret, HashMap<String,Type> environment) {
-								
+		doExpression(ret.expr(), environment);
 	}
 	
 	protected void doBreak(Stmt.Break brk, HashMap<String,Type> environment) {
-			
+		// nothing	
 	}
 	
 	protected void doContinue(Stmt.Continue brk, HashMap<String,Type> environment) {
-			
+		// nothing
 	}
 	
-	protected void doLabel(Stmt.Label lab, HashMap<String,Type> environment) {				
-
+	protected void doLabel(Stmt.Label lab, HashMap<String,Type> environment) {						
+		doStatement(lab.statement(), environment);
 	}
 	
 	protected void doIf(Stmt.If stmt, HashMap<String,Type> environment) {
@@ -197,23 +198,37 @@ public class TypingChecking {
 	}
 	
 	protected void doWhile(Stmt.While stmt, HashMap<String,Type> environment) {
-			
+		doExpression(stmt.condition(),environment);
+		doStatement(stmt.body(),environment);		
 	}
 	
 	protected void doDoWhile(Stmt.DoWhile stmt, HashMap<String,Type> environment) {
-		
+		doExpression(stmt.condition(),environment);
+		doStatement(stmt.body(),environment);
 	}
 	
 	protected void doFor(Stmt.For stmt, HashMap<String,Type> environment) {
-		
+		doStatement(stmt.initialiser(),environment);
+		doExpression(stmt.condition(),environment);
+		doStatement(stmt.increment(),environment);
+		doStatement(stmt.body(),environment);	
 	}
 	
 	protected void doForEach(Stmt.ForEach stmt, HashMap<String,Type> environment) {
-		
+		doExpression(stmt.source(),environment);
+		doStatement(stmt.body(),environment);
 	}
 	
-	protected void doSwitch(Stmt.Switch s, HashMap<String,Type> environment) {
+	protected void doSwitch(Stmt.Switch sw, HashMap<String,Type> environment) {
+		doExpression(sw.condition(), environment);
+		for(Case c : sw.cases()) {
+			doExpression(c.condition(), environment);
+			for(Stmt s : c.statements()) {
+				doStatement(s, environment);
+			}
+		}
 		
+		// should check that case conditions are final constants here.
 	}
 	
 	protected void doExpression(Expr e, HashMap<String,Type> environment) {	
@@ -269,11 +284,25 @@ public class TypingChecking {
 	}
 	
 	protected void doDeref(Expr.Deref e, HashMap<String,Type> environment) {
-			
+		doExpression(e.target(), environment);		
+		// need to perform field lookup here!
 	}
 	
 	protected void doArrayIndex(Expr.ArrayIndex e, HashMap<String,Type> environment) {
+		doExpression(e.target(), environment);
+		doExpression(e.index(), environment);
 		
+		e.setIndex(implicitCast(e.index(),new Type.Int()));
+				
+		Type target_t = (Type) e.target().attribute(Type.class);
+		
+		if(target_t instanceof Type.Array) {
+			Type.Array at = (Type.Array) target_t;
+			e.attributes().add(at.element());
+		} else {
+			// this is really a syntax error
+			syntax_error("array required, but " + target_t + " found", e);
+		}
 	}
 	
 	protected void doNew(Expr.New e, HashMap<String,Type> environment) {
@@ -338,10 +367,9 @@ public class TypingChecking {
 	
 	protected void doVariable(Expr.Variable e, HashMap<String,Type> environment) {			
 		Type t = environment.get(e.value());
-		if(t == null) {
-			SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
-			throw new SyntaxError("Cannot find symbol - variable \""
-					+ e.value() + "\"", loc.line(), loc.column());
+		if(t == null) {			
+			syntax_error("Cannot find symbol - variable \"" + e.value() + "\"",
+					e);
 		} else {
 			e.attributes().add(t);
 		}
@@ -694,6 +722,18 @@ public class TypingChecking {
 					&& c.components().get(0).first().equals("String");			
 		}
 		return false;
+	}
+	
+	/**
+     * This method is just to factor out the code for looking up the source
+     * location and throwing an exception based on that.
+     * 
+     * @param msg --- the error message
+     * @param e --- the syntactic element causing the error
+     */
+	protected void syntax_error(String msg, SyntacticElement e) {
+		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
+		throw new SyntaxError(msg,loc.line(),loc.column());
 	}
 }
 
