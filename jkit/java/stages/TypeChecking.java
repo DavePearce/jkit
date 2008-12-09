@@ -2,7 +2,6 @@ package jkit.java.stages;
 
 import java.util.*;
 
-import jkit.compiler.InternalException;
 import jkit.compiler.SyntaxError;
 import jkit.java.*;
 import jkit.java.Decl.*;
@@ -11,7 +10,6 @@ import jkit.java.Stmt.*;
 import jkit.jil.Type;
 import jkit.jil.SyntacticElement;
 import jkit.jil.SourceLocation;
-import jkit.jkil.FlowGraph.UnOp;
 import jkit.jkil.Type.Primitive;
 
 /**
@@ -424,11 +422,15 @@ public class TypeChecking {
 	}
 	
 	protected void checkTypedArrayVal(Value.TypedArray e) {		
-		// do nothing!
+		for(Expr v : e.values()) {
+			checkExpression(v);
+		}
 	}
 	
-	protected void checkArrayVal(Value.Array e) {		
-		// not sure what to check here.
+	protected void checkArrayVal(Value.Array e) {		 
+		for(Expr v : e.values()) {
+			checkExpression(v);
+		}
 	}
 	
 	protected void checkClassVal(Value.Class e) {
