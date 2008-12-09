@@ -48,10 +48,10 @@ public class ClassLoader {
 	 * A PackageInfo object contains information about a particular package,
 	 * including the following information:
 	 * 
-	 * 1) where it can be located on the file system (either a director, or a
-	 * jar file)
+	 * 1) where it can be found on the file system (either a directory, or a
+	 *    jar file).
 	 * 
-	 * 2) what classes it contains 
+	 * 2) what classes it contains.
 	 * 
 	 */
 	private class PackageInfo {

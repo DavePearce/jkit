@@ -21,10 +21,7 @@
 
 package jkit.compiler;
 
-import java.io.*;
 import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 import jkit.bytecode.Types;
 import jkit.jkil.Clazz;
