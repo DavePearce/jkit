@@ -10,7 +10,7 @@ import jkit.java.Stmt.*;
 import jkit.jil.Type;
 import jkit.jil.SyntacticElement;
 import jkit.jil.SourceLocation;
-import jkit.jkil.Type.Primitive;
+import jkit.util.Triple;
 
 /**
  * The purpose of this class is to type check the statements and expressions
@@ -79,7 +79,7 @@ public class TypeChecking {
 	}
 
 	protected void checkField(Field d) {
-
+		checkExpression(d.initialiser());
 	}
 	
 	protected void checkStatement(Stmt e) {
@@ -136,15 +136,32 @@ public class TypeChecking {
 	}
 	
 	protected void checkSynchronisedBlock(Stmt.SynchronisedBlock block) {
-		
+		checkBlock(block);
 	}
 	
 	protected void checkTryCatchBlock(Stmt.TryCatchBlock block) {
-		
+		checkBlock(block);
 	}
 	
 	protected void checkVarDef(Stmt.VarDef def) {
+		Type t = def.type();
 		
+		for(Triple<String, Integer, Expr> d : def.definitions()) {								
+			if(d.third() != null) {
+				checkExpression(d.third());
+
+				Type nt = t;
+				for(int i=0;i!=d.second();++i) {
+					nt = new Type.Array(nt);
+				}
+
+				Type i_t = (Type) d.third().attribute(Type.class);
+
+				if (!subtype(nt, i_t)) {
+					syntax_error("required type " + nt + ", found type " + i_t, def);
+				}
+			}
+		}
 	}
 	
 	protected void checkAssignment(Stmt.Assignment def) {
@@ -279,6 +296,8 @@ public class TypeChecking {
 			checkCharVal((Value.Char)e);
 		} else if(e instanceof Value.Int) {
 			checkIntVal((Value.Int)e);
+		} else if(e instanceof Value.Short) {
+			checkShortVal((Value.Short)e);
 		} else if(e instanceof Value.Long) {
 			checkLongVal((Value.Long)e);
 		} else if(e instanceof Value.Float) {
@@ -397,9 +416,13 @@ public class TypeChecking {
 		// do nothing!		
 	}
 	
-	protected void checkIntVal(Value.Int e) {
+	protected void checkShortVal(Value.Short e) {		
 		// do nothing!
 	}
+	
+	protected void checkIntVal(Value.Int e) {
+		// do nothing!
+	}	
 	
 	protected void checkLongVal(Value.Long e) {		
 		// do nothing!
@@ -593,12 +616,10 @@ public class TypeChecking {
      * @param t2
      * @return
      */
-	protected boolean subtype(Type t1, Type t2) {				
-		if (t1.equals(t2)) { return true; }
-						
-		if(t1 instanceof Primitive && t2 instanceof Primitive) {
-			// First, do all (non-trivial) primitive subtyping options
-			
+	protected boolean subtype(Type t1, Type t2) {			
+		if (t1.equals(t2)) { return true; }				
+		if(t1 instanceof Type.Primitive && t2 instanceof Type.Primitive) {			
+			// First, do all (non-trivial) primitive subtyping options			
 			if(t1 instanceof Type.Double && subtype(new Type.Float(),t2)) { 
 				return true;
 			} else if(t1 instanceof Type.Float && subtype(new Type.Long(),t2)) {
@@ -615,8 +636,7 @@ public class TypeChecking {
 		} else {
 			// Second, consider subtyping relationships between references			
 		}
-		
-		
+				
 		return false;
 	}
 	

@@ -170,6 +170,14 @@ public interface Stmt extends SyntacticElement {
 		public Expr rhs() {
 			return rhs;
 		}
+		
+		public void setLhs(Expr lhs) {
+			this.lhs = lhs;
+		}
+
+		public void setRhs(Expr rhs) {
+			this.rhs = rhs;
+		}
 	}
 
 	public static class Return extends SyntacticElementImpl implements Stmt {

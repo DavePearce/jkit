@@ -12,7 +12,10 @@ import jkit.jil.SyntacticElement;
 import jkit.jil.Type;
 import jkit.jil.Modifier;
 import jkit.jil.SourceLocation;
+import jkit.jkil.FlowGraph;
 import jkit.jkil.FlowGraph.ArrayVal;
+import jkit.jkil.FlowGraph.Assign;
+import jkit.jkil.FlowGraph.New;
 
 /**
  * This class goes through a JavaFile and propagate type attributes
@@ -145,15 +148,27 @@ public class TypePropagation {
 	protected void doVarDef(Stmt.VarDef def, HashMap<String,Type> environment) {
 		Type t = def.type();
 		
-		for(Triple<String, Integer, Expr> d : def.definitions()) {
-			Type nt = t;
-			if(d.third() != null) {
-				doExpression(d.third(),environment);
-			}
-			for(int i=0;i!=d.second();++i) {
+		List<Triple<String, Integer, Expr>> defs = def.definitions();
+		for(int i=0;i!=defs.size();++i) {
+			Triple<String, Integer, Expr> d = defs.get(i);
+			
+			Type nt = t;						
+			doExpression(d.third(),environment);						
+			
+			for(int j=0;j!=d.second();++j) {
 				nt = new Type.Array(nt);
-			}									
+			}
+			
 			environment.put(d.first(),nt);
+			
+			// perform type inference (if necesssary)
+			if(d.third() != null && isUnknownConstant(d.third())) {
+				Expr c = unknownConstantInference(d.third(), nt,
+						(SourceLocation) d.third
+								.attribute(SourceLocation.class));
+				
+				defs.set(i,new Triple(d.first(),d.second(),c));
+			}
 		}
 	}
 	
@@ -161,7 +176,16 @@ public class TypePropagation {
 		doExpression(def.lhs(),environment);	
 		doExpression(def.rhs(),environment);			
 
-		// type inference stuff goes here. 
+		Type lhs_t = (Type) def.lhs().attribute(Type.class);
+		
+		// perform type inference (if necesssary)
+		if(isUnknownConstant(def.rhs())) {
+			Expr c = unknownConstantInference(def.rhs(), lhs_t,
+					(SourceLocation) def.rhs()
+							.attribute(SourceLocation.class));
+			
+			def.setRhs(c);			
+		}		
 	}
 	
 	protected void doReturn(Stmt.Return ret, HashMap<String,Type> environment) {
@@ -710,12 +734,153 @@ public class TypePropagation {
 	}
 	
 	/**
+     * An unknown constant is a constant expression without any explicit type
+     * labels. For example:
+     * 
+     * <pre>
+     * short x = 1 + 1;
+     * </pre>
+     * 
+     * Here, "1 + 1" is an unknown constant expression, since the type of it
+     * must be inferred from the assignment. That is because, if the type of
+     * "1+1" were resolved to be int, then the above could not compile!
+     * 
+     * @param e
+     * @return
+     */
+	protected boolean isUnknownConstant(Expr e) {
+		if(e instanceof Value.Int) {
+			return true;
+		} else if(e instanceof Expr.BinOp) {
+			Expr.BinOp bop = (Expr.BinOp) e;
+			
+			switch(bop.op()) {
+				case Expr.BinOp.ADD:
+				case Expr.BinOp.SUB:
+				case Expr.BinOp.MUL:
+				case Expr.BinOp.DIV:
+				case Expr.BinOp.MOD:
+					return isUnknownConstant(bop.lhs()) && isUnknownConstant(bop.rhs());
+					
+				case Expr.BinOp.SHL:
+				case Expr.BinOp.SHR:
+				case Expr.BinOp.USHR:								
+					return isUnknownConstant(bop.lhs()); 								
+			}
+		} else if(e instanceof Expr.UnOp) {
+			Expr.UnOp uop = (Expr.UnOp) e;
+			switch(uop.op()) {
+				case Expr.UnOp.NEG:
+				case Expr.UnOp.INV:
+					return isUnknownConstant(uop.expr());
+			}
+		}
+		
+		return false;
+	}
+	
+	/**
+     * An unknown constant is a constant expression without any explicit type
+     * labels. For example:
+     * 
+     * <pre>
+     * short x = 1 + 1;
+     * </pre>
+     * 
+     * Here, "1 + 1" is an unknown constant expression, since the type of it
+     * must be inferred from the assignment. That is because, if the type of
+     * "1+1" were resolved to be int, then the above could not compile!
+     * 
+     * @param e
+     * @return
+     */
+	protected int evaluateUnknownConstant(Expr e) {
+		if(e instanceof Value.Int) {
+			return ((Value.Int)e).value();
+		} else if(e instanceof Expr.BinOp) {
+			Expr.BinOp bop = (Expr.BinOp) e;
+			
+			int lhs = evaluateUnknownConstant(bop.lhs());
+			int rhs = evaluateUnknownConstant(bop.rhs());
+			
+			switch(bop.op()) {
+				case Expr.BinOp.ADD:
+					return lhs + rhs;					
+				case Expr.BinOp.SUB:
+					return lhs - rhs;					
+				case Expr.BinOp.MUL:
+					return lhs * rhs;					
+				case Expr.BinOp.DIV:
+					return lhs / rhs;					
+				case Expr.BinOp.MOD:
+					return lhs % rhs;					
+				case Expr.BinOp.SHL:
+					return lhs << rhs;
+				case Expr.BinOp.SHR:
+					return lhs >> rhs;
+				case Expr.BinOp.USHR:
+					return lhs >>> rhs;					 							
+			}
+		} else if(e instanceof Expr.UnOp) {
+			Expr.UnOp uop = (Expr.UnOp) e;
+			int lhs = evaluateUnknownConstant(uop.expr());
+			
+			switch(uop.op()) {
+				case Expr.UnOp.NEG:
+					return -lhs;
+				case Expr.UnOp.INV:
+					return ~lhs;
+			}
+		}
+		
+		syntax_error("cannot evaluate a known expression!",e);
+		return 0; // unreachable
+	}
+	
+	/**
+     * This method accepts an unknown constant expression, and a required type
+     * and creates the appropriate value object.
+     * 
+     * @param c
+     * @param t
+     */
+	protected Expr unknownConstantInference(Expr e, Type lhs_t, SourceLocation loc) {
+		int val = evaluateUnknownConstant(e);
+		// first do primitive types
+		if(lhs_t instanceof Type.Byte && val >= -128 && val <= 127) {
+			return new Value.Byte((byte)val, new Type.Byte(), loc);				
+		} else if(lhs_t instanceof Type.Char && val >= 0 && val <= 65535) {
+			return new Value.Char((char)val, new Type.Char(), loc);				
+		} else if(lhs_t instanceof Type.Short && val >= -32768 && val <= 32768) {
+			return new Value.Short((short)val, new Type.Short(), loc);				
+		} else if(isWrapper(lhs_t)) {
+			Type.Clazz ref = (Type.Clazz) lhs_t;			
+			String s = ref.components().get(0).first();				
+			if(s.equals("Byte") && val >= -128 && val <= 127) {
+				ArrayList<Expr> params = new ArrayList<Expr>();
+				params.add(new Value.Byte((byte)val));
+				return new Expr.New(lhs_t,null,params,new ArrayList<Decl>(), lhs_t, loc);				
+			} else if(s.equals("Character") && val >= 0 && val <= 65535) {
+				ArrayList<Expr> params = new ArrayList<Expr>();
+				params.add(new Value.Byte((byte)val));
+				return new Expr.New(lhs_t,null,params,new ArrayList<Decl>(), lhs_t, loc);				
+			} else if(s.equals("Short") && val >= -32768 && val <= 32768) {
+				ArrayList<Expr> params = new ArrayList<Expr>();
+				params.add(new Value.Byte((byte)val));
+				return new Expr.New(lhs_t,null,params,new ArrayList<Decl>(), lhs_t, loc);				
+			}
+		} 
+		
+		return new Value.Int(val,new Type.Int(),loc);
+	}
+	
+	/**
      * Check wither a given type is a reference to java.lang.String or not.
      * 
      * @param t
      * @return
      */
-	private static boolean isString(Type t) {
+	protected static boolean isString(Type t) {
 		if(t instanceof Type.Clazz) {
 			Type.Clazz c = (Type.Clazz) t;
 			 return c.pkg().equals("java.lang") && c.components().size() == 1

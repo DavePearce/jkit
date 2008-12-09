@@ -29,7 +29,7 @@ public interface Value extends Expr {
 	 */
 	public static class Bool extends Number {
 		public Bool(boolean value, Attribute... attributes) {
-			super(value?1:0);
+			super(value?1:0, attributes);
 		}
 		
 		public boolean value() {
@@ -110,6 +110,7 @@ public interface Value extends Expr {
 		private long value;
 		
 		public Long(long value, Attribute... attributes) {
+			super(attributes);
 			this.value=value;
 		}
 		
