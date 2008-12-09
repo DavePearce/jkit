@@ -22,10 +22,10 @@ import jkit.jkil.FlowGraph.ArrayVal;
  * @author djp
  * 
  */
-public class TypingChecking {
+public class TypePropagation {
 	private ClassLoader loader;
 	
-	public TypingChecking(ClassLoader loader) {
+	public TypePropagation(ClassLoader loader) {
 		this.loader = loader; 
 	}
 	
