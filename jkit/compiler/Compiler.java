@@ -13,9 +13,15 @@ public interface Compiler {
 	
 	/**
 	 * Get the list of types defined in the source file being compiled.
+	 * 
 	 * @return
 	 */
-	public List<Type> types();
+	public List<Type.Clazz> types();
 	
-	
+	/**
+     * Compile the source file to produce a list of one or more jil classes.
+     * 
+     * @return
+     */
+	public List<Clazz> compile();
 }
