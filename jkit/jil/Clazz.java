@@ -58,6 +58,16 @@ public class Clazz extends SyntacticElementImpl {
 		return type;
 	}
 	
+
+	/**
+     * Name of class. This is just a convenience method. 
+     * 
+     * @return
+     */
+	public String name() {
+		return type.components().get(type.components().size() - 1).first();
+	}
+	
 	/**
      * Access the superclass of this class. This is useful (amongst other
      * things) for determining it's package, and/or any generic parameters it

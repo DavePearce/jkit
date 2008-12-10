@@ -4,7 +4,7 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-import jkit.jkil.Clazz;
+import jkit.jil.*;
 import jkit.util.Pair;
 
 /**
@@ -17,19 +17,21 @@ import jkit.util.Pair;
  * 
  */
 public class ClassCompiler {
+	
 	/**
-	 * Represents a pipeline configuration, for a given input file type.
-	 * 
-	 * @author djp
-	 * 
-	 */
+     * Represents a pipeline configuration, for a given input file type.
+     * 
+     * @author djp
+     * 
+     */
 	public static class Pipeline {
 		public Class<?> fileReader;
 		public Stage[] stages;
 		public Class<?> fileWriter;
 		public String target;
 
-		public Pipeline(Class<?> fileReader, Class<?> fileWriter, String target, Stage... stages) {
+		public Pipeline(Class<?> fileReader, Class<?> fileWriter,
+				String target, Stage... stages) {
 			this.fileReader = fileReader;
 			this.fileWriter = fileWriter;
 			this.stages = stages;
@@ -202,14 +204,14 @@ public class ClassCompiler {
 
 			for(Clazz c : classes) {
 				logout.println("Parsed skeleton " + c.name());
-				loader.updateInfo(c); 
+				// loader.updateInfo(c); 
 			}
 
 			// Second, read the full source of each class
 			classes = reader.readClasses();
 			for(Clazz c : classes) {
 				logout.println("Parsed class " + c.name());
-				loader.updateInfo(c); 
+				// loader.updateInfo(c); 
 			}
 
 			// Third, apply the appropriate pipeline stages
@@ -237,7 +239,7 @@ public class ClassCompiler {
 									
 				if(!outfile.equals("")) { outfile += File.separatorChar; }
 				boolean firstTime = true;
-				for (Pair<String, jkit.jkil.Type[]> p : c.type().classes()) {
+				for (Pair<String, List<Type>> p : c.type().components()) {
 					if (!firstTime) {
 						outfile += "$";
 					}

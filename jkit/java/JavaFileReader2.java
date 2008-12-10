@@ -1604,7 +1604,7 @@ public class JavaFileReader2 {
 							genArgs));
 				}
 
-				r = new Type.Clazz(components);
+				r = new Type.Clazz("",components);
 
 			}
 			
@@ -1645,7 +1645,7 @@ public class JavaFileReader2 {
 					.add(new Pair<String, List<Type>>(text, genArgs));
 		}
 
-		return new Type.Clazz(components);
+		return new Type.Clazz("",components);
 	}
 
 	protected static Type.Variable parseVariableType(Tree type) {
