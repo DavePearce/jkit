@@ -26,7 +26,6 @@ import java.util.*;
 
 import jkit.bytecode.ClassFileWriter;
 import jkit.compiler.ClassCompiler;
-import jkit.compiler.ClassTable;
 import jkit.compiler.InternalException;
 import jkit.compiler.Stage;
 import jkit.compiler.SyntaxError;

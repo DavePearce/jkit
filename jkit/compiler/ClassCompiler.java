@@ -52,13 +52,14 @@ public class ClassCompiler {
 	private ClassLoader loader;
 		
 	/**
-	 * The compilation queue is a list of files which are scheduled for
-	 * compilation. The purpose of the queue is simply to ensure that files to
-	 * not get compiled twice. For example, suppose we have files "C1.java" and
-	 * "C2.java" on the queue; we begin compiling "C1.java" and this in turn
-	 * forces the compilation of "C2.java"; then, "C2.java" is automatically
-	 * removed from the queue, thus preventing it from being compiled again.
-	 */
+     * The compilation queue is a list of files which are scheduled for
+     * compilation. The purpose of the queue is simply to ensure that files to
+     * not get compiled twice. For example, suppose we have files "C1.java" and
+     * "C2.java" on the queue; we begin compiling "C1.java" and this in turn
+     * forces the compilation of "C2.java"; then, when this is complete,
+     * "C2.java" is automatically removed from the queue, thus preventing it
+     * from being compiled again.
+     */
 	private ArrayList<String> compilationQueue = new ArrayList<String>(); 
 	
 	/**
@@ -157,6 +158,7 @@ public class ClassCompiler {
 		while(!compilationQueue.isEmpty()) {
 			classes.addAll(compile(compilationQueue.get(0)));
 		}
+		
 		return classes;
 	}
 	
