@@ -7,8 +7,8 @@ import java.io.*;
 
 import jkit.bytecode.ClassFileReader;
 import jkit.bytecode.Types;
-import jkit.jkil.Clazz;
-import jkit.jkil.Type;
+import jkit.jil.Clazz;
+import jkit.jil.Type;
 import jkit.util.Pair;
 import jkit.util.Triple;
 
@@ -170,16 +170,7 @@ public class ClassLoader {
 				
 		buildPackageMap();
 	}
-	
-	/**
-	 * This is method is used to override the information stored about Clazz c.
-	 * This is typically used during compilation, when the file is initially
-	 * loaded and then again when it has been fully compiled.
-	 */
-	public void updateInfo(Clazz c) {
-		classtable.put(refName(c.type()), c);
-	}
-	
+		
 	/**
 	 * This function checks whether the supplied package exists or not.
 	 * 
@@ -249,8 +240,8 @@ public class ClassLoader {
 	 * @return
 	 */
 	private Type.Reference resolveClassName(String pkg, String className) {
-		ArrayList<Pair<String,Type[]>> classes = new ArrayList<Pair<String,Type[]>>();
-		classes.add(new Pair<String, Type[]>(className,new Type[0]));
+		ArrayList<Pair<String,List<Type>>> classes = new ArrayList<Pair<String,List<Type>>>();
+		classes.add(new Pair<String, List<Type>>(className,new ArrayList<Type>()));
 		String fullClassName = className;
 		String outerClassName = className;
 		while(pkg != null) {			
@@ -258,7 +249,7 @@ public class ClassLoader {
 			if (pkgInfo != null) {				
 				if(pkgInfo.classes.contains(fullClassName)) {
 					// Found the class!!
-					return Type.referenceType(pkg,classes.toArray(new Pair[classes.size()]));
+					return new Type.Clazz(pkg,classes);
 				} else if (pkgInfo.classes.contains(outerClassName)
 						&& !pkgInfo.compiledClasses.contains(outerClassName)) {
 					// If we get here, then we may have a source file for the
@@ -277,7 +268,7 @@ public class ClassLoader {
 				// Therefore, it may be specifying an inner class and we need to check.
 				outerClassName = pathChild(pkg);
 				fullClassName = outerClassName +"$" + fullClassName;
-				classes.add(0,new Pair<String, Type[]>(pathChild(pkg),new Type[0]));				
+				classes.add(0,new Pair<String, List<Type>>(pathChild(pkg),new ArrayList<Type>()));				
 				pkg = pathParent(pkg);
 			}		
 		}
@@ -297,7 +288,7 @@ public class ClassLoader {
 	 * @throws ClassNotFoundException
 	 *             If it couldn't load the class
 	 */
-	public Clazz loadClass(Type.Reference ref) throws ClassNotFoundException {		
+	public Clazz loadClass(Type.Clazz ref) throws ClassNotFoundException {		
 		String name = refName(ref);
 		
 		// First, look in the classtable to see whether we have loaded this
@@ -315,12 +306,15 @@ public class ClassLoader {
 
 		if(c == null) { throw new ClassNotFoundException("Unable to load class " + name); }
 		
-		if(ref.classes().length > 1) {			
+		if(ref.components().size() > 1) {			
 			// Now, if this is an inner class, we need to load it's parent, so
 			// that we can finalise this classes modifiers.
-			Pair<String,Type[]>[] nclasses = new Pair[ref.classes().length-1];
-			System.arraycopy(ref.classes(), 0, nclasses, 0, nclasses.length);			
-			Clazz parent = loadClass(Type.referenceType(ref.pkg(), nclasses));
+			List<Pair<String,List<Type>>> nclasses = new ArrayList<Pair<String,List<Type>>>(ref.components());			
+			Clazz parent = loadClass(new Type.Clazz(ref.pkg(), nclasses));
+
+			/**
+			 * INNER CLASSES ARE BEING IGNORED FOR NOW --- djp
+			 * 
 			// now, iterate parent's inner classes to find this one
 			for (Triple<Type.Reference, Integer, Boolean> i : parent.inners()) {
 				if (i.first().supsetEqOf(ref)) {
@@ -329,7 +323,8 @@ public class ClassLoader {
 					c.setAnonymous(i.third());
 					return c;
 				}
-			}									
+			}	
+			*/								
 		}
 				
 		return c;
@@ -570,12 +565,17 @@ public class ClassLoader {
 	}
 
 	/**
-	 * Convert a type reference into a proper name.
+	 * Convert a class reference type into a proper name.
 	 */
-	String refName(Type.Reference ref) {
-		String descriptor = Types.descriptor(ref,false);
-		descriptor = descriptor.substring(1, descriptor.length() - 1); // strip off "L" and ";"
-		return descriptor.replace('/','.');		
+	String refName(Type.Clazz ref) {
+		String descriptor = ref.pkg();
+		for(Pair<String,List<Type>> c : ref.components()) {
+			if(!descriptor.equals("")) {
+				descriptor += ".";
+			}
+			descriptor += c.first();
+		}
+		return descriptor;
 	}
 	
 	/**

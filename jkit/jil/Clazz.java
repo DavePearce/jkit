@@ -54,7 +54,7 @@ public class Clazz extends SyntacticElementImpl {
      * 
      * @return
      */
-	public Type type() {
+	public Type.Clazz type() {
 		return type;
 	}
 	
@@ -65,7 +65,7 @@ public class Clazz extends SyntacticElementImpl {
      * 
      * @return
      */
-	public Type superClass() {
+	public Type.Clazz superClass() {
 		return superClass;
 	}
 	

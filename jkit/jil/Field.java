@@ -49,4 +49,65 @@ public class Field extends SyntacticElementImpl {
      * @return
      */
 	public List<Modifier> modifiers() { return modifiers; }
+	
+	/**
+     * Check whether this field has one of the "base" modifiers (e.g. static,
+     * public, private, etc). These are found in java.lang.reflect.Modifier.
+     * 
+     * @param modifier
+     * @return true if it does!
+     */
+	public boolean hasModifier(int modifier) {
+		for(Modifier m : modifiers) {
+			if(m instanceof Modifier.Base) {
+				Modifier.Base b = (Modifier.Base) m;
+				if(b.modifier() == modifier) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Check whether this field is abstract
+	 */
+	public boolean isAbstract() {
+		return hasModifier(java.lang.reflect.Modifier.ABSTRACT);
+	}
+
+	/**
+	 * Check whether this field is final
+	 */
+	public boolean isFinal() {
+		return hasModifier(java.lang.reflect.Modifier.FINAL);
+	}
+
+	/**
+	 * Check whether this field is static
+	 */
+	public boolean isStatic() {
+		return hasModifier(java.lang.reflect.Modifier.STATIC);
+	}
+
+	/**
+	 * Check whether this field is public
+	 */
+	public boolean isPublic() {
+		return hasModifier(java.lang.reflect.Modifier.PUBLIC);
+	}
+
+	/**
+	 * Check whether this field is protected
+	 */
+	public boolean isProtected() {
+		return hasModifier(java.lang.reflect.Modifier.PROTECTED);
+	}
+
+	/**
+	 * Check whether this field is private
+	 */
+	public boolean isPrivate() {
+		return hasModifier(java.lang.reflect.Modifier.PRIVATE);
+	}
 }

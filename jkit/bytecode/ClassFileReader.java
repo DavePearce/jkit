@@ -26,16 +26,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Modifier;
 import java.util.*;
 
 import jkit.compiler.ClassReader;
-import jkit.jkil.Clazz;
-import jkit.jkil.Field;
-import jkit.jkil.Method;
-import jkit.jkil.Type;
-import jkit.jkil.Type.Reference;
-import jkit.jkil.Type.Variable;
+import jkit.jil.*;
 import jkit.util.*;
 
 @SuppressWarnings("unused")
@@ -157,7 +151,7 @@ public class ClassFileReader implements ClassReader {
 				: getString(read_u2(items[read_u2(index + 4)]));
 		
 		index += 6;		
-		List<Type.Reference> interfaces = parseInterfaces(index);		
+		List<Type.Clazz> interfaces = parseInterfaces(index);		
 		int count = read_u2(index);
 		index += 2 + (count * 2);
 				
@@ -189,7 +183,7 @@ public class ClassFileReader implements ClassReader {
 		}
 	
 		ArrayList<Attribute> attributes = parseAttributes(index);
-		List<Triple<Type.Reference,Integer,Boolean>> innerClasses = new ArrayList<Triple<Type.Reference,Integer,Boolean>>();
+		List<Triple<Type.Reference, Integer, Boolean>> innerClasses = new ArrayList<Triple<Type.Reference, Integer, Boolean>>();
 		
 		// now, try and figure out the full type of this class
 		
@@ -202,13 +196,12 @@ public class ClassFileReader implements ClassReader {
 				innerClasses = ((Attribute.InnerClasses) a).innerClasses();				
 			}
 		} 	
-		Type.Reference type = parseClassDescriptor("L" + name + ";");
-		Type.Reference superType = superClass == null ? null
+		Type.Clazz type = parseClassDescriptor("L" + name + ";");
+		Type.Clazz superType = superClass == null ? null
 				: parseClassDescriptor("L" + superClass + ";");
 		
 		if(s != null) { 
-			Triple<List<Type>,Type.Reference,List<Type.Reference>> st;
-			//System.out.println("SIGNATURE " + s.signature());
+			Triple<List<Type>,Type.Clazz,List<Type.Clazz>> st;
 			st = parseClassSignature(s.signature());
 			interfaces = st.third();
 			superType = st.second();
@@ -216,15 +209,16 @@ public class ClassFileReader implements ClassReader {
 			// There is a bug here, when we have an inner class, whose outer 
 			// class has generic parameters.
 			List<Type> genericParams = st.first();
-			Pair<String,Type[]>[] classes = type.classes();
-			classes[classes.length - 1] = new Pair<String, Type[]>(
-					classes[classes.length - 1].first(), genericParams
-							.toArray(new Type[genericParams.size()]));
-			type = Type.referenceType(type.pkg(),classes,type.elements());
+			List<Pair<String,List<Type>>> classes = type.components();
+			Pair<String,List<Type>> nc = new Pair<String, List<Type>>(
+					classes.get(classes.size() - 1).first(), genericParams);
+			 
+			classes.set(classes.size()-1,nc);
+			type = new Type.Clazz(type.pkg(),classes);
 		}
 		
-		Clazz c = new Clazz(modifiers, type, superType, interfaces, fields,
-				methods, innerClasses);
+		Clazz c = new Clazz(type, listModifiers(modifiers), superType, interfaces, fields,
+				methods);
 		ArrayList<Clazz> r = new ArrayList<Clazz>();
 		r.add(c);
 		return 	r;			 		
@@ -240,12 +234,12 @@ public class ClassFileReader implements ClassReader {
 	 * 
 	 * @return
 	 */
-	protected ArrayList<Type.Reference> parseInterfaces(int interfaces) {
+	protected ArrayList<Type.Clazz> parseInterfaces(int interfaces) {
 		int count = read_u2(interfaces);
 		int index = interfaces + 2;
-		ArrayList<Type.Reference> r = new ArrayList<Type.Reference>();		
+		ArrayList<Type.Clazz> r = new ArrayList<Type.Clazz>();		
 		for(int i=0;i!=count;++i,index+=2) {
-			Type.Reference t = parseClassDescriptor("L"+getString(read_u2(items[read_u2(index)])));
+			Type.Clazz t = parseClassDescriptor("L"+getString(read_u2(items[read_u2(index)])));
 			r.add(t); 
 		}
 		return r;
@@ -295,16 +289,14 @@ public class ClassFileReader implements ClassReader {
 		for(Attribute at : attributes) {
 			if(at instanceof Attribute.Signature) {
 				desc = ((Attribute.Signature) at).signature();
-				//System.out.println("DESC " + desc);
 			} else if(at instanceof Attribute.ConstantValue) {
-				constValue = ((Attribute.ConstantValue) at).constValue();
-				//System.out.println("Const value " + constValue);
+				constValue = ((Attribute.ConstantValue) at).constValue();		
 			}
 		}
-		//System.out.println("Parsing field dec " + desc);
+		
 		Type type = parseDescriptor(desc);		
-		//System.out.println("Name " + name);		
-		return new Field(modifiers, type, name, constValue);
+		
+		return new Field(name, type, listModifiers(modifiers));
 	}
 	
 	/**
@@ -351,7 +343,7 @@ public class ClassFileReader implements ClassReader {
 			index += len + 6;
 		}
 		
-		List<Type.Reference> exceptions = new ArrayList<Type.Reference>(); // FIXME:
+		List<Type.Clazz> exceptions = new ArrayList<Type.Clazz>(); 
 		
         // we use the desc type, unless there is a 
 		// signature attribute, since this provides
@@ -366,7 +358,7 @@ public class ClassFileReader implements ClassReader {
 		
 		Type.Function type = parseMethodDescriptor(desc);
 						
-		return new Method(modifiers, type, name, exceptions);// FIXME
+		return new Method(name, type, listModifiers(modifiers), exceptions);
 	}
 	
 	/**
@@ -417,7 +409,7 @@ public class ClassFileReader implements ClassReader {
 	}
 	
 	protected Attribute.Exceptions parseExceptions(int offset, String name) {
-		ArrayList<Type.Reference> exceptions = new ArrayList<Type.Reference>();
+		ArrayList<Type.Clazz> exceptions = new ArrayList<Type.Clazz>();
 		int numExceptions = read_u2(offset + 6);
 		offset += 8;
 		for(int i=0;i!=numExceptions;++i) {
@@ -468,7 +460,7 @@ public class ClassFileReader implements ClassReader {
 	 * @param descriptor
 	 * @return
 	 */	
-	protected Type.Reference parseClassDescriptor(String descriptor) {
+	protected Type.Clazz parseClassDescriptor(String descriptor) {
 		return parseInternalClassDescriptor(descriptor,0).first();
 	}
 	
@@ -478,7 +470,7 @@ public class ClassFileReader implements ClassReader {
 	 * 
 	 * @return
 	 */
-	protected Triple<List<Type>, Type.Reference, List<Type.Reference>> parseClassSignature(
+	protected Triple<List<Type>, Type.Clazz, List<Type.Clazz>> parseClassSignature(
 			String descriptor) {
 		int pos = 0;
 		ArrayList<Type> targs = new ArrayList<Type>();
@@ -492,24 +484,24 @@ public class ClassFileReader implements ClassReader {
 			}
 			pos = pos + 1; // skip '>'
 		}
-		Pair<Type.Reference, Integer> state = parseInternalClassDescriptor(
+		Pair<Type.Clazz, Integer> state = parseInternalClassDescriptor(
 				descriptor, pos);
-		Type.Reference superT = state.first();
+		Type.Clazz superT = state.first();
 		pos = state.second();
-		ArrayList<Type.Reference> interfaces = new ArrayList<Type.Reference>();
+		ArrayList<Type.Clazz> interfaces = new ArrayList<Type.Clazz>();
 		while (pos < descriptor.length()) {
 			state = parseInternalClassDescriptor(descriptor, pos);
 			interfaces.add(state.first());
 			pos = state.second();
 		}
-		return new Triple<List<Type>, Reference, List<Reference>>(targs,
+		return new Triple<List<Type>, Type.Clazz, List<Type.Clazz>>(targs,
 				superT, interfaces);
 	}
 	
 	protected Pair<Type,Integer> parseInternalDescriptor(String descriptor, int pos) {		
 		char c = descriptor.charAt(pos);		
 		if(c == 'L') {
-			Pair<Type.Reference,Integer> p = parseInternalClassDescriptor(descriptor,pos);
+			Pair<Type.Clazz,Integer> p = parseInternalClassDescriptor(descriptor,pos);
 			return new Pair<Type,Integer>(p.first(),p.second());
 		} else if(c == '[') {
 			int num = 0;			
@@ -517,13 +509,16 @@ public class ClassFileReader implements ClassReader {
 				++num; ++pos;
 			}
 			Pair<Type,Integer> tmp = parseInternalDescriptor(descriptor,pos);
-			Type type = Type.arrayType(num, tmp.first());
+			Type type = tmp.first();
+			for(int i=0;i!=num;++i) {
+				type = new Type.Array(type);
+			}			
 			return new Pair<Type,Integer>(type,tmp.second());
 		} else if(c == 'T') {
 			// this is a type variable
 			int start = ++pos;
 			while(descriptor.charAt(pos) != ';') { ++pos; }			
-			Type type = Type.variableType(descriptor.substring(start,pos), new Type[0]);
+			Type type = new Type.Variable(descriptor.substring(start,pos), new ArrayList<Type>());
 			return new Pair<Type,Integer>(type,pos+1);
 		} else if(c == '+') {
 			// FIXME: added wildcard upper bound
@@ -535,33 +530,33 @@ public class ClassFileReader implements ClassReader {
 			// is primitive type ...
 			switch(c) {
 			case 'B':
-				return new Pair<Type,Integer>(Type.byteType(),pos+1);						        	
+				return new Pair<Type,Integer>(new Type.Byte(),pos+1);						        	
 			case 'C':
-				return new Pair<Type,Integer>(Type.charType(),pos+1);			        	
+				return new Pair<Type,Integer>(new Type.Char(),pos+1);			        	
 			case 'D':
-				return new Pair<Type,Integer>(Type.doubleType(),pos+1);			        	
+				return new Pair<Type,Integer>(new Type.Double(),pos+1);			        	
 			case 'F':				
-				return new Pair<Type,Integer>(Type.floatType(),pos+1);			        	
+				return new Pair<Type,Integer>(new Type.Float(),pos+1);			        	
 			case 'I':
-				return new Pair<Type,Integer>(Type.intType(),pos+1);		        	
+				return new Pair<Type,Integer>(new Type.Int(),pos+1);		        	
 			case 'J':
-				return new Pair<Type,Integer>(Type.longType(),pos+1);			        	
+				return new Pair<Type,Integer>(new Type.Long(),pos+1);			        	
 			case 'S':
-				return new Pair<Type,Integer>(Type.shortType(),pos+1);	
+				return new Pair<Type,Integer>(new Type.Short(),pos+1);	
 			case 'Z':
-				return new Pair<Type,Integer>(Type.booleanType(),pos+1);
+				return new Pair<Type,Integer>(new Type.Bool(),pos+1);
 			case 'V':
-				return new Pair<Type,Integer>(Type.voidType(),pos+1);
-            // FIXME:
+				return new Pair<Type,Integer>(new Type.Void(),pos+1);
 			case '*':
-				return new Pair<Type,Integer>(Type.wildcardType(new Type[0],new Type[0]),pos+1); 
+	            // FIXME: wildcard bounds.
+				return new Pair<Type,Integer>(new Type.Wildcard(null,null),pos+1); 
 			default:
 				throw new RuntimeException("Unknown type qualifier: " + c);
 			}
 		}
 	}
 		
-	protected Pair<Type.Reference, Integer> parseInternalClassDescriptor(
+	protected Pair<Type.Clazz, Integer> parseInternalClassDescriptor(
 			String descriptor, int pos) {		
 		assert descriptor.charAt(pos) == 'L';
 		
@@ -573,7 +568,7 @@ public class ClassFileReader implements ClassReader {
 		}
 		String pkg = descriptor.substring(start,last).replace('/','.');
 		
-		ArrayList<Pair<String,Type[]>> classes = new ArrayList<Pair<String,Type[]>>();
+		ArrayList<Pair<String,List<Type>>> classes = new ArrayList<Pair<String,List<Type>>>();
 		// back track to make my life easier
 		pos = last;		
 		while (pos < descriptor.length() && descriptor.charAt(pos) != ';') {
@@ -588,7 +583,7 @@ public class ClassFileReader implements ClassReader {
 				pos++;
 			}
 			String name = descriptor.substring(last, pos);
-			Type[] targs;
+			ArrayList<Type> targs;
 			if (pos < descriptor.length() && descriptor.charAt(pos) == '<') {				
 				ArrayList<Type> ts = new ArrayList<Type>();				
 				pos = pos + 1; // skip '<'
@@ -598,16 +593,15 @@ public class ClassFileReader implements ClassReader {
 					pos=ti.second();					
 				}
 				pos=pos+1; // skip '>'
-				targs = ts.toArray(new Type[ts.size()]);				
+				targs = ts;				
 			} else {
-				targs = new Type[0];
+				targs = new ArrayList<Type>();
 			}
-			classes.add(new Pair<String,Type[]>(name, targs));
+			classes.add(new Pair<String,List<Type>>(name, targs));
 		}
-		@SuppressWarnings("unchecked")
-		Pair<String,Type[]>[] rs = new Pair[classes.size()];		
-		Type.Reference r = Type.referenceType(pkg,classes.toArray(rs));		
-		return new Pair<Reference, Integer>(r,pos+1);
+		@SuppressWarnings("unchecked")			
+		Type.Clazz r = new Type.Clazz(pkg,classes);		
+		return new Pair<Type.Clazz, Integer>(r,pos+1);
 	}
 	
 	protected
@@ -618,9 +612,9 @@ public class ClassFileReader implements ClassReader {
 		pos = pos + 1; // skip ':'		
 		Type lowerBound = null;
 		if(descriptor.charAt(pos) == ':') {
-			lowerBound = Type.referenceType("java.lang", "Object");
+			lowerBound = new Type.Clazz("java.lang", "Object");
 		} else {
-			Pair<Type.Reference,Integer> rt = parseInternalClassDescriptor(descriptor,pos);			
+			Pair<Type.Clazz,Integer> rt = parseInternalClassDescriptor(descriptor,pos);			
 			lowerBound = rt.first();
 			pos = rt.second();
 		}
@@ -629,18 +623,18 @@ public class ClassFileReader implements ClassReader {
 			pos = pos + 1;
 			ArrayList<Type> ints = new ArrayList<Type>();		
 			while(pos < descriptor.length() && descriptor.charAt(pos) == 'L') {
-				Pair<Type.Reference,Integer> rt = parseInternalClassDescriptor(descriptor,pos);
+				Pair<Type.Clazz,Integer> rt = parseInternalClassDescriptor(descriptor,pos);
 				ints.add(rt.first());
 				pos = rt.second();
 			}
-			Type[] is = new Type[ints.size()+1];
-			is[0] = lowerBound;
-			for(int i=0;i!=ints.size();++i) { is[i+1] = ints.get(i); }
-			return new Pair<Variable, Integer>(Type.variableType(id,is),pos);
+			ArrayList<Type> is = new ArrayList<Type>();
+			is.add(lowerBound);
+			for(int i=0;i!=ints.size();++i) { is.add(ints.get(i)); }
+			return new Pair<Type.Variable, Integer>(new Type.Variable(id,is),pos);
 		} else {
-			Type[] is = new Type[1];
-			is[0] = lowerBound;
-			return new Pair<Variable, Integer>(Type.variableType(id,is),pos);	
+			ArrayList<Type> is = new ArrayList<Type>();
+			is.add(lowerBound);
+			return new Pair<Type.Variable, Integer>(new Type.Variable(id,is),pos);	
 		}		
 	}
 	
@@ -670,8 +664,7 @@ public class ClassFileReader implements ClassReader {
 		// finally, parse the return type
 		Pair<Type, Integer> rtype = parseInternalDescriptor(descriptor, pos + 1);
 		
-		Type.Function rf = Type.functionType(rtype.first(), params.toArray(new Type[params
-				.size()]), targs.toArray(new Type.Variable[targs.size()]));
+		Type.Function rf = new Type.Function(rtype.first(), params, targs);
 						
 		return rf;
 	}
@@ -1445,6 +1438,20 @@ public class ClassFileReader implements ClassReader {
 	// OTHER HELPER METHODS
 	// ============================================================	
 	
+	protected List<Modifier> listModifiers(int modifiers) {
+		int[] masks = { java.lang.reflect.Modifier.ABSTRACT };
+		
+		ArrayList<Modifier> mods = new ArrayList<Modifier>();
+		
+		for(int m : masks) {
+			if((modifiers & m) != 0) {
+				mods.add(new Modifier.Base(m));
+			}
+		}
+				
+		return mods;
+	}
+	
 	/** 
 	 * Read string from this classfile's constant pool.
 	 * 
@@ -1519,23 +1526,23 @@ public class ClassFileReader implements ClassReader {
 		switch (type) {
 		case CONSTANT_String:
 			if(getConstant(index) != null) {
-				return Type.referenceType("java.lang","String");
+				return new Type.Clazz("java.lang","String");
 			} else {
-				return Type.nullType();
+				return new Type.Null();
 			}
 		case CONSTANT_Double:
-			return Type.doubleType();						
+			return new Type.Double();						
 		case CONSTANT_Float:
-			return Type.floatType();						
+			return new Type.Float();						
 		case CONSTANT_Integer:
-			return Type.intType();			
+			return new Type.Int();			
 		case CONSTANT_Long:
-			return Type.longType();			
+			return new Type.Long();			
 		  // in Java 1.5, LDC_W can read 
 		  // "class constants"
 		case CONSTANT_Class:
 			// FIXME: this is broken, since Class takes a generic param.
-			return Type.referenceType("java.lang","Class");
+			return new Type.Clazz("java.lang","Class");
 		default:
 			throw new RuntimeException("unreachable code reached!");
 		}				
@@ -1704,14 +1711,14 @@ public class ClassFileReader implements ClassReader {
 		 * @author djp	 
 		 */
 		public static class Exceptions extends Attribute {
-			private List<Type.Reference> exceptions;
+			private List<Type.Clazz> exceptions;
 			
-			public Exceptions(String n, List<Type.Reference> exceptions) { 
+			public Exceptions(String n, List<Type.Clazz> exceptions) { 
 				super(n);				
 				this.exceptions = exceptions;
 			}
 			
-			public List<Type.Reference> exceptions() { return exceptions; }
+			public List<Type.Clazz> exceptions() { return exceptions; }
 		}
 		
 		/**

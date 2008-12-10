@@ -219,8 +219,8 @@ public interface Type extends Attribute {
 		private String pkg;
 		private List<Pair<String, List<Type>>> components;
 		
-		public Clazz(List<Pair<String, List<Type>>> components) {
-			this.pkg = "";
+		public Clazz(String pkg, List<Pair<String, List<Type>>> components) {
+			this.pkg = pkg;
 			this.components = components;
 		}		
 		
@@ -304,10 +304,22 @@ public interface Type extends Attribute {
 			this.upperBound = upperBound;
 		}
 
+		/**
+         * Return the upper bound of this wildcard. This will be null if there
+         * is none.
+         * 
+         * @return
+         */
 		public Type upperBound() {
 			return upperBound;
 		}
 
+		/**
+         * Return the lower bound of this wildcard. This will be null if there
+         * is none.
+         * 
+         * @return
+         */
 		public Type lowerBound() {
 			return lowerBound;
 		}
@@ -368,9 +380,9 @@ public interface Type extends Attribute {
 	public static class Function extends SyntacticElementImpl implements Type {
 		private final List<Type> parameters;
 		private final Type returnType;
-		private final List<Type> typeArgs;
+		private final List<Type.Variable> typeArgs;
 		
-		public Function(Type returnType, List<Type> parameters, List<Type> typeArgs) {
+		public Function(Type returnType, List<Type> parameters, List<Type.Variable> typeArgs) {
 			this.returnType = returnType;
 			this.parameters = parameters;
 			this.typeArgs = typeArgs;
@@ -384,7 +396,7 @@ public interface Type extends Attribute {
 			return parameters;
 		}
 		
-		public List<Type> typeArguments() {
+		public List<Type.Variable> typeArguments() {
 			return typeArgs;
 		}
 		

@@ -44,7 +44,7 @@ public class Method extends SyntacticElementImpl {
      * 
      * @return
      */
-	public Type type() {
+	public Type.Function type() {
 		return type;
 	}
 	
@@ -65,4 +65,79 @@ public class Method extends SyntacticElementImpl {
      * @return
      */
 	public List<Type.Clazz> exceptions() { return exceptions; }
+	
+	/**
+     * Check whether this method has one of the "base" modifiers (e.g. static,
+     * public, private, etc). These are found in java.lang.reflect.Modifier.
+     * 
+     * @param modifier
+     * @return true if it does!
+     */
+	public boolean hasModifier(int modifier) {
+		for(Modifier m : modifiers) {
+			if(m instanceof Modifier.Base) {
+				Modifier.Base b = (Modifier.Base) m;
+				if(b.modifier() == modifier) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Check whether this method is abstract
+	 */
+	public boolean isAbstract() {
+		return hasModifier(java.lang.reflect.Modifier.ABSTRACT);
+	}
+
+	/**
+	 * Check whether this method is final
+	 */
+	public boolean isFinal() {
+		return hasModifier(java.lang.reflect.Modifier.FINAL);
+	}
+
+	/**
+	 * Check whether this method is static
+	 */
+	public boolean isStatic() {
+		return hasModifier(java.lang.reflect.Modifier.STATIC);
+	}
+
+	/**
+	 * Check whether this method is public
+	 */
+	public boolean isPublic() {
+		return hasModifier(java.lang.reflect.Modifier.PUBLIC);
+	}
+
+	/**
+	 * Check whether this method is protected
+	 */
+	public boolean isProtected() {
+		return hasModifier(java.lang.reflect.Modifier.PROTECTED);
+	}
+
+	/**
+	 * Check whether this method is private
+	 */
+	public boolean isPrivate() {
+		return hasModifier(java.lang.reflect.Modifier.PRIVATE);
+	}
+
+	/**
+	 * Check whether this method is native
+	 */
+	public boolean isNative() {
+		return hasModifier(java.lang.reflect.Modifier.NATIVE);
+	}
+
+	/**
+	 * Check whether this method is synchronized
+	 */
+	public boolean isSynchronized() {
+		return hasModifier(java.lang.reflect.Modifier.SYNCHRONIZED);
+	}
 }
