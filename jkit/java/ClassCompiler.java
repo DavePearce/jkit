@@ -1,9 +1,15 @@
-package jkit.compiler;
+package jkit.java;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
+import jkit.compiler.ClassLoader;
+import jkit.compiler.ClassReader;
+import jkit.compiler.ClassWriter;
+import jkit.compiler.InternalException;
+import jkit.compiler.Stage;
+import jkit.compiler.SyntaxError;
 import jkit.jil.*;
 import jkit.util.Pair;
 
