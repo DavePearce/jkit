@@ -668,6 +668,8 @@ public class JavaFileReader2 {
 					myName, dims, myInitialiser));
 		}
 
+		System.out.println("VARDEF: " + tree.getLine());
+		
 		return new Stmt.VarDef(
 				modifiers,
 				type,

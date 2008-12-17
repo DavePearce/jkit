@@ -163,7 +163,7 @@ public class JavaCompiler implements Compiler {
 			return new ArrayList<Clazz>(); // to be completed			
 		} catch(SyntaxError se) {
 			throw new SyntaxError(se.msg(), filename, se.line(), se
-					.column(), se.width());			
+					.column(), se.width(), se);			
 		} 
 	}	
 }

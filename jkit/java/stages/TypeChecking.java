@@ -658,6 +658,7 @@ public class TypeChecking {
      * @param e --- the syntactic element causing the error
      */
 	protected void syntax_error(String msg, SyntacticElement e) {
+		System.out.println("GOT HERE");
 		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
 		throw new SyntaxError(msg,loc.line(),loc.column());
 	}
