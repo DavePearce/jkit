@@ -2,6 +2,7 @@ package jkit.java.stages;
 
 import java.util.*;
 
+import jkit.bytecode.Types;
 import jkit.compiler.SyntaxError;
 import jkit.java.*;
 import jkit.java.Decl.*;
@@ -10,6 +11,7 @@ import jkit.java.Stmt.*;
 import jkit.jil.Type;
 import jkit.jil.SyntacticElement;
 import jkit.jil.SourceLocation;
+import jkit.util.Pair;
 import jkit.util.Triple;
 
 /**
@@ -129,9 +131,11 @@ public class TypeChecking {
 		}		
 	}
 	
-	protected void checkBlock(Stmt.Block block) {		
-		for(Stmt s : block.statements()) {
-			checkStatement(s);
+	protected void checkBlock(Stmt.Block block) {	
+		if(block != null) {
+			for(Stmt s : block.statements()) {
+				checkStatement(s);
+			}
 		}
 	}
 	
@@ -149,6 +153,17 @@ public class TypeChecking {
 	
 	protected void checkTryCatchBlock(Stmt.TryCatchBlock block) {
 		checkBlock(block);
+		checkBlock(block.finaly());
+		
+		for(Stmt.CatchBlock cb : block.handlers()) {
+			checkBlock(cb);
+			
+			if (!subtype(new Type.Clazz("java.lang", "Throwable"), cb.type())) {
+				syntax_error(
+						"required subtype of java.lang.Throwable, found type "
+								+ cb.type(), cb);
+			}
+		}
 	}
 	
 	protected void checkVarDef(Stmt.VarDef def) {
@@ -647,6 +662,8 @@ public class TypeChecking {
 				
 		return false;
 	}
+	
+	
 	
 	protected Decl getEnclosingScope(Class c) {
 		for(int i=enclosingScopes.size()-1;i>=0;--i) {

@@ -122,14 +122,16 @@ public class TypePropagation {
 	}
 	
 	protected void doBlock(Stmt.Block block, HashMap<String,Type> environment) {
-		// The following clone is required, so that any additions to the
-        // environment via local variable defintions in this block are
-        // preserved.
-		HashMap<String,Type> newEnv = (HashMap<String,Type>) environment.clone();
-		
-		// now process every statement in this block.
-		for(Stmt s : block.statements()) {
-			doStatement(s,environment);
+		if(block != null) {
+			// The following clone is required, so that any additions to the
+			// environment via local variable defintions in this block are
+			// not preserved.
+			HashMap<String,Type> newEnv = (HashMap<String,Type>) environment.clone();
+
+			// now process every statement in this block.
+			for(Stmt s : block.statements()) {
+				doStatement(s,newEnv);
+			}
 		}
 	}
 	
@@ -139,7 +141,8 @@ public class TypePropagation {
 	}
 	
 	protected void doTryCatchBlock(Stmt.TryCatchBlock block, HashMap<String,Type> environment) {
-		doBlock(block,environment);
+		doBlock(block,environment);		
+		doBlock(block.finaly(),environment);		
 		
 		for(Stmt.CatchBlock cb : block.handlers()) {
 			doBlock(cb, environment);
@@ -335,7 +338,9 @@ public class TypePropagation {
 	}
 	
 	protected void doInvoke(Expr.Invoke e, HashMap<String,Type> environment) {
-		
+		for(Expr p : e.parameters()) {
+			doExpression(p, environment);
+		}
 	}
 	
 	protected void doInstanceOf(Expr.InstanceOf e, HashMap<String,Type> environment) {		
