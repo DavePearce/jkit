@@ -28,9 +28,9 @@ import jkit.bytecode.ClassFileWriter;
 import jkit.compiler.InternalException;
 import jkit.compiler.Stage;
 import jkit.compiler.SyntaxError;
-import jkit.java.ClassCompiler;
+import jkit.java.JavaCompiler;
 import jkit.java.JavaFileReader;
-import jkit.java.ClassCompiler.Pipeline;
+import jkit.java.JavaCompiler.Pipeline;
 import jkit.jkil.FlowGraph;
 import jkit.jkil.JKilWriter;
 
@@ -61,7 +61,7 @@ public class Main {
 	/**
 	 * This provides global control over the pipelines
 	 */
-	public static final HashMap<String, ClassCompiler.Pipeline> pipelines = new HashMap<String, ClassCompiler.Pipeline>();	
+	public static final HashMap<String, JavaCompiler.Pipeline> pipelines = new HashMap<String, JavaCompiler.Pipeline>();	
 	static{
 		// default pipelines
 		pipelines.put("java", new Pipeline(JavaFileReader.class,
@@ -169,12 +169,12 @@ public class Main {
 		}
 
 		classPath.addAll(bootClassPath);
-		ClassCompiler compiler;
+		JavaCompiler compiler;
 		
 		if(verbose) {
-			compiler = new ClassCompiler(pipelines,classPath,System.err);	
+			compiler = new JavaCompiler(pipelines,classPath,System.err);	
 		} else {
-			compiler = new ClassCompiler(pipelines,classPath);
+			compiler = new JavaCompiler(pipelines,classPath);
 		}
 
 		ClassTable.setLoader(compiler.getClassLoader());
@@ -271,10 +271,10 @@ public class Main {
 	 * 
 	 * @param pipelines
 	 */
-	public void listStages(Map<String, ClassCompiler.Pipeline> pipelines) {
-		for (Map.Entry<String, ClassCompiler.Pipeline> e : pipelines.entrySet()) {
+	public void listStages(Map<String, JavaCompiler.Pipeline> pipelines) {
+		for (Map.Entry<String, JavaCompiler.Pipeline> e : pipelines.entrySet()) {
 			System.out.println("*." + e.getKey() + ":");
-			ClassCompiler.Pipeline p = e.getValue();
+			JavaCompiler.Pipeline p = e.getValue();
 			System.out.println(" >> " + p.fileReader.getName());
 			for (Stage s : p.stages) {
 				System.out.println("    " + s.getClass().getName() + "\t[" + s.description() + "]");
@@ -289,10 +289,10 @@ public class Main {
 	 * @param stage
 	 * @param pipelines
 	 */
-	public void stopStage(String stage, Map<String, ClassCompiler.Pipeline> pipelines) {
+	public void stopStage(String stage, Map<String, JavaCompiler.Pipeline> pipelines) {
 		// cut every pipeline short
-		for (Map.Entry<String, ClassCompiler.Pipeline> e : pipelines.entrySet()) {
-			ClassCompiler.Pipeline p = e.getValue();
+		for (Map.Entry<String, JavaCompiler.Pipeline> e : pipelines.entrySet()) {
+			JavaCompiler.Pipeline p = e.getValue();
 			for (int i = 0; i != p.stages.length; ++i) {
 				String stageName = p.stages[i].getClass().getName();
 				if (stageName.contains(stage)) {
@@ -311,10 +311,10 @@ public class Main {
 	 * @param stage
 	 * @param pipelines
 	 */
-	public void ignoreStage(String stage, Map<String, ClassCompiler.Pipeline> pipelines) {
+	public void ignoreStage(String stage, Map<String, JavaCompiler.Pipeline> pipelines) {
 		// cut every pipeline short
-		for (Map.Entry<String, ClassCompiler.Pipeline> e : pipelines.entrySet()) {
-			ClassCompiler.Pipeline p = e.getValue();
+		for (Map.Entry<String, JavaCompiler.Pipeline> e : pipelines.entrySet()) {
+			JavaCompiler.Pipeline p = e.getValue();
 			for (int i = 0; i != p.stages.length; ++i) {
 				String stageName = p.stages[i].getClass().getName();
 				if (stageName.contains(stage)) {
@@ -354,9 +354,9 @@ public class Main {
 	 *            Set of pipelines
 	 */
 	public void retargetPipelines(Class<?> writer, String target,
-			Map<String, ClassCompiler.Pipeline> pipelines) {
+			Map<String, JavaCompiler.Pipeline> pipelines) {
 		// cut every pipeline short
-		for (Map.Entry<String, ClassCompiler.Pipeline> e : pipelines.entrySet()) {
+		for (Map.Entry<String, JavaCompiler.Pipeline> e : pipelines.entrySet()) {
 			Pipeline p = e.getValue();
 			p.fileWriter = writer;
 			p.target = target;

@@ -22,7 +22,7 @@ import jkit.util.Pair;
  * @author djp
  * 
  */
-public class ClassCompiler {
+public class JavaCompiler {
 	
 	/**
      * Represents a pipeline configuration, for a given input file type.
@@ -99,7 +99,7 @@ public class ClassCompiler {
 	 * @param classpath
 	 *            A list of directory and/or jar file locations.
 	 */	
-	public ClassCompiler(HashMap<String, Pipeline> pipelines, List<String> classpath) {
+	public JavaCompiler(HashMap<String, Pipeline> pipelines, List<String> classpath) {
 		this.pipelines = pipelines;		
 		this.loader = new ClassLoader(classpath,this);
 	}
@@ -113,7 +113,7 @@ public class ClassCompiler {
 	 * @param logout
 	 *            A stream where log messages are sent
 	 */	
-	public ClassCompiler(HashMap<String, Pipeline> pipelines,
+	public JavaCompiler(HashMap<String, Pipeline> pipelines,
 			List<String> classpath, OutputStream logout) {
 		this.pipelines = pipelines;
 		this.loader = new ClassLoader(classpath, this, logout);
@@ -131,7 +131,7 @@ public class ClassCompiler {
 	 * @param logout
 	 *            A stream where log messages are sent
 	 */	
-	public ClassCompiler(HashMap<String, Pipeline> pipelines,
+	public JavaCompiler(HashMap<String, Pipeline> pipelines,
 			List<String> sourcepath, List<String> classpath, OutputStream logout) {
 		this.pipelines = pipelines;
 		this.loader = new ClassLoader(sourcepath, classpath, this, logout);
@@ -187,7 +187,7 @@ public class ClassCompiler {
 		
 		String fileExtension = filename.substring(filename.lastIndexOf(".") + 1);	
 		
-		ClassCompiler.Pipeline pipeline = pipelines.get(fileExtension);
+		JavaCompiler.Pipeline pipeline = pipelines.get(fileExtension);
 		
 		if (pipeline == null) {
 			// problem, no pipeline for this file type!
