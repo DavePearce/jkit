@@ -28,11 +28,11 @@ package jkit.compiler;
  * 
  */
 public class SyntaxError extends RuntimeException {
-	String msg;
-	String filename;
-	int line;
-	int column;	
-	int width;
+	private final String msg;
+	private final String filename;
+	private final int line;
+	private final int column;	
+	private final int width;
 	
 	/**
 	 * Identify a syntax error at a particular point in a file.

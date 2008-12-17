@@ -4,12 +4,11 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-import jkit.compiler.ClassLoader;
-import jkit.compiler.ClassReader;
-import jkit.compiler.ClassWriter;
-import jkit.compiler.InternalException;
-import jkit.compiler.Stage;
+import jkit.compiler.Compiler;
 import jkit.compiler.SyntaxError;
+import jkit.compiler.ClassLoader;
+import jkit.java.stages.TypeChecking;
+import jkit.java.stages.TypePropagation;
 import jkit.jil.*;
 import jkit.util.Pair;
 
@@ -22,34 +21,7 @@ import jkit.util.Pair;
  * @author djp
  * 
  */
-public class JavaCompiler {
-	
-	/**
-     * Represents a pipeline configuration, for a given input file type.
-     * 
-     * @author djp
-     * 
-     */
-	public static class Pipeline {
-		public Class<?> fileReader;
-		public Stage[] stages;
-		public Class<?> fileWriter;
-		public String target;
-
-		public Pipeline(Class<?> fileReader, Class<?> fileWriter,
-				String target, Stage... stages) {
-			this.fileReader = fileReader;
-			this.fileWriter = fileWriter;
-			this.stages = stages;
-			this.target = target;
-		}
-	}
-	
-	/**
-	 * The pipelines map maps source file extensions (e.g. "java", "mocha") to
-	 * the pipeline configurations needed for compiling them.
-	 */
-	private HashMap<String, Pipeline> pipelines;
+public class JavaCompiler implements Compiler {
 	
 	/**
 	 * The class loader is needed to locate required types and classes in the
@@ -93,37 +65,25 @@ public class JavaCompiler {
 	});
 		
 	/**
-	 * @param pipelines
-	 *            A map from extensions (e.g. "java", "mocha") to pipelines for
-	 *            compiling source files with those extensions.
 	 * @param classpath
 	 *            A list of directory and/or jar file locations.
 	 */	
-	public JavaCompiler(HashMap<String, Pipeline> pipelines, List<String> classpath) {
-		this.pipelines = pipelines;		
+	public JavaCompiler(List<String> classpath) {			
 		this.loader = new ClassLoader(classpath,this);
 	}
 	
 	/**
-	 * @param pipelines
-	 *            A map from extensions (e.g. "java", "mocha") to pipelines for
-	 *            compiling source files with those extensions.
 	 * @param classpath
 	 *            A list of directory and/or jar file locations.
 	 * @param logout
 	 *            A stream where log messages are sent
 	 */	
-	public JavaCompiler(HashMap<String, Pipeline> pipelines,
-			List<String> classpath, OutputStream logout) {
-		this.pipelines = pipelines;
+	public JavaCompiler(List<String> classpath, OutputStream logout) {
 		this.loader = new ClassLoader(classpath, this, logout);
 		this.logout = new PrintStream(logout);
 	}
 	
 	/**
-	 * @param pipelines
-	 *            A map from extensions (e.g. "java", "mocha") to pipelines for
-	 *            compiling source files with those extensions.
 	 * @param sourcepath
 	 *            a list of directory and/or jar file locations.
 	 * @param classpath
@@ -131,9 +91,7 @@ public class JavaCompiler {
 	 * @param logout
 	 *            A stream where log messages are sent
 	 */	
-	public JavaCompiler(HashMap<String, Pipeline> pipelines,
-			List<String> sourcepath, List<String> classpath, OutputStream logout) {
-		this.pipelines = pipelines;
+	public JavaCompiler(List<String> sourcepath, List<String> classpath, OutputStream logout) {
 		this.loader = new ClassLoader(sourcepath, classpath, this, logout);
 		this.logout = new PrintStream(logout);
 	}		
@@ -183,144 +141,29 @@ public class JavaCompiler {
 		if(compiling.contains(filename)) {			
 			return new ArrayList<Clazz>();
 		}
-		compiling.add(filename);
-		
-		String fileExtension = filename.substring(filename.lastIndexOf(".") + 1);	
-		
-		JavaCompiler.Pipeline pipeline = pipelines.get(fileExtension);
-		
-		if (pipeline == null) {
-			// problem, no pipeline for this file type!
-			throw new IllegalArgumentException(
-					"Error: Unable to process files with extension \"."
-							+ fileExtension + "\" (" + filename + ")");
-		}
+		compiling.add(filename);			
 						
 		try {
 			long start = System.currentTimeMillis();
 			
 			// Now, construct the reader!
-			File srcFile = new File(filename); 
-			ClassReader reader = constructReader(
-					new FileInputStream(srcFile), loader, pipeline.fileReader);
+			JavaFileReader2 reader = new JavaFileReader2(filename);
 
 			long last = System.currentTimeMillis();
 			logout.println("Parsed " + filename + " [" + (last - start) + "ms]");
 			
 			// First we must read the skeletons
-			List<Clazz> classes = reader.readSkeletons();
-
-			for(Clazz c : classes) {
-				logout.println("Parsed skeleton " + c.name());
-				// loader.updateInfo(c); 
-			}
-
-			// Second, read the full source of each class
-			classes = reader.readClasses();
-			for(Clazz c : classes) {
-				logout.println("Parsed class " + c.name());
-				// loader.updateInfo(c); 
-			}
-
-			// Third, apply the appropriate pipeline stages
-			for (Clazz c : classes) {				
-				// apply each stage in the pipeline ...
-				for (Stage s : pipeline.stages) {
-
-					s.apply(c);
-
-					long next = System.currentTimeMillis();					
-					logout.println("Applied stage "
-							+ s.getClass().getName() + " [" + (next - start)
-							+ "ms]");					
-					start = next;
-				}
-								
-				String outfile;
-				if(outputDirectory == null) {
-					String parent = srcFile.getParent();
-					outfile = parent == null ? "" : parent;
-				} else { 
-					outfile =  outputDirectory.getPath() + File.separatorChar;
-					outfile += c.type().pkg().replace('.',File.separatorChar);
-				}
-									
-				if(!outfile.equals("")) { outfile += File.separatorChar; }
-				boolean firstTime = true;
-				for (Pair<String, List<Type>> p : c.type().components()) {
-					if (!firstTime) {
-						outfile += "$";
-					}
-					firstTime = false;
-					outfile = outfile + p.first();
-				}
-				outfile += "." + pipeline.target;
-				OutputStream fos = new FileOutputStream(outfile);
-				ClassWriter writer = constructWriter(fos, pipeline.fileWriter);
-
-				writer.writeClass(c);
-
-				long next = System.currentTimeMillis();				
-				logout.println("Written " + outfile + " ["
-						+ (next - start) + "ms]");
-			}
+			JavaFile jfile = reader.read();
+			new TypePropagation(null).apply(jfile);
+			new TypeChecking(null).apply(jfile);
 			
 			compilationQueue.remove(filename);
 			compiling.remove(filename);
 			
-			return classes;			
-		} catch(IllegalAccessException e) {
-			throw new RuntimeException("Compilation failure",e);
-		} catch(InvocationTargetException e) {
-			Throwable re = e.getTargetException(); 
-			if(re instanceof SyntaxError) {
-				SyntaxError se = (SyntaxError) re;	
-				se.filename = filename;
-				throw se;
-			} 
-			throw new RuntimeException("Compilation failure",e);
-		} catch(InstantiationException e) {
-			throw new RuntimeException("Compilation failure",e);
-		} catch(SyntaxError e) {
-			if(e.filename.equals("unknown")) {
-				e.filename = filename;
-			}
-			throw e;
-		} catch(InternalException e) {
-			if(e.point().source().equals("unknown")) {
-				e.point().setSource(filename);
-			}
-			throw e;
+			return new ArrayList<Clazz>(); // to be completed			
+		} catch(SyntaxError se) {
+			throw new SyntaxError(se.msg(), filename, se.line(), se
+					.column(), se.width());			
 		} 
-	}
-	
-	public static ClassReader constructReader(InputStream fis,
-			jkit.compiler.ClassLoader loader, Class<?> readerClass)
-			throws IllegalAccessException, InvocationTargetException,
-			InstantiationException {
-
-		for (java.lang.reflect.Constructor<?> c : readerClass.getConstructors()) {
-			Class<?>[] params = c.getParameterTypes();
-			if (params != null && params.length == 2
-					&& params[0].equals(InputStream.class)
-					&& params[1].equals(jkit.compiler.ClassLoader.class)) {				
-				return (ClassReader) c.newInstance(fis,loader);
-			}
-		}
-		throw new RuntimeException("Unable to construct ClassReader");
-	}
-
-	public static ClassWriter constructWriter(OutputStream fos,
-			Class<?> readerClass) throws IllegalAccessException,
-			InvocationTargetException, InstantiationException {
-
-		for (java.lang.reflect.Constructor<?> c : readerClass.getConstructors()) {
-			Class<?>[] params = c.getParameterTypes();
-			if (params != null && params.length == 1
-					&& params[0].equals(OutputStream.class)) {
-				return (ClassWriter) c.newInstance(fos);
-			}
-		}
-		throw new RuntimeException("Unable to construct ClassWriter");
-	}
+	}	
 }

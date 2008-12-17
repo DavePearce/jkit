@@ -7,7 +7,6 @@ import java.io.*;
 
 import jkit.bytecode.ClassFileReader;
 import jkit.bytecode.Types;
-import jkit.java.JavaCompiler;
 import jkit.jil.Clazz;
 import jkit.jil.Type;
 import jkit.util.Pair;
@@ -91,7 +90,7 @@ public class ClassLoader {
 	 * The ClassCompiler is needed for compiling source files found on the
 	 * sourcepath which are needed to identify inner classes appropriately.
 	 */
-	private JavaCompiler compiler = null;			
+	private Compiler compiler = null;			
 	
 	/**
 	 * The logout output stream is used to write log information about the
@@ -115,7 +114,7 @@ public class ClassLoader {
 	 * @param compiler
 	 *            A class compiler
 	 */
-	public ClassLoader(List<String> classpath, JavaCompiler compiler) {
+	public ClassLoader(List<String> classpath, Compiler compiler) {
 		this.sourcepath = new ArrayList<String>(classpath);
 		this.classpath = new ArrayList<String>(classpath);
 		this.compiler = compiler;
@@ -137,7 +136,7 @@ public class ClassLoader {
 	 * @param logout
 	 *            A stream where log messages are sent
 	 */
-	public ClassLoader(List<String> classpath, JavaCompiler compiler, OutputStream logout) {
+	public ClassLoader(List<String> classpath, Compiler compiler, OutputStream logout) {
 		this.classpath = new ArrayList<String>(classpath);
 		this.sourcepath = new ArrayList<String>(classpath);
 		this.logout = new PrintStream(logout);
@@ -163,7 +162,7 @@ public class ClassLoader {
 	 *            an output stream to which logging information is written.
 	 */		
 	public ClassLoader(List<String> sourcepath, List<String> classpath,
-			JavaCompiler compiler, OutputStream logout) {		
+			Compiler compiler, OutputStream logout) {		
 		this.sourcepath = new ArrayList<String>(sourcepath);
 		this.classpath = new ArrayList<String>(classpath);
 		this.compiler = compiler;

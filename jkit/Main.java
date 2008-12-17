@@ -29,10 +29,6 @@ import jkit.compiler.InternalException;
 import jkit.compiler.Stage;
 import jkit.compiler.SyntaxError;
 import jkit.java.JavaCompiler;
-import jkit.java.JavaFileReader;
-import jkit.java.JavaCompiler.Pipeline;
-import jkit.jkil.FlowGraph;
-import jkit.jkil.JKilWriter;
 
 /**
  * The main class provides the entry point for the JKit compiler. It is
@@ -47,37 +43,7 @@ public class Main {
 	public static final int MAJOR_VERSION = 0;
 	public static final int MINOR_VERSION = 4;
 	public static final int MINOR_REVISION = 0;
-		
-	/**
-	 * This provides global control over the target set
-	 */
-	public static final HashMap<String, Class<?>> targets = new HashMap<String, Class<?>>();
-	static{
-		// default targets
-		targets.put("class", ClassFileWriter.class);
-		targets.put("jkil", JKilWriter.class);		
-	}
-	
-	/**
-	 * This provides global control over the pipelines
-	 */
-	public static final HashMap<String, JavaCompiler.Pipeline> pipelines = new HashMap<String, JavaCompiler.Pipeline>();	
-	static{
-		// default pipelines
-		pipelines.put("java", new Pipeline(JavaFileReader.class,
-				ClassFileWriter.class,
-				"class",
-				new jkit.java.stages.FieldInitialisation(),
-				new jkit.java.stages.AnonClass(),
-				new jkit.jkil.stages.BypassMethods(),
-				new jkit.java.stages.Typing(),
-				new jkit.java.stages.SwitchConstants(),
-				new jkit.java.stages.ForEachLoop(),
-				new jkit.java.stages.Exceptions(),
-				new jkit.java.stages.Subtyping(),
-				new jkit.jkil.stages.VariableDefinitions()));
-	}
-
+			
 	/**
 	 * Main method provides command-line processing capability.
 	 * 
@@ -131,24 +97,6 @@ public class Main {
 					// split classpath along appropriate separator
 					Collections.addAll(bootClassPath, args[++i]
 					                                       .split(File.pathSeparator));
-				} else if (arg.equals("-ls") || arg.equals("-liststages")) {
-					listStages(pipelines);
-				} else if (arg.equals("-is") || arg.equals("-ignorestage")) {
-					String stage = args[++i];
-					ignoreStage(stage, pipelines);
-				} else if (arg.equals("-ss") || arg.equals("-stopstage")) {
-					String stage = args[++i];
-					stopStage(stage, pipelines);
-				} else if (arg.equals("-t") || arg.equals("-target")) {
-					String target = args[++i];
-					if (!targets.containsKey(target)) {
-						System.err.println("Unregistered target filetype \""
-								+ target + "\"");
-						return false;
-					}
-					retargetPipelines(targets.get(target), target, pipelines);
-				} else if (arg.equals("-lt") || arg.equals("-listtargets")) {
-					listTargets(targets);
 				} else {
 					throw new RuntimeException("Unknown option: " + args[i]);
 				}
@@ -172,12 +120,10 @@ public class Main {
 		JavaCompiler compiler;
 		
 		if(verbose) {
-			compiler = new JavaCompiler(pipelines,classPath,System.err);	
+			compiler = new JavaCompiler(classPath,System.err);	
 		} else {
-			compiler = new JavaCompiler(pipelines,classPath);
+			compiler = new JavaCompiler(classPath);
 		}
-
-		ClassTable.setLoader(compiler.getClassLoader());
 		
 		// ======================================================
 		// ============== Third, load skeletons ================
@@ -189,13 +135,6 @@ public class Main {
 		} catch (SyntaxError e) {
 			outputSourceError(e.fileName(), e.line(), e.column(), e.width(), e
 					.getMessage());
-			if (verbose) {
-				e.printStackTrace(System.err);
-			}
-			return false;
-		} catch (InternalException e) {
-			FlowGraph.Point point = e.point();
-			outputSourceError(point.source(), point.line(), point.column(), 3, e.getMessage());
 			if (verbose) {
 				e.printStackTrace(System.err);
 			}
@@ -264,104 +203,7 @@ public class Main {
 			}
 			System.out.println(p[1]);
 		}
-	}
-
-	/**
-	 * List pipeline stages for each pipeline.
-	 * 
-	 * @param pipelines
-	 */
-	public void listStages(Map<String, JavaCompiler.Pipeline> pipelines) {
-		for (Map.Entry<String, JavaCompiler.Pipeline> e : pipelines.entrySet()) {
-			System.out.println("*." + e.getKey() + ":");
-			JavaCompiler.Pipeline p = e.getValue();
-			System.out.println(" >> " + p.fileReader.getName());
-			for (Stage s : p.stages) {
-				System.out.println("    " + s.getClass().getName() + "\t[" + s.description() + "]");
-			}
-			System.out.println(" << " + p.fileWriter.getName());
-		}
-	}
-
-	/**
-	 * Remove all stages after given stage in each pipeline.
-	 * 
-	 * @param stage
-	 * @param pipelines
-	 */
-	public void stopStage(String stage, Map<String, JavaCompiler.Pipeline> pipelines) {
-		// cut every pipeline short
-		for (Map.Entry<String, JavaCompiler.Pipeline> e : pipelines.entrySet()) {
-			JavaCompiler.Pipeline p = e.getValue();
-			for (int i = 0; i != p.stages.length; ++i) {
-				String stageName = p.stages[i].getClass().getName();
-				if (stageName.contains(stage)) {
-					Stage[] nStages = new Stage[i + 1];
-					System.arraycopy(p.stages, 0, nStages, 0, i + 1);
-					p.stages = nStages;
-					break;
-				}
-			}
-		}
-	}
-
-	/**
-	 * Remove single stage from each pipeline.
-	 * 
-	 * @param stage
-	 * @param pipelines
-	 */
-	public void ignoreStage(String stage, Map<String, JavaCompiler.Pipeline> pipelines) {
-		// cut every pipeline short
-		for (Map.Entry<String, JavaCompiler.Pipeline> e : pipelines.entrySet()) {
-			JavaCompiler.Pipeline p = e.getValue();
-			for (int i = 0; i != p.stages.length; ++i) {
-				String stageName = p.stages[i].getClass().getName();
-				if (stageName.contains(stage)) {
-					Stage[] nStages = new Stage[p.stages.length - 1];
-					System.arraycopy(p.stages, 0, nStages, 0, i);
-					if (i < nStages.length) {
-						System.arraycopy(p.stages, i + 1, nStages, i,
-								nStages.length - i);
-					}
-					p.stages = nStages;
-					break;
-				}
-			}
-		}
-	}
-
-	/**
-	 * Print list of registered filetype targets
-	 * 
-	 * @param targets
-	 *            List of registered filetype targets
-	 */
-	public void listTargets(HashMap<String, Class<?>> targets) {
-		System.out.println("Registered target filetypes:");
-		for (Map.Entry<String, Class<?>> e : targets.entrySet()) {
-			System.out.println("  " + e.getKey() + " => "
-					+ e.getValue().getName());
-		}
-	}
-
-	/**
-	 * Retarget all pipelines to use alternative ClassWriter
-	 * 
-	 * @param writer
-	 *            Class object representing class writer in question.
-	 * @param pipelines
-	 *            Set of pipelines
-	 */
-	public void retargetPipelines(Class<?> writer, String target,
-			Map<String, JavaCompiler.Pipeline> pipelines) {
-		// cut every pipeline short
-		for (Map.Entry<String, JavaCompiler.Pipeline> e : pipelines.entrySet()) {
-			Pipeline p = e.getValue();
-			p.fileWriter = writer;
-			p.target = target;
-		}
-	}
+	}	
 
 	public ArrayList<String> buildClassPath() {
 		// Classpath hasn't been overriden by user, so import
