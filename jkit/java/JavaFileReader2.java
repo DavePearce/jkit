@@ -667,8 +667,6 @@ public class JavaFileReader2 {
 			vardefs.add(new Triple<String, Integer, Expr>(
 					myName, dims, myInitialiser));
 		}
-
-		System.out.println("VARDEF: " + tree.getLine());
 		
 		return new Stmt.VarDef(
 				modifiers,

@@ -136,7 +136,15 @@ public class TypeChecking {
 	}
 	
 	protected void checkSynchronisedBlock(Stmt.SynchronisedBlock block) {
+		checkExpression(block.expr());
 		checkBlock(block);
+		
+		Type e_t = (Type) block.expr().attribute(Type.class);
+		
+		if (!(e_t instanceof Type.Reference)) {
+			syntax_error("required reference type, found type "
+					+ e_t, block);
+		} 
 	}
 	
 	protected void checkTryCatchBlock(Stmt.TryCatchBlock block) {
@@ -657,8 +665,7 @@ public class TypeChecking {
      * @param msg --- the error message
      * @param e --- the syntactic element causing the error
      */
-	protected void syntax_error(String msg, SyntacticElement e) {
-		System.out.println("GOT HERE");
+	protected void syntax_error(String msg, SyntacticElement e) {		
 		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
 		throw new SyntaxError(msg,loc.line(),loc.column());
 	}

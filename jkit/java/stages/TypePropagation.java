@@ -135,6 +135,7 @@ public class TypePropagation {
 	
 	protected void doSynchronisedBlock(Stmt.SynchronisedBlock block, HashMap<String,Type> environment) {
 		doBlock(block,environment);
+		doExpression(block.expr(),environment);
 	}
 	
 	protected void doTryCatchBlock(Stmt.TryCatchBlock block, HashMap<String,Type> environment) {
