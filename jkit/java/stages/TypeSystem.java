@@ -2,9 +2,11 @@ package jkit.java.stages;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
-import jkit.java.Decl.Clazz;
+import jkit.compiler.ClassLoader;
 import jkit.jil.Type;
+import jkit.jil.Clazz;
 import jkit.util.Pair;
 
 /**
@@ -17,16 +19,60 @@ public class TypeSystem {
 
 	
 	/**
-     * This method determines the common super type of the two types supplied.
+     * This method determines whether t1 :> t2; that is, whether t2 is a subtype
+     * of t1 or not, following the class heirarchy. Observe that this relation
+     * is reflexive, transitive and anti-symmetric:
      * 
-     * @param refT1
-     * @param refT2
+     * 1) t1 :> t1 always holds
+     * 2) if t1 :> t2 and t2 :> t3, then t1 :> t3
+     * 3) if t1 :> t2 then not t2 :> t1 (unless t1 == t2)
+     * 
+     * @param t1
+     * @param t2
      * @return
      * @throws ClassNotFoundException
      */
-	public Type.Clazz findCommonSuperType(Type.Clazz refT1, Type.Clazz refT2)
+	public boolean subtype(Type.Clazz t1, Type.Clazz t2, ClassLoader loader)
 			throws ClassNotFoundException {
 		
+		ArrayList<Type.Clazz> worklist = new ArrayList<Type.Clazz>();
+		HashSet<Type.Clazz> closure = new HashSet<Type.Clazz>();
+		
+		worklist.add(t2);
+		
+		// Ok, so the idea behind the worklist is to start from type t2, and
+        // proceed up the class heirarchy visiting all supertypes (i.e. classes
+        // + interfaces) of t2 until either we reach t1, or java.lang.Object.
+		while(!worklist.isEmpty()) {
+			Type.Clazz type = worklist.remove(worklist.size() - 1);
+			if(type.equals(t1)) {
+				return true;
+			} else if(haveSameBaseComponents(type, t1)) {
+				// at this point, we have reached a type with the same base
+                // components as t1, but they are not identical. We now have to
+                // check wether or not any types in the generic parameter
+                // position are compatible or not.
+			}
+			
+			// The current type we're visiting is not a match. Therefore, we
+            // need to explore its supertypes as well.			
+			Clazz c = loader.loadClass(type);
+
+			// no match yet, so traverse super class and interfaces
+			if (c.superClass() != null) {
+				worklist.add((Type.Clazz) substituteTypes(type, c.type(), c
+						.superClass()));
+			}
+			for (Type.Clazz t : c.interfaces()) {
+				worklist
+						.add((Type.Clazz) substituteTypes(type, c.type(), t));
+			}
+		}
+		
+		return false;
+	}
+	
+	
 		// this performs quite a complicated search,
 		// which could be made more efficient
 		// through caching and by recording which have
@@ -39,10 +85,10 @@ public class TypeSystem {
 		while (!worklist.isEmpty()) {
 			// first, remove and check
 			Type.Clazz type = worklist.remove(worklist.size() - 1);
+			
 			if (type.equals(refT2)) {
 				return type;
-			} else if (TypeSystem.descriptor(type, false).equals(
-					TypeSystem.descriptor(refT2, false))) {
+			} else if (haveSameBaseComponents(type, refT2)) {
 				// There are several cases here:
 				//
 				// 1) computing common supertype of erased and non-erased types.
@@ -52,45 +98,46 @@ public class TypeSystem {
 				// 2) computing common supertype of two non-erased types.
                 //    e.g. ArrayList<String> and ArrayList<Integer>. In this case,
                 //    we can generate ArrayList<?>
-				Pair<String,Type[]>[] tClasses = type.classes();
-				Pair<String,Type[]>[] rClasses = refT2.classes();
-				@SuppressWarnings("unchecked")
-				Pair<String,Type[]>[] nClasses = new Pair[tClasses.length];
+				List<Pair<String,List<Type>>> tClasses = type.components();
+				List<Pair<String,List<Type>>> rClasses = refT2.components();
+				List<Pair<String,List<Type>>> nClasses = new ArrayList();
 				boolean failed = false;
-				for(int i=0;i!=tClasses.length;++i) {
-					Type[] ts = tClasses[i].second();
-					Type[] rs = rClasses[i].second();					
-					if(ts.length != rs.length) {
-						if(ts.length == 0) {
-							nClasses[i] = rClasses[i];							
-						} else if(rs.length == 0) {
-							nClasses[i] = tClasses[i];
+				for(int i=0;i!=tClasses.size();++i) {
+					List<Type> ts = tClasses.get(i).second();
+					List<Type> rs = rClasses.get(i).second();					
+					if(ts.size() != rs.size()) {
+						if(ts.size() == 0) {
+							nClasses.add(rClasses.get(i));							
+						} else if(rs.size() == 0) {
+							nClasses.add(tClasses.get(i));
 						} else {
-							// fall through, since this on doesn't work
+							// fall through, since this one doesn't work
 							failed = true;
 							break;
 						}
 					} else {
-						Type[] ns = new Type[rs.length];
-						for (int j = 0; j != ts.length; ++j) {
-							if(!ts[j].supsetEqOfElem(rs[j]) && !rs[j].supsetEqOfElem(ts[j])) {
+						ArrayList<Type> ns = new ArrayList<Type>();
+						for (int j = 0; j != ts.size(); ++j) {
+							Type ts_t = ts.get(j);
+							Type rs_t = rs.get(j);
+							if(!ts_t.supsetEqOfElem(rs_t)) && !rs_t.supsetEqOfElem(ts_t)) {
 								// FIXME: need to deal with bounds here
-								ns[j] = Type.wildcardType(new Type[0], new Type[0]);
-							} else if(rs[j].supsetEqOfElem(ts[j])){
-								ns[j] = rs[j];
+								ns.add(new Type.Wildcard(null,null));
+							} else if(rs_t.supsetEqOfElem(ts_t)){
+								ns.add(rs_t);
 							} else {
-								ns[j] = ts[j];
+								ns.add(ts_t);								
 							}							
 						}
-						nClasses[i] = new Pair<String, Type[]>(tClasses[i].first(),ns);
+						nClasses.add(new Pair<String, List<Type>>(tClasses.get(i).first(),ns));
 					}		
 				}
 				if(!failed) {
-					return Type.referenceType(type.pkg(),nClasses);
+					return new Type.Clazz(type.pkg(),nClasses);
 				}				
 			}
 			closure.add(type);
-			Clazz c = findClass(type);
+			Clazz c = loader.loadClass(type);
 
 			// no match yet, so traverse super class and interfaces
 			if (c.superClass() != null) {
@@ -131,5 +178,33 @@ public class TypeSystem {
 
 		// this is always true!
 		return new Type.Clazz("java.lang","Object");
+	}
+	
+	/**
+     * This method checks whether the two types in question have the same base
+     * components. So, for example, ArrayList<String> and ArrayList<Integer>
+     * have the same base component --- namely, ArrayList.
+     * 
+     * @param t
+     * @return
+     */
+	protected boolean haveSameBaseComponents(Type.Clazz t1, Type.Clazz t2) {
+		List<Pair<String, List<Type>>> t1components = t1.components();
+		List<Pair<String, List<Type>>> t2components = t2.components();
+
+		// first, check they have the same number of components.
+		if(t1components.size() != t2components.size()) {
+			return false;
+		}
+		
+		// second, check each component in turn
+		for(int i=0;i!=t1components.size();++i) {
+			String t1c = t1components.get(i).first();
+			String t2c = t2components.get(i).first();
+			if(!t1c.equals(t2c)) {
+				return false;
+			}
+		}
+		return true;
 	}
 }
