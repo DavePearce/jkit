@@ -28,25 +28,14 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
-import jkit.compiler.ClassReader;
 import jkit.jil.*;
 import jkit.util.*;
 
-@SuppressWarnings("unused")
-public class ClassFileReader implements ClassReader {	
+public class ClassFileReader {	
 	private final byte[] bytes;      // byte array of class
 	private int[] items;       // start indices of constant pool items	
 	private Object[] objects;  // cache for constant pool objects
 	
-	public static void main(String[] args) {
-		try {
-			ClassFileReader cfr = new ClassFileReader(args[0]);
-			cfr.readClasses();
-		} catch(IOException e) {
-			System.out.println("Couldnt load file");
-		}
-	}
-		
 	/**
 	 * Construct reader for classfile. This method looks in all the places
 	 * specified by the VM's CLASSPATH.
@@ -83,19 +72,7 @@ public class ClassFileReader implements ClassReader {
 		items = null;
 		objects = null;
 	}
-	
-	/**
-     * Parse classfile and construct ClassInfo object, but ignore method body
-     * information.
-     * 
-     * @throws ClassFormatError
-     *             if the classfile is invalid.
-     */
-	public List<Clazz> readSkeletons() {		
-		return readClasses();
-	}
-		
-	
+				
 	/**
      * Parse classfile and construct ClassInfo object. Currently, this does the
      * same thing as readSkeletons.
@@ -103,7 +80,7 @@ public class ClassFileReader implements ClassReader {
      * @throws ClassFormatError
      *             if the classfile is invalid.
      */
-	public List<Clazz> readClasses() {		
+	public Clazz readClass() {		
 		if(read_u2(0) != 0xCAFE || read_u2(2) != 0xBABE) {
 			throw new ClassFormatError("bad magic number");
 		}
@@ -201,16 +178,16 @@ public class ClassFileReader implements ClassReader {
 				: parseClassDescriptor("L" + superClass + ";");
 		
 		if(s != null) { 
-			Triple<List<Type>,Type.Clazz,List<Type.Clazz>> st;
+			Triple<List<Type.Reference>,Type.Clazz,List<Type.Clazz>> st;
 			st = parseClassSignature(s.signature());
 			interfaces = st.third();
 			superType = st.second();
 			// Append generic parameters onto reference type.
 			// There is a bug here, when we have an inner class, whose outer 
 			// class has generic parameters.
-			List<Type> genericParams = st.first();
-			List<Pair<String,List<Type>>> classes = type.components();
-			Pair<String,List<Type>> nc = new Pair<String, List<Type>>(
+			List<Type.Reference> genericParams = st.first();
+			List<Pair<String,List<Type.Reference>>> classes = type.components();
+			Pair<String,List<Type.Reference>> nc = new Pair<String, List<Type.Reference>>(
 					classes.get(classes.size() - 1).first(), genericParams);
 			 
 			classes.set(classes.size()-1,nc);
@@ -218,10 +195,8 @@ public class ClassFileReader implements ClassReader {
 		}
 		
 		Clazz c = new Clazz(type, listModifiers(modifiers), superType, interfaces, fields,
-				methods);
-		ArrayList<Clazz> r = new ArrayList<Clazz>();
-		r.add(c);
-		return 	r;			 		
+				methods);		
+		return 	c;			 		
 	}
 	
     // ============================================================
@@ -470,10 +445,10 @@ public class ClassFileReader implements ClassReader {
 	 * 
 	 * @return
 	 */
-	protected Triple<List<Type>, Type.Clazz, List<Type.Clazz>> parseClassSignature(
+	protected Triple<List<Type.Reference>, Type.Clazz, List<Type.Clazz>> parseClassSignature(
 			String descriptor) {
 		int pos = 0;
-		ArrayList<Type> targs = new ArrayList<Type>();
+		ArrayList<Type.Reference> targs = new ArrayList<Type.Reference>();
 		if (descriptor.charAt(pos) == '<') {
 			pos = pos + 1; // skip '<'
 			while (descriptor.charAt(pos) != '>') {
@@ -494,11 +469,12 @@ public class ClassFileReader implements ClassReader {
 			interfaces.add(state.first());
 			pos = state.second();
 		}
-		return new Triple<List<Type>, Type.Clazz, List<Type.Clazz>>(targs,
+		return new Triple<List<Type.Reference>, Type.Clazz, List<Type.Clazz>>(targs,
 				superT, interfaces);
 	}
 	
-	protected Pair<Type,Integer> parseInternalDescriptor(String descriptor, int pos) {		
+	protected Pair<Type, Integer> parseInternalDescriptor(
+			String descriptor, int pos) {		
 		char c = descriptor.charAt(pos);		
 		if(c == 'L') {
 			Pair<Type.Clazz,Integer> p = parseInternalClassDescriptor(descriptor,pos);
@@ -568,7 +544,7 @@ public class ClassFileReader implements ClassReader {
 		}
 		String pkg = descriptor.substring(start,last).replace('/','.');
 		
-		ArrayList<Pair<String,List<Type>>> classes = new ArrayList<Pair<String,List<Type>>>();
+		ArrayList<Pair<String, List<Type.Reference>>> classes = new ArrayList<Pair<String, List<Type.Reference>>>();
 		// back track to make my life easier
 		pos = last;		
 		while (pos < descriptor.length() && descriptor.charAt(pos) != ';') {
@@ -583,23 +559,23 @@ public class ClassFileReader implements ClassReader {
 				pos++;
 			}
 			String name = descriptor.substring(last, pos);
-			ArrayList<Type> targs;
+			ArrayList<Type.Reference> targs;
 			if (pos < descriptor.length() && descriptor.charAt(pos) == '<') {				
-				ArrayList<Type> ts = new ArrayList<Type>();				
+				ArrayList<Type.Reference> ts = new ArrayList<Type.Reference>();				
 				pos = pos + 1; // skip '<'
 				while(descriptor.charAt(pos) != '>') {					
 					Pair<Type,Integer> ti = parseInternalDescriptor(descriptor,pos); 
-					ts.add(ti.first());
+					ts.add((Type.Reference) ti.first());
 					pos=ti.second();					
 				}
 				pos=pos+1; // skip '>'
 				targs = ts;				
 			} else {
-				targs = new ArrayList<Type>();
+				targs = new ArrayList<Type.Reference>();
 			}
-			classes.add(new Pair<String,List<Type>>(name, targs));
+			classes.add(new Pair<String,List<Type.Reference>>(name, targs));
 		}
-		@SuppressWarnings("unchecked")			
+		
 		Type.Clazz r = new Type.Clazz(pkg,classes);		
 		return new Pair<Type.Clazz, Integer>(r,pos+1);
 	}

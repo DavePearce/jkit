@@ -28,6 +28,7 @@ import jkit.bytecode.ClassFileWriter;
 import jkit.compiler.InternalException;
 import jkit.compiler.Stage;
 import jkit.compiler.SyntaxError;
+import jkit.compiler.ClassLoader;
 import jkit.java.JavaCompiler;
 
 /**
@@ -124,7 +125,7 @@ public class Main {
 		} else {
 			compiler = new JavaCompiler(classPath);
 		}
-		
+				
 		// ======================================================
 		// ============== Third, load skeletons ================
 		// ======================================================		

@@ -238,8 +238,8 @@ public class ClassLoader {
 	 * @return
 	 */
 	private Type.Reference resolveClassName(String pkg, String className) {
-		ArrayList<Pair<String,List<Type>>> classes = new ArrayList<Pair<String,List<Type>>>();
-		classes.add(new Pair<String, List<Type>>(className,new ArrayList<Type>()));
+		ArrayList<Pair<String,List<Type.Reference>>> classes = new ArrayList<Pair<String,List<Type.Reference>>>();
+		classes.add(new Pair<String, List<Type.Reference>>(className,new ArrayList<Type.Reference>()));
 		String fullClassName = className;
 		String outerClassName = className;
 		while(pkg != null) {			
@@ -266,7 +266,7 @@ public class ClassLoader {
 				// Therefore, it may be specifying an inner class and we need to check.
 				outerClassName = pathChild(pkg);
 				fullClassName = outerClassName +"$" + fullClassName;
-				classes.add(0,new Pair<String, List<Type>>(pathChild(pkg),new ArrayList<Type>()));				
+				classes.add(0,new Pair<String, List<Type.Reference>>(pathChild(pkg),new ArrayList<Type.Reference>()));				
 				pkg = pathParent(pkg);
 			}		
 		}
@@ -286,9 +286,9 @@ public class ClassLoader {
 	 * @throws ClassNotFoundException
 	 *             If it couldn't load the class
 	 */
-	public Clazz loadClass(Type.Clazz ref) throws ClassNotFoundException {		
+	public Clazz loadClass(Type.Clazz ref) throws ClassNotFoundException {				
 		String name = refName(ref);
-		
+				
 		// First, look in the classtable to see whether we have loaded this
 		// class before.
 		Clazz c = classtable.get(name);
@@ -307,7 +307,7 @@ public class ClassLoader {
 		if(ref.components().size() > 1) {			
 			// Now, if this is an inner class, we need to load it's parent, so
 			// that we can finalise this classes modifiers.
-			List<Pair<String,List<Type>>> nclasses = new ArrayList<Pair<String,List<Type>>>(ref.components());			
+			List<Pair<String,List<Type.Reference>>> nclasses = new ArrayList<Pair<String,List<Type.Reference>>>(ref.components());			
 			Clazz parent = loadClass(new Type.Clazz(ref.pkg(), nclasses));
 
 			/**
@@ -363,12 +363,10 @@ public class ClassLoader {
 					time = System.currentTimeMillis() - time;
 					logout.println("Loaded skeletons " + location + ":"
 							+ jarname + " [" + time + "ms]");
-					List<Clazz> skeletons = r.readSkeletons();
-					// Update our knowledge base of classes.
-					for (Clazz c : skeletons) {
-						classtable.put(refName(c.type()), c);
-					}
-					return skeletons.get(0);
+					Clazz clazz = r.readClass();
+					// Update our knowledge base of classes.					
+					classtable.put(refName(clazz.type()), clazz);					
+					return clazz;
 				} else {
 					File classFile = new File(filename + ".class");					
 					File srcFile = new File(srcFilename + ".java");
@@ -402,12 +400,10 @@ public class ClassLoader {
 						ClassFileReader r = new ClassFileReader(new FileInputStream(classFile));
 						time = System.currentTimeMillis() - time;
 						logout.println("Loaded skeletons " + classFile + " [" + time + "ms]");
-						List<Clazz> skeletons = r.readSkeletons();
-						// Update our knowledge base of classes.
-						for (Clazz c : skeletons) {							
-							classtable.put(refName(c.type()), c);
-						}
-						return skeletons.get(0);										
+						Clazz clazz = r.readClass();
+						// Update our knowledge base of classes.												
+						classtable.put(refName(clazz.type()), clazz);						
+						return clazz;										
 					}
 				}
 			} catch(IOException e) {
@@ -567,7 +563,7 @@ public class ClassLoader {
 	 */
 	String refName(Type.Clazz ref) {
 		String descriptor = ref.pkg();
-		for(Pair<String,List<Type>> c : ref.components()) {
+		for(Pair<String,List<Type.Reference>> c : ref.components()) {
 			if(!descriptor.equals("")) {
 				descriptor += ".";
 			}
