@@ -54,11 +54,19 @@ public class TypeSystem {
                 // position are compatible or not.
 			}
 			
-			// The current type we're visiting is not a match. Therefore, we
-            // need to explore its supertypes as well.			
 			Clazz c = loader.loadClass(type);
-
-			// no match yet, so traverse super class and interfaces
+			
+			// The current type we're visiting is not a match. Therefore, we
+            // need to explore its supertypes as well. A key issue
+            // in doing this, is that we must preserve the appropriate types
+            // according to the class declaration in question. For example,
+            // suppose we're checking:
+			// 
+			// subtype(List<String>,ArrayList<String>)
+			
+			test
+			
+			
 			if (c.superClass() != null) {
 				worklist.add((Type.Clazz) substituteTypes(type, c.type(), c
 						.superClass()));
