@@ -117,7 +117,7 @@ public class TypeSystem {
         // + interfaces) of t2 until either we reach t1, or java.lang.Object.
 		while(!worklist.isEmpty()) {
 			Type.Clazz type = worklist.remove(worklist.size() - 1);
-			System.out.println("EXAMINING: " + type);
+
 			if(type.equals(t1)) {
 				return true;
 			} else if(baseEquivalent(type, t1)) {
@@ -129,6 +129,7 @@ public class TypeSystem {
 			}
 			
 			Clazz c = loader.loadClass(type);
+			System.out.println("GOT HERE");
 			
 			// The current type we're visiting is not a match. Therefore, we
             // need to explore its supertypes as well. A key issue
