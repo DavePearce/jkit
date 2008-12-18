@@ -1,8 +1,6 @@
 package jkit.java.stages;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 import jkit.compiler.ClassLoader;
 import jkit.jil.Type;
@@ -16,7 +14,6 @@ import jkit.util.Pair;
  * @author djp
  */
 public class TypeSystem {
-
 	
 	/**
      * This method determines whether t1 :> t2; that is, whether t2 is a subtype
@@ -32,11 +29,86 @@ public class TypeSystem {
      * @return
      * @throws ClassNotFoundException
      */
-	public boolean subtype(Type.Clazz t1, Type.Clazz t2, ClassLoader loader)
+	public boolean subtype(Type t1, Type t2, ClassLoader loader)
 			throws ClassNotFoundException {
 		
+		// First, do the easy cases where things are symmetrical.
+		if(t1 instanceof Type.Clazz && t2 instanceof Type.Clazz) {
+			return subtype((Type.Clazz) t1, (Type.Clazz) t2, loader);
+		} else if(t1 instanceof Type.Primitive && t2 instanceof Type.Primitive) {
+			return subtype((Type.Primitive) t1, (Type.Primitive) t2);
+		} else if(t1 instanceof Type.Array && t2 instanceof Type.Array) {
+			return subtype((Type.Array) t1, (Type.Array) t2, loader);
+		} 
+		
+		// Now, we have to do the harder cases.
+		
+		
+		return false;
+	}
+	
+	/**
+     * This determines whether two primitive types are subtypes of each other or
+     * not. The JLS 4.10.1 states that subtyping between primitives looks like
+     * this:
+     * 
+     * <pre>
+     *    double :&gt; float 
+     *    float :&gt; long
+     *    long :&gt; int
+     *    int :&gt; char 
+     *    int :&gt; short 
+     *    short :&gt; byte
+     * </pre>
+     * 
+     * @param t1
+     * @param t2
+     * @return
+     */
+	public boolean subtype(Type.Primitive t1, Type.Primitive t2) {										
+		if(t1 instanceof Type.Double && subtype(new Type.Float(),t2)) { 
+			return true;
+		} else if(t1 instanceof Type.Float && subtype(new Type.Long(),t2)) {
+			return true;
+		} else if(t1 instanceof Type.Long && subtype(new Type.Int(),t2)) {
+			return true;
+		} else if(t1 instanceof Type.Int && subtype(new Type.Short(),t2)) {
+			return true;
+		} else if(t1 instanceof Type.Int && t2 instanceof Type.Char) {
+			return true;
+		} else if (t1 instanceof Type.Short && t2 instanceof Type.Byte) {
+			return true;
+		}
+
+		return false;
+	} 	
+		
+	/**
+     * This method determines whether two Array types are subtypes or not.
+     * Observe that we must follow Java's broken rules on this, depsite the fact
+     * that they can lead to runtime type errors.
+     * 
+     * @param t1
+     * @param t2
+     * @return
+     */
+	public boolean subtype(Type.Array t1, Type.Array t2, ClassLoader loader)
+			throws ClassNotFoundException {
+		return subtype(t1.element(), t2.element(), loader);
+	}
+
+	/**
+     * This method determines whether two Clazz types are subtypes or not.
+     * 
+     * @param t1
+     * @param t2
+     * @param loader
+     * @return
+     * @throws ClassNotFoundException
+     */
+	public boolean subtype(Type.Clazz t1, Type.Clazz t2, ClassLoader loader)
+			throws ClassNotFoundException {
 		ArrayList<Type.Clazz> worklist = new ArrayList<Type.Clazz>();
-		HashSet<Type.Clazz> closure = new HashSet<Type.Clazz>();
 		
 		worklist.add(t2);
 		
@@ -47,7 +119,7 @@ public class TypeSystem {
 			Type.Clazz type = worklist.remove(worklist.size() - 1);
 			if(type.equals(t1)) {
 				return true;
-			} else if(haveSameBaseComponents(type, t1)) {
+			} else if(baseEquivalent(type, t1)) {
 				// at this point, we have reached a type with the same base
                 // components as t1, but they are not identical. We now have to
                 // check wether or not any types in the generic parameter
@@ -62,130 +134,171 @@ public class TypeSystem {
             // according to the class declaration in question. For example,
             // suppose we're checking:
 			// 
-			// subtype(List<String>,ArrayList<String>)
-			
-			test
-			
+			//         subtype(List<String>,ArrayList<String>)
+			// 
+			// then, we'll start with ArrayList<String> and we'll want to move
+            // that here to be List<String>. The key issue is what determines
+            // how we decide what the appropriate generic parameters for List
+            // should be. To do that, we must look at the declaration for class
+            // ArrayList, where we'll notice something like this:
+			//
+			// <pre> 
+			// class ArrayList<T> implements List<T> { ... }
+			// </pre>
+			// 
+			// We need to use this template --- namely that the first generic
+            // parameter of ArrayList maps to the first of List --- in order to
+            // determine the proper supertype for ArrayList<String>. This is
+            // what the binding / substitution stuff is for.			
+			Map<String,Type.Reference> binding = bind(type, c.type());
 			
 			if (c.superClass() != null) {
-				worklist.add((Type.Clazz) substituteTypes(type, c.type(), c
-						.superClass()));
+				worklist.add((Type.Clazz) substitute(c.superClass(), binding));
 			}
 			for (Type.Clazz t : c.interfaces()) {
-				worklist
-						.add((Type.Clazz) substituteTypes(type, c.type(), t));
-			}
+				worklist.add(substitute(t, binding));
+			}			
 		}
 		
 		return false;
 	}
 	
+	/**
+     * This method builds a binding between a concrete class type, and a
+     * "template" type. For example, consider these two types:
+     * 
+     * <pre>
+     *        java.util.ArrayList&lt;String&gt; 
+     *        java.util.ArrayList&lt;T&gt;
+     * </pre>
+     * 
+     * Here, the parameterised variant is the "template". The binding produced
+     * from these two types would be:
+     * 
+     * <pre>
+     *        T -&gt; String
+     * </pre>
+     * 
+     * Thus, it is a mapping from the generic parameters, to the concrete types
+     * that they are instantiated with. This method requires that the concrete
+     * and template types are base equivalent.
+     * 
+     * Finally, a binding is not always constructable. This occurs when an
+     * attempt is made to bind one variable to different instantiations. This
+     * can occur is some rather strange places.
+     * 
+     * @param concrete
+     *            --- the concrete (i.e. instantiated) type.
+     * @param template
+     *            --- the template (i.e. having generic parameters) type.
+     * @return
+     * @throws ---
+     *             a BindError if the binding is not constructable.
+     */
+	public Map<String, Type.Reference> bind(Type.Clazz concrete,
+			Type.Clazz template) {
+		if(!baseEquivalent(concrete,template)) {
+			throw new IllegalArgumentException(
+					"Parameters to TypeSystem.bind() are not base equivalent ("
+							+ concrete + ", " + template + ")");
+		}
+		
+		HashMap<String, Type.Reference> binding = new HashMap<String, Type.Reference>();
+		innerBind(concrete, template, binding);
+		return binding;
+	}
 	
-		// this performs quite a complicated search,
-		// which could be made more efficient
-		// through caching and by recording which have
-		// already been visited.
-
-		ArrayList<Type.Clazz> worklist = new ArrayList<Type.Clazz>();
-		HashSet<Type.Clazz> closure = new HashSet<Type.Clazz>();
-		worklist.add(refT1);
-
-		while (!worklist.isEmpty()) {
-			// first, remove and check
-			Type.Clazz type = worklist.remove(worklist.size() - 1);
-			
-			if (type.equals(refT2)) {
-				return type;
-			} else if (haveSameBaseComponents(type, refT2)) {
-				// There are several cases here:
-				//
-				// 1) computing common supertype of erased and non-erased types.
-                //    e.g. ArrayList<String> and ArrayList. In this case, we employ
-                //    the unchecked assumption that they go together (as Java does)
-				//
-				// 2) computing common supertype of two non-erased types.
-                //    e.g. ArrayList<String> and ArrayList<Integer>. In this case,
-                //    we can generate ArrayList<?>
-				List<Pair<String,List<Type>>> tClasses = type.components();
-				List<Pair<String,List<Type>>> rClasses = refT2.components();
-				List<Pair<String,List<Type>>> nClasses = new ArrayList();
-				boolean failed = false;
-				for(int i=0;i!=tClasses.size();++i) {
-					List<Type> ts = tClasses.get(i).second();
-					List<Type> rs = rClasses.get(i).second();					
-					if(ts.size() != rs.size()) {
-						if(ts.size() == 0) {
-							nClasses.add(rClasses.get(i));							
-						} else if(rs.size() == 0) {
-							nClasses.add(tClasses.get(i));
-						} else {
-							// fall through, since this one doesn't work
-							failed = true;
-							break;
-						}
-					} else {
-						ArrayList<Type> ns = new ArrayList<Type>();
-						for (int j = 0; j != ts.size(); ++j) {
-							Type ts_t = ts.get(j);
-							Type rs_t = rs.get(j);
-							if(!ts_t.supsetEqOfElem(rs_t)) && !rs_t.supsetEqOfElem(ts_t)) {
-								// FIXME: need to deal with bounds here
-								ns.add(new Type.Wildcard(null,null));
-							} else if(rs_t.supsetEqOfElem(ts_t)){
-								ns.add(rs_t);
-							} else {
-								ns.add(ts_t);								
-							}							
-						}
-						nClasses.add(new Pair<String, List<Type>>(tClasses.get(i).first(),ns));
-					}		
-				}
-				if(!failed) {
-					return new Type.Clazz(type.pkg(),nClasses);
-				}				
-			}
-			closure.add(type);
-			Clazz c = loader.loadClass(type);
-
-			// no match yet, so traverse super class and interfaces
-			if (c.superClass() != null) {
-				worklist.add((Type.Clazz) substituteTypes(type, c.type(), c
-						.superClass()));
-			}
-			for (Type.Clazz t : c.interfaces()) {
-				worklist
-						.add((Type.Clazz) substituteTypes(type, c.type(), t));
-			}
+	public class BindError extends RuntimeException {
+		public BindError(String m) {
+			super(m);
 		}
-		// Now, do the second half of the search
-		worklist.add(refT2);
-
-		while (!worklist.isEmpty()) {
-			// first, remove and check
-			Type.Clazz type = worklist.remove(worklist.size() - 1);
-			for(Type.Clazz t : closure) {
-				if(t.equals(type)) {
-					return t;
-				}
+	}
+	
+	/**
+	 * A helper method for bind()
+	 * 
+	 * @param concrete
+	 * @param template
+	 * @return
+	 */
+	private void innerBind(Type.Reference concrete, Type.Reference template,
+			HashMap<String, Type.Reference> binding) {
+		
+		if (template instanceof Type.Variable) {
+			// Ok, we've reached a type variable, so we can now bind this with
+			// what we already have.
+			Type.Variable v = (Type.Variable) template;
+			Type.Reference r = binding.get(v.variable());
+			if (r != null && !r.equals(concrete)) {
+				// in this case, a sound binding cannot be constructed, so we
+				// must throw an error.
+				throw new BindError("attempt to bind variable " + v
+						+ " to both " + r + " and " + concrete);
+			} else if(r == null) {
+				binding.put(v.variable(), concrete);
+			}
+		} else if(template instanceof Type.Wildcard) {
+			// NEED TO HANDLE LOWER AND UPPER BOUNDS.
+			
+		} else if(template instanceof Type.Clazz) {
+			if(!(concrete instanceof Type.Clazz)) {
+				throw new BindError("Cannot bind " + concrete + " to " + template);
 			}
 			
-			if (closure.contains(type)) {
-				return type;
+			Type.Clazz cc = (Type.Clazz) concrete;
+			Type.Clazz tc = (Type.Clazz) template;			
+			
+			if(cc.components().size() != tc.components().size()) {
+				throw new BindError("Cannot bind " + concrete + " to " + template);
 			}
-			Clazz c = findClass(type);
-			// no match yet, so traverse super class and interfaces
-			if (c.superClass() != null) {
-				worklist.add((Type.Clazz) substituteTypes(type, c.type(), c
-						.superClass()));
+			
+			for(int i=0;i!=cc.components().size();++i) {
+				Pair<String,List<Type.Reference>> c = cc.components().get(i);
+				Pair<String,List<Type.Reference>> t = tc.components().get(i);
+				List<Type.Reference> cs = c.second();
+				List<Type.Reference> ts = t.second();
+				
+				// this maybe too strict for erased types.
+				if(!c.first().equals(t.first()) || cs.size() != ts.size()) {
+					throw new BindError("Cannot bind " + concrete + " to " + template);
+				}
+				
+				for(int j=0;j!=cs.size();++j) {
+					innerBind(cs.get(j),ts.get(j),binding);	
+				}							
 			}
-			for (Type.Clazz t : c.interfaces()) {
-				worklist
-						.add((Type.Clazz) substituteTypes(type, c.type(), t));
+			
+		} else if(template instanceof Type.Array) {
+			if(!(concrete instanceof Type.Array)) {
+				throw new BindError("Cannot bind " + concrete + " to " + template);
 			}
-		}
-
-		// this is always true!
-		return new Type.Clazz("java.lang","Object");
+			
+			Type.Array ca = (Type.Array) concrete;
+			Type.Array ta = (Type.Array) template;
+			
+			innerBind(ca,ta, binding);
+		} 
+	}
+	
+	/**
+     * This method accepts a binding from type variables to concrete types, and
+     * then substitutes each such variable occuring in the target type with its
+     * corresponding instantation. For example, suppose we have this binding:
+     * 
+     * <pre>
+     *  K -&gt; String
+     *  V -&gt; Integer
+     * </pre>
+     * 
+     * Then, substituting against <code>HashMap<K,V></code> yields
+     * <code>HashMap<String,Integer></code>.
+     * 
+     * @param type
+     * @param binding
+     * @return
+     */
+	protected Type.Clazz substitute(Type.Clazz type, Map<String,Type.Reference> binding) {
+		return null;
 	}
 	
 	/**
@@ -196,9 +309,9 @@ public class TypeSystem {
      * @param t
      * @return
      */
-	protected boolean haveSameBaseComponents(Type.Clazz t1, Type.Clazz t2) {
-		List<Pair<String, List<Type>>> t1components = t1.components();
-		List<Pair<String, List<Type>>> t2components = t2.components();
+	protected boolean baseEquivalent(Type.Clazz t1, Type.Clazz t2) {
+		List<Pair<String, List<Type.Reference>>> t1components = t1.components();
+		List<Pair<String, List<Type.Reference>>> t2components = t2.components();
 
 		// first, check they have the same number of components.
 		if(t1components.size() != t2components.size()) {

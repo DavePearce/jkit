@@ -1604,7 +1604,7 @@ public class JavaFileReader2 {
 
 				// === NON-PRIMITIVE TYPES ===
 
-				ArrayList<Pair<String, List<Type>>> components = new ArrayList<Pair<String, List<Type>>>();
+				ArrayList<Pair<String, List<Type.Reference>>> components = new ArrayList<Pair<String, List<Type.Reference>>>();
 
 				for (int i = 0; i != (type.getChildCount() - dims); ++i) {
 					Tree child = type.getChild(i);
@@ -1613,14 +1613,14 @@ public class JavaFileReader2 {
 					if (text.equals("VOID")) {
 						text = "void"; // hack!
 					}
-					ArrayList<Type> genArgs = new ArrayList<Type>();
+					ArrayList<Type.Reference> genArgs = new ArrayList<Type.Reference>();
 
 					for (int j = 0; j != child.getChildCount(); ++j) {
 						Tree childchild = child.getChild(j);
-						genArgs.add(parseType(childchild));
+						genArgs.add((Type.Reference) parseType(childchild));
 					}
 
-					components.add(new Pair<String, List<Type>>(text,
+					components.add(new Pair<String, List<Type.Reference>>(text,
 							genArgs));
 				}
 
@@ -1641,7 +1641,7 @@ public class JavaFileReader2 {
 
 		// === COMPONENTS ===
 
-		ArrayList<Pair<String, List<Type>>> components = new ArrayList<Pair<String, List<Type>>>();
+		ArrayList<Pair<String, List<Type.Reference>>> components = new ArrayList<Pair<String, List<Type.Reference>>>();
 
 		for (int i = 0; i != type.getChildCount(); ++i) {
 			Tree child = type.getChild(i);
@@ -1650,22 +1650,22 @@ public class JavaFileReader2 {
 			if (text.equals("VOID")) {
 				text = "void"; // hack!
 			}
-			ArrayList<Type> genArgs = new ArrayList<Type>();
+			ArrayList<Type.Reference> genArgs = new ArrayList<Type.Reference>();
 
 			for (int j = 0; j != child.getChildCount(); ++j) {
 				Tree childchild = child.getChild(j);
 				if (childchild.getType() == EXTENDS) {
 					// this is a lower bound, not a generic argument.
 				} else {
-					genArgs.add(parseType(childchild));
+					genArgs.add((Type.Reference) parseType(childchild));
 				}
 			}
 
 			components
-					.add(new Pair<String, List<Type>>(text, genArgs));
+					.add(new Pair<String, List<Type.Reference>>(text, genArgs));
 		}
 
-		return new Type.Clazz("",components);
+		return new Type.Clazz("", components);
 	}
 
 	protected static Type.Variable parseVariableType(Tree type) {

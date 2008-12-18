@@ -39,8 +39,7 @@ public interface Type extends Attribute {
 		public boolean equals(Object o) {
 			return o instanceof Type.Null;
 		}
-	}
-	 
+	}	 
 	
 	/**
      * The Void type is used to represent "void" types, found in method
@@ -217,25 +216,25 @@ public interface Type extends Attribute {
      */
 	public static class Clazz implements Reference {		
 		private String pkg;
-		private List<Pair<String, List<Type>>> components;
+		private List<Pair<String, List<Type.Reference>>> components;
 		
-		public Clazz(String pkg, List<Pair<String, List<Type>>> components) {
+		public Clazz(String pkg, List<Pair<String, List<Type.Reference>>> components) {
 			this.pkg = pkg;
 			this.components = components;
 		}		
 		
 		public Clazz(String pkg, String clazz) {
 			this.pkg = pkg;
-			components = new ArrayList<Pair<String,List<Type>>>();
-			components.add(new Pair(clazz,new ArrayList<Type>()));
+			components = new ArrayList<Pair<String,List<Type.Reference>>>();
+			components.add(new Pair(clazz,new ArrayList<Type.Reference>()));
 		}
 		
-		public List<Pair<String, List<Type>>> components() {
+		public List<Pair<String, List<Type.Reference>>> components() {
 			return components;
 		}
 		
 		public void setComponents(
-				List<Pair<String, List<Type>>> components) {
+				List<Pair<String, List<Type.Reference>>> components) {
 			this.components = components;
 		}
 		
@@ -252,13 +251,13 @@ public interface Type extends Attribute {
 		public String toString() {
 			String r = pkg;			
 			boolean firstTime = pkg.length() == 0;
-			for (Pair<String, List<Type>> n : components) {
+			for (Pair<String, List<Type.Reference>> n : components) {
 				if (!firstTime) {
 					r += ".";
 				}
 				firstTime = false;
 				r += n.first();
-				List<Type> typeArgs = n.second();
+				List<Type.Reference> typeArgs = n.second();
 				if (typeArgs != null && typeArgs.size() > 0) {
 					r += "<";
 					boolean innerFirstTime = true;
@@ -296,10 +295,10 @@ public interface Type extends Attribute {
      * 
      */
 	public static class Wildcard implements Reference {
-		private Type lowerBound;
-		private Type upperBound;
+		private Type.Reference lowerBound;
+		private Type.Reference upperBound;
 
-		public Wildcard(Type lowerBound, Type upperBound) {			
+		public Wildcard(Type.Reference lowerBound, Type.Reference upperBound) {			
 			this.lowerBound = lowerBound;
 			this.upperBound = upperBound;
 		}
@@ -310,7 +309,7 @@ public interface Type extends Attribute {
          * 
          * @return
          */
-		public Type upperBound() {
+		public Type.Reference upperBound() {
 			return upperBound;
 		}
 
@@ -320,7 +319,7 @@ public interface Type extends Attribute {
          * 
          * @return
          */
-		public Type lowerBound() {
+		public Type.Reference lowerBound() {
 			return lowerBound;
 		}
 		
