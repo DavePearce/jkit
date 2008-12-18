@@ -4,6 +4,7 @@ import java.util.*;
 
 import jkit.bytecode.Types;
 import jkit.compiler.SyntaxError;
+import jkit.compiler.ClassLoader;
 import jkit.java.*;
 import jkit.java.Decl.*;
 import jkit.java.Expr.*;
@@ -29,9 +30,11 @@ import jkit.util.Triple;
 public class TypeChecking {
 	private ClassLoader loader;
 	private Stack<Decl> enclosingScopes = new Stack<Decl>();
+	private TypeSystem types;
 	
-	public TypeChecking(ClassLoader loader) {
+	public TypeChecking(ClassLoader loader, TypeSystem types) {
 		this.loader = loader; 
+		this.types = types;
 	}
 	
 	public void apply(JavaFile file) {
@@ -157,12 +160,15 @@ public class TypeChecking {
 		
 		for(Stmt.CatchBlock cb : block.handlers()) {
 			checkBlock(cb);
-			
-			if (!subtype(new Type.Clazz("java.lang", "Throwable"), cb.type())) {
-				syntax_error(
-						"required subtype of java.lang.Throwable, found type "
-								+ cb.type(), cb);
-			}
+			try {
+				if (!types.subtype(new Type.Clazz("java.lang", "Throwable"), cb.type(), loader)) {
+					syntax_error(
+							"required subtype of java.lang.Throwable, found type "
+							+ cb.type(), cb);
+				}
+			} catch (ClassNotFoundException ex) {
+				syntax_error(ex.getMessage(), block);
+			}	
 		}
 	}
 	
@@ -179,10 +185,13 @@ public class TypeChecking {
 				}
 
 				Type i_t = (Type) d.third().attribute(Type.class);
-
-				if (!subtype(nt, i_t)) {
-					syntax_error("required type " + nt + ", found type " + i_t, def);
-				}
+				try {
+					if (!types.subtype(nt, i_t, loader)) {
+						syntax_error("required type " + nt + ", found type " + i_t, def);
+					}
+				} catch (ClassNotFoundException ex) {
+					syntax_error(ex.getMessage(), def);
+				}	
 			}
 		}
 	}
@@ -193,11 +202,15 @@ public class TypeChecking {
 		
 		Type lhs_t = (Type) def.lhs().attribute(Type.class);
 		Type rhs_t = (Type) def.rhs().attribute(Type.class);
-					
-		if (!subtype(lhs_t, rhs_t)) {
-			syntax_error("required type " + lhs_t + ", found type "
-					+ rhs_t, def);
-		} 		
+		
+		try {			
+			if (!types.subtype(lhs_t, rhs_t, loader)) {
+				syntax_error(
+						"required type " + lhs_t + ", found type " + rhs_t, def);
+			}
+		} catch (ClassNotFoundException ex) {
+			syntax_error(ex.getMessage(), def);
+		}	
 	}
 	
 	protected void checkReturn(Stmt.Return ret) {		
@@ -207,16 +220,19 @@ public class TypeChecking {
 			checkExpression(ret.expr());						
 			
 			Type ret_t = (Type) ret.expr().attribute(Type.class);
-			
-			if(ret_t.equals(new Type.Void())) {
-				syntax_error(
-						"cannot return a value from method whose result type is void",
-						ret);	
-			} else if(!subtype(method.returnType(),ret_t)) {
-				syntax_error("required return type " + method.returnType()
-						+ ",  found type " + ret_t , ret);	
-			}
-			
+			try {
+				if(ret_t.equals(new Type.Void())) {
+					syntax_error(
+							"cannot return a value from method whose result type is void",
+							ret);	
+				} else if(!types.subtype(method.returnType(),ret_t, loader)) {
+					syntax_error("required return type " + method.returnType()
+							+ ",  found type " + ret_t , ret);	
+				}
+
+			} catch (ClassNotFoundException ex) {
+				syntax_error(ex.getMessage(), ret);
+			}				
 		} else if(!(method.returnType() instanceof Type.Void)) {
 			syntax_error("missing return value", ret);
 		}
@@ -296,10 +312,13 @@ public class TypeChecking {
 		// need to check that the static type of the source expression
 		// implements java.lang.iterable
 		Type s_t = (Type) stmt.source().attribute(Type.class);
-
-		if (!subtype(new Type.Clazz("java.lang", "Iterable"), s_t)) {
-			syntax_error("foreach not applicable to expression type",stmt);
-		}
+		try {
+			if (!types.subtype(new Type.Clazz("java.lang", "Iterable"), s_t, loader)) {
+				syntax_error("foreach not applicable to expression type",stmt);
+			} 
+		} catch (ClassNotFoundException ex) {
+			syntax_error(ex.getMessage(), stmt);
+		}		
 	}
 	
 	protected void checkSwitch(Stmt.Switch sw) {
@@ -413,21 +432,28 @@ public class TypeChecking {
 	
 	protected void checkCast(Expr.Cast e) {
 		Type e_t = (Type) e.expr().attribute(Type.class);
-		
-		if(!subtype(e.type(),e_t)) {
-			syntax_error("inconvertible types: " + e_t + ", " + e.type(), e);
+		try {
+			if(!types.subtype(e.type(),e_t, loader)) {
+				syntax_error("inconvertible types: " + e_t + ", " + e.type(), e);
+			}
+		} catch(ClassNotFoundException ex) {
+			syntax_error (ex.getMessage(),e);
 		}
 	}
 	
 	protected void checkConvert(Expr.Convert e) {
 		Type rhs_t = (Type) e.expr().attribute(Type.class);
-		if(!subtype(e.type(),rhs_t)) {
-			SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
-			if(rhs_t instanceof Type.Primitive) {
-				throw new SyntaxError("possible loss of precision",loc.line(),loc.column());
-			} else {
-				throw new SyntaxError("incompatible types",loc.line(),loc.column());
+		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
+		try {
+			if(!types.subtype(e.type(),rhs_t, loader)) {
+				if(rhs_t instanceof Type.Primitive) {
+					throw new SyntaxError("possible loss of precision",loc.line(),loc.column());
+				} else {
+					throw new SyntaxError("incompatible types",loc.line(),loc.column());
+				}
 			}
+		} catch(ClassNotFoundException ex) {
+			syntax_error (ex.getMessage(),e);			
 		}
 	}
 	
@@ -616,54 +642,7 @@ public class TypeChecking {
 		if (!(c_t instanceof Type.Bool)) {
 			syntax_error("required type boolean, found " + c_t, e);
 		}		
-	}
-	
-	/**
-     * This method determines wether t2 is a (non-strict) subtype of t2. In the
-     * case of primitive types, this is relatively easy to determine. However,
-     * in the case of reference types it is harder as we must navigate the class
-     * heirarchy to determine this.
-     * 
-     * JLS 4.10.1 states that subtyping between primitives looks like this:
-     * 
-     * <pre>
-     *   double :&gt; float 
-     *   float :&gt; long
-     *   long :&gt; int
-     *   int :&gt; char 
-     *   int :&gt; short 
-     *   short :&gt; byte
-     * </pre>
-     * 
-     * @param t1
-     * @param t2
-     * @return
-     */
-	protected boolean subtype(Type t1, Type t2) {			
-		if (t1.equals(t2)) { return true; }				
-		if(t1 instanceof Type.Primitive && t2 instanceof Type.Primitive) {			
-			// First, do all (non-trivial) primitive subtyping options			
-			if(t1 instanceof Type.Double && subtype(new Type.Float(),t2)) { 
-				return true;
-			} else if(t1 instanceof Type.Float && subtype(new Type.Long(),t2)) {
-				return true;
-			} else if(t1 instanceof Type.Long && subtype(new Type.Int(),t2)) {
-				return true;
-			} else if(t1 instanceof Type.Int && subtype(new Type.Short(),t2)) {
-				return true;
-			} else if(t1 instanceof Type.Int && t2 instanceof Type.Char) {
-				return true;
-			} else if (t1 instanceof Type.Short && t2 instanceof Type.Byte) {
-				return true;
-			}					
-		} else {
-			// Second, consider subtyping relationships between references			
-		}
-				
-		return false;
-	}
-	
-	
+	}		
 	
 	protected Decl getEnclosingScope(Class c) {
 		for(int i=enclosingScopes.size()-1;i>=0;--i) {

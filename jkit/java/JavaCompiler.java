@@ -9,6 +9,7 @@ import jkit.compiler.SyntaxError;
 import jkit.compiler.ClassLoader;
 import jkit.java.stages.TypeChecking;
 import jkit.java.stages.TypePropagation;
+import jkit.java.stages.TypeSystem;
 import jkit.jil.*;
 import jkit.util.Pair;
 
@@ -155,7 +156,7 @@ public class JavaCompiler implements Compiler {
 			// First we must read the skeletons
 			JavaFile jfile = reader.read();
 			new TypePropagation(null).apply(jfile);
-			new TypeChecking(null).apply(jfile);
+			new TypeChecking(null, new TypeSystem()).apply(jfile);
 			
 			compilationQueue.remove(filename);
 			compiling.remove(filename);

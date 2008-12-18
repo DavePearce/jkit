@@ -117,6 +117,7 @@ public class TypeSystem {
         // + interfaces) of t2 until either we reach t1, or java.lang.Object.
 		while(!worklist.isEmpty()) {
 			Type.Clazz type = worklist.remove(worklist.size() - 1);
+			System.out.println("EXAMINING: " + type);
 			if(type.equals(t1)) {
 				return true;
 			} else if(baseEquivalent(type, t1)) {
@@ -124,6 +125,7 @@ public class TypeSystem {
                 // components as t1, but they are not identical. We now have to
                 // check wether or not any types in the generic parameter
                 // position are compatible or not.
+				return true; // TEMPORARY
 			}
 			
 			Clazz c = loader.loadClass(type);
@@ -156,7 +158,7 @@ public class TypeSystem {
 				worklist.add((Type.Clazz) substitute(c.superClass(), binding));
 			}
 			for (Type.Clazz t : c.interfaces()) {
-				worklist.add(substitute(t, binding));
+				worklist.add((Type.Clazz) substitute(t, binding));
 			}			
 		}
 		
@@ -195,9 +197,9 @@ public class TypeSystem {
      * @throws ---
      *             a BindError if the binding is not constructable.
      */
-	public Map<String, Type.Reference> bind(Type.Clazz concrete,
-			Type.Clazz template) {
-		if(!baseEquivalent(concrete,template)) {
+	public Map<String, Type.Reference> bind(Type.Reference concrete,
+			Type.Reference template) {
+		if(template instanceof Type.Clazz && concrete instanceof Type.Clazz && !baseEquivalent((Type.Clazz)concrete,(Type.Clazz)template)) {
 			throw new IllegalArgumentException(
 					"Parameters to TypeSystem.bind() are not base equivalent ("
 							+ concrete + ", " + template + ")");
@@ -297,8 +299,50 @@ public class TypeSystem {
      * @param binding
      * @return
      */
-	protected Type.Clazz substitute(Type.Clazz type, Map<String,Type.Reference> binding) {
-		return null;
+	protected Type.Reference substitute(Type.Reference type, Map<String,Type.Reference> binding) {
+		if (type instanceof Type.Variable) {
+			// Ok, we've reached a type variable, so we can now bind this with
+			// what we already have.
+			Type.Variable v = (Type.Variable) type;
+			Type.Reference r = binding.get(v.variable());
+			if(r == null) {
+				// if the variable is not part of the binding, then we simply do
+                // not do anything with it.
+				return v;
+			} else {
+				return r;
+			}
+		} else if(type instanceof Type.Wildcard) {
+			Type.Wildcard wc = (Type.Wildcard) type;
+			Type.Reference lb = wc.lowerBound();
+			Type.Reference ub = wc.upperBound();
+			if(lb != null) { lb = substitute(lb,binding); }
+			if(ub != null) { ub = substitute(ub,binding); }
+			return new Type.Wildcard(lb,ub);
+		} else if(type instanceof Type.Array) {
+			Type.Array at = (Type.Array) type;
+			if(at.element() instanceof Type.Reference) {
+				return new Type.Array(substitute((Type.Reference) at.element(),binding));
+			} else {
+				return type;
+			}
+		} else if(type instanceof Type.Clazz) {
+			Type.Clazz ct = (Type.Clazz) type;
+			ArrayList<Pair<String,List<Type.Reference>>> ncomponents = new ArrayList();
+			List<Pair<String,List<Type.Reference>>> components = ct.components();
+			
+			for(Pair<String,List<Type.Reference>> c : components) {
+				ArrayList<Type.Reference> nc = new ArrayList<Type.Reference>();
+				for(Type.Reference r : c.second()) {
+					nc.add(substitute(r,binding));
+				}
+				ncomponents.add(new Pair(c.first(),nc));
+			}
+			
+			return new Type.Clazz(ct.pkg(),ncomponents);
+		}
+		
+		throw new BindError("Cannot substitute against type " + type);
 	}
 	
 	/**
