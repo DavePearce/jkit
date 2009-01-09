@@ -200,11 +200,11 @@ public class ClassLoader {
 	 * @throws ClassNotFoundException
 	 *             if it couldn't resolve the class
 	 */
-	public Type.Reference resolve(String className, List<String> imports)
+	public Type.Clazz resolve(String className, List<String> imports)
 			throws ClassNotFoundException {						
 						
 		for (String imp : imports) {
-			Type.Reference ref = null;
+			Type.Clazz ref = null;
 			if (imp.endsWith(".*")) {
 				// try and resolve the class
 				ref = resolveClassName(imp.substring(0, imp.length() - 2),className);												
@@ -237,7 +237,7 @@ public class ClassLoader {
 	 *            the class name provided, in the form "xxx$yyy"
 	 * @return
 	 */
-	private Type.Reference resolveClassName(String pkg, String className) {
+	protected Type.Clazz resolveClassName(String pkg, String className) {
 		ArrayList<Pair<String,List<Type.Reference>>> classes = new ArrayList<Pair<String,List<Type.Reference>>>();
 		classes.add(new Pair<String, List<Type.Reference>>(className,new ArrayList<Type.Reference>()));
 		String fullClassName = className;

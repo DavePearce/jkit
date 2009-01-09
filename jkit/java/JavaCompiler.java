@@ -8,6 +8,7 @@ import jkit.compiler.Compiler;
 import jkit.compiler.SyntaxError;
 import jkit.compiler.ClassLoader;
 import jkit.java.stages.TypeChecking;
+import jkit.java.stages.TypeResolution;
 import jkit.java.stages.TypePropagation;
 import jkit.java.stages.TypeSystem;
 import jkit.jil.*;
@@ -155,8 +156,10 @@ public class JavaCompiler implements Compiler {
 			
 			// First we must read the skeletons
 			JavaFile jfile = reader.read();
+			new TypeResolution(loader).apply(jfile);
 			new TypePropagation(loader).apply(jfile);
-			new TypeChecking(loader, new TypeSystem()).apply(jfile);
+			// new TypeChecking(loader, new TypeSystem()).apply(jfile);
+			new JavaFileWriter(System.out).write(jfile);
 			
 			compilationQueue.remove(filename);
 			compiling.remove(filename);

@@ -966,7 +966,7 @@ public class JavaFileWriter {
 	
 	protected void writeClassType(Type.Clazz t) {		
 		boolean firstTime=true;
-		for(Pair<String,List<Type>> c : t.components()) {
+		for(Pair<String,List<Type.Reference>> c : t.components()) {
 			if(!firstTime) {
 				write(".");
 			} else {
