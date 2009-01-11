@@ -274,4 +274,7 @@ public interface Decl extends SyntacticElement {
 		}
 	}
 
+	
+	
+	
 }	
