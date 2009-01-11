@@ -38,15 +38,113 @@ public class Type extends SyntacticElementImpl {
      * The Primitive type abstracts all the primitive types.
      */
 	public static class Primitive extends Type {
-		private String type;
-		
-		public Primitive(String type, Attribute... attributes) {
-			super(attributes);
-			this.type = type;
+		public Primitive(Attribute... attributes) {
+			super(attributes);			
 		}
-		
-		public String type() { return type; }
 	}
+	
+	/**
+     * The Void type is used to represent "void" types, found in method
+     * declarations.
+     * 
+     * @author djp
+     * 
+     */
+	public static class Void extends Primitive {		
+		public Void(Attribute... attributes) {
+			super(attributes);
+		}
+	}
+	
+	/**
+	 * Represents the Java type "boolean"
+	 * @author djp
+	 *
+	 */
+	public static class Bool extends Primitive {		
+		public Bool(Attribute... attributes) {
+			super(attributes);
+		}
+	}
+	
+
+	/**
+	 * Represents the Java type "byte"
+	 * @author djp
+	 *
+	 */
+	public static class Byte extends Primitive {
+		public Byte(Attribute... attributes) {
+			super(attributes);
+		}
+	}
+	
+	/**
+	 * Represents the Java type "char"
+	 * @author djp
+	 *
+	 */
+	public static class Char extends Primitive {
+		public Char(Attribute... attributes) {
+			super(attributes);
+		}
+	}
+	
+	/**
+	 * Represents the Java type "short"
+	 * @author djp
+	 *
+	 */
+	public static class Short extends Primitive {
+		public Short(Attribute... attributes) {
+			super(attributes);
+		}
+	}
+
+	/**
+	 * Represents the Java type "int"
+	 * @author djp
+	 *
+	 */
+	public static class Int extends Primitive {
+		public Int(Attribute... attributes) {
+			super(attributes);
+		}
+	}
+	
+	/**
+	 * Represents the Java type "long"
+	 * @author djp
+	 *
+	 */
+	public static class Long extends Primitive {
+		public Long(Attribute... attributes) {
+			super(attributes);
+		}
+	}
+	
+	/**
+	 * Represents the Java type "float"
+	 * @author djp
+	 *
+	 */
+	public static class Float extends Primitive {
+		public Float(Attribute... attributes) {
+			super(attributes);
+		}
+	}
+	
+	/**
+	 * Represents the Java type "double"
+	 * @author djp
+	 *
+	 */
+	public static class Double extends Primitive {
+		public Double(Attribute... attributes) {
+			super(attributes);
+		}
+	}
+	
 	
 	/**
      * The Reference type abstracts all the reference types, including class
@@ -65,7 +163,7 @@ public class Type extends SyntacticElementImpl {
      * 
      * @author djp
      */
-	public static class Array extends Type {
+	public static class Array extends Reference {
 		private Type element;
 		public Array(Type element, Attribute... attributes) {
 			super(attributes);

@@ -7,7 +7,6 @@ import jkit.jil.Attribute;
 import jkit.jil.Modifier;
 import jkit.jil.SyntacticElement;
 import jkit.jil.SyntacticElementImpl;
-import jkit.jil.Type;
 import jkit.util.Triple;
 
 public interface Decl extends SyntacticElement {

@@ -2,10 +2,10 @@ package jkit.java.stages;
 
 import java.util.*;
 
+import jkit.*;
 import jkit.compiler.ClassLoader;
 import jkit.compiler.SyntaxError;
-import jkit.java.Decl;
-import jkit.java.JavaFile;
+import jkit.java.*;
 import jkit.java.Decl.Clazz;
 import jkit.java.Decl.Field;
 import jkit.java.Decl.Interface;
@@ -13,7 +13,6 @@ import jkit.java.Decl.Method;
 import jkit.jil.Modifier;
 import jkit.jil.SourceLocation;
 import jkit.jil.SyntacticElement;
-import jkit.jil.Type;
 import jkit.util.*;
 
 /**
@@ -98,14 +97,14 @@ public class TypeResolution {
 		// doExpression(d.initialiser(), new HashMap<String,Type>());
 	}
 	
-	protected Type.Reference resolve(Type.Reference t, JavaFile file) {
-		if(t instanceof Type.Clazz) {
+	protected jkit.jil.Type.Reference resolve(Type.Reference t, JavaFile file) {
+		if(t instanceof jkit.java.Type.Clazz) {
 			resolveClass((Type.Clazz)t,file);			
 		} else if(t instanceof Type.Array) {
 			
 		}
 		
-		return t;
+		return null;
 	}
 	
 	/**
@@ -136,8 +135,8 @@ public class TypeResolution {
 	 *            determine the import list.
 	 * @return
 	 */
-	protected Type.Reference resolveClass(Type.Clazz ct, JavaFile file) {
-		ArrayList<Pair<String,List<Type.Reference>>> ncomponents = new ArrayList();
+	protected jkit.jil.Type.Reference resolveClass(Type.Clazz ct, JavaFile file) {
+		ArrayList<Pair<String,List<jkit.jil.Type.Reference>>> ncomponents = new ArrayList();
 		String className = "";
 		String pkg = "";
 				
@@ -153,7 +152,15 @@ public class TypeResolution {
 				}
 				firstTime = false;
 				className += ct.components().get(i).first();
-				ncomponents.add(ct.components().get(i));
+				// now, rebuild the component list
+				Pair<String,List<Type.Reference>> component = ct.components().get(i);
+				ArrayList<jkit.jil.Type.Reference> nvars = new ArrayList();
+				
+				for(Type.Reference r : component.second()) {
+					nvars.add(resolve(r,file));
+				}
+				
+				ncomponents.add(new Pair<String,List<jkit.jil.Type.Reference>>(component.first(),nvars));
 			}
 		}
 		
@@ -163,7 +170,7 @@ public class TypeResolution {
 		} else if(pkg.length() > 0) {
 			// could add "containsClass" check here. Need to modify
 			// classLoader though.
-			return new Type.Clazz(pkg,ncomponents);			
+			return new jkit.jil.Type.Clazz(pkg,ncomponents);			
 		}
 		
 		// So, at this point, it seems there was no package information in the

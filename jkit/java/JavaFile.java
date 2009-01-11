@@ -1,8 +1,6 @@
 package jkit.java;
 
 import java.util.*;
-
-import jkit.jil.*;
 import jkit.util.*;
 
 public class JavaFile {

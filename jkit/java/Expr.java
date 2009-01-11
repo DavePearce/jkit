@@ -5,7 +5,6 @@ import java.util.List;
 import jkit.jil.Attribute;
 import jkit.jil.SyntacticElement;
 import jkit.jil.SyntacticElementImpl;
-import jkit.jil.Type;
 
 public interface Expr extends SyntacticElement {
 	/**
