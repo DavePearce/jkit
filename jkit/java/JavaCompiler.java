@@ -155,8 +155,7 @@ public class JavaCompiler implements Compiler {
 			logout.println("Parsed " + filename + " [" + (last - start) + "ms]");
 			
 			// First we must read the skeletons
-			JavaFile jfile = reader.read();
-			new TypeResolution(loader).apply(jfile);
+			JavaFile jfile = reader.read();			
 			new TypePropagation(loader).apply(jfile);
 			// new TypeChecking(loader, new TypeSystem()).apply(jfile);
 			new JavaFileWriter(System.out).write(jfile);

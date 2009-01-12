@@ -14,9 +14,36 @@ import jkit.jil.Modifier;
 import jkit.jil.SourceLocation;
 
 /**
- * This class goes through a JavaFile and propagate type attributes
- * appropriately. The stage also checks that types are used appropriately in
- * expressions and statements and, where not, emits error messages accordingly.
+ * This Class does two main things:
+ * 
+ * 1) it goes through all of the types that have been declared in the source
+ * file, and resolves them to fully qualified types. For example, consider this
+ * code:
+ * 
+ * <pre>
+ * import java.util.*;
+ * 
+ * public class Test extends Vector {
+ * 	public static void main(String[] args) {
+ *      ... 
+ *     }
+ * }
+ * </pre>
+ * 
+ * After type resolution, we will have resolved the following types:
+ * 
+ * <pre>
+ *   Vector -&gt; java.util.Vector
+ *   String -&gt; java.lang.String
+ * </pre>
+ * 
+ * Thus, in principle, we could use this information to eliminate any import
+ * statements (although type resolution by itself does not do this).
+ * 
+ * 2) all of the type information found on expressions is propagated as type
+ * attributes appropriately. The stage also checks that types are used
+ * appropriately in expressions and statements and, where not, emits error
+ * messages accordingly.
  * 
  * @author djp
  * 
@@ -29,34 +56,54 @@ public class TypePropagation {
 	}
 	
 	public void apply(JavaFile file) {
+		// the following may cause problems with static imports.
+		ArrayList<String> imports = new ArrayList<String>();
+		for(Pair<Boolean,String> i : file.imports()) {
+			imports.add(i.second());
+		}	
+		
+		imports.add(0,"java.lang.*");
+		
 		for(Decl d : file.declarations()) {
-			doDeclaration(d);
+			doDeclaration(d, imports);
 		}
 	}
 	
-	protected void doDeclaration(Decl d) {
+	protected void doDeclaration(Decl d, List<String> imports) {
 		if(d instanceof Interface) {
-			doInterface((Interface)d);
+			doInterface((Interface)d, imports);
 		} else if(d instanceof Clazz) {
-			doClass((Clazz)d);
+			doClass((Clazz)d, imports);
 		} else if(d instanceof Method) {
-			doMethod((Method)d);
+			doMethod((Method)d, imports);
 		} else if(d instanceof Field) {
-			doField((Field)d);
+			doField((Field)d, imports);
 		}
 	}
 	
-	protected void doInterface(Interface d) {
+	protected void doInterface(Interface d, List<String> imports) {
 		
 	}
 	
-	protected void doClass(Clazz c) {
+	protected void doClass(Clazz c, List<String> imports) {
+		if(c.superclass() != null) {
+			c.superclass().attributes().add(resolve(c.superclass(), imports));
+		}
+		
+		for(jkit.java.Type.Variable v : c.typeParameters()) {
+			v.attributes().add(resolve(v, imports));
+		}
+		
+		for(jkit.java.Type.Clazz i : c.interfaces()) {
+			i.attributes().add(resolve(i, imports));
+		}
+		
 		for(Decl d : c.declarations()) {
-			doDeclaration(d);
+			doDeclaration(d, imports);
 		}
 	}
 
-	protected void doMethod(Method d) {
+	protected void doMethod(Method d, List<String> imports) {
 		// First, we need to construct a typing environment for local variables.
 		HashMap<String,Type> environment = new HashMap<String,Type>();
 		
@@ -64,61 +111,61 @@ public class TypePropagation {
 			environment.put(p.first(), (jkit.jil.Type) p.third().attribute(Type.class));
 		}
 						
-		doStatement(d.body(),environment);
+		doStatement(d.body(),environment, imports);
 	}
 
-	protected void doField(Field d) {
-		doExpression(d.initialiser(), new HashMap<String,Type>());
+	protected void doField(Field d, List<String> imports) {
+		doExpression(d.initialiser(), new HashMap<String,Type>(), imports);
 	}
 	
-	protected void doStatement(Stmt e, HashMap<String,Type> environment) {
+	protected void doStatement(Stmt e, HashMap<String,Type> environment, List<String> imports) {
 		if(e instanceof Stmt.SynchronisedBlock) {
-			doSynchronisedBlock((Stmt.SynchronisedBlock)e, environment);
+			doSynchronisedBlock((Stmt.SynchronisedBlock)e, environment, imports);
 		} else if(e instanceof Stmt.TryCatchBlock) {
-			doTryCatchBlock((Stmt.TryCatchBlock)e, environment);
+			doTryCatchBlock((Stmt.TryCatchBlock)e, environment, imports);
 		} else if(e instanceof Stmt.Block) {
-			doBlock((Stmt.Block)e, environment);
+			doBlock((Stmt.Block)e, environment, imports);
 		} else if(e instanceof Stmt.VarDef) {
-			doVarDef((Stmt.VarDef) e, environment);
+			doVarDef((Stmt.VarDef) e, environment, imports);
 		} else if(e instanceof Stmt.Assignment) {
-			doAssignment((Stmt.Assignment) e, environment);
+			doAssignment((Stmt.Assignment) e, environment, imports);
 		} else if(e instanceof Stmt.Return) {
-			doReturn((Stmt.Return) e, environment);
+			doReturn((Stmt.Return) e, environment, imports);
 		} else if(e instanceof Stmt.Throw) {
-			doThrow((Stmt.Throw) e, environment);
+			doThrow((Stmt.Throw) e, environment, imports);
 		} else if(e instanceof Stmt.Assert) {
-			doAssert((Stmt.Assert) e, environment);
+			doAssert((Stmt.Assert) e, environment, imports);
 		} else if(e instanceof Stmt.Break) {
-			doBreak((Stmt.Break) e, environment);
+			doBreak((Stmt.Break) e, environment, imports);
 		} else if(e instanceof Stmt.Continue) {
-			doContinue((Stmt.Continue) e, environment);
+			doContinue((Stmt.Continue) e, environment, imports);
 		} else if(e instanceof Stmt.Label) {
-			doLabel((Stmt.Label) e, environment);
+			doLabel((Stmt.Label) e, environment, imports);
 		} else if(e instanceof Stmt.If) {
-			doIf((Stmt.If) e, environment);
+			doIf((Stmt.If) e, environment, imports);
 		} else if(e instanceof Stmt.For) {
-			doFor((Stmt.For) e, environment);
+			doFor((Stmt.For) e, environment, imports);
 		} else if(e instanceof Stmt.ForEach) {
-			doForEach((Stmt.ForEach) e, environment);
+			doForEach((Stmt.ForEach) e, environment, imports);
 		} else if(e instanceof Stmt.While) {
-			doWhile((Stmt.While) e, environment);
+			doWhile((Stmt.While) e, environment, imports);
 		} else if(e instanceof Stmt.DoWhile) {
-			doDoWhile((Stmt.DoWhile) e, environment);
+			doDoWhile((Stmt.DoWhile) e, environment, imports);
 		} else if(e instanceof Stmt.Switch) {
-			doSwitch((Stmt.Switch) e, environment);
+			doSwitch((Stmt.Switch) e, environment, imports);
 		} else if(e instanceof Expr.Invoke) {
-			doInvoke((Expr.Invoke) e, environment);
+			doInvoke((Expr.Invoke) e, environment, imports);
 		} else if(e instanceof Expr.New) {
-			doNew((Expr.New) e, environment);
+			doNew((Expr.New) e, environment, imports);
 		} else if(e instanceof Decl.Clazz) {
-			doClass((Decl.Clazz)e);
+			doClass((Decl.Clazz)e, imports);
 		} else if(e != null) {
 			throw new RuntimeException("Invalid statement encountered: "
 					+ e.getClass());
 		}		
 	}
 	
-	protected void doBlock(Stmt.Block block, HashMap<String,Type> environment) {
+	protected void doBlock(Stmt.Block block, HashMap<String,Type> environment, List<String> imports) {
 		if(block != null) {
 			// The following clone is required, so that any additions to the
 			// environment via local variable defintions in this block are
@@ -127,26 +174,26 @@ public class TypePropagation {
 
 			// now process every statement in this block.
 			for(Stmt s : block.statements()) {
-				doStatement(s,newEnv);
+				doStatement(s,newEnv, imports);
 			}
 		}
 	}
 	
-	protected void doSynchronisedBlock(Stmt.SynchronisedBlock block, HashMap<String,Type> environment) {
-		doBlock(block,environment);
-		doExpression(block.expr(),environment);
+	protected void doSynchronisedBlock(Stmt.SynchronisedBlock block, HashMap<String,Type> environment, List<String> imports) {
+		doBlock(block,environment, imports);
+		doExpression(block.expr(),environment, imports);
 	}
 	
-	protected void doTryCatchBlock(Stmt.TryCatchBlock block, HashMap<String,Type> environment) {
-		doBlock(block,environment);		
-		doBlock(block.finaly(),environment);		
+	protected void doTryCatchBlock(Stmt.TryCatchBlock block, HashMap<String,Type> environment, List<String> imports) {
+		doBlock(block,environment, imports);		
+		doBlock(block.finaly(),environment, imports);		
 		
 		for(Stmt.CatchBlock cb : block.handlers()) {
-			doBlock(cb, environment);
+			doBlock(cb, environment, imports);
 		}
 	}
 	
-	protected void doVarDef(Stmt.VarDef def, HashMap<String,Type> environment) {
+	protected void doVarDef(Stmt.VarDef def, HashMap<String,Type> environment, List<String> imports) {
 		Type t = (Type) def.type().attribute(Type.class);
 		
 		List<Triple<String, Integer, Expr>> defs = def.definitions();
@@ -154,7 +201,7 @@ public class TypePropagation {
 			Triple<String, Integer, Expr> d = defs.get(i);
 			
 			Type nt = t;						
-			doExpression(d.third(),environment);						
+			doExpression(d.third(),environment, imports);						
 			
 			for(int j=0;j!=d.second();++j) {
 				nt = new Type.Array(nt);
@@ -173,9 +220,9 @@ public class TypePropagation {
 		}
 	}
 	
-	protected void doAssignment(Stmt.Assignment def, HashMap<String,Type> environment) {
-		doExpression(def.lhs(),environment);	
-		doExpression(def.rhs(),environment);			
+	protected void doAssignment(Stmt.Assignment def, HashMap<String,Type> environment, List<String> imports) {
+		doExpression(def.lhs(),environment, imports);	
+		doExpression(def.rhs(),environment, imports);			
 
 		Type lhs_t = (Type) def.lhs().attribute(Type.class);
 		
@@ -189,133 +236,133 @@ public class TypePropagation {
 		}		
 	}
 	
-	protected void doReturn(Stmt.Return ret, HashMap<String,Type> environment) {
-		doExpression(ret.expr(), environment);
+	protected void doReturn(Stmt.Return ret, HashMap<String,Type> environment, List<String> imports) {
+		doExpression(ret.expr(), environment, imports);
 	}
 	
-	protected void doThrow(Stmt.Throw ret, HashMap<String,Type> environment) {
-		doExpression(ret.expr(), environment);
+	protected void doThrow(Stmt.Throw ret, HashMap<String,Type> environment, List<String> imports) {
+		doExpression(ret.expr(), environment, imports);
 
 		// should check whether enclosing method declares checked exceptions
         // appropriately.
 	}
 	
-	protected void doAssert(Stmt.Assert ret, HashMap<String,Type> environment) {
-		doExpression(ret.expr(), environment);
+	protected void doAssert(Stmt.Assert ret, HashMap<String,Type> environment, List<String> imports) {
+		doExpression(ret.expr(), environment, imports);
 	}
 	
-	protected void doBreak(Stmt.Break brk, HashMap<String,Type> environment) {
+	protected void doBreak(Stmt.Break brk, HashMap<String,Type> environment, List<String> imports) {
 		// nothing	
 	}
 	
-	protected void doContinue(Stmt.Continue brk, HashMap<String,Type> environment) {
+	protected void doContinue(Stmt.Continue brk, HashMap<String,Type> environment, List<String> imports) {
 		// nothing
 	}
 	
-	protected void doLabel(Stmt.Label lab, HashMap<String,Type> environment) {						
-		doStatement(lab.statement(), environment);
+	protected void doLabel(Stmt.Label lab, HashMap<String,Type> environment, List<String> imports) {						
+		doStatement(lab.statement(), environment, imports);
 	}
 	
-	protected void doIf(Stmt.If stmt, HashMap<String,Type> environment) {
-		doExpression(stmt.condition(),environment);
-		doStatement(stmt.trueStatement(),environment);
-		doStatement(stmt.falseStatement(),environment);
+	protected void doIf(Stmt.If stmt, HashMap<String,Type> environment, List<String> imports) {
+		doExpression(stmt.condition(),environment, imports);
+		doStatement(stmt.trueStatement(),environment, imports);
+		doStatement(stmt.falseStatement(),environment, imports);
 	}
 	
-	protected void doWhile(Stmt.While stmt, HashMap<String,Type> environment) {
-		doExpression(stmt.condition(),environment);
-		doStatement(stmt.body(),environment);		
+	protected void doWhile(Stmt.While stmt, HashMap<String,Type> environment, List<String> imports) {
+		doExpression(stmt.condition(),environment, imports);
+		doStatement(stmt.body(),environment, imports);		
 	}
 	
-	protected void doDoWhile(Stmt.DoWhile stmt, HashMap<String,Type> environment) {
-		doExpression(stmt.condition(),environment);
-		doStatement(stmt.body(),environment);
+	protected void doDoWhile(Stmt.DoWhile stmt, HashMap<String,Type> environment, List<String> imports) {
+		doExpression(stmt.condition(),environment, imports);
+		doStatement(stmt.body(),environment, imports);
 	}
 	
-	protected void doFor(Stmt.For stmt, HashMap<String,Type> environment) {
-		doStatement(stmt.initialiser(),environment);
-		doExpression(stmt.condition(),environment);
-		doStatement(stmt.increment(),environment);
-		doStatement(stmt.body(),environment);	
+	protected void doFor(Stmt.For stmt, HashMap<String,Type> environment, List<String> imports) {
+		doStatement(stmt.initialiser(),environment, imports);
+		doExpression(stmt.condition(),environment, imports);
+		doStatement(stmt.increment(),environment, imports);
+		doStatement(stmt.body(),environment, imports);	
 	}
 	
-	protected void doForEach(Stmt.ForEach stmt, HashMap<String,Type> environment) {
-		doExpression(stmt.source(),environment);
-		doStatement(stmt.body(),environment);
+	protected void doForEach(Stmt.ForEach stmt, HashMap<String,Type> environment, List<String> imports) {
+		doExpression(stmt.source(),environment, imports);
+		doStatement(stmt.body(),environment, imports);
 	}
 	
-	protected void doSwitch(Stmt.Switch sw, HashMap<String,Type> environment) {
-		doExpression(sw.condition(), environment);
+	protected void doSwitch(Stmt.Switch sw, HashMap<String,Type> environment, List<String> imports) {
+		doExpression(sw.condition(), environment, imports);
 		for(Case c : sw.cases()) {
-			doExpression(c.condition(), environment);
+			doExpression(c.condition(), environment, imports);
 			for(Stmt s : c.statements()) {
-				doStatement(s, environment);
+				doStatement(s, environment, imports);
 			}
 		}
 		
 		// should check that case conditions are final constants here.
 	}
 	
-	protected void doExpression(Expr e, HashMap<String,Type> environment) {	
+	protected void doExpression(Expr e, HashMap<String,Type> environment, List<String> imports) {	
 		if(e instanceof Value.Bool) {
-			doBoolVal((Value.Bool)e,environment);
+			doBoolVal((Value.Bool)e,environment, imports);
 		} else if(e instanceof Value.Char) {
-			doCharVal((Value.Char)e,environment);
+			doCharVal((Value.Char)e,environment, imports);
 		} else if(e instanceof Value.Int) {
-			doIntVal((Value.Int)e,environment);
+			doIntVal((Value.Int)e,environment, imports);
 		} else if(e instanceof Value.Long) {
-			doLongVal((Value.Long)e,environment);
+			doLongVal((Value.Long)e,environment, imports);
 		} else if(e instanceof Value.Float) {
-			doFloatVal((Value.Float)e,environment);
+			doFloatVal((Value.Float)e,environment, imports);
 		} else if(e instanceof Value.Double) {
-			doDoubleVal((Value.Double)e,environment);
+			doDoubleVal((Value.Double)e,environment, imports);
 		} else if(e instanceof Value.String) {
-			doStringVal((Value.String)e,environment);
+			doStringVal((Value.String)e,environment, imports);
 		} else if(e instanceof Value.Null) {
-			doNullVal((Value.Null)e,environment);
+			doNullVal((Value.Null)e,environment, imports);
 		} else if(e instanceof Value.TypedArray) {
-			doTypedArrayVal((Value.TypedArray)e,environment);
+			doTypedArrayVal((Value.TypedArray)e,environment, imports);
 		} else if(e instanceof Value.Array) {
-			doArrayVal((Value.Array)e,environment);
+			doArrayVal((Value.Array)e,environment, imports);
 		} else if(e instanceof Value.Class) {
-			doClassVal((Value.Class) e,environment);
+			doClassVal((Value.Class) e,environment, imports);
 		} else if(e instanceof Expr.Variable) {
-			doVariable((Expr.Variable)e,environment);
+			doVariable((Expr.Variable)e,environment, imports);
 		} else if(e instanceof Expr.UnOp) {
-			doUnOp((Expr.UnOp)e,environment);
+			doUnOp((Expr.UnOp)e,environment, imports);
 		} else if(e instanceof Expr.BinOp) {
-			doBinOp((Expr.BinOp)e,environment);
+			doBinOp((Expr.BinOp)e,environment, imports);
 		} else if(e instanceof Expr.TernOp) {
-			doTernOp((Expr.TernOp)e,environment);
+			doTernOp((Expr.TernOp)e,environment, imports);
 		} else if(e instanceof Expr.Cast) {
-			doCast((Expr.Cast)e,environment);
+			doCast((Expr.Cast)e,environment, imports);
 		} else if(e instanceof Expr.InstanceOf) {
-			doInstanceOf((Expr.InstanceOf)e,environment);
+			doInstanceOf((Expr.InstanceOf)e,environment, imports);
 		} else if(e instanceof Expr.Invoke) {
-			doInvoke((Expr.Invoke) e,environment);
+			doInvoke((Expr.Invoke) e,environment, imports);
 		} else if(e instanceof Expr.New) {
-			doNew((Expr.New) e,environment);
+			doNew((Expr.New) e,environment, imports);
 		} else if(e instanceof Expr.ArrayIndex) {
-			doArrayIndex((Expr.ArrayIndex) e,environment);
+			doArrayIndex((Expr.ArrayIndex) e,environment, imports);
 		} else if(e instanceof Expr.Deref) {
-			doDeref((Expr.Deref) e,environment);
+			doDeref((Expr.Deref) e,environment, imports);
 		} else if(e instanceof Stmt.Assignment) {
 			// force brackets			
-			doAssignment((Stmt.Assignment) e,environment);			
+			doAssignment((Stmt.Assignment) e,environment, imports);			
 		} else if(e != null) {
 			throw new RuntimeException("Invalid expression encountered: "
 					+ e.getClass());
 		}
 	}
 	
-	protected void doDeref(Expr.Deref e, HashMap<String,Type> environment) {
-		doExpression(e.target(), environment);		
+	protected void doDeref(Expr.Deref e, HashMap<String,Type> environment, List<String> imports) {
+		doExpression(e.target(), environment, imports);		
 		// need to perform field lookup here!
 	}
 	
-	protected void doArrayIndex(Expr.ArrayIndex e, HashMap<String,Type> environment) {
-		doExpression(e.target(), environment);
-		doExpression(e.index(), environment);
+	protected void doArrayIndex(Expr.ArrayIndex e, HashMap<String,Type> environment, List<String> imports) {
+		doExpression(e.target(), environment, imports);
+		doExpression(e.index(), environment, imports);
 		
 		e.setIndex(implicitCast(e.index(),new Type.Int()));
 				
@@ -330,69 +377,69 @@ public class TypePropagation {
 		}
 	}
 	
-	protected void doNew(Expr.New e, HashMap<String,Type> environment) {
+	protected void doNew(Expr.New e, HashMap<String,Type> environment, List<String> imports) {
 		
 	}
 	
-	protected void doInvoke(Expr.Invoke e, HashMap<String,Type> environment) {
+	protected void doInvoke(Expr.Invoke e, HashMap<String,Type> environment, List<String> imports) {
 		for(Expr p : e.parameters()) {
-			doExpression(p, environment);
+			doExpression(p, environment, imports);
 		}
 	}
 	
-	protected void doInstanceOf(Expr.InstanceOf e, HashMap<String,Type> environment) {		
+	protected void doInstanceOf(Expr.InstanceOf e, HashMap<String,Type> environment, List<String> imports) {		
 			
 	}
 	
-	protected void doCast(Expr.Cast e, HashMap<String,Type> environment) {
+	protected void doCast(Expr.Cast e, HashMap<String,Type> environment, List<String> imports) {
 	
 	}
 	
-	protected void doBoolVal(Value.Bool e, HashMap<String,Type> environment) {
+	protected void doBoolVal(Value.Bool e, HashMap<String,Type> environment, List<String> imports) {
 		e.attributes().add(new Type.Bool());
 	}
 	
-	protected void doCharVal(Value.Char e, HashMap<String,Type> environment) {
+	protected void doCharVal(Value.Char e, HashMap<String,Type> environment, List<String> imports) {
 		e.attributes().add(new Type.Char());
 	}
 	
-	protected void doIntVal(Value.Int e, HashMap<String,Type> environment) {
+	protected void doIntVal(Value.Int e, HashMap<String,Type> environment, List<String> imports) {
 		e.attributes().add(new Type.Int());
 	}
 	
-	protected void doLongVal(Value.Long e, HashMap<String,Type> environment) {		
+	protected void doLongVal(Value.Long e, HashMap<String,Type> environment, List<String> imports) {		
 		e.attributes().add(new Type.Long());
 	}
 	
-	protected void doFloatVal(Value.Float e, HashMap<String,Type> environment) {		
+	protected void doFloatVal(Value.Float e, HashMap<String,Type> environment, List<String> imports) {		
 		e.attributes().add(new Type.Float());
 	}
 	
-	protected void doDoubleVal(Value.Double e, HashMap<String,Type> environment) {		
+	protected void doDoubleVal(Value.Double e, HashMap<String,Type> environment, List<String> imports) {		
 		e.attributes().add(new Type.Double());
 	}
 	
-	protected void doStringVal(Value.String e, HashMap<String,Type> environment) {		
+	protected void doStringVal(Value.String e, HashMap<String,Type> environment, List<String> imports) {		
 		e.attributes().add(new Type.Clazz("java.lang","String"));
 	}
 	
-	protected void doNullVal(Value.Null e, HashMap<String,Type> environment) {		
+	protected void doNullVal(Value.Null e, HashMap<String,Type> environment, List<String> imports) {		
 		e.attributes().add(new Type.Null());
 	}
 	
-	protected void doTypedArrayVal(Value.TypedArray e, HashMap<String,Type> environment) {		
+	protected void doTypedArrayVal(Value.TypedArray e, HashMap<String,Type> environment, List<String> imports) {		
 		e.attributes().add((Type) e.type().attribute(Type.class));
 	}
 	
-	protected void doArrayVal(Value.Array e, HashMap<String,Type> environment) {		
+	protected void doArrayVal(Value.Array e, HashMap<String,Type> environment, List<String> imports) {		
 		// not sure what to do here.
 	}
 	
-	protected void doClassVal(Value.Class e, HashMap<String,Type> environment) {
+	protected void doClassVal(Value.Class e, HashMap<String,Type> environment, List<String> imports) {
 		
 	}
 	
-	protected void doVariable(Expr.Variable e, HashMap<String,Type> environment) {			
+	protected void doVariable(Expr.Variable e, HashMap<String,Type> environment, List<String> imports) {			
 		Type t = environment.get(e.value());
 		if(t == null) {			
 			syntax_error("Cannot find symbol - variable \"" + e.value() + "\"",
@@ -402,13 +449,13 @@ public class TypePropagation {
 		}
 	}
 
-	protected void doUnOp(Expr.UnOp e, HashMap<String,Type> environment) {		
+	protected void doUnOp(Expr.UnOp e, HashMap<String,Type> environment, List<String> imports) {		
 		
 	}
 		
-	protected void doBinOp(Expr.BinOp e, HashMap<String,Type> environment) {				
-		doExpression(e.lhs(),environment);
-		doExpression(e.rhs(),environment);
+	protected void doBinOp(Expr.BinOp e, HashMap<String,Type> environment, List<String> imports) {				
+		doExpression(e.lhs(),environment, imports);
+		doExpression(e.rhs(),environment, imports);
 		
 		Type lhs_t = (Type) e.lhs().attribute(Type.class);
 		Type rhs_t = (Type) e.rhs().attribute(Type.class);
@@ -490,7 +537,7 @@ public class TypePropagation {
 		}
 	}
 	
-	protected void doTernOp(Expr.TernOp e, HashMap<String,Type> environment) {		
+	protected void doTernOp(Expr.TernOp e, HashMap<String,Type> environment, List<String> imports) {		
 		
 	}
 	
@@ -947,6 +994,132 @@ public class TypePropagation {
 		}
 		
 		return new jkit.java.Type.Clazz(ncomponents,jt);
+	}
+	
+	/**
+     * The purpose of the resovle method is to examine the type in question, and
+     * determine the fully qualified it represents, based on the current import
+     * list. 
+     * 
+     * @param t
+     * @param file
+     * @return
+     */
+	protected jkit.jil.Type resolve(jkit.java.Type t, List<String> imports) {
+		if(t instanceof jkit.java.Type.Primitive) {
+			return resolve((jkit.java.Type.Primitive)t, imports);
+		} else if(t instanceof jkit.java.Type.Clazz) {
+			return resolve((jkit.java.Type.Clazz)t, imports);			
+		} else if(t instanceof jkit.java.Type.Array) {
+			return resolve((jkit.java.Type.Array)t, imports);
+		} 
+		
+		return null;
+	}
+	
+	protected jkit.jil.Type.Primitive resolve(jkit.java.Type.Primitive pt, List<String> imports) {
+		if(pt instanceof jkit.java.Type.Void) {
+			return new jkit.jil.Type.Void();
+		} else if(pt instanceof jkit.java.Type.Bool) {
+			return new jkit.jil.Type.Bool();
+		} else if(pt instanceof jkit.java.Type.Byte) {
+			return new jkit.jil.Type.Byte();
+		} else if(pt instanceof jkit.java.Type.Char) {
+			return new jkit.jil.Type.Char();
+		} else if(pt instanceof jkit.java.Type.Short) {
+			return new jkit.jil.Type.Short();
+		} else if(pt instanceof jkit.java.Type.Int) {
+			return new jkit.jil.Type.Int();
+		} else if(pt instanceof jkit.java.Type.Long) {
+			return new jkit.jil.Type.Long();
+		} else if(pt instanceof jkit.java.Type.Float) {
+			return new jkit.jil.Type.Float();
+		} else {
+			return new jkit.jil.Type.Double();
+		}
+	}
+	
+	protected jkit.jil.Type.Array resolve(jkit.java.Type.Array t, List<String> imports) {
+		return new jkit.jil.Type.Array(resolve(t.element(), imports));
+	}
+	
+	/**
+	 * The key challenge of this method, is that we have a Type.Clazz object
+	 * which is incorrectly initialised and/or not fully qualified. An example
+	 * of the former would arise from this code:
+	 * 
+	 * <pre>
+	 * public void f(java.util.Vector v) { ... }
+	 * </pre>
+	 * 
+	 * Here, the JavaFileReader will assume that "java" is the outerclass, and
+	 * that "util" and "Vector" are inner classes. Thus, we must correct this.
+	 * 
+	 * An example of the second case, is the following:
+	 * 
+	 * <pre>
+	 * public void f(Vector v) { ... }
+	 * </pre>
+	 * 
+	 * Here, the JavaFileReader will not prepend the appropriate package
+	 * information onto the type Vector. Thus, we must look this up here.
+	 * 
+	 * @param ct
+	 *            --- the class type to resolve.
+	 * @param file
+	 *            --- the JavaFile containing this type; this is required to
+	 *            determine the import list.
+	 * @return
+	 */
+	protected jkit.jil.Type.Reference resolve(jkit.java.Type.Clazz ct, List<String> imports) {
+		ArrayList<Pair<String,List<jkit.jil.Type.Reference>>> ncomponents = new ArrayList();
+		String className = "";
+		String pkg = "";
+				
+		boolean firstTime = true;
+		for(int i=0;i!=ct.components().size();++i) {
+			String tmp = ct.components().get(i).first();
+			String tmppkg = pkg.equals("") ? tmp : pkg + "." + tmp;
+			if(firstTime && loader.isPackage(tmppkg))  {
+				pkg = tmppkg;
+			} else {
+				if(!firstTime) {
+					className += "$";
+				}
+				firstTime = false;
+				className += ct.components().get(i).first();
+				
+				// now, rebuild the component list
+				Pair<String,List<jkit.java.Type.Reference>> component = ct.components().get(i);
+				ArrayList<jkit.jil.Type.Reference> nvars = new ArrayList();
+				
+				for(jkit.java.Type.Reference r : component.second()) {
+					nvars.add((jkit.jil.Type.Reference) resolve(r, imports));
+				}
+				
+				ncomponents.add(new Pair<String,List<jkit.jil.Type.Reference>>(component.first(),nvars));
+			}
+		}
+		
+		// now, some sanity checking.
+		if(className.equals("")) {
+			throw new SyntaxError("unable to find class " + pkg,0,0);
+		} else if(pkg.length() > 0) {
+			// could add "containsClass" check here. Need to modify
+			// classLoader though.
+			return new jkit.jil.Type.Clazz(pkg,ncomponents);			
+		}
+		
+		// So, at this point, it seems there was no package information in the
+		// source code and, hence, we need to determine this fromt he CLASSPATH
+		// and the import list.
+									
+		try {			
+			System.out.println("LOADING: " + className);
+			return loader.resolve(className, imports);			
+		} catch(ClassNotFoundException e) {}
+
+		throw new SyntaxError("unable to find class " + className,0,0);
 	}
 	
 	/**
