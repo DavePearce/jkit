@@ -107,8 +107,16 @@ public class TypePropagation {
 		// First, we need to construct a typing environment for local variables.
 		HashMap<String,Type> environment = new HashMap<String,Type>();
 		
+		for(jkit.java.Type.Clazz e : d.exceptions()) {
+			e.attributes().add(resolve(e,imports));
+		}
+		
+		d.returnType().attributes().add(resolve(d.returnType(),imports));
+		
 		for(Triple<String,List<Modifier>,jkit.java.Type> p : d.parameters()) {
-			environment.put(p.first(), (jkit.jil.Type) p.third().attribute(Type.class));
+			Type pt = resolve(p.third(),imports);
+			p.third().attributes().add(pt);			
+			environment.put(p.first(), pt);
 		}
 						
 		doStatement(d.body(),environment, imports);
@@ -194,7 +202,8 @@ public class TypePropagation {
 	}
 	
 	protected void doVarDef(Stmt.VarDef def, HashMap<String,Type> environment, List<String> imports) {
-		Type t = (Type) def.type().attribute(Type.class);
+		Type t = resolve(def.type(),imports);
+		def.type().attributes().add(t);
 		
 		List<Triple<String, Integer, Expr>> defs = def.definitions();
 		for(int i=0;i!=defs.size();++i) {
