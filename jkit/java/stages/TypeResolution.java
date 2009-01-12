@@ -25,23 +25,20 @@ import jkit.util.*;
  * 
  * public class Test extends Vector {
  * 	public static void main(String[] args) {
- *    ... 
- *   }
+ *     ... 
+ *    }
  * }
  * </pre>
  * 
- * After type resolution, this code will look like the following:
+ * After type resolution, we will have resolved the following types:
  * 
  * <pre>
- * public class Test extends java.util.Vector {
- * 	public static void main(java.lang.String[] args) {
- *    ... 
- *   }
- * }
+ *  Vector -&gt; java.util.Vector
+ *  String -&gt; java.lang.String
  * </pre>
  * 
- * Thus, we can see that the import statements are no longer required since the
- * full package for everytype has been provided.
+ * Thus, in principle, we could use this information to eliminate any import
+ * statements (although type resolution by itself does not do this).
  * 
  * @author djp
  * 
@@ -53,58 +50,76 @@ public class TypeResolution {
 		this.loader = loader; 
 	}
 	
-	public void apply(JavaFile file) {
+	public void apply(JavaFile file) {		
+		// the following may cause problems with static imports.
+		ArrayList<String> imports = new ArrayList<String>();
+		for(Pair<Boolean,String> i : file.imports()) {
+			imports.add(i.second());
+		}	
+		imports.add(0,"java.lang.*");
 		for(Decl d : file.declarations()) {
-			doDeclaration(d, file);
+			doDeclaration(d, imports);
 		}
 	}
 	
-	protected void doDeclaration(Decl d, JavaFile file) {
+	protected void doDeclaration(Decl d, List<String> imports) {
 		if(d instanceof Interface) {
-			doInterface((Interface)d, file);
+			doInterface((Interface)d, imports);
 		} else if(d instanceof Clazz) {
-			doClass((Clazz)d, file);
+			doClass((Clazz)d, imports);
 		} else if(d instanceof Method) {
-			doMethod((Method)d, file);
+			doMethod((Method)d, imports);
 		} else if(d instanceof Field) {
-			doField((Field)d, file);
+			doField((Field)d, imports);
 		}
 	}
 	
-	protected void doInterface(Interface d, JavaFile file) {
+	protected void doInterface(Interface d, List<String> imports) {
 		
 	}
 	
-	protected void doClass(Clazz c, JavaFile file) {		
-		resolve(c.superclass(),file);
+	protected void doClass(Clazz c, List<String> imports) {		
+		c.superclass().attributes().add(resolve(c.superclass(), imports));
 		
 		for(Decl d : c.declarations()) {
-			doDeclaration(d,file);
+			doDeclaration(d, imports);
 		}
 	}
 
-	protected void doMethod(Method d, JavaFile file) {
-		// First, we need to construct a typing environment for local variables.
-		HashMap<String,Type> environment = new HashMap<String,Type>();
+	protected void doMethod(Method d, List<String> imports) {
+		// First, resolve parameter types.		
 		for(Triple<String,List<Modifier>,Type> p : d.parameters()) {
-			environment.put(p.first(), p.third());
+			p.third().attributes().add(resolve(p.third(), imports));			
 		}
-						
+		
 		// doStatement(d.body(),environment);
 	}
 	
-	protected void doField(Field d, JavaFile file) {
+	protected void doField(Field d, List<String> imports) {
 		// doExpression(d.initialiser(), new HashMap<String,Type>());
 	}
 	
-	protected jkit.jil.Type.Reference resolve(Type.Reference t, JavaFile file) {
+	/**
+     * The purpose of the resovle method is to examine the type in question, and
+     * determine the fully qualified it represents, based on the current import
+     * list. 
+     * 
+     * @param t
+     * @param file
+     * @return
+     */
+	protected jkit.jil.Type resolve(Type t, List<String> imports) {
 		if(t instanceof jkit.java.Type.Clazz) {
-			resolveClass((Type.Clazz)t,file);			
+			resolve((Type.Clazz)t, imports);			
 		} else if(t instanceof Type.Array) {
-			
+			resolve((Type.Array)t, imports);
 		}
 		
 		return null;
+	}
+	
+	protected jkit.jil.Type.Array resolve(Type.Array t, List<String> imports) {
+		return new jkit.jil.Type.Array(resolve(t.element(), imports));
 	}
 	
 	/**
@@ -135,7 +150,7 @@ public class TypeResolution {
 	 *            determine the import list.
 	 * @return
 	 */
-	protected jkit.jil.Type.Reference resolveClass(Type.Clazz ct, JavaFile file) {
+	protected jkit.jil.Type.Reference resolve(Type.Clazz ct, List<String> imports) {
 		ArrayList<Pair<String,List<jkit.jil.Type.Reference>>> ncomponents = new ArrayList();
 		String className = "";
 		String pkg = "";
@@ -158,7 +173,7 @@ public class TypeResolution {
 				ArrayList<jkit.jil.Type.Reference> nvars = new ArrayList();
 				
 				for(Type.Reference r : component.second()) {
-					nvars.add(resolve(r,file));
+					nvars.add((jkit.jil.Type.Reference) resolve(r, imports));
 				}
 				
 				ncomponents.add(new Pair<String,List<jkit.jil.Type.Reference>>(component.first(),nvars));
@@ -178,11 +193,7 @@ public class TypeResolution {
 		// source code and, hence, we need to determine this fromt he CLASSPATH
 		// and the import list.
 		
-		// the following may cause problems with static imports.
-		ArrayList<String> imports = new ArrayList<String>();
-		for(Pair<Boolean,String> i : file.imports()) {
-			imports.add(i.second());
-		}		
+			
 				
 		try {			
 			return loader.resolve(className, imports);			
