@@ -927,8 +927,26 @@ public class JavaFileWriter {
 		}
 	}
 	
-	protected void writePrimitiveType(Type.Primitive at) {
-		write(at.toString());
+	protected void writePrimitiveType(Type.Primitive pt) {
+		if(pt instanceof Type.Void) {
+			write("void");
+		} else if(pt instanceof Type.Bool) {
+			write("bool");			
+		} else if(pt instanceof Type.Byte) {
+			write("byte");			
+		} else if(pt instanceof Type.Char) {
+			write("char");			
+		} else if(pt instanceof Type.Short) {
+			write("short");			
+		} else if(pt instanceof Type.Int) {
+			write("int");			
+		} else if(pt instanceof Type.Long) {
+			write("long");			
+		} else if(pt instanceof Type.Float) {
+			write("float");			
+		} else {
+			write("double");			
+		}
 	}
 	
 	protected void writeArrayType(Type.Array at) {

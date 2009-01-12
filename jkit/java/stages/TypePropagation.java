@@ -59,8 +59,9 @@ public class TypePropagation {
 	protected void doMethod(Method d) {
 		// First, we need to construct a typing environment for local variables.
 		HashMap<String,Type> environment = new HashMap<String,Type>();
+		
 		for(Triple<String,List<Modifier>,jkit.java.Type> p : d.parameters()) {
-			environment.put(p.first(), (Type) p.third().attribute(Type.class));
+			environment.put(p.first(), (jkit.jil.Type) p.third().attribute(Type.class));
 		}
 						
 		doStatement(d.body(),environment);
