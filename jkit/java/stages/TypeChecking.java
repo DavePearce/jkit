@@ -2,7 +2,6 @@ package jkit.java.stages;
 
 import java.util.*;
 
-import jkit.bytecode.Types;
 import jkit.compiler.SyntaxError;
 import jkit.compiler.ClassLoader;
 import jkit.java.*;
@@ -12,7 +11,6 @@ import jkit.java.Stmt.*;
 import jkit.jil.Type;
 import jkit.jil.SyntacticElement;
 import jkit.jil.SourceLocation;
-import jkit.util.Pair;
 import jkit.util.Triple;
 
 /**
@@ -161,7 +159,8 @@ public class TypeChecking {
 		for(Stmt.CatchBlock cb : block.handlers()) {
 			checkBlock(cb);
 			try {
-				if (!types.subtype(new Type.Clazz("java.lang", "Throwable"), cb.type(), loader)) {
+				if (!types.subtype(new Type.Clazz("java.lang", "Throwable"),
+						(Type.Clazz) cb.type().attribute(Type.class), loader)) {
 					syntax_error(
 							"required subtype of java.lang.Throwable, found type "
 							+ cb.type(), cb);
@@ -173,7 +172,9 @@ public class TypeChecking {
 	}
 	
 	protected void checkVarDef(Stmt.VarDef def) {
-		Type t = def.type();
+		// Observe that we cannot use the declared type here, rather we have to
+        // use the resolved type!
+		Type t = (Type) def.type().attribute(Type.class);
 		
 		for(Triple<String, Integer, Expr> d : def.definitions()) {								
 			if(d.third() != null) {
@@ -215,6 +216,7 @@ public class TypeChecking {
 	
 	protected void checkReturn(Stmt.Return ret) {		
 		Method method = (Method) getEnclosingScope(Method.class);
+		Type retType = (Type) method.returnType().attribute(Type.class);
 		
 		if(ret.expr() != null) { 
 			checkExpression(ret.expr());						
@@ -225,15 +227,15 @@ public class TypeChecking {
 					syntax_error(
 							"cannot return a value from method whose result type is void",
 							ret);	
-				} else if(!types.subtype(method.returnType(),ret_t, loader)) {
+				} else if (!types.subtype(retType, ret_t, loader)) {
 					syntax_error("required return type " + method.returnType()
-							+ ",  found type " + ret_t , ret);	
+							+ ",  found type " + ret_t, ret);
 				}
 
 			} catch (ClassNotFoundException ex) {
 				syntax_error(ex.getMessage(), ret);
 			}				
-		} else if(!(method.returnType() instanceof Type.Void)) {
+		} else if(!(retType instanceof Type.Void)) {
 			syntax_error("missing return value", ret);
 		}
 	}
@@ -432,8 +434,9 @@ public class TypeChecking {
 	
 	protected void checkCast(Expr.Cast e) {
 		Type e_t = (Type) e.expr().attribute(Type.class);
+		Type c_t = (Type) e.type().attribute(Type.class);
 		try {
-			if(!types.subtype(e.type(),e_t, loader)) {
+			if(!types.subtype(c_t,e_t, loader)) {
 				syntax_error("inconvertible types: " + e_t + ", " + e.type(), e);
 			}
 		} catch(ClassNotFoundException ex) {
@@ -443,9 +446,10 @@ public class TypeChecking {
 	
 	protected void checkConvert(Expr.Convert e) {
 		Type rhs_t = (Type) e.expr().attribute(Type.class);
+		Type c_t = (Type) e.type().attribute(Type.class);
 		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
 		try {
-			if(!types.subtype(e.type(),rhs_t, loader)) {
+			if(!types.subtype(c_t,rhs_t, loader)) {
 				if(rhs_t instanceof Type.Primitive) {
 					throw new SyntaxError("possible loss of precision",loc.line(),loc.column());
 				} else {

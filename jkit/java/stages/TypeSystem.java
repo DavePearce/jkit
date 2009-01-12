@@ -115,9 +115,7 @@ public class TypeSystem {
         // proceed up the class heirarchy visiting all supertypes (i.e. classes
         // + interfaces) of t2 until either we reach t1, or java.lang.Object.
 		while(!worklist.isEmpty()) {
-			Type.Clazz type = worklist.remove(worklist.size() - 1);
-
-			System.out.println("EXAMINING: " + type);
+			Type.Clazz type = worklist.remove(worklist.size() - 1);		
 
 			if(type.equals(t1)) {
 				return true;
@@ -128,8 +126,7 @@ public class TypeSystem {
                 // position are compatible or not.
 				return true; // TEMPORARY
 			}
-			
-			System.out.println("GOT HERE");
+						
 			Clazz c = loader.loadClass(type);
 			
 			

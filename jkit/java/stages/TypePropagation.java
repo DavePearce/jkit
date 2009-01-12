@@ -203,6 +203,7 @@ public class TypePropagation {
 	
 	protected void doVarDef(Stmt.VarDef def, HashMap<String,Type> environment, List<String> imports) {
 		Type t = resolve(def.type(),imports);
+		System.out.println("ADDING: " + t);
 		def.type().attributes().add(t);
 		
 		List<Triple<String, Integer, Expr>> defs = def.definitions();
@@ -453,7 +454,7 @@ public class TypePropagation {
 		if(t == null) {			
 			syntax_error("Cannot find symbol - variable \"" + e.value() + "\"",
 					e);
-		} else {
+		} else {			
 			e.attributes().add(t);
 		}
 	}
