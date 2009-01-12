@@ -1,6 +1,6 @@
 package jkit.java;
 
-import java.util.List;
+import java.util.*;
 import jkit.jil.Attribute;
 import jkit.jil.SyntacticElementImpl;
 import jkit.util.Pair;
@@ -187,6 +187,12 @@ public class Type extends SyntacticElementImpl {
 			this.components = components;
 		}
 
+		public Clazz(String str, Attribute... attributes) {
+			super(attributes);
+			this.components = new ArrayList<Pair<String, List<Type.Reference>>>();
+			this.components.add(new Pair(str, new ArrayList()));
+		}
+		
 		public List<Pair<String, List<Type.Reference>>> components() {
 			return components;
 		}

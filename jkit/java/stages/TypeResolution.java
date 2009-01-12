@@ -152,6 +152,7 @@ public class TypeResolution {
 				}
 				firstTime = false;
 				className += ct.components().get(i).first();
+				
 				// now, rebuild the component list
 				Pair<String,List<Type.Reference>> component = ct.components().get(i);
 				ArrayList<jkit.jil.Type.Reference> nvars = new ArrayList();
