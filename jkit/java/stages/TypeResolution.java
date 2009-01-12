@@ -56,7 +56,9 @@ public class TypeResolution {
 		for(Pair<Boolean,String> i : file.imports()) {
 			imports.add(i.second());
 		}	
+		
 		imports.add(0,"java.lang.*");
+		
 		for(Decl d : file.declarations()) {
 			doDeclaration(d, imports);
 		}
@@ -64,7 +66,7 @@ public class TypeResolution {
 	
 	protected void doDeclaration(Decl d, List<String> imports) {
 		if(d instanceof Interface) {
-			doInterface((Interface)d, imports);
+			doClass((Interface)d, imports);
 		} else if(d instanceof Clazz) {
 			doClass((Clazz)d, imports);
 		} else if(d instanceof Method) {
@@ -72,14 +74,20 @@ public class TypeResolution {
 		} else if(d instanceof Field) {
 			doField((Field)d, imports);
 		}
-	}
-	
-	protected void doInterface(Interface d, List<String> imports) {
-		
-	}
+	}	
 	
 	protected void doClass(Clazz c, List<String> imports) {		
-		c.superclass().attributes().add(resolve(c.superclass(), imports));
+		if(c.superclass() != null) {
+			c.superclass().attributes().add(resolve(c.superclass(), imports));
+		}
+		
+		for(Type.Variable v : c.typeParameters()) {
+			v.attributes().add(resolve(v, imports));
+		}
+		
+		for(Type.Clazz i : c.interfaces()) {
+			i.attributes().add(resolve(i, imports));
+		}
 		
 		for(Decl d : c.declarations()) {
 			doDeclaration(d, imports);
@@ -91,11 +99,21 @@ public class TypeResolution {
 		for(Triple<String,List<Modifier>,Type> p : d.parameters()) {
 			p.third().attributes().add(resolve(p.third(), imports));			
 		}
+		// Second, resolve return type
+		d.returnType().attributes().add(resolve(d.returnType(), imports));
 		
+		// Third, resolve exceptions
+		for(Type.Clazz e : d.exceptions()) {
+			e.attributes().add(resolve(e,imports));
+		}
+		
+		// Finally, resolve any types in the method body
 		// doStatement(d.body(),environment);
 	}
 	
 	protected void doField(Field d, List<String> imports) {
+		d.type().attributes().add(resolve(d.type(),imports));
+						
 		// doExpression(d.initialiser(), new HashMap<String,Type>());
 	}
 	
@@ -109,13 +127,37 @@ public class TypeResolution {
      * @return
      */
 	protected jkit.jil.Type resolve(Type t, List<String> imports) {
-		if(t instanceof jkit.java.Type.Clazz) {
-			resolve((Type.Clazz)t, imports);			
+		if(t instanceof Type.Primitive) {
+			return resolve((Type.Primitive)t, imports);
+		} else if(t instanceof jkit.java.Type.Clazz) {
+			return resolve((Type.Clazz)t, imports);			
 		} else if(t instanceof Type.Array) {
-			resolve((Type.Array)t, imports);
-		}
+			return resolve((Type.Array)t, imports);
+		} 
 		
 		return null;
+	}
+	
+	protected jkit.jil.Type.Primitive resolve(Type.Primitive pt, List<String> imports) {
+		if(pt instanceof Type.Void) {
+			return new jkit.jil.Type.Void();
+		} else if(pt instanceof Type.Bool) {
+			return new jkit.jil.Type.Bool();
+		} else if(pt instanceof Type.Byte) {
+			return new jkit.jil.Type.Byte();
+		} else if(pt instanceof Type.Char) {
+			return new jkit.jil.Type.Char();
+		} else if(pt instanceof Type.Short) {
+			return new jkit.jil.Type.Short();
+		} else if(pt instanceof Type.Int) {
+			return new jkit.jil.Type.Int();
+		} else if(pt instanceof Type.Long) {
+			return new jkit.jil.Type.Long();
+		} else if(pt instanceof Type.Float) {
+			return new jkit.jil.Type.Float();
+		} else {
+			return new jkit.jil.Type.Double();
+		}
 	}
 	
 	protected jkit.jil.Type.Array resolve(Type.Array t, List<String> imports) {
@@ -192,10 +234,9 @@ public class TypeResolution {
 		// So, at this point, it seems there was no package information in the
 		// source code and, hence, we need to determine this fromt he CLASSPATH
 		// and the import list.
-		
-			
-				
+									
 		try {			
+			System.out.println("LOADING: " + className);
 			return loader.resolve(className, imports);			
 		} catch(ClassNotFoundException e) {}
 

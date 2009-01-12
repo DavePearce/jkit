@@ -1582,7 +1582,7 @@ public class JavaFileReader2 {
 			
 			String ct = type.getChild(0).getText();						
 			
-			if (ct.equals("void")) {
+			if (ct.equals("VOID")) { // grr, annoying.
 				r = new Type.Void();
 			} else if (ct.equals("boolean")) {
 				r = new Type.Bool();
@@ -1609,10 +1609,7 @@ public class JavaFileReader2 {
 				for (int i = 0; i != (type.getChildCount() - dims); ++i) {
 					Tree child = type.getChild(i);
 
-					String text = child.getText();
-					if (text.equals("VOID")) {
-						text = "void"; // hack!
-					}
+					String text = child.getText();					
 					ArrayList<Type.Reference> genArgs = new ArrayList<Type.Reference>();
 
 					for (int j = 0; j != child.getChildCount(); ++j) {
@@ -1647,9 +1644,11 @@ public class JavaFileReader2 {
 			Tree child = type.getChild(i);
 
 			String text = child.getText();
+			
 			if (text.equals("VOID")) {
 				text = "void"; // hack!
 			}
+			
 			ArrayList<Type.Reference> genArgs = new ArrayList<Type.Reference>();
 
 			for (int j = 0; j != child.getChildCount(); ++j) {
