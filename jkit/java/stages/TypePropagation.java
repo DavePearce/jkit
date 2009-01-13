@@ -252,9 +252,6 @@ public class TypePropagation {
 	
 	protected void doThrow(Stmt.Throw ret, HashMap<String,Type> environment, List<String> imports) {
 		doExpression(ret.expr(), environment, imports);
-
-		// should check whether enclosing method declares checked exceptions
-        // appropriately.
 	}
 	
 	protected void doAssert(Stmt.Assert ret, HashMap<String,Type> environment, List<String> imports) {
@@ -388,7 +385,20 @@ public class TypePropagation {
 	}
 	
 	protected void doNew(Expr.New e, HashMap<String,Type> environment, List<String> imports) {
+		// First, figure out the type being created.		
+		Type t = resolve(e.type(),imports);
+		e.type().attributes().add(t);
+		e.attributes().add(t);
 		
+		// Second, recurse through any parameters supplied ...
+		for(Expr p : e.parameters()) {
+			doExpression(p, environment, imports);
+		}
+		
+		// Third, check whether this is constructing an anonymous class ...
+		for(Decl d : e.declarations()) {
+			doDeclaration(d,imports);
+		}
 	}
 	
 	protected void doInvoke(Expr.Invoke e, HashMap<String,Type> environment, List<String> imports) {

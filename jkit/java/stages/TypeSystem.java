@@ -32,8 +32,10 @@ public class TypeSystem {
 	public boolean subtype(Type t1, Type t2, ClassLoader loader)
 			throws ClassNotFoundException {
 		
-		// First, do the easy cases where things are symmetrical.		
-		if(t1 instanceof Type.Clazz && t2 instanceof Type.Clazz) {
+		// First, do the easy cases ...		
+		if(t1 instanceof Type.Reference && t2 instanceof Type.Null) {
+			return true; // null is a subtype of all references.
+		} else if(t1 instanceof Type.Clazz && t2 instanceof Type.Clazz) {
 			return subtype((Type.Clazz) t1, (Type.Clazz) t2, loader);
 		} else if(t1 instanceof Type.Primitive && t2 instanceof Type.Primitive) {
 			return subtype((Type.Primitive) t1, (Type.Primitive) t2);
@@ -42,9 +44,7 @@ public class TypeSystem {
 		} 
 				
 		// Now, we have to do the harder cases.
-		if(t1 instanceof Type.Reference && Type.Null) {
-			
-		}
+		
 		
 		return false;
 	}
