@@ -50,9 +50,11 @@ import jkit.jil.SourceLocation;
  */
 public class TypePropagation {
 	private ClassLoader loader;
+	private TypeSystem types;
 	
-	public TypePropagation(ClassLoader loader) {
+	public TypePropagation(ClassLoader loader, TypeSystem types) {
 		this.loader = loader; 
+		this.types = types;
 	}
 	
 	public void apply(JavaFile file) {
@@ -401,9 +403,47 @@ public class TypePropagation {
 		}
 	}
 	
-	protected void doInvoke(Expr.Invoke e, HashMap<String,Type> environment, List<String> imports) {
+	protected void doInvoke(Expr.Invoke e, HashMap<String, Type> environment,
+			List<String> imports) {
+		ArrayList<Type> parameterTypes = new ArrayList<Type>();
+		
+		doExpression(e.target(), environment, imports);
+		
 		for(Expr p : e.parameters()) {
 			doExpression(p, environment, imports);
+			parameterTypes.add((Type) p.attribute(Type.class));
+		}
+		
+		// Now, to determine the return type of this method, we need to lookup
+		// the method in the class heirarchy. This lookup procedure is seriously
+		// non-trivial, and is implemented in the TypeSystem module.
+		
+		Type.Function f;
+		
+		if(e.target() != null) {
+			Type.Clazz receiver = (Type.Clazz) e.target().attribute(Type.class);
+			try {				
+				f = types.resolveMethod(receiver, e.name(), parameterTypes, loader).third();
+			} catch(ClassNotFoundException cnfe) {
+				syntax_error(cnfe.getMessage(), e);
+			} catch(MethodNotFoundException mfne) {
+				String msg = "method not found: " + receiver + "(";
+				boolean firstTime=true;
+				for(Type t : parameterTypes) {
+					if(!firstTime) {
+						msg += ", ";
+					}
+					firstTime=false;
+					msg += t;
+				}
+				syntax_error(msg + ")", e);
+			}
+		} else {
+			// method with no explicit receiver. Hence, it must be this class
+			// which is the receiver. This is not trivial, since we need to
+			// consider inner classes declared in the scope of this source file.
+						
+			throw new RuntimeException("TO DO: COMPLETE METHOD TYPE LOOKUP");			
 		}
 	}
 	

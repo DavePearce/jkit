@@ -3,9 +3,12 @@ package jkit.java.stages;
 import java.util.*;
 
 import jkit.compiler.ClassLoader;
+import jkit.java.MethodNotFoundException;
 import jkit.jil.Type;
 import jkit.jil.Clazz;
+import jkit.jil.Method;
 import jkit.util.Pair;
+import jkit.util.Triple;
 
 /**
  * This method contains a variety of useful algorithms for deal with Java's type
@@ -202,7 +205,9 @@ public class TypeSystem {
      */
 	public Map<String, Type.Reference> bind(Type.Reference concrete,
 			Type.Reference template) {
-		if(template instanceof Type.Clazz && concrete instanceof Type.Clazz && !baseEquivalent((Type.Clazz)concrete,(Type.Clazz)template)) {
+		if (template instanceof Type.Clazz
+				&& concrete instanceof Type.Clazz
+				&& !baseEquivalent((Type.Clazz) concrete, (Type.Clazz) template)) {
 			throw new IllegalArgumentException(
 					"Parameters to TypeSystem.bind() are not base equivalent ("
 							+ concrete + ", " + template + ")");
@@ -212,6 +217,67 @@ public class TypeSystem {
 		innerBind(concrete, template, binding);
 		return binding;
 	}
+	
+	/**
+     * This method builds a binding between a concrete function type, and a
+     * "template" type.  It works in much the same way as for the bind method on class types (see above).
+     * 
+     * @param concrete
+     *            --- the concrete (i.e. instantiated) type.
+     * @param template
+     *            --- the template (i.e. having generic parameters) type.
+     * @return
+     * @throws ---
+     *             a BindError if the binding is not constructable.
+     */
+	public Map<String, Type.Reference> bind(Type.Function concrete,
+			Type.Function template) {
+		
+		// first, do return type
+		
+		HashMap<String, Type.Reference> binding = new HashMap<String, Type.Reference>();
+		
+		if(template.returnType() instanceof Type.Reference) {
+			if(concrete.returnType() instanceof Type.Reference) {
+				binding.putAll(bind((Type.Reference) concrete.returnType(),
+						(Type.Reference) template.returnType()));
+			} else {
+				throw new IllegalArgumentException(
+						"Parameters to TypeSystem.bind() are not base equivalent ("
+								+ concrete + ", " + template + ")");
+			}
+		}
+		
+		// second, do type parameters
+		
+		List<Type> concreteParams = concrete.parameterTypes();
+		List<Type> templateParams = template.parameterTypes();
+		
+		if(concreteParams.size() != templateParams.size()) {
+			throw new IllegalArgumentException(
+					"Parameters to TypeSystem.bind() are not base equivalent ("
+							+ concrete + ", " + template + ")");	
+		}
+		
+		for(int i=0;i!=concreteParams.size();++i) {
+			Type cp = concreteParams.get(i);
+			Type tp = templateParams.get(i);
+		
+			if(tp instanceof Type.Reference) {
+				if(cp instanceof Type.Reference) {
+					binding.putAll(bind((Type.Reference) cp,
+							(Type.Reference) tp));
+				} else {
+					throw new IllegalArgumentException(
+							"Parameters to TypeSystem.bind() are not base equivalent ("
+									+ concrete + ", " + template + ")");
+				}
+			}
+		}
+		
+		return binding;
+	}
+	
 	
 	public class BindError extends RuntimeException {
 		public BindError(String m) {
@@ -349,6 +415,50 @@ public class TypeSystem {
 	}
 	
 	/**
+	 * This method accepts a binding from type variables to concrete types, and
+	 * then substitutes each such variable occuring in the target (function)
+	 * type with its corresponding instantation. For example, suppose we have
+	 * this binding:
+	 * 
+	 * <pre>
+	 *  K -&gt; String
+	 *  V -&gt; Integer
+	 * </pre>
+	 * 
+	 * Then, substituting against <code>v f(K)</code> yields
+	 * <code>Integer f(String)</code>.
+	 * 
+	 * @param type
+	 * @param binding
+	 * @return
+	 */
+	protected Type.Function substitute(Type.Function type, Map<String,Type.Reference> binding) {
+		Type returnType = type.returnType();
+		
+		if(returnType instanceof Type.Reference) {
+			returnType = substitute((Type.Reference) returnType,binding);
+		}
+		
+		ArrayList<Type> paramTypes = new ArrayList<Type>();
+		for(Type t : type.parameterTypes()) {
+			if(t instanceof Type.Reference) {
+				t = substitute((Type.Reference)t,binding);
+			}
+			paramTypes.add(t);
+		}
+		
+		ArrayList<Type.Variable> varTypes = new ArrayList<Type.Variable>();
+		for(Type.Variable v : type.typeArguments()) {
+			if(!binding.containsKey(v.variable())) {
+				varTypes.add(v);	
+			}			
+		}
+		
+		return new Type.Function(returnType,paramTypes,varTypes);
+	}
+	
+	
+	/**
      * This method checks whether the two types in question have the same base
      * components. So, for example, ArrayList<String> and ArrayList<Integer>
      * have the same base component --- namely, ArrayList.
@@ -375,4 +485,243 @@ public class TypeSystem {
 		}
 		return true;
 	}
+	
+	/**
+	 * Identify the method with the given name in the given clazz that matches
+	 * the given method signature.
+	 * 
+	 * @param receiver
+	 *            enclosing class
+	 * @param name
+	 *            Method name
+	 * @param concreteParameterTypes
+	 *            the actual parameter types to match against
+	 * @return A triple (C,M,T), where M is the method being invoked, C it's
+	 *         enclosing class, and T is the actual type of the method. Note
+	 *         that T can vary from M.type, since it may contain appropriate
+	 *         substitutions for any generic type variables.
+	 * @throws ClassNotFoundException
+	 *             If it needs to access a class which cannot be found.
+	 * @throws MethodNotFoundException
+	 *             If it cannot find a matching method.
+	 */
+	public Triple<Clazz, Method, Type.Function> resolveMethod(
+			Type.Clazz receiver, String name,
+			List<Type> concreteParameterTypes, ClassLoader loader)
+			throws ClassNotFoundException, MethodNotFoundException {
+
+		// Phase 1: traverse heirarchy whilst ignoring autoboxing and varargs
+		Triple<jkit.jil.Clazz, jkit.jil.Method, Type.Function> methodInfo = resolveMethod(receiver,
+				name, concreteParameterTypes, false, false, loader);
+
+		if (methodInfo == null) {
+			// Phase 2: Ok, phase 1 failed, so now consider autoboxing.
+			methodInfo = resolveMethod(receiver, name, concreteParameterTypes,
+					true, false, loader);
+
+			if (methodInfo == null) {
+				// Phase 3: Ok, phase 2 failed, so now consider var args as well.
+				methodInfo = resolveMethod(receiver, name, concreteParameterTypes,
+						true, true, loader);
+				if(methodInfo == null) {
+					// Ok, phase 3 failed, so give up.
+					String method = name + "(";
+					boolean firstTime = true;
+					for (Type p : concreteParameterTypes) {
+						if (!firstTime) {
+							method += ", ";
+						}
+						method += p.toString();
+						firstTime = false;
+					}
+					throw new MethodNotFoundException(method + ")", receiver
+							.toString());
+				}
+			}
+		}
+		return methodInfo;
+	}
+
+	/**
+	 * <p>
+	 * Attempt to determine which method is actually being called. This process
+	 * is rather detailed, and you should refer to the <a
+	 * href="http://java.sun.com/docs/books/jls/third_edition/html/expressions.html#15.12">Java
+	 * Language Spec, Section 15.12</a>.
+	 * </p>
+	 * 
+	 * <p>
+	 * This method supports the three phases described in the JLS#15.12 through
+	 * the two boolean flags: <code>autoboxing</code> and <code>varargs</code>.
+	 * These flags indicate that the concept they represent should be considered
+	 * in resolution. In phase 1, following the JLS, neither concepts are
+	 * considered; in Phase 2, only autoboxing is considered; finally, in Phase
+	 * 3, both autoboxing and variable length argument lists are considered.
+	 * </p>
+	 * 
+	 * @param receiver
+	 *            Method Receiver Type
+	 * @param name
+	 *            Method name
+	 * @param concreteParameterTypes
+	 *            Parameter types to search for.
+	 * @param autoboxing
+	 *            Indicates whether autoboxing should be considered or not.
+	 * @param varargs
+	 *            Indicates whether variable-length arguments should be
+	 *            considered or not.
+	 * @return
+	 * @throws ClassNotFoundException
+	 */
+	protected Triple<Clazz, Method, Type.Function> resolveMethod(
+			Type.Clazz receiver, String name,
+			List<Type> concreteParameterTypes, boolean autoboxing,
+			boolean varargs, ClassLoader loader) throws ClassNotFoundException {
+		
+		// traverse class hierarchy looking for field
+		ArrayList<Type.Clazz> worklist = new ArrayList<Type.Clazz>();
+		worklist.add(receiver);
+		
+		ArrayList<Triple<Clazz, Method, Type.Function>> mts = new ArrayList<Triple<Clazz, Method, Type.Function>>();
+
+		// Traverse type hierarchy building a list of potential methods
+		while (!worklist.isEmpty()) {
+			Type.Clazz type = worklist.remove(0);
+			Clazz c = loader.loadClass(type);
+			List<jkit.jil.Method> methods = c.methods(name);
+			Map<String,Type.Reference> binding = bind(type, c.type());
+			
+			for (jkit.jil.Method m : methods) {
+				// try to rule out as many impossible candidates as possible
+				Type.Function m_type = m.type();
+				if (m_type.parameterTypes().size() == concreteParameterTypes
+						.size()
+						|| (varargs && m.isVariableArity() && m_type
+								.parameterTypes().size() <= (concreteParameterTypes
+								.size()+1))) {
+					// First, substitute class type parameters							
+					Type.Function mt = (Type.Function) substitute(m.type(), binding);
+					
+					// Second, substitute method type parameters
+					Type.Function concreteFunctionType = new Type.Function(mt.returnType(),
+							concreteParameterTypes, new ArrayList<Type.Variable>());
+					
+					mt = (Type.Function) substitute(mt,bind(concreteFunctionType,mt));
+					
+					// Third, identify and substitute any remaining generic variables
+					// for java.lang.Object. This corresponds to unsafe
+                    // operations that will compile in e.g. javac
+					
+					/**
+					 * TO BE COMPLETED (this code did work before)
+					 *
+					 * Set<Type.Variable> freeVars = mt.freeVariables();					
+					 * HashMap<String,Type> freeVarMap = new HashMap<String,Type>();
+					 * for(Type.Variable fv : freeVars) {
+					 * 	freeVarMap.put(fv.name(),Type.referenceType("java.lang","Object"));
+					 * }
+					 * mt = 	(Type.Function) mt.substitute(freeVarMap);
+					 */
+					
+					 mts.add(new Triple<Clazz, Method, Type.Function>(c, m, mt));					 				
+				}
+			}
+
+			if (c.superClass() != null) {				
+				worklist.add((Type.Clazz) substitute(c.superClass(),binding));				
+			}
+
+			for (Type.Reference t : c.interfaces()) {
+				worklist.add((Type.Clazz) substitute(t,binding));
+			}
+		}
+
+		// Find target method
+		return matchMethod(concreteParameterTypes, mts, autoboxing, loader);
+	}
+	
+	/**
+	 * The problem here is, given a list of similar functions, to select the
+	 * most appropriate match for the given parameter types. If there is no
+	 * appropriate match, simply return null.
+	 */
+	protected Triple<Clazz, Method, Type.Function> matchMethod(
+			List<Type> parameterTypes,
+			List<Triple<Clazz, Method, Type.Function>> methods,
+			boolean autoboxing, ClassLoader loader)
+			throws ClassNotFoundException {
+	
+		int matchIndex = -1;
+		// params contains the original parameter types we're looking for.
+		Type[] params = parameterTypes.toArray(new Type[parameterTypes.size()]);
+		// nparams contains the best match we have so far.
+		Type[] nparams = null;
+
+		outer: for (int i = methods.size() - 1; i >= 0; --i) {
+			Triple<Clazz, Method, Type.Function> methInfo = methods.get(i);
+			Method m = methInfo.second();
+			Type.Function f = methInfo.third();			
+			Type[] mps = f.parameterTypes().toArray(new Type[f.parameterTypes().size()]);
+			if (mps.length == params.length
+					|| (m.isVariableArity() && mps.length <= (params.length + 1))) {
+				// check each parameter type.
+				int numToCheck = m.isVariableArity() ? mps.length - 1
+						: mps.length;
+				for (int j = 0; j != numToCheck; ++j) {
+					Type p1 = mps[j];
+					Type p2 = params[j];
+
+					if (!subtype(p1,p2,loader)) {
+						continue outer;
+					}
+					if (!autoboxing
+							&& ((p1 instanceof Type.Primitive && !(p2 instanceof Type.Primitive)) || (p2 instanceof Type.Primitive && !(p1 instanceof Type.Primitive)))) {
+						continue outer;
+					}
+					if (nparams != null && !subtype(nparams[j],p1,loader)) {
+						continue outer;
+					}
+				}
+				
+				// At this point, if the method is a variable arity method we
+				// need to also check that the varargs portion make sense.
+				if(m.isVariableArity()) {
+					Type.Array arrayType = (Type.Array) mps[numToCheck];
+					Type elementType = arrayType.element();
+					if(numToCheck == (params.length-1)) {
+						// In the special case that just one parameter is
+						// provided in a variable arity position, we need to
+						// check whether or not it is an array of the
+						// appropriate type.
+						Type p2 = params[numToCheck];
+						if (!subtype(elementType, p2, loader)
+								&& !subtype(arrayType, p2, loader)) {
+							continue outer;
+						}
+					} else {
+						// This is the normal situation. We need to check
+						// whether or not the arguments provided in the variable
+						// arity positions are subtypes of the variable arity
+						// list element type.
+						for(int j=numToCheck;j<params.length;++j) {
+							Type p2 = params[j];						
+							if(!subtype(elementType,p2,loader)) {
+								continue outer;
+							}
+						}
+					}
+				}
+				matchIndex = i;
+				nparams = mps;
+			}
+		}
+
+		if (matchIndex == -1) {
+			// No method was found			
+			return null;
+		} else {						
+			return methods.get(matchIndex);
+		}
+	}
+
 }

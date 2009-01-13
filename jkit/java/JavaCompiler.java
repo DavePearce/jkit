@@ -155,7 +155,7 @@ public class JavaCompiler implements Compiler {
 			
 			// First we must read the skeletons
 			JavaFile jfile = reader.read();			
-			new TypePropagation(loader).apply(jfile);
+			new TypePropagation(loader, new TypeSystem()).apply(jfile);
 			new TypeChecking(loader, new TypeSystem()).apply(jfile);
 			new JavaFileWriter(System.out).write(jfile);
 			

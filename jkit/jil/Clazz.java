@@ -114,4 +114,22 @@ public class Clazz extends SyntacticElementImpl {
      * @return
      */
 	public List<Method> methods() { return methods; }
+
+	/**
+	 * Access the methods contained in this object with a given name. The
+	 * returned list may not be modified by adding, or removing methods. The
+	 * returned list is always non-null.
+	 * 
+	 * @return
+	 */
+	public List<Method> methods(String name) {
+		ArrayList<Method> r = new ArrayList();
+		for(Method m : methods) {
+			if(m.name().equals(name)) {
+				r.add(m);
+			}
+		}
+		return methods; 
+	}
+
 }

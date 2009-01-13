@@ -140,4 +140,13 @@ public class Method extends SyntacticElementImpl {
 	public boolean isSynchronized() {
 		return hasModifier(java.lang.reflect.Modifier.SYNCHRONIZED);
 	}
+
+	/**
+	 * Check whether this method has varargs
+	 */
+	public boolean isVariableArity() {
+		// note, ACC_TRANSIENT is same mask as ACC_VARARGS in vm spec.
+		return hasModifier(java.lang.reflect.Modifier.TRANSIENT);
+	}
+
 }

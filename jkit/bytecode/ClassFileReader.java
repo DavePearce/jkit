@@ -1415,7 +1415,20 @@ public class ClassFileReader {
 	// ============================================================	
 	
 	protected List<Modifier> listModifiers(int modifiers) {
-		int[] masks = { java.lang.reflect.Modifier.ABSTRACT };
+		int[] masks = { 
+				java.lang.reflect.Modifier.ABSTRACT,
+				java.lang.reflect.Modifier.FINAL,
+				java.lang.reflect.Modifier.INTERFACE,
+				java.lang.reflect.Modifier.NATIVE,
+				java.lang.reflect.Modifier.PRIVATE,
+				java.lang.reflect.Modifier.PUBLIC,
+				java.lang.reflect.Modifier.PROTECTED,
+				java.lang.reflect.Modifier.STATIC,
+				java.lang.reflect.Modifier.STRICT,
+				java.lang.reflect.Modifier.SYNCHRONIZED,
+				java.lang.reflect.Modifier.TRANSIENT,
+				java.lang.reflect.Modifier.VOLATILE				
+				};
 		
 		ArrayList<Modifier> mods = new ArrayList<Modifier>();
 		

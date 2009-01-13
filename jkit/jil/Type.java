@@ -408,5 +408,25 @@ public interface Type extends Attribute {
 			}
 			return false;
 		}
+		
+		public String toString() {
+			String r="";
+			boolean firstTime;
+			if(typeArgs.size() > 0) {
+				r += "<";
+				firstTime=true;
+				for(Type.Variable v : typeArgs) {
+					if(!firstTime) {
+						r += ", ";						
+					}
+					firstTime=false;
+				}
+				r += "> ";
+			}
+			r += returnType;
+			r += " ("; 
+			
+			
+		}
 	}	
 }
