@@ -12,7 +12,7 @@ import jkit.util.Pair;
 
 /**
  * A ClassLoader is responsible for loading classes from the filesystem. Classes
- * are located in either jar files or directories; furthermore, classes may be
+ * arfe located in either jar files or directories; furthermore, classes may be
  * in source of binary (i.e. compiled) form. The ClassLoader will search the
  * classpath and/or sourcepath to find classes and (if necessary) compile them. 
  * 
