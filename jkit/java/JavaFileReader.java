@@ -230,7 +230,8 @@ public class JavaFileReader implements ClassReader {
      * @param in
      *            the input stream to read from
      * 
-     * @throws IOException
+     * @throws IOExceptio
+     * 
      */
 	public JavaFileReader(InputStream in, jkit.compiler.ClassLoader loader)
 			throws IOException {
