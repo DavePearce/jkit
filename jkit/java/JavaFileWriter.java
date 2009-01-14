@@ -245,7 +245,7 @@ public class JavaFileWriter {
 			writeModifiers(p.second());
 			writeType(p.third());
 			
-			if(m.varargs() && va_count == m.parameters().size()) {
+			if(m.isVariableArity() && va_count == m.parameters().size()) {
 				write("...");
 			}
 			

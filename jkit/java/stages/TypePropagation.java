@@ -73,28 +73,27 @@ public class TypePropagation {
 		for(jkit.java.Type.Clazz i : c.interfaces()) {
 			i.attributes().add(resolve(i, imports));
 		}
-		
+
 		for(Decl d : c.declarations()) {
 			doDeclaration(d, imports);
 		}
 	}
 
 	protected void doMethod(Method d, List<String> imports) {
-		// First, we need to construct a typing environment for local variables.
-		HashMap<String,Type> environment = new HashMap<String,Type>();
-		
 		for(jkit.java.Type.Clazz e : d.exceptions()) {
 			e.attributes().add(resolve(e,imports));
-		}
-		
+		}		
 		d.returnType().attributes().add(resolve(d.returnType(),imports));
 		
+		// First, we need to construct a typing environment for local variables.
+		HashMap<String,Type> environment = new HashMap<String,Type>();
+				
 		for(Triple<String,List<Modifier>,jkit.java.Type> p : d.parameters()) {
 			Type pt = resolve(p.third(),imports);
 			p.third().attributes().add(pt);			
 			environment.put(p.first(), pt);
 		}
-						
+		
 		doStatement(d.body(),environment, imports);
 	}
 
@@ -1033,7 +1032,7 @@ public class TypePropagation {
 	}
 	
 	/**
-     * The purpose of the resovle method is to examine the type in question, and
+     * The purpose of the resolve method is to examine the type in question, and
      * determine the fully qualified it represents, based on the current import
      * list. 
      * 

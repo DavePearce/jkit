@@ -54,6 +54,81 @@ public interface Decl extends SyntacticElement {
 
 		public List<Decl> declarations() { 
 			return declarations;
+		}
+		
+		/**
+	     * Check whether this method has one of the "base" modifiers (e.g. static,
+	     * public, private, etc). These are found in java.lang.reflect.Modifier.
+	     * 
+	     * @param modifier
+	     * @return true if it does!
+	     */
+		public boolean hasModifier(int modifier) {
+			for(Modifier m : modifiers) {
+				if(m instanceof Modifier.Base) {
+					Modifier.Base b = (Modifier.Base) m;
+					if(b.modifier() == modifier) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+		
+		/**
+		 * Check whether this method is abstract
+		 */
+		public boolean isAbstract() {
+			return hasModifier(java.lang.reflect.Modifier.ABSTRACT);
+		}
+
+		/**
+		 * Check whether this method is final
+		 */
+		public boolean isFinal() {
+			return hasModifier(java.lang.reflect.Modifier.FINAL);
+		}
+
+		/**
+		 * Check whether this method is static
+		 */
+		public boolean isStatic() {
+			return hasModifier(java.lang.reflect.Modifier.STATIC);
+		}
+
+		/**
+		 * Check whether this method is public
+		 */
+		public boolean isPublic() {
+			return hasModifier(java.lang.reflect.Modifier.PUBLIC);
+		}
+
+		/**
+		 * Check whether this method is protected
+		 */
+		public boolean isProtected() {
+			return hasModifier(java.lang.reflect.Modifier.PROTECTED);
+		}
+
+		/**
+		 * Check whether this method is private
+		 */
+		public boolean isPrivate() {
+			return hasModifier(java.lang.reflect.Modifier.PRIVATE);
+		}
+
+		/**
+		 * Check whether this method is native
+		 */
+		public boolean isNative() {
+			return hasModifier(java.lang.reflect.Modifier.NATIVE);
+		}
+
+		/**
+		 * Check whether this method is synchronized
+		 */
+		public boolean isSynchronized() {
+			return hasModifier(java.lang.reflect.Modifier.SYNCHRONIZED);
 		}		
 	}
 
@@ -190,16 +265,6 @@ public interface Decl extends SyntacticElement {
 			return parameters;
 		}
 
-		/**
-		 * Indicates whether or not this method accept a variable-length
-		 * argument list.
-		 * 
-		 * @return
-		 */
-		public boolean varargs() {
-			return varargs;
-		}
-
 		public List<Type.Variable> typeParameters() {
 			return typeParameters;
 		}
@@ -210,6 +275,89 @@ public interface Decl extends SyntacticElement {
 
 		public Stmt.Block body() {
 			return block;
+		}
+		
+		/**
+	     * Check whether this method has one of the "base" modifiers (e.g. static,
+	     * public, private, etc). These are found in java.lang.reflect.Modifier.
+	     * 
+	     * @param modifier
+	     * @return true if it does!
+	     */
+		public boolean hasModifier(int modifier) {
+			for(Modifier m : modifiers) {
+				if(m instanceof Modifier.Base) {
+					Modifier.Base b = (Modifier.Base) m;
+					if(b.modifier() == modifier) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+		
+		/**
+		 * Check whether this method is abstract
+		 */
+		public boolean isAbstract() {
+			return hasModifier(java.lang.reflect.Modifier.ABSTRACT);
+		}
+
+		/**
+		 * Check whether this method is final
+		 */
+		public boolean isFinal() {
+			return hasModifier(java.lang.reflect.Modifier.FINAL);
+		}
+
+		/**
+		 * Check whether this method is static
+		 */
+		public boolean isStatic() {
+			return hasModifier(java.lang.reflect.Modifier.STATIC);
+		}
+
+		/**
+		 * Check whether this method is public
+		 */
+		public boolean isPublic() {
+			return hasModifier(java.lang.reflect.Modifier.PUBLIC);
+		}
+
+		/**
+		 * Check whether this method is protected
+		 */
+		public boolean isProtected() {
+			return hasModifier(java.lang.reflect.Modifier.PROTECTED);
+		}
+
+		/**
+		 * Check whether this method is private
+		 */
+		public boolean isPrivate() {
+			return hasModifier(java.lang.reflect.Modifier.PRIVATE);
+		}
+
+		/**
+		 * Check whether this method is native
+		 */
+		public boolean isNative() {
+			return hasModifier(java.lang.reflect.Modifier.NATIVE);
+		}
+
+		/**
+		 * Check whether this method is synchronized
+		 */
+		public boolean isSynchronized() {
+			return hasModifier(java.lang.reflect.Modifier.SYNCHRONIZED);
+		}
+
+		/**
+		 * Check whether this method has varargs
+		 */
+		public boolean isVariableArity() {
+			// note, ACC_TRANSIENT is same mask as ACC_VARARGS in vm spec.
+			return hasModifier(java.lang.reflect.Modifier.TRANSIENT);
 		}
 	}
 
@@ -260,6 +408,89 @@ public interface Decl extends SyntacticElement {
 		public Expr initialiser() {
 			return initialiser;
 		}		
+		
+		/**
+	     * Check whether this method has one of the "base" modifiers (e.g. static,
+	     * public, private, etc). These are found in java.lang.reflect.Modifier.
+	     * 
+	     * @param modifier
+	     * @return true if it does!
+	     */
+		public boolean hasModifier(int modifier) {
+			for(Modifier m : modifiers) {
+				if(m instanceof Modifier.Base) {
+					Modifier.Base b = (Modifier.Base) m;
+					if(b.modifier() == modifier) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+		
+		/**
+		 * Check whether this method is abstract
+		 */
+		public boolean isAbstract() {
+			return hasModifier(java.lang.reflect.Modifier.ABSTRACT);
+		}
+
+		/**
+		 * Check whether this method is final
+		 */
+		public boolean isFinal() {
+			return hasModifier(java.lang.reflect.Modifier.FINAL);
+		}
+
+		/**
+		 * Check whether this method is static
+		 */
+		public boolean isStatic() {
+			return hasModifier(java.lang.reflect.Modifier.STATIC);
+		}
+
+		/**
+		 * Check whether this method is public
+		 */
+		public boolean isPublic() {
+			return hasModifier(java.lang.reflect.Modifier.PUBLIC);
+		}
+
+		/**
+		 * Check whether this method is protected
+		 */
+		public boolean isProtected() {
+			return hasModifier(java.lang.reflect.Modifier.PROTECTED);
+		}
+
+		/**
+		 * Check whether this method is private
+		 */
+		public boolean isPrivate() {
+			return hasModifier(java.lang.reflect.Modifier.PRIVATE);
+		}
+
+		/**
+		 * Check whether this method is native
+		 */
+		public boolean isNative() {
+			return hasModifier(java.lang.reflect.Modifier.NATIVE);
+		}
+
+		/**
+		 * Check whether this method is synchronized
+		 */
+		public boolean isSynchronized() {
+			return hasModifier(java.lang.reflect.Modifier.SYNCHRONIZED);
+		}
+
+		/**
+		 * Check whether this method has varargs
+		 */
+		public boolean isVariableArity() {
+			// note, ACC_TRANSIENT is same mask as ACC_VARARGS in vm spec.
+			return hasModifier(java.lang.reflect.Modifier.TRANSIENT);
+		}
 	}
 
 	public static class InitialiserBlock extends Stmt.Block implements Decl {
