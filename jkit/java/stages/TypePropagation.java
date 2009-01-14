@@ -14,36 +14,10 @@ import jkit.jil.Modifier;
 import jkit.jil.SourceLocation;
 
 /**
- * This Class does two main things:
- * 
- * 1) it goes through all of the types that have been declared in the source
- * file, and resolves them to fully qualified types. For example, consider this
- * code:
- * 
- * <pre>
- * import java.util.*;
- * 
- * public class Test extends Vector {
- * 	public static void main(String[] args) {
- *      ... 
- *     }
- * }
- * </pre>
- * 
- * After type resolution, we will have resolved the following types:
- * 
- * <pre>
- *   Vector -&gt; java.util.Vector
- *   String -&gt; java.lang.String
- * </pre>
- * 
- * Thus, in principle, we could use this information to eliminate any import
- * statements (although type resolution by itself does not do this).
- * 
- * 2) all of the type information found on expressions is propagated as type
- * attributes appropriately. The stage also checks that types are used
- * appropriately in expressions and statements and, where not, emits error
- * messages accordingly.
+ * After type resolution, all of the type information found on expressions is
+ * propagated as type attributes appropriately. The stage also checks that types
+ * are used appropriately in expressions and statements and, where not, emits
+ * error messages accordingly.
  * 
  * @author djp
  * 
