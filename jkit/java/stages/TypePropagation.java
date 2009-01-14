@@ -205,7 +205,6 @@ public class TypePropagation {
 	
 	protected void doVarDef(Stmt.VarDef def, HashMap<String,Type> environment, List<String> imports) {
 		Type t = resolve(def.type(),imports);
-		System.out.println("ADDING: " + t);
 		def.type().attributes().add(t);
 		
 		List<Triple<String, Integer, Expr>> defs = def.definitions();
@@ -417,17 +416,20 @@ public class TypePropagation {
 		// Now, to determine the return type of this method, we need to lookup
 		// the method in the class heirarchy. This lookup procedure is seriously
 		// non-trivial, and is implemented in the TypeSystem module.
-		
-		Type.Function f;
-		
+				
 		if(e.target() != null) {
 			Type.Clazz receiver = (Type.Clazz) e.target().attribute(Type.class);
 			try {				
-				f = types.resolveMethod(receiver, e.name(), parameterTypes, loader).third();
+				Type.Function f = types.resolveMethod(receiver, e.name(), parameterTypes, loader).third();				
+				if(f.returnType() instanceof Type.Void) {
+					syntax_error("method must return a value " + e.name() + " : " + f, e);
+				} else {
+					e.attributes().add(f.returnType());
+				}
 			} catch(ClassNotFoundException cnfe) {
 				syntax_error(cnfe.getMessage(), e);
 			} catch(MethodNotFoundException mfne) {
-				String msg = "method not found: " + receiver + "(";
+				String msg = "method not found: " + receiver + "." + e.name() + "(";
 				boolean firstTime=true;
 				for(Type t : parameterTypes) {
 					if(!firstTime) {
@@ -1174,8 +1176,7 @@ public class TypePropagation {
 		// source code and, hence, we need to determine this fromt he CLASSPATH
 		// and the import list.
 									
-		try {			
-			System.out.println("LOADING: " + className);
+		try {						
 			return loader.resolve(className, imports);			
 		} catch(ClassNotFoundException e) {}
 

@@ -420,13 +420,23 @@ public interface Type extends Attribute {
 						r += ", ";						
 					}
 					firstTime=false;
+					r += v;
 				}
 				r += "> ";
 			}
 			r += returnType;
 			r += " ("; 
 			
-			
+			firstTime=true;
+			for(Type t : parameters) {
+				if(!firstTime) {
+					r += ", ";						
+				}
+				firstTime=false;
+				r += t;
+			}
+			r+= ")";
+			return r;
 		}
 	}	
 }

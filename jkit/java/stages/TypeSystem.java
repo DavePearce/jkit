@@ -70,8 +70,10 @@ public class TypeSystem {
      * @param t2
      * @return
      */
-	public boolean subtype(Type.Primitive t1, Type.Primitive t2) {										
-		if(t1 instanceof Type.Double && subtype(new Type.Float(),t2)) { 
+	public boolean subtype(Type.Primitive t1, Type.Primitive t2) {
+		if(t1.getClass() == t2.getClass()) {
+			return true;
+		} else if(t1 instanceof Type.Double && subtype(new Type.Float(),t2)) { 
 			return true;
 		} else if(t1 instanceof Type.Float && subtype(new Type.Long(),t2)) {
 			return true;
@@ -205,6 +207,7 @@ public class TypeSystem {
      */
 	public Map<String, Type.Reference> bind(Type.Reference concrete,
 			Type.Reference template) {
+		
 		if (template instanceof Type.Clazz
 				&& concrete instanceof Type.Clazz
 				&& !baseEquivalent((Type.Clazz) concrete, (Type.Clazz) template)) {
@@ -220,7 +223,8 @@ public class TypeSystem {
 	
 	/**
      * This method builds a binding between a concrete function type, and a
-     * "template" type.  It works in much the same way as for the bind method on class types (see above).
+     * "template" type. It works in much the same way as for the bind method on
+     * class types (see above).
      * 
      * @param concrete
      *            --- the concrete (i.e. instantiated) type.
@@ -279,7 +283,7 @@ public class TypeSystem {
 	}
 	
 	
-	public class BindError extends RuntimeException {
+	public static class BindError extends RuntimeException {
 		public BindError(String m) {
 			super(m);
 		}
@@ -599,14 +603,17 @@ public class TypeSystem {
 						|| (varargs && m.isVariableArity() && m_type
 								.parameterTypes().size() <= (concreteParameterTypes
 								.size()+1))) {
+					
 					// First, substitute class type parameters							
-					Type.Function mt = (Type.Function) substitute(m.type(), binding);
+					Type.Function mt = (Type.Function) substitute(m_type, binding);
 					
 					// Second, substitute method type parameters
+					/* THIS NEED FIXING!
 					Type.Function concreteFunctionType = new Type.Function(mt.returnType(),
 							concreteParameterTypes, new ArrayList<Type.Variable>());
 					
 					mt = (Type.Function) substitute(mt,bind(concreteFunctionType,mt));
+					*/
 					
 					// Third, identify and substitute any remaining generic variables
 					// for java.lang.Object. This corresponds to unsafe
@@ -622,7 +629,7 @@ public class TypeSystem {
 					 * }
 					 * mt = 	(Type.Function) mt.substitute(freeVarMap);
 					 */
-					
+				
 					 mts.add(new Triple<Clazz, Method, Type.Function>(c, m, mt));					 				
 				}
 			}
@@ -667,6 +674,7 @@ public class TypeSystem {
 				// check each parameter type.
 				int numToCheck = m.isVariableArity() ? mps.length - 1
 						: mps.length;
+				
 				for (int j = 0; j != numToCheck; ++j) {
 					Type p1 = mps[j];
 					Type p2 = params[j];
@@ -674,6 +682,7 @@ public class TypeSystem {
 					if (!subtype(p1,p2,loader)) {
 						continue outer;
 					}
+					
 					if (!autoboxing
 							&& ((p1 instanceof Type.Primitive && !(p2 instanceof Type.Primitive)) || (p2 instanceof Type.Primitive && !(p1 instanceof Type.Primitive)))) {
 						continue outer;

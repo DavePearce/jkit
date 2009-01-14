@@ -125,11 +125,11 @@ public class Clazz extends SyntacticElementImpl {
 	public List<Method> methods(String name) {
 		ArrayList<Method> r = new ArrayList();
 		for(Method m : methods) {
-			if(m.name().equals(name)) {
+			if(m.name().equals(name)) {				
 				r.add(m);
 			}
 		}
-		return methods; 
+		return r; 
 	}
 
 }
