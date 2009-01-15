@@ -8,6 +8,8 @@ import jkit.compiler.Compiler;
 import jkit.compiler.SyntaxError;
 import jkit.compiler.ClassLoader;
 import jkit.java.stages.TypeChecking;
+import jkit.java.stages.TypeResolution;
+import jkit.java.stages.ScopeResolution;
 import jkit.java.stages.TypePropagation;
 import jkit.java.stages.TypeSystem;
 import jkit.jil.*;
@@ -154,7 +156,9 @@ public class JavaCompiler implements Compiler {
 			logout.println("Parsed " + filename + " [" + (last - start) + "ms]");
 			
 			// First we must read the skeletons
-			JavaFile jfile = reader.read();			
+			JavaFile jfile = reader.read();
+			new TypeResolution(loader, new TypeSystem()).apply(jfile);
+			new ScopeResolution(loader, new TypeSystem()).apply(jfile);
 			new TypePropagation(loader, new TypeSystem()).apply(jfile);
 			new TypeChecking(loader, new TypeSystem()).apply(jfile);
 			new JavaFileWriter(System.out).write(jfile);

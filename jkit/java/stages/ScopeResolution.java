@@ -1,8 +1,6 @@
 package jkit.java.stages;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import java.util.*;
 import jkit.compiler.ClassLoader;
 import jkit.java.Decl;
 import jkit.java.Expr;
@@ -132,319 +130,421 @@ import jkit.util.Triple;
  * 
  */
 public class ScopeResolution {
+	
+	/*
+	 * A Scope represents a declaration which defines some variables that may be
+	 * accessed directly by code contained within this scope. 
+	 */
+	private static class Scope {
+		public final Set<String> variables;
+		public Scope() {
+			this.variables = new HashSet<String>();
+		}
+		public Scope(Set<String> variables) {
+			this.variables = variables;
+		}
+	}
+	
+	private static class ClassScope extends Scope {
+		public Type.Clazz type; 		
+		public ClassScope(Type.Clazz type) {
+			super(new HashSet<String>());
+			this.type = type;
+		}
+	}
+	
+	private static class MethodScope extends Scope {
+		public MethodScope(Set<String> variables) {
+			super(variables);
+		}
+	}
+	
 	private ClassLoader loader;
 	private TypeSystem types;
+	private final Stack<Scope> scopes = new Stack<Scope>();
 	
 	public ScopeResolution(ClassLoader loader, TypeSystem types) {
 		this.loader = loader; 
 		this.types = types;
 	}
 	
-	public void apply(JavaFile file) {
+	public void apply(JavaFile file) {		
 		for(Decl d : file.declarations()) {
-			doDeclaration(d);
+			doDeclaration(d,file);
 		}
 	}
 	
-	protected void doDeclaration(Decl d) {
+	protected void doDeclaration(Decl d, JavaFile file) {
 		if(d instanceof Interface) {
-			doInterface((Interface)d);
+			doInterface((Interface)d, file);
 		} else if(d instanceof Clazz) {
-			doClass((Clazz)d);
+			doClass((Clazz)d, file);
 		} else if(d instanceof Method) {
-			doMethod((Method)d);
+			doMethod((Method)d, file);
 		} else if(d instanceof Field) {
-			doField((Field)d);
+			doField((Field)d, file);
 		}
 	}
 	
-	protected void doInterface(Interface d) {
+	protected void doInterface(Interface d, JavaFile file) {
 		
 	}
 	
-	protected void doClass(Clazz c) {
-		for(Decl d : c.declarations()) {
-			doDeclaration(d);
+	protected void doClass(Clazz c, JavaFile file) {
+		// Create a Type.Class representing this class.
+		ClassScope enclosingScope = (ClassScope) findEnclosingScope(ClassScope.class);
+		List<Pair<String,List<Type.Reference>>> components = new ArrayList();
+		if (enclosingScope != null) {
+			for (Pair<String, List<Type.Reference>> i : enclosingScope.type
+					.components()) {
+				components.add(i);
+			}
+			components.add(new Pair(c.name(), new ArrayList()));
+		} else {
+			components.add(new Pair(c.name(), new ArrayList()));
 		}
+				
+		// Ok, push on a scope representing this class definition.
+		scopes.push(new ClassScope(new Type.Clazz(file.pkg(), components)));
+		
+		for(Decl d : c.declarations()) {
+			doDeclaration(d, file);
+		}
+		
+		scopes.pop();
 	}
 
-	protected void doMethod(Method d) {
+	protected void doMethod(Method d, JavaFile file) {
+		
+		Set<String> params = new HashSet<String>();
+		for(Triple<String,List<Modifier>,jkit.java.Type> t : d.parameters()) {
+			params.add(t.first());
+		}		
+		scopes.push(new MethodScope(params));
+		
 		// Now, explore the method body for any other things to resolve.
-		doStatement(d.body());
+		doStatement(d.body(), file);
+		
+		scopes.pop(); // leaving scope
 	}
 
-	protected void doField(Field d) {
-		doExpression(d.initialiser());
+	protected void doField(Field d, JavaFile file) {
+		doExpression(d.initialiser(), file);
 	}
 	
-	protected void doStatement(Stmt e) {
+	protected void doStatement(Stmt e, JavaFile file) {
 		if(e instanceof Stmt.SynchronisedBlock) {
-			doSynchronisedBlock((Stmt.SynchronisedBlock)e);
+			doSynchronisedBlock((Stmt.SynchronisedBlock)e, file);
 		} else if(e instanceof Stmt.TryCatchBlock) {
-			doTryCatchBlock((Stmt.TryCatchBlock)e);
+			doTryCatchBlock((Stmt.TryCatchBlock)e, file);
 		} else if(e instanceof Stmt.Block) {
-			doBlock((Stmt.Block)e);
+			doBlock((Stmt.Block)e, file);
 		} else if(e instanceof Stmt.VarDef) {
-			doVarDef((Stmt.VarDef) e);
+			doVarDef((Stmt.VarDef) e, file);
 		} else if(e instanceof Stmt.Assignment) {
-			doAssignment((Stmt.Assignment) e);
+			doAssignment((Stmt.Assignment) e, file);
 		} else if(e instanceof Stmt.Return) {
-			doReturn((Stmt.Return) e);
+			doReturn((Stmt.Return) e, file);
 		} else if(e instanceof Stmt.Throw) {
-			doThrow((Stmt.Throw) e);
+			doThrow((Stmt.Throw) e, file);
 		} else if(e instanceof Stmt.Assert) {
-			doAssert((Stmt.Assert) e);
+			doAssert((Stmt.Assert) e, file);
 		} else if(e instanceof Stmt.Break) {
-			doBreak((Stmt.Break) e);
+			doBreak((Stmt.Break) e, file);
 		} else if(e instanceof Stmt.Continue) {
-			doContinue((Stmt.Continue) e);
+			doContinue((Stmt.Continue) e, file);
 		} else if(e instanceof Stmt.Label) {
-			doLabel((Stmt.Label) e);
+			doLabel((Stmt.Label) e, file);
 		} else if(e instanceof Stmt.If) {
-			doIf((Stmt.If) e);
+			doIf((Stmt.If) e, file);
 		} else if(e instanceof Stmt.For) {
-			doFor((Stmt.For) e);
+			doFor((Stmt.For) e, file);
 		} else if(e instanceof Stmt.ForEach) {
-			doForEach((Stmt.ForEach) e);
+			doForEach((Stmt.ForEach) e, file);
 		} else if(e instanceof Stmt.While) {
-			doWhile((Stmt.While) e);
+			doWhile((Stmt.While) e, file);
 		} else if(e instanceof Stmt.DoWhile) {
-			doDoWhile((Stmt.DoWhile) e);
+			doDoWhile((Stmt.DoWhile) e, file);
 		} else if(e instanceof Stmt.Switch) {
-			doSwitch((Stmt.Switch) e);
+			doSwitch((Stmt.Switch) e, file);
 		} else if(e instanceof Expr.Invoke) {
-			doInvoke((Expr.Invoke) e);
+			doInvoke((Expr.Invoke) e, file);
 		} else if(e instanceof Expr.New) {
-			doNew((Expr.New) e);
+			doNew((Expr.New) e, file);
 		} else if(e instanceof Decl.Clazz) {
-			doClass((Decl.Clazz)e);
+			doClass((Decl.Clazz)e, file);
 		} else if(e != null) {
 			throw new RuntimeException("Invalid statement encountered: "
 					+ e.getClass());
 		}		
 	}
 	
-	protected void doBlock(Stmt.Block block) {
+	protected void doBlock(Stmt.Block block, JavaFile file) {
 		if(block != null) {
+			scopes.push(new Scope());
+			
 			// now process every statement in this block.
 			for(Stmt s : block.statements()) {
-				doStatement(s);
+				doStatement(s, file);
 			}
+		
+			scopes.pop();
 		}
 	}
 	
-	protected void doSynchronisedBlock(Stmt.SynchronisedBlock block) {
-		doBlock(block);
-		doExpression(block.expr());
+	protected void doSynchronisedBlock(Stmt.SynchronisedBlock block, JavaFile file) {
+		doBlock(block, file);
+		doExpression(block.expr(), file);
 	}
 	
-	protected void doTryCatchBlock(Stmt.TryCatchBlock block) {
-		doBlock(block);		
-		doBlock(block.finaly());		
+	protected void doTryCatchBlock(Stmt.TryCatchBlock block, JavaFile file) {
+		doBlock(block, file);		
+		doBlock(block.finaly(), file);		
 		
 		for(Stmt.CatchBlock cb : block.handlers()) {
-			doBlock(cb);
+			doBlock(cb, file);
 		}
 	}
 	
-	protected void doVarDef(Stmt.VarDef def) {
+	protected void doVarDef(Stmt.VarDef def, JavaFile file) {
 		List<Triple<String, Integer, Expr>> defs = def.definitions();
+		Scope enclosingScope = findEnclosingScope();
+		
 		for(int i=0;i!=defs.size();++i) {
 			Triple<String, Integer, Expr> d = defs.get(i);			
-			doExpression(d.third());														
-		}
+			enclosingScope.variables.add(d.first());
+			doExpression(d.third(), file);														
+		}		
 	}
 	
-	protected void doAssignment(Stmt.Assignment def) {
-		doExpression(def.lhs());	
-		doExpression(def.rhs());			
+	protected void doAssignment(Stmt.Assignment def, JavaFile file) {
+		doExpression(def.lhs(), file);	
+		doExpression(def.rhs(), file);			
 	}
 	
-	protected void doReturn(Stmt.Return ret) {
-		doExpression(ret.expr());
+	protected void doReturn(Stmt.Return ret, JavaFile file) {
+		doExpression(ret.expr(), file);
 	}
 	
-	protected void doThrow(Stmt.Throw ret) {
-		doExpression(ret.expr());
+	protected void doThrow(Stmt.Throw ret, JavaFile file) {
+		doExpression(ret.expr(), file);
 	}
 	
-	protected void doAssert(Stmt.Assert ret) {
-		doExpression(ret.expr());
+	protected void doAssert(Stmt.Assert ret, JavaFile file) {
+		doExpression(ret.expr(), file);
 	}
 	
-	protected void doBreak(Stmt.Break brk) {
+	protected void doBreak(Stmt.Break brk, JavaFile file) {
 		// nothing	
 	}
 	
-	protected void doContinue(Stmt.Continue brk) {
+	protected void doContinue(Stmt.Continue brk, JavaFile file) {
 		// nothing
 	}
 	
-	protected void doLabel(Stmt.Label lab) {						
-		doStatement(lab.statement());
+	protected void doLabel(Stmt.Label lab, JavaFile file) {						
+		doStatement(lab.statement(), file);
 	}
 	
-	protected void doIf(Stmt.If stmt) {
-		doExpression(stmt.condition());
-		doStatement(stmt.trueStatement());
-		doStatement(stmt.falseStatement());
+	protected void doIf(Stmt.If stmt, JavaFile file) {
+		doExpression(stmt.condition(), file);
+		doStatement(stmt.trueStatement(), file);
+		doStatement(stmt.falseStatement(), file);
 	}
 	
-	protected void doWhile(Stmt.While stmt) {
-		doExpression(stmt.condition());
-		doStatement(stmt.body());		
+	protected void doWhile(Stmt.While stmt, JavaFile file) {
+		doExpression(stmt.condition(), file);
+		doStatement(stmt.body(), file);		
 	}
 	
-	protected void doDoWhile(Stmt.DoWhile stmt) {
-		doExpression(stmt.condition());
-		doStatement(stmt.body());
+	protected void doDoWhile(Stmt.DoWhile stmt, JavaFile file) {
+		doExpression(stmt.condition(), file);
+		doStatement(stmt.body(), file);
 	}
 	
-	protected void doFor(Stmt.For stmt) {
-		doStatement(stmt.initialiser());
-		doExpression(stmt.condition());
-		doStatement(stmt.increment());
-		doStatement(stmt.body());	
+	protected void doFor(Stmt.For stmt, JavaFile file) {
+		scopes.push(new Scope());
+		
+		doStatement(stmt.initialiser(), file);
+		doExpression(stmt.condition(), file);
+		doStatement(stmt.increment(), file);
+		doStatement(stmt.body(), file);
+		
+		scopes.pop();
 	}
 	
-	protected void doForEach(Stmt.ForEach stmt) {
-		doExpression(stmt.source());
-		doStatement(stmt.body());
+	protected void doForEach(Stmt.ForEach stmt, JavaFile file) {
+		scopes.push(new Scope());
+		
+		doExpression(stmt.source(), file);
+		doStatement(stmt.body(), file);
+		
+		scopes.pop();
 	}
 	
-	protected void doSwitch(Stmt.Switch sw) {
-		doExpression(sw.condition());
+	protected void doSwitch(Stmt.Switch sw, JavaFile file) {
+		doExpression(sw.condition(), file);
 		for(Case c : sw.cases()) {
-			doExpression(c.condition());
+			doExpression(c.condition(), file);
 			for(Stmt s : c.statements()) {
-				doStatement(s);
+				doStatement(s, file);
 			}
 		}
 		
 		// should check that case conditions are final constants here.
 	}
 	
-	protected void doExpression(Expr e) {	
+	protected void doExpression(Expr e, JavaFile file) {	
 		if(e instanceof Value.Bool) {
-			doBoolVal((Value.Bool)e);
+			doBoolVal((Value.Bool)e, file);
 		} else if(e instanceof Value.Char) {
-			doCharVal((Value.Char)e);
+			doCharVal((Value.Char)e, file);
 		} else if(e instanceof Value.Int) {
-			doIntVal((Value.Int)e);
+			doIntVal((Value.Int)e, file);
 		} else if(e instanceof Value.Long) {
-			doLongVal((Value.Long)e);
+			doLongVal((Value.Long)e, file);
 		} else if(e instanceof Value.Float) {
-			doFloatVal((Value.Float)e);
+			doFloatVal((Value.Float)e, file);
 		} else if(e instanceof Value.Double) {
-			doDoubleVal((Value.Double)e);
+			doDoubleVal((Value.Double)e, file);
 		} else if(e instanceof Value.String) {
-			doStringVal((Value.String)e);
+			doStringVal((Value.String)e, file);
 		} else if(e instanceof Value.Null) {
-			doNullVal((Value.Null)e);
+			doNullVal((Value.Null)e, file);
 		} else if(e instanceof Value.TypedArray) {
-			doTypedArrayVal((Value.TypedArray)e);
+			doTypedArrayVal((Value.TypedArray)e, file);
 		} else if(e instanceof Value.Array) {
-			doArrayVal((Value.Array)e);
+			doArrayVal((Value.Array)e, file);
 		} else if(e instanceof Value.Class) {
-			doClassVal((Value.Class) e);
+			doClassVal((Value.Class) e, file);
 		} else if(e instanceof Expr.Variable) {
-			doVariable((Expr.Variable)e);
+			doVariable((Expr.Variable)e, file);
 		} else if(e instanceof Expr.UnOp) {
-			doUnOp((Expr.UnOp)e);
+			doUnOp((Expr.UnOp)e, file);
 		} else if(e instanceof Expr.BinOp) {
-			doBinOp((Expr.BinOp)e);
+			doBinOp((Expr.BinOp)e, file);
 		} else if(e instanceof Expr.TernOp) {
-			doTernOp((Expr.TernOp)e);
+			doTernOp((Expr.TernOp)e, file);
 		} else if(e instanceof Expr.Cast) {
-			doCast((Expr.Cast)e);
+			doCast((Expr.Cast)e, file);
 		} else if(e instanceof Expr.InstanceOf) {
-			doInstanceOf((Expr.InstanceOf)e);
+			doInstanceOf((Expr.InstanceOf)e, file);
 		} else if(e instanceof Expr.Invoke) {
-			doInvoke((Expr.Invoke) e);
+			doInvoke((Expr.Invoke) e, file);
 		} else if(e instanceof Expr.New) {
-			doNew((Expr.New) e);
+			doNew((Expr.New) e, file);
 		} else if(e instanceof Expr.ArrayIndex) {
-			doArrayIndex((Expr.ArrayIndex) e);
+			doArrayIndex((Expr.ArrayIndex) e, file);
 		} else if(e instanceof Expr.Deref) {
-			doDeref((Expr.Deref) e);
+			doDeref((Expr.Deref) e, file);
 		} else if(e instanceof Stmt.Assignment) {
 			// force brackets			
-			doAssignment((Stmt.Assignment) e);			
+			doAssignment((Stmt.Assignment) e, file);			
 		} else if(e != null) {
 			throw new RuntimeException("Invalid expression encountered: "
 					+ e.getClass());
 		}
 	}
 	
-	protected void doDeref(Expr.Deref e) {
-		doExpression(e.target());		
+	protected void doDeref(Expr.Deref e, JavaFile file) {
+		doExpression(e.target(), file);		
 		// need to perform field lookup here!
 	}
 	
-	protected void doArrayIndex(Expr.ArrayIndex e) {
-		doExpression(e.target());
-		doExpression(e.index());
+	protected void doArrayIndex(Expr.ArrayIndex e, JavaFile file) {
+		doExpression(e.target(), file);
+		doExpression(e.index(), file);
 	}
 	
-	protected void doNew(Expr.New e) {
+	protected void doNew(Expr.New e, JavaFile file) {
 		// Second, recurse through any parameters supplied ...
 		for(Expr p : e.parameters()) {
-			doExpression(p);
+			doExpression(p, file);
 		}
 		
 		// Third, check whether this is constructing an anonymous class ...
 		for(Decl d : e.declarations()) {
-			doDeclaration(d);
+			doDeclaration(d, file);
 		}
 	}
 	
-	protected void doInvoke(Expr.Invoke e) {
-		doExpression(e.target());
+	protected void doInvoke(Expr.Invoke e, JavaFile file) {
+		doExpression(e.target(), file);
 		
 		for(Expr p : e.parameters()) {
-			doExpression(p);
+			doExpression(p, file);
 		}
 	}
 	
-	protected void doInstanceOf(Expr.InstanceOf e) {}
+	protected void doInstanceOf(Expr.InstanceOf e, JavaFile file) {}
 	
-	protected void doCast(Expr.Cast e) {}
+	protected void doCast(Expr.Cast e, JavaFile file) {}
 	
-	protected void doBoolVal(Value.Bool e) {}
+	protected void doBoolVal(Value.Bool e, JavaFile file) {}
 	
-	protected void doCharVal(Value.Char e) {}
+	protected void doCharVal(Value.Char e, JavaFile file) {}
 	
-	protected void doIntVal(Value.Int e) {}
+	protected void doIntVal(Value.Int e, JavaFile file) {}
 	
-	protected void doLongVal(Value.Long e) {}
+	protected void doLongVal(Value.Long e, JavaFile file) {}
 	
-	protected void doFloatVal(Value.Float e) {}
+	protected void doFloatVal(Value.Float e, JavaFile file) {}
 	
-	protected void doDoubleVal(Value.Double e) {}
+	protected void doDoubleVal(Value.Double e, JavaFile file) {}
 	
-	protected void doStringVal(Value.String e) {}
+	protected void doStringVal(Value.String e, JavaFile file) {}
 	
-	protected void doNullVal(Value.Null e) {}
+	protected void doNullVal(Value.Null e, JavaFile file) {}
 	
-	protected void doTypedArrayVal(Value.TypedArray e) {}
+	protected void doTypedArrayVal(Value.TypedArray e, JavaFile file) {}
 	
-	protected void doArrayVal(Value.Array e) {}
+	protected void doArrayVal(Value.Array e, JavaFile file) {}
 	
-	protected void doClassVal(Value.Class e) {}
+	protected void doClassVal(Value.Class e, JavaFile file) {}
 	
-	protected void doVariable(Expr.Variable e) {					
+	protected void doVariable(Expr.Variable e, JavaFile file) {
+		// This method is really the heart of the whole operation defined in
+		// this class. It is at this point that we have encountered a variable
+		// and we now need to determine what it's scope is. To do this, we
+		// traverse up the stack of scopes looking for an enclosing scope which
+		// contains a variable with the same name.
+		
+		System.out.println("LOOKING FOR: " + e.value());
+		for(int i=scopes.size()-1;i>=0;--i) {
+			Scope s = scopes.get(i);
+			if(s instanceof ClassScope) {
+				// resolve field from here
+			} else if(s.variables.contains(e.value())) {
+				// found scope
+				System.out.println("FOUND IT");
+			} 			
+		}
 	}
 
-	protected void doUnOp(Expr.UnOp e) {		
+	protected void doUnOp(Expr.UnOp e, JavaFile file) {		
 		
 	}
 		
-	protected void doBinOp(Expr.BinOp e) {				
-		doExpression(e.lhs());
-		doExpression(e.rhs());		
+	protected void doBinOp(Expr.BinOp e, JavaFile file) {				
+		doExpression(e.lhs(), file);
+		doExpression(e.rhs(), file);		
 	}
 	
-	protected void doTernOp(Expr.TernOp e) {		
+	protected void doTernOp(Expr.TernOp e, JavaFile file) {		
 		
+	}
+	
+	protected Scope findEnclosingScope() {
+		return scopes.get(scopes.size()-1);
+	}
+	
+	protected Scope findEnclosingScope(Class c) {
+		for(int i=scopes.size()-1;i>=0;--i) {
+			Scope s = scopes.get(i);
+			if(s.getClass().equals(c)) {
+				return s;
+			}
+		}
+		return null;
 	}
 }
