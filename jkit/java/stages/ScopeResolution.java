@@ -131,11 +131,11 @@ import jkit.util.Triple;
  * @author djp
  * 
  */
-public class ScopePropagation {
+public class ScopeResolution {
 	private ClassLoader loader;
 	private TypeSystem types;
 	
-	public ScopePropagation(ClassLoader loader, TypeSystem types) {
+	public ScopeResolution(ClassLoader loader, TypeSystem types) {
 		this.loader = loader; 
 		this.types = types;
 	}
