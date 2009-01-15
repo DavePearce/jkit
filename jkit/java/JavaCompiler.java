@@ -13,6 +13,7 @@ import jkit.java.stages.ScopeResolution;
 import jkit.java.stages.TypePropagation;
 import jkit.java.stages.TypeSystem;
 import jkit.jil.*;
+import jkit.jil.Type;
 import jkit.util.Pair;
 
 /**
@@ -158,6 +159,8 @@ public class JavaCompiler implements Compiler {
 			// First we must read the skeletons
 			JavaFile jfile = reader.read();
 			new TypeResolution(loader, new TypeSystem()).apply(jfile);
+			Clazz skeleton = buildSkeleton(jfile);
+			loader.add(skeleton);
 			new ScopeResolution(loader, new TypeSystem()).apply(jfile);
 			new TypePropagation(loader, new TypeSystem()).apply(jfile);
 			new TypeChecking(loader, new TypeSystem()).apply(jfile);
@@ -171,5 +174,42 @@ public class JavaCompiler implements Compiler {
 			throw new SyntaxError(se.msg(), filename, se.line(), se
 					.column(), se.width(), se);			
 		} 
-	}	
+	}
+	
+	public List<Clazz> buildSkeletons(JavaFile file) {
+		ArrayList<Clazz> skeletons = new ArrayList();
+		for(Decl d : file.declarations()) {
+			if(d instanceof Decl.Clazz) {
+				skeletons.addAll(buildSkeletons((Decl.Clazz) d, file.pkg()));
+			}
+		}
+		return skeletons;
+	}
+	
+	public List<Clazz> buildSkeletons(Decl.Clazz c, String pkg) {
+		ArrayList<Clazz> skeletons = new ArrayList();
+		
+		Type.Clazz type = null;
+		Type.Clazz superClass = null;
+		ArrayList<Type.Clazz> interfaces = new ArrayList();
+		ArrayList<Field> fields = new ArrayList();
+		ArrayList<Method> methods = new ArrayList();
+		
+		for(Decl d : c.declarations()) {
+			if(d instanceof Clazz) {
+				skeletons.addAll(buildSkeletons((Decl.Clazz) d, pkg));
+			} else if(d instanceof Field) {
+				
+			} else if(d instanceof Method) {
+				
+			}
+		}
+		
+		/** 
+		 * Now, construct the skeleton for this class!
+		 */
+		skeletons.add(new Clazz(type,c.modifiers(),superClass,interfaces,fields,methods));
+		
+		return skeletons;
+	}
 }

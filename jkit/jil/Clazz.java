@@ -37,8 +37,7 @@ public class Clazz extends SyntacticElementImpl {
      */
 	public Clazz(Type.Clazz type, List<Modifier> modifiers,
 			Type.Clazz superClass, List<Type.Clazz> interfaces,
-			List<Field> fields, List<Method> methods, Attribute... attributes) {
-		
+			List<Field> fields, List<Method> methods, Attribute... attributes) {		
 		super(attributes);
 		this.type = type;
 		this.modifiers = modifiers;

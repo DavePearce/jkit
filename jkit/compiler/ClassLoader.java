@@ -414,6 +414,17 @@ public class ClassLoader {
 	}	
 	
 	/**
+	 * This method simply adds a class definition to the classtable. This is
+	 * needed for when a class is being compiled, since we cannot simply load
+	 * the class details from the bytecode as this doesn't exist!
+	 * 
+	 * @param jilClass - The class being added.
+	 */
+	public void add(Clazz jilClass) {
+		classtable.put(refName(jilClass.type()), jilClass);
+	}
+	
+	/**
 	 * Given a path string of the form "xxx.yyy.zzz" this returns the parent
 	 * component (i.e. "xxx.yyy")
 	 * 
