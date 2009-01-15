@@ -106,6 +106,22 @@ public class Clazz extends SyntacticElementImpl {
      */
 	public List<Field> fields() { return fields; }
 	
+    /**
+	 * Attempt to find a field declared in this class with the given name;
+	 * if no such field exists, return null.
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public Field getField(String name) {
+		for(Field f : fields) {							
+			if (f.name().equals(name)) {
+				return f;
+			}
+		}
+		return null;
+	}
+	
 	/**
      * Access the methods contained in this object. The returned list may be
      * modified by adding, or removing methods. The returned list is always

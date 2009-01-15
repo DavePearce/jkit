@@ -3,10 +3,12 @@ package jkit.java.stages;
 import java.util.*;
 
 import jkit.compiler.ClassLoader;
+import jkit.java.FieldNotFoundException;
 import jkit.java.MethodNotFoundException;
 import jkit.jil.Type;
 import jkit.jil.Clazz;
 import jkit.jil.Method;
+import jkit.jil.Field;
 import jkit.util.Pair;
 import jkit.util.Triple;
 
@@ -731,6 +733,53 @@ public class TypeSystem {
 		} else {						
 			return methods.get(matchIndex);
 		}
+	}
+
+	/**
+	 * Identify the field with the given name in the given clazz.
+	 * 
+	 * @param owner
+	 *            enclosing class
+	 * @param name
+	 *            Field name
+	 * @return (C,F,T) where C is the enclosing class, F is the field being
+	 *         accessed, and T is type of that field with appropriate type
+	 *         subsititions based on the owner reference given.
+	 * @throws ClassNotFoundException
+	 *             If it needs to access a Class which cannot be found.
+	 * @throws FieldNotFoundException
+	 *             If it cannot find the field in question
+	 */
+	public Triple<Clazz, Field, Type> resolveField(Type.Clazz owner,
+			String name, ClassLoader loader) throws ClassNotFoundException,
+			FieldNotFoundException {
+		// traverse class hierarchy looking for field
+		ArrayList<Type.Clazz> worklist = new ArrayList<Type.Clazz>();
+		worklist.add(owner);
+		while (!worklist.isEmpty()) {
+			Type.Clazz type = worklist.remove(worklist.size() - 1);
+			Clazz c = loader.loadClass(type);
+			Map<String,Type.Reference> binding = bind(type, c.type());
+			Field f = c.getField(name);
+			
+			if (f != null) {
+				// found it!
+				Type fieldT = f.type();
+				if(fieldT instanceof Type.Reference) {
+					fieldT = substitute((Type.Reference) f.type(), binding);
+				}
+				return new Triple<Clazz, Field, Type>(c, f, fieldT);
+			}
+			// no match yet, so traverse super class and interfaces
+			if (c.superClass() != null) {
+				worklist.add((Type.Clazz) substitute(c.superClass(),binding));
+			}
+			for (Type.Reference t : c.interfaces()) {
+				worklist.add((Type.Clazz) substitute(t,binding));
+			}
+		}
+
+		throw new FieldNotFoundException(name, owner.toString());
 	}
 
 }
