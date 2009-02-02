@@ -156,14 +156,38 @@ public class JavaCompiler implements Compiler {
 			long last = System.currentTimeMillis();
 			logout.println("Parsed " + filename + " [" + (last - start) + "ms]");
 			
-			// First we must read the skeletons
 			JavaFile jfile = reader.read();
+			
+			// First, we need to resolve types. That is, for each class
+			// reference type, determine what package it's in.			
 			new TypeResolution(loader, new TypeSystem()).apply(jfile);
-			Clazz skeleton = buildSkeleton(jfile);
-			loader.add(skeleton);
+			
+			// Second, we need to build the skeletons of the classes. This is
+			// necessary to resolve the scope of a particular variable.
+			// Specifically, during scope resolution, we need to be able to:
+			// 1) traverse the class heirarchy
+			// 2) determine what fields are declared.			
+			List<Clazz> skeletons = buildSkeletons(jfile);
+			for(Clazz s : skeletons) { loader.add(s); }
+			
+			// Third, perform the scope resolution itself. The aim here is, for
+			// each variable access, to determine whether it is a local
+			// variable access, an inherited field access, an enclosing field
+			// access, or an access to a local variable in an enclosing scope
+			// (e.g. for anonymous inner classes).
 			new ScopeResolution(loader, new TypeSystem()).apply(jfile);
+			
+			// Fourth, propagate the type information throughout all expressions
+			// in the class file, including those in the method bodies and field
+			// initialisers.
 			new TypePropagation(loader, new TypeSystem()).apply(jfile);
+			
+			// Fifth, check whether the types are being used correctly. If not,
+			// report a syntax error.
 			new TypeChecking(loader, new TypeSystem()).apply(jfile);
+			
+			// This stage is temporary. Just write out the java file again to
+			// indicate success thus far.
 			new JavaFileWriter(System.out).write(jfile);
 			
 			compilationQueue.remove(filename);
@@ -189,18 +213,20 @@ public class JavaCompiler implements Compiler {
 	public List<Clazz> buildSkeletons(Decl.Clazz c, String pkg) {
 		ArrayList<Clazz> skeletons = new ArrayList();
 		
-		Type.Clazz type = null;
+		Type.Clazz type = (Type.Clazz) c.attribute(Type.class);
 		Type.Clazz superClass = null;
 		ArrayList<Type.Clazz> interfaces = new ArrayList();
 		ArrayList<Field> fields = new ArrayList();
 		ArrayList<Method> methods = new ArrayList();
 		
 		for(Decl d : c.declarations()) {
-			if(d instanceof Clazz) {
+			if(d instanceof Decl.Clazz) {
 				skeletons.addAll(buildSkeletons((Decl.Clazz) d, pkg));
-			} else if(d instanceof Field) {
-				
-			} else if(d instanceof Method) {
+			} else if(d instanceof Decl.Field) {				
+				Decl.Field f = (Decl.Field) d;
+				Type t = (Type) f.attribute(Type.class);
+				fields.add(new Field(f.name(),t,f.modifiers()));
+			} else if(d instanceof Decl.Method) {
 				
 			}
 		}

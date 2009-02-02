@@ -1,7 +1,6 @@
 package jkit.java.stages;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import jkit.compiler.ClassLoader;
 import jkit.compiler.SyntaxError;
@@ -60,6 +59,9 @@ import jkit.util.Triple;
 public class TypeResolution {
 	private ClassLoader loader;
 	private TypeSystem types;
+	// the classes stack is used to keep track of the full type for the inner
+	// classes.
+	private Stack<Type.Clazz> classes = new Stack<Type.Clazz>();
 	
 	public TypeResolution(ClassLoader loader, TypeSystem types) {
 		this.loader = loader; 
@@ -75,6 +77,15 @@ public class TypeResolution {
 		
 		imports.add(0,"java.lang.*");
 		
+		// The first entry on to the classes stack is a dummy to set the package
+		// for remaining classes.
+		if(file.pkg() == null) {
+			classes.push(new Type.Clazz("",new ArrayList()));
+		} else {
+			classes.push(new Type.Clazz(file.pkg(),new ArrayList()));
+		}
+		
+		// Now, examine all the declarations contain here-in
 		for(Decl d : file.declarations()) {
 			doDeclaration(d, imports);
 		}
@@ -99,19 +110,30 @@ public class TypeResolution {
 	protected void doClass(Clazz c, List<String> imports) {
 		if(c.superclass() != null) {
 			c.superclass().attributes().add(resolve(c.superclass(), imports));
-		}
-		
-		for(jkit.java.Type.Variable v : c.typeParameters()) {
-			v.attributes().add(resolve(v, imports));
-		}
-		
+		}		
+										
 		for(jkit.java.Type.Clazz i : c.interfaces()) {
 			i.attributes().add(resolve(i, imports));
 		}
 
+		// Now, build my type.
+		Type.Clazz parentType = classes.peek();
+		List<Pair<String, List<Type.Reference>>> components = new ArrayList(parentType.components());
+		ArrayList<Type.Reference> typevars = new ArrayList<Type.Reference>();
+		for(jkit.java.Type.Variable v : c.typeParameters()) {
+			typevars.add((Type.Reference) resolve(v, imports));
+		}		
+		components.add(new Pair(c.name(),typevars));
+		Type.Clazz myType = new Type.Clazz(parentType.pkg(),components);
+		c.attributes().add(myType); // record the type
+	 				
+		classes.push(myType);
+		
 		for(Decl d : c.declarations()) {
 			doDeclaration(d, imports);
 		}
+		
+		classes.pop(); // undo my type
 	}
 
 	protected void doMethod(Method d, List<String> imports) {
@@ -132,6 +154,8 @@ public class TypeResolution {
 
 	protected void doField(Field d, List<String> imports) {
 		doExpression(d.initialiser(), imports);
+		System.out.println("RESOLVING FIELD: " + d.name());
+		d.attributes().add(resolve(d.type(),imports));
 	}
 	
 	protected void doStatement(Stmt e, List<String> imports) {
