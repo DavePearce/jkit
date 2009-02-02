@@ -35,6 +35,7 @@ import jkit.jil.SourceLocation;
 public class TypePropagation {
 	private ClassLoader loader;
 	private TypeSystem types;
+	private Stack<Clazz> scopes = new Stack<Clazz>();
 	
 	public TypePropagation(ClassLoader loader, TypeSystem types) {
 		this.loader = loader; 
@@ -64,15 +65,23 @@ public class TypePropagation {
 	}
 	
 	protected void doClass(Clazz c) {
+		scopes.push(c);
+		
 		for(Decl d : c.declarations()) {
 			doDeclaration(d);
 		}
+		
+		scopes.pop();
 	}
 
 	protected void doMethod(Method d) {
 		// First, we need to construct a typing environment for local variables.
 		HashMap<String,Type> environment = new HashMap<String,Type>();
-				
+		
+		if(!d.isStatic()) {
+			environment.put("this", (Type) scopes.peek().attribute(Type.class));
+		}
+		
 		for(Triple<String,List<Modifier>,jkit.java.Type> p : d.parameters()) {
 			Type pt = (Type) p.third().attribute(Type.class);
 			environment.put(p.first(), pt);
@@ -320,8 +329,27 @@ public class TypePropagation {
 	}
 	
 	protected void doDeref(Expr.Deref e, HashMap<String,Type> environment) {
-		doExpression(e.target(), environment);		
-		// need to perform field lookup here!
+		
+		doExpression(e.target(), environment);	
+		
+		Type tmp = (Type) e.target().attribute(Type.class);
+		
+		if(!(tmp instanceof Type.Reference)) {
+			syntax_error("cannot dereference type: " + tmp,e);
+		}
+		
+		Type.Clazz target = (Type.Clazz) tmp;
+		
+		// now, perform field lookup!
+		try {
+			Triple<jkit.jil.Clazz, jkit.jil.Field, Type> r = types
+					.resolveField(target, e.name(), loader);
+			e.attributes().add(r.third());			
+		} catch(ClassNotFoundException cne) {
+			syntax_error("class not found: " + target,e);
+		} catch(FieldNotFoundException fne) {
+			syntax_error("field not found: " + target + "." + e.name(),e);
+		}
 	}
 	
 	protected void doArrayIndex(Expr.ArrayIndex e, HashMap<String,Type> environment) {

@@ -191,6 +191,10 @@ public interface Stmt extends SyntacticElement {
 		public Expr expr() {
 			return expr;
 		}
+		
+		public void setExpr(Expr expr) {
+			this.expr = expr;
+		}
 	}
 
 	public static class Throw extends SyntacticElementImpl implements Stmt {
@@ -203,6 +207,10 @@ public interface Stmt extends SyntacticElement {
 
 		public Expr expr() {
 			return expr;
+		}
+		
+		public void setExpr(Expr expr) {
+			this.expr = expr;
 		}
 	}
 
@@ -217,6 +225,10 @@ public interface Stmt extends SyntacticElement {
 		public Expr expr() {
 			return expr;
 		}
+		
+		public void setExpr(Expr expr) {
+			this.expr = expr;
+		}
 	}
 
 	public static class Break extends SyntacticElementImpl implements Stmt {
@@ -230,6 +242,10 @@ public interface Stmt extends SyntacticElement {
 		public String label() {
 			return label;
 		}
+		
+		public void setLabel(String label) {
+			this.label = label;
+		}
 	}
 
 	public static class Continue extends SyntacticElementImpl implements Simple {
@@ -242,6 +258,10 @@ public interface Stmt extends SyntacticElement {
 
 		public String label() {
 			return label;
+		}
+		
+		public void setLabel(String label) {
+			this.label = label;
 		}
 	}
 
@@ -262,12 +282,24 @@ public interface Stmt extends SyntacticElement {
 			return condition;
 		}
 
+		public void setCondition(Expr condition) {
+			this.condition = condition;
+		}
+		
 		public Stmt trueStatement() {
 			return trueStatement;
 		}
 
+		public void setTrueStatement(Stmt trueStatement) {
+			this.trueStatement = trueStatement;
+		}
+		
 		public Stmt falseStatement() {
 			return falseStatement;
+		}
+		
+		public void setFalseStatement(Stmt falseStatement) {
+			this.falseStatement = falseStatement;
 		}
 	}
 
@@ -285,8 +317,16 @@ public interface Stmt extends SyntacticElement {
 			return condition;
 		}
 
+		public void setCondition(Expr condition) {
+			this.condition = condition;
+		}
+				
 		public Stmt body() {
 			return body;
+		}
+		
+		public void setBody(Stmt body) {
+			this.body = body;
 		}
 	}
 
@@ -306,6 +346,14 @@ public interface Stmt extends SyntacticElement {
 
 		public Stmt body() {
 			return body;
+		}
+
+		public void setCondition(Expr condition) {
+			this.condition = condition;
+		}
+						
+		public void setBody(Stmt body) {
+			this.body = body;
 		}
 	}
 
@@ -327,7 +375,11 @@ public interface Stmt extends SyntacticElement {
 		public Stmt initialiser() {
 			return initialiser;
 		}
-
+	
+		public void setInitialiser(Stmt initialiser) {
+			this.initialiser = initialiser;
+		}
+		
 		public Expr condition() {
 			return condition;
 		}
@@ -336,8 +388,20 @@ public interface Stmt extends SyntacticElement {
 			return body;
 		}
 
+		public void setCondition(Expr condition) {
+			this.condition = condition;
+		}
+						
+		public void setBody(Stmt body) {
+			this.body = body;
+		}
+		
 		public Stmt increment() {
 			return increment;
+		}
+		
+		public void setIncrement(Stmt increment) {
+			this.increment = increment;
 		}
 	}
 
@@ -386,6 +450,10 @@ public interface Stmt extends SyntacticElement {
 			return type;
 		}
 
+		public void setType(Type t) {
+			type = t;
+		}
+		
 		/**
 		 * Get name of variable declared in for-each statement.
 		 * 
@@ -395,6 +463,10 @@ public interface Stmt extends SyntacticElement {
 			return var;
 		}
 
+		public void setVar(String v) {
+			var = v;
+		}
+		
 		/**
 		 * Get the source expression which corresponds to an array or collection
 		 * which the for-each statement is going to iterate over.
@@ -405,6 +477,10 @@ public interface Stmt extends SyntacticElement {
 			return source;
 		}
 
+		public void setSource(Expr source) {
+			this.source = source;
+		}
+		
 		/**
 		 * Get the body of the for-each statement. Maybe null if there is no
 		 * body!
@@ -513,6 +589,10 @@ public interface Stmt extends SyntacticElement {
 			return condition;
 		}
 
+		public void setCondition(Expr condition) {
+			this.condition = condition;
+		}
+						
 		public List<Case> cases() {
 			return cases;
 		}

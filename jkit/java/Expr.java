@@ -20,6 +20,11 @@ public interface Expr extends SyntacticElement {
 			super(attributes);
 			this.value = value;
 		}
+		
+		public Variable(String value, List<Attribute> attributes) {
+			super(attributes);
+			this.value = value;
+		}
 
 		public String value() {
 			return value;
@@ -42,6 +47,12 @@ public interface Expr extends SyntacticElement {
 			this.type = type;
 		}
 
+		public Cast(Type type, Expr expr, List<Attribute> attributes) {
+			super(attributes);
+			this.expr = expr;
+			this.type = type;
+		}
+		
 		public Expr expr() {
 			return expr;
 		}
@@ -92,6 +103,12 @@ public interface Expr extends SyntacticElement {
 			this.rhs = rhs;
 		}
 
+		public InstanceOf(Expr lhs, Type rhs, List<Attribute> attributes) {
+			super(attributes);
+			this.lhs = lhs;
+			this.rhs = rhs;
+		}
+		
 		public Expr lhs() {
 			return lhs;
 		}
@@ -125,6 +142,12 @@ public interface Expr extends SyntacticElement {
 			this.op = op;
 		}
 
+		public UnOp(int op, Expr expr, List<Attribute> attributes) {
+			super(attributes);
+			this.expr = expr;
+			this.op = op;
+		}
+		
 		public int op() {
 			return op;
 		}
@@ -176,6 +199,13 @@ public interface Expr extends SyntacticElement {
 			this.op = op;
 		}
 
+		public BinOp(int op, Expr lhs, Expr rhs, List<Attribute> attributes) {
+			super(attributes);
+			this.lhs = lhs;
+			this.rhs = rhs;
+			this.op = op;
+		}
+		
 		public int op() {
 			return op;
 		}
@@ -215,6 +245,14 @@ public interface Expr extends SyntacticElement {
 			foption = fOption;
 		}
 
+		public TernOp(Expr con, Expr tOption, Expr fOption,
+				List<Attribute> attributes) {
+			super(attributes);
+			cond = con;
+			toption = tOption;
+			foption = fOption;
+		}
+		
 		public Expr trueBranch() {
 			return toption;
 		}
@@ -263,14 +301,41 @@ public interface Expr extends SyntacticElement {
 			this.typeParameters = typeParameters;
 		}
 
+		/**
+		 * Construct a method which may, or may not be polymorphic.
+		 * 
+		 * @param target
+		 *            The expression from which the receiver is determined
+		 * @param name
+		 *            The name of the method
+		 * @param parameters
+		 *            The parameters of the method
+		 */
+		public Invoke(Expr target, String name, List<Expr> parameters,
+				List<Type> typeParameters, List<Attribute> attributes) {
+			super(attributes);
+			this.target = target;
+			this.name = name;
+			this.parameters = parameters;
+			this.typeParameters = typeParameters;
+		}
+		
 		public Expr target() {
 			return target;
 		}
 
+		public void setTarget(Expr target) {
+			this.target = target;
+		}
+		
 		public String name() {
 			return name;
 		}
 
+		public void setName(String name) {
+			this.name = name;
+		}
+		
 		public List<Expr> parameters() {
 			return parameters;
 		}
@@ -325,6 +390,35 @@ public interface Expr extends SyntacticElement {
 			this.declarations = declarations;
 		}
 
+		/**
+		 * Create an AST node represent a new statement or expression.
+		 * 
+		 * @param type -
+		 *            the type being constructed e.g. java.lang.String or
+		 *            Integer[]
+		 * @param Context -
+		 *            the context in which the type is constructed. This is only
+		 *            required for non-static classes which are created outside
+		 *            of their enclosing class's scope. For example, i = o.new
+		 *            Inner(); Should be null if no context.
+		 * @param parameters -
+		 *            The parameters (if any) supplied to the constructor.
+		 *            Should be an empty (i.e. non-null) list .
+		 * @param declarations -
+		 *            the list of field/method/class declarations contained in
+		 *            this statement. These arise only when constructing a new
+		 *            anonymous class. Again, should be an empty (i.e. non-null)
+		 *            list.
+		 */
+		public New(Type type, Expr context, List<Expr> parameters,
+				List<Decl> declarations, List<Attribute> attributes) {
+			super(attributes);
+			this.type = type;
+			this.context = context;
+			this.parameters = parameters;
+			this.declarations = declarations;
+		}
+		
 		public Type type() {
 			return type;
 		}
@@ -374,12 +468,26 @@ public interface Expr extends SyntacticElement {
 			this.name = rhs;
 		}
 
+		public Deref(Expr lhs, String rhs, List<Attribute> attributes) {
+			super(attributes);
+			this.target = lhs;
+			this.name = rhs;
+		}
+		
 		public Expr target() {
 			return target;
 		}
 
+		public void setTarget(Expr target) {
+			this.target = target;
+		}
+		
 		public String name() {
 			return name;
+		}
+		
+		public void setName(String name) {
+			this.name = name;
 		}
 	}
 
@@ -399,6 +507,12 @@ public interface Expr extends SyntacticElement {
 			this.idx = idx;
 		}
 
+		public ArrayIndex(Expr array, Expr idx, List<Attribute> attributes) {
+			super(attributes);
+			this.array = array;
+			this.idx = idx;
+		}
+		
 		public Expr target() {
 			return array;
 		}

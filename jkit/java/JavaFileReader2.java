@@ -101,7 +101,7 @@ public class JavaFileReader2 {
 	public JavaFile read() {
 		ArrayList<Decl> classes = new ArrayList<Decl>();
 		ArrayList<Pair<Boolean, String>> imports = new ArrayList<Pair<Boolean, String>>();
-		String pkg = null;
+		String pkg = "";
 
 		// Read top declarations first.
 		outer : for (int i = 0; i != ast.getChildCount(); ++i) {

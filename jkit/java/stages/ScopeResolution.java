@@ -12,6 +12,7 @@ import jkit.java.Decl.Field;
 import jkit.java.Decl.Interface;
 import jkit.java.Decl.Method;
 import jkit.java.Stmt.Case;
+import jkit.java.FieldNotFoundException;
 import jkit.jil.Modifier;
 import jkit.jil.Type;
 import jkit.util.Pair;
@@ -317,21 +318,22 @@ public class ScopeResolution {
 		}		
 	}
 	
-	protected void doAssignment(Stmt.Assignment def, JavaFile file) {
-		doExpression(def.lhs(), file);	
-		doExpression(def.rhs(), file);			
+	protected Expr doAssignment(Stmt.Assignment def, JavaFile file) {
+		def.setLhs(doExpression(def.lhs(), file));	
+		def.setRhs(doExpression(def.rhs(), file));
+		return def;
 	}
 	
 	protected void doReturn(Stmt.Return ret, JavaFile file) {
-		doExpression(ret.expr(), file);
+		ret.setExpr(doExpression(ret.expr(), file));
 	}
 	
 	protected void doThrow(Stmt.Throw ret, JavaFile file) {
-		doExpression(ret.expr(), file);
+		ret.setExpr(doExpression(ret.expr(), file));
 	}
 	
 	protected void doAssert(Stmt.Assert ret, JavaFile file) {
-		doExpression(ret.expr(), file);
+		ret.setExpr(doExpression(ret.expr(), file));
 	}
 	
 	protected void doBreak(Stmt.Break brk, JavaFile file) {
@@ -347,18 +349,18 @@ public class ScopeResolution {
 	}
 	
 	protected void doIf(Stmt.If stmt, JavaFile file) {
-		doExpression(stmt.condition(), file);
+		stmt.setCondition(doExpression(stmt.condition(), file));
 		doStatement(stmt.trueStatement(), file);
 		doStatement(stmt.falseStatement(), file);
 	}
 	
 	protected void doWhile(Stmt.While stmt, JavaFile file) {
-		doExpression(stmt.condition(), file);
+		stmt.setCondition(doExpression(stmt.condition(), file));
 		doStatement(stmt.body(), file);		
 	}
 	
 	protected void doDoWhile(Stmt.DoWhile stmt, JavaFile file) {
-		doExpression(stmt.condition(), file);
+		stmt.setCondition(doExpression(stmt.condition(), file));
 		doStatement(stmt.body(), file);
 	}
 	
@@ -366,7 +368,7 @@ public class ScopeResolution {
 		scopes.push(new Scope());
 		
 		doStatement(stmt.initialiser(), file);
-		doExpression(stmt.condition(), file);
+		stmt.setCondition(doExpression(stmt.condition(), file));
 		doStatement(stmt.increment(), file);
 		doStatement(stmt.body(), file);
 		
@@ -376,14 +378,14 @@ public class ScopeResolution {
 	protected void doForEach(Stmt.ForEach stmt, JavaFile file) {
 		scopes.push(new Scope());
 		
-		doExpression(stmt.source(), file);
+		stmt.setSource(doExpression(stmt.source(), file));
 		doStatement(stmt.body(), file);
 		
 		scopes.pop();
 	}
 	
 	protected void doSwitch(Stmt.Switch sw, JavaFile file) {
-		doExpression(sw.condition(), file);
+		sw.setCondition(doExpression(sw.condition(), file));
 		for(Case c : sw.cases()) {
 			doExpression(c.condition(), file);
 			for(Stmt s : c.statements()) {
@@ -394,144 +396,194 @@ public class ScopeResolution {
 		// should check that case conditions are final constants here.
 	}
 	
-	protected void doExpression(Expr e, JavaFile file) {	
+	protected Expr doExpression(Expr e, JavaFile file) {	
 		if(e instanceof Value.Bool) {
-			doBoolVal((Value.Bool)e, file);
+			return doBoolVal((Value.Bool)e, file);
 		} else if(e instanceof Value.Char) {
-			doCharVal((Value.Char)e, file);
+			return doCharVal((Value.Char)e, file);
 		} else if(e instanceof Value.Int) {
-			doIntVal((Value.Int)e, file);
+			return doIntVal((Value.Int)e, file);
 		} else if(e instanceof Value.Long) {
-			doLongVal((Value.Long)e, file);
+			return doLongVal((Value.Long)e, file);
 		} else if(e instanceof Value.Float) {
-			doFloatVal((Value.Float)e, file);
+			return doFloatVal((Value.Float)e, file);
 		} else if(e instanceof Value.Double) {
-			doDoubleVal((Value.Double)e, file);
+			return doDoubleVal((Value.Double)e, file);
 		} else if(e instanceof Value.String) {
-			doStringVal((Value.String)e, file);
+			return doStringVal((Value.String)e, file);
 		} else if(e instanceof Value.Null) {
-			doNullVal((Value.Null)e, file);
+			return doNullVal((Value.Null)e, file);
 		} else if(e instanceof Value.TypedArray) {
-			doTypedArrayVal((Value.TypedArray)e, file);
+			return doTypedArrayVal((Value.TypedArray)e, file);
 		} else if(e instanceof Value.Array) {
-			doArrayVal((Value.Array)e, file);
+			return doArrayVal((Value.Array)e, file);
 		} else if(e instanceof Value.Class) {
-			doClassVal((Value.Class) e, file);
+			return doClassVal((Value.Class) e, file);
 		} else if(e instanceof Expr.Variable) {
-			doVariable((Expr.Variable)e, file);
+			return doVariable((Expr.Variable)e, file);
 		} else if(e instanceof Expr.UnOp) {
-			doUnOp((Expr.UnOp)e, file);
+			return doUnOp((Expr.UnOp)e, file);
 		} else if(e instanceof Expr.BinOp) {
-			doBinOp((Expr.BinOp)e, file);
+			return doBinOp((Expr.BinOp)e, file);
 		} else if(e instanceof Expr.TernOp) {
-			doTernOp((Expr.TernOp)e, file);
+			return doTernOp((Expr.TernOp)e, file);
 		} else if(e instanceof Expr.Cast) {
-			doCast((Expr.Cast)e, file);
+			return doCast((Expr.Cast)e, file);
 		} else if(e instanceof Expr.InstanceOf) {
-			doInstanceOf((Expr.InstanceOf)e, file);
+			return doInstanceOf((Expr.InstanceOf)e, file);
 		} else if(e instanceof Expr.Invoke) {
-			doInvoke((Expr.Invoke) e, file);
+			return doInvoke((Expr.Invoke) e, file);
 		} else if(e instanceof Expr.New) {
-			doNew((Expr.New) e, file);
+			return doNew((Expr.New) e, file);
 		} else if(e instanceof Expr.ArrayIndex) {
-			doArrayIndex((Expr.ArrayIndex) e, file);
+			return doArrayIndex((Expr.ArrayIndex) e, file);
 		} else if(e instanceof Expr.Deref) {
-			doDeref((Expr.Deref) e, file);
+			return doDeref((Expr.Deref) e, file);
 		} else if(e instanceof Stmt.Assignment) {
 			// force brackets			
-			doAssignment((Stmt.Assignment) e, file);			
+			return doAssignment((Stmt.Assignment) e, file);			
 		} else if(e != null) {
 			throw new RuntimeException("Invalid expression encountered: "
 					+ e.getClass());
 		}
+		
+		return null;
 	}
 	
-	protected void doDeref(Expr.Deref e, JavaFile file) {
-		doExpression(e.target(), file);		
-		// need to perform field lookup here!
+	protected Expr doDeref(Expr.Deref e, JavaFile file) {
+		e.setTarget(doExpression(e.target(), file));		
+		return e;
 	}
 	
-	protected void doArrayIndex(Expr.ArrayIndex e, JavaFile file) {
-		doExpression(e.target(), file);
-		doExpression(e.index(), file);
+	protected Expr doArrayIndex(Expr.ArrayIndex e, JavaFile file) {
+		e.setTarget(doExpression(e.target(), file));
+		e.setIndex(doExpression(e.index(), file));
+		
+		return e;
 	}
 	
-	protected void doNew(Expr.New e, JavaFile file) {
+	protected Expr doNew(Expr.New e, JavaFile file) {
 		// Second, recurse through any parameters supplied ...
-		for(Expr p : e.parameters()) {
-			doExpression(p, file);
+		List<Expr> parameters = e.parameters();
+		for(int i=0;i!=parameters.size();++i) {
+			Expr p = parameters.get(i);
+			parameters.set(i,doExpression(p, file));
 		}
 		
 		// Third, check whether this is constructing an anonymous class ...
 		for(Decl d : e.declarations()) {
 			doDeclaration(d, file);
 		}
-	}
-	
-	protected void doInvoke(Expr.Invoke e, JavaFile file) {
-		doExpression(e.target(), file);
 		
-		for(Expr p : e.parameters()) {
-			doExpression(p, file);
-		}
+		return e;
 	}
 	
-	protected void doInstanceOf(Expr.InstanceOf e, JavaFile file) {}
+	protected Expr doInvoke(Expr.Invoke e, JavaFile file) {		
+		e.setTarget(doExpression(e.target(), file));
+		
+		List<Expr> parameters = e.parameters();
+		for(int i=0;i!=parameters.size();++i) {
+			Expr p = parameters.get(i);
+			parameters.set(i, doExpression(p, file));
+		}				
+		
+		return e;
+	}
 	
-	protected void doCast(Expr.Cast e, JavaFile file) {}
+	protected Expr doInstanceOf(Expr.InstanceOf e, JavaFile file) {
+		return e;
+	}
 	
-	protected void doBoolVal(Value.Bool e, JavaFile file) {}
+	protected Expr doCast(Expr.Cast e, JavaFile file) {
+		return e;
+	}
 	
-	protected void doCharVal(Value.Char e, JavaFile file) {}
+	protected Expr doBoolVal(Value.Bool e, JavaFile file) {
+		return e;
+	}
 	
-	protected void doIntVal(Value.Int e, JavaFile file) {}
+	protected Expr doCharVal(Value.Char e, JavaFile file) {
+		return e;
+	}
 	
-	protected void doLongVal(Value.Long e, JavaFile file) {}
+	protected Expr doIntVal(Value.Int e, JavaFile file) {
+		return e;
+	}
 	
-	protected void doFloatVal(Value.Float e, JavaFile file) {}
+	protected Expr doLongVal(Value.Long e, JavaFile file) {
+		return e;
+	}
 	
-	protected void doDoubleVal(Value.Double e, JavaFile file) {}
+	protected Expr doFloatVal(Value.Float e, JavaFile file) {
+		return e;
+	}
 	
-	protected void doStringVal(Value.String e, JavaFile file) {}
+	protected Expr doDoubleVal(Value.Double e, JavaFile file) {
+		return e;
+	}
 	
-	protected void doNullVal(Value.Null e, JavaFile file) {}
+	protected Expr doStringVal(Value.String e, JavaFile file) {
+		return e;
+	}
 	
-	protected void doTypedArrayVal(Value.TypedArray e, JavaFile file) {}
+	protected Expr doNullVal(Value.Null e, JavaFile file) {
+		return e;
+	}
 	
-	protected void doArrayVal(Value.Array e, JavaFile file) {}
+	protected Expr doTypedArrayVal(Value.TypedArray e, JavaFile file) {
+		return e;
+	}
 	
-	protected void doClassVal(Value.Class e, JavaFile file) {}
+	protected Expr doArrayVal(Value.Array e, JavaFile file) {
+		return e;
+	}
 	
-	protected void doVariable(Expr.Variable e, JavaFile file) {
+	protected Expr doClassVal(Value.Class e, JavaFile file) {
+		return e;
+	}
+	
+	protected Expr doVariable(Expr.Variable e, JavaFile file) {
 		// This method is really the heart of the whole operation defined in
 		// this class. It is at this point that we have encountered a variable
 		// and we now need to determine what it's scope is. To do this, we
 		// traverse up the stack of scopes looking for an enclosing scope which
 		// contains a variable with the same name.
 		
-		System.out.println("LOOKING FOR: " + e.value());
 		for(int i=scopes.size()-1;i>=0;--i) {
 			Scope s = scopes.get(i);
 			if(s instanceof ClassScope) {
 				// resolve field from here
+				ClassScope cs = (ClassScope) s;
+				try {
+					Triple<jkit.jil.Clazz, jkit.jil.Field, Type> r = types
+							.resolveField(cs.type, e.value(), loader);
+					// Ok, this variable access corresponds to a field load.
+					return new Expr.Deref(new Expr.Variable("this",
+							new ArrayList(e.attributes())), e.value(), e
+							.attributes());
+				} catch(ClassNotFoundException cne) {					
+				} catch(FieldNotFoundException fne) {					
+				}
 			} else if(s.variables.contains(e.value())) {
 				// found scope
 				System.out.println("FOUND IT");
 			} 			
 		}
+		return e;
 	}
 
-	protected void doUnOp(Expr.UnOp e, JavaFile file) {		
-		
+	protected Expr doUnOp(Expr.UnOp e, JavaFile file) {		
+		return e;
 	}
 		
-	protected void doBinOp(Expr.BinOp e, JavaFile file) {				
-		doExpression(e.lhs(), file);
-		doExpression(e.rhs(), file);		
+	protected Expr doBinOp(Expr.BinOp e, JavaFile file) {				
+		e.setLhs(doExpression(e.lhs(), file));
+		e.setRhs(doExpression(e.rhs(), file));
+		return e;
 	}
 	
-	protected void doTernOp(Expr.TernOp e, JavaFile file) {		
-		
+	protected Expr doTernOp(Expr.TernOp e, JavaFile file) {		
+		return e;
 	}
 	
 	protected Scope findEnclosingScope() {
