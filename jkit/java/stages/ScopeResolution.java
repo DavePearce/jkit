@@ -549,21 +549,31 @@ public class ScopeResolution {
 		// traverse up the stack of scopes looking for an enclosing scope which
 		// contains a variable with the same name.
 		
+		boolean isThis = true;
 		for(int i=scopes.size()-1;i>=0;--i) {
 			Scope s = scopes.get(i);
 			if(s instanceof ClassScope) {
 				// resolve field from here
-				ClassScope cs = (ClassScope) s;
+				ClassScope cs = (ClassScope) s;				
 				try {
 					Triple<jkit.jil.Clazz, jkit.jil.Field, Type> r = types
 							.resolveField(cs.type, e.value(), loader);
 					// Ok, this variable access corresponds to a field load.
-					return new Expr.Deref(new Expr.Variable("this",
+					if(isThis) {
+						return new Expr.Deref(new Expr.Variable("this",
 							new ArrayList(e.attributes())), e.value(), e
 							.attributes());
+					} else {
+						return  
+							new Expr.Deref(
+								new Expr.Deref(new Expr.Variable(cs.type.toString()),
+										"this", new ArrayList(e.attributes())),
+								e.value(), e.attributes());
+					}
 				} catch(ClassNotFoundException cne) {					
 				} catch(FieldNotFoundException fne) {					
 				}
+				isThis = false;
 			} else if(s.variables.contains(e.value())) {
 				// found scope
 				System.out.println("FOUND IT");
