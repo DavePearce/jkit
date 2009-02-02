@@ -624,6 +624,8 @@ public class JavaFileWriter {
 			writeClassVal((Value.Class) e);
 		} else if(e instanceof Expr.Variable) {
 			writeVariable((Expr.Variable)e);
+		} else if(e instanceof Expr.ClassVariable) {
+			writeClassVariable((Expr.ClassVariable)e);
 		} else if(e instanceof Expr.UnOp) {
 			writeUnOp((Expr.UnOp)e);
 		} else if(e instanceof Expr.BinOp) {
@@ -862,6 +864,10 @@ public class JavaFileWriter {
 	
 	protected void writeVariable(Expr.Variable e) {			
 		write(e.value());		
+	}
+	
+	protected void writeClassVariable(Expr.ClassVariable e) {			
+		write(e.type());		
 	}
 	
 	public static final String[] unopstr={"!","~","-","++","--","++","--"};

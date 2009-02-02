@@ -147,10 +147,12 @@ public class ScopeResolution {
 	}
 	
 	private static class ClassScope extends Scope {
-		public Type.Clazz type; 		
-		public ClassScope(Type.Clazz type) {
+		public Type.Clazz type; 	
+		public boolean isStatic;
+		public ClassScope(Type.Clazz type, boolean isStatic) {
 			super(new HashSet<String>());
 			this.type = type;
+			this.isStatic = isStatic;
 		}
 	}
 	
@@ -206,7 +208,7 @@ public class ScopeResolution {
 		}
 				
 		// Ok, push on a scope representing this class definition.
-		scopes.push(new ClassScope(new Type.Clazz(file.pkg(), components)));
+		scopes.push(new ClassScope(new Type.Clazz(file.pkg(), components),c.isStatic()));
 		
 		for(Decl d : c.declarations()) {
 			doDeclaration(d, file);
@@ -549,7 +551,7 @@ public class ScopeResolution {
 		// traverse up the stack of scopes looking for an enclosing scope which
 		// contains a variable with the same name.
 		
-		boolean isThis = true;
+		boolean isThis = true;		
 		for(int i=scopes.size()-1;i>=0;--i) {
 			Scope s = scopes.get(i);
 			if(s instanceof ClassScope) {
@@ -563,17 +565,19 @@ public class ScopeResolution {
 						return new Expr.Deref(new Expr.Variable("this",
 							new ArrayList(e.attributes())), e.value(), e
 							.attributes());
-					} else {
-						return  
-							new Expr.Deref(
-								new Expr.Deref(new Expr.Variable(cs.type.toString()),
-										"this", new ArrayList(e.attributes())),
-								e.value(), e.attributes());
+					} else {						
+						// Create a class access variable.
+						Expr.ClassVariable cv = new Expr.ClassVariable(cs.type.toString());
+						cv.attributes().add(cs.type);
+						return new Expr.Deref(new Expr.Deref(cv, "this",
+								new ArrayList(e.attributes())), e.value(), e
+								.attributes());
 					}
 				} catch(ClassNotFoundException cne) {					
 				} catch(FieldNotFoundException fne) {					
 				}
 				isThis = false;
+				if(cs.isStatic) { break; }
 			} else if(s.variables.contains(e.value())) {
 				// found scope
 				System.out.println("FOUND IT");

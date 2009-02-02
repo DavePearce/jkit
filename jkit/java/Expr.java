@@ -32,6 +32,31 @@ public interface Expr extends SyntacticElement {
 	}
 
 	/**
+	 * An static Class Access
+	 * 
+	 * @author djp
+	 * 
+	 */
+	public static class ClassVariable extends SyntacticElementImpl implements Expr {
+		private String type;
+
+		public ClassVariable(String type, Attribute... attributes) {
+			super(attributes);
+			this.type = type;
+		}
+		
+		public ClassVariable(String type, List<Attribute> attributes) {
+			super(attributes);
+			this.type = type;
+		}
+
+		public String type() {
+			return type;
+		}
+	}
+
+	
+	/**
 	 * Represents an explicit cast.
 	 * 
 	 * @author djp

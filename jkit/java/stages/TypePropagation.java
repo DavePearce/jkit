@@ -301,6 +301,8 @@ public class TypePropagation {
 			doClassVal((Value.Class) e,environment);
 		} else if(e instanceof Expr.Variable) {
 			doVariable((Expr.Variable)e,environment);
+		} else if(e instanceof Expr.ClassVariable) {
+			doClassVariable((Expr.ClassVariable)e,environment);
 		} else if(e instanceof Expr.UnOp) {
 			doUnOp((Expr.UnOp)e,environment);
 		} else if(e instanceof Expr.BinOp) {
@@ -339,16 +341,26 @@ public class TypePropagation {
 		}
 		
 		Type.Clazz target = (Type.Clazz) tmp;
-		
-		// now, perform field lookup!
-		try {
-			Triple<jkit.jil.Clazz, jkit.jil.Field, Type> r = types
-					.resolveField(target, e.name(), loader);
-			e.attributes().add(r.third());			
-		} catch(ClassNotFoundException cne) {
-			syntax_error("class not found: " + target,e);
-		} catch(FieldNotFoundException fne) {
-			syntax_error("field not found: " + target + "." + e.name(),e);
+
+		if(e.name().equals("this")) {
+			// This is a special case, where we're trying to look up a field
+			// called "this". No such field can exist! What this means is that
+			// we're inside an inner class, and we're trying to access the this
+			// pointer of an enclosing class. This is easy to deal with here,
+			// since the type returned by this expression will be the target
+			// type of the dereference.
+			e.attributes().add(target);
+		} else {
+			// now, perform field lookup!
+			try {
+				Triple<jkit.jil.Clazz, jkit.jil.Field, Type> r = types
+				.resolveField(target, e.name(), loader);
+				e.attributes().add(r.third());			
+			} catch(ClassNotFoundException cne) {
+				syntax_error("class not found: " + target,e);
+			} catch(FieldNotFoundException fne) {
+				syntax_error("field not found: " + target + "." + e.name(),e);
+			}
 		}
 	}
 	
@@ -485,7 +497,7 @@ public class TypePropagation {
 	
 	protected void doVariable(Expr.Variable e, HashMap<String,Type> environment) {			
 		Type t = environment.get(e.value());
-		if(t == null) {			
+		if(t == null) {					
 			syntax_error("Cannot find symbol - variable \"" + e.value() + "\"",
 					e);
 		} else {			
@@ -493,6 +505,11 @@ public class TypePropagation {
 		}
 	}
 
+	protected void doClassVariable(Expr.ClassVariable e,
+			HashMap<String, Type> environment) {
+
+	}
+	
 	protected void doUnOp(Expr.UnOp e, HashMap<String,Type> environment) {		
 		
 	}

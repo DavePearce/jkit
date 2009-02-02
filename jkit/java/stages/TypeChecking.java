@@ -360,6 +360,8 @@ public class TypeChecking {
 			checkClassVal((Value.Class) e);
 		} else if(e instanceof Expr.Variable) {
 			checkVariable((Expr.Variable)e);
+		} else if(e instanceof Expr.ClassVariable) {
+			checkClassVariable((Expr.ClassVariable)e);
 		} else if(e instanceof Expr.UnOp) {
 			checkUnOp((Expr.UnOp)e);
 		} else if(e instanceof Expr.BinOp) {
@@ -517,6 +519,10 @@ public class TypeChecking {
 		// do nothing!
 	}
 
+	protected void checkClassVariable(Expr.ClassVariable e) {			
+		// do nothing!
+	}
+	
 	protected void checkUnOp(Expr.UnOp uop) {		
 		checkExpression(uop.expr());
 		
