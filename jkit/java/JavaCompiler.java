@@ -7,6 +7,8 @@ import java.util.*;
 import jkit.compiler.Compiler;
 import jkit.compiler.SyntaxError;
 import jkit.compiler.ClassLoader;
+import jkit.java.io.JavaFileReader2;
+import jkit.java.io.JavaFileWriter;
 import jkit.java.stages.TypeChecking;
 import jkit.java.stages.TypeResolution;
 import jkit.java.stages.ScopeResolution;
@@ -14,7 +16,6 @@ import jkit.java.stages.TypePropagation;
 import jkit.java.stages.TypeSystem;
 import jkit.java.tree.Decl;
 import jkit.jil.*;
-import jkit.jil.Type;
 import jkit.util.Pair;
 
 /**

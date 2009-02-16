@@ -19,12 +19,13 @@
 
 //(C) David James Pearce, 2007. 
 
-package jkit.java;
+package jkit.java.io;
 
 import java.io.*;
 import java.util.*;
 
 import jkit.compiler.SyntaxError;
+import jkit.java.JavaFile;
 import jkit.java.tree.Decl;
 import jkit.java.tree.Expr;
 import jkit.java.tree.Stmt;
