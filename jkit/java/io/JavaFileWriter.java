@@ -32,7 +32,7 @@ public class JavaFileWriter {
 	}
 	
 	public void write(JavaFile jf) {
-		if(jf.pkg() != null) {
+		if(!jf.pkg().equals("")) {
 			output.println("package " + jf.pkg() + ";\n");
 		}				
 		
