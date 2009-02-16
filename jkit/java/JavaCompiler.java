@@ -19,10 +19,10 @@ import jkit.jil.*;
 import jkit.util.Pair;
 
 /**
- * A class compiler is responsible for compiling class files. It's one of the
- * most important classes in the system, and is built upon several other
- * important components. In particular, the ClassLoader is responsible for
- * locating source and class files from the classpath.
+ * A Java compiler is responsible for compiling Java source files into class
+ * files. It's one of the most important classes in the system, and is built
+ * upon several other important components. In particular, the ClassLoader is
+ * responsible for locating source and class files from the classpath.
  * 
  * @author djp
  * 
