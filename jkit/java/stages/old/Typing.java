@@ -1,4 +1,4 @@
-package jkit.java.stages;
+package jkit.java.stages.old;
 
 import java.util.Collections;
 import java.util.Comparator;

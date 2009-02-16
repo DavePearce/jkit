@@ -6,8 +6,8 @@ import java.util.Map;
 import mocha.util.Utils;
 
 import jkit.compiler.InternalException;
-import jkit.java.stages.Subtyping;
-import jkit.java.stages.Typing;
+import jkit.java.stages.old.Subtyping;
+import jkit.java.stages.old.Typing;
 import jkit.jkil.Clazz;
 import jkit.jkil.FlowGraph;
 import jkit.jkil.Method;

@@ -24,6 +24,7 @@ package jkit.java.io;
 import java.io.*;
 import java.util.*;
 
+import jkit.java.parser.*;
 import jkit.compiler.SyntaxError;
 import jkit.java.JavaFile;
 import jkit.java.tree.Decl;

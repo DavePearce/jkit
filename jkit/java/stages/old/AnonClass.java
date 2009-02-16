@@ -1,4 +1,4 @@
-package jkit.java.stages;
+package jkit.java.stages.old;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;

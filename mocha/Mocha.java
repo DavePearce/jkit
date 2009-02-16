@@ -93,22 +93,22 @@ public class Mocha {
 			p = new Pipeline(JavaFileReader.class,
 					ClassFileWriter.class,
 					new jkit.java.stages.FieldInitialisation(),
-					new jkit.java.stages.Typing(),
-					new jkit.java.stages.ForEachLoop(),
-					new jkit.java.stages.Exceptions(),
-					new jkit.java.stages.Subtyping(),
+					new jkit.java.stages.old.Typing(),
+					new jkit.java.stages.old.ForEachLoop(),
+					new jkit.java.stages.old.Exceptions(),
+					new jkit.java.stages.old.Subtyping(),
 					new jkit.jkil.stages.VariableDefinitions());
 			readClass = JavaFileReader.class;
 		} else {
 			p = new Pipeline(MochaFileReader.class, 
 							ClassFileWriter.class, 
 							new jkit.java.stages.FieldInitialisation(),
-							new jkit.java.stages.AnonClass(),
+							new jkit.java.stages.old.AnonClass(),
 							inf,
 							trans,
 							retype, 
 							typing,
-							new jkit.java.stages.SwitchConstants());
+							new jkit.java.stages.old.SwitchConstants());
 			readClass = MochaFileReader.class;
 		}
 
