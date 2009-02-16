@@ -549,7 +549,8 @@ public class TypeResolution {
 		// source code and, hence, we need to determine this fromt he CLASSPATH
 		// and the import list.
 									
-		try {						
+		try {
+			System.out.println("LOOKING UP: " + className + ", " + imports);
 			return loader.resolve(className, imports);			
 		} catch(ClassNotFoundException e) {}
 
