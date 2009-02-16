@@ -1,4 +1,4 @@
-package jkit.java;
+package jkit.compiler;
 
 /**
  * This exception is thrown when trying to resolve a method using

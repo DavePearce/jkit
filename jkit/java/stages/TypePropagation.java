@@ -3,6 +3,8 @@ package jkit.java.stages;
 import java.util.*;
 
 import jkit.compiler.ClassLoader;
+import jkit.compiler.FieldNotFoundException;
+import jkit.compiler.MethodNotFoundException;
 import jkit.compiler.SyntaxError;
 import jkit.java.*;
 import jkit.java.tree.Decl;

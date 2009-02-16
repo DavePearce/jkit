@@ -24,6 +24,8 @@ package jkit.java;
 import java.util.*;
 
 import jkit.bytecode.Types;
+import jkit.compiler.FieldNotFoundException;
+import jkit.compiler.MethodNotFoundException;
 import jkit.jkil.Clazz;
 import jkit.jkil.Field;
 import jkit.jkil.Method;

@@ -2,6 +2,7 @@ package jkit.java.stages;
 
 import java.util.*;
 import jkit.compiler.ClassLoader;
+import jkit.compiler.FieldNotFoundException;
 import jkit.java.JavaFile;
 import jkit.java.tree.Decl;
 import jkit.java.tree.Expr;
@@ -12,7 +13,6 @@ import jkit.java.tree.Decl.Field;
 import jkit.java.tree.Decl.Interface;
 import jkit.java.tree.Decl.Method;
 import jkit.java.tree.Stmt.Case;
-import jkit.java.FieldNotFoundException;
 import jkit.jil.Modifier;
 import jkit.jil.Type;
 import jkit.util.Pair;

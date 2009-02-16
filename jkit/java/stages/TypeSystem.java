@@ -3,8 +3,8 @@ package jkit.java.stages;
 import java.util.*;
 
 import jkit.compiler.ClassLoader;
-import jkit.java.FieldNotFoundException;
-import jkit.java.MethodNotFoundException;
+import jkit.compiler.FieldNotFoundException;
+import jkit.compiler.MethodNotFoundException;
 import jkit.jil.Type;
 import jkit.jil.Clazz;
 import jkit.jil.Method;
