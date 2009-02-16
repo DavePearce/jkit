@@ -1,6 +1,8 @@
 package jkit.java;
 
 import java.util.*;
+
+import jkit.java.tree.Decl;
 import jkit.util.*;
 
 public class JavaFile {

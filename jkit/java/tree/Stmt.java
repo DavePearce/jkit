@@ -1,7 +1,9 @@
-package jkit.java;
+package jkit.java.tree;
 
 import java.util.List;
 
+import jkit.java.Expr;
+import jkit.java.tree.Type.Clazz;
 import jkit.jil.*;
 import jkit.util.Triple;
 

@@ -25,7 +25,11 @@ import java.io.*;
 import java.util.*;
 
 import jkit.compiler.SyntaxError;
-import jkit.java.Decl.*;
+import jkit.java.tree.Decl;
+import jkit.java.tree.Stmt;
+import jkit.java.tree.Type;
+import jkit.java.tree.Value;
+import jkit.java.tree.Decl.*;
 import jkit.util.Pair;
 import jkit.util.Triple;
 import jkit.jil.*;

@@ -12,6 +12,7 @@ import jkit.java.stages.TypeResolution;
 import jkit.java.stages.ScopeResolution;
 import jkit.java.stages.TypePropagation;
 import jkit.java.stages.TypeSystem;
+import jkit.java.tree.Decl;
 import jkit.jil.*;
 import jkit.jil.Type;
 import jkit.util.Pair;

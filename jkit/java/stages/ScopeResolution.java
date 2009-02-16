@@ -2,16 +2,16 @@ package jkit.java.stages;
 
 import java.util.*;
 import jkit.compiler.ClassLoader;
-import jkit.java.Decl;
 import jkit.java.Expr;
 import jkit.java.JavaFile;
-import jkit.java.Stmt;
-import jkit.java.Value;
-import jkit.java.Decl.Clazz;
-import jkit.java.Decl.Field;
-import jkit.java.Decl.Interface;
-import jkit.java.Decl.Method;
-import jkit.java.Stmt.Case;
+import jkit.java.tree.Decl;
+import jkit.java.tree.Stmt;
+import jkit.java.tree.Value;
+import jkit.java.tree.Decl.Clazz;
+import jkit.java.tree.Decl.Field;
+import jkit.java.tree.Decl.Interface;
+import jkit.java.tree.Decl.Method;
+import jkit.java.tree.Stmt.Case;
 import jkit.java.FieldNotFoundException;
 import jkit.jil.Modifier;
 import jkit.jil.Type;
@@ -220,7 +220,7 @@ public class ScopeResolution {
 	protected void doMethod(Method d, JavaFile file) {
 		
 		Set<String> params = new HashSet<String>();
-		for(Triple<String,List<Modifier>,jkit.java.Type> t : d.parameters()) {
+		for(Triple<String,List<Modifier>,jkit.java.tree.Type> t : d.parameters()) {
 			params.add(t.first());
 		}		
 		scopes.push(new MethodScope(params));

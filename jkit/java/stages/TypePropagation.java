@@ -5,8 +5,11 @@ import java.util.*;
 import jkit.compiler.ClassLoader;
 import jkit.compiler.SyntaxError;
 import jkit.java.*;
-import jkit.java.Decl.*;
-import jkit.java.Stmt.Case;
+import jkit.java.tree.Decl;
+import jkit.java.tree.Stmt;
+import jkit.java.tree.Value;
+import jkit.java.tree.Decl.*;
+import jkit.java.tree.Stmt.Case;
 import jkit.util.*;
 import jkit.jil.SyntacticElement;
 import jkit.jil.Type;
@@ -82,7 +85,7 @@ public class TypePropagation {
 			environment.put("this", (Type) scopes.peek().attribute(Type.class));
 		}
 		
-		for(Triple<String,List<Modifier>,jkit.java.Type> p : d.parameters()) {
+		for(Triple<String,List<Modifier>,jkit.java.tree.Type> p : d.parameters()) {
 			Type pt = (Type) p.third().attribute(Type.class);
 			environment.put(p.first(), pt);
 		}
@@ -995,7 +998,7 @@ public class TypePropagation {
      * @param jt
      * @return
      */
-	protected jkit.java.Type fromJilType(jkit.jil.Type t) {
+	protected jkit.java.tree.Type fromJilType(jkit.jil.Type t) {
 		if(t instanceof jkit.jil.Type.Primitive) {
 			return fromJilType((jkit.jil.Type.Primitive)t);
 		} else if(t instanceof jkit.jil.Type.Array) {
@@ -1006,35 +1009,35 @@ public class TypePropagation {
 		throw new RuntimeException("Need to finish fromJilType off!");
 	}
 	
-	protected jkit.java.Type.Primitive fromJilType(jkit.jil.Type.Primitive pt) {
+	protected jkit.java.tree.Type.Primitive fromJilType(jkit.jil.Type.Primitive pt) {
 		if(pt instanceof jkit.jil.Type.Void) {
-			return new jkit.java.Type.Void(pt);
+			return new jkit.java.tree.Type.Void(pt);
 		} else if(pt instanceof jkit.jil.Type.Bool) {
-			return new jkit.java.Type.Bool(pt);
+			return new jkit.java.tree.Type.Bool(pt);
 		} else if(pt instanceof jkit.jil.Type.Byte) {
-			return new jkit.java.Type.Byte(pt);
+			return new jkit.java.tree.Type.Byte(pt);
 		} else if(pt instanceof jkit.jil.Type.Char) {
-			return new jkit.java.Type.Char(pt);
+			return new jkit.java.tree.Type.Char(pt);
 		} else if(pt instanceof jkit.jil.Type.Short) {
-			return new jkit.java.Type.Short(pt);
+			return new jkit.java.tree.Type.Short(pt);
 		} else if(pt instanceof jkit.jil.Type.Int) {
-			return new jkit.java.Type.Int(pt);
+			return new jkit.java.tree.Type.Int(pt);
 		} else if(pt instanceof jkit.jil.Type.Long) {
-			return new jkit.java.Type.Long(pt);
+			return new jkit.java.tree.Type.Long(pt);
 		} else if(pt instanceof jkit.jil.Type.Float) {
-			return new jkit.java.Type.Float(pt);
+			return new jkit.java.tree.Type.Float(pt);
 		} else {
-			return new jkit.java.Type.Double(pt);
+			return new jkit.java.tree.Type.Double(pt);
 		}
 	}
 	
-	protected jkit.java.Type.Array fromJilType(jkit.jil.Type.Array at) {
-		return new jkit.java.Type.Array(fromJilType(at.element()),at);
+	protected jkit.java.tree.Type.Array fromJilType(jkit.jil.Type.Array at) {
+		return new jkit.java.tree.Type.Array(fromJilType(at.element()),at);
 	}
 	
-	protected jkit.java.Type.Clazz fromJilType(jkit.jil.Type.Clazz jt) {
+	protected jkit.java.tree.Type.Clazz fromJilType(jkit.jil.Type.Clazz jt) {
 		// I will make it fully qualified for simplicity.
-		ArrayList<Pair<String,List<jkit.java.Type.Reference>>> ncomponents = new ArrayList();
+		ArrayList<Pair<String,List<jkit.java.tree.Type.Reference>>> ncomponents = new ArrayList();
 		// So, we need to split out the package into the component parts
 		String pkg = jt.pkg();
 		int idx = 0;
@@ -1046,14 +1049,14 @@ public class TypePropagation {
 		
 		// Now, complete the components list
 		for(Pair<String,List<jkit.jil.Type.Reference>> c : jt.components()) {
-			ArrayList<jkit.java.Type.Reference> l = new ArrayList();
+			ArrayList<jkit.java.tree.Type.Reference> l = new ArrayList();
 			for(jkit.jil.Type.Reference r : c.second()) {
-				l.add((jkit.java.Type.Reference)fromJilType(r));
+				l.add((jkit.java.tree.Type.Reference)fromJilType(r));
 			}
 			ncomponents.add(new Pair(c.first(),l));
 		}
 		
-		return new jkit.java.Type.Clazz(ncomponents,jt);
+		return new jkit.java.tree.Type.Clazz(ncomponents,jt);
 	}
 	
 	/**

@@ -1,8 +1,11 @@
-package jkit.java;
+package jkit.java.tree;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import jkit.java.Expr;
+import jkit.java.tree.Type.Clazz;
+import jkit.java.tree.Type.Variable;
 import jkit.jil.Attribute;
 import jkit.jil.Modifier;
 import jkit.jil.SyntacticElement;

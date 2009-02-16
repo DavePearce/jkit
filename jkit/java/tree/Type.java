@@ -1,4 +1,4 @@
-package jkit.java;
+package jkit.java.tree;
 
 import java.util.*;
 import jkit.jil.Attribute;

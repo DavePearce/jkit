@@ -4,16 +4,16 @@ import java.util.*;
 
 import jkit.compiler.ClassLoader;
 import jkit.compiler.SyntaxError;
-import jkit.java.Decl;
 import jkit.java.Expr;
 import jkit.java.JavaFile;
-import jkit.java.Stmt;
-import jkit.java.Value;
-import jkit.java.Decl.Clazz;
-import jkit.java.Decl.Field;
-import jkit.java.Decl.Interface;
-import jkit.java.Decl.Method;
-import jkit.java.Stmt.Case;
+import jkit.java.tree.Decl;
+import jkit.java.tree.Stmt;
+import jkit.java.tree.Value;
+import jkit.java.tree.Decl.Clazz;
+import jkit.java.tree.Decl.Field;
+import jkit.java.tree.Decl.Interface;
+import jkit.java.tree.Decl.Method;
+import jkit.java.tree.Stmt.Case;
 import jkit.jil.Modifier;
 import jkit.jil.SourceLocation;
 import jkit.jil.SyntacticElement;
@@ -108,7 +108,7 @@ public class TypeResolution {
 			c.superclass().attributes().add(resolve(c.superclass(), imports));
 		}		
 										
-		for(jkit.java.Type.Clazz i : c.interfaces()) {
+		for(jkit.java.tree.Type.Clazz i : c.interfaces()) {
 			i.attributes().add(resolve(i, imports));
 		}
 
@@ -116,7 +116,7 @@ public class TypeResolution {
 		Type.Clazz parentType = scopes.peek();
 		List<Pair<String, List<Type.Reference>>> components = new ArrayList(parentType.components());
 		ArrayList<Type.Reference> typevars = new ArrayList<Type.Reference>();
-		for(jkit.java.Type.Variable v : c.typeParameters()) {
+		for(jkit.java.tree.Type.Variable v : c.typeParameters()) {
 			typevars.add((Type.Reference) resolve(v, imports));
 		}		
 		components.add(new Pair(c.name(),typevars));
@@ -134,12 +134,12 @@ public class TypeResolution {
 
 	protected void doMethod(Method d, List<String> imports) {
 		// First, resolve return type and parameter types. 
-		for(jkit.java.Type.Clazz e : d.exceptions()) {
+		for(jkit.java.tree.Type.Clazz e : d.exceptions()) {
 			e.attributes().add(resolve(e,imports));
 		}		
 		d.returnType().attributes().add(resolve(d.returnType(),imports));
 							
-		for(Triple<String,List<Modifier>,jkit.java.Type> p : d.parameters()) {
+		for(Triple<String,List<Modifier>,jkit.java.tree.Type> p : d.parameters()) {
 			Type pt = resolve(p.third(),imports);
 			p.third().attributes().add(pt);					
 		}
@@ -440,41 +440,41 @@ public class TypeResolution {
 	 * @param file
 	 * @return
 	 */
-	protected jkit.jil.Type resolve(jkit.java.Type t, List<String> imports) {
-		if(t instanceof jkit.java.Type.Primitive) {
-			return resolve((jkit.java.Type.Primitive)t, imports);
-		} else if(t instanceof jkit.java.Type.Clazz) {
-			return resolve((jkit.java.Type.Clazz)t, imports);			
-		} else if(t instanceof jkit.java.Type.Array) {
-			return resolve((jkit.java.Type.Array)t, imports);
+	protected jkit.jil.Type resolve(jkit.java.tree.Type t, List<String> imports) {
+		if(t instanceof jkit.java.tree.Type.Primitive) {
+			return resolve((jkit.java.tree.Type.Primitive)t, imports);
+		} else if(t instanceof jkit.java.tree.Type.Clazz) {
+			return resolve((jkit.java.tree.Type.Clazz)t, imports);			
+		} else if(t instanceof jkit.java.tree.Type.Array) {
+			return resolve((jkit.java.tree.Type.Array)t, imports);
 		} 
 		
 		return null;
 	}
 	
-	protected jkit.jil.Type.Primitive resolve(jkit.java.Type.Primitive pt, List<String> imports) {
-		if(pt instanceof jkit.java.Type.Void) {
+	protected jkit.jil.Type.Primitive resolve(jkit.java.tree.Type.Primitive pt, List<String> imports) {
+		if(pt instanceof jkit.java.tree.Type.Void) {
 			return new jkit.jil.Type.Void();
-		} else if(pt instanceof jkit.java.Type.Bool) {
+		} else if(pt instanceof jkit.java.tree.Type.Bool) {
 			return new jkit.jil.Type.Bool();
-		} else if(pt instanceof jkit.java.Type.Byte) {
+		} else if(pt instanceof jkit.java.tree.Type.Byte) {
 			return new jkit.jil.Type.Byte();
-		} else if(pt instanceof jkit.java.Type.Char) {
+		} else if(pt instanceof jkit.java.tree.Type.Char) {
 			return new jkit.jil.Type.Char();
-		} else if(pt instanceof jkit.java.Type.Short) {
+		} else if(pt instanceof jkit.java.tree.Type.Short) {
 			return new jkit.jil.Type.Short();
-		} else if(pt instanceof jkit.java.Type.Int) {
+		} else if(pt instanceof jkit.java.tree.Type.Int) {
 			return new jkit.jil.Type.Int();
-		} else if(pt instanceof jkit.java.Type.Long) {
+		} else if(pt instanceof jkit.java.tree.Type.Long) {
 			return new jkit.jil.Type.Long();
-		} else if(pt instanceof jkit.java.Type.Float) {
+		} else if(pt instanceof jkit.java.tree.Type.Float) {
 			return new jkit.jil.Type.Float();
 		} else {
 			return new jkit.jil.Type.Double();
 		}
 	}
 	
-	protected jkit.jil.Type.Array resolve(jkit.java.Type.Array t, List<String> imports) {
+	protected jkit.jil.Type.Array resolve(jkit.java.tree.Type.Array t, List<String> imports) {
 		return new jkit.jil.Type.Array(resolve(t.element(), imports));
 	}
 	
@@ -506,7 +506,7 @@ public class TypeResolution {
 	 *            determine the import list.
 	 * @return
 	 */
-	protected jkit.jil.Type.Reference resolve(jkit.java.Type.Clazz ct, List<String> imports) {
+	protected jkit.jil.Type.Reference resolve(jkit.java.tree.Type.Clazz ct, List<String> imports) {
 		ArrayList<Pair<String,List<jkit.jil.Type.Reference>>> ncomponents = new ArrayList();
 		String className = "";
 		String pkg = "";
@@ -525,10 +525,10 @@ public class TypeResolution {
 				className += ct.components().get(i).first();
 				
 				// now, rebuild the component list
-				Pair<String,List<jkit.java.Type.Reference>> component = ct.components().get(i);
+				Pair<String,List<jkit.java.tree.Type.Reference>> component = ct.components().get(i);
 				ArrayList<jkit.jil.Type.Reference> nvars = new ArrayList();
 				
-				for(jkit.java.Type.Reference r : component.second()) {
+				for(jkit.java.tree.Type.Reference r : component.second()) {
 					nvars.add((jkit.jil.Type.Reference) resolve(r, imports));
 				}
 				
