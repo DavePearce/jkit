@@ -75,7 +75,12 @@ public class TypeResolution {
 			imports.add(i.second());
 		}	
 		
+		if(!file.pkg().equals("")) {
+			imports.add(0,file.pkg() + ".*");
+		}
+		
 		imports.add(0,"java.lang.*");
+		
 		
 		// The first entry on to the classes stack is a dummy to set the package
 		// for remaining classes.		
@@ -137,7 +142,11 @@ public class TypeResolution {
 		for(jkit.java.tree.Type.Clazz e : d.exceptions()) {
 			e.attributes().add(resolve(e,imports));
 		}		
-		d.returnType().attributes().add(resolve(d.returnType(),imports));
+		
+		if(d.returnType() != null) {
+			// The return type may be null iff this is a constructor.
+			d.returnType().attributes().add(resolve(d.returnType(),imports));
+		}
 							
 		for(Triple<String,List<Modifier>,jkit.java.tree.Type> p : d.parameters()) {
 			Type pt = resolve(p.third(),imports);
@@ -549,8 +558,7 @@ public class TypeResolution {
 		// source code and, hence, we need to determine this fromt he CLASSPATH
 		// and the import list.
 									
-		try {
-			System.out.println("LOOKING UP: " + className + ", " + imports);
+		try {			
 			return loader.resolve(className, imports);			
 		} catch(ClassNotFoundException e) {}
 
