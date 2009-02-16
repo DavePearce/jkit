@@ -3,7 +3,6 @@ package jkit.java.io;
 import java.io.*;
 import java.util.*;
 
-import jkit.java.JavaFile;
 import jkit.java.tree.Decl;
 import jkit.java.tree.Expr;
 import jkit.java.tree.Stmt;
@@ -12,6 +11,14 @@ import jkit.java.tree.Value;
 import jkit.jil.*;
 import jkit.util.*; 
 
+/**
+ * A JavaFileWrite reads a source file as input and produces a JavaFile as
+ * output. This does not have any type attributes, but does include source line
+ * attributes.
+ * 
+ * @author djp
+ * 
+ */
 public class JavaFileWriter {
 	private PrintWriter output;
 	private int depth = 0;

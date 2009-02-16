@@ -26,7 +26,6 @@ import java.util.*;
 
 import jkit.java.parser.*;
 import jkit.compiler.SyntaxError;
-import jkit.java.JavaFile;
 import jkit.java.tree.Decl;
 import jkit.java.tree.Expr;
 import jkit.java.tree.Stmt;
@@ -40,7 +39,7 @@ import jkit.jil.*;
 import org.antlr.runtime.*;
 import org.antlr.runtime.tree.*;
 
-public class JavaFileReader2 {
+public class JavaFileReader {
 
 	private Tree ast;
 
@@ -55,7 +54,7 @@ public class JavaFileReader2 {
      * 
      * @throws IOException
      */
-	public JavaFileReader2(String file) throws IOException {
+	public JavaFileReader(String file) throws IOException {
 		CommonTokenStream tokenStream = new CommonTokenStream(new JavaLexer(
 				new ANTLRFileStream(file)));
 
@@ -76,7 +75,7 @@ public class JavaFileReader2 {
      * 
      * @throws IOException
      */
-	public JavaFileReader2(Reader r) throws IOException {
+	public JavaFileReader(Reader r) throws IOException {
 		CommonTokenStream tokenStream = new CommonTokenStream(new JavaLexer(
 				new ANTLRReaderStream(r)));
 
@@ -95,7 +94,7 @@ public class JavaFileReader2 {
      * 
      * @throws IOException
      */
-	public JavaFileReader2(InputStream in) throws IOException {
+	public JavaFileReader(InputStream in) throws IOException {
 		CommonTokenStream tokenStream = new CommonTokenStream(new JavaLexer(
 				new ANTLRInputStream(in)));
 		JavaParser parser = new JavaParser(tokenStream);

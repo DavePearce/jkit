@@ -4,7 +4,7 @@ import java.util.*;
 
 import jkit.compiler.ClassLoader;
 import jkit.compiler.SyntaxError;
-import jkit.java.JavaFile;
+import jkit.java.io.JavaFile;
 import jkit.java.tree.Decl;
 import jkit.java.tree.Expr;
 import jkit.java.tree.Stmt;

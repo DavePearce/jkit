@@ -3,7 +3,7 @@ package jkit.java.stages;
 import java.util.*;
 import jkit.compiler.ClassLoader;
 import jkit.compiler.FieldNotFoundException;
-import jkit.java.JavaFile;
+import jkit.java.io.JavaFile;
 import jkit.java.tree.Decl;
 import jkit.java.tree.Expr;
 import jkit.java.tree.Stmt;

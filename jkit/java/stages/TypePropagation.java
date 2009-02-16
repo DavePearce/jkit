@@ -7,6 +7,7 @@ import jkit.compiler.FieldNotFoundException;
 import jkit.compiler.MethodNotFoundException;
 import jkit.compiler.SyntaxError;
 import jkit.java.*;
+import jkit.java.io.JavaFile;
 import jkit.java.tree.Decl;
 import jkit.java.tree.Expr;
 import jkit.java.tree.Stmt;

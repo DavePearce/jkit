@@ -1,4 +1,4 @@
-package jkit.java;
+package jkit.java.io;
 
 import java.util.*;
 

@@ -7,7 +7,8 @@ import java.util.*;
 import jkit.compiler.Compiler;
 import jkit.compiler.SyntaxError;
 import jkit.compiler.ClassLoader;
-import jkit.java.io.JavaFileReader2;
+import jkit.java.io.JavaFile;
+import jkit.java.io.JavaFileReader;
 import jkit.java.io.JavaFileWriter;
 import jkit.java.stages.TypeChecking;
 import jkit.java.stages.TypeResolution;
@@ -153,7 +154,7 @@ public class JavaCompiler implements Compiler {
 			long start = System.currentTimeMillis();
 			
 			// Now, construct the reader!
-			JavaFileReader2 reader = new JavaFileReader2(filename);
+			JavaFileReader reader = new JavaFileReader(filename);
 
 			long last = System.currentTimeMillis();
 			logout.println("Parsed " + filename + " [" + (last - start) + "ms]");
