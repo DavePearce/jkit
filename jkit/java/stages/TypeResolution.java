@@ -78,7 +78,7 @@ public class TypeResolution {
 		if(!file.pkg().equals("")) {
 			imports.add(0,file.pkg() + ".*");
 		}
-		
+				
 		imports.add(0,"java.lang.*");
 		
 		
@@ -87,7 +87,7 @@ public class TypeResolution {
 		scopes.push(new Type.Clazz(file.pkg(),new ArrayList()));		
 		
 		// Now, examine all the declarations contain here-in
-		for(Decl d : file.declarations()) {
+		for(Decl d : file.declarations()) {			
 			doDeclaration(d, imports);
 		}
 	}
@@ -108,17 +108,22 @@ public class TypeResolution {
 		
 	}
 	
-	protected void doClass(Clazz c, List<String> imports) {
-		if(c.superclass() != null) {
-			c.superclass().attributes().add(resolve(c.superclass(), imports));
-		}		
-										
-		for(jkit.java.tree.Type.Clazz i : c.interfaces()) {
-			i.attributes().add(resolve(i, imports));
-		}
-
-		// Now, build my type.
+	protected void doClass(Clazz c, List<String> imports) {		
+		// First, add myself to the import list, since that means we'll search
+		// in my class for types before searching anywhere else i've declared
+		// and/or on the CLASSPATH.
 		Type.Clazz parentType = scopes.peek();
+		String pkgn = parentType.pkg();
+		
+		pkgn = pkgn + "." + c.name();
+		
+		for(Pair<String, List<Type.Reference>> pc : parentType.components()) {
+			pkgn = pkgn + pc.first() + ".";
+		}
+		System.out.println("ADDING SEARCH TERM: " + pkgn + ".*");
+		imports.add(pkgn + ".*");
+		
+		// Second, build my fully qualified type!		
 		List<Pair<String, List<Type.Reference>>> components = new ArrayList(parentType.components());
 		ArrayList<Type.Reference> typevars = new ArrayList<Type.Reference>();
 		for(jkit.java.tree.Type.Variable v : c.typeParameters()) {
@@ -127,13 +132,26 @@ public class TypeResolution {
 		components.add(new Pair(c.name(),typevars));
 		Type.Clazz myType = new Type.Clazz(parentType.pkg(),components);
 		c.attributes().add(myType); // record the type
-	 				
+		
 		scopes.push(myType);
 		
+		// 1) resolve types in my declared super class.
+		if(c.superclass() != null) {
+			c.superclass().attributes().add(resolve(c.superclass(), imports));
+		}		
+
+		// 2) resolve types in my declared interfaces
+		for(jkit.java.tree.Type.Clazz i : c.interfaces()) {
+			i.attributes().add(resolve(i, imports));
+		}			 						
+		
+		// 3) resolve types in my other declarations (e.g. fields, methods,inner
+		// classes, etc)
 		for(Decl d : c.declarations()) {
 			doDeclaration(d, imports);
 		}
 		
+		imports.remove(imports.size()-1);
 		scopes.pop(); // undo my type
 	}
 
@@ -555,10 +573,12 @@ public class TypeResolution {
 		}
 		
 		// So, at this point, it seems there was no package information in the
-		// source code and, hence, we need to determine this fromt he CLASSPATH
-		// and the import list.
-									
+		// source code and, hence, we need to determine this from the CLASSPATH
+		// and the import list. There are two phases. 
+		
 		try {			
+
+			
 			return loader.resolve(className, imports);			
 		} catch(ClassNotFoundException e) {}
 

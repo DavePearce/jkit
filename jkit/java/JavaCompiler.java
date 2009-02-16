@@ -228,7 +228,7 @@ public class JavaCompiler implements Compiler {
 	 *            or include fields and methods as well (false).
 	 * @return
 	 */
-	public List<Clazz> buildSkeletons(JavaFile file, boolean typeOnly) {
+	protected List<Clazz> buildSkeletons(JavaFile file, boolean typeOnly) {
 		ArrayList<Clazz> skeletons = new ArrayList();
 		for(Decl d : file.declarations()) {
 			if(d instanceof Decl.Clazz) {
@@ -239,7 +239,22 @@ public class JavaCompiler implements Compiler {
 		return skeletons;
 	}
 	
-	public List<Clazz> buildSkeletons(Decl.Clazz c, String pkg,
+	/**
+	 * Helper method for buildSkeletons.
+	 * 
+	 * @param c
+	 *            --- Class being traversed
+	 * @param pkg
+	 *            --- package of enclosing file
+	 * @param parent
+	 *            --- type of parent class, or null if there is none.
+	 * @param typeOnly
+	 *            --- true if we don't want field or method information (because
+	 *            type resolution has not yet been performed and thus we can't
+	 *            generate their types yet.)
+	 * @return
+	 */
+	protected List<Clazz> buildSkeletons(Decl.Clazz c, String pkg,
 			Type.Clazz parent, boolean typeOnly) {
 		ArrayList<Clazz> skeletons = new ArrayList();
 		
