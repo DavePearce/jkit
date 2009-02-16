@@ -2,7 +2,6 @@ package jkit.java.tree;
 
 import java.util.List;
 
-import jkit.java.Expr;
 import jkit.jil.*;
 
 public interface Value extends Expr {

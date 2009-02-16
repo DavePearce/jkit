@@ -2,7 +2,7 @@ package jkit.jil;
 
 import java.util.List;
 
-import jkit.java.Expr;
+import jkit.java.tree.Expr;
 
 /**
  * A modifier represents a flag (e.g. public/final/static) which can be used in

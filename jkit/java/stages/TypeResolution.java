@@ -4,9 +4,9 @@ import java.util.*;
 
 import jkit.compiler.ClassLoader;
 import jkit.compiler.SyntaxError;
-import jkit.java.Expr;
 import jkit.java.JavaFile;
 import jkit.java.tree.Decl;
+import jkit.java.tree.Expr;
 import jkit.java.tree.Stmt;
 import jkit.java.tree.Value;
 import jkit.java.tree.Decl.Clazz;

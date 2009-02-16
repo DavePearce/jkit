@@ -186,11 +186,11 @@ tokens {
 protected boolean enumIsKeyword = true;
 }
 @lexer::header {
-package jkit.java;
+package jkit.java.parser;
 import jkit.compiler.SyntaxError;
 }
 @header {
-package jkit.java;
+package jkit.java.parser;
 import jkit.compiler.SyntaxError;
 }
 

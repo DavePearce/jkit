@@ -1,10 +1,7 @@
-package jkit.java;
+package jkit.java.tree;
 
 import java.util.List;
 
-import jkit.java.tree.Decl;
-import jkit.java.tree.Stmt;
-import jkit.java.tree.Type;
 import jkit.jil.Attribute;
 import jkit.jil.SyntacticElement;
 import jkit.jil.SyntacticElementImpl;
