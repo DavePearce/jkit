@@ -162,7 +162,12 @@ public class JavaCompiler implements Compiler {
 			JavaFile jfile = reader.read();
 			
 			// First, we need to resolve types. That is, for each class
-			// reference type, determine what package it's in.			
+			// reference type, determine what package it's in.	
+			List<Clazz> skeletons = buildSkeletons(jfile,true);
+			for(Clazz s : skeletons) {
+				System.out.println("GOT SKELETONS: " + s.type());
+				loader.add(s); 
+			}
 			new TypeResolution(loader, new TypeSystem()).apply(jfile);
 			
 			// Second, we need to build the skeletons of the classes. This is
@@ -170,7 +175,7 @@ public class JavaCompiler implements Compiler {
 			// Specifically, during scope resolution, we need to be able to:
 			// 1) traverse the class heirarchy
 			// 2) determine what fields are declared.			
-			List<Clazz> skeletons = buildSkeletons(jfile);
+			skeletons = buildSkeletons(jfile,false);
 			for(Clazz s : skeletons) { loader.add(s); }
 			
 			// Third, perform the scope resolution itself. The aim here is, for
@@ -203,20 +208,61 @@ public class JavaCompiler implements Compiler {
 		} 
 	}
 	
-	public List<Clazz> buildSkeletons(JavaFile file) {
+	/**
+	 * The purpose of this method is to go through the JavaFiles and extract as
+	 * much basic information as possible. This method is used at to points in
+	 * the build process; firstly, before type resolution has been run on all
+	 * input java files; and, secondly after type resolution has been run. It
+	 * needs to be run before type resolution, in order that we can extract all
+	 * the classes being compiled, including those inner classes. Thus, we can
+	 * resolve the package of any given type during type resolution. Once type
+	 * resolution is complete, then we want to put into place the proper
+	 * skeleton for every file being compiled, which includes fully resolve
+	 * types for all methods, fields and classes. This is necessary in order to
+	 * resolve a particular method or field at a dereference point in some code.
+	 * 
+	 * @param file
+	 *            --- input Java file to process.
+	 * @param typeOnly
+	 *            --- indicate whether only classes should be included (true),
+	 *            or include fields and methods as well (false).
+	 * @return
+	 */
+	public List<Clazz> buildSkeletons(JavaFile file, boolean typeOnly) {
 		ArrayList<Clazz> skeletons = new ArrayList();
 		for(Decl d : file.declarations()) {
 			if(d instanceof Decl.Clazz) {
-				skeletons.addAll(buildSkeletons((Decl.Clazz) d, file.pkg()));
+				skeletons.addAll(buildSkeletons((Decl.Clazz) d, file.pkg(),
+						null, typeOnly));
 			}
 		}
 		return skeletons;
 	}
 	
-	public List<Clazz> buildSkeletons(Decl.Clazz c, String pkg) {
+	public List<Clazz> buildSkeletons(Decl.Clazz c, String pkg,
+			Type.Clazz parent, boolean typeOnly) {
 		ArrayList<Clazz> skeletons = new ArrayList();
 		
-		Type.Clazz type = (Type.Clazz) c.attribute(Type.class);
+		Type.Clazz type;
+		
+		if(!typeOnly) {
+			// In this case, type resolution has already occurred and, hence, we
+			// have more detailed type information which can be extracted here.
+			type = (Type.Clazz) c.attribute(Type.class);
+		} else {
+			// At this stage, type resolution has not already occurred and,
+			// hence, we have only basic (i.e. non-generic) type information
+			// available.
+			List<Pair<String,List<Type.Reference>>> components = new ArrayList();
+			if(parent != null) {
+				for (Pair<String, List<Type.Reference>> i : parent.components()) {
+					components.add(i);
+				}
+			}
+			components.add(new Pair(c.name(), new ArrayList()));
+			type = new Type.Clazz(pkg,components);
+		}
+		
 		Type.Clazz superClass = null;
 		ArrayList<Type.Clazz> interfaces = new ArrayList();
 		ArrayList<Field> fields = new ArrayList();
@@ -224,12 +270,12 @@ public class JavaCompiler implements Compiler {
 		
 		for(Decl d : c.declarations()) {
 			if(d instanceof Decl.Clazz) {
-				skeletons.addAll(buildSkeletons((Decl.Clazz) d, pkg));
-			} else if(d instanceof Decl.Field) {				
+				skeletons.addAll(buildSkeletons((Decl.Clazz) d, pkg,type,typeOnly));
+			} else if(d instanceof Decl.Field && !typeOnly) {				
 				Decl.Field f = (Decl.Field) d;
 				Type t = (Type) f.attribute(Type.class);
 				fields.add(new Field(f.name(),t,f.modifiers()));
-			} else if(d instanceof Decl.Method) {
+			} else if(d instanceof Decl.Method && !typeOnly) {
 				
 			}
 		}
