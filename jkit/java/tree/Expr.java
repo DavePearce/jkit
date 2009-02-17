@@ -158,8 +158,8 @@ public interface Expr extends SyntacticElement {
 		public static final int POSTINC = 5;
 		public static final int POSTDEC = 6;
 
-		protected final Expr expr;
-		protected final int op;
+		protected Expr expr;
+		protected int op;
 
 		public UnOp(int op, Expr expr, Attribute... attributes) {
 			super(attributes);
@@ -177,8 +177,16 @@ public interface Expr extends SyntacticElement {
 			return op;
 		}
 
+		public void setOp(int op) {
+			this.op = op;
+		}
+		
 		public Expr expr() {
 			return expr;
+		}
+		
+		public void setExpr(Expr expr) {
+			this.expr = expr;
 		}
 	}
 

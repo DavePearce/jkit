@@ -515,7 +515,31 @@ public class TypePropagation {
 	}
 	
 	protected void doUnOp(Expr.UnOp e, HashMap<String,Type> environment) {		
+		doExpression(e.expr(),environment);
+		Type expr_t = (Type) e.expr().attribute(Type.class);
 		
+		switch(e.op()) {
+		case Expr.UnOp.NEG:
+			if (expr_t instanceof Type.Byte || expr_t instanceof Type.Char
+					|| expr_t instanceof Type.Short) {
+				// This is a strange feature of javac. I don't really understand
+				// why it's necessary.
+				e.setExpr(implicitCast(e.expr(),new Type.Int()));
+				e.attributes().add(new Type.Int());				
+			} 
+			break;		
+		case Expr.UnOp.INV:
+			if (expr_t instanceof Type.Byte || expr_t instanceof Type.Char
+					|| expr_t instanceof Type.Short) {
+				// This is a strange feature of javac. I don't really understand
+				// why it's necessary.
+				e.setExpr(implicitCast(e.expr(),new Type.Int()));
+				e.attributes().add(new Type.Int());					
+			} 
+			break;	
+		default:
+			e.attributes().add(expr_t);	
+		}		
 	}
 		
 	protected void doBinOp(Expr.BinOp e, HashMap<String,Type> environment) {				

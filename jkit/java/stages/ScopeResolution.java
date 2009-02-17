@@ -691,6 +691,7 @@ public class ScopeResolution {
 	}
 
 	protected Expr doUnOp(Expr.UnOp e, JavaFile file) {		
+		e.setExpr(doExpression(e.expr(), file));
 		return e;
 	}
 		
@@ -700,7 +701,10 @@ public class ScopeResolution {
 		return e;
 	}
 	
-	protected Expr doTernOp(Expr.TernOp e, JavaFile file) {		
+	protected Expr doTernOp(Expr.TernOp e, JavaFile file) {	
+		e.setCondition(doExpression(e.condition(), file));
+		e.setTrueBranch(doExpression(e.trueBranch(), file));
+		e.setFalseBranch(doExpression(e.falseBranch(), file));
 		return e;
 	}
 		
