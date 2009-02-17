@@ -311,6 +311,8 @@ public class TypeResolution {
 	}
 	
 	protected void doForEach(Stmt.ForEach stmt) {
+		Type t = resolve(stmt.type());
+		stmt.type().attributes().add(t);
 		doExpression(stmt.source());
 		doStatement(stmt.body());
 	}

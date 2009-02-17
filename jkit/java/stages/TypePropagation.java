@@ -260,6 +260,7 @@ public class TypePropagation {
 	}
 	
 	protected void doFor(Stmt.For stmt, HashMap<String,Type> environment) {
+		environment = (HashMap<String,Type>) environment.clone();
 		doStatement(stmt.initialiser(),environment);
 		doExpression(stmt.condition(),environment);
 		doStatement(stmt.increment(),environment);
@@ -267,6 +268,8 @@ public class TypePropagation {
 	}
 	
 	protected void doForEach(Stmt.ForEach stmt, HashMap<String,Type> environment) {
+		environment = (HashMap<String,Type>) environment.clone();		
+		environment.put(stmt.var(), (Type.Clazz) stmt.type().attribute(Type.class));
 		doExpression(stmt.source(),environment);
 		doStatement(stmt.body(),environment);
 	}
@@ -496,7 +499,7 @@ public class TypePropagation {
 		
 	}
 	
-	protected void doVariable(Expr.Variable e, HashMap<String,Type> environment) {			
+	protected void doVariable(Expr.Variable e, HashMap<String,Type> environment) {					
 		Type t = environment.get(e.value());
 		if(t == null) {			 
 			syntax_error("Cannot find symbol - variable \"" + e.value() + "\"",

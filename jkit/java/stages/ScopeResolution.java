@@ -388,8 +388,10 @@ public class ScopeResolution {
 	}
 	
 	protected void doForEach(Stmt.ForEach stmt, JavaFile file) {
-		scopes.push(new Scope());
+		Scope myScope = new Scope();
+		scopes.push(myScope);
 		
+		myScope.variables.add(stmt.var());
 		stmt.setSource(doExpression(stmt.source(), file));
 		doStatement(stmt.body(), file);
 		
