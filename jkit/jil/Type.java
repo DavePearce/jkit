@@ -359,14 +359,30 @@ public interface Type extends Attribute {
 			return lowerBounds;
 		}		
 		
-		public boolean equals(Object o) {
+		public boolean equals(Object o) {			
 			if (o instanceof Variable) {
 				Variable v = (Variable) o;
 				return variable.equals(v.variable)
 						&& lowerBounds.equals(v.lowerBounds);
 			}
 			return false;
-		}		
+		}
+		
+		public String toString() {
+			if(lowerBounds == null || lowerBounds.size() == 0) {
+				return variable;
+			} else {
+				String r = variable + " extends (";
+				boolean firstTime = true;
+				for(Type t : lowerBounds) {
+					if(!firstTime) {
+						r += " & ";
+					}
+					r += t.toString();
+				}
+				return r + ")";				
+			}
+		}
 	}
 	
 	/**

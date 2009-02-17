@@ -123,10 +123,9 @@ public class TypeSystem {
 		
 		// Ok, so the idea behind the worklist is to start from type t2, and
         // proceed up the class heirarchy visiting all supertypes (i.e. classes
-        // + interfaces) of t2 until either we reach t1, or java.lang.Object.
+        // + interfaces) of t2 until either we reach t1, or java.lang.Object.		
 		while(!worklist.isEmpty()) {
-			Type.Clazz type = worklist.remove(worklist.size() - 1);		
-
+			Type.Clazz type = worklist.remove(worklist.size() - 1);					
 			if(type.equals(t1)) {
 				return true;
 			} else if(baseEquivalent(type, t1)) {
@@ -138,8 +137,7 @@ public class TypeSystem {
 			}
 						
 			Clazz c = loader.loadClass(type);
-			
-			
+						
 			// The current type we're visiting is not a match. Therefore, we
             // need to explore its supertypes as well. A key issue
             // in doing this, is that we must preserve the appropriate types
@@ -164,11 +162,11 @@ public class TypeSystem {
             // what the binding / substitution stuff is for.			
 			Map<String,Type.Reference> binding = bind(type, c.type());
 			
-			if (c.superClass() != null) {
+			if (c.superClass() != null) {				
 				worklist.add((Type.Clazz) substitute(c.superClass(), binding));
 			}
 			for (Type.Clazz t : c.interfaces()) {
-				worklist.add((Type.Clazz) substitute(t, binding));
+				worklist.add((Type.Clazz) substitute(t, binding));				
 			}			
 		}
 		
