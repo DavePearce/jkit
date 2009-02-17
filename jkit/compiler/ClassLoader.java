@@ -243,14 +243,15 @@ public class ClassLoader {
 				new ArrayList<Type.Reference>()));
 		String fullClassName = className;
 		String outerClassName = className;
-		while(pkg != null) {						
-			PackageInfo pkgInfo = packages.get(pkg);
+		
+		while(pkg != null) {			
+			PackageInfo pkgInfo = packages.get(pkg);			
 			if (pkgInfo != null) {				
-				if(pkgInfo.classes.contains(fullClassName)) {
+				if(pkgInfo.classes.contains(fullClassName)) {					
 					// Found the class!!
 					return new Type.Clazz(pkg,classes);
 				} else if (pkgInfo.classes.contains(outerClassName)
-						&& !pkgInfo.compiledClasses.contains(outerClassName)) {
+						&& !pkgInfo.compiledClasses.contains(outerClassName)) {									
 					// If we get here, then we may have a source file for the
 					// outer class which has not been compiled yet. Therefore,
 					// we need to check for this and, if so, compile it to check
@@ -259,7 +260,7 @@ public class ClassLoader {
 					String ocn = pkg == "" ? outerClassName : pkg + "." + outerClassName;
 					loadClass(ocn,pkgInfo); // this will force a compile					
 					continue; // try again for the same class/pkg combination
-				} else {
+				} else {					
 					break;
 				}
 			} else {
@@ -410,7 +411,7 @@ public class ClassLoader {
 						classtable.put(refName(clazz.type()), clazz);						
 						return clazz;										
 					} else if(compiler.isCompiling(srcFile)) {
-						System.out.println("SHOULDN'T FUCKING GET HERE");
+						
 					}
 				}
 			} catch(IOException e) {
@@ -430,15 +431,15 @@ public class ClassLoader {
 	 */
 	public void compilingClasses(List<Clazz> jilClasses) {
 		for(Clazz f : jilClasses) {
-			PackageInfo pkgInfo = packages.get(f.type().pkg());
-			String rn = refName(f.type());
+			PackageInfo pkgInfo = packages.get(f.type().pkg());			
+			String rn = refName(f.type());			
 			String pc = pathChild(rn);
 			classtable.put(rn, f);			
 			// Need to do this to indicate that the source file in question has
 			// being compiled. Otherwise, we end up with an infinite loop of
 			// class loading.
 			pkgInfo.classes.add(pc);
-			pkgInfo.compiledClasses.add(pc);
+			pkgInfo.compiledClasses.add(pc);			
 		}
 	}
 	
@@ -592,10 +593,15 @@ public class ClassLoader {
 	 */
 	String refName(Type.Clazz ref) {
 		String descriptor = ref.pkg();
+		if(!descriptor.equals("")) {
+			descriptor += ".";
+		}
+		boolean firstTime=true;
 		for(Pair<String,List<Type.Reference>> c : ref.components()) {
-			if(!descriptor.equals("")) {
-				descriptor += ".";
-			}
+			if(!firstTime) {
+				descriptor += "$";
+			}	
+			firstTime=false;
 			descriptor += c.first();
 		}
 		return descriptor;

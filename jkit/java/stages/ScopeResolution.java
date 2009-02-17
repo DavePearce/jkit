@@ -4,6 +4,7 @@ import java.util.*;
 
 import jkit.compiler.ClassLoader;
 import jkit.compiler.FieldNotFoundException;
+import jkit.compiler.SyntaxError;
 import jkit.java.io.JavaFile;
 import jkit.java.tree.Decl;
 import jkit.java.tree.Expr;
@@ -15,6 +16,8 @@ import jkit.java.tree.Decl.Interface;
 import jkit.java.tree.Decl.Method;
 import jkit.java.tree.Stmt.Case;
 import jkit.jil.Modifier;
+import jkit.jil.SourceLocation;
+import jkit.jil.SyntacticElement;
 import jkit.jil.Type;
 import jkit.util.Pair;
 import jkit.util.Triple;
@@ -458,7 +461,41 @@ public class ScopeResolution {
 	}
 	
 	protected Expr doDeref(Expr.Deref e, JavaFile file) {
-		e.setTarget(doExpression(e.target(), file));		
+		Expr target = doExpression(e.target(), file);
+		
+		if(target instanceof Expr.ClassVariable) {
+			// The question we need to consider here is. If we're dereference a
+			// ClassVariable, then does it actually contain the field given, or is
+			// it an inner class?						
+			Expr.ClassVariable cv = (Expr.ClassVariable) target;
+			Type.Clazz type = (Type.Clazz) target.attribute(Type.class);
+			
+			try {
+				Triple<jkit.jil.Clazz, jkit.jil.Field, Type> r = types
+						.resolveField(type, e.name(), loader);
+				// if we get here, then there is such a field.
+				//
+				// so do nothing!
+			} catch(ClassNotFoundException cne) {
+				syntax_error(cne.getMessage(),e);
+			} catch(FieldNotFoundException fne) {	
+				// Right, if we get here then there is no field ... so maybe
+				// this is actually an inner class (or a syntax error :)
+				try {						
+					Type.Clazz c = loader.resolve(cv.type() + "$" + e.name(),
+							imports);
+					Expr r = new Expr.ClassVariable(cv.type() + "." + e.name(),
+							new ArrayList(e.attributes()));
+					r.attributes().add(c);
+					return r;
+				} catch(ClassNotFoundException cne) {
+					// this must be an error...
+					syntax_error("field does not exist: " + cv.type() + "." + e.name(),e);
+				}
+			}
+		}
+		
+		e.setTarget(target);		
 		return e;
 	}
 	
@@ -638,6 +675,18 @@ public class ScopeResolution {
 			}
 		}
 		return null;
+	}
+	
+	/**
+     * This method is just to factor out the code for looking up the source
+     * location and throwing an exception based on that.
+     * 
+     * @param msg --- the error message
+     * @param e --- the syntactic element causing the error
+     */
+	protected void syntax_error(String msg, SyntacticElement e) {
+		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
+		throw new SyntaxError(msg,loc.line(),loc.column());
 	}
 	
 	/**

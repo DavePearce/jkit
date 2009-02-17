@@ -173,7 +173,7 @@ public class JavaCompiler implements Compiler {
 			
 			// First, we need to resolve types. That is, for each class
 			// reference type, determine what package it's in.	
-			List<Clazz> skeletons = buildSkeletons(jfile,true);
+			List<Clazz> skeletons = buildSkeletons(jfile,true);			
 			loader.compilingClasses(skeletons);
 			
 			start = System.currentTimeMillis();
@@ -218,7 +218,7 @@ public class JavaCompiler implements Compiler {
 			
 			return skeletons; // to be completed			
 		} catch(SyntaxError se) {
-			throw new SyntaxError(se.msg(), filename.getPath(), se.line(), se
+			throw new SyntaxError(se.msg(), filename.toString(), se.line(), se
 					.column(), se.width(), se);			
 		} 
 	}
