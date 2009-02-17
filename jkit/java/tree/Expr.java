@@ -282,12 +282,24 @@ public interface Expr extends SyntacticElement {
 			return toption;
 		}
 
+		public void setTrueBranch(Expr toption) {
+			this.toption = toption;
+		}
+		
 		public Expr falseBranch() {
 			return foption;
+		}
+		
+		public void setFalseBranch(Expr foption) {
+			this.foption = foption;
 		}
 
 		public Expr condition() {
 			return cond;
+		}
+		
+		public void setCondition(Expr condition) {
+			this.cond = condition;
 		}
 	}
 

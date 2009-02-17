@@ -36,7 +36,15 @@ public class TypeSystem {
      */
 	public boolean subtype(Type t1, Type t2, ClassLoader loader)
 			throws ClassNotFoundException {
-		
+		if(loader == null) {
+			throw new IllegalArgumentException("loader cannot be null.");
+		}
+		if(t1 == null) {
+			throw new IllegalArgumentException("t1 cannot be null.");
+		}
+		if(t2 == null) {
+			throw new IllegalArgumentException("t2 cannot be null.");
+		}	
 		// First, do the easy cases ...		
 		if(t1 instanceof Type.Reference && t2 instanceof Type.Null) {
 			return true; // null is a subtype of all references.
@@ -72,7 +80,13 @@ public class TypeSystem {
      * @param t2
      * @return
      */
-	public boolean subtype(Type.Primitive t1, Type.Primitive t2) {
+	public boolean subtype(Type.Primitive t1, Type.Primitive t2) {		
+		if(t1 == null) {
+			throw new IllegalArgumentException("t1 cannot be null.");
+		}
+		if(t2 == null) {
+			throw new IllegalArgumentException("t2 cannot be null.");
+		}	
 		if(t1.getClass() == t2.getClass()) {
 			return true;
 		} else if(t1 instanceof Type.Double && subtype(new Type.Float(),t2)) { 
@@ -103,6 +117,15 @@ public class TypeSystem {
      */
 	public boolean subtype(Type.Array t1, Type.Array t2, ClassLoader loader)
 			throws ClassNotFoundException {
+		if(loader == null) {
+			throw new IllegalArgumentException("loader cannot be null.");
+		}
+		if(t1 == null) {
+			throw new IllegalArgumentException("t1 cannot be null.");
+		}
+		if(t2 == null) {
+			throw new IllegalArgumentException("t2 cannot be null.");
+		}	
 		return subtype(t1.element(), t2.element(), loader);
 	}
 
@@ -117,6 +140,15 @@ public class TypeSystem {
      */
 	public boolean subtype(Type.Clazz t1, Type.Clazz t2, ClassLoader loader)
 			throws ClassNotFoundException {
+		if(loader == null) {
+			throw new IllegalArgumentException("loader cannot be null.");
+		}
+		if(t1 == null) {
+			throw new IllegalArgumentException("t1 cannot be null.");
+		}
+		if(t2 == null) {
+			throw new IllegalArgumentException("t2 cannot be null.");
+		}	
 		ArrayList<Type.Clazz> worklist = new ArrayList<Type.Clazz>();
 		
 		worklist.add(t2);
@@ -206,8 +238,13 @@ public class TypeSystem {
      *             a BindError if the binding is not constructable.
      */
 	public Map<String, Type.Reference> bind(Type.Reference concrete,
-			Type.Reference template) {
-		
+			Type.Reference template) {		
+		if(concrete == null) {
+			throw new IllegalArgumentException("concrete cannot be null.");
+		}
+		if(template == null) {
+			throw new IllegalArgumentException("template cannot be null.");
+		}
 		if (template instanceof Type.Clazz
 				&& concrete instanceof Type.Clazz
 				&& !baseEquivalent((Type.Clazz) concrete, (Type.Clazz) template)) {
@@ -227,15 +264,21 @@ public class TypeSystem {
      * class types (see above).
      * 
      * @param concrete
-     *            --- the concrete (i.e. instantiated) type.
+     *            --- the concrete (i.e. instantiated) type.  Must be non-null.
      * @param template
-     *            --- the template (i.e. having generic parameters) type.
+     *            --- the template (i.e. having generic parameters) type.  Must be non-null.
      * @return
      * @throws ---
      *             a BindError if the binding is not constructable.
      */
 	public Map<String, Type.Reference> bind(Type.Function concrete,
 			Type.Function template) {
+		if(concrete == null) {
+			throw new IllegalArgumentException("concrete cannot be null.");
+		}
+		if(template == null) {
+			throw new IllegalArgumentException("template cannot be null.");
+		}
 		
 		// first, do return type
 		
@@ -499,7 +542,16 @@ public class TypeSystem {
 	 * @return
 	 */
 	public boolean hasMethod(Type.Clazz receiver, String name,
-			ClassLoader loader) throws ClassNotFoundException {				
+			ClassLoader loader) throws ClassNotFoundException {
+		if(loader == null) {
+			throw new IllegalArgumentException("loader cannot be null.");
+		}
+		if(name == null) {
+			throw new IllegalArgumentException("name cannot be null.");
+		}
+		if(receiver == null) {
+			throw new IllegalArgumentException("receiver cannot be null.");
+		}		
 		while(receiver != null) {
 			Clazz c = loader.loadClass(receiver);
 			if(c.methods(name).size() > 0) {
@@ -519,8 +571,8 @@ public class TypeSystem {
 	 *            enclosing class
 	 * @param name
 	 *            Method name
-	 * @param concreteParameterTypes
-	 *            the actual parameter types to match against
+	 * @param concreteParameterTypes 
+	 *            The actual parameter types to match against.  Must be non-null.  
 	 * @return A triple (C,M,T), where M is the method being invoked, C it's
 	 *         enclosing class, and T is the actual type of the method. Note
 	 *         that T can vary from M.type, since it may contain appropriate
@@ -534,6 +586,18 @@ public class TypeSystem {
 			Type.Clazz receiver, String name,
 			List<Type> concreteParameterTypes, ClassLoader loader)
 			throws ClassNotFoundException, MethodNotFoundException {
+		if(loader == null) {
+			throw new IllegalArgumentException("loader cannot be null.");
+		}
+		if(name == null) {
+			throw new IllegalArgumentException("name cannot be null.");
+		}
+		if(receiver == null) {
+			throw new IllegalArgumentException("receiver cannot be null.");
+		}
+		if(concreteParameterTypes == null) {
+			throw new IllegalArgumentException("concreteParameterTypes cannot be null.");
+		}		
 		
 		// Phase 1: traverse heirarchy whilst ignoring autoboxing and varargs
 		Triple<jkit.jil.Clazz, jkit.jil.Method, Type.Function> methodInfo = resolveMethod(receiver,
@@ -602,8 +666,8 @@ public class TypeSystem {
 	protected Triple<Clazz, Method, Type.Function> resolveMethod(
 			Type.Clazz receiver, String name,
 			List<Type> concreteParameterTypes, boolean autoboxing,
-			boolean varargs, ClassLoader loader) throws ClassNotFoundException {
-						
+			boolean varargs, ClassLoader loader) throws ClassNotFoundException {				
+		
 		// traverse class hierarchy looking for field
 		ArrayList<Type.Clazz> worklist = new ArrayList<Type.Clazz>();
 		worklist.add(receiver);
@@ -759,9 +823,9 @@ public class TypeSystem {
 	 * Identify the field with the given name in the given clazz.
 	 * 
 	 * @param owner
-	 *            enclosing class
+	 *            enclosing class.  Must be non-null.
 	 * @param name
-	 *            Field name
+	 *            Field name.  Must be non-null.
 	 * @return (C,F,T) where C is the enclosing class, F is the field being
 	 *         accessed, and T is type of that field with appropriate type
 	 *         subsititions based on the owner reference given.
@@ -773,6 +837,15 @@ public class TypeSystem {
 	public Triple<Clazz, Field, Type> resolveField(Type.Clazz owner,
 			String name, ClassLoader loader) throws ClassNotFoundException,
 			FieldNotFoundException {
+		if(loader == null) {
+			throw new IllegalArgumentException("loader cannot be null.");
+		}
+		if(name == null) {
+			throw new IllegalArgumentException("name cannot be null.");
+		}
+		if(owner == null) {
+			throw new IllegalArgumentException("receiver cannot be null.");
+		}	
 		// traverse class hierarchy looking for field
 		ArrayList<Type.Clazz> worklist = new ArrayList<Type.Clazz>();
 		worklist.add(owner);

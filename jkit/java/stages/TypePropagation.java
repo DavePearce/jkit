@@ -417,7 +417,7 @@ public class TypePropagation {
 		// Now, to determine the return type of this method, we need to lookup
 		// the method in the class hierarchy. This lookup procedure is seriously
 		// non-trivial, and is implemented in the TypeSystem module.
-						
+		
 		Type.Clazz receiver = (Type.Clazz) e.target().attribute(Type.class);
 		try {				
 			Type.Function f = types.resolveMethod(receiver, e.name(), parameterTypes, loader).third();				
@@ -437,10 +437,6 @@ public class TypePropagation {
 				msg += t;
 			}
 			syntax_error(msg + ")", e);
-		} catch(IllegalArgumentException iae) {
-			// This can happen if the parameters supplied to bind, which is
-			// called by resolveMethod are somehow not "base equivalent"
-			syntax_error(iae.getMessage(),e);
 		} catch(TypeSystem.BindError be) {
 			// This can happen if the parameters supplied to bind, which is
 			// called by resolveMethod are somehow not "base equivalent"
@@ -607,7 +603,88 @@ public class TypePropagation {
 	}
 	
 	protected void doTernOp(Expr.TernOp e, HashMap<String,Type> environment) {		
+		doExpression(e.condition(),environment);
+		doExpression(e.falseBranch(),environment);
+		doExpression(e.trueBranch(),environment);
 		
+		Type lhs_t = (Type) e.trueBranch().attribute(Type.class);
+		Type rhs_t = (Type) e.falseBranch().attribute(Type.class);
+		
+		/*
+		 * See JLS Section 15.25 for more details on the rules that apply here. 
+		 */
+		if(lhs_t.equals(rhs_t)) {
+			e.attributes().add(lhs_t);
+		} else if((lhs_t instanceof Type.Bool || rhs_t instanceof Type.Bool)
+				&& (isWrapper(lhs_t,"Boolean") || isWrapper(rhs_t,"Boolean"))) {
+			e.attributes().add(new Type.Bool());			
+		} else if(lhs_t instanceof Type.Null) {			
+			e.attributes().add(rhs_t);
+		} else if(rhs_t instanceof Type.Null) {
+			e.attributes().add(lhs_t);			
+		} else if((lhs_t instanceof Type.Byte || rhs_t instanceof Type.Byte) && 
+				(lhs_t instanceof Type.Short || rhs_t instanceof Type.Short)) {
+			e.attributes().add(new Type.Short());
+		} else if ((lhs_t instanceof Type.Byte || isWrapper(lhs_t, "Byte"))
+				&& rhs_t instanceof Type.Int
+				&& isUnknownConstant(e.falseBranch())) {
+			int v = evaluateUnknownConstant(e.falseBranch());
+			if(v >= Byte.MIN_VALUE && v <= Byte.MAX_VALUE) {
+				e.setFalseBranch(implicitCast(e.falseBranch(),lhs_t));
+				e.attributes().add(lhs_t);
+				return;
+			}
+		} else if ((rhs_t instanceof Type.Byte || isWrapper(rhs_t, "Byte"))
+				&& lhs_t instanceof Type.Int
+				&& isUnknownConstant(e.trueBranch())) {
+			int v = evaluateUnknownConstant(e.trueBranch());
+			if(v >= Byte.MIN_VALUE && v <= Byte.MAX_VALUE) {
+				e.setTrueBranch(implicitCast(e.trueBranch(),rhs_t));
+				e.attributes().add(rhs_t);
+				return;
+			}
+		} else if ((lhs_t instanceof Type.Char || isWrapper(lhs_t, "Character"))
+				&& rhs_t instanceof Type.Int
+				&& isUnknownConstant(e.falseBranch())) {
+			int v = evaluateUnknownConstant(e.falseBranch());
+			if(v >= Byte.MIN_VALUE && v <= Byte.MAX_VALUE) {
+				e.setFalseBranch(implicitCast(e.falseBranch(),lhs_t));
+				e.attributes().add(lhs_t);
+				return;
+			}
+		} else if ((rhs_t instanceof Type.Char || isWrapper(rhs_t, "Character"))
+				&& lhs_t instanceof Type.Int
+				&& isUnknownConstant(e.trueBranch())) {
+			int v = evaluateUnknownConstant(e.trueBranch());
+			if(v >= Character.MIN_VALUE && v <= Character.MAX_VALUE) {
+				e.setTrueBranch(implicitCast(e.trueBranch(),rhs_t));
+				e.attributes().add(rhs_t);
+				return;
+			}
+		} else if ((lhs_t instanceof Type.Short || isWrapper(lhs_t, "Short"))
+				&& rhs_t instanceof Type.Int
+				&& isUnknownConstant(e.falseBranch())) {
+			int v = evaluateUnknownConstant(e.falseBranch());
+			if(v >= Short.MIN_VALUE && v <= Short.MAX_VALUE) {
+				e.setFalseBranch(implicitCast(e.falseBranch(),lhs_t));
+				e.attributes().add(lhs_t);
+				return;
+			}
+		} else if ((rhs_t instanceof Type.Short || isWrapper(rhs_t, "Short"))
+				&& lhs_t instanceof Type.Int
+				&& isUnknownConstant(e.trueBranch())) {
+			int v = evaluateUnknownConstant(e.trueBranch());
+			if(v >= Short.MIN_VALUE && v <= Short.MAX_VALUE) {
+				e.setTrueBranch(implicitCast(e.trueBranch(),rhs_t));
+				e.attributes().add(rhs_t);
+				return;
+			}
+		} else {
+			Type rt = binaryNumericPromotion(lhs_t,rhs_t);
+			e.attributes().add(rt);
+			e.setTrueBranch(implicitCast(e.trueBranch(),rt));
+			e.setFalseBranch(implicitCast(e.falseBranch(),rt));
+		}				
 	}
 	
 	/**
@@ -628,6 +705,30 @@ public class TypePropagation {
 				s.equals("Integer") || s.equals("Long")
 					|| s.equals("Float") || s.equals("Double")
 					|| s.equals("Boolean")) {
+				return true;
+			}
+		}
+		return false;
+	}
+	/**
+	 * Determine whether or not the given type is a wrapper for a primitive
+	 * type. E.g. java.lang.Integer is a wrapper for int.
+	 * 
+	 * @param t
+	 *            --- type to test
+	 * @param wrapper
+	 *            --- specific wrapper class to look for (i.e. Integer, Boolean,
+	 *            Character).
+	 * @return
+	 */
+	protected static boolean isWrapper(Type t, String wrapper) {
+		if(!(t instanceof Type.Clazz)) {
+			return false;
+		}
+		Type.Clazz ref = (Type.Clazz) t;
+		if(ref.pkg().equals("java.lang") && ref.components().size() == 1) {
+			String s = ref.components().get(0).first();
+			if(s.equals(wrapper)) {
 				return true;
 			}
 		}
