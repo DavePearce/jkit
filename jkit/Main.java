@@ -69,9 +69,7 @@ public class Main {
 			usage();
 			System.exit(0);
 		}
-		
-
-		
+				
 		// ======================================================
 		// ======== First, parse command-line arguments ========
 		// ======================================================
@@ -131,8 +129,11 @@ public class Main {
 		// ======================================================		
 		
 		try {
-			compiler.compile(Arrays.asList(args).subList(fileArgsBegin,
-					args.length));
+			List<File> srcfiles = new ArrayList<File>();
+			for(int i=fileArgsBegin;i!=args.length;++i) {
+				srcfiles.add(new File(args[i]));
+			}
+			compiler.compile(srcfiles);
 		} catch (SyntaxError e) {
 			outputSourceError(e.fileName(), e.line(), e.column(), e.width(), e
 					.getMessage());

@@ -17,5 +17,13 @@ public interface Compiler {
      * 
      * @return
      */
-	public List<Clazz> compile(String srcFile) throws IOException,SyntaxError;
+	public List<Clazz> compile(File srcFile) throws IOException,SyntaxError;
+	
+	/**
+	 * The purpose of this method is to indicate that a source file is currently
+	 * being compiled. This is crucial for the ClassLoader, since it prevents
+	 * infinite recursive loops where the classloader attempts to compile the
+	 * class in question, but it's already being compiled.
+	 */
+	public boolean isCompiling(File srcFile);
 }

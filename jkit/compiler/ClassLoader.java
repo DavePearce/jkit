@@ -242,7 +242,7 @@ public class ClassLoader {
 		classes.add(new Pair<String, List<Type.Reference>>(className,new ArrayList<Type.Reference>()));
 		String fullClassName = className;
 		String outerClassName = className;
-		while(pkg != null) {			
+		while(pkg != null) {						
 			PackageInfo pkgInfo = packages.get(pkg);
 			if (pkgInfo != null) {				
 				if(pkgInfo.classes.contains(fullClassName)) {
@@ -372,16 +372,14 @@ public class ClassLoader {
 					File srcFile = new File(srcFilename + ".java");
 					
 					if (srcFile.exists()
+							&& !compiler.isCompiling(srcFile)
 							&& (!classFile.exists() || classFile.lastModified() < srcFile
 									.lastModified())) {
 						// Here, there is a source file, and either there is no class
 						// file, or the class file is older than the source file.
 						// Therefore, we need to (re)compile the source file.
-						time = System.currentTimeMillis() - time;						
-						List<Clazz> cs = compiler.compile(srcFile.getPath());
-
-						// ADDED TO RESOLVE INFINITE COMPILATION LOOP. 
-						if (cs.size() == 0) { continue; }
+						time = System.currentTimeMillis() - time;		
+						List<Clazz> cs = compiler.compile(srcFile);
 						
 						logout.println("Compiled " + srcFile + " [" + time + "ms]");						
 						// Add all classes coming out of the src file into the
@@ -404,6 +402,8 @@ public class ClassLoader {
 						// Update our knowledge base of classes.												
 						classtable.put(refName(clazz.type()), clazz);						
 						return clazz;										
+					} else if(compiler.isCompiling(srcFile)) {
+						System.out.println("SHOULDN'T FUCKING GET HERE");
 					}
 				}
 			} catch(IOException e) {
@@ -416,12 +416,18 @@ public class ClassLoader {
 	/**
 	 * This method simply adds a class definition to the classtable. This is
 	 * needed for when a class is being compiled, since we cannot simply load
-	 * the class details from the bytecode as this doesn't exist!
+	 * the class details from the bytecode as this doesn't exist! 
 	 * 
-	 * @param jilClass - The class being added.
+	 * @param jilClasses -
+	 *            The classes being added.
 	 */
-	public void add(Clazz jilClass) {
-		classtable.put(refName(jilClass.type()), jilClass);
+	public void compilingClasses(List<Clazz> jilClasses) {
+		for(Clazz f : jilClasses) {
+			PackageInfo pkgInfo = packages.get(f.type().pkg());
+			String rn = refName(f.type());
+			classtable.put(rn, f);			
+			pkgInfo.compiledClasses.add(pathChild(rn));
+		}
 	}
 	
 	/**

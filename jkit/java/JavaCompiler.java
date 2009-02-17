@@ -112,6 +112,19 @@ public class JavaCompiler implements Compiler {
 	}
 	
 	/**
+	 * The purpose of this method is to indicate that a source file is currently
+	 * being compiled.
+	 */
+	public boolean isCompiling(File sfile)  {		
+		try {
+			return compilationQueue.contains(sfile.getCanonicalPath())
+					|| compiling.contains(sfile.getCanonicalPath());
+		} catch (IOException e) {
+			return false;
+		}
+	}
+	
+	/**
 	 * Compile a list of classes in the file system, using the appropriate
 	 * pipeline(s).
 	 * 
@@ -121,13 +134,15 @@ public class JavaCompiler implements Compiler {
 	 *            using File.separatorChar's to indicate directories).
 	 * @return
 	 */
-	public List<Clazz> compile(List<String> filenames) throws IOException, SyntaxError {
-		compilationQueue.addAll(filenames);
+	public List<Clazz> compile(List<File> filenames) throws IOException, SyntaxError {
+		for(File f : filenames) {
+			compilationQueue.add(f.getCanonicalPath());
+		}
 		
 		ArrayList<Clazz> classes = new ArrayList<Clazz>();
 		
 		while(!compilationQueue.isEmpty()) {
-			classes.addAll(compile(compilationQueue.get(0)));
+			classes.addAll(compile(new File(compilationQueue.get(0))));
 		}
 		
 		return classes;
@@ -142,33 +157,29 @@ public class JavaCompiler implements Compiler {
 	 *            File.separatorChar's to indicate directories).
 	 * @return
 	 */
-	public List<Clazz> compile(String filename) throws IOException, SyntaxError {		
-		// first, check whether we are already compiling this file. If so,
-        // return nothing [CAN WE DO BETTER THAN THIS?]
-		if(compiling.contains(filename)) {			
-			return new ArrayList<Clazz>();
-		}
-		compiling.add(filename);			
+	public List<Clazz> compile(File filename) throws IOException, SyntaxError {		
+		logout.println("ASKED TO COMPILE: " + filename);
+		compilationQueue.remove(filename.getCanonicalPath());
+		compiling.add(filename.getCanonicalPath());			
 						
 		try {
 			long start = System.currentTimeMillis();
 			
 			// Now, construct the reader!
-			JavaFileReader reader = new JavaFileReader(filename);
+			JavaFileReader reader = new JavaFileReader(filename.getPath());
 
-			long last = System.currentTimeMillis();
-			logout.println("Parsed " + filename + " [" + (last - start) + "ms]");
+			logout.println("Parsed " + filename + " [" + (System.currentTimeMillis() - start) + "ms]");
 			
 			JavaFile jfile = reader.read();
 			
 			// First, we need to resolve types. That is, for each class
 			// reference type, determine what package it's in.	
 			List<Clazz> skeletons = buildSkeletons(jfile,true);
-			for(Clazz s : skeletons) {
-				System.out.println("GOT SKELETONS: " + s.type());
-				loader.add(s); 
-			}
-			new TypeResolution(loader, new TypeSystem()).apply(jfile);
+			loader.compilingClasses(skeletons);
+			
+			start = System.currentTimeMillis();
+			new TypeResolution(loader, new TypeSystem()).apply(jfile);			
+			logout.println("Type resolution completed [" + (System.currentTimeMillis()-start) + "ms]");
 			
 			// Second, we need to build the skeletons of the classes. This is
 			// necessary to resolve the scope of a particular variable.
@@ -176,34 +187,39 @@ public class JavaCompiler implements Compiler {
 			// 1) traverse the class heirarchy
 			// 2) determine what fields are declared.			
 			skeletons = buildSkeletons(jfile,false);
-			for(Clazz s : skeletons) { loader.add(s); }
+			loader.compilingClasses(skeletons);			
 			
 			// Third, perform the scope resolution itself. The aim here is, for
 			// each variable access, to determine whether it is a local
 			// variable access, an inherited field access, an enclosing field
 			// access, or an access to a local variable in an enclosing scope
 			// (e.g. for anonymous inner classes).
+			start = System.currentTimeMillis();
 			new ScopeResolution(loader, new TypeSystem()).apply(jfile);
+			logout.println("Scope resolution completed [" + (System.currentTimeMillis()-start) + "ms]");
 			
 			// Fourth, propagate the type information throughout all expressions
 			// in the class file, including those in the method bodies and field
 			// initialisers.
+			start = System.currentTimeMillis();
 			new TypePropagation(loader, new TypeSystem()).apply(jfile);
+			logout.println("Type propagation completed [" + (System.currentTimeMillis()-start) + "ms]");
 			
 			// Fifth, check whether the types are being used correctly. If not,
 			// report a syntax error.
+			start = System.currentTimeMillis();
 			new TypeChecking(loader, new TypeSystem()).apply(jfile);
+			logout.println("Type checking completed [" + (System.currentTimeMillis()-start) + "ms]");
 			
 			// This stage is temporary. Just write out the java file again to
 			// indicate success thus far.
 			new JavaFileWriter(System.out).write(jfile);
-			
-			compilationQueue.remove(filename);
+						
 			compiling.remove(filename);
 			
 			return new ArrayList<Clazz>(); // to be completed			
 		} catch(SyntaxError se) {
-			throw new SyntaxError(se.msg(), filename, se.line(), se
+			throw new SyntaxError(se.msg(), filename.getPath(), se.line(), se
 					.column(), se.width(), se);			
 		} 
 	}
