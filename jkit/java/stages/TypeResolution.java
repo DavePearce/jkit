@@ -62,6 +62,7 @@ public class TypeResolution {
 	// the classes stack is used to keep track of the full type for the inner
 	// classes.
 	private Stack<Type.Clazz> scopes = new Stack<Type.Clazz>();
+	private Stack<String> imports = new Stack<String>();
 	
 	public TypeResolution(ClassLoader loader, TypeSystem types) {
 		this.loader = loader; 
@@ -70,63 +71,51 @@ public class TypeResolution {
 	
 	public void apply(JavaFile file) {
 		// the following may cause problems with static imports.
-		ArrayList<String> imports = new ArrayList<String>();
+		imports.push("java.lang.*");
+		imports.push(file.pkg() + ".*");								
 		for(Pair<Boolean,String> i : file.imports()) {
-			imports.add(i.second());
+			imports.push(i.second());
 		}	
-		
-		if(!file.pkg().equals("")) {
-			imports.add(0,file.pkg() + ".*");
-		}
-				
-		imports.add(0,"java.lang.*");
-		
-		
+						
 		// The first entry on to the classes stack is a dummy to set the package
 		// for remaining classes.		
 		scopes.push(new Type.Clazz(file.pkg(),new ArrayList()));		
 		
 		// Now, examine all the declarations contain here-in
 		for(Decl d : file.declarations()) {			
-			doDeclaration(d, imports);
+			doDeclaration(d);
 		}
 	}
 	
-	protected void doDeclaration(Decl d, List<String> imports) {
+	protected void doDeclaration(Decl d) {
 		if(d instanceof Interface) {
-			doInterface((Interface)d, imports);
+			doInterface((Interface)d);
 		} else if(d instanceof Clazz) {
-			doClass((Clazz)d, imports);
+			doClass((Clazz)d);
 		} else if(d instanceof Method) {
-			doMethod((Method)d, imports);
+			doMethod((Method)d);
 		} else if(d instanceof Field) {
-			doField((Field)d, imports);
+			doField((Field)d);
 		}
 	}
 	
-	protected void doInterface(Interface d, List<String> imports) {
+	protected void doInterface(Interface d) {
 		
 	}
 	
-	protected void doClass(Clazz c, List<String> imports) {		
+	protected void doClass(Clazz c) {		
 		// First, add myself to the import list, since that means we'll search
 		// in my class for types before searching anywhere else i've declared
 		// and/or on the CLASSPATH.
-		Type.Clazz parentType = scopes.peek();
-		String pkgn = parentType.pkg();
+		Type.Clazz parentType = scopes.peek();		
 		
-		pkgn = pkgn + "." + c.name();
-		
-		for(Pair<String, List<Type.Reference>> pc : parentType.components()) {
-			pkgn = pkgn + pc.first() + ".";
-		}		
-		imports.add(pkgn + ".*");
+		imports.add(computeImportDecl(parentType,c.name()));
 		
 		// Second, build my fully qualified type!		
 		List<Pair<String, List<Type.Reference>>> components = new ArrayList(parentType.components());
 		ArrayList<Type.Reference> typevars = new ArrayList<Type.Reference>();
 		for(jkit.java.tree.Type.Variable v : c.typeParameters()) {
-			typevars.add((Type.Reference) resolve(v, imports));
+			typevars.add((Type.Reference) resolve(v));
 		}		
 		components.add(new Pair(c.name(),typevars));
 		Type.Clazz myType = new Type.Clazz(parentType.pkg(),components);
@@ -136,324 +125,324 @@ public class TypeResolution {
 		
 		// 1) resolve types in my declared super class.
 		if(c.superclass() != null) {
-			c.superclass().attributes().add(resolve(c.superclass(), imports));
+			c.superclass().attributes().add(resolve(c.superclass()));
 		}		
 
 		// 2) resolve types in my declared interfaces
 		for(jkit.java.tree.Type.Clazz i : c.interfaces()) {
-			i.attributes().add(resolve(i, imports));
+			i.attributes().add(resolve(i));
 		}			 						
 		
 		// 3) resolve types in my other declarations (e.g. fields, methods,inner
 		// classes, etc)
 		for(Decl d : c.declarations()) {
-			doDeclaration(d, imports);
+			doDeclaration(d);
 		}
 		
 		imports.remove(imports.size()-1);
 		scopes.pop(); // undo my type
 	}
 
-	protected void doMethod(Method d, List<String> imports) {
+	protected void doMethod(Method d) {
 		// First, resolve return type and parameter types. 
 		for(jkit.java.tree.Type.Clazz e : d.exceptions()) {
-			e.attributes().add(resolve(e,imports));
+			e.attributes().add(resolve(e));
 		}		
 		
 		if(d.returnType() != null) {
 			// The return type may be null iff this is a constructor.
-			d.returnType().attributes().add(resolve(d.returnType(),imports));
+			d.returnType().attributes().add(resolve(d.returnType()));
 		}
 							
 		for(Triple<String,List<Modifier>,jkit.java.tree.Type> p : d.parameters()) {
-			Type pt = resolve(p.third(),imports);
+			Type pt = resolve(p.third());
 			p.third().attributes().add(pt);					
 		}
 		
 		// Now, explore the method body for any other things to resolve.
-		doStatement(d.body(), imports);
+		doStatement(d.body());
 	}
 
-	protected void doField(Field d, List<String> imports) {
-		doExpression(d.initialiser(), imports);		
-		d.attributes().add(resolve(d.type(),imports));
+	protected void doField(Field d) {
+		doExpression(d.initialiser());		
+		d.attributes().add(resolve(d.type()));
 	}
 	
-	protected void doStatement(Stmt e, List<String> imports) {
+	protected void doStatement(Stmt e) {
 		if(e instanceof Stmt.SynchronisedBlock) {
-			doSynchronisedBlock((Stmt.SynchronisedBlock)e, imports);
+			doSynchronisedBlock((Stmt.SynchronisedBlock)e);
 		} else if(e instanceof Stmt.TryCatchBlock) {
-			doTryCatchBlock((Stmt.TryCatchBlock)e, imports);
+			doTryCatchBlock((Stmt.TryCatchBlock)e);
 		} else if(e instanceof Stmt.Block) {
-			doBlock((Stmt.Block)e, imports);
+			doBlock((Stmt.Block)e);
 		} else if(e instanceof Stmt.VarDef) {
-			doVarDef((Stmt.VarDef) e, imports);
+			doVarDef((Stmt.VarDef) e);
 		} else if(e instanceof Stmt.Assignment) {
-			doAssignment((Stmt.Assignment) e, imports);
+			doAssignment((Stmt.Assignment) e);
 		} else if(e instanceof Stmt.Return) {
-			doReturn((Stmt.Return) e, imports);
+			doReturn((Stmt.Return) e);
 		} else if(e instanceof Stmt.Throw) {
-			doThrow((Stmt.Throw) e, imports);
+			doThrow((Stmt.Throw) e);
 		} else if(e instanceof Stmt.Assert) {
-			doAssert((Stmt.Assert) e, imports);
+			doAssert((Stmt.Assert) e);
 		} else if(e instanceof Stmt.Break) {
-			doBreak((Stmt.Break) e, imports);
+			doBreak((Stmt.Break) e);
 		} else if(e instanceof Stmt.Continue) {
-			doContinue((Stmt.Continue) e, imports);
+			doContinue((Stmt.Continue) e);
 		} else if(e instanceof Stmt.Label) {
-			doLabel((Stmt.Label) e, imports);
+			doLabel((Stmt.Label) e);
 		} else if(e instanceof Stmt.If) {
-			doIf((Stmt.If) e, imports);
+			doIf((Stmt.If) e);
 		} else if(e instanceof Stmt.For) {
-			doFor((Stmt.For) e, imports);
+			doFor((Stmt.For) e);
 		} else if(e instanceof Stmt.ForEach) {
-			doForEach((Stmt.ForEach) e, imports);
+			doForEach((Stmt.ForEach) e);
 		} else if(e instanceof Stmt.While) {
-			doWhile((Stmt.While) e, imports);
+			doWhile((Stmt.While) e);
 		} else if(e instanceof Stmt.DoWhile) {
-			doDoWhile((Stmt.DoWhile) e, imports);
+			doDoWhile((Stmt.DoWhile) e);
 		} else if(e instanceof Stmt.Switch) {
-			doSwitch((Stmt.Switch) e, imports);
+			doSwitch((Stmt.Switch) e);
 		} else if(e instanceof Expr.Invoke) {
-			doInvoke((Expr.Invoke) e, imports);
+			doInvoke((Expr.Invoke) e);
 		} else if(e instanceof Expr.New) {
-			doNew((Expr.New) e, imports);
+			doNew((Expr.New) e);
 		} else if(e instanceof Decl.Clazz) {
-			doClass((Decl.Clazz)e, imports);
+			doClass((Decl.Clazz)e);
 		} else if(e != null) {
 			throw new RuntimeException("Invalid statement encountered: "
 					+ e.getClass());
 		}		
 	}
 	
-	protected void doBlock(Stmt.Block block, List<String> imports) {
+	protected void doBlock(Stmt.Block block) {
 		if(block != null) {
 			// now process every statement in this block.
 			for(Stmt s : block.statements()) {
-				doStatement(s, imports);
+				doStatement(s);
 			}
 		}
 	}
 	
-	protected void doSynchronisedBlock(Stmt.SynchronisedBlock block, List<String> imports) {
-		doBlock(block, imports);
-		doExpression(block.expr(), imports);
+	protected void doSynchronisedBlock(Stmt.SynchronisedBlock block) {
+		doBlock(block);
+		doExpression(block.expr());
 	}
 	
-	protected void doTryCatchBlock(Stmt.TryCatchBlock block, List<String> imports) {
-		doBlock(block, imports);		
-		doBlock(block.finaly(), imports);		
+	protected void doTryCatchBlock(Stmt.TryCatchBlock block) {
+		doBlock(block);		
+		doBlock(block.finaly());		
 		
 		for(Stmt.CatchBlock cb : block.handlers()) {
-			doBlock(cb, imports);
+			doBlock(cb);
 		}
 	}
 	
-	protected void doVarDef(Stmt.VarDef def, List<String> imports) {
-		Type t = resolve(def.type(),imports);
+	protected void doVarDef(Stmt.VarDef def) {
+		Type t = resolve(def.type());
 		def.type().attributes().add(t);
 		
 		List<Triple<String, Integer, Expr>> defs = def.definitions();
 		for(int i=0;i!=defs.size();++i) {
 			Triple<String, Integer, Expr> d = defs.get(i);			
-			doExpression(d.third(), imports);														
+			doExpression(d.third());														
 		}
 	}
 	
-	protected void doAssignment(Stmt.Assignment def, List<String> imports) {
-		doExpression(def.lhs(), imports);	
-		doExpression(def.rhs(), imports);			
+	protected void doAssignment(Stmt.Assignment def) {
+		doExpression(def.lhs());	
+		doExpression(def.rhs());			
 	}
 	
-	protected void doReturn(Stmt.Return ret, List<String> imports) {
-		doExpression(ret.expr(), imports);
+	protected void doReturn(Stmt.Return ret) {
+		doExpression(ret.expr());
 	}
 	
-	protected void doThrow(Stmt.Throw ret, List<String> imports) {
-		doExpression(ret.expr(), imports);
+	protected void doThrow(Stmt.Throw ret) {
+		doExpression(ret.expr());
 	}
 	
-	protected void doAssert(Stmt.Assert ret, List<String> imports) {
-		doExpression(ret.expr(), imports);
+	protected void doAssert(Stmt.Assert ret) {
+		doExpression(ret.expr());
 	}
 	
-	protected void doBreak(Stmt.Break brk, List<String> imports) {
+	protected void doBreak(Stmt.Break brk) {
 		// nothing	
 	}
 	
-	protected void doContinue(Stmt.Continue brk, List<String> imports) {
+	protected void doContinue(Stmt.Continue brk) {
 		// nothing
 	}
 	
-	protected void doLabel(Stmt.Label lab, List<String> imports) {						
-		doStatement(lab.statement(), imports);
+	protected void doLabel(Stmt.Label lab) {						
+		doStatement(lab.statement());
 	}
 	
-	protected void doIf(Stmt.If stmt, List<String> imports) {
-		doExpression(stmt.condition(), imports);
-		doStatement(stmt.trueStatement(), imports);
-		doStatement(stmt.falseStatement(), imports);
+	protected void doIf(Stmt.If stmt) {
+		doExpression(stmt.condition());
+		doStatement(stmt.trueStatement());
+		doStatement(stmt.falseStatement());
 	}
 	
-	protected void doWhile(Stmt.While stmt, List<String> imports) {
-		doExpression(stmt.condition(), imports);
-		doStatement(stmt.body(), imports);		
+	protected void doWhile(Stmt.While stmt) {
+		doExpression(stmt.condition());
+		doStatement(stmt.body());		
 	}
 	
-	protected void doDoWhile(Stmt.DoWhile stmt, List<String> imports) {
-		doExpression(stmt.condition(), imports);
-		doStatement(stmt.body(), imports);
+	protected void doDoWhile(Stmt.DoWhile stmt) {
+		doExpression(stmt.condition());
+		doStatement(stmt.body());
 	}
 	
-	protected void doFor(Stmt.For stmt, List<String> imports) {
-		doStatement(stmt.initialiser(), imports);
-		doExpression(stmt.condition(), imports);
-		doStatement(stmt.increment(), imports);
-		doStatement(stmt.body(), imports);	
+	protected void doFor(Stmt.For stmt) {
+		doStatement(stmt.initialiser());
+		doExpression(stmt.condition());
+		doStatement(stmt.increment());
+		doStatement(stmt.body());	
 	}
 	
-	protected void doForEach(Stmt.ForEach stmt, List<String> imports) {
-		doExpression(stmt.source(), imports);
-		doStatement(stmt.body(), imports);
+	protected void doForEach(Stmt.ForEach stmt) {
+		doExpression(stmt.source());
+		doStatement(stmt.body());
 	}
 	
-	protected void doSwitch(Stmt.Switch sw, List<String> imports) {
-		doExpression(sw.condition(), imports);
+	protected void doSwitch(Stmt.Switch sw) {
+		doExpression(sw.condition());
 		for(Case c : sw.cases()) {
-			doExpression(c.condition(), imports);
+			doExpression(c.condition());
 			for(Stmt s : c.statements()) {
-				doStatement(s, imports);
+				doStatement(s);
 			}
 		}
 		
 		// should check that case conditions are final constants here.
 	}
 	
-	protected void doExpression(Expr e, List<String> imports) {	
+	protected void doExpression(Expr e) {	
 		if(e instanceof Value.Bool) {
-			doBoolVal((Value.Bool)e, imports);
+			doBoolVal((Value.Bool)e);
 		} else if(e instanceof Value.Char) {
-			doCharVal((Value.Char)e, imports);
+			doCharVal((Value.Char)e);
 		} else if(e instanceof Value.Int) {
-			doIntVal((Value.Int)e, imports);
+			doIntVal((Value.Int)e);
 		} else if(e instanceof Value.Long) {
-			doLongVal((Value.Long)e, imports);
+			doLongVal((Value.Long)e);
 		} else if(e instanceof Value.Float) {
-			doFloatVal((Value.Float)e, imports);
+			doFloatVal((Value.Float)e);
 		} else if(e instanceof Value.Double) {
-			doDoubleVal((Value.Double)e, imports);
+			doDoubleVal((Value.Double)e);
 		} else if(e instanceof Value.String) {
-			doStringVal((Value.String)e, imports);
+			doStringVal((Value.String)e);
 		} else if(e instanceof Value.Null) {
-			doNullVal((Value.Null)e, imports);
+			doNullVal((Value.Null)e);
 		} else if(e instanceof Value.TypedArray) {
-			doTypedArrayVal((Value.TypedArray)e, imports);
+			doTypedArrayVal((Value.TypedArray)e);
 		} else if(e instanceof Value.Array) {
-			doArrayVal((Value.Array)e, imports);
+			doArrayVal((Value.Array)e);
 		} else if(e instanceof Value.Class) {
-			doClassVal((Value.Class) e, imports);
+			doClassVal((Value.Class) e);
 		} else if(e instanceof Expr.Variable) {
-			doVariable((Expr.Variable)e, imports);
+			doVariable((Expr.Variable)e);
 		} else if(e instanceof Expr.UnOp) {
-			doUnOp((Expr.UnOp)e, imports);
+			doUnOp((Expr.UnOp)e);
 		} else if(e instanceof Expr.BinOp) {
-			doBinOp((Expr.BinOp)e, imports);
+			doBinOp((Expr.BinOp)e);
 		} else if(e instanceof Expr.TernOp) {
-			doTernOp((Expr.TernOp)e, imports);
+			doTernOp((Expr.TernOp)e);
 		} else if(e instanceof Expr.Cast) {
-			doCast((Expr.Cast)e, imports);
+			doCast((Expr.Cast)e);
 		} else if(e instanceof Expr.InstanceOf) {
-			doInstanceOf((Expr.InstanceOf)e, imports);
+			doInstanceOf((Expr.InstanceOf)e);
 		} else if(e instanceof Expr.Invoke) {
-			doInvoke((Expr.Invoke) e, imports);
+			doInvoke((Expr.Invoke) e);
 		} else if(e instanceof Expr.New) {
-			doNew((Expr.New) e, imports);
+			doNew((Expr.New) e);
 		} else if(e instanceof Expr.ArrayIndex) {
-			doArrayIndex((Expr.ArrayIndex) e, imports);
+			doArrayIndex((Expr.ArrayIndex) e);
 		} else if(e instanceof Expr.Deref) {
-			doDeref((Expr.Deref) e, imports);
+			doDeref((Expr.Deref) e);
 		} else if(e instanceof Stmt.Assignment) {
 			// force brackets			
-			doAssignment((Stmt.Assignment) e, imports);			
+			doAssignment((Stmt.Assignment) e);			
 		} else if(e != null) {
 			throw new RuntimeException("Invalid expression encountered: "
 					+ e.getClass());
 		}
 	}
 	
-	protected void doDeref(Expr.Deref e, List<String> imports) {
-		doExpression(e.target(), imports);		
+	protected void doDeref(Expr.Deref e) {
+		doExpression(e.target());		
 		// need to perform field lookup here!
 	}
 	
-	protected void doArrayIndex(Expr.ArrayIndex e, List<String> imports) {
-		doExpression(e.target(), imports);
-		doExpression(e.index(), imports);
+	protected void doArrayIndex(Expr.ArrayIndex e) {
+		doExpression(e.target());
+		doExpression(e.index());
 	}
 	
-	protected void doNew(Expr.New e, List<String> imports) {
+	protected void doNew(Expr.New e) {
 		// First, figure out the type being created.		
-		Type t = resolve(e.type(),imports);
+		Type t = resolve(e.type());
 		e.type().attributes().add(t);
 		
 		// Second, recurse through any parameters supplied ...
 		for(Expr p : e.parameters()) {
-			doExpression(p, imports);
+			doExpression(p);
 		}
 		
 		// Third, check whether this is constructing an anonymous class ...
 		for(Decl d : e.declarations()) {
-			doDeclaration(d,imports);
+			doDeclaration(d);
 		}
 	}
 	
-	protected void doInvoke(Expr.Invoke e, List<String> imports) {
-		doExpression(e.target(), imports);
+	protected void doInvoke(Expr.Invoke e) {
+		doExpression(e.target());
 		
 		for(Expr p : e.parameters()) {
-			doExpression(p, imports);
+			doExpression(p);
 		}
 	}
 	
-	protected void doInstanceOf(Expr.InstanceOf e, List<String> imports) {}
+	protected void doInstanceOf(Expr.InstanceOf e) {}
 	
-	protected void doCast(Expr.Cast e, List<String> imports) {}
+	protected void doCast(Expr.Cast e) {}
 	
-	protected void doBoolVal(Value.Bool e, List<String> imports) {}
+	protected void doBoolVal(Value.Bool e) {}
 	
-	protected void doCharVal(Value.Char e, List<String> imports) {}
+	protected void doCharVal(Value.Char e) {}
 	
-	protected void doIntVal(Value.Int e, List<String> imports) {}
+	protected void doIntVal(Value.Int e) {}
 	
-	protected void doLongVal(Value.Long e, List<String> imports) {}
+	protected void doLongVal(Value.Long e) {}
 	
-	protected void doFloatVal(Value.Float e, List<String> imports) {}
+	protected void doFloatVal(Value.Float e) {}
 	
-	protected void doDoubleVal(Value.Double e, List<String> imports) {}
+	protected void doDoubleVal(Value.Double e) {}
 	
-	protected void doStringVal(Value.String e, List<String> imports) {}
+	protected void doStringVal(Value.String e) {}
 	
-	protected void doNullVal(Value.Null e, List<String> imports) {}
+	protected void doNullVal(Value.Null e) {}
 	
-	protected void doTypedArrayVal(Value.TypedArray e, List<String> imports) {}
+	protected void doTypedArrayVal(Value.TypedArray e) {}
 	
-	protected void doArrayVal(Value.Array e, List<String> imports) {}
+	protected void doArrayVal(Value.Array e) {}
 	
-	protected void doClassVal(Value.Class e, List<String> imports) {}
+	protected void doClassVal(Value.Class e) {}
 	
-	protected void doVariable(Expr.Variable e, List<String> imports) {					
+	protected void doVariable(Expr.Variable e) {					
 	}
 
-	protected void doUnOp(Expr.UnOp e, List<String> imports) {		
+	protected void doUnOp(Expr.UnOp e) {		
 		
 	}
 		
-	protected void doBinOp(Expr.BinOp e, List<String> imports) {				
-		doExpression(e.lhs(), imports);
-		doExpression(e.rhs(), imports);		
+	protected void doBinOp(Expr.BinOp e) {				
+		doExpression(e.lhs());
+		doExpression(e.rhs());		
 	}
 	
-	protected void doTernOp(Expr.TernOp e, List<String> imports) {		
+	protected void doTernOp(Expr.TernOp e) {		
 		
 	}
 		
@@ -466,19 +455,19 @@ public class TypeResolution {
 	 * @param file
 	 * @return
 	 */
-	protected jkit.jil.Type resolve(jkit.java.tree.Type t, List<String> imports) {
+	protected jkit.jil.Type resolve(jkit.java.tree.Type t) {
 		if(t instanceof jkit.java.tree.Type.Primitive) {
-			return resolve((jkit.java.tree.Type.Primitive)t, imports);
+			return resolve((jkit.java.tree.Type.Primitive)t);
 		} else if(t instanceof jkit.java.tree.Type.Clazz) {
-			return resolve((jkit.java.tree.Type.Clazz)t, imports);			
+			return resolve((jkit.java.tree.Type.Clazz)t);			
 		} else if(t instanceof jkit.java.tree.Type.Array) {
-			return resolve((jkit.java.tree.Type.Array)t, imports);
+			return resolve((jkit.java.tree.Type.Array)t);
 		} 
 		
 		return null;
 	}
 	
-	protected jkit.jil.Type.Primitive resolve(jkit.java.tree.Type.Primitive pt, List<String> imports) {
+	protected jkit.jil.Type.Primitive resolve(jkit.java.tree.Type.Primitive pt) {
 		if(pt instanceof jkit.java.tree.Type.Void) {
 			return new jkit.jil.Type.Void();
 		} else if(pt instanceof jkit.java.tree.Type.Bool) {
@@ -500,8 +489,8 @@ public class TypeResolution {
 		}
 	}
 	
-	protected jkit.jil.Type.Array resolve(jkit.java.tree.Type.Array t, List<String> imports) {
-		return new jkit.jil.Type.Array(resolve(t.element(), imports));
+	protected jkit.jil.Type.Array resolve(jkit.java.tree.Type.Array t) {
+		return new jkit.jil.Type.Array(resolve(t.element()));
 	}
 	
 	/**
@@ -532,7 +521,7 @@ public class TypeResolution {
 	 *            determine the import list.
 	 * @return
 	 */
-	protected jkit.jil.Type.Reference resolve(jkit.java.tree.Type.Clazz ct, List<String> imports) {
+	protected jkit.jil.Type.Reference resolve(jkit.java.tree.Type.Clazz ct) {
 		ArrayList<Pair<String,List<jkit.jil.Type.Reference>>> ncomponents = new ArrayList();
 		String className = "";
 		String pkg = "";
@@ -555,7 +544,7 @@ public class TypeResolution {
 				ArrayList<jkit.jil.Type.Reference> nvars = new ArrayList();
 				
 				for(jkit.java.tree.Type.Reference r : component.second()) {
-					nvars.add((jkit.jil.Type.Reference) resolve(r, imports));
+					nvars.add((jkit.jil.Type.Reference) resolve(r));
 				}
 				
 				ncomponents.add(new Pair<String,List<jkit.jil.Type.Reference>>(component.first(),nvars));
@@ -576,9 +565,7 @@ public class TypeResolution {
 		// and the import list. There are two phases. 
 		
 		try {			
-
-			
-			return loader.resolve(className, imports);			
+			return loader.resolve(className,imports);			
 		} catch(ClassNotFoundException e) {}
 
 		throw new SyntaxError("unable to find class " + className,0,0);
@@ -611,4 +598,22 @@ public class TypeResolution {
 		throw new SyntaxError(msg,loc.line(),loc.column());
 	}
 
+	/**
+	 * The purpose of this method is to compute an import declaration from a
+	 * given class Type. For example, consider the type "mypkg.MyClass". From
+	 * this, we compute an import declaration "import mypkg.MyClass.*". This
+	 * simplifies the problem of resolving an internal class, since we can use
+	 * the existing method for looking up classes in the ClassLoader.
+	 * 
+	 * @param type
+	 * @return
+	 */
+	protected String computeImportDecl(Type.Clazz parentType, String clazz) {
+		String decl = parentType.pkg();
+		if(!decl.equals("")) { decl = decl + "."; }
+		for(Pair<String,List<Type.Reference>> p : parentType.components()) {
+			decl = decl + p.first() + ".";
+		}
+		return decl + clazz + ".*";
+	}
 }

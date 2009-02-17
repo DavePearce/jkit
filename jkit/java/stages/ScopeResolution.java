@@ -1,6 +1,7 @@
 package jkit.java.stages;
 
 import java.util.*;
+
 import jkit.compiler.ClassLoader;
 import jkit.compiler.FieldNotFoundException;
 import jkit.java.io.JavaFile;
@@ -165,16 +166,27 @@ public class ScopeResolution {
 	private ClassLoader loader;
 	private TypeSystem types;
 	private final Stack<Scope> scopes = new Stack<Scope>();
+	private final Stack<String> imports = new Stack<String>();
 	
 	public ScopeResolution(ClassLoader loader, TypeSystem types) {
 		this.loader = loader; 
 		this.types = types;
 	}
 	
-	public void apply(JavaFile file) {		
+	public void apply(JavaFile file) {
+		// First, setup the imports list					
+		imports.push("java.lang.*");		
+		imports.push(file.pkg() + ".*");
+		for(Pair<Boolean,String> i : file.imports()) {
+			imports.push(i.second());
+		}
+		
+		// Now, traverse the declarations
 		for(Decl d : file.declarations()) {
 			doDeclaration(d,file);
 		}
+		
+		imports.clear();
 	}
 	
 	protected void doDeclaration(Decl d, JavaFile file) {
@@ -194,26 +206,19 @@ public class ScopeResolution {
 	}
 	
 	protected void doClass(Clazz c, JavaFile file) {
-		// Create a Type.Class representing this class.
-		ClassScope enclosingScope = (ClassScope) findEnclosingScope(ClassScope.class);
-		List<Pair<String,List<Type.Reference>>> components = new ArrayList();
-		if (enclosingScope != null) {
-			for (Pair<String, List<Type.Reference>> i : enclosingScope.type
-					.components()) {
-				components.add(i);
-			}
-			components.add(new Pair(c.name(), new ArrayList()));
-		} else {
-			components.add(new Pair(c.name(), new ArrayList()));
-		}
+		Type.Clazz myType = (Type.Clazz) c.attribute(Type.class);
+		
+		// Create an appropriate import declaration for this class.
+		imports.push(computeImportDecl(myType));
 				
-		// Ok, push on a scope representing this class definition.
-		scopes.push(new ClassScope(new Type.Clazz(file.pkg(), components),c.isStatic()));
+		// And, push on a scope representing this class definition.
+		scopes.push(new ClassScope(myType,c.isStatic()));
 		
 		for(Decl d : c.declarations()) {
 			doDeclaration(d, file);
 		}
 		
+		imports.pop();
 		scopes.pop();
 	}
 
@@ -561,16 +566,22 @@ public class ScopeResolution {
 					Triple<jkit.jil.Clazz, jkit.jil.Field, Type> r = types
 							.resolveField(cs.type, e.value(), loader);
 					// Ok, this variable access corresponds to a field load.
-					if(isThis) {
+					if(isThis && !r.second().isStatic()) {
 						return new Expr.Deref(new Expr.Variable("this",
 							new ArrayList(e.attributes())), e.value(), e
 							.attributes());
-					} else {						
+					} else if(!r.second().isStatic()){						
 						// Create a class access variable.
 						Expr.ClassVariable cv = new Expr.ClassVariable(cs.type.toString());
 						cv.attributes().add(cs.type);
 						return new Expr.Deref(new Expr.Deref(cv, "this",
 								new ArrayList(e.attributes())), e.value(), e
+								.attributes());
+					} else {
+						// Create a class access variable.
+						Expr.ClassVariable cv = new Expr.ClassVariable(cs.type.toString());
+						cv.attributes().add(cs.type);
+						return new Expr.Deref(cv, e.value(), e
 								.attributes());
 					}
 				} catch(ClassNotFoundException cne) {					
@@ -580,10 +591,24 @@ public class ScopeResolution {
 				if(cs.isStatic) { break; }
 			} else if(s.variables.contains(e.value())) {
 				// found scope
-				System.out.println("FOUND IT");
+				return e;
 			} 			
 		}
-		return e;
+		
+		// If we get here, then this variable access is either a syntax error,
+		// or a static class access. For example, in "System.out" we initially
+		// have "System" marked as a variable. In practice, we need to extend
+		// this to be a ClassVariable. So, we check whether or not it actually
+		// could represent a class.
+					
+		try {
+			loader.resolve(e.value(), imports);			
+			return new Expr.ClassVariable(e.value(),new ArrayList(e.attributes()));
+		} catch(ClassNotFoundException ex) {
+			System.out.println("FAILED LOOKUP - " + imports);
+			// no, can't find any class which could represent this variable.
+			return e;
+		}
 	}
 
 	protected Expr doUnOp(Expr.UnOp e, JavaFile file) {		
@@ -612,5 +637,24 @@ public class ScopeResolution {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * The purpose of this method is to compute an import declaration from a
+	 * given class Type. For example, consider the type "mypkg.MyClass". From
+	 * this, we compute an import declaration "import mypkg.MyClass.*". This
+	 * simplifies the problem of resolving an internal class, since we can use
+	 * the existing method for looking up classes in the ClassLoader.
+	 * 
+	 * @param type
+	 * @return
+	 */
+	protected String computeImportDecl(Type.Clazz type) {
+		String decl = type.pkg();
+		if(!decl.equals("")) { decl = decl + "."; }
+		for(Pair<String,List<Type.Reference>> p : type.components()) {
+			decl = decl + p.first() + ".";
+		}
+		return decl + "*";
 	}
 }

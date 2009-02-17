@@ -238,8 +238,9 @@ public class ClassLoader {
 	 * @return
 	 */
 	protected Type.Clazz resolveClassName(String pkg, String className) {		
-		ArrayList<Pair<String,List<Type.Reference>>> classes = new ArrayList<Pair<String,List<Type.Reference>>>();
-		classes.add(new Pair<String, List<Type.Reference>>(className,new ArrayList<Type.Reference>()));
+		ArrayList<Pair<String, List<Type.Reference>>> classes = new ArrayList<Pair<String, List<Type.Reference>>>();
+		classes.add(new Pair<String, List<Type.Reference>>(className,
+				new ArrayList<Type.Reference>()));
 		String fullClassName = className;
 		String outerClassName = className;
 		while(pkg != null) {						

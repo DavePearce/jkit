@@ -504,7 +504,7 @@ public class TypePropagation {
 	
 	protected void doVariable(Expr.Variable e, HashMap<String,Type> environment) {			
 		Type t = environment.get(e.value());
-		if(t == null) {					
+		if(t == null) {			 
 			syntax_error("Cannot find symbol - variable \"" + e.value() + "\"",
 					e);
 		} else {			
@@ -514,7 +514,7 @@ public class TypePropagation {
 
 	protected void doClassVariable(Expr.ClassVariable e,
 			HashMap<String, Type> environment) {
-
+		System.out.println("GOT HERE!!!");
 	}
 	
 	protected void doUnOp(Expr.UnOp e, HashMap<String,Type> environment) {		
