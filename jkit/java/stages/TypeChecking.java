@@ -320,8 +320,10 @@ public class TypeChecking {
 		// implements java.lang.iterable
 		Type s_t = (Type) stmt.source().attribute(Type.class);
 		try {
-			if (!types.subtype(new Type.Clazz("java.lang", "Iterable"), s_t, loader)) {
-				syntax_error("foreach not applicable to expression type",stmt);
+			if (!(s_t instanceof Type.Array)
+					&& !types.subtype(new Type.Clazz("java.lang", "Iterable"),
+							s_t, loader)) {
+				syntax_error("foreach not applicable to expression type", stmt);
 			} 
 		} catch (ClassNotFoundException ex) {
 			syntax_error(ex.getMessage(), stmt);
