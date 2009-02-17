@@ -602,10 +602,11 @@ public class ScopeResolution {
 		// could represent a class.
 					
 		try {
-			loader.resolve(e.value(), imports);			
-			return new Expr.ClassVariable(e.value(),new ArrayList(e.attributes()));
-		} catch(ClassNotFoundException ex) {
-			System.out.println("FAILED LOOKUP - " + imports);
+			Type.Clazz c = loader.resolve(e.value(), imports);			
+			Expr r = new Expr.ClassVariable(e.value(),new ArrayList(e.attributes()));
+			r.attributes().add(c);
+			return r;
+		} catch(ClassNotFoundException ex) {			
 			// no, can't find any class which could represent this variable.
 			return e;
 		}

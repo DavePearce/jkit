@@ -422,9 +422,7 @@ public class TypePropagation {
 			Type.Clazz receiver = (Type.Clazz) e.target().attribute(Type.class);
 			try {				
 				Type.Function f = types.resolveMethod(receiver, e.name(), parameterTypes, loader).third();				
-				if(f.returnType() instanceof Type.Void) {
-					syntax_error("method must return a value " + e.name() + " : " + f, e);
-				} else {
+				if(!(f.returnType() instanceof Type.Void)) {					
 					e.attributes().add(f.returnType());
 				}
 			} catch(ClassNotFoundException cnfe) {
@@ -514,7 +512,10 @@ public class TypePropagation {
 
 	protected void doClassVariable(Expr.ClassVariable e,
 			HashMap<String, Type> environment) {
-		System.out.println("GOT HERE!!!");
+		/*
+		 * Don't need to do anything here ... it should have all been done as
+		 * part of ScopeResolution.
+		 */
 	}
 	
 	protected void doUnOp(Expr.UnOp e, HashMap<String,Type> environment) {		

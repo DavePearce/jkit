@@ -216,7 +216,7 @@ public class JavaCompiler implements Compiler {
 						
 			compiling.remove(filename);
 			
-			return new ArrayList<Clazz>(); // to be completed			
+			return skeletons; // to be completed			
 		} catch(SyntaxError se) {
 			throw new SyntaxError(se.msg(), filename.getPath(), se.line(), se
 					.column(), se.width(), se);			

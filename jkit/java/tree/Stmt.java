@@ -181,7 +181,7 @@ public interface Stmt extends SyntacticElement {
 		}
 	}
 
-	public static class Return extends SyntacticElementImpl implements Stmt {
+	public static class Return extends SyntacticElementImpl implements Simple {
 		private Expr expr;
 
 		public Return(Expr expr, Attribute... attributes) {
@@ -198,7 +198,7 @@ public interface Stmt extends SyntacticElement {
 		}
 	}
 
-	public static class Throw extends SyntacticElementImpl implements Stmt {
+	public static class Throw extends SyntacticElementImpl implements Simple {
 		private Expr expr;
 
 		public Throw(Expr expr, Attribute... attributes) {
