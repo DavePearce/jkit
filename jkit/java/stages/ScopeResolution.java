@@ -161,8 +161,10 @@ public class ScopeResolution {
 	}
 	
 	private static class MethodScope extends Scope {
-		public MethodScope(Set<String> variables) {
+		public boolean isStatic;
+		public MethodScope(Set<String> variables, boolean isStatic) {
 			super(variables);
+			this.isStatic = isStatic;
 		}
 	}
 	
@@ -231,7 +233,7 @@ public class ScopeResolution {
 		for(Triple<String,List<Modifier>,jkit.java.tree.Type> t : d.parameters()) {
 			params.add(t.first());
 		}		
-		scopes.push(new MethodScope(params));
+		scopes.push(new MethodScope(params,d.isStatic()));
 		
 		// Now, explore the method body for any other things to resolve.
 		doStatement(d.body(), file);
@@ -477,15 +479,15 @@ public class ScopeResolution {
 				//
 				// so do nothing!
 			} catch(ClassNotFoundException cne) {
-				syntax_error(cne.getMessage(),e);
+				syntax_error(cne.getMessage(),e);				
 			} catch(FieldNotFoundException fne) {	
 				// Right, if we get here then there is no field ... so maybe
 				// this is actually an inner class (or a syntax error :)
-				try {						
-					Type.Clazz c = loader.resolve(cv.type() + "$" + e.name(),
+				try {								
+					Type.Clazz c = loader.resolve(cv.type().replace('.','$') + "$" + e.name(),
 							imports);
 					Expr r = new Expr.ClassVariable(cv.type() + "." + e.name(),
-							new ArrayList(e.attributes()));
+							new ArrayList(e.attributes()));					
 					r.attributes().add(c);
 					return r;
 				} catch(ClassNotFoundException cne) {
@@ -523,7 +525,43 @@ public class ScopeResolution {
 	}
 	
 	protected Expr doInvoke(Expr.Invoke e, JavaFile file) {		
-		e.setTarget(doExpression(e.target(), file));
+		Expr target = doExpression(e.target(), file);
+		if(target == null) {
+			boolean isThis = true;		
+			MethodScope ms = (MethodScope) findEnclosingScope(MethodScope.class);
+			for(int i=scopes.size()-1;i>=0;--i) {
+				Scope s = scopes.get(i);
+				if(s instanceof ClassScope) {
+					// resolve field from here
+					ClassScope cs = (ClassScope) s;		
+					try {
+						if(types.hasMethod(cs.type,e.name(),loader)) {
+							// Ok, we have found the relevant method in question.
+							if(isThis && !ms.isStatic) {
+								target = new Expr.Variable("this",
+										new ArrayList(e.attributes()));								
+							} else if(!ms.isStatic) {
+								Expr.ClassVariable cv = new Expr.ClassVariable(cs.type.toString());
+								cv.attributes().add(cs.type);
+								target = new Expr.Deref(cv, "this",
+										new ArrayList(e.attributes()));								
+							} else {
+								target = new Expr.ClassVariable(cs.type.toString());
+								target.attributes().add(cs.type);
+							}
+							break;
+						}
+					} catch(ClassNotFoundException cne) {
+						syntax_error(cne.getMessage(), e);
+					}
+					
+					isThis = false;
+					if(cs.isStatic) { break; }
+				} 		
+			}	
+		} 
+		
+		e.setTarget(target);		
 		
 		List<Expr> parameters = e.parameters();
 		for(int i=0;i!=parameters.size();++i) {
@@ -593,34 +631,37 @@ public class ScopeResolution {
 		// traverse up the stack of scopes looking for an enclosing scope which
 		// contains a variable with the same name.
 		
+		MethodScope ms = (MethodScope) findEnclosingScope(MethodScope.class);
+		
 		boolean isThis = true;		
 		for(int i=scopes.size()-1;i>=0;--i) {
 			Scope s = scopes.get(i);
 			if(s instanceof ClassScope) {
 				// resolve field from here
-				ClassScope cs = (ClassScope) s;				
+				ClassScope cs = (ClassScope) s;		
+				
 				try {
 					Triple<jkit.jil.Clazz, jkit.jil.Field, Type> r = types
 							.resolveField(cs.type, e.value(), loader);
 					// Ok, this variable access corresponds to a field load.
-					if(isThis && !r.second().isStatic()) {
+					if(isThis && !ms.isStatic) {
 						return new Expr.Deref(new Expr.Variable("this",
 							new ArrayList(e.attributes())), e.value(), e
 							.attributes());
-					} else if(!r.second().isStatic()){						
+					} else if(!!ms.isStatic){						
 						// Create a class access variable.
 						Expr.ClassVariable cv = new Expr.ClassVariable(cs.type.toString());
 						cv.attributes().add(cs.type);
 						return new Expr.Deref(new Expr.Deref(cv, "this",
 								new ArrayList(e.attributes())), e.value(), e
 								.attributes());
-					} else {
+					} else {						
 						// Create a class access variable.
 						Expr.ClassVariable cv = new Expr.ClassVariable(cs.type.toString());
 						cv.attributes().add(cs.type);
 						return new Expr.Deref(cv, e.value(), e
 								.attributes());
-					}
+					} 
 				} catch(ClassNotFoundException cne) {					
 				} catch(FieldNotFoundException fne) {					
 				}
@@ -638,8 +679,8 @@ public class ScopeResolution {
 		// this to be a ClassVariable. So, we check whether or not it actually
 		// could represent a class.
 					
-		try {
-			Type.Clazz c = loader.resolve(e.value(), imports);			
+		try {			
+			Type.Clazz c = loader.resolve(e.value(), imports);
 			Expr r = new Expr.ClassVariable(e.value(),new ArrayList(e.attributes()));
 			r.attributes().add(c);
 			return r;
@@ -662,7 +703,7 @@ public class ScopeResolution {
 	protected Expr doTernOp(Expr.TernOp e, JavaFile file) {		
 		return e;
 	}
-	
+		
 	protected Scope findEnclosingScope() {
 		return scopes.get(scopes.size()-1);
 	}
@@ -675,6 +716,25 @@ public class ScopeResolution {
 			}
 		}
 		return null;
+	}		
+	
+	/**
+	 * Convert a class reference type into a proper name.
+	 */
+	protected String refName(Type.Clazz ref) {
+		String descriptor = ref.pkg();
+		if(!descriptor.equals("")) {
+			descriptor += ".";
+		}
+		boolean firstTime=true;
+		for(Pair<String,List<Type.Reference>> c : ref.components()) {
+			if(!firstTime) {
+				descriptor += "$";
+			}	
+			firstTime=false;
+			descriptor += c.first();
+		}
+		return descriptor;
 	}
 	
 	/**

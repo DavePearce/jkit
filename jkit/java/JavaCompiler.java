@@ -178,7 +178,7 @@ public class JavaCompiler implements Compiler {
 			
 			start = System.currentTimeMillis();
 			new TypeResolution(loader, new TypeSystem()).apply(jfile);			
-			logout.println("Type resolution completed [" + (System.currentTimeMillis()-start) + "ms]");
+			logout.println("Type resolution completed ......... [" + (System.currentTimeMillis()-start) + "ms]");
 			
 			// Second, we need to build the skeletons of the classes. This is
 			// necessary to resolve the scope of a particular variable.
@@ -195,20 +195,20 @@ public class JavaCompiler implements Compiler {
 			// (e.g. for anonymous inner classes).
 			start = System.currentTimeMillis();
 			new ScopeResolution(loader, new TypeSystem()).apply(jfile);
-			logout.println("Scope resolution completed [" + (System.currentTimeMillis()-start) + "ms]");
+			logout.println("Scope resolution completed ........ [" + (System.currentTimeMillis()-start) + "ms]");
 			
 			// Fourth, propagate the type information throughout all expressions
 			// in the class file, including those in the method bodies and field
 			// initialisers.
 			start = System.currentTimeMillis();
 			new TypePropagation(loader, new TypeSystem()).apply(jfile);
-			logout.println("Type propagation completed [" + (System.currentTimeMillis()-start) + "ms]");
+			logout.println("Type propagation completed ........ [" + (System.currentTimeMillis()-start) + "ms]");
 			
 			// Fifth, check whether the types are being used correctly. If not,
 			// report a syntax error.
 			start = System.currentTimeMillis();
 			new TypeChecking(loader, new TypeSystem()).apply(jfile);
-			logout.println("Type checking completed [" + (System.currentTimeMillis()-start) + "ms]");
+			logout.println("Type checking completed ........... [" + (System.currentTimeMillis()-start) + "ms]");
 			
 			// This stage is temporary. Just write out the java file again to
 			// indicate success thus far.
@@ -321,10 +321,40 @@ public class JavaCompiler implements Compiler {
 		}
 		
 		/**
+		 * Now, deal with some special cases when this is not actually a class
+		 */
+		if(c instanceof Decl.Enum) {
+			Decl.Enum ec = (Decl.Enum) c;
+			for(Decl.EnumConstant enc : ec.constants()) {
+				Type t = (Type) enc.attribute(Type.class);
+				if(enc.declarations().size() > 0) {
+					syntax_error("No support for ENUMS that have methods",enc);
+				} else {
+					List<Modifier> modifiers = new ArrayList<Modifier>();
+					modifiers.add(new Modifier.Base(java.lang.reflect.Modifier.PUBLIC));
+					fields.add(new Field(enc.name(), t, modifiers, new ArrayList(
+						enc.attributes())));
+				}
+			}
+		}
+		
+		/**
 		 * Now, construct the skeleton for this class! 
 		 */
 		skeletons.add(new Clazz(type,c.modifiers(),superClass,interfaces,fields,methods));
 		
 		return skeletons;
+	}
+	
+	/**
+     * This method is just to factor out the code for looking up the source
+     * location and throwing an exception based on that.
+     * 
+     * @param msg --- the error message
+     * @param e --- the syntactic element causing the error
+     */
+	protected void syntax_error(String msg, SyntacticElement e) {
+		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
+		throw new SyntaxError(msg,loc.line(),loc.column());
 	}
 }

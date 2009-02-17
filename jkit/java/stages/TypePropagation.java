@@ -415,41 +415,33 @@ public class TypePropagation {
 		}
 		
 		// Now, to determine the return type of this method, we need to lookup
-		// the method in the class heirarchy. This lookup procedure is seriously
+		// the method in the class hierarchy. This lookup procedure is seriously
 		// non-trivial, and is implemented in the TypeSystem module.
-				
-		if(e.target() != null) {
-			Type.Clazz receiver = (Type.Clazz) e.target().attribute(Type.class);
-			try {				
-				Type.Function f = types.resolveMethod(receiver, e.name(), parameterTypes, loader).third();				
-				if(!(f.returnType() instanceof Type.Void)) {					
-					e.attributes().add(f.returnType());
-				}
-			} catch(ClassNotFoundException cnfe) {
-				syntax_error(cnfe.getMessage(), e);
-			} catch(MethodNotFoundException mfne) {
-				String msg = "method not found: " + receiver + "." + e.name() + "(";
-				boolean firstTime=true;
-				for(Type t : parameterTypes) {
-					if(!firstTime) {
-						msg += ", ";
-					}
-					firstTime=false;
-					msg += t;
-				}
-				syntax_error(msg + ")", e);
-			} /*catch(IllegalArgumentException iae) {
-				// This can happen if the parameters supplied to bind, which is
-				// called by resolveMethod are somehow not "base equivalent"
-				syntax_error(iae.getMessage(),e);
-			}*/
-		} else {
-			// method with no explicit receiver. Hence, it must be this class
-			// which is the receiver. This is not trivial, since we need to
-			// consider inner classes declared in the scope of this source file.
 						
-			throw new RuntimeException("TO DO: COMPLETE METHOD TYPE LOOKUP");			
-		}
+		Type.Clazz receiver = (Type.Clazz) e.target().attribute(Type.class);
+		try {				
+			Type.Function f = types.resolveMethod(receiver, e.name(), parameterTypes, loader).third();				
+			if(!(f.returnType() instanceof Type.Void)) {					
+				e.attributes().add(f.returnType());
+			}
+		} catch(ClassNotFoundException cnfe) {
+			syntax_error(cnfe.getMessage(), e);
+		} catch(MethodNotFoundException mfne) {
+			String msg = "method not found: " + receiver + "." + e.name() + "(";
+			boolean firstTime=true;
+			for(Type t : parameterTypes) {
+				if(!firstTime) {
+					msg += ", ";
+				}
+				firstTime=false;
+				msg += t;
+			}
+			syntax_error(msg + ")", e);
+		} catch(IllegalArgumentException iae) {
+			// This can happen if the parameters supplied to bind, which is
+			// called by resolveMethod are somehow not "base equivalent"
+			syntax_error(iae.getMessage(),e);
+		}		
 	}
 	
 	protected void doInstanceOf(Expr.InstanceOf e, HashMap<String,Type> environment) {		

@@ -201,8 +201,10 @@ public class ClassLoader {
 	 *             if it couldn't resolve the class
 	 */
 	public Type.Clazz resolve(String className, List<String> imports)
-			throws ClassNotFoundException {						
-						
+			throws ClassNotFoundException {
+		if(className.contains(".")) {
+			throw new IllegalArgumentException("className cannot contain \".\"");
+		}
 		for (String imp : imports) {
 			Type.Clazz ref = null;
 			if (imp.endsWith(".*")) {
@@ -239,16 +241,20 @@ public class ClassLoader {
 	 */
 	protected Type.Clazz resolveClassName(String pkg, String className) {		
 		ArrayList<Pair<String, List<Type.Reference>>> classes = new ArrayList<Pair<String, List<Type.Reference>>>();
-		classes.add(new Pair<String, List<Type.Reference>>(className,
-				new ArrayList<Type.Reference>()));
-		String fullClassName = className;
-		String outerClassName = className;
 		
-		while(pkg != null) {			
+		for(String c : className.split("\\$")) {			
+			classes.add(new Pair<String, List<Type.Reference>>(c,
+				new ArrayList<Type.Reference>()));
+		}
+		
+		String fullClassName = className;
+		String outerClassName = fullClassName;
+		
+		while(pkg != null) {							
 			PackageInfo pkgInfo = packages.get(pkg);			
-			if (pkgInfo != null) {				
+			if (pkgInfo != null) {								
 				if(pkgInfo.classes.contains(fullClassName)) {					
-					// Found the class!!
+					// Found the class!!					
 					return new Type.Clazz(pkg,classes);
 				} else if (pkgInfo.classes.contains(outerClassName)
 						&& !pkgInfo.compiledClasses.contains(outerClassName)) {									
@@ -267,7 +273,7 @@ public class ClassLoader {
 				// This import does not correspond to a valid package.
 				// Therefore, it may be specifying an inner class and we need to check.
 				outerClassName = pathChild(pkg);
-				fullClassName = outerClassName +"$" + fullClassName;
+				fullClassName = outerClassName + "$" + fullClassName;				
 				classes.add(0,new Pair<String, List<Type.Reference>>(pathChild(pkg),new ArrayList<Type.Reference>()));				
 				pkg = pathParent(pkg);
 			}		
@@ -289,8 +295,7 @@ public class ClassLoader {
 	 *             If it couldn't load the class
 	 */
 	public Clazz loadClass(Type.Clazz ref) throws ClassNotFoundException {				
-		String name = refName(ref);
-				
+		String name = refName(ref);			
 		// First, look in the classtable to see whether we have loaded this
 		// class before.
 		Clazz c = classtable.get(name);
@@ -300,8 +305,7 @@ public class ClassLoader {
 		// then attempt to locate either a source or class file.
 		PackageInfo pkgInfo = packages.get(ref.pkg());
 		
-		if (pkgInfo == null) { throw new ClassNotFoundException("Unable to load class " + name); }
-						
+		if (pkgInfo == null) { throw new ClassNotFoundException("Unable to load class " + name); }		
 		c = loadClass(name,pkgInfo);
 
 		if(c == null) { throw new ClassNotFoundException("Unable to load class " + name); }

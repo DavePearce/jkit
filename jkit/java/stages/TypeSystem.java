@@ -493,6 +493,27 @@ public class TypeSystem {
 	}
 	
 	/**
+	 * Identify whether or not there is a method with the given name in the
+	 * receiver class. Traverse the class hierarchy if necessary to answer this.
+	 * 
+	 * @param receiver
+	 * @param name
+	 * @return
+	 */
+	public boolean hasMethod(Type.Clazz receiver, String name,
+			ClassLoader loader) throws ClassNotFoundException {				
+		while(receiver != null) {
+			Clazz c = loader.loadClass(receiver);
+			if(c.methods(name).size() > 0) {
+				return true;
+			}
+			receiver = c.superClass();			
+		}
+		
+		return false;
+	}
+	
+	/**
 	 * Identify the method with the given name in the given clazz that matches
 	 * the given method signature.
 	 * 
@@ -758,8 +779,8 @@ public class TypeSystem {
 		ArrayList<Type.Clazz> worklist = new ArrayList<Type.Clazz>();
 		worklist.add(owner);
 		while (!worklist.isEmpty()) {
-			Type.Clazz type = worklist.remove(worklist.size() - 1);
-			Clazz c = loader.loadClass(type);
+			Type.Clazz type = worklist.remove(worklist.size() - 1);			
+			Clazz c = loader.loadClass(type);			
 			Map<String,Type.Reference> binding = bind(type, c.type());
 			Field f = c.getField(name);
 			
