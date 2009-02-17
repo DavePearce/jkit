@@ -119,8 +119,7 @@ public class TypeResolution {
 		
 		for(Pair<String, List<Type.Reference>> pc : parentType.components()) {
 			pkgn = pkgn + pc.first() + ".";
-		}
-		System.out.println("ADDING SEARCH TERM: " + pkgn + ".*");
+		}		
 		imports.add(pkgn + ".*");
 		
 		// Second, build my fully qualified type!		

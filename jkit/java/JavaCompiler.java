@@ -157,8 +157,7 @@ public class JavaCompiler implements Compiler {
 	 *            File.separatorChar's to indicate directories).
 	 * @return
 	 */
-	public List<Clazz> compile(File filename) throws IOException, SyntaxError {		
-		logout.println("ASKED TO COMPILE: " + filename);
+	public List<Clazz> compile(File filename) throws IOException, SyntaxError {				
 		compilationQueue.remove(filename.getCanonicalPath());
 		compiling.add(filename.getCanonicalPath());			
 						
@@ -168,7 +167,7 @@ public class JavaCompiler implements Compiler {
 			// Now, construct the reader!
 			JavaFileReader reader = new JavaFileReader(filename.getPath());
 
-			logout.println("Parsed " + filename + " [" + (System.currentTimeMillis() - start) + "ms]");
+			logout.println("Parsed " + filename.getPath() + " [" + (System.currentTimeMillis() - start) + "ms]");
 			
 			JavaFile jfile = reader.read();
 			

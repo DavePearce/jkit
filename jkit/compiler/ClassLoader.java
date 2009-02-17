@@ -237,7 +237,7 @@ public class ClassLoader {
 	 *            the class name provided, in the form "xxx$yyy"
 	 * @return
 	 */
-	protected Type.Clazz resolveClassName(String pkg, String className) {
+	protected Type.Clazz resolveClassName(String pkg, String className) {		
 		ArrayList<Pair<String,List<Type.Reference>>> classes = new ArrayList<Pair<String,List<Type.Reference>>>();
 		classes.add(new Pair<String, List<Type.Reference>>(className,new ArrayList<Type.Reference>()));
 		String fullClassName = className;
@@ -425,8 +425,13 @@ public class ClassLoader {
 		for(Clazz f : jilClasses) {
 			PackageInfo pkgInfo = packages.get(f.type().pkg());
 			String rn = refName(f.type());
+			String pc = pathChild(rn);
 			classtable.put(rn, f);			
-			pkgInfo.compiledClasses.add(pathChild(rn));
+			// Need to do this to indicate that the source file in question has
+			// being compiled. Otherwise, we end up with an infinite loop of
+			// class loading.
+			pkgInfo.classes.add(pc);
+			pkgInfo.compiledClasses.add(pc);
 		}
 	}
 	
