@@ -448,7 +448,8 @@ public class TypePropagation {
 	}
 	
 	protected void doInstanceOf(Expr.InstanceOf e, HashMap<String,Type> environment) {		
-			
+		doExpression(e.lhs(), environment);
+		e.attributes().add(new Type.Bool());
 	}
 	
 	protected void doCast(Expr.Cast e, HashMap<String,Type> environment) {
