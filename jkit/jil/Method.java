@@ -30,6 +30,27 @@ public class Method extends SyntacticElementImpl {
 	}
 	
 	/**
+     * Construct an object representing a field of a JVM class.
+     * 
+     * @param name -
+     *            The name of the method.
+     * @param type -
+     *            The (fully generic) function type of this method.
+     * @param modifiers -
+     *            Any modifiers of the method (e.g. public, static, etc)
+     * @param exceptions -
+     *            The (non-null) list of exceptions thrown by this method.
+     */
+	public Method(String name, Type.Function type, List<Modifier> modifiers,
+			List<Type.Clazz> exceptions, List<Attribute> attributes) {
+		super(attributes);
+		this.name = name;
+		this.type = type;
+		this.modifiers = modifiers;
+		this.exceptions = exceptions;
+	}
+	
+	/**
      * Access the name of this field.  
      * 
      * @return

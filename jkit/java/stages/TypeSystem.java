@@ -515,7 +515,7 @@ public class TypeSystem {
 			Type.Clazz receiver, String name,
 			List<Type> concreteParameterTypes, ClassLoader loader)
 			throws ClassNotFoundException, MethodNotFoundException {
-
+		
 		// Phase 1: traverse heirarchy whilst ignoring autoboxing and varargs
 		Triple<jkit.jil.Clazz, jkit.jil.Method, Type.Function> methodInfo = resolveMethod(receiver,
 				name, concreteParameterTypes, false, false, loader);
@@ -545,6 +545,7 @@ public class TypeSystem {
 				}
 			}
 		}
+		
 		return methodInfo;
 	}
 
@@ -583,7 +584,7 @@ public class TypeSystem {
 			Type.Clazz receiver, String name,
 			List<Type> concreteParameterTypes, boolean autoboxing,
 			boolean varargs, ClassLoader loader) throws ClassNotFoundException {
-		
+						
 		// traverse class hierarchy looking for field
 		ArrayList<Type.Clazz> worklist = new ArrayList<Type.Clazz>();
 		worklist.add(receiver);
@@ -592,7 +593,7 @@ public class TypeSystem {
 
 		// Traverse type hierarchy building a list of potential methods
 		while (!worklist.isEmpty()) {
-			Type.Clazz type = worklist.remove(0);
+			Type.Clazz type = worklist.remove(0);			
 			Clazz c = loader.loadClass(type);
 			List<jkit.jil.Method> methods = c.methods(name);
 			Map<String,Type.Reference> binding = bind(type, c.type());

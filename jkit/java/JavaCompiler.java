@@ -304,14 +304,24 @@ public class JavaCompiler implements Compiler {
 			} else if(d instanceof Decl.Field && !typeOnly) {				
 				Decl.Field f = (Decl.Field) d;
 				Type t = (Type) f.attribute(Type.class);
-				fields.add(new Field(f.name(),t,f.modifiers()));
+				fields.add(new Field(f.name(), t, f.modifiers(), new ArrayList(
+						f.attributes())));
 			} else if(d instanceof Decl.Method && !typeOnly) {
+				Decl.Method m = (Decl.Method) d;
+				Type.Function t = (Type.Function) m.attribute(Type.class);
+				List<Type.Clazz> exceptions = new ArrayList<Type.Clazz>();
 				
+				for(jkit.java.tree.Type.Clazz tc : m.exceptions()) {
+					exceptions.add((Type.Clazz)tc.attribute(Type.class));
+				}
+				 
+				methods.add(new Method(m.name(), t, m.modifiers(), exceptions,
+						new ArrayList(m.attributes())));
 			}
 		}
 		
-		/** 
-		 * Now, construct the skeleton for this class!
+		/**
+		 * Now, construct the skeleton for this class! 
 		 */
 		skeletons.add(new Clazz(type,c.modifiers(),superClass,interfaces,fields,methods));
 		

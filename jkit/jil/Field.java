@@ -23,6 +23,21 @@ public class Field extends SyntacticElementImpl {
 	}
 	
 	/**
+     * Construct an object representing a field of a JVM class.
+     * 
+     * @param name - The name of the field.
+     * @param type - The (fully generic) type of the field.
+     * @param modifiers - Any modifiers of the field (e.g. public, static, etc)
+     */
+	public Field(String name, Type type, List<Modifier> modifiers,
+			List<Attribute> attributes) {
+		super(attributes);
+		this.name = name;
+		this.type = type;
+		this.modifiers = modifiers;
+	}
+	
+	/**
      * Access the name of this field.  
      * 
      * @return

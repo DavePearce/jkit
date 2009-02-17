@@ -438,7 +438,11 @@ public class TypePropagation {
 					msg += t;
 				}
 				syntax_error(msg + ")", e);
-			}
+			} /*catch(IllegalArgumentException iae) {
+				// This can happen if the parameters supplied to bind, which is
+				// called by resolveMethod are somehow not "base equivalent"
+				syntax_error(iae.getMessage(),e);
+			}*/
 		} else {
 			// method with no explicit receiver. Hence, it must be this class
 			// which is the receiver. This is not trivial, since we need to

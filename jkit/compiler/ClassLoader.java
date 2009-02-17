@@ -385,14 +385,20 @@ public class ClassLoader {
 						logout.println("Compiled " + srcFile + " [" + time + "ms]");						
 						// Add all classes coming out of the src file into the
 						// classtable, and register that they have been compiled.
+						Clazz r = null;
+						
 						for(Clazz c : cs) {
-							String n = pathChild(refName(c.type()));
+							String rn = refName(c.type());
+							String n = pathChild(rn);
 							pkgInfo.classes.add(n);
 							pkgInfo.compiledClasses.add(n);
-							classtable.put(n,c);
+							classtable.put(n,c);							
+							if(rn.equals(name)) {
+								r = c;
+							}
 						}
-						
-						return cs.get(0);
+																		
+						return r;
 					} else if(classFile.exists()) {
 						// Here, there is no sourcefile, but there is a classfile.
 						// So, no need to compile --- just load the class file!

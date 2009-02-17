@@ -149,15 +149,24 @@ public class TypeResolution {
 			e.attributes().add(resolve(e));
 		}		
 		
+		Type returnType = new Type.Void();
+		List<Type> parameterTypes = new ArrayList<Type>();
+		
 		if(d.returnType() != null) {
 			// The return type may be null iff this is a constructor.
-			d.returnType().attributes().add(resolve(d.returnType()));
+			returnType = resolve(d.returnType());
+			d.returnType().attributes().add(returnType);			
 		}
 							
 		for(Triple<String,List<Modifier>,jkit.java.tree.Type> p : d.parameters()) {
 			Type pt = resolve(p.third());
-			p.third().attributes().add(pt);					
+			p.third().attributes().add(pt);				
+			parameterTypes.add(pt);
 		}
+		
+		d.attributes().add(
+				new Type.Function(returnType, parameterTypes,
+						new ArrayList<Type.Variable>()));
 		
 		// Now, explore the method body for any other things to resolve.
 		doStatement(d.body());
