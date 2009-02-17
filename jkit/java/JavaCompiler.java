@@ -303,7 +303,7 @@ public class JavaCompiler implements Compiler {
 				skeletons.addAll(buildSkeletons((Decl.Clazz) d, pkg,type,typeOnly));
 			} else if(d instanceof Decl.Field && !typeOnly) {				
 				Decl.Field f = (Decl.Field) d;
-				Type t = (Type) f.attribute(Type.class);
+				Type t = (Type) f.attribute(Type.class);				
 				fields.add(new Field(f.name(), t, f.modifiers(), new ArrayList(
 						f.attributes())));
 			} else if(d instanceof Decl.Method && !typeOnly) {

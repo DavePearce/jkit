@@ -530,33 +530,36 @@ public class TypeResolution {
 	 *            determine the import list.
 	 * @return
 	 */
-	protected jkit.jil.Type.Reference resolve(jkit.java.tree.Type.Clazz ct) {
+	protected jkit.jil.Type.Reference resolve(jkit.java.tree.Type.Clazz ct) {		
 		ArrayList<Pair<String,List<jkit.jil.Type.Reference>>> ncomponents = new ArrayList();
 		String className = "";
 		String pkg = "";
 				
 		boolean firstTime = true;
-		for(int i=0;i!=ct.components().size();++i) {
+		for (int i = 0; i != ct.components().size(); ++i) {
 			String tmp = ct.components().get(i).first();
 			String tmppkg = pkg.equals("") ? tmp : pkg + "." + tmp;
-			if(firstTime && loader.isPackage(tmppkg))  {
+			if (firstTime && loader.isPackage(tmppkg)) {
 				pkg = tmppkg;
 			} else {
-				if(!firstTime) {
+				if (!firstTime) {
 					className += "$";
 				}
 				firstTime = false;
 				className += ct.components().get(i).first();
-				
+
 				// now, rebuild the component list
-				Pair<String,List<jkit.java.tree.Type.Reference>> component = ct.components().get(i);
+				Pair<String, List<jkit.java.tree.Type.Reference>> component = ct
+						.components().get(i);
 				ArrayList<jkit.jil.Type.Reference> nvars = new ArrayList();
-				
-				for(jkit.java.tree.Type.Reference r : component.second()) {
+
+				for (jkit.java.tree.Type.Reference r : component.second()) {					
 					nvars.add((jkit.jil.Type.Reference) resolve(r));
 				}
-				
-				ncomponents.add(new Pair<String,List<jkit.jil.Type.Reference>>(component.first(),nvars));
+
+				ncomponents
+						.add(new Pair<String, List<jkit.jil.Type.Reference>>(
+								component.first(), nvars));
 			}
 		}
 		
@@ -573,8 +576,9 @@ public class TypeResolution {
 		// source code and, hence, we need to determine this from the CLASSPATH
 		// and the import list. There are two phases. 
 		
-		try {			
-			return loader.resolve(className,imports);			
+		try {
+			Type.Clazz r = loader.resolve(className,imports);
+			return new jkit.jil.Type.Clazz(r.pkg(),ncomponents);					
 		} catch(ClassNotFoundException e) {}
 
 		throw new SyntaxError("unable to find class " + className,0,0);

@@ -441,6 +441,10 @@ public class TypePropagation {
 			// This can happen if the parameters supplied to bind, which is
 			// called by resolveMethod are somehow not "base equivalent"
 			syntax_error(iae.getMessage(),e);
+		} catch(TypeSystem.BindError be) {
+			// This can happen if the parameters supplied to bind, which is
+			// called by resolveMethod are somehow not "base equivalent"
+			syntax_error(be.getMessage(),e);
 		}		
 	}
 	
