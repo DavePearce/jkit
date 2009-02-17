@@ -445,7 +445,8 @@ public class TypeChecking {
 		Type e_t = (Type) e.expr().attribute(Type.class);
 		Type c_t = (Type) e.type().attribute(Type.class);
 		try {
-			if(!types.subtype(c_t,e_t, loader)) {
+			if (!(types.subtype(c_t, e_t, loader) || types.subtype(e_t, c_t,
+					loader))) {
 				syntax_error("inconvertible types: " + e_t + ", " + e.type(), e);
 			}
 		} catch(ClassNotFoundException ex) {

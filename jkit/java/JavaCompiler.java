@@ -291,10 +291,21 @@ public class JavaCompiler implements Compiler {
 			}
 			components.add(new Pair(c.name(), new ArrayList()));
 			type = new Type.Clazz(pkg,components);
+		}		
+		Type.Clazz superClass = new Type.Clazz("java.lang","Object");
+		if(c.superclass() != null) {
+			// Observe, after type resolution, this will give the correct
+			// superclass type. However, prior to type resolution it will just
+			// return null.
+			superClass = (Type.Clazz) c.superclass().attribute(Type.class);
 		}
-		
-		Type.Clazz superClass = null;
 		ArrayList<Type.Clazz> interfaces = new ArrayList();
+		for(jkit.java.tree.Type.Clazz i : c.interfaces()) {
+			Type.Clazz t = (Type.Clazz) i.attribute(Type.class);
+			if(t != null) {
+				interfaces.add(t);
+			}
+		}
 		ArrayList<Field> fields = new ArrayList();
 		ArrayList<Method> methods = new ArrayList();
 		

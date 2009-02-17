@@ -417,7 +417,10 @@ public class TypeResolution {
 	
 	protected void doInstanceOf(Expr.InstanceOf e) {}
 	
-	protected void doCast(Expr.Cast e) {}
+	protected void doCast(Expr.Cast e) {
+		Type t = resolve(e.type());
+		e.type().attributes().add(t);
+	}
 	
 	protected void doBoolVal(Value.Bool e) {}
 	

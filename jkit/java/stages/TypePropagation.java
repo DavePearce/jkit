@@ -452,7 +452,9 @@ public class TypePropagation {
 	}
 	
 	protected void doCast(Expr.Cast e, HashMap<String,Type> environment) {
-	
+		doExpression(e.expr(), environment);
+		// may need to insert an implicit cast here...
+		e.attributes().add(e.type().attribute(Type.class));
 	}
 	
 	protected void doBoolVal(Value.Bool e, HashMap<String,Type> environment) {
