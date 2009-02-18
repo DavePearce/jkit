@@ -794,10 +794,7 @@ public class JavaFileWriter {
 	}
 	
 	protected void writeConvert(Expr.Convert e) {
-		write("[");
-		writeType(e.type());
-		write("] ");
-		writeExpressionWithBracketsIfNecessary(e.expr());
+		writeExpression(e.expr());
 	}
 	
 	protected void writeBoolVal(Value.Bool e) {

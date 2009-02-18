@@ -410,7 +410,7 @@ public class TypePropagation {
 		// the method in the class hierarchy. This lookup procedure is seriously
 		// non-trivial, and is implemented in the TypeSystem module.
 			
-		Type.Clazz receiver = (Type.Clazz) e.target().attribute(Type.class);
+		Type.Clazz receiver = null;
 		String e_name = e.name();
 		
 		try {		
@@ -418,9 +418,11 @@ public class TypePropagation {
 				// special case when calling the super constructor. The method
 				// name we're looking for is not "super"; rather, it's the name
 				// of the receivers super class.
-				Type.Clazz sc = getSuperClass(receiver);
-				e_name = sc.components().get(sc.components().size()-1).first();
-			}			
+				receiver = getSuperClass((Type.Clazz) e.attribute(Type.class));
+				e_name = receiver.components().get(receiver.components().size()-1).first();
+			} else {
+				 receiver = (Type.Clazz) e.target().attribute(Type.class);
+			}
 			Type.Function f = types.resolveMethod(receiver, e_name,
 					parameterTypes, loader).third();
 

@@ -601,12 +601,10 @@ public class ScopeResolution {
 		Expr target = doExpression(e.target(), file);
 		
 		if(target == null && e.name().equals("super")) {
-			// Special case.  We're invoking the super constructor 
+			// Special case. We're invoking the super constructor. There's not
+			// much we can do here.
 			Type thisType = ((ClassScope) findEnclosingScope(ClassScope.class)).type;
-			target = new Expr.LocalVariable("this",
-					new ArrayList(e.attributes()));
-			target.attributes().add(thisType);
-			
+			e.attributes().add(thisType);			
 		} else if(target == null) {
 			boolean isThis = true;
 			
