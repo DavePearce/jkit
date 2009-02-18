@@ -579,6 +579,10 @@ public class TypeChecking {
 		Type rhs_t = (Type) e.rhs().attribute(Type.class);
 		Type e_t = (Type) e.attribute(Type.class);
 		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
+
+		if(lhs_t == null || rhs_t == null) {
+			syntax_error("Location is...",e);
+		}
 		
 		if ((lhs_t instanceof Type.Primitive || rhs_t instanceof Type.Primitive)
 				&& !lhs_t.equals(rhs_t)) {

@@ -197,7 +197,9 @@ public class TypePropagation {
 							.attribute(SourceLocation.class));
 			
 			def.setRhs(c);			
-		}		
+		}
+		
+		def.attributes().add(lhs_t);
 	}
 	
 	protected void doReturn(Stmt.Return ret) {
