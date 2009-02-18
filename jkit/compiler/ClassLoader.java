@@ -367,7 +367,7 @@ public class ClassLoader {
 					}  
 					ClassFileReader r = new ClassFileReader(jf.getInputStream(je));
 					time = System.currentTimeMillis() - time;
-					logout.println("Loaded skeletons " + location + ":"
+					logout.println("Loaded " + location + ":"
 							+ jarname + " [" + time + "ms]");
 					Clazz clazz = r.readClass();
 					// Update our knowledge base of classes.					

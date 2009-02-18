@@ -745,25 +745,7 @@ public class ScopeResolution {
 		// traverse up the stack of scopes looking for an enclosing scope which
 		// contains a variable with the same name.
 				
-		// Now, we need to determine whether or not this method invocation
-		// is from a static context. This is because, if it is, then we
-		// cannot use the "this" variable as the receiver. Instead, we'll
-		// need to use the Class itself as the receiver.
-		boolean isStatic;
-		MethodScope ms = (MethodScope) findEnclosingScope(MethodScope.class);
-		if(ms != null) {
-			isStatic = ms.isStatic;
-		} else {
-			FieldScope fs = (FieldScope) findEnclosingScope(FieldScope.class);
-			if(fs != null) {
-				isStatic = fs.isStatic;
-			} else {
-				// i'm not sure how you can get here, so we'll just assume
-				// it's not from something static.
-				isStatic = false;
-			}
-		}
-		
+		boolean isStatic = false;		
 		boolean isThis = true;		
 		for(int i=scopes.size()-1;i>=0;--i) {
 			Scope s = scopes.get(i);
@@ -799,7 +781,7 @@ public class ScopeResolution {
 				} catch(FieldNotFoundException fne) {					
 				}
 				isThis = false;
-				if(cs.isStatic) { break; }
+				isStatic = cs.isStatic; 
 			} else if(s.variables.containsKey(e.value())) {
 				Expr r;
 				if(isThis) {				
@@ -812,7 +794,11 @@ public class ScopeResolution {
 				// add the variables type here.
 				r.attributes().add(s.variables.get(e.value()));
 				return r;
-			} 
+			} else if(s instanceof MethodScope) {
+				isStatic = ((MethodScope)s).isStatic;
+			} else if(s instanceof FieldScope) {
+				isStatic = ((FieldScope)s).isStatic;
+			}
 		}
 		
 		// If we get here, then this variable access is either a syntax error,
