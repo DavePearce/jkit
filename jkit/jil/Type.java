@@ -31,7 +31,7 @@ public interface Type extends Attribute {
      * The Null type is a special type given to the null value. We require that
      * Null is a subtype of any Reference.
      */
-	public static class Null implements Primitive {		
+	public static class Null implements Reference {		
 		public String toString() {
 			return "null";
 		}
