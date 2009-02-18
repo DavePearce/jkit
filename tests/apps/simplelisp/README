@@ -1,0 +1,38 @@
+TO DO
+=====
+Add PrettyPrinter method [requires support for comments?]
+
+Add support for defmacro ?
+Add support for floats ?
+
+Add configuration (e.g. toolbar = false, key mappings etc.)
+Add command buffer ?
+Add syntax highlighting?
+
+Icons
+=====
+The icons used in this application are sourced from two locations:
+
+1) The OOO-icons library, which is licensed under the LGPL.  
+   This includes all files com/simpular/frontend/icons/stock_*.png
+   See:	http://www.novell.com/coolsolutions/feature/1637.html
+	
+2) The Java look-and-feel icons library.  This includes the file
+   com/simpular/frontend/icons/Play24.gif
+   See: http://java.sun.com/developer/techDocs/hi/repository/
+	
+As such, these Icons can be freely distributed with this program.  
+However, you must abide by their respective licenses if you choose 
+to distribute the icons as part of any other program/library.
+
+Known Bugs / "Features"
+=======================
+1) Comments are lost when pretty printing.
+2) Can't stop program when it's waiting for input.  Or in an infinite 
+   loop it seems?
+3) Only one syntax error is reported at a time.
+4) Console/Problems tabs don't auto-appear.
+5) can't delete input in console.
+6) once an exception has been thrown can't rerun program.
+7) interesting bug about swapping < operators
+8) expressions don't support -1!

@@ -1,0 +1,18 @@
+(set-window-width 500)
+(set-window-height 602)
+(set-top-pane-proportion 75)
+(setq text-background-colour "black")
+(setq text-foreground-colour "0xEEEEEE")
+(setq text-comment-colour "blue")
+(setq text-string-colour "red")
+(setq text-brace-colour "light gray")
+
+(setq text-caret-colour "light gray")
+
+;; some helper functions!
+(defun switch-tab () (if (equal (selected-tab) 1) (set-selected-tab 0) (set-selected-tab 1)))
+(defun maximise-window () (set-window-height (screen-height)) (set-window-width (screen-width)))
+
+;; some extra key bindings!
+(set-key "alt S" '(switch-tab))
+(set-key "alt M" '(maximise-window))

@@ -1,0 +1,18 @@
+<project default="build">
+  <target name="clean">
+    <delete>
+	<fileset dir="org" includes="**/*.class"/>
+	<fileset file="lib/*.jar"/>
+    </delete>
+  </target>
+ 
+  <target name="build">
+    <javac srcdir="." includes="org/**" debug="true"/> 
+    <jar destfile="lib/simplelisp.jar" includes="org/**" basedir=".">
+     <manifest>
+      <attribute name="Built-By" value="${user.name}"/>
+      <attribute name="Main-Class" value="org.simplelisp.editor.InterpreterFrame"/>
+     </manifest>
+    </jar>
+  </target>
+</project>
