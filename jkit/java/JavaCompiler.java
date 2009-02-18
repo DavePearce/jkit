@@ -135,7 +135,7 @@ public class JavaCompiler implements Compiler {
 	 */
 	public List<Clazz> compile(List<File> filenames) throws IOException, SyntaxError {
 		for(File f : filenames) {
-			compilationQueue.add(f.getCanonicalPath());
+			compilationQueue.add(f.getPath());
 		}
 		
 		ArrayList<Clazz> classes = new ArrayList<Clazz>();
@@ -217,7 +217,7 @@ public class JavaCompiler implements Compiler {
 			
 			return skeletons; // to be completed			
 		} catch(SyntaxError se) {
-			throw new SyntaxError(se.msg(), filename.toString(), se.line(), se
+			throw new SyntaxError(se.msg(), filename.getPath(), se.line(), se
 					.column(), se.width(), se);			
 		} 
 	}
