@@ -420,23 +420,54 @@ public class TypePropagation {
 		// Now, to determine the return type of this method, we need to lookup
 		// the method in the class hierarchy. This lookup procedure is seriously
 		// non-trivial, and is implemented in the TypeSystem module.
+			
+		Type.Clazz receiver = null; 
+		String e_name = e.name();
 		
-		Type.Clazz receiver = (Type.Clazz) e.target().attribute(Type.class);
-		try {				
-			Type.Function f = types.resolveMethod(receiver, e.name(), parameterTypes, loader).third();				
-			if(!(f.returnType() instanceof Type.Void)) {					
+		try {
+			
+			if(e.target() == null) {
+				// If there is no target, then this means that scope resolution was
+				// unable to find a suitable candidate. This can happen in the case
+				// of "super" calls, since no such method declared "super" could
+				// exist in any of the enclosing scopes.
+				if(e.name().equals("super") && environment.containsKey("this")) {
+					receiver = getSuperClass((Type.Clazz) environment.get("this"));
+					// determine the name of the constructor call.
+					e_name = receiver.components().get(receiver.components().size()-1).first();
+				} else {
+					String msg = "method not found: " + e.name() + "(";
+					boolean firstTime = true;
+					for (Type t : parameterTypes) {
+						if (!firstTime) {
+							msg += ", ";
+						}
+						firstTime = false;
+						msg += t;
+					}
+					syntax_error(msg + ")", e);	
+				}
+			} else {
+				// Simpler case, there is a target to look up its type.
+				receiver = (Type.Clazz) e.target().attribute(Type.class);
+			}
+						
+			Type.Function f = types.resolveMethod(receiver, e_name,
+					parameterTypes, loader).third();
+			
+			if (!(f.returnType() instanceof Type.Void)) {
 				e.attributes().add(f.returnType());
 			}
 		} catch(ClassNotFoundException cnfe) {
 			syntax_error(cnfe.getMessage(), e);
 		} catch(MethodNotFoundException mfne) {
 			String msg = "method not found: " + receiver + "." + e.name() + "(";
-			boolean firstTime=true;
-			for(Type t : parameterTypes) {
-				if(!firstTime) {
+			boolean firstTime = true;
+			for (Type t : parameterTypes) {
+				if (!firstTime) {
 					msg += ", ";
 				}
-				firstTime=false;
+				firstTime = false;
 				msg += t;
 			}
 			syntax_error(msg + ")", e);
@@ -1208,6 +1239,17 @@ public class TypePropagation {
 					&& c.components().get(0).first().equals("String");			
 		}
 		return false;
+	}
+	
+	/**
+	 * This method simply determines the super class of the given class.
+	 * 
+	 * @param c
+	 * @return
+	 */
+	protected Type.Clazz getSuperClass(Type.Clazz c) throws ClassNotFoundException {
+		jkit.jil.Clazz cc = loader.loadClass(c);
+		return cc.superClass();
 	}
 	
 	/**
