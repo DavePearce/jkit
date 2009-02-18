@@ -443,7 +443,9 @@ public class TypeResolution {
 	
 	protected void doArrayVal(Value.Array e) {}
 	
-	protected void doClassVal(Value.Class e) {}
+	protected void doClassVal(Value.Class e) {
+		e.value().attributes().add(resolve(e.value()));
+	}
 	
 	protected void doVariable(Expr.Variable e) {					
 	}

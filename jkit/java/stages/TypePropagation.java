@@ -450,6 +450,9 @@ public class TypePropagation {
 			} else {
 				// Simpler case, there is a target to look up its type.
 				receiver = (Type.Clazz) e.target().attribute(Type.class);
+				if(receiver == null) {
+					syntax_error("Location is...",e);
+				}
 			}
 						
 			Type.Function f = types.resolveMethod(receiver, e_name,
@@ -530,7 +533,22 @@ public class TypePropagation {
 	}
 	
 	protected void doClassVal(Value.Class e, HashMap<String,Type> environment) {
+		// Basically, this corresponds to some code like this:
+		// <pre>
+		// void f() {
+		// String x = String.class.getName();
+		// }
+		// <pre>
+		// Here, the Class Value is that returned by "String.class" and it
+		// corresponds to an instance of java.lang.Class<String>. Therefore, we
+		// need to construct a type representing java.lang.Class<X> here.
 		
+		Type.Clazz c = (Type.Clazz) e.value().attribute(Type.class);
+		List<Type.Reference> tvars = new ArrayList();
+		tvars.add(c);
+		List<Pair<String, List<Type.Reference>>> components = new ArrayList();
+		components.add(new Pair("Class",tvars));
+		e.attributes().add(new Type.Clazz("java.lang",components));
 	}
 	
 	protected void doVariable(Expr.Variable e, HashMap<String,Type> environment) {					
