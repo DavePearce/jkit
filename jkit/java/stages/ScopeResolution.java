@@ -327,6 +327,23 @@ public class ScopeResolution {
 		}
 	}
 	
+	protected void doCatchBlock(Stmt.CatchBlock block, JavaFile file) {
+		if(block != null) {
+			Scope myScope = new Scope();
+			scopes.push(myScope);
+			
+			myScope.variables.put(block.variable(), (Type.Clazz) block.type()
+					.attribute(Type.class)); 
+					
+			// now process every statement in this block.
+			for(Stmt s : block.statements()) {
+				doStatement(s, file);
+			}
+		
+			scopes.pop();
+		}
+	}
+	
 	protected void doSynchronisedBlock(Stmt.SynchronisedBlock block, JavaFile file) {
 		doBlock(block, file);
 		doExpression(block.expr(), file);
@@ -337,7 +354,7 @@ public class ScopeResolution {
 		doBlock(block.finaly(), file);		
 		
 		for(Stmt.CatchBlock cb : block.handlers()) {
-			doBlock(cb, file);
+			doCatchBlock(cb, file);
 		}
 	}
 	
