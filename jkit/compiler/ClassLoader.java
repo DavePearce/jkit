@@ -253,7 +253,7 @@ public class ClassLoader {
 		while(pkg != null) {
 			PackageInfo pkgInfo = packages.get(pkg);			
 			if (pkgInfo != null) {								
-				if(pkgInfo.classes.contains(fullClassName)) {					
+				if(pkgInfo.classes.contains(fullClassName)) {						
 					// Found the class!!		
 					return new Type.Clazz(pkg,classes);
 				} else if (pkgInfo.classes.contains(outerClassName)

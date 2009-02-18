@@ -418,8 +418,7 @@ public class TypePropagation {
 				// of the receivers super class.
 				Type.Clazz sc = getSuperClass(receiver);
 				e_name = sc.components().get(sc.components().size()-1).first();
-			}
-			
+			}			
 			Type.Function f = types.resolveMethod(receiver, e_name,
 					parameterTypes, loader).third();
 

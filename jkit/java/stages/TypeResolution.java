@@ -249,7 +249,7 @@ public class TypeResolution {
 	}
 	
 	protected void doVarDef(Stmt.VarDef def) {
-		Type t = resolve(def.type());
+		Type t = resolve(def.type());		
 		def.type().attributes().add(t);
 		
 		List<Triple<String, Integer, Expr>> defs = def.definitions();
@@ -585,8 +585,32 @@ public class TypeResolution {
 		// source code and, hence, we need to determine this from the CLASSPATH
 		// and the import list. There are two phases. 
 		
-		try {
+		try {			
 			Type.Clazz r = loader.resolve(className,imports);
+			
+			// The following loop is required for two reasons:
+			//
+			// 1) we may not have full type information in the source code.
+			// 2) we may have generic type information in the source code which
+			// need to keep.
+			//
+			// For example, imagine a class Test, with inner class Inner<G>. The
+			// source code may include a reference "Inner<String>". Via resolve
+			// above, we'll determine the type to be "Test.Inner<G>". But, the
+			// actual type we want is "Test.Inner<String>". Therefore, the
+			// following loop combines all the information we have together to
+			// achieve this.
+			
+			List<Pair<String,List<jkit.jil.Type.Reference>>> rcomponents = r.components();
+			for(int i=0;i!=r.components().size();++i) {
+				Pair<String,List<jkit.jil.Type.Reference>> p = rcomponents.get(i); 
+				if(p.first().equals(ncomponents.get(i).first())) {
+					break;
+				} else {
+					ncomponents.add(i,p);
+				}
+			}
+			
 			return new jkit.jil.Type.Clazz(r.pkg(),ncomponents);					
 		} catch(ClassNotFoundException e) {}
 
