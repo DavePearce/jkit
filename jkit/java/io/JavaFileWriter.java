@@ -250,6 +250,7 @@ public class JavaFileWriter {
 		write("(");
 		boolean firstTime=true;
 		int va_count = 1; // to detect varargs 
+		
 		for(Triple<String,List<Modifier>,Type> p : m.parameters()) {
 			if(!firstTime) {
 				write(", ");				

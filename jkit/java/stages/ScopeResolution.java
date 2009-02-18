@@ -247,12 +247,22 @@ public class ScopeResolution {
 	protected void doMethod(Method d, JavaFile file) {
 		
 		HashMap<String,Pair<Type,List<Modifier>>> params = new HashMap();
+		int count = 1;
 		for (Triple<String, List<Modifier>, jkit.java.tree.Type> t : d
 				.parameters()) {
-			Pair<Type, List<Modifier>> p = new Pair((Type) t.third().attribute(
-					Type.class), t.second());
+			Type type = (Type) t.third().attribute(Type.class);
+
+			// if this method has variable arity, and this is the last parameter
+			// in the declaration, then we need to upgrade it's type to be an
+			// array.
+			if(count++ == d.parameters().size() && d.isVariableArity()) {				
+				type = new Type.Array(type);
+			}
+			
+			Pair<Type, List<Modifier>> p = new Pair(type, t.second());
 			params.put(t.first(), p);
 		}		
+		
 		if (!d.isStatic()) {
 			// put in a type for the special "this" variable
 			ArrayList<Modifier> ms = new ArrayList<Modifier>();

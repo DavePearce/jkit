@@ -224,7 +224,6 @@ public interface Decl extends SyntacticElement {
 		private String name;
 		private Type returnType;
 		private List<Triple<String,List<Modifier>,Type>> parameters;
-		private boolean varargs;
 		private List<Type.Variable> typeParameters;
 		private List<Type.Clazz> exceptions;
 		private Stmt.Block block;
@@ -239,7 +238,9 @@ public interface Decl extends SyntacticElement {
 			this.returnType = returnType;
 			this.name = name;
 			this.parameters = parameters;
-			this.varargs = varargs;
+			if(varargs) {
+				modifiers.add(new Modifier.Base(java.lang.reflect.Modifier.TRANSIENT));
+			}			
 			this.typeParameters = typeParameters;
 			this.exceptions = exceptions;
 			this.block = block;

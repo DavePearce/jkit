@@ -352,7 +352,7 @@ public class TypePropagation {
 				// now, perform field lookup!
 				try {
 					Triple<jkit.jil.Clazz, jkit.jil.Field, Type> r = types
-					.resolveField(target, e.name(), loader);
+							.resolveField(target, e.name(), loader);
 					e.attributes().add(r.third());			
 				} catch(ClassNotFoundException cne) {
 					syntax_error("class not found: " + target,e);

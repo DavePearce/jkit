@@ -420,7 +420,7 @@ public class JavaFileReader {
 			idx++;
 			varargs = true;
 		}
-
+		
 		// === THROWS CLAUSE ===
 
 		ArrayList<Type.Clazz> exceptions = new ArrayList<Type.Clazz>();
