@@ -243,7 +243,8 @@ public class TypeResolution {
 		doBlock(block.finaly());		
 		
 		for(Stmt.CatchBlock cb : block.handlers()) {
-			doBlock(cb);
+			cb.type().attributes().add(resolve(cb.type()));
+			doBlock(cb);			
 		}
 	}
 	

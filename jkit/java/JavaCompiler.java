@@ -117,8 +117,7 @@ public class JavaCompiler implements Compiler {
 	 */
 	public boolean isCompiling(File sfile)  {		
 		try {
-			return compilationQueue.contains(sfile.getCanonicalPath())
-					|| compiling.contains(sfile.getCanonicalPath());
+			return compiling.contains(sfile.getCanonicalPath());
 		} catch (IOException e) {
 			return false;
 		}
