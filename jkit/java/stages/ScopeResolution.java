@@ -150,11 +150,11 @@ public class ScopeResolution {
 	 * accessed directly by code contained within this scope.
 	 */
 	private static class Scope {
-		public final HashMap<String,Type> variables;
+		public final HashMap<String,Pair<Type,List<Modifier>>> variables;
 		public Scope() {
-			this.variables = new HashMap<String,Type>();
+			this.variables = new HashMap<String,Pair<Type,List<Modifier>>>();
 		}
-		public Scope(HashMap<String,Type> variables) {
+		public Scope(HashMap<String,Pair<Type,List<Modifier>>> variables) {
 			this.variables = variables;
 		}
 	}
@@ -170,7 +170,10 @@ public class ScopeResolution {
 	
 	private static class MethodScope extends Scope {
 		public boolean isStatic;
-		public MethodScope(HashMap<String,Type> variables, boolean isStatic) {
+
+		public MethodScope(
+				HashMap<String, Pair<Type, List<Modifier>>> variables,
+				boolean isStatic) {
 			super(variables);
 			this.isStatic = isStatic;
 		}
@@ -243,15 +246,21 @@ public class ScopeResolution {
 
 	protected void doMethod(Method d, JavaFile file) {
 		
-		HashMap<String,Type> params = new HashMap();
+		HashMap<String,Pair<Type,List<Modifier>>> params = new HashMap();
 		for (Triple<String, List<Modifier>, jkit.java.tree.Type> t : d
 				.parameters()) {
-			params.put(t.first(), (Type) t.third().attribute(Type.class));
+			Pair<Type, List<Modifier>> p = new Pair((Type) t.third().attribute(
+					Type.class), t.second());
+			params.put(t.first(), p);
 		}		
 		if (!d.isStatic()) {
 			// put in a type for the special "this" variable
-			params.put("this",
-					((ClassScope) findEnclosingScope(ClassScope.class)).type);
+			ArrayList<Modifier> ms = new ArrayList<Modifier>();
+			ms.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL));
+			Pair<Type, List<Modifier>> p = new Pair(
+					((ClassScope) findEnclosingScope(ClassScope.class)).type,
+					ms);
+			params.put("this",p);
 		}
 		scopes.push(new MethodScope(params,d.isStatic()));
 		
@@ -332,8 +341,8 @@ public class ScopeResolution {
 			Scope myScope = new Scope();
 			scopes.push(myScope);
 			
-			myScope.variables.put(block.variable(), (Type.Clazz) block.type()
-					.attribute(Type.class)); 
+			myScope.variables.put(block.variable(), new Pair((Type.Clazz) block
+					.type().attribute(Type.class), new ArrayList<Modifier>())); 
 					
 			// now process every statement in this block.
 			for(Stmt s : block.statements()) {
@@ -371,7 +380,8 @@ public class ScopeResolution {
 				nt = new Type.Array(nt);
 			}
 			
-			enclosingScope.variables.put(d.first(), nt);
+			enclosingScope.variables.put(d.first(), new Pair(nt, def
+					.modifiers()));
 			doExpression(d.third(), file);														
 		}		
 	}
@@ -437,8 +447,8 @@ public class ScopeResolution {
 		Scope myScope = new Scope();
 		scopes.push(myScope);
 		
-		myScope.variables.put(stmt.var(), (Type) stmt.type().attribute(
-				Type.class));
+		myScope.variables.put(stmt.var(), new Pair((Type) stmt.type()
+				.attribute(Type.class), stmt.modifiers()));
 		stmt.setSource(doExpression(stmt.source(), file));
 		doStatement(stmt.body(), file);
 		
@@ -602,20 +612,7 @@ public class ScopeResolution {
 			// is from a static context. This is because, if it is, then we
 			// cannot use the "this" variable as the receiver. Instead, we'll
 			// need to use the Class itself as the receiver.
-			boolean isStatic;
-			MethodScope ms = (MethodScope) findEnclosingScope(MethodScope.class);
-			if(ms != null) {
-				isStatic = ms.isStatic;
-			} else {
-				FieldScope fs = (FieldScope) findEnclosingScope(FieldScope.class);
-				if(fs != null) {
-					isStatic = fs.isStatic;
-				} else {
-					// i'm not sure how you can get here, so we'll just assume
-					// it's not from something static.
-					isStatic = false;
-				}
-			}
+			boolean isStatic = false;			
 			
 			// At this stage, we traverse the available scopes looking for one
 			// which contains a method of the same name. It's interesting to
@@ -657,7 +654,7 @@ public class ScopeResolution {
 								cv.attributes().add(cs.type);
 								target = new Expr.Deref(cv, "this",
 										new ArrayList(e.attributes()));								
-							} else {
+							} else {															
 								target = new Expr.ClassVariable(cs.type.toString());
 								target.attributes().add(cs.type);
 							}
@@ -668,8 +665,12 @@ public class ScopeResolution {
 					}
 					
 					isThis = false;
-					if(cs.isStatic) { break; }
-				} 		
+					isStatic = cs.isStatic;
+				} else if(s instanceof MethodScope) {
+					isStatic = ((MethodScope)s).isStatic;
+				} else if(s instanceof FieldScope) {
+					isStatic = ((FieldScope)s).isStatic;
+				}
 			}	
 		} 
 		
@@ -745,7 +746,16 @@ public class ScopeResolution {
 		// traverse up the stack of scopes looking for an enclosing scope which
 		// contains a variable with the same name.
 				
+
+		// Now, we need to determine whether or not this method invocation
+		// is from a static context. This is because, if it is, then we
+		// cannot use the "this" variable as the receiver. Instead, we'll
+		// need to use the Class itself as the receiver.
 		boolean isStatic = false;		
+		
+		// At this stage, we traverse the available scopes looking for one
+		// which contains the field we're after. 
+		
 		boolean isThis = true;		
 		for(int i=scopes.size()-1;i>=0;--i) {
 			Scope s = scopes.get(i);
@@ -756,6 +766,7 @@ public class ScopeResolution {
 				try {
 					Triple<jkit.jil.Clazz, jkit.jil.Field, Type> r = types
 							.resolveField(cs.type, e.value(), loader);
+					
 					// Ok, this variable access corresponds to a field load.
 					if(isThis && !isStatic) {
 						Expr thisvar = new Expr.LocalVariable("this",
@@ -771,7 +782,15 @@ public class ScopeResolution {
 								new ArrayList(e.attributes())), e.value(), e
 								.attributes());
 					} else {						
-						// Create a class access variable.
+						// Create a class access variable. A key issue we need
+						// to check for, is whether or not the variable in
+						// question is static or not (as, if not, then we have a
+						// syntax error)
+						if (!r.second().isStatic()) {
+							syntax_error("Cannot access non-static field \""
+									+ e.value() + "\" from static context", e);
+						}
+						
 						Expr.ClassVariable cv = new Expr.ClassVariable(cs.type.toString());
 						cv.attributes().add(cs.type);
 						return new Expr.Deref(cv, e.value(), e
@@ -792,7 +811,7 @@ public class ScopeResolution {
 							.attributes()));
 				}
 				// add the variables type here.
-				r.attributes().add(s.variables.get(e.value()));
+				r.attributes().add(s.variables.get(e.value()).first());
 				return r;
 			} else if(s instanceof MethodScope) {
 				isStatic = ((MethodScope)s).isStatic;
