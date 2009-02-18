@@ -809,10 +809,8 @@ public class ScopeResolution {
 				} else {
 					// Check whether or not the non-local variable is declared
 					// final (as this is a Java requirement).
-					if (!s.variables.get(e.value()).second()
-							.contains(
-									new Modifier.Base(
-											java.lang.reflect.Modifier.FINAL))) {
+					if (!hasModifier(java.lang.reflect.Modifier.FINAL,
+							s.variables.get(e.value()).second())) {
 						// no it doesn't
 						syntax_error(
 								"local variable \""
@@ -902,6 +900,24 @@ public class ScopeResolution {
 			descriptor += c.first();
 		}
 		return descriptor;
+	}
+	
+	/**
+	 * Helper method.
+	 * @param modifier
+	 * @param modifiers
+	 * @return
+	 */
+	protected boolean hasModifier(int modifier, List<Modifier> modifiers) {
+		for(Modifier m : modifiers) {
+			if(m instanceof Modifier.Base) {
+				Modifier.Base b = (Modifier.Base) m;
+				if(b.modifier() == modifier) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	/**
