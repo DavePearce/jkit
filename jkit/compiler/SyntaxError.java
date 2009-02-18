@@ -61,6 +61,24 @@ public class SyntaxError extends RuntimeException {
 	 *            Line number within file containing problem.
 	 * @param column
 	 *            Column within line of file containing problem.
+	 */
+	public SyntaxError(String msg, int line, int column, Throwable ex) {
+		super(ex);
+		this.msg = msg;
+		this.filename = "unknown";
+		this.line=line;		
+		this.column=column;
+		this.width=1;
+	}
+	/**
+	 * Identify a syntax error at a particular point in a file.
+	 * 
+	 * @param msg
+	 *            Message detailing the problem.
+	 * @param line
+	 *            Line number within file containing problem.
+	 * @param column
+	 *            Column within line of file containing problem.
 	 * @param width
 	 *            Width of token within line of file containing problem.
 	 */

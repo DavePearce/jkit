@@ -377,12 +377,20 @@ public class TypeSystem {
 				List<Type.Reference> ts = t.second();
 				
 				// this maybe too strict for erased types.
-				if(!c.first().equals(t.first()) || cs.size() != ts.size()) {
+				if(!c.first().equals(t.first())) {
 					throw new BindError("Cannot bind " + concrete + " to " + template);
 				}
 				
-				for(int j=0;j!=cs.size();++j) {
-					innerBind(cs.get(j),ts.get(j),binding);	
+				for(int j=0;j!=Math.max(cs.size(),ts.size());++j) {
+					// We need to deal with the case of erased types. For
+					// example, when binding java.util.ArrayList with
+					// java.util.ArrayList<T> we must assume that the first type
+					// is, in fact, java.util.ArrayList<Object>.
+					Type.Reference cr = cs.size() <= j ? new Type.Clazz(
+							"java.lang", "Object") : cs.get(j);
+					Type.Reference tr = ts.size() <= j ? new Type.Clazz(
+							"java.lang", "Object") : ts.get(j);
+					innerBind(cr,tr,binding);	
 				}							
 			}
 			

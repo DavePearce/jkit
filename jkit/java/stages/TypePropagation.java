@@ -445,7 +445,7 @@ public class TypePropagation {
 		} catch(TypeSystem.BindError be) {
 			// This can happen if the parameters supplied to bind, which is
 			// called by resolveMethod are somehow not "base equivalent"
-			syntax_error(be.getMessage(),e);
+			syntax_error("internal failure (" + be.getMessage() + ")",e,be);
 		}		
 	}
 	
@@ -1245,6 +1245,24 @@ public class TypePropagation {
 	protected void syntax_error(String msg, SyntacticElement e) {
 		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
 		throw new SyntaxError(msg,loc.line(),loc.column());
+	}
+	
+	/**
+	 * This method is just to factor out the code for looking up the source
+	 * location and throwing an exception based on that. In this case, we also
+	 * have an internal exception which has given rise to this particular
+	 * problem.
+	 * 
+	 * @param msg
+	 *            --- the error message
+	 * @param e
+	 *            --- the syntactic element causing the error
+	 * @parem ex --- an internal exception, the details of which we want to
+	 *        keep.
+	 */
+	protected void syntax_error(String msg, SyntacticElement e, Throwable ex) {
+		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
+		throw new SyntaxError(msg,loc.line(),loc.column(),ex);
 	}
 }
 
