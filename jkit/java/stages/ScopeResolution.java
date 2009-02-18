@@ -382,7 +382,9 @@ public class ScopeResolution {
 			
 			enclosingScope.variables.put(d.first(), new Pair(nt, def
 					.modifiers()));
-			doExpression(d.third(), file);														
+									
+			Expr e = doExpression(d.third(), file);
+			defs.set(i, new Triple(d.first(),d.second(),e));
 		}		
 	}
 	
