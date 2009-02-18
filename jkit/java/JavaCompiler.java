@@ -116,7 +116,7 @@ public class JavaCompiler implements Compiler {
 	 * being compiled.
 	 */
 	public boolean isCompiling(File sfile)  {		
-		try {
+		try {			
 			return compiling.contains(sfile.getCanonicalPath());
 		} catch (IOException e) {
 			return false;
@@ -172,7 +172,7 @@ public class JavaCompiler implements Compiler {
 			
 			// First, we need to resolve types. That is, for each class
 			// reference type, determine what package it's in.	
-			List<Clazz> skeletons = buildSkeletons(jfile,true);			
+			List<Clazz> skeletons = buildSkeletons(jfile,true);
 			loader.compilingClasses(skeletons);
 			
 			start = System.currentTimeMillis();

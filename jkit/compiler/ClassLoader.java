@@ -239,7 +239,7 @@ public class ClassLoader {
 	 *            the class name provided, in the form "xxx$yyy"
 	 * @return
 	 */
-	protected Type.Clazz resolveClassName(String pkg, String className) {		
+	protected Type.Clazz resolveClassName(String pkg, String className) {
 		ArrayList<Pair<String, List<Type.Reference>>> classes = new ArrayList<Pair<String, List<Type.Reference>>>();
 		
 		for(String c : className.split("\\$")) {			
@@ -250,14 +250,14 @@ public class ClassLoader {
 		String fullClassName = className;
 		String outerClassName = fullClassName;
 		
-		while(pkg != null) {							
+		while(pkg != null) {
 			PackageInfo pkgInfo = packages.get(pkg);			
 			if (pkgInfo != null) {								
 				if(pkgInfo.classes.contains(fullClassName)) {					
-					// Found the class!!					
+					// Found the class!!		
 					return new Type.Clazz(pkg,classes);
 				} else if (pkgInfo.classes.contains(outerClassName)
-						&& !pkgInfo.compiledClasses.contains(outerClassName)) {									
+						&& !pkgInfo.compiledClasses.contains(outerClassName)) {					
 					// If we get here, then we may have a source file for the
 					// outer class which has not been compiled yet. Therefore,
 					// we need to check for this and, if so, compile it to check
@@ -269,7 +269,7 @@ public class ClassLoader {
 				} else {					
 					break;
 				}
-			} else {
+			} else {				
 				// This import does not correspond to a valid package.
 				// Therefore, it may be specifying an inner class and we need to check.
 				outerClassName = pathChild(pkg);
@@ -449,15 +449,19 @@ public class ClassLoader {
 	
 	/**
 	 * Given a path string of the form "xxx.yyy.zzz" this returns the parent
-	 * component (i.e. "xxx.yyy")
+	 * component (i.e. "xxx.yyy"). If you supply "xxx", then the path parent is
+	 * "". However, the path parent of "" is null.
 	 * 
 	 * @param pkg
 	 * @return
 	 */
 	private String pathParent(String pkg) {
+		if(pkg.equals("")) {
+			return null;
+		}
 		int idx = pkg.lastIndexOf('.');
 		if(idx == -1) {
-			return null;
+			return "";
 		} else {
 			return pkg.substring(0,idx);
 		}
