@@ -913,7 +913,7 @@ public class JavaFileWriter {
 
 	protected static final String[] binopstr = {"+", "-", "*", "/", "%", "<<",
 			">>", ">>>", "&", "|", "^", "<", "<=", ">", ">=", "==", "!=", "&&",
-			"||", "++"};
+			"||", "+"};
 	
 	
 	protected void writeBinOp(Expr.BinOp e) {				

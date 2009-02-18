@@ -319,36 +319,44 @@ public class TypePropagation {
 		}
 	}
 	
-	protected void doDeref(Expr.Deref e) {
-		
+	protected void doDeref(Expr.Deref e) {		
 		doExpression(e.target());	
 		
 		Type tmp = (Type) e.target().attribute(Type.class);
 		
 		if(!(tmp instanceof Type.Reference)) {
 			syntax_error("cannot dereference type: " + tmp,e);
-		}
-		
-		Type.Clazz target = (Type.Clazz) tmp;
-
-		if(e.name().equals("this")) {
-			// This is a special case, where we're trying to look up a field
-			// called "this". No such field can exist! What this means is that
-			// we're inside an inner class, and we're trying to access the this
-			// pointer of an enclosing class. This is easy to deal with here,
-			// since the type returned by this expression will be the target
-			// type of the dereference.
-			e.attributes().add(target);
+		} else if(tmp instanceof Type.Array) {
+			// This dereference must represent an internal method access.
+			if(e.name().equals("length")) {
+				// most common case.
+				e.attributes().add(new Type.Int());
+			} else {
+				syntax_error("field not found: " + tmp + "." + e.name(),e);
+			}
 		} else {
-			// now, perform field lookup!
-			try {
-				Triple<jkit.jil.Clazz, jkit.jil.Field, Type> r = types
-				.resolveField(target, e.name(), loader);
-				e.attributes().add(r.third());			
-			} catch(ClassNotFoundException cne) {
-				syntax_error("class not found: " + target,e);
-			} catch(FieldNotFoundException fne) {
-				syntax_error("field not found: " + target + "." + e.name(),e);
+
+			Type.Clazz target = (Type.Clazz) tmp;
+
+			if(e.name().equals("this")) {
+				// This is a special case, where we're trying to look up a field
+				// called "this". No such field can exist! What this means is that
+				// we're inside an inner class, and we're trying to access the this
+				// pointer of an enclosing class. This is easy to deal with here,
+				// since the type returned by this expression will be the target
+				// type of the dereference.
+				e.attributes().add(target);
+			} else {
+				// now, perform field lookup!
+				try {
+					Triple<jkit.jil.Clazz, jkit.jil.Field, Type> r = types
+					.resolveField(target, e.name(), loader);
+					e.attributes().add(r.third());			
+				} catch(ClassNotFoundException cne) {
+					syntax_error("class not found: " + target,e);
+				} catch(FieldNotFoundException fne) {
+					syntax_error("field not found: " + target + "." + e.name(),e);
+				}
 			}
 		}
 	}
