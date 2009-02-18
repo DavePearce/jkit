@@ -188,7 +188,7 @@ public class ScopeResolution {
 	private ClassLoader loader;
 	private TypeSystem types;
 	private final Stack<Scope> scopes = new Stack<Scope>();
-	private final Stack<String> imports = new Stack<String>();
+	private final LinkedList<String> imports = new LinkedList<String>();
 	
 	public ScopeResolution(ClassLoader loader, TypeSystem types) {
 		this.loader = loader; 
@@ -196,13 +196,13 @@ public class ScopeResolution {
 	}
 	
 	public void apply(JavaFile file) {
-		// First, setup the imports list					
-		imports.push("java.lang.*");		
-		imports.push(file.pkg() + ".*");
+		// First, setup the imports list (in reverse order).
 		for(Pair<Boolean,String> i : file.imports()) {
-			imports.push(i.second());
+			imports.add(i.second());
 		}
-		
+		imports.add(file.pkg() + ".*");
+		imports.add("java.lang.*");		
+				
 		// Now, traverse the declarations
 		for(Decl d : file.declarations()) {
 			doDeclaration(d,file);
@@ -231,16 +231,16 @@ public class ScopeResolution {
 		Type.Clazz myType = (Type.Clazz) c.attribute(Type.class);
 		
 		// Create an appropriate import declaration for this class.
-		imports.push(computeImportDecl(myType));
+		imports.addFirst(computeImportDecl(myType));
 				
 		// And, push on a scope representing this class definition.
-		scopes.push(new ClassScope(myType,c.isStatic()));
+		scopes.add(new ClassScope(myType,c.isStatic()));
 		
 		for(Decl d : c.declarations()) {
 			doDeclaration(d, file);
 		}
 		
-		imports.pop();
+		imports.removeFirst();
 		scopes.pop();
 	}
 

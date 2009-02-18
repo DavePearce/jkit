@@ -62,7 +62,7 @@ public class TypeResolution {
 	// the classes stack is used to keep track of the full type for the inner
 	// classes.
 	private Stack<Type.Clazz> scopes = new Stack<Type.Clazz>();
-	private Stack<String> imports = new Stack<String>();
+	private LinkedList<String> imports = new LinkedList<String>();
 	
 	public TypeResolution(ClassLoader loader, TypeSystem types) {
 		this.loader = loader; 
@@ -71,12 +71,12 @@ public class TypeResolution {
 	
 	public void apply(JavaFile file) {
 		// the following may cause problems with static imports.
-		imports.push("java.lang.*");
-		imports.push(file.pkg() + ".*");								
 		for(Pair<Boolean,String> i : file.imports()) {
-			imports.push(i.second());
-		}	
-						
+			imports.add(i.second());
+		}			
+		imports.add(file.pkg() + ".*");								
+		imports.add("java.lang.*");
+		
 		// The first entry on to the classes stack is a dummy to set the package
 		// for remaining classes.		
 		scopes.push(new Type.Clazz(file.pkg(),new ArrayList()));		
@@ -109,7 +109,7 @@ public class TypeResolution {
 		// and/or on the CLASSPATH.
 		Type.Clazz parentType = scopes.peek();		
 		
-		imports.add(computeImportDecl(parentType,c.name()));
+		imports.addFirst(computeImportDecl(parentType,c.name()));
 		
 		// Second, build my fully qualified type!		
 		List<Pair<String, List<Type.Reference>>> components = new ArrayList(parentType.components());
@@ -139,7 +139,7 @@ public class TypeResolution {
 			doDeclaration(d);
 		}
 		
-		imports.remove(imports.size()-1);
+		imports.removeFirst();
 		scopes.pop(); // undo my type
 	}
 
