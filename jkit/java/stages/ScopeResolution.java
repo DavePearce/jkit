@@ -168,6 +168,12 @@ public class ScopeResolution {
 		}
 	}
 	
+	private static class FieldScope extends Scope {
+		public boolean isStatic;
+		public FieldScope(boolean isStatic) {			
+			this.isStatic = isStatic;
+		}
+	}
 	private ClassLoader loader;
 	private TypeSystem types;
 	private final Stack<Scope> scopes = new Stack<Scope>();
@@ -242,7 +248,9 @@ public class ScopeResolution {
 	}
 
 	protected void doField(Field d, JavaFile file) {
+		scopes.push(new FieldScope(d.isStatic()));
 		doExpression(d.initialiser(), file);
+		scopes.pop();
 	}
 	
 	protected void doStatement(Stmt e, JavaFile file) {
@@ -529,8 +537,45 @@ public class ScopeResolution {
 	protected Expr doInvoke(Expr.Invoke e, JavaFile file) {		
 		Expr target = doExpression(e.target(), file);
 		if(target == null) {
-			boolean isThis = true;		
+			boolean isThis = true;
+			
+			// Now, we need to determine whether or not this method invocation
+			// is from a static context. This is because, if it is, then we
+			// cannot use the "this" variable as the receiver. Instead, we'll
+			// need to use the Class itself as the receiver.
+			boolean isStatic;
 			MethodScope ms = (MethodScope) findEnclosingScope(MethodScope.class);
+			if(ms != null) {
+				isStatic = ms.isStatic;
+			} else {
+				FieldScope fs = (FieldScope) findEnclosingScope(FieldScope.class);
+				if(fs != null) {
+					isStatic = fs.isStatic;
+				} else {
+					// i'm not sure how you can get here, so we'll just assume
+					// it's not from something static.
+					isStatic = false;
+				}
+			}
+			
+			// At this stage, we traverse the available scopes looking for one
+			// which contains a method of the same name. It's interesting to
+			// note that, the scope in question may not contain a method of the
+			// same name with the right types --- but we don't care and neither
+			// does javac. This leads to some interesting bits of code which
+			// seem like they should compile, but don't under javac. For
+			// example:
+			// <pre>
+			// public class Test {
+			//
+			// public void test(String z) {}
+			//
+			// public class Inner {
+			// public void test(int x) {}
+			// public void f(String y) { test(y); }
+			// }}
+			// </pre>
+			
 			for(int i=scopes.size()-1;i>=0;--i) {
 				Scope s = scopes.get(i);
 				if(s instanceof ClassScope) {
@@ -539,10 +584,10 @@ public class ScopeResolution {
 					try {
 						if(types.hasMethod(cs.type,e.name(),loader)) {
 							// Ok, we have found the relevant method in question.
-							if(isThis && !ms.isStatic) {
+							if(isThis && !isStatic) {
 								target = new Expr.Variable("this",
 										new ArrayList(e.attributes()));								
-							} else if(!ms.isStatic) {
+							} else if(!isStatic) {
 								Expr.ClassVariable cv = new Expr.ClassVariable(cs.type.toString());
 								cv.attributes().add(cs.type);
 								target = new Expr.Deref(cv, "this",
