@@ -950,7 +950,7 @@ public class JavaFileWriter {
 		if(pt instanceof Type.Void) {
 			write("void");
 		} else if(pt instanceof Type.Bool) {
-			write("bool");			
+			write("boolean");			
 		} else if(pt instanceof Type.Byte) {
 			write("byte");			
 		} else if(pt instanceof Type.Char) {

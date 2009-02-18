@@ -232,7 +232,7 @@ public interface Stmt extends SyntacticElement {
 		}
 	}
 
-	public static class Break extends SyntacticElementImpl implements Stmt {
+	public static class Break extends SyntacticElementImpl implements Simple {
 		private String label;
 
 		public Break(String label, Attribute... attributes) {

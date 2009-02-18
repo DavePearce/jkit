@@ -579,9 +579,14 @@ public class ScopeResolution {
 			for(int i=scopes.size()-1;i>=0;--i) {
 				Scope s = scopes.get(i);
 				if(s instanceof ClassScope) {
-					// resolve field from here
+					// We've found a scope that may contain the method we're
+					// after ...
 					ClassScope cs = (ClassScope) s;		
 					try {
+						// Now, the method we're after may not be declared
+						// explicitly in this scope; rather it may be declared
+						// in a superclass of this class and we must account for
+						// this.
 						if(types.hasMethod(cs.type,e.name(),loader)) {
 							// Ok, we have found the relevant method in question.
 							if(isThis && !isStatic) {
@@ -677,8 +682,25 @@ public class ScopeResolution {
 		// and we now need to determine what it's scope is. To do this, we
 		// traverse up the stack of scopes looking for an enclosing scope which
 		// contains a variable with the same name.
-		
+				
+		// Now, we need to determine whether or not this method invocation
+		// is from a static context. This is because, if it is, then we
+		// cannot use the "this" variable as the receiver. Instead, we'll
+		// need to use the Class itself as the receiver.
+		boolean isStatic;
 		MethodScope ms = (MethodScope) findEnclosingScope(MethodScope.class);
+		if(ms != null) {
+			isStatic = ms.isStatic;
+		} else {
+			FieldScope fs = (FieldScope) findEnclosingScope(FieldScope.class);
+			if(fs != null) {
+				isStatic = fs.isStatic;
+			} else {
+				// i'm not sure how you can get here, so we'll just assume
+				// it's not from something static.
+				isStatic = false;
+			}
+		}
 		
 		boolean isThis = true;		
 		for(int i=scopes.size()-1;i>=0;--i) {
@@ -691,11 +713,11 @@ public class ScopeResolution {
 					Triple<jkit.jil.Clazz, jkit.jil.Field, Type> r = types
 							.resolveField(cs.type, e.value(), loader);
 					// Ok, this variable access corresponds to a field load.
-					if(isThis && !ms.isStatic) {
+					if(isThis && !isStatic) {
 						return new Expr.Deref(new Expr.Variable("this",
 							new ArrayList(e.attributes())), e.value(), e
 							.attributes());
-					} else if(!!ms.isStatic){						
+					} else if(!isStatic){						
 						// Create a class access variable.
 						Expr.ClassVariable cv = new Expr.ClassVariable(cs.type.toString());
 						cv.attributes().add(cs.type);
