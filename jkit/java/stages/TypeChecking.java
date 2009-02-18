@@ -365,8 +365,10 @@ public class TypeChecking {
 			checkArrayVal((Value.Array)e);
 		} else if(e instanceof Value.Class) {
 			checkClassVal((Value.Class) e);
-		} else if(e instanceof Expr.Variable) {
-			checkVariable((Expr.Variable)e);
+		} else if(e instanceof Expr.LocalVariable) {
+			checkLocalVariable((Expr.LocalVariable)e);
+		} else if(e instanceof Expr.NonLocalVariable) {
+			checkNonLocalVariable((Expr.NonLocalVariable)e);
 		} else if(e instanceof Expr.ClassVariable) {
 			checkClassVariable((Expr.ClassVariable)e);
 		} else if(e instanceof Expr.UnOp) {
@@ -523,10 +525,14 @@ public class TypeChecking {
 		// do nothing!	
 	}
 	
-	protected void checkVariable(Expr.Variable e) {			
+	protected void checkLocalVariable(Expr.LocalVariable e) {			
 		// do nothing!
 	}
 
+	protected void checkNonLocalVariable(Expr.NonLocalVariable e) {			
+		// do nothing!
+	}
+	
 	protected void checkClassVariable(Expr.ClassVariable e) {			
 		// do nothing!
 	}

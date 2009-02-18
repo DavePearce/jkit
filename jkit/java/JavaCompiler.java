@@ -157,7 +157,7 @@ public class JavaCompiler implements Compiler {
 	 * @return
 	 */
 	public List<Clazz> compile(File filename) throws IOException, SyntaxError {				
-		compilationQueue.remove(filename.getCanonicalPath());
+		compilationQueue.remove(filename.getPath());
 		compiling.add(filename.getCanonicalPath());			
 						
 		try {

@@ -24,8 +24,9 @@ import jkit.util.Triple;
 
 /**
  * The aim of this class is purely to eliminate ambiguities over the scope of a
- * variable. There are several different situations that can arise for a given
- * variable:
+ * variable. More specifically, it is to identify all UnresolvedVariable
+ * instances and eliminate them. There are several different situations that can
+ * arise for a given variable:
  * 
  * <ol>
  * <li>It is declared locally (this is the easiest)</li>
@@ -105,32 +106,40 @@ import jkit.util.Triple;
  * 
  * <pre>
  * public class Test {
- *   public int g() { return 0; }
- *
- *   public class Inner {
- *	   public int f;
- *
- *	   public void print() {
- *	     System.out.println(f);
- *	     System.out.println(g());
- * } } }
+ * 	public int g() {
+ * 		return 0;
+ * 	}
+ * 
+ * 	public class Inner {
+ * 		public int f;
+ * 
+ * 		public void print() {
+ * 			System.out.println(f);
+ * 			System.out.println(g());
+ * 		}
+ * 	}
+ * }
  * </pre>
  * 
  * This code would be transformed into the following, which remains valid Java:
  * 
  * <pre>
  * public class Test {
- *   public int g() { return 0; }
- *
- *   public class Inner {
- *	   public int f;
- *
- *	   public void print() {
- *	     System.out.println(this.f);
- *	     System.out.println(Test.this.g());
- * } } }
+ * 	public int g() {
+ * 		return 0;
+ * 	}
+ * 
+ * 	public class Inner {
+ * 		public int f;
+ * 
+ * 		public void print() {
+ * 			System.out.println(this.f);
+ * 			System.out.println(Test.this.g());
+ * 		}
+ * 	}
+ * }
  * </pre>
- *
+ * 
  * @author djp
  * 
  */
@@ -138,14 +147,14 @@ public class ScopeResolution {
 	
 	/*
 	 * A Scope represents a declaration which defines some variables that may be
-	 * accessed directly by code contained within this scope. 
+	 * accessed directly by code contained within this scope.
 	 */
 	private static class Scope {
-		public final Set<String> variables;
+		public final HashMap<String,Type> variables;
 		public Scope() {
-			this.variables = new HashSet<String>();
+			this.variables = new HashMap<String,Type>();
 		}
-		public Scope(Set<String> variables) {
+		public Scope(HashMap<String,Type> variables) {
 			this.variables = variables;
 		}
 	}
@@ -153,8 +162,7 @@ public class ScopeResolution {
 	private static class ClassScope extends Scope {
 		public Type.Clazz type; 	
 		public boolean isStatic;
-		public ClassScope(Type.Clazz type, boolean isStatic) {
-			super(new HashSet<String>());
+		public ClassScope(Type.Clazz type, boolean isStatic) {			
 			this.type = type;
 			this.isStatic = isStatic;
 		}
@@ -162,7 +170,7 @@ public class ScopeResolution {
 	
 	private static class MethodScope extends Scope {
 		public boolean isStatic;
-		public MethodScope(Set<String> variables, boolean isStatic) {
+		public MethodScope(HashMap<String,Type> variables, boolean isStatic) {
 			super(variables);
 			this.isStatic = isStatic;
 		}
@@ -235,10 +243,16 @@ public class ScopeResolution {
 
 	protected void doMethod(Method d, JavaFile file) {
 		
-		Set<String> params = new HashSet<String>();
-		for(Triple<String,List<Modifier>,jkit.java.tree.Type> t : d.parameters()) {
-			params.add(t.first());
+		HashMap<String,Type> params = new HashMap();
+		for (Triple<String, List<Modifier>, jkit.java.tree.Type> t : d
+				.parameters()) {
+			params.put(t.first(), (Type) t.third().attribute(Type.class));
 		}		
+		if (!d.isStatic()) {
+			// put in a type for the special "this" variable
+			params.put("this",
+					((ClassScope) findEnclosingScope(ClassScope.class)).type);
+		}
 		scopes.push(new MethodScope(params,d.isStatic()));
 		
 		// Now, explore the method body for any other things to resolve.
@@ -330,10 +344,17 @@ public class ScopeResolution {
 	protected void doVarDef(Stmt.VarDef def, JavaFile file) {
 		List<Triple<String, Integer, Expr>> defs = def.definitions();
 		Scope enclosingScope = findEnclosingScope();
+		Type t = (Type) def.type().attribute(Type.class);
 		
 		for(int i=0;i!=defs.size();++i) {
-			Triple<String, Integer, Expr> d = defs.get(i);			
-			enclosingScope.variables.add(d.first());
+			Triple<String, Integer, Expr> d = defs.get(i);
+			Type nt = t;											
+			
+			for(int j=0;j!=d.second();++j) {
+				nt = new Type.Array(nt);
+			}
+			
+			enclosingScope.variables.put(d.first(), nt);
 			doExpression(d.third(), file);														
 		}		
 	}
@@ -399,7 +420,8 @@ public class ScopeResolution {
 		Scope myScope = new Scope();
 		scopes.push(myScope);
 		
-		myScope.variables.add(stmt.var());
+		myScope.variables.put(stmt.var(), (Type) stmt.type().attribute(
+				Type.class));
 		stmt.setSource(doExpression(stmt.source(), file));
 		doStatement(stmt.body(), file);
 		
@@ -441,8 +463,8 @@ public class ScopeResolution {
 			return doArrayVal((Value.Array)e, file);
 		} else if(e instanceof Value.Class) {
 			return doClassVal((Value.Class) e, file);
-		} else if(e instanceof Expr.Variable) {
-			return doVariable((Expr.Variable)e, file);
+		} else if(e instanceof Expr.UnresolvedVariable) {
+			return doUnresolvedVariable((Expr.UnresolvedVariable)e, file);
 		} else if(e instanceof Expr.UnOp) {
 			return doUnOp((Expr.UnOp)e, file);
 		} else if(e instanceof Expr.BinOp) {
@@ -526,17 +548,37 @@ public class ScopeResolution {
 			parameters.set(i,doExpression(p, file));
 		}
 		
-		// Third, check whether this is constructing an anonymous class ...
-		for(Decl d : e.declarations()) {
-			doDeclaration(d, file);
+		if(e.declarations().size() > 0) {
+			// At this point, we are constructing an anonymous inner
+			// class. We need to push a class scope to indicate to any variable
+			// accesses contained inside that variables declared outside this
+			// correspond to non-local accesses.
+			
+			Type.Clazz t = (Type.Clazz) e.type().attribute(Type.class);
+			
+			scopes.push(new ClassScope(t,false));
+			
+			for(Decl d : e.declarations()) {
+				doDeclaration(d, file);
+			}
+			
+			scopes.pop();
 		}
 		
 		return e;
 	}
 	
-	protected Expr doInvoke(Expr.Invoke e, JavaFile file) {		
+	protected Expr doInvoke(Expr.Invoke e, JavaFile file) {				
 		Expr target = doExpression(e.target(), file);
-		if(target == null) {
+		
+		if(target == null && e.name().equals("super")) {
+			// Special case.  We're invoking the super constructor 
+			Type thisType = ((ClassScope) findEnclosingScope(ClassScope.class)).type;
+			target = new Expr.LocalVariable("this",
+					new ArrayList(e.attributes()));
+			target.attributes().add(thisType);
+			
+		} else if(target == null) {
 			boolean isThis = true;
 			
 			// Now, we need to determine whether or not this method invocation
@@ -590,8 +632,9 @@ public class ScopeResolution {
 						if(types.hasMethod(cs.type,e.name(),loader)) {
 							// Ok, we have found the relevant method in question.
 							if(isThis && !isStatic) {
-								target = new Expr.Variable("this",
-										new ArrayList(e.attributes()));								
+								target = new Expr.LocalVariable("this",
+										new ArrayList(e.attributes()));			
+								target.attributes().add(cs.type);
 							} else if(!isStatic) {
 								Expr.ClassVariable cv = new Expr.ClassVariable(cs.type.toString());
 								cv.attributes().add(cs.type);
@@ -625,10 +668,12 @@ public class ScopeResolution {
 	}
 	
 	protected Expr doInstanceOf(Expr.InstanceOf e, JavaFile file) {
+		e.setLhs(doExpression(e.lhs(),file));
 		return e;
 	}
 	
 	protected Expr doCast(Expr.Cast e, JavaFile file) {
+		e.setExpr(doExpression(e.expr(),file));
 		return e;
 	}
 	
@@ -676,7 +721,7 @@ public class ScopeResolution {
 		return e;
 	}
 	
-	protected Expr doVariable(Expr.Variable e, JavaFile file) {
+	protected Expr doUnresolvedVariable(Expr.UnresolvedVariable e, JavaFile file) {
 		// This method is really the heart of the whole operation defined in
 		// this class. It is at this point that we have encountered a variable
 		// and we now need to determine what it's scope is. To do this, we
@@ -714,8 +759,10 @@ public class ScopeResolution {
 							.resolveField(cs.type, e.value(), loader);
 					// Ok, this variable access corresponds to a field load.
 					if(isThis && !isStatic) {
-						return new Expr.Deref(new Expr.Variable("this",
-							new ArrayList(e.attributes())), e.value(), e
+						Expr thisvar = new Expr.LocalVariable("this",
+								new ArrayList(e.attributes()));
+						thisvar.attributes().add(cs.type);
+						return new Expr.Deref(thisvar, e.value(), e
 							.attributes());
 					} else if(!isStatic){						
 						// Create a class access variable.
@@ -736,10 +783,19 @@ public class ScopeResolution {
 				}
 				isThis = false;
 				if(cs.isStatic) { break; }
-			} else if(s.variables.contains(e.value())) {
-				// found scope
-				return e;
-			} 			
+			} else if(s.variables.containsKey(e.value())) {
+				Expr r;
+				if(isThis) {				
+					r = new Expr.LocalVariable(e.value(),
+							new ArrayList(e.attributes()));
+				} else {
+					r = new Expr.NonLocalVariable(e.value(), new ArrayList(e
+							.attributes()));
+				}
+				// add the variables type here.
+				r.attributes().add(s.variables.get(e.value()));
+				return r;
+			} 
 		}
 		
 		// If we get here, then this variable access is either a syntax error,
@@ -755,7 +811,9 @@ public class ScopeResolution {
 			return r;
 		} catch(ClassNotFoundException ex) {			
 			// no, can't find any class which could represent this variable.
-			return e;
+			syntax_error("Cannot find symbol - variable \"" + e.value() + "\"",
+					e);
+			return null; // so very dead!!!
 		}
 	}
 

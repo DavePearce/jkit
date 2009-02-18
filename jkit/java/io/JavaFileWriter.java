@@ -635,8 +635,12 @@ public class JavaFileWriter {
 			writeArrayVal((Value.Array)e);
 		} else if(e instanceof Value.Class) {
 			writeClassVal((Value.Class) e);
-		} else if(e instanceof Expr.Variable) {
-			writeVariable((Expr.Variable)e);
+		} else if(e instanceof Expr.UnresolvedVariable) {
+			writeVariable((Expr.UnresolvedVariable)e);
+		} else if(e instanceof Expr.LocalVariable) {
+			writeLocalVariable((Expr.LocalVariable)e);
+		} else if(e instanceof Expr.NonLocalVariable) {
+			writeNonLocalVariable((Expr.NonLocalVariable)e);
 		} else if(e instanceof Expr.ClassVariable) {
 			writeClassVariable((Expr.ClassVariable)e);
 		} else if(e instanceof Expr.UnOp) {
@@ -875,8 +879,16 @@ public class JavaFileWriter {
 		write(".class");
 	}
 	
-	protected void writeVariable(Expr.Variable e) {			
+	protected void writeVariable(Expr.UnresolvedVariable e) {			
 		write(e.value());		
+	}
+	
+	protected void writeLocalVariable(Expr.LocalVariable e) {			
+		write(e.value());		
+	}
+	
+	protected void writeNonLocalVariable(Expr.NonLocalVariable e) {
+		write(e.value());
 	}
 	
 	protected void writeClassVariable(Expr.ClassVariable e) {			

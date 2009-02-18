@@ -1239,7 +1239,7 @@ public class JavaFileReader {
 
 	protected Expr parseVariable(Tree expr) {
 		String name = expr.getChild(0).getText();
-		return new Expr.Variable(name, new SourceLocation(expr.getLine(),
+		return new Expr.UnresolvedVariable(name, new SourceLocation(expr.getLine(),
 				expr.getCharPositionInLine()));
 	}
 

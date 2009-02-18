@@ -8,20 +8,26 @@ import jkit.jil.SyntacticElementImpl;
 
 public interface Expr extends SyntacticElement {
 	/**
-	 * An (unresolved) variable
+	 * An unresolved variable access. The parser will turn anything that looks
+	 * like a variable access into a Variable object. However, in many cases,
+	 * these do not correspond to variable accesses. Instead, they can be field
+	 * accesses, static class references, non-local variable accesses, etc.
+	 * Thus, all variable accesses are resolved during scope resolution to
+	 * determine in more detail what they are. Once scope resolution is
+	 * complete, there should be no UnresolvedVariable instances remaining.
 	 * 
 	 * @author djp
 	 * 
 	 */
-	public static class Variable extends SyntacticElementImpl implements Expr {
+	public static class UnresolvedVariable extends SyntacticElementImpl implements Expr {
 		private String value;
 
-		public Variable(String value, Attribute... attributes) {
+		public UnresolvedVariable(String value, Attribute... attributes) {
 			super(attributes);
 			this.value = value;
 		}
 		
-		public Variable(String value, List<Attribute> attributes) {
+		public UnresolvedVariable(String value, List<Attribute> attributes) {
 			super(attributes);
 			this.value = value;
 		}
@@ -31,6 +37,74 @@ public interface Expr extends SyntacticElement {
 		}
 	}
 
+	/**
+	 * A LocalVariable object represents a local variable access. A variable
+	 * access is considered local if the variable is declared within the current
+	 * method. Non-local variable accesses correspond to variables which are
+	 * declared outside the current method.
+	 * 
+	 * @author djp
+	 * 
+	 */
+	public static class LocalVariable extends SyntacticElementImpl implements Expr {
+		private String value;
+
+		public LocalVariable(String value, Attribute... attributes) {
+			super(attributes);
+			this.value = value;
+		}
+		
+		public LocalVariable(String value, List<Attribute> attributes) {
+			super(attributes);
+			this.value = value;
+		}
+
+		public String value() {
+			return value;
+		}
+	}
+	
+	/**
+	 * A NonLocalVariable object represents a non-local variable access. This
+	 * typically occurs in the definition of anonymous inner classes. For
+	 * example:
+	 * 
+	 * <pre>
+	 * public abstract class Test {
+	 * 	public abstract void f();
+	 * 
+	 * 	public static void main(final String[] args) {
+	 *    Test x = new Test() {
+	 * 	    public void f() {
+	 *        System.out.println(args[0]);
+	 *      }
+	 *    };
+	 *    x.f();
+	 * }}
+	 * </pre>
+	 * 
+	 * Here, the access "args[0]" is a non-local variable access.   
+	 * 
+	 * @author djp
+	 */
+	public static class NonLocalVariable extends SyntacticElementImpl implements Expr {
+		private String value;
+
+		public NonLocalVariable(String value, Attribute... attributes) {
+			super(attributes);
+			this.value = value;
+		}
+		
+		public NonLocalVariable(String value, List<Attribute> attributes) {
+			super(attributes);
+			this.value = value;
+		}
+
+		public String value() {
+			return value;
+		}
+	}
+	
 	/**
 	 * An static Class Access
 	 * 
@@ -82,8 +156,16 @@ public interface Expr extends SyntacticElement {
 			return expr;
 		}
 
+		public void setExpr(Expr e) {
+			expr = e;
+		}
+		
 		public Type type() {
 			return type;
+		}
+		
+		public void setType(Type t) {
+			type = t;
 		}
 	}
 
@@ -138,8 +220,16 @@ public interface Expr extends SyntacticElement {
 			return lhs;
 		}
 
+		public void setLhs(Expr e) {
+			lhs = e;
+		}
+		
 		public Type rhs() {
 			return rhs;
+		}
+		
+		public void setRhs(Type e) {
+			rhs = e;
 		}
 	}
 

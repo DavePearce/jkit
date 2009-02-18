@@ -353,8 +353,8 @@ public class TypeResolution {
 			doArrayVal((Value.Array)e);
 		} else if(e instanceof Value.Class) {
 			doClassVal((Value.Class) e);
-		} else if(e instanceof Expr.Variable) {
-			doVariable((Expr.Variable)e);
+		} else if(e instanceof Expr.UnresolvedVariable) {
+			doVariable((Expr.UnresolvedVariable)e);
 		} else if(e instanceof Expr.UnOp) {
 			doUnOp((Expr.UnOp)e);
 		} else if(e instanceof Expr.BinOp) {
@@ -448,7 +448,7 @@ public class TypeResolution {
 		e.value().attributes().add(resolve(e.value()));
 	}
 	
-	protected void doVariable(Expr.Variable e) {					
+	protected void doVariable(Expr.UnresolvedVariable e) {					
 	}
 
 	protected void doUnOp(Expr.UnOp e) {		

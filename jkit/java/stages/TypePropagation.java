@@ -82,130 +82,96 @@ public class TypePropagation {
 	}
 
 	protected void doMethod(Method d) {
-		// First, we need to construct a typing environment for local variables.
-		HashMap<String,Type> environment = new HashMap<String,Type>();
-		
-		if(!d.isStatic()) {
-			environment.put("this", (Type) scopes.peek().attribute(Type.class));
-		}
-		
-		for(Triple<String,List<Modifier>,jkit.java.tree.Type> p : d.parameters()) {
-			Type pt = (Type) p.third().attribute(Type.class);
-			environment.put(p.first(), pt);
-		}
-		
-		doStatement(d.body(),environment);
+		doStatement(d.body());
 	}
 
 	protected void doField(Field d) {
-		doExpression(d.initialiser(), new HashMap<String,Type>());
+		doExpression(d.initialiser());
 	}
 	
-	protected void doStatement(Stmt e, HashMap<String,Type> environment) {
+	protected void doStatement(Stmt e) {
 		if(e instanceof Stmt.SynchronisedBlock) {
-			doSynchronisedBlock((Stmt.SynchronisedBlock)e, environment);
+			doSynchronisedBlock((Stmt.SynchronisedBlock)e);
 		} else if(e instanceof Stmt.TryCatchBlock) {
-			doTryCatchBlock((Stmt.TryCatchBlock)e, environment);
+			doTryCatchBlock((Stmt.TryCatchBlock)e);
 		} else if(e instanceof Stmt.Block) {
-			doBlock((Stmt.Block)e, environment);
+			doBlock((Stmt.Block)e);
 		} else if(e instanceof Stmt.VarDef) {
-			doVarDef((Stmt.VarDef) e, environment);
+			doVarDef((Stmt.VarDef) e);
 		} else if(e instanceof Stmt.Assignment) {
-			doAssignment((Stmt.Assignment) e, environment);
+			doAssignment((Stmt.Assignment) e);
 		} else if(e instanceof Stmt.Return) {
-			doReturn((Stmt.Return) e, environment);
+			doReturn((Stmt.Return) e);
 		} else if(e instanceof Stmt.Throw) {
-			doThrow((Stmt.Throw) e, environment);
+			doThrow((Stmt.Throw) e);
 		} else if(e instanceof Stmt.Assert) {
-			doAssert((Stmt.Assert) e, environment);
+			doAssert((Stmt.Assert) e);
 		} else if(e instanceof Stmt.Break) {
-			doBreak((Stmt.Break) e, environment);
+			doBreak((Stmt.Break) e);
 		} else if(e instanceof Stmt.Continue) {
-			doContinue((Stmt.Continue) e, environment);
+			doContinue((Stmt.Continue) e);
 		} else if(e instanceof Stmt.Label) {
-			doLabel((Stmt.Label) e, environment);
+			doLabel((Stmt.Label) e);
 		} else if(e instanceof Stmt.If) {
-			doIf((Stmt.If) e, environment);
+			doIf((Stmt.If) e);
 		} else if(e instanceof Stmt.For) {
-			doFor((Stmt.For) e, environment);
+			doFor((Stmt.For) e);
 		} else if(e instanceof Stmt.ForEach) {
-			doForEach((Stmt.ForEach) e, environment);
+			doForEach((Stmt.ForEach) e);
 		} else if(e instanceof Stmt.While) {
-			doWhile((Stmt.While) e, environment);
+			doWhile((Stmt.While) e);
 		} else if(e instanceof Stmt.DoWhile) {
-			doDoWhile((Stmt.DoWhile) e, environment);
+			doDoWhile((Stmt.DoWhile) e);
 		} else if(e instanceof Stmt.Switch) {
-			doSwitch((Stmt.Switch) e, environment);
+			doSwitch((Stmt.Switch) e);
 		} else if(e instanceof Expr.Invoke) {
-			doInvoke((Expr.Invoke) e, environment);
+			doInvoke((Expr.Invoke) e);
 		} else if(e instanceof Expr.New) {
-			doNew((Expr.New) e, environment);
+			doNew((Expr.New) e);
 		} else if(e instanceof Decl.Clazz) {
 			doClass((Decl.Clazz)e);
 		} else if(e != null) {
-			throw new RuntimeException("Invalid statement encountered: "
-					+ e.getClass());
+			syntax_error("Internal failure (invalid statement \""
+					+ e.getClass() + "\" encountered)", e);			
 		}		
 	}
 	
-	protected void doBlock(Stmt.Block block, HashMap<String,Type> environment) {
-		if(block != null) {
-			// The following clone is required, so that any additions to the
-			// environment via local variable defintions in this block are
-			// not preserved.
-			HashMap<String,Type> newEnv = (HashMap<String,Type>) environment.clone();
-
+	protected void doBlock(Stmt.Block block) {
+		if(block != null) {			
 			// now process every statement in this block.
 			for(Stmt s : block.statements()) {
-				doStatement(s,newEnv);
+				doStatement(s);
 			}
 		}
 	}
 	
-	protected void doCatchBlock(Stmt.CatchBlock cb, HashMap<String,Type> environment) {
-		if(cb != null) {
-			// The following clone is required, so that any additions to the
-			// environment via local variable defintions in this block are
-			// not preserved.
-			HashMap<String,Type> newEnv = (HashMap<String,Type>) environment.clone();			
-			newEnv.put(cb.variable(), (Type) cb.type().attribute(Type.class));
-			// now process every statement in this block.
-			for(Stmt s : cb.statements()) {
-				doStatement(s,newEnv);
-			}
-		}
+	protected void doSynchronisedBlock(Stmt.SynchronisedBlock block) {
+		doBlock(block);
+		doExpression(block.expr());
 	}
 	
-	protected void doSynchronisedBlock(Stmt.SynchronisedBlock block, HashMap<String,Type> environment) {
-		doBlock(block,environment);
-		doExpression(block.expr(),environment);
-	}
-	
-	protected void doTryCatchBlock(Stmt.TryCatchBlock block,
-			HashMap<String, Type> environment) {
-		doBlock(block, environment);
-		doBlock(block.finaly(), environment);
+	protected void doTryCatchBlock(Stmt.TryCatchBlock block) {
+		doBlock(block);
+		doBlock(block.finaly());
 
 		for (Stmt.CatchBlock cb : block.handlers()) {			
-			doCatchBlock(cb, environment);
+			doBlock(cb);
 		}
 	}
 	
-	protected void doVarDef(Stmt.VarDef def, HashMap<String,Type> environment) {
+	protected void doVarDef(Stmt.VarDef def) {
 		Type t = (Type) def.type().attribute(Type.class);
 		
 		List<Triple<String, Integer, Expr>> defs = def.definitions();
 		for(int i=0;i!=defs.size();++i) {
 			Triple<String, Integer, Expr> d = defs.get(i);
+			doExpression(d.third());
 			
+			// calculate the actual type of this variable.
 			Type nt = t;						
-			doExpression(d.third(),environment);						
-			
 			for(int j=0;j!=d.second();++j) {
 				nt = new Type.Array(nt);
 			}
-			
-			environment.put(d.first(),nt);
 			
 			// perform type inference (if necesssary)
 			if(d.third() != null && isUnknownConstant(d.third())) {
@@ -218,9 +184,9 @@ public class TypePropagation {
 		}
 	}
 	
-	protected void doAssignment(Stmt.Assignment def, HashMap<String,Type> environment) {
-		doExpression(def.lhs(),environment);	
-		doExpression(def.rhs(),environment);			
+	protected void doAssignment(Stmt.Assignment def) {
+		doExpression(def.lhs());	
+		doExpression(def.rhs());			
 
 		Type lhs_t = (Type) def.lhs().attribute(Type.class);
 		
@@ -234,130 +200,128 @@ public class TypePropagation {
 		}		
 	}
 	
-	protected void doReturn(Stmt.Return ret, HashMap<String,Type> environment) {
-		doExpression(ret.expr(), environment);
+	protected void doReturn(Stmt.Return ret) {
+		doExpression(ret.expr());
 	}
 	
-	protected void doThrow(Stmt.Throw ret, HashMap<String,Type> environment) {
-		doExpression(ret.expr(), environment);
+	protected void doThrow(Stmt.Throw ret) {
+		doExpression(ret.expr());
 	}
 	
-	protected void doAssert(Stmt.Assert ret, HashMap<String,Type> environment) {
-		doExpression(ret.expr(), environment);
+	protected void doAssert(Stmt.Assert ret) {
+		doExpression(ret.expr());
 	}
 	
-	protected void doBreak(Stmt.Break brk, HashMap<String,Type> environment) {
+	protected void doBreak(Stmt.Break brk) {
 		// nothing	
 	}
 	
-	protected void doContinue(Stmt.Continue brk, HashMap<String,Type> environment) {
+	protected void doContinue(Stmt.Continue brk) {
 		// nothing
 	}
 	
-	protected void doLabel(Stmt.Label lab, HashMap<String,Type> environment) {						
-		doStatement(lab.statement(), environment);
+	protected void doLabel(Stmt.Label lab) {						
+		doStatement(lab.statement());
 	}
 	
-	protected void doIf(Stmt.If stmt, HashMap<String,Type> environment) {
-		doExpression(stmt.condition(),environment);
-		doStatement(stmt.trueStatement(),environment);
-		doStatement(stmt.falseStatement(),environment);
+	protected void doIf(Stmt.If stmt) {
+		doExpression(stmt.condition());
+		doStatement(stmt.trueStatement());
+		doStatement(stmt.falseStatement());
 	}
 	
-	protected void doWhile(Stmt.While stmt, HashMap<String,Type> environment) {
-		doExpression(stmt.condition(),environment);
-		doStatement(stmt.body(),environment);		
+	protected void doWhile(Stmt.While stmt) {
+		doExpression(stmt.condition());
+		doStatement(stmt.body());		
 	}
 	
-	protected void doDoWhile(Stmt.DoWhile stmt, HashMap<String,Type> environment) {
-		doExpression(stmt.condition(),environment);
-		doStatement(stmt.body(),environment);
+	protected void doDoWhile(Stmt.DoWhile stmt) {
+		doExpression(stmt.condition());
+		doStatement(stmt.body());
 	}
 	
-	protected void doFor(Stmt.For stmt, HashMap<String,Type> environment) {
-		environment = (HashMap<String,Type>) environment.clone();
-		doStatement(stmt.initialiser(),environment);
-		doExpression(stmt.condition(),environment);
-		doStatement(stmt.increment(),environment);
-		doStatement(stmt.body(),environment);	
+	protected void doFor(Stmt.For stmt) {		
+		doStatement(stmt.initialiser());
+		doExpression(stmt.condition());
+		doStatement(stmt.increment());
+		doStatement(stmt.body());	
 	}
 	
-	protected void doForEach(Stmt.ForEach stmt, HashMap<String,Type> environment) {
-		environment = (HashMap<String,Type>) environment.clone();		
-		environment.put(stmt.var(), (Type.Clazz) stmt.type().attribute(Type.class));
-		doExpression(stmt.source(),environment);
-		doStatement(stmt.body(),environment);
+	protected void doForEach(Stmt.ForEach stmt) {
+		doExpression(stmt.source());
+		doStatement(stmt.body());
 	}
 	
-	protected void doSwitch(Stmt.Switch sw, HashMap<String,Type> environment) {
-		doExpression(sw.condition(), environment);
+	protected void doSwitch(Stmt.Switch sw) {
+		doExpression(sw.condition());
 		for(Case c : sw.cases()) {
-			doExpression(c.condition(), environment);
+			doExpression(c.condition());
 			for(Stmt s : c.statements()) {
-				doStatement(s, environment);
+				doStatement(s);
 			}
 		}
 		
 		// should check that case conditions are final constants here.
 	}
 	
-	protected void doExpression(Expr e, HashMap<String,Type> environment) {	
+	protected void doExpression(Expr e) {	
 		if(e instanceof Value.Bool) {
-			doBoolVal((Value.Bool)e,environment);
+			doBoolVal((Value.Bool)e);
 		} else if(e instanceof Value.Char) {
-			doCharVal((Value.Char)e,environment);
+			doCharVal((Value.Char)e);
 		} else if(e instanceof Value.Int) {
-			doIntVal((Value.Int)e,environment);
+			doIntVal((Value.Int)e);
 		} else if(e instanceof Value.Long) {
-			doLongVal((Value.Long)e,environment);
+			doLongVal((Value.Long)e);
 		} else if(e instanceof Value.Float) {
-			doFloatVal((Value.Float)e,environment);
+			doFloatVal((Value.Float)e);
 		} else if(e instanceof Value.Double) {
-			doDoubleVal((Value.Double)e,environment);
+			doDoubleVal((Value.Double)e);
 		} else if(e instanceof Value.String) {
-			doStringVal((Value.String)e,environment);
+			doStringVal((Value.String)e);
 		} else if(e instanceof Value.Null) {
-			doNullVal((Value.Null)e,environment);
+			doNullVal((Value.Null)e);
 		} else if(e instanceof Value.TypedArray) {
-			doTypedArrayVal((Value.TypedArray)e,environment);
+			doTypedArrayVal((Value.TypedArray)e);
 		} else if(e instanceof Value.Array) {
-			doArrayVal((Value.Array)e,environment);
+			doArrayVal((Value.Array)e);
 		} else if(e instanceof Value.Class) {
-			doClassVal((Value.Class) e,environment);
-		} else if(e instanceof Expr.Variable) {
-			doVariable((Expr.Variable)e,environment);
+			doClassVal((Value.Class) e);
+		} else if(e instanceof Expr.LocalVariable) {
+			doLocalVariable((Expr.LocalVariable)e);
+		} else if(e instanceof Expr.NonLocalVariable) {
+			doNonLocalVariable((Expr.NonLocalVariable)e);
 		} else if(e instanceof Expr.ClassVariable) {
-			doClassVariable((Expr.ClassVariable)e,environment);
+			doClassVariable((Expr.ClassVariable)e);
 		} else if(e instanceof Expr.UnOp) {
-			doUnOp((Expr.UnOp)e,environment);
+			doUnOp((Expr.UnOp)e);
 		} else if(e instanceof Expr.BinOp) {
-			doBinOp((Expr.BinOp)e,environment);
+			doBinOp((Expr.BinOp)e);
 		} else if(e instanceof Expr.TernOp) {
-			doTernOp((Expr.TernOp)e,environment);
+			doTernOp((Expr.TernOp)e);
 		} else if(e instanceof Expr.Cast) {
-			doCast((Expr.Cast)e,environment);
+			doCast((Expr.Cast)e);
 		} else if(e instanceof Expr.InstanceOf) {
-			doInstanceOf((Expr.InstanceOf)e,environment);
+			doInstanceOf((Expr.InstanceOf)e);
 		} else if(e instanceof Expr.Invoke) {
-			doInvoke((Expr.Invoke) e,environment);
+			doInvoke((Expr.Invoke) e);
 		} else if(e instanceof Expr.New) {
-			doNew((Expr.New) e,environment);
+			doNew((Expr.New) e);
 		} else if(e instanceof Expr.ArrayIndex) {
-			doArrayIndex((Expr.ArrayIndex) e,environment);
+			doArrayIndex((Expr.ArrayIndex) e);
 		} else if(e instanceof Expr.Deref) {
-			doDeref((Expr.Deref) e,environment);
+			doDeref((Expr.Deref) e);
 		} else if(e instanceof Stmt.Assignment) {
 			// force brackets			
-			doAssignment((Stmt.Assignment) e,environment);			
+			doAssignment((Stmt.Assignment) e);			
 		} else if(e != null) {
-			throw new RuntimeException("Invalid expression encountered: "
-					+ e.getClass());
+			syntax_error("Internal failure (invalid expression \"" + e.getClass() + "\" encountered)",e);			
 		}
 	}
 	
-	protected void doDeref(Expr.Deref e, HashMap<String,Type> environment) {
+	protected void doDeref(Expr.Deref e) {
 		
-		doExpression(e.target(), environment);	
+		doExpression(e.target());	
 		
 		Type tmp = (Type) e.target().attribute(Type.class);
 		
@@ -389,9 +353,9 @@ public class TypePropagation {
 		}
 	}
 	
-	protected void doArrayIndex(Expr.ArrayIndex e, HashMap<String,Type> environment) {
-		doExpression(e.target(), environment);
-		doExpression(e.index(), environment);
+	protected void doArrayIndex(Expr.ArrayIndex e) {
+		doExpression(e.target());
+		doExpression(e.index());
 		
 		e.setIndex(implicitCast(e.index(),new Type.Int()));
 				
@@ -406,14 +370,14 @@ public class TypePropagation {
 		}
 	}
 	
-	protected void doNew(Expr.New e, HashMap<String,Type> environment) {
+	protected void doNew(Expr.New e) {
 		// First, figure out the type being created.		
 		Type t = (Type) e.type().attribute(Type.class);
 		e.attributes().add(t);
 		
 		// Second, recurse through any parameters supplied ...
 		for(Expr p : e.parameters()) {
-			doExpression(p, environment);
+			doExpression(p);
 		}
 		
 		// Third, check whether this is constructing an anonymous class ...
@@ -422,13 +386,13 @@ public class TypePropagation {
 		}
 	}
 	
-	protected void doInvoke(Expr.Invoke e, HashMap<String, Type> environment) {
+	protected void doInvoke(Expr.Invoke e) {
 		ArrayList<Type> parameterTypes = new ArrayList<Type>();
 		
-		doExpression(e.target(), environment);
+		doExpression(e.target());
 		
 		for(Expr p : e.parameters()) {
-			doExpression(p, environment);
+			doExpression(p);
 			parameterTypes.add((Type) p.attribute(Type.class));
 		}
 		
@@ -436,50 +400,28 @@ public class TypePropagation {
 		// the method in the class hierarchy. This lookup procedure is seriously
 		// non-trivial, and is implemented in the TypeSystem module.
 			
-		Type.Clazz receiver = null; 
+		Type.Clazz receiver = (Type.Clazz) e.target().attribute(Type.class);
 		String e_name = e.name();
 		
-		try {
-			
-			if(e.target() == null) {
-				// If there is no target, then this means that scope resolution was
-				// unable to find a suitable candidate. This can happen in the case
-				// of "super" calls, since no such method declared "super" could
-				// exist in any of the enclosing scopes.
-				if(e.name().equals("super") && environment.containsKey("this")) {
-					receiver = getSuperClass((Type.Clazz) environment.get("this"));
-					// determine the name of the constructor call.
-					e_name = receiver.components().get(receiver.components().size()-1).first();
-				} else {
-					String msg = "method not found: " + e.name() + "(";
-					boolean firstTime = true;
-					for (Type t : parameterTypes) {
-						if (!firstTime) {
-							msg += ", ";
-						}
-						firstTime = false;
-						msg += t;
-					}
-					syntax_error(msg + ")", e);	
-				}
-			} else {
-				// Simpler case, there is a target to look up its type.
-				receiver = (Type.Clazz) e.target().attribute(Type.class);
-				if(receiver == null) {
-					syntax_error("Location is...",e);
-				}
+		try {		
+			if(e.name().equals("super")) {
+				// special case when calling the super constructor. The method
+				// name we're looking for is not "super"; rather, it's the name
+				// of the receivers super class.
+				Type.Clazz sc = getSuperClass(receiver);
+				e_name = sc.components().get(sc.components().size()-1).first();
 			}
-						
+			
 			Type.Function f = types.resolveMethod(receiver, e_name,
 					parameterTypes, loader).third();
-			
+
 			if (!(f.returnType() instanceof Type.Void)) {
 				e.attributes().add(f.returnType());
 			}
 		} catch(ClassNotFoundException cnfe) {
 			syntax_error(cnfe.getMessage(), e);
 		} catch(MethodNotFoundException mfne) {
-			String msg = "method not found: " + receiver + "." + e.name() + "(";
+			String msg = "method not found: " + receiver + "." + e_name + "(";
 			boolean firstTime = true;
 			for (Type t : parameterTypes) {
 				if (!firstTime) {
@@ -496,58 +438,58 @@ public class TypePropagation {
 		}		
 	}
 	
-	protected void doInstanceOf(Expr.InstanceOf e, HashMap<String,Type> environment) {		
-		doExpression(e.lhs(), environment);
+	protected void doInstanceOf(Expr.InstanceOf e) {		
+		doExpression(e.lhs());
 		e.attributes().add(new Type.Bool());
 	}
 	
-	protected void doCast(Expr.Cast e, HashMap<String,Type> environment) {
-		doExpression(e.expr(), environment);
+	protected void doCast(Expr.Cast e) {
+		doExpression(e.expr());
 		// may need to insert an implicit cast here...
 		e.attributes().add(e.type().attribute(Type.class));
 	}
 	
-	protected void doBoolVal(Value.Bool e, HashMap<String,Type> environment) {
+	protected void doBoolVal(Value.Bool e) {
 		e.attributes().add(new Type.Bool());
 	}
 	
-	protected void doCharVal(Value.Char e, HashMap<String,Type> environment) {
+	protected void doCharVal(Value.Char e) {
 		e.attributes().add(new Type.Char());
 	}
 	
-	protected void doIntVal(Value.Int e, HashMap<String,Type> environment) {
+	protected void doIntVal(Value.Int e) {
 		e.attributes().add(new Type.Int());
 	}
 	
-	protected void doLongVal(Value.Long e, HashMap<String,Type> environment) {		
+	protected void doLongVal(Value.Long e) {		
 		e.attributes().add(new Type.Long());
 	}
 	
-	protected void doFloatVal(Value.Float e, HashMap<String,Type> environment) {		
+	protected void doFloatVal(Value.Float e) {		
 		e.attributes().add(new Type.Float());
 	}
 	
-	protected void doDoubleVal(Value.Double e, HashMap<String,Type> environment) {		
+	protected void doDoubleVal(Value.Double e) {		
 		e.attributes().add(new Type.Double());
 	}
 	
-	protected void doStringVal(Value.String e, HashMap<String,Type> environment) {		
+	protected void doStringVal(Value.String e) {		
 		e.attributes().add(new Type.Clazz("java.lang","String"));
 	}
 	
-	protected void doNullVal(Value.Null e, HashMap<String,Type> environment) {		
+	protected void doNullVal(Value.Null e) {		
 		e.attributes().add(new Type.Null());
 	}
 	
-	protected void doTypedArrayVal(Value.TypedArray e, HashMap<String,Type> environment) {		
+	protected void doTypedArrayVal(Value.TypedArray e) {		
 		e.attributes().add((Type) e.type().attribute(Type.class));
 	}
 	
-	protected void doArrayVal(Value.Array e, HashMap<String,Type> environment) {		
+	protected void doArrayVal(Value.Array e) {		
 		// not sure what to do here.
 	}
 	
-	protected void doClassVal(Value.Class e, HashMap<String,Type> environment) {
+	protected void doClassVal(Value.Class e) {
 		// Basically, this corresponds to some code like this:
 		// <pre>
 		// void f() {
@@ -566,26 +508,23 @@ public class TypePropagation {
 		e.attributes().add(new Type.Clazz("java.lang",components));
 	}
 	
-	protected void doVariable(Expr.Variable e, HashMap<String,Type> environment) {					
-		Type t = environment.get(e.value());
-		if(t == null) {			 
-			syntax_error("Cannot find symbol - variable \"" + e.value() + "\"",
-					e);
-		} else {			
-			e.attributes().add(t);
-		}
+	protected void doLocalVariable(Expr.LocalVariable e) {
+		// don't need to do anything here --- ScopeResolution has initialised
+		// the type of all variable accesses.
 	}
 
-	protected void doClassVariable(Expr.ClassVariable e,
-			HashMap<String, Type> environment) {
-		/*
-		 * Don't need to do anything here ... it should have all been done as
-		 * part of ScopeResolution.
-		 */
+	protected void doNonLocalVariable(Expr.NonLocalVariable e) {
+		// don't need to do anything here --- ScopeResolution has initialised
+		// the type of all variable accesses.
 	}
 	
-	protected void doUnOp(Expr.UnOp e, HashMap<String,Type> environment) {		
-		doExpression(e.expr(),environment);
+	protected void doClassVariable(Expr.ClassVariable e) {
+		// don't need to do anything here --- ScopeResolution has initialised
+		// the type of all variable accesses.		
+	}
+	
+	protected void doUnOp(Expr.UnOp e) {		
+		doExpression(e.expr());
 		Type expr_t = (Type) e.expr().attribute(Type.class);
 		
 		switch(e.op()) {
@@ -612,9 +551,9 @@ public class TypePropagation {
 		}		
 	}
 		
-	protected void doBinOp(Expr.BinOp e, HashMap<String,Type> environment) {				
-		doExpression(e.lhs(),environment);
-		doExpression(e.rhs(),environment);
+	protected void doBinOp(Expr.BinOp e) {				
+		doExpression(e.lhs());
+		doExpression(e.rhs());
 		
 		Type lhs_t = (Type) e.lhs().attribute(Type.class);
 		Type rhs_t = (Type) e.rhs().attribute(Type.class);
@@ -696,10 +635,10 @@ public class TypePropagation {
 		}
 	}
 	
-	protected void doTernOp(Expr.TernOp e, HashMap<String,Type> environment) {		
-		doExpression(e.condition(),environment);
-		doExpression(e.falseBranch(),environment);
-		doExpression(e.trueBranch(),environment);
+	protected void doTernOp(Expr.TernOp e) {		
+		doExpression(e.condition());
+		doExpression(e.falseBranch());
+		doExpression(e.trueBranch());
 		
 		Type lhs_t = (Type) e.trueBranch().attribute(Type.class);
 		Type rhs_t = (Type) e.falseBranch().attribute(Type.class);
