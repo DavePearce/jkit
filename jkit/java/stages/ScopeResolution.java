@@ -807,9 +807,23 @@ public class ScopeResolution {
 					r = new Expr.LocalVariable(e.value(),
 							new ArrayList(e.attributes()));
 				} else {
-					r = new Expr.NonLocalVariable(e.value(), new ArrayList(e
-							.attributes()));
+					// Check whether or not the non-local variable is declared
+					// final (as this is a Java requirement).
+					if (!s.variables.get(e.value()).second()
+							.contains(
+									new Modifier.Base(
+											java.lang.reflect.Modifier.FINAL))) {
+						// no it doesn't
+						syntax_error(
+								"local variable \""
+										+ e.value()
+										+ "\" accessed from inner class; needs to be declared final",
+								e);
+					}											
 				}
+				// Yes, it does.
+				r = new Expr.NonLocalVariable(e.value(), new ArrayList(e
+						.attributes()));	
 				// add the variables type here.
 				r.attributes().add(s.variables.get(e.value()).first());
 				return r;
