@@ -19,14 +19,22 @@ import jkit.jil.SyntacticElement;
 import jkit.util.Triple;
 
 /**
- * The purpose of the skeleton initialiser is to traverse the source file in
- * question and identify any classes which are declared within. For each, an
- * empty "skeleton" is created. This can be thought of as simply an empty class.
- * However, subsequent passes will flesh these skeletons out in more detail.
+ * The purpose of the skeleton builder is to construct skeletons from the parsed
+ * source file. A skeleton comes in one of two forms:
+ * <ol>
+ * <li>Simply an empty class. The reason these exist, is that we need someway
+ * to extract all of the classes which are defined in a particular source file.
+ * This is crucial for the type resolution phase.</li>
+ * <li>A class with fully qualified types, fields and methods. In particular,
+ * all superclasses, interfaces, fields, methods and their parameters are
+ * identified. However, all forms of executable code are not. For example, no
+ * field initialisers or method bodies are present.</li>
+ * </ol>
  * 
  * @author djp
  * 
  */
+
 public class SkeletonBuilder {
 	private int anonymousClassCount = 1;
 	

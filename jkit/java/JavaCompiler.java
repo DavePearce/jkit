@@ -10,6 +10,7 @@ import jkit.compiler.ClassLoader;
 import jkit.java.io.JavaFile;
 import jkit.java.io.JavaFileReader;
 import jkit.java.io.JavaFileWriter;
+import jkit.java.stages.SkeletonDiscovery;
 import jkit.java.stages.TypeChecking;
 import jkit.java.stages.TypeResolution;
 import jkit.java.stages.ScopeResolution;
@@ -165,29 +166,33 @@ public class JavaCompiler implements Compiler {
 		compiling.add(filename.getCanonicalPath());			
 						
 		try {
+			// First, parse the Java source file to yield an abstract syntax
+			// tree.
 			long start = System.currentTimeMillis();						
 			JavaFile jfile = parseSourceFile(filename);
 			logTimedMessage("Parsed " + filename.getPath(),(System.currentTimeMillis() - start));
 			
-			// First, we need to resolve types. That is, for each class
-			// reference type, determine what package it's in.	
-			List<Clazz> skeletons = buildSkeletons(jfile,true);
-			loader.compilingClasses(skeletons);
+			// Second, we need to resolve types. That is, for each class
+			// reference type, determine what package it's in.				
+			start = System.currentTimeMillis();
+			discoverSkeletons(jfile,loader);			
+			logTimedMessage("Skeleton discovery completed",(System.currentTimeMillis()-start));
 			
-			// Second, we need to resolve all types found in the src file.
+			// Third, we need to resolve all types found in the src file.
 			start = System.currentTimeMillis();
 			resolveTypes(jfile,loader);					
 			logTimedMessage("Type resolution completed",(System.currentTimeMillis()-start));
 			
-			// Second, we need to build the skeletons of the classes. This is
+			// Fourth, we need to build the skeletons of the classes. This is
 			// necessary to resolve the scope of a particular variable.
 			// Specifically, during scope resolution, we need to be able to:
 			// 1) traverse the class heirarchy
 			// 2) determine what fields are declared.			
-			skeletons = buildSkeletons(jfile,false);
-			loader.compilingClasses(skeletons);			
-			
-			// Third, perform the scope resolution itself. The aim here is, for
+			start = System.currentTimeMillis();
+			buildSkeletons(jfile,loader);			
+			logTimedMessage("Skeleton construction completed",(System.currentTimeMillis()-start));
+						
+			// Fifth, perform the scope resolution itself. The aim here is, for
 			// each variable access, to determine whether it is a local
 			// variable access, an inherited field access, an enclosing field
 			// access, or an access to a local variable in an enclosing scope
@@ -196,20 +201,20 @@ public class JavaCompiler implements Compiler {
 			resolveScopes(jfile,loader);			
 			logTimedMessage("Scope resolution completed",(System.currentTimeMillis()-start));
 			
-			// Fourth, propagate the type information throughout all expressions
+			// Sixth, propagate the type information throughout all expressions
 			// in the class file, including those in the method bodies and field
 			// initialisers.
 			start = System.currentTimeMillis();
 			propagateTypes(jfile,loader);			
 			logTimedMessage("Type propagation completed",(System.currentTimeMillis()-start));
 			
-			// Fifth, check whether the types are being used correctly. If not,
+			// Seventh, check whether the types are being used correctly. If not,
 			// report a syntax error.
 			start = System.currentTimeMillis();
 			checkTypes(jfile,loader);
 			logTimedMessage("Type checking completed",(System.currentTimeMillis()-start));
 			
-			// Finally, write out the compiled class file.
+			// Eigth, write out the compiled class file.
 			start = System.currentTimeMillis();
 			String outFile = writeOutputFile(jfile, filename);			
 			logTimedMessage("Wrote " + outFile,(System.currentTimeMillis()-start));
@@ -238,6 +243,17 @@ public class JavaCompiler implements Compiler {
 	
 	/**
 	 * This is the second stage in the compilation pipeline --- we must visit
+	 * all declared classes in the source file and extract their types.
+	 * 
+	 * @param jfile
+	 * @param loader
+	 */
+	protected void discoverSkeletons(JavaFile jfile, ClassLoader loader) {
+		new SkeletonDiscovery().apply(jfile,loader);
+	}
+		
+	/**
+	 * This is the third stage in the compilation pipeline --- we must visit
 	 * all declared types in the code and resolve them to fully qualified types. 
 	 * 
 	 * @param jfile
@@ -247,11 +263,21 @@ public class JavaCompiler implements Compiler {
 		new TypeResolution(loader, new TypeSystem()).apply(jfile);
 	}
 	
+	/**
+	 * This is the fourth stage in the compilation pipeline --- we must revisit
+	 * all declared and anonymous classes, and flesh out their fields and methods.
+	 * 
+	 * @param jfile
+	 * @param loader
+	 */
+	protected void buildSkeletons(JavaFile jfile, ClassLoader loader) {
+		
+	}
 	
 	/**
-	 * Third, perform the scope resolution itself. The aim here is, for each
-	 * variable access, to determine whether it is a local variable access, an
-	 * inherited field access, an enclosing field access, or an access to a
+	 * This is the fifth stage in the compilation pipeline. The aim here is, for
+	 * each variable access, to determine whether it is a local variable access,
+	 * an inherited field access, an enclosing field access, or an access to a
 	 * local variable in an enclosing scope (e.g. for anonymous inner classes).
 	 */
 	protected void resolveScopes(JavaFile jfile, ClassLoader loader) {
@@ -259,7 +285,7 @@ public class JavaCompiler implements Compiler {
 	}
 	
 	/**
-	 * This is the fourth stage in the compilation pipeline --- we must
+	 * This is the sixth stage in the compilation pipeline --- we must
 	 * propagate our fully qualified types throughout the expressions of the
 	 * source file.
 	 * 
@@ -271,7 +297,7 @@ public class JavaCompiler implements Compiler {
 	}
 	
 	/**
-	 * This is the fifth stage in the compilation pipeline --- we must check
+	 * This is the seventh stage in the compilation pipeline --- we must check
 	 * that types are used correctly throughout the source code.
 	 * 
 	 * @param jfile
