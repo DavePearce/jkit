@@ -281,7 +281,19 @@ public class ScopeResolution {
 	}
 
 	protected void doField(Field d, JavaFile file) {
-		scopes.push(new FieldScope(d.isStatic()));
+		FieldScope myScope = new FieldScope(d.isStatic());
+		
+		if (!d.isStatic()) {
+			// put in a type for the special "this" variable
+			ArrayList<Modifier> ms = new ArrayList<Modifier>();
+			ms.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL));
+			Pair<Type, List<Modifier>> p = new Pair(
+					((ClassScope) findEnclosingScope(ClassScope.class)).type,
+					ms);
+			myScope.variables.put("this",p);
+		}
+		
+		scopes.push(myScope);
 		doExpression(d.initialiser(), file);
 		scopes.pop();
 	}
@@ -550,7 +562,7 @@ public class ScopeResolution {
 				//
 				// so do nothing!
 			} catch(ClassNotFoundException cne) {
-				syntax_error(cne.getMessage(),e);				
+				syntax_error(cne.getMessage(),e,cne);				
 			} catch(FieldNotFoundException fne) {	
 				// Right, if we get here then there is no field ... so maybe
 				// this is actually an inner class (or a syntax error :)
@@ -563,7 +575,7 @@ public class ScopeResolution {
 					return r;
 				} catch(ClassNotFoundException cne) {
 					// this must be an error...
-					syntax_error("field does not exist: " + cv.type() + "." + e.name(),e);
+					syntax_error("field does not exist: " + cv.type() + "." + e.name(),e,cne);
 				}
 			}
 		}
@@ -671,7 +683,7 @@ public class ScopeResolution {
 							break;
 						}
 					} catch(ClassNotFoundException cne) {
-						syntax_error(cne.getMessage(), e);
+						syntax_error(cne.getMessage(), e, cne);
 					}
 					
 					isThis = false;
@@ -856,7 +868,7 @@ public class ScopeResolution {
 		} catch(ClassNotFoundException ex) {			
 			// no, can't find any class which could represent this variable.
 			syntax_error("Cannot find symbol - variable \"" + e.value() + "\"",
-					e);
+					e, ex);
 			return null; // so very dead!!!
 		}
 	}
@@ -940,6 +952,24 @@ public class ScopeResolution {
 	protected void syntax_error(String msg, SyntacticElement e) {
 		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
 		throw new SyntaxError(msg,loc.line(),loc.column());
+	}
+	
+	/**
+	 * This method is just to factor out the code for looking up the source
+	 * location and throwing an exception based on that. In this case, we also
+	 * have an internal exception which has given rise to this particular
+	 * problem.
+	 * 
+	 * @param msg
+	 *            --- the error message
+	 * @param e
+	 *            --- the syntactic element causing the error
+	 * @parem ex --- an internal exception, the details of which we want to
+	 *        keep.
+	 */
+	protected void syntax_error(String msg, SyntacticElement e, Throwable ex) {
+		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
+		throw new SyntaxError(msg,loc.line(),loc.column(),ex);
 	}
 	
 	/**
