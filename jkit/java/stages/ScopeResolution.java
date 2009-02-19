@@ -720,13 +720,14 @@ public class ScopeResolution {
 				} else if(s instanceof FieldScope) {
 					isStatic = ((FieldScope)s).isStatic;
 				}
-			}	
+			}
+			
+			if(target == null) {
+				// sanity check
+				syntax_error("internal failure (unable to determine receiver type)",e);
+			}			
 		} 
 		
-		if(target == null) {
-			// sanity check
-			syntax_error("internal failure (unable to determine receiver type)",e);
-		}
 		
 		e.setTarget(target);		
 		

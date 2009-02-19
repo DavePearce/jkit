@@ -77,6 +77,7 @@ public class SkeletonBuilder {
 			// Next, we need to update as much information about the skeleton as
 			// we can.
 			Type.Clazz superClass = new Type.Clazz("java.lang","Object");
+			
 			if(c.superclass() != null) {
 				// Observe, after type resolution, this will give the correct
 				// superclass type. However, prior to type resolution it will just
