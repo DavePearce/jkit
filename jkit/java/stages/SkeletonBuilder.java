@@ -18,7 +18,7 @@ import jkit.jil.Modifier;
 import jkit.jil.Type;
 import jkit.jil.SourceLocation;
 import jkit.jil.SyntacticElement;
-import jkit.util.Triple;
+import jkit.util.*;
 
 /**
  * The purpose of the skeleton builder is to flesh out the skeletons identified
@@ -35,7 +35,7 @@ import jkit.util.Triple;
  */
 
 public class SkeletonBuilder {
-	private int anonymousClassCount = 1;
+	private int anonymousClassCount = 0;
 	private JavaFile file;
 	private ClassLoader loader = null;
 	
@@ -367,9 +367,28 @@ public class SkeletonBuilder {
 			doExpression(p, skeleton);
 		}
 		
-		// Third, check whether this is constructing an anonymous class ...
-		for(Decl d : e.declarations()) {
-			doDeclaration(d, skeleton);
+		if(e.declarations().size() > 0) {
+			// Ok, this represents an anonymous class declaration. Since
+			// anonymous classes are not discovered during skeleton discovery,
+			// the class loader will not know about them.
+			
+			Type.Clazz superType = (Type.Clazz) e.attribute(Type.class);
+			 
+			ArrayList<Pair<String, List<Type.Reference>>> ncomponents = new ArrayList(
+					skeleton.type().components());
+			ncomponents.add(new Pair(Integer.toString(++anonymousClassCount),
+					new ArrayList()));
+			Type.Clazz myType = new Type.Clazz(skeleton.type().pkg(),
+					ncomponents);
+			skeleton = new Clazz(myType, new ArrayList<Modifier>(), superType,
+					new ArrayList<Type.Clazz>(), new ArrayList<Field>(),
+					new ArrayList<Method>(), e.attributes()); 
+			
+			loader.register(skeleton);
+			
+			for(Decl d : e.declarations()) {
+				doDeclaration(d, skeleton);
+			}
 		}
 	}
 	

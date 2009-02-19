@@ -439,6 +439,27 @@ public class ClassLoader {
 		}
 	}
 	
+
+	/**
+	 * This method simply adds a class definition to the classtable. This is
+	 * needed for when a class is being compiled, since we cannot simply load
+	 * the class details from the bytecode as this doesn't exist! 
+	 * 
+	 * @param jilClasses -
+	 *            The classes being added.
+	 */
+	public void register(Clazz jilClass) {				
+		PackageInfo pkgInfo = packages.get(jilClass.type().pkg());			
+		String rn = refName(jilClass.type());			
+		String pc = pathChild(rn);
+		classtable.put(rn, jilClass);			
+		// Need to do this to indicate that the source file in question has
+		// being compiled. Otherwise, we end up with an infinite loop of
+		// class loading.
+		pkgInfo.classes.add(pc);
+		pkgInfo.compiledClasses.add(pc);					
+	}
+	
 	/**
 	 * Given a path string of the form "xxx.yyy.zzz" this returns the parent
 	 * component (i.e. "xxx.yyy"). If you supply "xxx", then the path parent is

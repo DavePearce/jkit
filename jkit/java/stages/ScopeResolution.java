@@ -189,7 +189,7 @@ public class ScopeResolution {
 	}
 	private ClassLoader loader;
 	private TypeSystem types;
-	private int anonymousClassCount = 1;
+	private int anonymousClassCount = 0;
 	private final Stack<Scope> scopes = new Stack<Scope>();
 	private final LinkedList<String> imports = new LinkedList<String>();
 	
@@ -628,12 +628,18 @@ public class ScopeResolution {
 			// accesses contained inside that variables declared outside this
 			// correspond to non-local accesses.
 			
-			Type.Clazz t = (Type.Clazz) e.type().attribute(Type.class);
+			ClassScope cs = (ClassScope) findEnclosingScope(ClassScope.class);
+			Type.Clazz superType = (Type.Clazz) e.type().attribute(Type.class);
+			ArrayList<Pair<String, List<Type.Reference>>> ncomponents = new ArrayList(
+					cs.type.components());
+			ncomponents.add(new Pair(Integer.toString(++anonymousClassCount),
+					new ArrayList()));
+			Type.Clazz myType = new Type.Clazz(cs.type.pkg(), ncomponents);
 			
 			// This is a bug. I need to decide what the anonymous type is more
 			// specifically here. Otherwise, the "this" variable will not be
 			// initialised properly.
-			scopes.push(new ClassScope(t,t,false));
+			scopes.push(new ClassScope(myType,superType,false));
 			
 			for(Decl d : e.declarations()) {
 				doDeclaration(d, file);
@@ -678,15 +684,14 @@ public class ScopeResolution {
 			// public void test(int x) {}
 			// public void f(String y) { test(y); }
 			// }}
-			// </pre>
+			// </pre>						
 			
 			for(int i=scopes.size()-1;i>=0;--i) {
 				Scope s = scopes.get(i);
 				if(s instanceof ClassScope) {
 					// We've found a scope that may contain the method we're
 					// after ...
-					ClassScope cs = (ClassScope) s;		
-					System.out.println("VISITING CLASS SCOPE: " + cs.type);
+					ClassScope cs = (ClassScope) s;							
 					try {
 						// Now, the method we're after may not be declared
 						// explicitly in this scope; rather it may be declared
@@ -727,8 +732,7 @@ public class ScopeResolution {
 				syntax_error("internal failure (unable to determine receiver type)",e);
 			}			
 		} 
-		
-		
+				
 		e.setTarget(target);		
 		
 		List<Expr> parameters = e.parameters();
