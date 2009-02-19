@@ -125,11 +125,29 @@ public class SkeletonBuilder {
 		}
 	}
 
-	protected void doMethod(Decl.Method d, Clazz skeleton) {
+	protected void doMethod(Decl.Method d, Clazz skeleton) {		
+		Decl.Method m = (Decl.Method) d;
+		Type.Function t = (Type.Function) m.attribute(Type.class);
+		List<Type.Clazz> exceptions = new ArrayList<Type.Clazz>();
+		
+		for(jkit.java.tree.Type.Clazz tc : m.exceptions()) {
+			exceptions.add((Type.Clazz)tc.attribute(Type.class));
+		}
+		 
+		skeleton.methods().add(
+				new Method(m.name(), t, m.modifiers(), exceptions,
+						new ArrayList(m.attributes())));
+		
 		doStatement(d.body(), skeleton);
 	}
 
 	protected void doField(Decl.Field d, Clazz skeleton) {
+		Decl.Field f = (Decl.Field) d;
+		Type t = (Type) f.attribute(Type.class);
+		skeleton.fields().add(
+				new Field(f.name(), t, f.modifiers(), new ArrayList(f
+						.attributes())));
+
 		doExpression(d.initialiser(), skeleton);
 	}
 	
@@ -302,10 +320,8 @@ public class SkeletonBuilder {
 			doArrayVal((Value.Array)e, skeleton);
 		} else if(e instanceof Value.Class) {
 			doClassVal((Value.Class) e, skeleton);
-		} else if(e instanceof Expr.LocalVariable) {
-			doLocalVariable((Expr.LocalVariable)e, skeleton);
-		} else if(e instanceof Expr.NonLocalVariable) {
-			doNonLocalVariable((Expr.NonLocalVariable)e, skeleton);
+		} else if(e instanceof Expr.UnresolvedVariable) {
+			doUnresolvedVariable((Expr.UnresolvedVariable)e, skeleton);
 		} else if(e instanceof Expr.ClassVariable) {
 			doClassVariable((Expr.ClassVariable)e, skeleton);
 		} else if(e instanceof Expr.UnOp) {
@@ -405,10 +421,7 @@ public class SkeletonBuilder {
 	protected void doClassVal(Value.Class e, Clazz skeleton) {
 	}
 	
-	protected void doLocalVariable(Expr.LocalVariable e, Clazz skeleton) {		
-	}
-
-	protected void doNonLocalVariable(Expr.NonLocalVariable e, Clazz skeleton) {
+	protected void doUnresolvedVariable(Expr.UnresolvedVariable e, Clazz skeleton) {		
 	}
 	
 	protected void doClassVariable(Expr.ClassVariable e, Clazz skeleton) {	

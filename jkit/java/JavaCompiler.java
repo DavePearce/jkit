@@ -1,7 +1,6 @@
 package jkit.java;
 
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import jkit.compiler.Compiler;
@@ -11,14 +10,13 @@ import jkit.java.io.JavaFile;
 import jkit.java.io.JavaFileReader;
 import jkit.java.io.JavaFileWriter;
 import jkit.java.stages.SkeletonDiscovery;
+import jkit.java.stages.SkeletonBuilder;
 import jkit.java.stages.TypeChecking;
 import jkit.java.stages.TypeResolution;
 import jkit.java.stages.ScopeResolution;
 import jkit.java.stages.TypePropagation;
 import jkit.java.stages.TypeSystem;
-import jkit.java.tree.Decl;
 import jkit.jil.*;
-import jkit.util.Pair;
 
 /**
  * A Java compiler is responsible for compiling Java source files into class
@@ -271,7 +269,7 @@ public class JavaCompiler implements Compiler {
 	 * @param loader
 	 */
 	protected void buildSkeletons(JavaFile jfile, ClassLoader loader) {
-		
+		new SkeletonBuilder(loader).apply(jfile);
 	}
 	
 	/**
@@ -334,141 +332,6 @@ public class JavaCompiler implements Compiler {
 		// write the file!!
 		new JavaFileWriter(new FileWriter(outputFile)).write(jfile);
 		return outputFile.getPath();
-	}
-	
-	/**
-	 * The purpose of this method is to go through the JavaFiles and extract as
-	 * much basic information as possible. This method is used at to points in
-	 * the build process; firstly, before type resolution has been run on all
-	 * input java files; and, secondly after type resolution has been run. It
-	 * needs to be run before type resolution, in order that we can extract all
-	 * the classes being compiled, including those inner classes. Thus, we can
-	 * resolve the package of any given type during type resolution. Once type
-	 * resolution is complete, then we want to put into place the proper
-	 * skeleton for every file being compiled, which includes fully resolve
-	 * types for all methods, fields and classes. This is necessary in order to
-	 * resolve a particular method or field at a dereference point in some code.
-	 * 
-	 * @param file
-	 *            --- input Java file to process.
-	 * @param typeOnly
-	 *            --- indicate whether only classes should be included (true),
-	 *            or include fields and methods as well (false).
-	 * @return
-	 */	
-	protected List<Clazz> buildSkeletons(JavaFile file, boolean typeOnly) {
-		ArrayList<Clazz> skeletons = new ArrayList();
-		for(Decl d : file.declarations()) {
-			if(d instanceof Decl.Clazz) {
-				skeletons.addAll(buildSkeletons((Decl.Clazz) d, file.pkg(),
-						null, typeOnly));
-			}
-		}
-		return skeletons;
-	}
-	private int anonymousClassCount = 1; // bit of a hack :(
-	
-	/**
-	 * Helper method for buildSkeletons.
-	 * 
-	 * @param c
-	 *            --- Class being traversed
-	 * @param pkg
-	 *            --- package of enclosing file
-	 * @param parent
-	 *            --- type of parent class, or null if there is none.
-	 * @param typeOnly
-	 *            --- true if we don't want field or method information (because
-	 *            type resolution has not yet been performed and thus we can't
-	 *            generate their types yet.)
-	 * @return
-	 */
-	protected List<Clazz> buildSkeletons(Decl.Clazz c, String pkg,
-			Type.Clazz parent, boolean typeOnly) {
-		ArrayList<Clazz> skeletons = new ArrayList();
-		
-		Type.Clazz type;
-		
-		if(!typeOnly) {
-			// In this case, type resolution has already occurred and, hence, we
-			// have more detailed type information which can be extracted here.
-			type = (Type.Clazz) c.attribute(Type.class);
-		} else {
-			// At this stage, type resolution has not already occurred and,
-			// hence, we have only basic (i.e. non-generic) type information
-			// available.
-			List<Pair<String,List<Type.Reference>>> components = new ArrayList();
-			if(parent != null) {
-				for (Pair<String, List<Type.Reference>> i : parent.components()) {
-					components.add(i);
-				}
-			}
-			components.add(new Pair(c.name(), new ArrayList()));
-			type = new Type.Clazz(pkg,components);
-		}		
-		Type.Clazz superClass = new Type.Clazz("java.lang","Object");
-		if(c.superclass() != null) {
-			// Observe, after type resolution, this will give the correct
-			// superclass type. However, prior to type resolution it will just
-			// return null.
-			superClass = (Type.Clazz) c.superclass().attribute(Type.class);
-		}
-		ArrayList<Type.Clazz> interfaces = new ArrayList();
-		for(jkit.java.tree.Type.Clazz i : c.interfaces()) {
-			Type.Clazz t = (Type.Clazz) i.attribute(Type.class);
-			if(t != null) {
-				interfaces.add(t);
-			}
-		}
-		ArrayList<Field> fields = new ArrayList();
-		ArrayList<Method> methods = new ArrayList();
-		
-		for(Decl d : c.declarations()) {
-			if(d instanceof Decl.Clazz) {
-				skeletons.addAll(buildSkeletons((Decl.Clazz) d, pkg,type,typeOnly));
-			} else if(d instanceof Decl.Field && !typeOnly) {				
-				Decl.Field f = (Decl.Field) d;
-				Type t = (Type) f.attribute(Type.class);				
-				fields.add(new Field(f.name(), t, f.modifiers(), new ArrayList(
-						f.attributes())));
-			} else if(d instanceof Decl.Method && !typeOnly) {
-				Decl.Method m = (Decl.Method) d;
-				Type.Function t = (Type.Function) m.attribute(Type.class);
-				List<Type.Clazz> exceptions = new ArrayList<Type.Clazz>();
-				
-				for(jkit.java.tree.Type.Clazz tc : m.exceptions()) {
-					exceptions.add((Type.Clazz)tc.attribute(Type.class));
-				}
-				 
-				methods.add(new Method(m.name(), t, m.modifiers(), exceptions,
-						new ArrayList(m.attributes())));
-			}
-		}
-		
-		/**
-		 * Now, deal with some special cases when this is not actually a class
-		 */
-		if(c instanceof Decl.Enum) {
-			Decl.Enum ec = (Decl.Enum) c;
-			for(Decl.EnumConstant enc : ec.constants()) {
-				Type t = (Type) enc.attribute(Type.class);
-				if(enc.declarations().size() > 0) {
-					syntax_error("No support for ENUMS that have methods",enc);
-				} else {
-					List<Modifier> modifiers = new ArrayList<Modifier>();
-					modifiers.add(new Modifier.Base(java.lang.reflect.Modifier.PUBLIC));
-					fields.add(new Field(enc.name(), t, modifiers, new ArrayList(
-						enc.attributes())));
-				}
-			}
-		}
-		
-		/**
-		 * Now, construct the skeleton for this class! 
-		 */
-		skeletons.add(new Clazz(type,c.modifiers(),superClass,interfaces,fields,methods));
-		
-		return skeletons;
 	}
 	
 	/**
