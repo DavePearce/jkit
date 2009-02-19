@@ -71,10 +71,10 @@ public class TypeResolution {
 	
 	public void apply(JavaFile file) {
 		// the following may cause problems with static imports.
+		imports.add(file.pkg() + ".*");	
 		for(Pair<Boolean,String> i : file.imports()) {
 			imports.add(i.second());
-		}			
-		imports.add(file.pkg() + ".*");								
+		}											
 		imports.add("java.lang.*");
 		
 		// The first entry on to the classes stack is a dummy to set the package

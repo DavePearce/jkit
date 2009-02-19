@@ -202,6 +202,7 @@ public class ClassLoader {
 	 */
 	public Type.Clazz resolve(String className, List<String> imports)
 			throws ClassNotFoundException {
+		System.out.println("*** IMPORTS: " + imports);
 		if(className.contains(".")) {
 			throw new IllegalArgumentException("className cannot contain \".\"");
 		}
@@ -241,6 +242,8 @@ public class ClassLoader {
 	 */
 	protected Type.Clazz resolveClassName(String pkg, String className) {
 		ArrayList<Pair<String, List<Type.Reference>>> classes = new ArrayList<Pair<String, List<Type.Reference>>>();
+		
+		System.out.println("TRYING TO RESOLVE: " + pkg + ".." + className);
 		
 		for(String c : className.split("\\$")) {			
 			classes.add(new Pair<String, List<Type.Reference>>(c,

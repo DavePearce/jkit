@@ -197,10 +197,10 @@ public class ScopeResolution {
 	
 	public void apply(JavaFile file) {
 		// First, setup the imports list (in reverse order).
+		imports.add(file.pkg() + ".*");
 		for(Pair<Boolean,String> i : file.imports()) {
 			imports.add(i.second());
-		}
-		imports.add(file.pkg() + ".*");
+		}		
 		imports.add("java.lang.*");		
 				
 		// Now, traverse the declarations
