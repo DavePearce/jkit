@@ -224,7 +224,7 @@ public class ScopeResolution {
 	}
 	
 	protected void doInterface(Interface d, JavaFile file) {
-		
+		doClass(d,file);
 	}
 	
 	protected void doClass(Clazz c, JavaFile file) {

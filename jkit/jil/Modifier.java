@@ -33,6 +33,18 @@ public interface Modifier extends SyntacticElement {
 	}	
 	
 	/**
+	 * A varargs modifier is used to indicate that a method has variable-length
+	 * arity. In the Java ClassFile format, this is written as ACC_TRANSIENT,
+	 * although it's simpler for us to distinguish these things properly.
+	 */
+	public static class VarArgs extends SyntacticElementImpl implements
+			Modifier {
+		public VarArgs(Attribute... attributes) {
+			super(attributes);
+		}
+	}
+	
+	/**
 	 * An annotation represents a user-defined modifier. For example,
 	 * "@deprecated" is a user-defined modifier, or annotation in Java terminolgy.
 	 * 

@@ -239,7 +239,7 @@ public interface Decl extends SyntacticElement {
 			this.name = name;
 			this.parameters = parameters;
 			if(varargs) {
-				modifiers.add(new Modifier.Base(java.lang.reflect.Modifier.TRANSIENT));
+				modifiers.add(new Modifier.VarArgs());
 			}			
 			this.typeParameters = typeParameters;
 			this.exceptions = exceptions;
@@ -359,8 +359,12 @@ public interface Decl extends SyntacticElement {
 		 * Check whether this method has varargs
 		 */
 		public boolean isVariableArity() {
-			// note, ACC_TRANSIENT is same mask as ACC_VARARGS in vm spec.
-			return hasModifier(java.lang.reflect.Modifier.TRANSIENT);
+			for(Modifier m : modifiers) {
+				if(m instanceof Modifier.VarArgs) {								
+					return true;				
+				}
+			}
+			return false;
 		}
 	}
 

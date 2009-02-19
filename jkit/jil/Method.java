@@ -41,7 +41,7 @@ public class Method extends SyntacticElementImpl {
      * @param exceptions -
      *            The (non-null) list of exceptions thrown by this method.
      */
-	public Method(String name, Type.Function type, List<Modifier> modifiers,
+	public Method(String name, Type.Function type, List<Modifier> modifiers,			
 			List<Type.Clazz> exceptions, List<Attribute> attributes) {
 		super(attributes);
 		this.name = name;
@@ -166,8 +166,12 @@ public class Method extends SyntacticElementImpl {
 	 * Check whether this method has varargs
 	 */
 	public boolean isVariableArity() {
-		// note, ACC_TRANSIENT is same mask as ACC_VARARGS in vm spec.
-		return hasModifier(java.lang.reflect.Modifier.TRANSIENT);
+		for(Modifier m : modifiers) {
+			if(m instanceof Modifier.VarArgs) {				
+				return true;				
+			}
+		}
+		return false;
 	}
 
 }

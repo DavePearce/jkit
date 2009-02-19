@@ -100,7 +100,7 @@ public class TypeResolution {
 	}
 	
 	protected void doInterface(Interface d) {
-		
+		doClass(d);
 	}
 	
 	protected void doClass(Clazz c) {		

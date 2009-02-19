@@ -194,7 +194,7 @@ public class ClassFileReader {
 			type = new Type.Clazz(type.pkg(),classes);
 		}
 		
-		Clazz c = new Clazz(type, listModifiers(modifiers), superType, interfaces, fields,
+		Clazz c = new Clazz(type, listModifiers(modifiers,false), superType, interfaces, fields,
 				methods);		
 		return 	c;			 		
 	}
@@ -271,7 +271,7 @@ public class ClassFileReader {
 		
 		Type type = parseDescriptor(desc);		
 		
-		return new Field(name, type, listModifiers(modifiers));
+		return new Field(name, type, listModifiers(modifiers,false));
 	}
 	
 	/**
@@ -333,7 +333,7 @@ public class ClassFileReader {
 		
 		Type.Function type = parseMethodDescriptor(desc);
 						
-		return new Method(name, type, listModifiers(modifiers), exceptions);
+		return new Method(name, type, listModifiers(modifiers, true), exceptions);
 	}
 	
 	/**
@@ -1414,7 +1414,7 @@ public class ClassFileReader {
 	// OTHER HELPER METHODS
 	// ============================================================	
 	
-	protected List<Modifier> listModifiers(int modifiers) {
+	protected List<Modifier> listModifiers(int modifiers, boolean methodDecl) {
 		int[] masks = { 
 				java.lang.reflect.Modifier.ABSTRACT,
 				java.lang.reflect.Modifier.FINAL,
@@ -1434,7 +1434,11 @@ public class ClassFileReader {
 		
 		for(int m : masks) {
 			if((modifiers & m) != 0) {
-				mods.add(new Modifier.Base(m));
+				if(m == java.lang.reflect.Modifier.TRANSIENT && methodDecl) {
+					mods.add(new Modifier.VarArgs());
+				} else {
+					mods.add(new Modifier.Base(m));
+				}
 			}
 		}
 				

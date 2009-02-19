@@ -434,7 +434,7 @@ public class ClassLoader {
 	 *            The classes being added.
 	 */
 	public void compilingClasses(List<Clazz> jilClasses) {
-		for(Clazz f : jilClasses) {
+		for(Clazz f : jilClasses) {			
 			PackageInfo pkgInfo = packages.get(f.type().pkg());			
 			String rn = refName(f.type());			
 			String pc = pathChild(rn);

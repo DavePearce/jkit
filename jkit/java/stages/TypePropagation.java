@@ -68,7 +68,7 @@ public class TypePropagation {
 	}
 	
 	protected void doInterface(Interface d) {
-		
+		doClass(d);
 	}
 	
 	protected void doClass(Clazz c) {
@@ -355,9 +355,9 @@ public class TypePropagation {
 							.resolveField(target, e.name(), loader);
 					e.attributes().add(r.third());			
 				} catch(ClassNotFoundException cne) {
-					syntax_error("class not found: " + target,e);
+					syntax_error("class not found: " + target,e,cne);
 				} catch(FieldNotFoundException fne) {
-					syntax_error("field not found: " + target + "." + e.name(),e);
+					syntax_error("field not found: " + target + "." + e.name(),e,fne);
 				}
 			}
 		}
@@ -430,7 +430,7 @@ public class TypePropagation {
 				e.attributes().add(f.returnType());
 			}
 		} catch(ClassNotFoundException cnfe) {
-			syntax_error(cnfe.getMessage(), e);
+			syntax_error(cnfe.getMessage(), e, cnfe);
 		} catch(MethodNotFoundException mfne) {
 			String msg = "method not found: " + receiver + "." + e_name + "(";
 			boolean firstTime = true;
@@ -441,7 +441,7 @@ public class TypePropagation {
 				firstTime = false;
 				msg += t;
 			}
-			syntax_error(msg + ")", e);
+			syntax_error(msg + ")", e, mfne);
 		} catch(TypeSystem.BindError be) {
 			// This can happen if the parameters supplied to bind, which is
 			// called by resolveMethod are somehow not "base equivalent"
