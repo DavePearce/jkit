@@ -57,7 +57,10 @@ public class Clazz extends SyntacticElementImpl {
 		return type;
 	}
 	
-
+	public void setType(Type.Clazz type) {
+		this.type = type;
+	}
+	
 	/**
      * Name of class. This is just a convenience method. 
      * 
@@ -65,7 +68,7 @@ public class Clazz extends SyntacticElementImpl {
      */
 	public String name() {
 		return type.components().get(type.components().size() - 1).first();
-	}
+	}	
 	
 	/**
      * Access the superclass of this class. This is useful (amongst other
@@ -78,6 +81,10 @@ public class Clazz extends SyntacticElementImpl {
 		return superClass;
 	}
 	
+	public void setSuperClass(Type.Clazz superClass) {
+		this.superClass = superClass;
+	}
+	
 	/**
      * Access the modifiers contained in this class object. The returned list
      * may be modified by adding, or removing modifiers. The returned list is
@@ -86,7 +93,11 @@ public class Clazz extends SyntacticElementImpl {
      * @return
      */
 	public List<Modifier> modifiers() { return modifiers; }
-		
+	
+	public void setModifiers(List<Modifier> modifiers) {
+		this.modifiers = modifiers;
+	}
+	
 	/**
      * Access the interfaces implemented by this object. The returned list may
      * be modified by adding, or removing interfaces. The returned list is
@@ -95,6 +106,10 @@ public class Clazz extends SyntacticElementImpl {
      * @return
      */
 	public List<Type.Clazz> interfaces() { return interfaces; }
+	
+	public void setInterfaces(List<Type.Clazz> interfaces) {
+		this.interfaces = interfaces;
+	}
 	
 	/**
      * Access the fields contained in this object. The returned list may be

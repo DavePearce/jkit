@@ -4,32 +4,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jkit.compiler.SyntaxError;
+import jkit.compiler.ClassLoader;
 import jkit.java.io.JavaFile;
 import jkit.java.tree.Decl;
 import jkit.java.tree.Expr;
 import jkit.java.tree.Stmt;
 import jkit.java.tree.Value;
-import jkit.java.tree.Decl.Clazz;
-import jkit.java.tree.Decl.Field;
-import jkit.java.tree.Decl.Interface;
-import jkit.java.tree.Decl.Method;
 import jkit.java.tree.Stmt.Case;
+import jkit.jil.Clazz;
+import jkit.jil.Method;
+import jkit.jil.Field;
+import jkit.jil.Modifier;
+import jkit.jil.Type;
 import jkit.jil.SourceLocation;
 import jkit.jil.SyntacticElement;
 import jkit.util.Triple;
 
 /**
- * The purpose of the skeleton builder is to construct skeletons from the parsed
- * source file. A skeleton comes in one of two forms:
- * <ol>
- * <li>Simply an empty class. The reason these exist, is that we need someway
- * to extract all of the classes which are defined in a particular source file.
- * This is crucial for the type resolution phase.</li>
- * <li>A class with fully qualified types, fields and methods. In particular,
- * all superclasses, interfaces, fields, methods and their parameters are
- * identified. However, all forms of executable code are not. For example, no
- * field initialisers or method bodies are present.</li>
- * </ol>
+ * The purpose of the skeleton builder is to flesh out the skeletons identified
+ * during discovery, so that they now include fully qualified type information,
+ * superclasses and interfaces, fields and methods. However, the skeletons do
+ * not include any executable code; in particular, field initialisers and method
+ * bodies are not included in the skeletons. This is because, at the point where
+ * this stage is run, we do not have sufficient information to type such code
+ * correctly. Finally, anonymous inner classes are discovered for the first time
+ * during this phase.
  * 
  * @author djp
  * 
@@ -37,338 +36,397 @@ import jkit.util.Triple;
 
 public class SkeletonBuilder {
 	private int anonymousClassCount = 1;
+	private JavaFile file;
+	private ClassLoader loader = null;
+	
+	public SkeletonBuilder(ClassLoader loader) {
+		this.loader = loader;
+	}
 	
 	public void apply(JavaFile file) {		
+		this.file = file;
 		// Now, traverse the declarations
 		for(Decl d : file.declarations()) {
-			doDeclaration(d);
+			doDeclaration(d,null);
 		}
 	}
 	
-	protected void doDeclaration(Decl d) {
-		if(d instanceof Interface) {
-			doInterface((Interface)d);
-		} else if(d instanceof Clazz) {
-			doClass((Clazz)d);
-		} else if(d instanceof Method) {
-			doMethod((Method)d);
-		} else if(d instanceof Field) {
-			doField((Field)d);
+	protected void doDeclaration(Decl d, Clazz skeleton) {
+		if(d instanceof Decl.Interface) {
+			doInterface((Decl.Interface)d, skeleton);
+		} else if(d instanceof Decl.Clazz) {
+			doClass((Decl.Clazz)d, skeleton);
+		} else if(d instanceof Decl.Method) {
+			doMethod((Decl.Method)d, skeleton);
+		} else if(d instanceof Decl.Field) {
+			doField((Decl.Field)d, skeleton);
 		}
 	}
 	
-	protected void doInterface(Interface d) {
-		doClass(d);
+	protected void doInterface(Decl.Interface d, Clazz skeleton) {
+		doClass(d, skeleton);
 	}
 	
-	protected void doClass(Clazz c) {
-		for(Decl d : c.declarations()) {
-			doDeclaration(d);
-		}		
+	protected void doClass(Decl.Clazz c, Clazz skeleton) {
+		Type.Clazz type = (Type.Clazz) c.attribute(Type.class);
+		try {
+			// We, need to update the skeleton so that any methods and fields
+			// discovered below this are attributed to this class!			
+			skeleton = loader.loadClass(type);	
+			
+			// Next, we need to update as much information about the skeleton as
+			// we can.
+			Type.Clazz superClass = new Type.Clazz("java.lang","Object");
+			if(c.superclass() != null) {
+				// Observe, after type resolution, this will give the correct
+				// superclass type. However, prior to type resolution it will just
+				// return null.
+				superClass = (Type.Clazz) c.superclass().attribute(Type.class);
+			}			
+			
+			ArrayList<Type.Clazz> interfaces = new ArrayList();
+			for(jkit.java.tree.Type.Clazz i : c.interfaces()) {
+				Type.Clazz t = (Type.Clazz) i.attribute(Type.class);
+				if(t != null) {
+					interfaces.add(t);
+				}
+			}
+			
+			skeleton.setType(type);
+			skeleton.setSuperClass(superClass);
+			skeleton.setInterfaces(interfaces);
+			
+			// ok, now update information for declarations in this skeleton.
+			for(Decl d : c.declarations()) {
+				doDeclaration(d, skeleton);
+			}		
+			
+			// Now, deal with some special cases when this is not actually a
+			// class			
+			if(c instanceof Decl.Enum) {
+				Decl.Enum ec = (Decl.Enum) c;
+				for(Decl.EnumConstant enc : ec.constants()) {
+					Type t = (Type) enc.attribute(Type.class);
+					if(enc.declarations().size() > 0) {
+						syntax_error("No support for ENUMS that have methods",enc);
+					} else {
+						List<Modifier> modifiers = new ArrayList<Modifier>();
+						modifiers.add(new Modifier.Base(
+								java.lang.reflect.Modifier.PUBLIC));
+						skeleton.fields().add(
+								new Field(enc.name(), t, modifiers,
+										new ArrayList(enc.attributes())));
+					}
+				}
+			}
+		} catch(ClassNotFoundException cne) {
+			syntax_error("internal failure (skeleton for \"" + type
+					+ "\" not found", c, cne);
+		}
 	}
 
-	protected void doMethod(Method d) {
-		doStatement(d.body());
+	protected void doMethod(Decl.Method d, Clazz skeleton) {
+		doStatement(d.body(), skeleton);
 	}
 
-	protected void doField(Field d) {
-		doExpression(d.initialiser());
+	protected void doField(Decl.Field d, Clazz skeleton) {
+		doExpression(d.initialiser(), skeleton);
 	}
 	
-	protected void doStatement(Stmt e) {
+	protected void doStatement(Stmt e, Clazz skeleton) {
 		if(e instanceof Stmt.SynchronisedBlock) {
-			doSynchronisedBlock((Stmt.SynchronisedBlock)e);
+			doSynchronisedBlock((Stmt.SynchronisedBlock)e, skeleton);
 		} else if(e instanceof Stmt.TryCatchBlock) {
-			doTryCatchBlock((Stmt.TryCatchBlock)e);
+			doTryCatchBlock((Stmt.TryCatchBlock)e, skeleton);
 		} else if(e instanceof Stmt.Block) {
-			doBlock((Stmt.Block)e);
+			doBlock((Stmt.Block)e, skeleton);
 		} else if(e instanceof Stmt.VarDef) {
-			doVarDef((Stmt.VarDef) e);
+			doVarDef((Stmt.VarDef) e, skeleton);
 		} else if(e instanceof Stmt.Assignment) {
-			doAssignment((Stmt.Assignment) e);
+			doAssignment((Stmt.Assignment) e, skeleton);
 		} else if(e instanceof Stmt.Return) {
-			doReturn((Stmt.Return) e);
+			doReturn((Stmt.Return) e, skeleton);
 		} else if(e instanceof Stmt.Throw) {
-			doThrow((Stmt.Throw) e);
+			doThrow((Stmt.Throw) e, skeleton);
 		} else if(e instanceof Stmt.Assert) {
-			doAssert((Stmt.Assert) e);
+			doAssert((Stmt.Assert) e, skeleton);
 		} else if(e instanceof Stmt.Break) {
-			doBreak((Stmt.Break) e);
+			doBreak((Stmt.Break) e, skeleton);
 		} else if(e instanceof Stmt.Continue) {
-			doContinue((Stmt.Continue) e);
+			doContinue((Stmt.Continue) e, skeleton);
 		} else if(e instanceof Stmt.Label) {
-			doLabel((Stmt.Label) e);
+			doLabel((Stmt.Label) e, skeleton);
 		} else if(e instanceof Stmt.If) {
-			doIf((Stmt.If) e);
+			doIf((Stmt.If) e, skeleton);
 		} else if(e instanceof Stmt.For) {
-			doFor((Stmt.For) e);
+			doFor((Stmt.For) e, skeleton);
 		} else if(e instanceof Stmt.ForEach) {
-			doForEach((Stmt.ForEach) e);
+			doForEach((Stmt.ForEach) e, skeleton);
 		} else if(e instanceof Stmt.While) {
-			doWhile((Stmt.While) e);
+			doWhile((Stmt.While) e, skeleton);
 		} else if(e instanceof Stmt.DoWhile) {
-			doDoWhile((Stmt.DoWhile) e);
+			doDoWhile((Stmt.DoWhile) e, skeleton);
 		} else if(e instanceof Stmt.Switch) {
-			doSwitch((Stmt.Switch) e);
+			doSwitch((Stmt.Switch) e, skeleton);
 		} else if(e instanceof Expr.Invoke) {
-			doInvoke((Expr.Invoke) e);
+			doInvoke((Expr.Invoke) e, skeleton);
 		} else if(e instanceof Expr.New) {
-			doNew((Expr.New) e);
+			doNew((Expr.New) e, skeleton);
 		} else if(e instanceof Decl.Clazz) {
-			doClass((Decl.Clazz)e);
+			doClass((Decl.Clazz)e, skeleton);
 		} else if(e != null) {
 			syntax_error("Internal failure (invalid statement \""
 					+ e.getClass() + "\" encountered)", e);			
 		}		
 	}
 	
-	protected void doBlock(Stmt.Block block) {
+	protected void doBlock(Stmt.Block block, Clazz skeleton) {
 		if(block != null) {			
 			// now process every statement in this block.
 			for(Stmt s : block.statements()) {
-				doStatement(s);
+				doStatement(s, skeleton);
 			}
 		}
 	}
 	
-	protected void doSynchronisedBlock(Stmt.SynchronisedBlock block) {
-		doBlock(block);
-		doExpression(block.expr());
+	protected void doSynchronisedBlock(Stmt.SynchronisedBlock block, Clazz skeleton) {
+		doBlock(block, skeleton);
+		doExpression(block.expr(), skeleton);
 	}
 	
-	protected void doTryCatchBlock(Stmt.TryCatchBlock block) {
-		doBlock(block);
-		doBlock(block.finaly());
+	protected void doTryCatchBlock(Stmt.TryCatchBlock block, Clazz skeleton) {
+		doBlock(block, skeleton);
+		doBlock(block.finaly(), skeleton);
 
 		for (Stmt.CatchBlock cb : block.handlers()) {			
-			doBlock(cb);
+			doBlock(cb, skeleton);
 		}
 	}
 	
-	protected void doVarDef(Stmt.VarDef def) {
+	protected void doVarDef(Stmt.VarDef def, Clazz skeleton) {
 		List<Triple<String, Integer, Expr>> defs = def.definitions();
 		for(int i=0;i!=defs.size();++i) {			
-			doExpression(defs.get(i).third());			
+			doExpression(defs.get(i).third(), skeleton);			
 		}
 	}
 	
-	protected void doAssignment(Stmt.Assignment def) {
-		doExpression(def.lhs());	
-		doExpression(def.rhs());			
+	protected void doAssignment(Stmt.Assignment def, Clazz skeleton) {
+		doExpression(def.lhs(), skeleton);	
+		doExpression(def.rhs(), skeleton);			
 	}
 	
-	protected void doReturn(Stmt.Return ret) {
-		doExpression(ret.expr());
+	protected void doReturn(Stmt.Return ret, Clazz skeleton) {
+		doExpression(ret.expr(), skeleton);
 	}
 	
-	protected void doThrow(Stmt.Throw ret) {
-		doExpression(ret.expr());
+	protected void doThrow(Stmt.Throw ret, Clazz skeleton) {
+		doExpression(ret.expr(), skeleton);
 	}
 	
-	protected void doAssert(Stmt.Assert ret) {
-		doExpression(ret.expr());
+	protected void doAssert(Stmt.Assert ret, Clazz skeleton) {
+		doExpression(ret.expr(), skeleton);
 	}
 	
-	protected void doBreak(Stmt.Break brk) {
+	protected void doBreak(Stmt.Break brk, Clazz skeleton) {
 		// nothing	
 	}
 	
-	protected void doContinue(Stmt.Continue brk) {
+	protected void doContinue(Stmt.Continue brk, Clazz skeleton) {
 		// nothing
 	}
 	
-	protected void doLabel(Stmt.Label lab) {						
-		doStatement(lab.statement());
+	protected void doLabel(Stmt.Label lab, Clazz skeleton) {						
+		doStatement(lab.statement(), skeleton);
 	}
 	
-	protected void doIf(Stmt.If stmt) {
-		doExpression(stmt.condition());
-		doStatement(stmt.trueStatement());
-		doStatement(stmt.falseStatement());
+	protected void doIf(Stmt.If stmt, Clazz skeleton) {
+		doExpression(stmt.condition(), skeleton);
+		doStatement(stmt.trueStatement(), skeleton);
+		doStatement(stmt.falseStatement(), skeleton);
 	}
 	
-	protected void doWhile(Stmt.While stmt) {
-		doExpression(stmt.condition());
-		doStatement(stmt.body());		
+	protected void doWhile(Stmt.While stmt, Clazz skeleton) {
+		doExpression(stmt.condition(), skeleton);
+		doStatement(stmt.body(), skeleton);		
 	}
 	
-	protected void doDoWhile(Stmt.DoWhile stmt) {
-		doExpression(stmt.condition());
-		doStatement(stmt.body());
+	protected void doDoWhile(Stmt.DoWhile stmt, Clazz skeleton) {
+		doExpression(stmt.condition(), skeleton);
+		doStatement(stmt.body(), skeleton);
 	}
 	
-	protected void doFor(Stmt.For stmt) {		
-		doStatement(stmt.initialiser());
-		doExpression(stmt.condition());
-		doStatement(stmt.increment());
-		doStatement(stmt.body());	
+	protected void doFor(Stmt.For stmt, Clazz skeleton) {		
+		doStatement(stmt.initialiser(), skeleton);
+		doExpression(stmt.condition(), skeleton);
+		doStatement(stmt.increment(), skeleton);
+		doStatement(stmt.body(), skeleton);	
 	}
 	
-	protected void doForEach(Stmt.ForEach stmt) {
-		doExpression(stmt.source());
-		doStatement(stmt.body());
+	protected void doForEach(Stmt.ForEach stmt, Clazz skeleton) {
+		doExpression(stmt.source(), skeleton);
+		doStatement(stmt.body(), skeleton);
 	}
 	
-	protected void doSwitch(Stmt.Switch sw) {
-		doExpression(sw.condition());
+	protected void doSwitch(Stmt.Switch sw, Clazz skeleton) {
+		doExpression(sw.condition(), skeleton);
 		for(Case c : sw.cases()) {
-			doExpression(c.condition());
+			doExpression(c.condition(), skeleton);
 			for(Stmt s : c.statements()) {
-				doStatement(s);
+				doStatement(s, skeleton);
 			}
 		}
 		
 		// should check that case conditions are final constants here.
 	}
 	
-	protected void doExpression(Expr e) {	
+	protected void doExpression(Expr e, Clazz skeleton) {	
 		if(e instanceof Value.Bool) {
-			doBoolVal((Value.Bool)e);
+			doBoolVal((Value.Bool)e, skeleton);
 		} else if(e instanceof Value.Char) {
-			doCharVal((Value.Char)e);
+			doCharVal((Value.Char)e, skeleton);
 		} else if(e instanceof Value.Int) {
-			doIntVal((Value.Int)e);
+			doIntVal((Value.Int)e, skeleton);
 		} else if(e instanceof Value.Long) {
-			doLongVal((Value.Long)e);
+			doLongVal((Value.Long)e, skeleton);
 		} else if(e instanceof Value.Float) {
-			doFloatVal((Value.Float)e);
+			doFloatVal((Value.Float)e, skeleton);
 		} else if(e instanceof Value.Double) {
-			doDoubleVal((Value.Double)e);
+			doDoubleVal((Value.Double)e, skeleton);
 		} else if(e instanceof Value.String) {
-			doStringVal((Value.String)e);
+			doStringVal((Value.String)e, skeleton);
 		} else if(e instanceof Value.Null) {
-			doNullVal((Value.Null)e);
+			doNullVal((Value.Null)e, skeleton);
 		} else if(e instanceof Value.TypedArray) {
-			doTypedArrayVal((Value.TypedArray)e);
+			doTypedArrayVal((Value.TypedArray)e, skeleton);
 		} else if(e instanceof Value.Array) {
-			doArrayVal((Value.Array)e);
+			doArrayVal((Value.Array)e, skeleton);
 		} else if(e instanceof Value.Class) {
-			doClassVal((Value.Class) e);
+			doClassVal((Value.Class) e, skeleton);
 		} else if(e instanceof Expr.LocalVariable) {
-			doLocalVariable((Expr.LocalVariable)e);
+			doLocalVariable((Expr.LocalVariable)e, skeleton);
 		} else if(e instanceof Expr.NonLocalVariable) {
-			doNonLocalVariable((Expr.NonLocalVariable)e);
+			doNonLocalVariable((Expr.NonLocalVariable)e, skeleton);
 		} else if(e instanceof Expr.ClassVariable) {
-			doClassVariable((Expr.ClassVariable)e);
+			doClassVariable((Expr.ClassVariable)e, skeleton);
 		} else if(e instanceof Expr.UnOp) {
-			doUnOp((Expr.UnOp)e);
+			doUnOp((Expr.UnOp)e, skeleton);
 		} else if(e instanceof Expr.BinOp) {
-			doBinOp((Expr.BinOp)e);
+			doBinOp((Expr.BinOp)e, skeleton);
 		} else if(e instanceof Expr.TernOp) {
-			doTernOp((Expr.TernOp)e);
+			doTernOp((Expr.TernOp)e, skeleton);
 		} else if(e instanceof Expr.Cast) {
-			doCast((Expr.Cast)e);
+			doCast((Expr.Cast)e, skeleton);
 		} else if(e instanceof Expr.InstanceOf) {
-			doInstanceOf((Expr.InstanceOf)e);
+			doInstanceOf((Expr.InstanceOf)e, skeleton);
 		} else if(e instanceof Expr.Invoke) {
-			doInvoke((Expr.Invoke) e);
+			doInvoke((Expr.Invoke) e, skeleton);
 		} else if(e instanceof Expr.New) {
-			doNew((Expr.New) e);
+			doNew((Expr.New) e, skeleton);
 		} else if(e instanceof Expr.ArrayIndex) {
-			doArrayIndex((Expr.ArrayIndex) e);
+			doArrayIndex((Expr.ArrayIndex) e, skeleton);
 		} else if(e instanceof Expr.Deref) {
-			doDeref((Expr.Deref) e);
+			doDeref((Expr.Deref) e, skeleton);
 		} else if(e instanceof Stmt.Assignment) {
 			// force brackets			
-			doAssignment((Stmt.Assignment) e);			
+			doAssignment((Stmt.Assignment) e, skeleton);			
 		} else if(e != null) {
 			syntax_error("Internal failure (invalid expression \""
 					+ e.getClass() + "\" encountered)", e);			
 		}
 	}
 	
-	protected void doDeref(Expr.Deref e) {		
-		doExpression(e.target());					
+	protected void doDeref(Expr.Deref e, Clazz skeleton) {		
+		doExpression(e.target(), skeleton);					
 	}
 	
-	protected void doArrayIndex(Expr.ArrayIndex e) {
-		doExpression(e.target());
-		doExpression(e.index());		
+	protected void doArrayIndex(Expr.ArrayIndex e, Clazz skeleton) {
+		doExpression(e.target(), skeleton);
+		doExpression(e.index(), skeleton);		
 	}
 	
-	protected void doNew(Expr.New e) {
+	protected void doNew(Expr.New e, Clazz skeleton) {
 		// Second, recurse through any parameters supplied ...
 		for(Expr p : e.parameters()) {
-			doExpression(p);
+			doExpression(p, skeleton);
 		}
 		
 		// Third, check whether this is constructing an anonymous class ...
 		for(Decl d : e.declarations()) {
-			doDeclaration(d);
+			doDeclaration(d, skeleton);
 		}
 	}
 	
-	protected void doInvoke(Expr.Invoke e) {
-		doExpression(e.target());
+	protected void doInvoke(Expr.Invoke e, Clazz skeleton) {
+		doExpression(e.target(), skeleton);
 		
 		for(Expr p : e.parameters()) {
-			doExpression(p);
+			doExpression(p, skeleton);
 		}
 	}
 	
-	protected void doInstanceOf(Expr.InstanceOf e) {		
-		doExpression(e.lhs());		
+	protected void doInstanceOf(Expr.InstanceOf e, Clazz skeleton) {		
+		doExpression(e.lhs(), skeleton);		
 	}
 	
-	protected void doCast(Expr.Cast e) {
-		doExpression(e.expr());
+	protected void doCast(Expr.Cast e, Clazz skeleton) {
+		doExpression(e.expr(), skeleton);
 	}
 	
-	protected void doBoolVal(Value.Bool e) {		
+	protected void doBoolVal(Value.Bool e, Clazz skeleton) {		
 	}
 	
-	protected void doCharVal(Value.Char e) {		
+	protected void doCharVal(Value.Char e, Clazz skeleton) {		
 	}
 	
-	protected void doIntVal(Value.Int e) {		
+	protected void doIntVal(Value.Int e, Clazz skeleton) {		
 	}
 	
-	protected void doLongVal(Value.Long e) {				
+	protected void doLongVal(Value.Long e, Clazz skeleton) {				
 	}
 	
-	protected void doFloatVal(Value.Float e) {				
+	protected void doFloatVal(Value.Float e, Clazz skeleton) {				
 	}
 	
-	protected void doDoubleVal(Value.Double e) {				
+	protected void doDoubleVal(Value.Double e, Clazz skeleton) {				
 	}
 	
-	protected void doStringVal(Value.String e) {				
+	protected void doStringVal(Value.String e, Clazz skeleton) {				
 	}
 	
-	protected void doNullVal(Value.Null e) {		
+	protected void doNullVal(Value.Null e, Clazz skeleton) {		
 	}
 	
-	protected void doTypedArrayVal(Value.TypedArray e) {		
+	protected void doTypedArrayVal(Value.TypedArray e, Clazz skeleton) {		
 	}
 	
-	protected void doArrayVal(Value.Array e) {		
+	protected void doArrayVal(Value.Array e, Clazz skeleton) {		
 	}
 	
-	protected void doClassVal(Value.Class e) {
+	protected void doClassVal(Value.Class e, Clazz skeleton) {
 	}
 	
-	protected void doLocalVariable(Expr.LocalVariable e) {		
+	protected void doLocalVariable(Expr.LocalVariable e, Clazz skeleton) {		
 	}
 
-	protected void doNonLocalVariable(Expr.NonLocalVariable e) {
+	protected void doNonLocalVariable(Expr.NonLocalVariable e, Clazz skeleton) {
 	}
 	
-	protected void doClassVariable(Expr.ClassVariable e) {	
+	protected void doClassVariable(Expr.ClassVariable e, Clazz skeleton) {	
 	}
 	
-	protected void doUnOp(Expr.UnOp e) {		
-		doExpression(e.expr());		
+	protected void doUnOp(Expr.UnOp e, Clazz skeleton) {		
+		doExpression(e.expr(), skeleton);		
 	}
 		
-	protected void doBinOp(Expr.BinOp e) {				
-		doExpression(e.lhs());
-		doExpression(e.rhs());		
+	protected void doBinOp(Expr.BinOp e, Clazz skeleton) {				
+		doExpression(e.lhs(), skeleton);
+		doExpression(e.rhs(), skeleton);		
 	}
 	
-	protected void doTernOp(Expr.TernOp e) {		
-		doExpression(e.condition());
-		doExpression(e.falseBranch());
-		doExpression(e.trueBranch());		
+	protected void doTernOp(Expr.TernOp e, Clazz skeleton) {		
+		doExpression(e.condition(), skeleton);
+		doExpression(e.falseBranch(), skeleton);
+		doExpression(e.trueBranch(), skeleton);		
 	}
 	
 	/**
@@ -383,4 +441,21 @@ public class SkeletonBuilder {
 		throw new SyntaxError(msg,loc.line(),loc.column());
 	}
 	
+	/**
+	 * This method is just to factor out the code for looking up the source
+	 * location and throwing an exception based on that. In this case, we also
+	 * have an internal exception which has given rise to this particular
+	 * problem.
+	 * 
+	 * @param msg
+	 *            --- the error message
+	 * @param e
+	 *            --- the syntactic element causing the error
+	 * @parem ex --- an internal exception, the details of which we want to
+	 *        keep.
+	 */
+	protected void syntax_error(String msg, SyntacticElement e, Throwable ex) {
+		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
+		throw new SyntaxError(msg,loc.line(),loc.column(),ex);
+	}
 }

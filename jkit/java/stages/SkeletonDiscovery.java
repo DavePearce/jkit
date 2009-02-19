@@ -7,20 +7,12 @@ import jkit.compiler.ClassLoader;
 import jkit.compiler.SyntaxError;
 import jkit.java.io.JavaFile;
 import jkit.java.tree.Decl;
-import jkit.java.tree.Expr;
-import jkit.java.tree.Stmt;
-import jkit.java.tree.Value;
 import jkit.java.tree.Decl.Field;
-import jkit.java.tree.Decl.Interface;
-import jkit.java.tree.Decl.Method;
-import jkit.java.tree.Stmt.Case;
 import jkit.jil.Clazz;
-import jkit.jil.Modifier;
 import jkit.jil.SourceLocation;
 import jkit.jil.SyntacticElement;
 import jkit.jil.Type;
 import jkit.util.Pair;
-import jkit.util.Triple;
 
 /**
  * The purpose of the skeleton discovery phase is to traverse the source file in
