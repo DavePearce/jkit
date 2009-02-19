@@ -85,7 +85,7 @@ public class JavaCompiler implements Compiler {
 	 *            A stream where log messages are sent
 	 */	
 	public JavaCompiler(List<String> classpath, OutputStream logout) {
-		this.loader = new ClassLoader(classpath, this, logout);
+		this.loader = new ClassLoader(classpath, this);
 		this.logout = new PrintStream(logout);
 	}
 	
@@ -98,7 +98,7 @@ public class JavaCompiler implements Compiler {
 	 *            A stream where log messages are sent
 	 */	
 	public JavaCompiler(List<String> sourcepath, List<String> classpath, OutputStream logout) {
-		this.loader = new ClassLoader(sourcepath, classpath, this, logout);
+		this.loader = new ClassLoader(sourcepath, classpath, this);
 		this.logout = new PrintStream(logout);
 	}		
 	

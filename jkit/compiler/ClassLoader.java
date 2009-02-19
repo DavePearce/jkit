@@ -111,28 +111,6 @@ public class ClassLoader {
 	}
 	
 	/**
-	 * Construct a ClassLoader with a given classpath. The classpath is a list
-	 * of directory and/or jar file locations (specified according to the local
-	 * file system) which is to be searched for class files. The sourcepath
-	 * (which is used for finding source files) is set the same as the
-	 * classpath.
-	 * 
-	 * @param classpath
-	 *            A list of directory and/or jar file locations.
-	 * @param compiler
-	 *            A class compiler
-	 * @param logout
-	 *            A stream where log messages are sent
-	 */
-	public ClassLoader(List<String> classpath, Compiler compiler, OutputStream logout) {
-		this.classpath = new ArrayList<String>(classpath);
-		this.sourcepath = new ArrayList<String>(classpath);		
-		this.compiler = compiler;
-		
-		buildPackageMap();
-	}
-
-	/**
 	 * Construct a ClassLoader with a given classpath and sourcepath. The
 	 * classpath is a list of directory and/or jar file locations (specified
 	 * according to the local file system) which is to be searched for class
@@ -145,11 +123,9 @@ public class ClassLoader {
 	 *            a list of directory and/or jar file locations.
 	 * @param compiler
 	 *            A class compiler
-	 * @param logout
-	 *            an output stream to which logging information is written.
 	 */		
 	public ClassLoader(List<String> sourcepath, List<String> classpath,
-			Compiler compiler, OutputStream logout) {		
+			Compiler compiler) {		
 		this.sourcepath = new ArrayList<String>(sourcepath);
 		this.classpath = new ArrayList<String>(classpath);
 		this.compiler = compiler;		
