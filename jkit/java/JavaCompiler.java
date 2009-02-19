@@ -175,7 +175,7 @@ public class JavaCompiler implements Compiler {
 			// Second, we need to resolve types. That is, for each class
 			// reference type, determine what package it's in.				
 			start = System.currentTimeMillis();
-			discoverSkeletons(jfile,loader);			
+			List<Clazz> skeletons = discoverSkeletons(jfile,loader);			
 			logTimedMessage("Skeleton discovery completed",(System.currentTimeMillis()-start));
 			
 			// Third, we need to resolve all types found in the src file.
@@ -248,8 +248,8 @@ public class JavaCompiler implements Compiler {
 	 * @param jfile
 	 * @param loader
 	 */
-	protected void discoverSkeletons(JavaFile jfile, ClassLoader loader) {
-		new SkeletonDiscovery().apply(jfile,loader);
+	protected List<Clazz> discoverSkeletons(JavaFile jfile, ClassLoader loader) {
+		return new SkeletonDiscovery().apply(jfile,loader);
 	}
 		
 	/**

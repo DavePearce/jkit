@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jkit.compiler.ClassLoader;
+import jkit.compiler.SyntaxError;
 import jkit.java.io.JavaFile;
 import jkit.java.tree.Decl;
 import jkit.java.tree.Expr;
@@ -37,13 +38,14 @@ import jkit.util.Triple;
  * 
  */
 public class SkeletonDiscovery {		
-	public void apply(JavaFile file, ClassLoader loader) {
-		List<jkit.jil.Clazz> skeletons = new ArrayList<Clazz>();
+	public List<Clazz> apply(JavaFile file, ClassLoader loader) {
+		List<Clazz> skeletons = new ArrayList<Clazz>();
 		// Now, traverse the declarations
 		for(Decl d : file.declarations()) {
 			skeletons.addAll(doDeclaration(d,file.pkg(),null));
 		}
-		loader.compilingClasses(skeletons);		
+		loader.compilingClasses(skeletons);
+		return skeletons;
 	}
 	
 	protected List<Clazz> doDeclaration(Decl d, String pkg, Type.Clazz parent) {		

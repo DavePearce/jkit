@@ -388,22 +388,14 @@ public class ClassLoader {
 						List<Clazz> cs = compiler.compile(srcFile);
 						
 						logout.println("Compiled " + srcFile + " [" + time + "ms]");						
-						// Add all classes coming out of the src file into the
-						// classtable, and register that they have been compiled.
-						Clazz r = null;
 						
-						for(Clazz c : cs) {
-							String rn = refName(c.type());
-							String n = pathChild(rn);
-							pkgInfo.classes.add(n);
-							pkgInfo.compiledClasses.add(n);
-							classtable.put(n,c);							
-							if(rn.equals(name)) {
-								r = c;
+						for(Clazz c : cs) {											
+							if(refName(c.type()).equals(name)) {
+								return c;
 							}
 						}
-																		
-						return r;
+						throw new RuntimeException(
+								"internal failure (unreachable code reached!)");
 					} else if(classFile.exists()) {
 						// Here, there is no sourcefile, but there is a classfile.
 						// So, no need to compile --- just load the class file!
