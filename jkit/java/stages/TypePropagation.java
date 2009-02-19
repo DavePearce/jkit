@@ -446,6 +446,10 @@ public class TypePropagation {
 			// This can happen if the parameters supplied to bind, which is
 			// called by resolveMethod are somehow not "base equivalent"
 			syntax_error("internal failure (" + be.getMessage() + ")",e,be);
+		} catch(IllegalArgumentException be) {
+			// This can happen if the parameters supplied to bind, which is
+			// called by resolveMethod are somehow not "base equivalent"
+			syntax_error("internal failure (" + be.getMessage() + ")",e,be);
 		}		
 	}
 	
@@ -546,7 +550,9 @@ public class TypePropagation {
 				// why it's necessary.
 				e.setExpr(implicitCast(e.expr(),new Type.Int()));
 				e.attributes().add(new Type.Int());				
-			} 
+			} else {
+				e.attributes().add(expr_t);				
+			}
 			break;		
 		case Expr.UnOp.INV:
 			if (expr_t instanceof Type.Byte || expr_t instanceof Type.Char
@@ -554,7 +560,9 @@ public class TypePropagation {
 				// This is a strange feature of javac. I don't really understand
 				// why it's necessary.
 				e.setExpr(implicitCast(e.expr(),new Type.Int()));
-				e.attributes().add(new Type.Int());					
+				e.attributes().add(new Type.Int());				
+			} else {
+				e.attributes().add(expr_t);
 			} 
 			break;	
 		default:
