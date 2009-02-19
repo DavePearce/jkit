@@ -394,7 +394,7 @@ public class TypeResolution {
 	
 	protected void doNew(Expr.New e) {
 		// First, figure out the type being created.		
-		Type t = resolve(e.type());
+		Type t = resolve(e.type());			
 		e.type().attributes().add(t);
 		
 		// Second, recurse through any parameters supplied ...
@@ -452,7 +452,7 @@ public class TypeResolution {
 	}
 
 	protected void doUnOp(Expr.UnOp e) {		
-		
+		doExpression(e.expr());
 	}
 		
 	protected void doBinOp(Expr.BinOp e) {				
@@ -461,7 +461,9 @@ public class TypeResolution {
 	}
 	
 	protected void doTernOp(Expr.TernOp e) {		
-		
+		doExpression(e.condition());
+		doExpression(e.falseBranch());
+		doExpression(e.trueBranch());
 	}
 		
 	/**
