@@ -160,10 +160,12 @@ public class ScopeResolution {
 	}
 	
 	private static class ClassScope extends Scope {
-		public Type.Clazz type; 	
+		public Type.Clazz type;
+		public Type.Clazz superType; 	
 		public boolean isStatic;
-		public ClassScope(Type.Clazz type, boolean isStatic) {			
+		public ClassScope(Type.Clazz type, Type.Clazz superType, boolean isStatic) {			
 			this.type = type;
+			this.superType = superType;
 			this.isStatic = isStatic;
 		}
 	}
@@ -229,12 +231,24 @@ public class ScopeResolution {
 	
 	protected void doClass(Clazz c, JavaFile file) {
 		Type.Clazz myType = (Type.Clazz) c.attribute(Type.class);
+		Type.Clazz superType = null;
+		
+		if(c.superclass() == null) {
+			// java makes writing this so icky ...
+			if (!(myType.pkg().equals("java.lang")
+					&& myType.components().size() == 1 && myType.components()
+					.get(0).first().equals("Object"))) {
+				superType = new Type.Clazz("java.lang", "Object");
+			} 
+		} else {
+			superType = (Type.Clazz) c.superclass().attribute(Type.class);
+		}
 		
 		// Create an appropriate import declaration for this class.
 		imports.addFirst(computeImportDecl(myType));
 				
 		// And, push on a scope representing this class definition.
-		scopes.add(new ClassScope(myType,c.isStatic()));
+		scopes.add(new ClassScope(myType,superType,c.isStatic()));
 		
 		for(Decl d : c.declarations()) {
 			doDeclaration(d, file);
@@ -264,13 +278,18 @@ public class ScopeResolution {
 		}		
 		
 		if (!d.isStatic()) {
-			// put in a type for the special "this" variable
+			// put in a type for the special "this" variable, and "super"
+			// variable (if appropriate).
 			ArrayList<Modifier> ms = new ArrayList<Modifier>();
 			ms.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL));
-			Pair<Type, List<Modifier>> p = new Pair(
-					((ClassScope) findEnclosingScope(ClassScope.class)).type,
-					ms);
+			ClassScope cs = ((ClassScope) findEnclosingScope(ClassScope.class));
+			Pair<Type, List<Modifier>> p = new Pair(cs.type,ms);
 			params.put("this",p);
+			
+			// now, we'll add super as a variable (if there is a super class).
+			if(cs.superType != null) {
+				params.put("super",new Pair(cs.superType,new ArrayList()));
+			}			
 		}
 		scopes.push(new MethodScope(params,d.isStatic()));
 		
@@ -287,10 +306,13 @@ public class ScopeResolution {
 			// put in a type for the special "this" variable
 			ArrayList<Modifier> ms = new ArrayList<Modifier>();
 			ms.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL));
-			Pair<Type, List<Modifier>> p = new Pair(
-					((ClassScope) findEnclosingScope(ClassScope.class)).type,
-					ms);
+			ClassScope cs = ((ClassScope) findEnclosingScope(ClassScope.class)); 
+			Pair<Type, List<Modifier>> p = new Pair(cs.type,ms);
 			myScope.variables.put("this",p);
+			// now, we'll add super as a variable (if there is a super class).
+			if(cs.superType != null) {
+				myScope.variables.put("super",new Pair(cs.superType,new ArrayList()));
+			}		
 		}
 		
 		scopes.push(myScope);
@@ -607,7 +629,10 @@ public class ScopeResolution {
 			
 			Type.Clazz t = (Type.Clazz) e.type().attribute(Type.class);
 			
-			scopes.push(new ClassScope(t,false));
+			// This is a bug. I need to decide what the anonymous type is more
+			// specifically here. Otherwise, the "this" variable will not be
+			// initialised properly.
+			scopes.push(new ClassScope(t,t,false));
 			
 			for(Decl d : e.declarations()) {
 				doDeclaration(d, file);
@@ -940,6 +965,17 @@ public class ScopeResolution {
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * This method simply determines the super class of the given class.
+	 * 
+	 * @param c
+	 * @return
+	 */
+	protected Type.Clazz getSuperClass(Type.Clazz c) throws ClassNotFoundException {
+		jkit.jil.Clazz cc = loader.loadClass(c);
+		return cc.superClass();
 	}
 	
 	/**
