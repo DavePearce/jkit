@@ -337,7 +337,14 @@ public class JavaCompiler implements Compiler {
 	/**
 	 * This method is just a helper to format the output
 	 */
-	protected void logTimedMessage(String msg, long time) {
+	public void logMessage(String msg) {
+		logout.print(msg);		
+	}
+	
+	/**
+	 * This method is just a helper to format the output
+	 */
+	public void logTimedMessage(String msg, long time) {
 		logout.print(msg);
 		logout.print(" ");
 		

@@ -26,4 +26,16 @@ public interface Compiler {
 	 * class in question, but it's already being compiled.
 	 */
 	public boolean isCompiling(File srcFile);
+	
+	/**
+	 * This method is to permit log messages from other components, such as the
+	 * class loader;
+	 */
+	public void logMessage(String msg);
+	
+	/**
+	 * This method is to permit log messages from other components, such as the
+	 * class loader;
+	 */
+	public void logTimedMessage(String msg, long time);
 }

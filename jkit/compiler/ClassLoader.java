@@ -91,16 +91,6 @@ public class ClassLoader {
 	private Compiler compiler = null;			
 	
 	/**
-	 * The logout output stream is used to write log information about the
-	 * status of compilation.  The default stream just discards everything.
-	 */
-	private PrintStream logout = new PrintStream(new OutputStream() {
-		public void write(byte[] b) { /* don't do anything! */}
-		public void write(byte[] b,int x, int y) { /* don't do anything! */}
-		public void write(int x) { /* don't do anything! */}
-	});
-	
-	/**
 	 * Construct a ClassLoader with a given classpath. The classpath is a list
 	 * of directory and/or jar file locations (specified according to the local
 	 * file system) which is to be searched for class files. The sourcepath
@@ -136,8 +126,7 @@ public class ClassLoader {
 	 */
 	public ClassLoader(List<String> classpath, Compiler compiler, OutputStream logout) {
 		this.classpath = new ArrayList<String>(classpath);
-		this.sourcepath = new ArrayList<String>(classpath);
-		this.logout = new PrintStream(logout);
+		this.sourcepath = new ArrayList<String>(classpath);		
 		this.compiler = compiler;
 		
 		buildPackageMap();
@@ -163,8 +152,7 @@ public class ClassLoader {
 			Compiler compiler, OutputStream logout) {		
 		this.sourcepath = new ArrayList<String>(sourcepath);
 		this.classpath = new ArrayList<String>(classpath);
-		this.compiler = compiler;
-		this.logout = new PrintStream(logout);
+		this.compiler = compiler;		
 				
 		buildPackageMap();
 	}
@@ -366,9 +354,8 @@ public class ClassLoader {
 						return null; 
 					}  
 					ClassFileReader r = new ClassFileReader(jf.getInputStream(je));
-					time = System.currentTimeMillis() - time;
-					logout.println("Loaded " + location + ":"
-							+ jarname + " [" + time + "ms]");
+					compiler.logTimedMessage("Loaded " + location + ":"
+							+ jarname, System.currentTimeMillis() - time);
 					Clazz clazz = r.readClass();
 					// Update our knowledge base of classes.					
 					classtable.put(refName(clazz.type()), clazz);					
@@ -384,10 +371,11 @@ public class ClassLoader {
 						// Here, there is a source file, and either there is no class
 						// file, or the class file is older than the source file.
 						// Therefore, we need to (re)compile the source file.
-						time = System.currentTimeMillis() - time;		
 						List<Clazz> cs = compiler.compile(srcFile);
-						
-						logout.println("Compiled " + srcFile + " [" + time + "ms]");						
+																	
+						compiler.logTimedMessage("Compiled " + srcFile, System
+								.currentTimeMillis()
+								- time);
 						
 						for(Clazz c : cs) {											
 							if(refName(c.type()).equals(name)) {
@@ -399,10 +387,14 @@ public class ClassLoader {
 					} else if(classFile.exists()) {
 						// Here, there is no sourcefile, but there is a classfile.
 						// So, no need to compile --- just load the class file!
-						ClassFileReader r = new ClassFileReader(new FileInputStream(classFile));
-						time = System.currentTimeMillis() - time;
-						logout.println("Loaded skeletons " + classFile + " [" + time + "ms]");
+						ClassFileReader r = new ClassFileReader(new FileInputStream(classFile));								
+						
 						Clazz clazz = r.readClass();
+						
+						compiler.logTimedMessage("Loaded " + classFile, System
+								.currentTimeMillis()
+								- time);
+												
 						// Update our knowledge base of classes.												
 						classtable.put(refName(clazz.type()), clazz);						
 						return clazz;										
