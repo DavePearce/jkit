@@ -42,7 +42,7 @@ import jkit.java.JavaCompiler;
 public class Main {
 
 	public static final int MAJOR_VERSION = 0;
-	public static final int MINOR_VERSION = 4;
+	public static final int MINOR_VERSION = 5;
 	public static final int MINOR_REVISION = 0;
 			
 	/**
@@ -61,7 +61,7 @@ public class Main {
 	public boolean compile(String[] args) {
 		ArrayList<String> classPath = null;
 		ArrayList<String> bootClassPath = null;
-
+		String outputDirectory = null;		
 		boolean verbose = false;
 
 		if (args.length == 0) {
@@ -96,6 +96,8 @@ public class Main {
 					// split classpath along appropriate separator
 					Collections.addAll(bootClassPath, args[++i]
 					                                       .split(File.pathSeparator));
+				} else if (arg.equals("-d")) {
+					outputDirectory = args[++i];
 				} else {
 					throw new RuntimeException("Unknown option: " + args[i]);
 				}
@@ -123,7 +125,11 @@ public class Main {
 		} else {
 			compiler = new JavaCompiler(classPath);
 		}
-				
+		
+		if (outputDirectory != null) {
+			compiler.setOutputDirectory(new File(outputDirectory));
+		}
+		
 		// ======================================================
 		// ============== Third, load skeletons ================
 		// ======================================================		

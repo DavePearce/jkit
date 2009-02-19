@@ -111,6 +111,10 @@ public class JavaCompiler implements Compiler {
 		return loader;
 	}
 	
+	public void setOutputDirectory(File outputDirectory) {
+		this.outputDirectory = outputDirectory;
+	}
+	
 	/**
 	 * The purpose of this method is to indicate that a source file is currently
 	 * being compiled.
@@ -161,23 +165,19 @@ public class JavaCompiler implements Compiler {
 		compiling.add(filename.getCanonicalPath());			
 						
 		try {
-			long start = System.currentTimeMillis();
-			
-			// Now, construct the reader!
-			JavaFileReader reader = new JavaFileReader(filename.getPath());
-
-			logout.println("Parsed " + filename.getPath() + " [" + (System.currentTimeMillis() - start) + "ms]");
-			
-			JavaFile jfile = reader.read();
+			long start = System.currentTimeMillis();						
+			JavaFile jfile = parseSourceFile(filename);
+			logTimedMessage("Parsed " + filename.getPath(),(System.currentTimeMillis() - start));
 			
 			// First, we need to resolve types. That is, for each class
 			// reference type, determine what package it's in.	
 			List<Clazz> skeletons = buildSkeletons(jfile,true);
 			loader.compilingClasses(skeletons);
 			
+			// Second, we need to resolve all types found in the src file.
 			start = System.currentTimeMillis();
-			new TypeResolution(loader, new TypeSystem()).apply(jfile);			
-			logout.println("Type resolution completed ......... [" + (System.currentTimeMillis()-start) + "ms]");
+			resolveTypes(jfile,loader);					
+			logTimedMessage("Type resolution completed",(System.currentTimeMillis()-start));
 			
 			// Second, we need to build the skeletons of the classes. This is
 			// necessary to resolve the scope of a particular variable.
@@ -193,26 +193,27 @@ public class JavaCompiler implements Compiler {
 			// access, or an access to a local variable in an enclosing scope
 			// (e.g. for anonymous inner classes).
 			start = System.currentTimeMillis();
-			new ScopeResolution(loader, new TypeSystem()).apply(jfile);
-			logout.println("Scope resolution completed ........ [" + (System.currentTimeMillis()-start) + "ms]");
+			resolveScopes(jfile,loader);			
+			logTimedMessage("Scope resolution completed",(System.currentTimeMillis()-start));
 			
 			// Fourth, propagate the type information throughout all expressions
 			// in the class file, including those in the method bodies and field
 			// initialisers.
 			start = System.currentTimeMillis();
-			new TypePropagation(loader, new TypeSystem()).apply(jfile);
-			logout.println("Type propagation completed ........ [" + (System.currentTimeMillis()-start) + "ms]");
+			propagateTypes(jfile,loader);			
+			logTimedMessage("Type propagation completed",(System.currentTimeMillis()-start));
 			
 			// Fifth, check whether the types are being used correctly. If not,
 			// report a syntax error.
 			start = System.currentTimeMillis();
-			new TypeChecking(loader, new TypeSystem()).apply(jfile);
-			logout.println("Type checking completed ........... [" + (System.currentTimeMillis()-start) + "ms]");
+			checkTypes(jfile,loader);
+			logTimedMessage("Type checking completed",(System.currentTimeMillis()-start));
 			
-			// This stage is temporary. Just write out the java file again to
-			// indicate success thus far.
-			new JavaFileWriter(System.out).write(jfile);
-						
+			// Finally, write out the compiled class file.
+			start = System.currentTimeMillis();
+			String outFile = writeOutputFile(jfile, filename);			
+			logTimedMessage("Wrote " + outFile,(System.currentTimeMillis()-start));
+			
 			compiling.remove(filename);
 			
 			return skeletons; // to be completed			
@@ -220,6 +221,93 @@ public class JavaCompiler implements Compiler {
 			throw new SyntaxError(se.msg(), filename.getPath(), se.line(), se
 					.column(), se.width(), se);			
 		} 
+	}
+	
+	/**
+	 * This is the first stage in the compilation pipeline --- given a source
+	 * file, we must parse it into an Abstract Syntax Tree.
+	 * 
+	 * @param srcFile --- the source file to be parsed.
+	 * @return
+	 */
+	protected JavaFile parseSourceFile(File srcFile) throws IOException,SyntaxError {
+		// Now, construct the reader!
+		JavaFileReader reader = new JavaFileReader(srcFile.getPath());		
+		return reader.read();
+	}
+	
+	/**
+	 * This is the second stage in the compilation pipeline --- we must visit
+	 * all declared types in the code and resolve them to fully qualified types. 
+	 * 
+	 * @param jfile
+	 * @param loader
+	 */
+	protected void resolveTypes(JavaFile jfile, ClassLoader loader) {
+		new TypeResolution(loader, new TypeSystem()).apply(jfile);
+	}
+	
+	
+	/**
+	 * Third, perform the scope resolution itself. The aim here is, for each
+	 * variable access, to determine whether it is a local variable access, an
+	 * inherited field access, an enclosing field access, or an access to a
+	 * local variable in an enclosing scope (e.g. for anonymous inner classes).
+	 */
+	protected void resolveScopes(JavaFile jfile, ClassLoader loader) {
+		new ScopeResolution(loader, new TypeSystem()).apply(jfile);					
+	}
+	
+	/**
+	 * This is the fourth stage in the compilation pipeline --- we must
+	 * propagate our fully qualified types throughout the expressions of the
+	 * source file.
+	 * 
+	 * @param jfile
+	 * @param loader
+	 */
+	protected void propagateTypes(JavaFile jfile, ClassLoader loader) {
+		new TypePropagation(loader, new TypeSystem()).apply(jfile);
+	}
+	
+	/**
+	 * This is the fifth stage in the compilation pipeline --- we must check
+	 * that types are used correctly throughout the source code.
+	 * 
+	 * @param jfile
+	 * @param loader
+	 */
+	protected void checkTypes(JavaFile jfile, ClassLoader loader) {
+		new TypeChecking(loader, new TypeSystem()).apply(jfile);
+	}
+	
+	/**
+	 * This is the final stage in the compilation pipeline --- we must write the
+	 * output file somewhere.
+	 * 
+	 * @param jfile
+	 * @param loader
+	 */
+	public String writeOutputFile(JavaFile jfile, File inputFile)
+			throws IOException {
+		// This is currently a hack
+		File outputFile;
+
+		if (outputDirectory == null) {
+			String inf = inputFile.getPath();
+			inf = inf.substring(0, inf.length() - 5); // strip off .java
+			outputFile = new File(inf + ".jout"); // to avoid overwriting
+			// input files.
+		} else {
+			outputFile = new File(outputDirectory, inputFile.getPath());
+			outputFile.getParentFile().mkdirs(); // ensure output directory
+			// and package
+			// directories exist.
+		}
+
+		// write the file!!
+		new JavaFileWriter(new FileWriter(outputFile)).write(jfile);
+		return outputFile.getPath();
 	}
 	
 	/**
@@ -355,6 +443,21 @@ public class JavaCompiler implements Compiler {
 		
 		return skeletons;
 	}
+	
+	/**
+	 * This method is just a helper to format the output
+	 */
+	protected void logTimedMessage(String msg, long time) {
+		logout.print(msg);
+		logout.print(" ");
+		
+		for(int i=0;i<(80-msg.length());++i) {
+			logout.print(".");
+		}
+		logout.print(" [");
+		logout.print(time);
+		logout.println("ms]");
+	}	
 	
 	/**
      * This method is just to factor out the code for looking up the source
