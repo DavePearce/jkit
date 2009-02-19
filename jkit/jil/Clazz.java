@@ -119,20 +119,7 @@ public class Clazz extends SyntacticElementImpl {
 	
 	public void setSuperClass(Type.Clazz superClass) {
 		this.superClass = superClass;
-	}
-	
-	/**
-     * Access the modifiers contained in this class object. The returned list
-     * may be modified by adding, or removing modifiers. The returned list is
-     * always non-null.
-     * 
-     * @return
-     */
-	public List<Modifier> modifiers() { return modifiers; }
-	
-	public void setModifiers(List<Modifier> modifiers) {
-		this.modifiers = modifiers;
-	}
+	}	
 	
 	/**
      * Access the interfaces implemented by this object. The returned list may
@@ -196,6 +183,101 @@ public class Clazz extends SyntacticElementImpl {
 			}
 		}
 		return r; 
+	}	
+
+	/**
+     * Access the modifiers contained in this class object. The returned list
+     * may be modified by adding, or removing modifiers. The returned list is
+     * always non-null.
+     * 
+     * @return
+     */
+	public List<Modifier> modifiers() { return modifiers; }
+	
+	public void setModifiers(List<Modifier> modifiers) {
+		this.modifiers = modifiers;
 	}
+	
+	/**
+     * Check whether this method has one of the "base" modifiers (e.g. static,
+     * public, private, etc). These are found in java.lang.reflect.Modifier.
+     * 
+     * @param modifier
+     * @return true if it does!
+     */
+	public boolean hasModifier(int modifier) {
+		for(Modifier m : modifiers) {
+			if(m instanceof Modifier.Base) {
+				Modifier.Base b = (Modifier.Base) m;
+				if(b.modifier() == modifier) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Check whether this method is abstract
+	 */
+	public boolean isInterface() {
+		return hasModifier(java.lang.reflect.Modifier.INTERFACE);
+	}
+	
+	/**
+	 * Check whether this method is abstract
+	 */
+	public boolean isAbstract() {
+		return hasModifier(java.lang.reflect.Modifier.ABSTRACT);
+	}
+
+	/**
+	 * Check whether this method is final
+	 */
+	public boolean isFinal() {
+		return hasModifier(java.lang.reflect.Modifier.FINAL);
+	}
+
+	/**
+	 * Check whether this method is static
+	 */
+	public boolean isStatic() {
+		return hasModifier(java.lang.reflect.Modifier.STATIC);
+	}
+
+	/**
+	 * Check whether this method is public
+	 */
+	public boolean isPublic() {
+		return hasModifier(java.lang.reflect.Modifier.PUBLIC);
+	}
+
+	/**
+	 * Check whether this method is protected
+	 */
+	public boolean isProtected() {
+		return hasModifier(java.lang.reflect.Modifier.PROTECTED);
+	}
+
+	/**
+	 * Check whether this method is private
+	 */
+	public boolean isPrivate() {
+		return hasModifier(java.lang.reflect.Modifier.PRIVATE);
+	}
+
+	/**
+	 * Check whether this method is native
+	 */
+	public boolean isNative() {
+		return hasModifier(java.lang.reflect.Modifier.NATIVE);
+	}
+
+	/**
+	 * Check whether this method is synchronized
+	 */
+	public boolean isSynchronized() {
+		return hasModifier(java.lang.reflect.Modifier.SYNCHRONIZED);
+	}		
 
 }

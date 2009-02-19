@@ -36,7 +36,7 @@ public class SkeletonDiscovery {
 		for(Decl d : file.declarations()) {
 			skeletons.addAll(doDeclaration(d,file.pkg(),null));
 		}
-		loader.compilingClasses(skeletons);
+		loader.register(skeletons);
 		return skeletons;
 	}
 	

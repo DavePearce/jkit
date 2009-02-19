@@ -372,22 +372,44 @@ public class SkeletonBuilder {
 			// anonymous classes are not discovered during skeleton discovery,
 			// the class loader will not know about them.
 			
-			Type.Clazz superType = (Type.Clazz) e.attribute(Type.class);
-			 
-			ArrayList<Pair<String, List<Type.Reference>>> ncomponents = new ArrayList(
-					skeleton.type().components());
-			ncomponents.add(new Pair(Integer.toString(++anonymousClassCount),
-					new ArrayList()));
-			Type.Clazz myType = new Type.Clazz(skeleton.type().pkg(),
-					ncomponents);
-			skeleton = new Clazz(myType, new ArrayList<Modifier>(), superType,
-					new ArrayList<Type.Clazz>(), new ArrayList<Field>(),
-					new ArrayList<Method>(), e.attributes()); 
+			Type.Clazz superType = (Type.Clazz) e.type().attribute(Type.class);
 			
-			loader.register(skeleton);
-			
-			for(Decl d : e.declarations()) {
-				doDeclaration(d, skeleton);
+			try {				
+				
+				Clazz c = loader.loadClass(superType);
+							
+				ArrayList<Pair<String, List<Type.Reference>>> ncomponents = new ArrayList(
+						skeleton.type().components());
+				ncomponents.add(new Pair(Integer.toString(++anonymousClassCount),
+						new ArrayList()));
+				Type.Clazz myType = new Type.Clazz(skeleton.type().pkg(),
+						ncomponents);
+				
+				if (c.isInterface()) {
+					// In this case, we're extending from an interface rather
+					// than a super class.
+					ArrayList<Type.Clazz> interfaces = new ArrayList<Type.Clazz>();
+					interfaces.add(superType);
+					skeleton = new Clazz(myType, new ArrayList<Modifier>(),
+							new Type.Clazz("java.lang", "Object"), interfaces,
+							new ArrayList<Field>(), new ArrayList<Method>(), e
+									.attributes());
+				} else {
+					// In this case, we're extending directly from a super class.
+					skeleton = new Clazz(myType, new ArrayList<Modifier>(),
+							superType, new ArrayList<Type.Clazz>(),
+							new ArrayList<Field>(), new ArrayList<Method>(), e
+									.attributes());
+				}
+				
+				loader.register(skeleton);
+
+				for(Decl d : e.declarations()) {
+					doDeclaration(d, skeleton);
+				}
+				
+			} catch (ClassNotFoundException cne) {
+				syntax_error("Unable to load class " + superType, e, cne);
 			}
 		}
 	}
