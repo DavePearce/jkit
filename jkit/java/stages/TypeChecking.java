@@ -593,8 +593,10 @@ public class TypeChecking {
 					&& rhs_t instanceof Type.Int
 					&& (e.op() == BinOp.SHL || e.op() == BinOp.SHR || e.op() == BinOp.USHR)) {
 				// Ok!
-			} else throw new SyntaxError("Operand types do not go together: "
-					+ rhs_t + " and " + lhs_t,loc.line(),loc.column());			
+			} else if(!(isStringType(lhs_t) || isStringType(rhs_t)) && e.op() == BinOp.CONCAT) {
+				throw new SyntaxError("Operand types do not go together: "
+					+ rhs_t + " and " + lhs_t,loc.line(),loc.column());		
+			}
 		}
 		
 		if((lhs_t instanceof Type.Char || lhs_t instanceof Type.Byte 
@@ -680,6 +682,23 @@ public class TypeChecking {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Helper method to determine whether or not t is the type java.lang.String.
+	 * 
+	 * @param t --- Type to be tested.
+	 * @return
+	 */
+	protected boolean isStringType(Type _t) {
+		if(_t instanceof Type.Clazz) {
+			Type.Clazz t = (Type.Clazz) _t;
+			if(t.pkg().equals("java.lang")) {
+				return t.components().size() == 1
+				&& t.components().get(0).first().equals("String"); 
+			}
+		}
+		return false;
 	}
 	
 	/**
