@@ -189,6 +189,7 @@ public class ScopeResolution {
 	}
 	private ClassLoader loader;
 	private TypeSystem types;
+	private int anonymousClassCount = 1;
 	private final Stack<Scope> scopes = new Stack<Scope>();
 	private final LinkedList<String> imports = new LinkedList<String>();
 	
@@ -652,7 +653,7 @@ public class ScopeResolution {
 			// much we can do here.
 			Type thisType = ((ClassScope) findEnclosingScope(ClassScope.class)).type;
 			e.attributes().add(thisType);			
-		} else if(target == null) {
+		} else if(target == null) {			
 			boolean isThis = true;
 			
 			// Now, we need to determine whether or not this method invocation
@@ -685,6 +686,7 @@ public class ScopeResolution {
 					// We've found a scope that may contain the method we're
 					// after ...
 					ClassScope cs = (ClassScope) s;		
+					System.out.println("VISITING CLASS SCOPE: " + cs.type);
 					try {
 						// Now, the method we're after may not be declared
 						// explicitly in this scope; rather it may be declared
@@ -720,6 +722,11 @@ public class ScopeResolution {
 				}
 			}	
 		} 
+		
+		if(target == null) {
+			// sanity check
+			syntax_error("internal failure (unable to determine receiver type)",e);
+		}
 		
 		e.setTarget(target);		
 		

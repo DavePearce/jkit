@@ -329,7 +329,7 @@ public class JavaCompiler implements Compiler {
 	 *            --- indicate whether only classes should be included (true),
 	 *            or include fields and methods as well (false).
 	 * @return
-	 */
+	 */	
 	protected List<Clazz> buildSkeletons(JavaFile file, boolean typeOnly) {
 		ArrayList<Clazz> skeletons = new ArrayList();
 		for(Decl d : file.declarations()) {
@@ -340,6 +340,7 @@ public class JavaCompiler implements Compiler {
 		}
 		return skeletons;
 	}
+	private int anonymousClassCount = 1; // bit of a hack :(
 	
 	/**
 	 * Helper method for buildSkeletons.
