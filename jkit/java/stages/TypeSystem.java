@@ -692,14 +692,17 @@ public class TypeSystem {
 			for (jkit.jil.Method m : methods) {
 				// try to rule out as many impossible candidates as possible
 				Type.Function m_type = m.type();
+				System.out.println("VISITING: " + m.name() + " : " + m_type);
 				if (m_type.parameterTypes().size() == concreteParameterTypes
 						.size()
 						|| (varargs && m.isVariableArity() && m_type
 								.parameterTypes().size() <= (concreteParameterTypes
-								.size()+1))) {
+								.size() + 1))) {										
 					
 					// First, substitute class type parameters							
 					Type.Function mt = (Type.Function) substitute(m_type, binding);
+					
+					System.out.println("CANDIDATE: " + name + " : " + mt);
 					
 					// Second, substitute method type parameters
 					/* THIS NEED FIXING!
@@ -789,8 +792,10 @@ public class TypeSystem {
 				// At this point, if the method is a variable arity method we
 				// need to also check that the varargs portion make sense.
 				if(m.isVariableArity()) {
+					System.out.println("METHOD HAS VARARGS");
 					Type.Array arrayType = (Type.Array) mps[numToCheck];
 					Type elementType = arrayType.element();
+					System.out.println("ELEMENT TYPE: " + elementType);
 					if(numToCheck == (params.length-1)) {
 						// In the special case that just one parameter is
 						// provided in a variable arity position, we need to

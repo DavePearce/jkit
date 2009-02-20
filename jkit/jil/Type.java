@@ -331,6 +331,17 @@ public interface Type extends Attribute {
 			}
 			return false;
 		}
+		
+		public String toString() {
+			String r = "?";
+			if(lowerBound != null) {
+				r += " extends " + lowerBound;							
+			}
+			if(upperBound != null) {
+				r += " super " + upperBound;							
+			}
+			return r;
+		}
 	}
 	
 	/**
@@ -342,9 +353,9 @@ public interface Type extends Attribute {
      */
 	public static class Variable extends SyntacticElementImpl implements Reference {
 		private String variable;
-		private List<Type> lowerBounds;
+		private List<Type.Reference> lowerBounds;
 
-		public Variable(String variable, List<Type> lowerBounds,
+		public Variable(String variable, List<Type.Reference> lowerBounds,
 				Attribute... attributes) {
 			super(attributes);
 			this.variable = variable;
@@ -355,7 +366,7 @@ public interface Type extends Attribute {
 			return variable;
 		}
 
-		public List<Type> lowerBounds() {
+		public List<Type.Reference> lowerBounds() {
 			return lowerBounds;
 		}		
 		

@@ -482,7 +482,11 @@ public class TypeResolution {
 			return resolve((jkit.java.tree.Type.Clazz)t);			
 		} else if(t instanceof jkit.java.tree.Type.Array) {
 			return resolve((jkit.java.tree.Type.Array)t);
-		} 
+		} else if(t instanceof jkit.java.tree.Type.Wildcard) {
+			return resolve((jkit.java.tree.Type.Wildcard)t);
+		} else if(t instanceof jkit.java.tree.Type.Variable) {
+			
+		}
 		
 		return null;
 	}
@@ -511,6 +515,22 @@ public class TypeResolution {
 	
 	protected jkit.jil.Type.Array resolve(jkit.java.tree.Type.Array t) {
 		return new jkit.jil.Type.Array(resolve(t.element()));
+	}
+	
+	protected jkit.jil.Type.Wildcard resolve(jkit.java.tree.Type.Wildcard t) {		
+		return new jkit.jil.Type.Wildcard((Type.Reference) resolve(t
+				.lowerBound()), (Type.Reference) resolve(t.upperBound()));
+	}
+	
+	protected jkit.jil.Type.Variable resolve(jkit.java.tree.Type.Variable t) {		
+		List<Type.Reference> args = null;
+		if(t.lowerBounds() != null) {
+			args = new ArrayList<Type.Reference>();
+			for(jkit.java.tree.Type.Reference r : t.lowerBounds()) {
+				args.add((Type.Reference) resolve(r));
+			}
+		}
+		return new jkit.jil.Type.Variable(t.variable(),args);
 	}
 	
 	/**

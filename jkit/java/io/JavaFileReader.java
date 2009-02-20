@@ -1676,12 +1676,13 @@ public class JavaFileReader {
 	protected static Type.Variable parseVariableType(Tree type) {
 		Tree child = type.getChild(0);
 		String text = child.getText();
-		List<Type> lowerBounds = new ArrayList<Type>();
+		List<Type.Reference> lowerBounds = new ArrayList<Type.Reference>();
 
 		if (child.getChildCount() > 0 && child.getChild(0).getType() == EXTENDS) {
 			Tree childchild = child.getChild(0);
 			for (int i = 0; i != childchild.getChildCount(); ++i) {
-				lowerBounds.add(parseType(childchild.getChild(i)));
+				lowerBounds.add((Type.Reference) parseType(childchild
+						.getChild(i)));
 			}
 		}
 		return new Type.Variable(text, lowerBounds, new SourceLocation(

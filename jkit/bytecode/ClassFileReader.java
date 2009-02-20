@@ -494,7 +494,7 @@ public class ClassFileReader {
 			// this is a type variable
 			int start = ++pos;
 			while(descriptor.charAt(pos) != ';') { ++pos; }			
-			Type type = new Type.Variable(descriptor.substring(start,pos), new ArrayList<Type>());
+			Type type = new Type.Variable(descriptor.substring(start,pos), new ArrayList<Type.Reference>());
 			return new Pair<Type,Integer>(type,pos+1);
 		} else if(c == '+') {
 			// FIXME: added wildcard upper bound
@@ -586,7 +586,7 @@ public class ClassFileReader {
 		while(descriptor.charAt(pos) != ':') { pos++; }
 		String id = descriptor.substring(start,pos);
 		pos = pos + 1; // skip ':'		
-		Type lowerBound = null;
+		Type.Reference lowerBound = null;
 		if(descriptor.charAt(pos) == ':') {
 			lowerBound = new Type.Clazz("java.lang", "Object");
 		} else {
@@ -597,18 +597,18 @@ public class ClassFileReader {
 		if(descriptor.charAt(pos) == ':') {
 			// parse the interface bounds		
 			pos = pos + 1;
-			ArrayList<Type> ints = new ArrayList<Type>();		
+			ArrayList<Type.Reference> ints = new ArrayList<Type.Reference>();		
 			while(pos < descriptor.length() && descriptor.charAt(pos) == 'L') {
 				Pair<Type.Clazz,Integer> rt = parseInternalClassDescriptor(descriptor,pos);
 				ints.add(rt.first());
 				pos = rt.second();
 			}
-			ArrayList<Type> is = new ArrayList<Type>();
+			ArrayList<Type.Reference> is = new ArrayList<Type.Reference>();
 			is.add(lowerBound);
 			for(int i=0;i!=ints.size();++i) { is.add(ints.get(i)); }
 			return new Pair<Type.Variable, Integer>(new Type.Variable(id,is),pos);
 		} else {
-			ArrayList<Type> is = new ArrayList<Type>();
+			ArrayList<Type.Reference> is = new ArrayList<Type.Reference>();
 			is.add(lowerBound);
 			return new Pair<Type.Variable, Integer>(new Type.Variable(id,is),pos);	
 		}		

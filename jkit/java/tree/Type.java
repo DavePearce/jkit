@@ -252,9 +252,9 @@ public class Type extends SyntacticElementImpl {
      */
 	public static class Variable extends Reference {
 		private String variable;
-		private List<Type> lowerBounds;
+		private List<Reference> lowerBounds;
 
-		public Variable(String variable, List<Type> lowerBounds,
+		public Variable(String variable, List<Reference> lowerBounds,
 				Attribute... attributes) {
 			super(attributes);
 			this.variable = variable;
@@ -265,7 +265,7 @@ public class Type extends SyntacticElementImpl {
 			return variable;
 		}
 
-		public List<Type> lowerBounds() {
+		public List<Reference> lowerBounds() {
 			return lowerBounds;
 		}		
 		
