@@ -249,12 +249,10 @@ public class ClassFileReader {
 		
 		// parse attributes
 		int acount = read_u2(offset+6);
-		//System.out.println("Attribute Count " + acount);
 		Attribute[] attributes = new Attribute[acount];
 		int index = offset + 8;
 		for(int j=0;j!=acount;++j) {
 			int len = read_i4(index+2);
-			//System.out.println("Attribute length " + len);
 			attributes[j] = parseAttribute(index);
 			index += len + 6;
 		}
@@ -496,12 +494,14 @@ public class ClassFileReader {
 			while(descriptor.charAt(pos) != ';') { ++pos; }			
 			Type type = new Type.Variable(descriptor.substring(start,pos), new ArrayList<Type.Reference>());
 			return new Pair<Type,Integer>(type,pos+1);
-		} else if(c == '+') {
+		} else if(c == '+') {			
 			// FIXME: added wildcard upper bound
-			return parseInternalDescriptor(descriptor,pos+1);
+			Pair<Type,Integer> r = parseInternalDescriptor(descriptor,pos+1);
+			return new Pair(new Type.Wildcard((Type.Reference)r.first(),null),r.second());
 		} else if(c == '-') {
 			// FIXME: added wildcard lower bound
-			return parseInternalDescriptor(descriptor,pos+1);
+			Pair<Type,Integer> r = parseInternalDescriptor(descriptor,pos+1);
+			return new Pair(new Type.Wildcard(null,(Type.Reference)r.first()),r.second());			
 		} else {
 			// is primitive type ...
 			switch(c) {
@@ -524,7 +524,7 @@ public class ClassFileReader {
 			case 'V':
 				return new Pair<Type,Integer>(new Type.Void(),pos+1);
 			case '*':
-	            // FIXME: wildcard bounds.
+	            // FIXME: wildcard bounds.				
 				return new Pair<Type,Integer>(new Type.Wildcard(null,null),pos+1); 
 			default:
 				throw new RuntimeException("Unknown type qualifier: " + c);
