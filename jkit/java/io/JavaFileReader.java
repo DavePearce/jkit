@@ -156,22 +156,22 @@ public class JavaFileReader {
 
 		switch (decl.getType()) {
 			case FIELD :
-				declarations.addAll(parseField(decl), genericVariables);
+				declarations.addAll(parseField(decl, genericVariables));
 				break;
 			case METHOD :
-				declarations.add(parseMethod(decl), genericVariables);
+				declarations.add(parseMethod(decl, genericVariables));
 				break;
 			case CLASS :
 			case INTERFACE :
-				declarations.add(parseClass(decl), genericVariables);
+				declarations.add(parseClass(decl, genericVariables));
 				break;
 			case ENUM :
-				declarations.add(parseEnum(decl), genericVariables);
+				declarations.add(parseEnum(decl, genericVariables));
 				break;
 			case STATIC :
 				// static initialiser block
 				declarations.add(new Decl.StaticInitialiserBlock(
-						parseBlock(decl.getChild(0)).statements(), genericVariables));
+						parseBlock(decl.getChild(0), genericVariables).statements()));
 				break;
 			case BLOCK :
 				// non-static initialiser block
@@ -192,7 +192,7 @@ public class JavaFileReader {
 		int idx = 0;
 		List<Modifier> modifiers = new ArrayList<Modifier>();
 		if (decl.getChild(idx).getType() == MODIFIERS) {
-			modifiers = parseModifiers(decl.getChild(0));
+			modifiers = parseModifiers(decl.getChild(0), genericVariables);
 			idx++;
 		}
 		
@@ -350,7 +350,7 @@ public class JavaFileReader {
 		for (; idx < decl.getChildCount(); ++idx) {
 			Tree child = decl.getChild(idx);
 			if (child.getType() == METHOD) {
-				Type t = parseType(child.getChild(0));
+				Type t = parseType(child.getChild(0), genericVariables);
 				String n = child.getChild(1).getText();
 				Value v = null;
 				if (child.getChildCount() > 2) {
@@ -369,7 +369,7 @@ public class JavaFileReader {
 	}
 
 	protected Decl.Method parseMethod(Tree method, HashSet<String> genericVariables) {
-		genericVariables = (HashSet<String>) genericVariables; 
+		genericVariables = (HashSet<String>) genericVariables.clone(); 
 		// === TYPE MODIFIERS ===
 
 		List<Modifier> modifiers = new ArrayList<Modifier>();
@@ -383,7 +383,9 @@ public class JavaFileReader {
 
 		ArrayList<Type.Variable> typeArgs = new ArrayList<Type.Variable>();
 		while (method.getChild(idx).getType() == TYPE_PARAMETER) {
-			typeArgs.add(parseVariableType(method.getChild(idx++), genericVariables));
+			Type.Variable tvar = parseVariableType(method.getChild(idx++), genericVariables); 
+			typeArgs.add(tvar);
+			genericVariables.add(tvar.variable());
 		}
 
 		String name = method.getChild(idx++).getText();
@@ -404,7 +406,11 @@ public class JavaFileReader {
 				&& method.getChild(idx).getType() == PARAMETER) {
 			Tree c = method.getChild(idx);
 			List<Modifier> pModifiers = parseModifiers(c.getChild(0), genericVariables);
+			System.out.println("PARSING: " + c.getChild(1).getChild(0));
 			Type t = parseType(c.getChild(1), genericVariables);
+			if(t instanceof Type.Variable) {
+				System.out.println("GOT TYPE VARIABLE");
+			}
 			String n = c.getChild(2).getText();
 
 			for (int i = 3; i < c.getChildCount(); i = i + 2) {
@@ -470,12 +476,12 @@ public class JavaFileReader {
 		List<Modifier> modifiers = new ArrayList<Modifier>();
 		int idx = 0;
 		if (tree.getChild(idx).getType() == MODIFIERS) {
-			modifiers = parseModifiers(tree.getChild(0));
+			modifiers = parseModifiers(tree.getChild(0), genericVariables);
 			idx++;
 		}
 
 		// === FIELD TYPE ===
-		Type type = parseType(tree.getChild(idx++));
+		Type type = parseType(tree.getChild(idx++), genericVariables);
 
 		// === FIELD NAME(S) ===
 
@@ -494,7 +500,7 @@ public class JavaFileReader {
 				// FIXME: problem of side effects in initialisers. The only real
 				// solution is to require that initialisers are inlined into
 				// constructors!
-				initialiser = parseExpression(child.getChild(aindx));
+				initialiser = parseExpression(child.getChild(aindx), genericVariables);
 			}
 			fields.add(new Decl.Field(modifiers, name, type, initialiser,
 					new SourceLocation(child.getLine(), child
@@ -503,54 +509,54 @@ public class JavaFileReader {
 		return fields;
 	}
 
-	protected Stmt parseStatement(Tree stmt) {
+	protected Stmt parseStatement(Tree stmt, HashSet<String> genericVariables) {
 		switch (stmt.getType()) {
 			case BLOCK :
-				return parseBlock(stmt);
+				return parseBlock(stmt, genericVariables);
 			case VARDEF :
-				return parseVarDef(stmt);
+				return parseVarDef(stmt, genericVariables);
 			case ASSIGN :
-				return parseAssign(stmt);
+				return parseAssign(stmt, genericVariables);
 			case RETURN :
-				return parseReturn(stmt);
+				return parseReturn(stmt, genericVariables);
 			case THROW :
-				return parseThrow(stmt);
+				return parseThrow(stmt, genericVariables);
 			case NEW :
-				return parseNew(stmt);
+				return parseNew(stmt, genericVariables);
 			case INVOKE :
-				return parseInvoke(stmt);
+				return parseInvoke(stmt, genericVariables);
 			case IF :
-				return parseIf(stmt);
+				return parseIf(stmt, genericVariables);
 			case SWITCH :
-				return parseSwitch(stmt);
+				return parseSwitch(stmt, genericVariables);
 			case FOR :
-				return parseFor(stmt);
+				return parseFor(stmt, genericVariables);
 			case WHILE :
-				return parseWhile(stmt);
+				return parseWhile(stmt, genericVariables);
 			case DOWHILE :
-				return parseDoWhile(stmt);
+				return parseDoWhile(stmt, genericVariables);
 			case SELECTOR :
-				return parseSelectorStmt(stmt);
+				return parseSelectorStmt(stmt, genericVariables);
 			case CONTINUE :
-				return parseContinue(stmt);
+				return parseContinue(stmt, genericVariables);
 			case BREAK :
-				return parseBreak(stmt);
+				return parseBreak(stmt, genericVariables);
 			case LABEL :
-				return parseLabel(stmt);
+				return parseLabel(stmt, genericVariables);
 			case POSTINC :
 			case PREINC :
 			case POSTDEC :
 			case PREDEC :
-				return parseIncDec(stmt);
+				return parseIncDec(stmt, genericVariables);
 			case ASSERT :
-				return parseAssert(stmt);
+				return parseAssert(stmt, genericVariables);
 			case TRY :
-				return parseTry(stmt);
+				return parseTry(stmt, genericVariables);
 			case SYNCHRONIZED :
-				return parseSynchronisedBlock(stmt);
+				return parseSynchronisedBlock(stmt, genericVariables);
 			case CLASS :
 				// this is a strange case for inner classes
-				return parseClass(stmt);
+				return parseClass(stmt, genericVariables);
 			default :
 				throw new SyntaxError("Unknown statement encountered ("
 						+ stmt.getText() + ")", stmt.getLine(), stmt
@@ -567,13 +573,13 @@ public class JavaFileReader {
      * @return A Block containing all the statements in this block
      * 
      */
-	protected Stmt.Block parseBlock(Tree tree) {
+	protected Stmt.Block parseBlock(Tree tree, HashSet<String> genericVariables) {
 		ArrayList<Stmt> stmts = new ArrayList<Stmt>();
 
 		// === ITERATE STATEMENTS ===
 
 		for (int i = 0; i != tree.getChildCount(); ++i) {
-			Stmt stmt = parseStatement(tree.getChild(i));
+			Stmt stmt = parseStatement(tree.getChild(i), genericVariables);
 			stmts.add(stmt);
 		}
 
@@ -590,14 +596,14 @@ public class JavaFileReader {
      * @return A Block containing all the statements in this block
      * 
      */
-	protected Stmt parseSynchronisedBlock(Tree tree) {
+	protected Stmt parseSynchronisedBlock(Tree tree, HashSet<String> genericVariables) {
 		ArrayList<Stmt> stmts = new ArrayList<Stmt>();
-		Expr e = parseExpression(tree.getChild(0));
+		Expr e = parseExpression(tree.getChild(0), genericVariables);
 
 		// === ITERATE STATEMENTS ===
 		Tree child = tree.getChild(1);
 		for (int i = 0; i != child.getChildCount(); ++i) {
-			Stmt stmt = parseStatement(child.getChild(i));
+			Stmt stmt = parseStatement(child.getChild(i), genericVariables);
 			stmts.add(stmt);
 		}
 
@@ -605,7 +611,7 @@ public class JavaFileReader {
 				.getLine(), tree.getCharPositionInLine()));
 	}
 
-	protected Stmt parseTry(Tree tree) {
+	protected Stmt parseTry(Tree tree, HashSet<String> genericVariables) {
 		ArrayList<Stmt> stmts = new ArrayList<Stmt>();
 		ArrayList<Stmt.CatchBlock> handlers = new ArrayList<Stmt.CatchBlock>();
 		Stmt.Block finallyBlk = null;
@@ -613,7 +619,7 @@ public class JavaFileReader {
 		// === ITERATE STATEMENTS ===
 		Tree child = tree.getChild(0);
 		for (int i = 0; i != child.getChildCount(); ++i) {
-			Stmt stmt = parseStatement(child.getChild(i));
+			Stmt stmt = parseStatement(child.getChild(i), genericVariables);
 			stmts.add(stmt);
 		}
 
@@ -623,17 +629,17 @@ public class JavaFileReader {
 
 			if (child.getType() == CATCH) {
 				Tree cb = child.getChild(0);
-				Type.Clazz type = parseClassType(cb.getChild(0));
+				Type.Clazz type = parseClassType(cb.getChild(0), genericVariables);
 				Tree cbb = child.getChild(1);
 				for (int j = 0; j != cbb.getChildCount(); ++j) {
-					Stmt stmt = parseStatement(cbb.getChild(j));
+					Stmt stmt = parseStatement(cbb.getChild(j), genericVariables);
 					cbstmts.add(stmt);
 				}
 				handlers.add(new Stmt.CatchBlock(type, cb.getChild(1)
 						.getText(), cbstmts, new SourceLocation(cb.getLine(),
 						cb.getCharPositionInLine())));
 			} else {
-				finallyBlk = parseBlock(child.getChild(0));
+				finallyBlk = parseBlock(child.getChild(0), genericVariables);
 			}
 		}
 
@@ -653,13 +659,13 @@ public class JavaFileReader {
      *            ANTLR if-statement tree
      * @return
      */
-	protected Stmt parseVarDef(Tree tree) {
+	protected Stmt parseVarDef(Tree tree, HashSet<String> genericVariables) {
 		ArrayList<Triple<String, Integer, Expr>> vardefs = new ArrayList<Triple<String, Integer, Expr>>();
 
 		// === MODIFIERS ===
-		List<Modifier> modifiers = parseModifiers(tree.getChild(0));
+		List<Modifier> modifiers = parseModifiers(tree.getChild(0), genericVariables);
 
-		Type type = parseType(tree.getChild(1));
+		Type type = parseType(tree.getChild(1), genericVariables);
 
 		for (int i = 2; i < tree.getChildCount(); i = i + 1) {
 			Tree nameTree = tree.getChild(i);
@@ -674,7 +680,7 @@ public class JavaFileReader {
 					dims++;
 				} else {
 					// If we get here, then we've hit an initialiser
-					myInitialiser = parseExpression(am);
+					myInitialiser = parseExpression(am, genericVariables);
 				}
 			}
 			vardefs.add(new Triple<String, Integer, Expr>(
@@ -694,16 +700,16 @@ public class JavaFileReader {
      * @param tree
      * @return
      */
-	protected Stmt.Assignment parseAssign(Tree tree) {
-		Expr lhs = parseExpression(tree.getChild(0));
-		Expr rhs = parseExpression(tree.getChild(1));
+	protected Stmt.Assignment parseAssign(Tree tree, HashSet<String> genericVariables) {
+		Expr lhs = parseExpression(tree.getChild(0), genericVariables);
+		Expr rhs = parseExpression(tree.getChild(1), genericVariables);
 		return new Stmt.Assignment(lhs, rhs, new SourceLocation(tree
 				.getLine(), tree.getCharPositionInLine()));
 	}
 
-	protected Stmt parseReturn(Tree tree) {
+	protected Stmt parseReturn(Tree tree, HashSet<String> genericVariables) {
 		if (tree.getChildCount() > 0) {
-			return new Stmt.Return(parseExpression(tree.getChild(0)),
+			return new Stmt.Return(parseExpression(tree.getChild(0), genericVariables),
 					new SourceLocation(tree.getLine(), tree
 							.getCharPositionInLine()));
 		} else {
@@ -712,14 +718,14 @@ public class JavaFileReader {
 		}
 	}
 
-	protected Stmt parseThrow(Tree tree) {
+	protected Stmt parseThrow(Tree tree, HashSet<String> genericVariables) {
 		return new Stmt.Throw(
-				parseExpression(tree.getChild(0)),
+				parseExpression(tree.getChild(0), genericVariables),
 				new SourceLocation(tree.getLine(), tree.getCharPositionInLine()));
 	}
 
-	protected Stmt parseAssert(Tree tree) {
-		Expr expr = parseExpression(tree.getChild(0));
+	protected Stmt parseAssert(Tree tree, HashSet<String> genericVariables) {
+		Expr expr = parseExpression(tree.getChild(0), genericVariables);
 		return new Stmt.Assert(expr, new SourceLocation(tree.getLine(),
 				tree.getCharPositionInLine()));
 	}
@@ -732,7 +738,7 @@ public class JavaFileReader {
      * @param cfg
      * @return
      */
-	protected Stmt parseBreak(Tree tree) {
+	protected Stmt parseBreak(Tree tree, HashSet<String> genericVariables) {
 		if (tree.getChildCount() > 0) {
 			// this is a labelled break statement.
 			return new Stmt.Break(tree.getChild(0).getText(),
@@ -752,7 +758,7 @@ public class JavaFileReader {
      * @param cfg
      * @return
      */
-	protected Stmt parseContinue(Tree tree) {
+	protected Stmt parseContinue(Tree tree, HashSet<String> genericVariables) {
 		if (tree.getChildCount() > 0) {
 			// this is a labelled continue statement.
 			return new Stmt.Continue(tree.getChild(0).getText(),
@@ -772,20 +778,20 @@ public class JavaFileReader {
      * @param cfg
      * @return
      */
-	protected Stmt parseLabel(Tree stmt) {
+	protected Stmt parseLabel(Tree stmt, HashSet<String> genericVariables) {
 		String label = stmt.getChild(0).getText();
-		Stmt s = parseStatement(stmt.getChild(1));
+		Stmt s = parseStatement(stmt.getChild(1), genericVariables);
 
 		return new Stmt.Label(label, s, new SourceLocation(stmt.getLine(),
 				stmt.getCharPositionInLine()));
 	}
 
-	protected Stmt parseIf(Tree stmt) {
-		Expr condition = parseExpression(stmt.getChild(0));
-		Stmt trueStmt = parseStatement(stmt.getChild(1));
+	protected Stmt parseIf(Tree stmt, HashSet<String> genericVariables) {
+		Expr condition = parseExpression(stmt.getChild(0), genericVariables);
+		Stmt trueStmt = parseStatement(stmt.getChild(1), genericVariables);
 		Stmt falseStmt = stmt.getChildCount() < 3
 				? null
-				: parseStatement(stmt.getChild(2));
+				: parseStatement(stmt.getChild(2), genericVariables);
 		return new Stmt.If(
 				condition,
 				trueStmt,
@@ -793,43 +799,43 @@ public class JavaFileReader {
 				new SourceLocation(stmt.getLine(), stmt.getCharPositionInLine()));
 	}
 
-	protected Stmt parseWhile(Tree stmt) {
+	protected Stmt parseWhile(Tree stmt, HashSet<String> genericVariables) {
 		Expr condition = parseExpression(stmt.getChild(0)
-				.getChild(0));
-		Stmt body = parseStatement(stmt.getChild(1));
+				.getChild(0), genericVariables);
+		Stmt body = parseStatement(stmt.getChild(1), genericVariables);
 		return new Stmt.While(condition, body, new SourceLocation(stmt
 				.getLine(), stmt.getCharPositionInLine()));
 	}
 
-	protected Stmt parseDoWhile(Tree stmt) {
+	protected Stmt parseDoWhile(Tree stmt, HashSet<String> genericVariables) {
 		Expr condition = parseExpression(stmt.getChild(0)
-				.getChild(0));
-		Stmt body = parseStatement(stmt.getChild(1));
+				.getChild(0), genericVariables);
+		Stmt body = parseStatement(stmt.getChild(1), genericVariables);
 		return new Stmt.DoWhile(condition, body, new SourceLocation(stmt
 				.getLine(), stmt.getCharPositionInLine()));
 	}
 
-	protected Stmt parseFor(Tree stmt) {
+	protected Stmt parseFor(Tree stmt, HashSet<String> genericVariables) {
 		Stmt initialiser = null;
 		Expr condition = null;
 		Stmt increment = null;
 		Stmt body = null;
 
 		if (stmt.getChild(0).getType() == FOREACH) {
-			return parseForEach(stmt.getChild(0), stmt.getChild(1));
+			return parseForEach(stmt.getChild(0), stmt.getChild(1), genericVariables);
 		}
 
 		if (stmt.getChild(0).getChildCount() > 0) {
-			initialiser = parseStatement(stmt.getChild(0).getChild(0));
+			initialiser = parseStatement(stmt.getChild(0).getChild(0), genericVariables);
 		}
 		if (stmt.getChild(1).getChildCount() > 0) {
-			condition = parseExpression(stmt.getChild(1).getChild(0));
+			condition = parseExpression(stmt.getChild(1).getChild(0), genericVariables);
 		}
 		if (stmt.getChild(2).getChildCount() > 0) {
-			increment = parseStatement(stmt.getChild(2).getChild(0));
+			increment = parseStatement(stmt.getChild(2).getChild(0), genericVariables);
 		}
 		if (stmt.getChild(3).getChildCount() > 0) {
-			body = parseStatement(stmt.getChild(3));
+			body = parseStatement(stmt.getChild(3), genericVariables);
 		}
 
 		return new Stmt.For(
@@ -851,14 +857,14 @@ public class JavaFileReader {
      *            control-flow graph
      * @return
      */
-	protected Stmt parseForEach(Tree stmt, Tree body) {
+	protected Stmt parseForEach(Tree stmt, Tree body, HashSet<String> genericVariables) {
 
 		Tree varDef = stmt.getChild(0);
-		List<Modifier> varMods = parseModifiers(varDef.getChild(0));
-		Type varType = parseType(varDef.getChild(1));
+		List<Modifier> varMods = parseModifiers(varDef.getChild(0), genericVariables);
+		Type varType = parseType(varDef.getChild(1), genericVariables);
 		String varName = varDef.getChild(2).getText();
-		Expr src = parseExpression(stmt.getChild(1));
-		Stmt loopBody = parseStatement(body);
+		Expr src = parseExpression(stmt.getChild(1), genericVariables);
+		Stmt loopBody = parseStatement(body, genericVariables);
 
 		return new Stmt.ForEach(
 				varMods,
@@ -869,18 +875,18 @@ public class JavaFileReader {
 				new SourceLocation(stmt.getLine(), stmt.getCharPositionInLine()));
 	}
 
-	protected Stmt parseSwitch(Tree stmt) {
+	protected Stmt parseSwitch(Tree stmt, HashSet<String> genericVariables) {
 		// Second, process the expression to switch on
-		Expr condition = parseExpression(stmt.getChild(0));
+		Expr condition = parseExpression(stmt.getChild(0), genericVariables);
 		ArrayList<Stmt.Case> cases = new ArrayList<Stmt.Case>();
 
 		for (int i = 1; i < stmt.getChildCount(); i++) {
 			Tree child = stmt.getChild(i);
 			if (child.getType() == CASE) {
-				Expr c = parseExpression(child.getChild(0));
+				Expr c = parseExpression(child.getChild(0), genericVariables);
 				List<Stmt> stmts = null;
 				if (child.getChild(1) != null) {
-					Stmt.Block b = parseBlock(child.getChild(1));
+					Stmt.Block b = parseBlock(child.getChild(1), genericVariables);
 					stmts = b.statements();
 				}
 				cases.add(new Stmt.Case(c, stmts, new SourceLocation(child
@@ -889,7 +895,7 @@ public class JavaFileReader {
 				// default label
 				List<Stmt> stmts = new ArrayList<Stmt>();
 				if (child.getChild(0) != null) {
-					Stmt.Block b = parseBlock(child.getChild(0));
+					Stmt.Block b = parseBlock(child.getChild(0), genericVariables);
 					stmts = b.statements();
 				}
 				cases.add(new Stmt.DefaultCase(stmts, new SourceLocation(
@@ -906,8 +912,8 @@ public class JavaFileReader {
      * @param stmt
      * @return
      */
-	public Stmt parseIncDec(Tree stmt) {
-		Expr.UnOp lhs = (Expr.UnOp) parseExpression(stmt);
+	public Stmt parseIncDec(Tree stmt, HashSet<String> genericVariables) {
+		Expr.UnOp lhs = (Expr.UnOp) parseExpression(stmt, genericVariables);
 		Expr lval = lhs.expr();
 		SourceLocation loc = new SourceLocation(stmt.getLine(), stmt
 				.getCharPositionInLine());
@@ -924,8 +930,8 @@ public class JavaFileReader {
 		}
 	}
 
-	public Stmt parseSelectorStmt(Tree stmt) {
-		Expr e = parseExpression(stmt);
+	public Stmt parseSelectorStmt(Tree stmt, HashSet<String> genericVariables) {
+		Expr e = parseExpression(stmt, genericVariables);
 		if (e instanceof Stmt) {
 			return (Stmt) e;
 		} else {
@@ -933,7 +939,7 @@ public class JavaFileReader {
 		}
 	}
 
-	protected Expr parseExpression(Tree expr) {
+	protected Expr parseExpression(Tree expr, HashSet<String> genericVariables) {
 		switch (expr.getType()) {
 			case CHARVAL :
 				return parseCharVal(expr);
@@ -948,67 +954,67 @@ public class JavaFileReader {
 			case NULLVAL :
 				return parseNullVal(expr);
 			case ARRAYVAL :
-				return parseArrayVal(expr);
+				return parseArrayVal(expr, genericVariables);
 			case ARRAYINIT :
-				return parseTypedArrayVal(expr);
+				return parseTypedArrayVal(expr, genericVariables);
 			case VAR :
-				return parseVariable(expr);
+				return parseVariable(expr, genericVariables);
 			case NEW :
-				return parseNew(expr);
+				return parseNew(expr, genericVariables);
 			case INVOKE :
-				return parseInvoke(expr);
+				return parseInvoke(expr, genericVariables);
 			case SELECTOR :
-				return parseSelector(expr);
+				return parseSelector(expr, genericVariables);
 			case GETCLASS :
-				return parseGetClass(expr);
+				return parseGetClass(expr, genericVariables);
 			case PREINC :
-				return parseUnOp(Expr.UnOp.PREINC, expr);
+				return parseUnOp(Expr.UnOp.PREINC, expr, genericVariables);
 			case PREDEC :
-				return parseUnOp(Expr.UnOp.PREDEC, expr);
+				return parseUnOp(Expr.UnOp.PREDEC, expr, genericVariables);
 			case POSTINC :
-				return parseUnOp(Expr.UnOp.POSTINC, expr);
+				return parseUnOp(Expr.UnOp.POSTINC, expr, genericVariables);
 			case POSTDEC :
-				return parseUnOp(Expr.UnOp.POSTDEC, expr);
+				return parseUnOp(Expr.UnOp.POSTDEC, expr, genericVariables);
 			case NEG :
-				return parseUnOp(Expr.UnOp.NEG, expr);
+				return parseUnOp(Expr.UnOp.NEG, expr, genericVariables);
 			case NOT :
-				return parseUnOp(Expr.UnOp.NOT, expr);
+				return parseUnOp(Expr.UnOp.NOT, expr, genericVariables);
 			case INV :
-				return parseUnOp(Expr.UnOp.INV, expr);
+				return parseUnOp(Expr.UnOp.INV, expr, genericVariables);
 			case CAST :
-				return parseCast(expr);
+				return parseCast(expr, genericVariables);
 			case LABINOP :
-				return parseLeftAssociativeBinOp(expr);
+				return parseLeftAssociativeBinOp(expr, genericVariables);
 			case USHR :
-				return parseBinOp(Expr.BinOp.USHR, expr);
+				return parseBinOp(Expr.BinOp.USHR, expr, genericVariables);
 			case LAND :
-				return parseBinOp(Expr.BinOp.LAND, expr);
+				return parseBinOp(Expr.BinOp.LAND, expr, genericVariables);
 			case LOR :
-				return parseBinOp(Expr.BinOp.LOR, expr);
+				return parseBinOp(Expr.BinOp.LOR, expr, genericVariables);
 			case AND :
-				return parseBinOp(Expr.BinOp.AND, expr);
+				return parseBinOp(Expr.BinOp.AND, expr, genericVariables);
 			case OR :
-				return parseBinOp(Expr.BinOp.OR, expr);
+				return parseBinOp(Expr.BinOp.OR, expr, genericVariables);
 			case XOR :
-				return parseBinOp(Expr.BinOp.XOR, expr);
+				return parseBinOp(Expr.BinOp.XOR, expr, genericVariables);
 			case EQ :
-				return parseBinOp(Expr.BinOp.EQ, expr);
+				return parseBinOp(Expr.BinOp.EQ, expr, genericVariables);
 			case NEQ :
-				return parseBinOp(Expr.BinOp.NEQ, expr);
+				return parseBinOp(Expr.BinOp.NEQ, expr, genericVariables);
 			case LT :
-				return parseBinOp(Expr.BinOp.LT, expr);
+				return parseBinOp(Expr.BinOp.LT, expr, genericVariables);
 			case LTEQ :
-				return parseBinOp(Expr.BinOp.LTEQ, expr);
+				return parseBinOp(Expr.BinOp.LTEQ, expr, genericVariables);
 			case GT :
-				return parseBinOp(Expr.BinOp.GT, expr);
+				return parseBinOp(Expr.BinOp.GT, expr, genericVariables);
 			case GTEQ :
-				return parseBinOp(Expr.BinOp.GTEQ, expr);
+				return parseBinOp(Expr.BinOp.GTEQ, expr, genericVariables);
 			case INSTANCEOF :
-				return parseInstanceOf(expr);
+				return parseInstanceOf(expr, genericVariables);
 			case TERNOP :
-				return parseTernOp(expr);
+				return parseTernOp(expr, genericVariables);
 			case ASSIGN :
-				return parseAssign(expr);
+				return parseAssign(expr, genericVariables);
 			default :
 				throw new SyntaxError("Unknown expression encountered ("
 						+ expr.getText() + ")", expr.getLine(), expr
@@ -1016,7 +1022,7 @@ public class JavaFileReader {
 		}
 	}
 
-	protected Expr parseSelector(Tree selector) {
+	protected Expr parseSelector(Tree selector, HashSet<String> genericVariables) {
 		Tree target = selector.getChild(0);
 
 		// The following is basically dealing with an awkward situation. For
@@ -1041,7 +1047,7 @@ public class JavaFileReader {
 		// figure out which class.
 
 		int idx = 1;
-		Expr expr = parseExpression(target);
+		Expr expr = parseExpression(target, genericVariables);
 
 		for (int i = idx; i != selector.getChildCount(); ++i) {
 			Tree child = selector.getChild(i);
@@ -1054,7 +1060,7 @@ public class JavaFileReader {
 					break;
 				case ARRAYINDEX : {
 					expr = new Expr.ArrayIndex(expr, parseExpression(child
-							.getChild(0)), loc);
+							.getChild(0), genericVariables), loc);
 					break;
 				}
 				case INVOKE : {
@@ -1063,7 +1069,7 @@ public class JavaFileReader {
 					if (child.getChild(0).getType() == TYPE_PARAMETER) {
 						Tree c = child.getChild(0);
 						for (int j = 0; j != c.getChildCount(); ++j) {
-							typeParameters.add(parseType(c.getChild(j)));
+							typeParameters.add(parseType(c.getChild(j), genericVariables));
 						}
 						start++;
 					}
@@ -1071,14 +1077,14 @@ public class JavaFileReader {
 					String method = child.getChild(start).getText();
 
 					List<Expr> params = parseExpressionList(
-							start + 1, child.getChildCount(), child);
+							start + 1, child.getChildCount(), child, genericVariables);
 
 					expr = new Expr.Invoke(expr, method, params,
 							typeParameters, loc);
 					break;
 				}
 				case NEW : {
-					Expr.New tmp = parseNew(child);
+					Expr.New tmp = parseNew(child, genericVariables);
 					tmp.setContext(expr);
 					expr = tmp;
 					break;
@@ -1100,7 +1106,7 @@ public class JavaFileReader {
      * @param expr
      * @return
      */
-	protected Expr.New parseNew(Tree expr) {
+	protected Expr.New parseNew(Tree expr, HashSet<String> genericVariables) {
 		// first, parse any parameters supplied
 		ArrayList<Decl> declarations = new ArrayList<Decl>();
 
@@ -1109,17 +1115,17 @@ public class JavaFileReader {
 			Tree child = expr.getChild(i);
 			if (child.getType() == METHOD) {
 				// Store anonymous class methods
-				declarations.add(parseMethod(child));
+				declarations.add(parseMethod(child, genericVariables));
 				end = Math.min(i, end);
 			} else if (child.getType() == FIELD) {
-				declarations.addAll(parseField(child));
+				declarations.addAll(parseField(child, genericVariables));
 				end = Math.min(i, end);
 			}
 		}
 
-		List<Expr> params = parseExpressionList(1, end, expr);
+		List<Expr> params = parseExpressionList(1, end, expr, genericVariables);
 
-		return new Expr.New(parseType(expr.getChild(0)), null, params,
+		return new Expr.New(parseType(expr.getChild(0), genericVariables), null, params,
 				declarations, new SourceLocation(expr.getLine(), expr
 						.getCharPositionInLine()));
 	}
@@ -1131,7 +1137,7 @@ public class JavaFileReader {
      * @param expr
      * @return
      */
-	public Expr.Invoke parseInvoke(Tree expr) {
+	public Expr.Invoke parseInvoke(Tree expr, HashSet<String> genericVariables) {
 
 		// =================================================
 		// ======== PARSE TYPE PARAMETERS (IF ANY) =========
@@ -1146,7 +1152,7 @@ public class JavaFileReader {
 		if (expr.getChild(0).getType() == TYPE_PARAMETER) {
 			Tree child = expr.getChild(0);
 			for (int i = 0; i != child.getChildCount(); ++i) {
-				typeParameters.add(parseType(child.getChild(i)));
+				typeParameters.add(parseType(child.getChild(i), genericVariables));
 			}
 			start++;
 		}
@@ -1154,7 +1160,7 @@ public class JavaFileReader {
 		String method = expr.getChild(start).getText();
 
 		List<Expr> params = parseExpressionList(start + 1, expr
-				.getChildCount(), expr);
+				.getChildCount(), expr, genericVariables);
 
 		return new Expr.Invoke(
 				null,
@@ -1164,48 +1170,48 @@ public class JavaFileReader {
 				new SourceLocation(expr.getLine(), expr.getCharPositionInLine()));
 	}
 
-	public Expr parseGetClass(Tree expr) {
-		return new Value.Class(parseClassType(expr.getChild(0)));
+	public Expr parseGetClass(Tree expr, HashSet<String> genericVariables) {
+		return new Value.Class(parseClassType(expr.getChild(0), genericVariables));
 	}
 
-	protected Expr parseTernOp(Tree expr) {
-		Expr cond = parseExpression(expr.getChild(0));
-		Expr tbranch = parseExpression(expr.getChild(1));
-		Expr fbranch = parseExpression(expr.getChild(2));
+	protected Expr parseTernOp(Tree expr, HashSet<String> genericVariables) {
+		Expr cond = parseExpression(expr.getChild(0), genericVariables);
+		Expr tbranch = parseExpression(expr.getChild(1), genericVariables);
+		Expr fbranch = parseExpression(expr.getChild(2), genericVariables);
 		return new Expr.TernOp(cond, tbranch, fbranch, new SourceLocation(
 				expr.getLine(), expr.getCharPositionInLine()));
 	}
 
-	protected Expr parseInstanceOf(Tree expr) {
-		Expr e = parseExpression(expr.getChild(0));
+	protected Expr parseInstanceOf(Tree expr, HashSet<String> genericVariables) {
+		Expr e = parseExpression(expr.getChild(0), genericVariables);
 		return new Expr.InstanceOf(
 				e,
-				parseType(expr.getChild(1)),
+				parseType(expr.getChild(1), genericVariables),
 				new SourceLocation(expr.getLine(), expr.getCharPositionInLine()));
 	}
 
-	protected Expr parseCast(Tree expr) {
-		return new Expr.Cast(parseType(expr.getChild(0)),
-				parseExpression(expr.getChild(1)), new SourceLocation(expr
+	protected Expr parseCast(Tree expr, HashSet<String> genericVariables) {
+		return new Expr.Cast(parseType(expr.getChild(0), genericVariables),
+				parseExpression(expr.getChild(1), genericVariables), new SourceLocation(expr
 						.getLine(), expr.getCharPositionInLine()));
 	}
 
-	protected Expr parseUnOp(int uop, Tree expr) {
+	protected Expr parseUnOp(int uop, Tree expr, HashSet<String> genericVariables) {
 		return new Expr.UnOp(
 				uop,
-				parseExpression(expr.getChild(0)),
+				parseExpression(expr.getChild(0), genericVariables),
 				new SourceLocation(expr.getLine(), expr.getCharPositionInLine()));
 	}
 
 	// Binary operations which can be left associative are more complex and have
 	// to be delt with using a special LABINOP operator.
-	protected Expr parseLeftAssociativeBinOp(Tree expr) {
-		Expr lhs = parseExpression(expr.getChild(0));
+	protected Expr parseLeftAssociativeBinOp(Tree expr, HashSet<String> genericVariables) {
+		Expr lhs = parseExpression(expr.getChild(0), genericVariables);
 
 		for (int i = 1; i < expr.getChildCount(); i = i + 2) {
 			Tree child = expr.getChild(i + 1);
-			int bop = parseBinOpOp(expr.getChild(i).getText(), expr);
-			lhs = new Expr.BinOp(bop, lhs, parseExpression(child),
+			int bop = parseBinOpOp(expr.getChild(i).getText(), expr, genericVariables);
+			lhs = new Expr.BinOp(bop, lhs, parseExpression(child, genericVariables),
 					new SourceLocation(child.getLine(), child
 							.getCharPositionInLine()));
 		}
@@ -1213,15 +1219,15 @@ public class JavaFileReader {
 		return lhs;
 	}
 
-	protected Expr parseBinOp(int bop, Tree expr) {
-		Expr lhs = parseExpression(expr.getChild(0));
-		Expr rhs = parseExpression(expr.getChild(1));
+	protected Expr parseBinOp(int bop, Tree expr, HashSet<String> genericVariables) {
+		Expr lhs = parseExpression(expr.getChild(0), genericVariables);
+		Expr rhs = parseExpression(expr.getChild(1), genericVariables);
 
 		return new Expr.BinOp(bop, lhs, rhs, new SourceLocation(expr
 				.getLine(), expr.getCharPositionInLine()));
 	}
 
-	protected int parseBinOpOp(String op, Tree expr) {
+	protected int parseBinOpOp(String op, Tree expr, HashSet<String> genericVariables) {
 		if (op.equals("+")) {
 			return Expr.BinOp.ADD;
 		} else if (op.equals("-")) {
@@ -1244,7 +1250,7 @@ public class JavaFileReader {
 		}
 	}
 
-	protected Expr parseVariable(Tree expr) {
+	protected Expr parseVariable(Tree expr, HashSet<String> genericVariables) {
 		String name = expr.getChild(0).getText();
 		return new Expr.UnresolvedVariable(name, new SourceLocation(expr.getLine(),
 				expr.getCharPositionInLine()));
@@ -1466,9 +1472,9 @@ public class JavaFileReader {
      * @param expr
      * @return
      */
-	protected Expr parseArrayVal(Tree expr) {
+	protected Expr parseArrayVal(Tree expr, HashSet<String> genericVariables) {
 		List<Expr> values = parseExpressionList(0, expr
-				.getChildCount(), expr);
+				.getChildCount(), expr, genericVariables);
 		
 		return new Value.Array(values, new SourceLocation(expr.getLine(),
 				expr.getCharPositionInLine()));
@@ -1487,29 +1493,29 @@ public class JavaFileReader {
      * @param expr
      * @return
      */
-	protected Expr parseTypedArrayVal(Tree expr) {
-		Type type = parseType(expr.getChild(0));
+	protected Expr parseTypedArrayVal(Tree expr, HashSet<String> genericVariables) {
+		Type type = parseType(expr.getChild(0), genericVariables);
 		Tree aval = expr.getChild(1);
 		List<Expr> values = parseExpressionList(0, aval
-				.getChildCount(), aval);
+				.getChildCount(), aval, genericVariables);
 		
 		return new Value.TypedArray(type, values, new SourceLocation(expr
 				.getLine(), expr.getCharPositionInLine()));
 	}
 
 	protected List<Expr> parseExpressionList(int start, int end,
-			Tree expr) {
+			Tree expr, HashSet<String> genericVariables) {
 
 		ArrayList<Expr> es = new ArrayList<Expr>();
 
 		for (int i = start; i < end; i++) {
-			es.add(parseExpression(expr.getChild(i)));
+			es.add(parseExpression(expr.getChild(i), genericVariables));
 		}
 
 		return es;
 	}
 
-	protected List<Modifier> parseModifiers(Tree ms) {
+	protected List<Modifier> parseModifiers(Tree ms, HashSet<String> genericVariables) {
 		ArrayList<Modifier> mods = new ArrayList<Modifier>();
 		for (int i = 0; i != ms.getChildCount(); ++i) {
 			Tree mc = ms.getChild(i);
@@ -1541,7 +1547,7 @@ public class JavaFileReader {
 				String name = mc.getChild(0).getText();
 				ArrayList<Expr> arguments = new ArrayList<Expr>();
 				for (int j = 1; j != mc.getChildCount(); ++j) {
-					arguments.add(parseExpression(mc.getChild(j)));
+					arguments.add(parseExpression(mc.getChild(j), genericVariables));
 				}
 				mods.add(new Modifier.Annotation(name, arguments,loc));
 			} else {
@@ -1552,7 +1558,7 @@ public class JavaFileReader {
 		return mods;
 	}
 
-	protected static Type parseType(Tree type) {
+	protected static Type parseType(Tree type, HashSet<String> genericVariables) {
 		assert type.getType() == TYPE;
 
 		SourceLocation loc = new SourceLocation(type.getLine(), type
@@ -1562,20 +1568,18 @@ public class JavaFileReader {
 			// special case to deal with wildcards
 			Tree child = type.getChild(0);
 
-			Type.Clazz lowerBound = null;
-			Type.Clazz upperBound = null;
+			Type.Reference lowerBound = null;
+			Type.Reference upperBound = null;
 
 			if (child.getChildCount() > 0
-					&& child.getChild(0).getType() == EXTENDS) {
-				lowerBound = parseClassType(child.getChild(0).getChild(0));
-
+					&& child.getChild(0).getType() == EXTENDS) {				
+				lowerBound = parseClassVarType(child.getChild(0).getChild(0), genericVariables);				
 			} else if (child.getChildCount() > 0
 					&& child.getChild(0).getType() == SUPER) {
-
-				upperBound = parseClassType(child.getChild(0).getChild(0));
+				upperBound = parseClassVarType(child.getChild(0).getChild(0), genericVariables);
 			}
 			// Ok, all done!
-			return new Type.Wildcard(lowerBound, upperBound,loc);
+			return new Type.Wildcard(lowerBound, upperBound,loc);			
 		} else {
 
 			// === ARRAY DIMENSIONS ===
@@ -1613,6 +1617,8 @@ public class JavaFileReader {
 				r = new Type.Float(loc);
 			} else if (ct.equals("double")) {
 				r = new Type.Double(loc);
+			} else if(genericVariables.contains(ct)) {
+				return new Type.Variable(ct,new ArrayList<Type.Reference>(),loc);
 			} else {
 
 				// === NON-PRIMITIVE TYPES ===
@@ -1627,7 +1633,7 @@ public class JavaFileReader {
 
 					for (int j = 0; j != child.getChildCount(); ++j) {
 						Tree childchild = child.getChild(j);
-						genArgs.add((Type.Reference) parseType(childchild));
+						genArgs.add((Type.Reference) parseType(childchild, genericVariables));
 					}
 
 					components.add(new Pair<String, List<Type.Reference>>(text,
@@ -1646,9 +1652,20 @@ public class JavaFileReader {
 		}
 	}
 
-	protected static Type.Clazz parseClassType(Tree type) {
+	protected static Type.Reference parseClassVarType(Tree type, HashSet<String> genericVariables) {
+		if(type.getChildCount() == 1 && genericVariables.contains(type.getChild(0).getText())) {
+			SourceLocation loc = new SourceLocation(type.getLine(), type
+					.getCharPositionInLine());
+			return new Type.Variable(type.getChild(0).getText(),
+					new ArrayList<Type.Reference>(),loc);
+		} else {
+			return parseClassType(type,genericVariables);
+		}
+	}
+	
+	protected static Type.Clazz parseClassType(Tree type, HashSet<String> genericVariables) {
 		assert type.getType() == TYPE;
-
+		
 		// === COMPONENTS ===
 
 		ArrayList<Pair<String, List<Type.Reference>>> components = new ArrayList<Pair<String, List<Type.Reference>>>();
@@ -1669,7 +1686,7 @@ public class JavaFileReader {
 				if (childchild.getType() == EXTENDS) {
 					// this is a lower bound, not a generic argument.
 				} else {
-					genArgs.add((Type.Reference) parseType(childchild));
+					genArgs.add((Type.Reference) parseType(childchild, genericVariables));
 				}
 			}
 
@@ -1681,7 +1698,7 @@ public class JavaFileReader {
 				type.getLine(), type.getCharPositionInLine()));
 	}
 
-	protected static Type.Variable parseVariableType(Tree type) {
+	protected static Type.Variable parseVariableType(Tree type, HashSet<String> genericVariables) {
 		Tree child = type.getChild(0);
 		String text = child.getText();
 		List<Type.Reference> lowerBounds = new ArrayList<Type.Reference>();
@@ -1690,7 +1707,7 @@ public class JavaFileReader {
 			Tree childchild = child.getChild(0);
 			for (int i = 0; i != childchild.getChildCount(); ++i) {
 				lowerBounds.add((Type.Reference) parseType(childchild
-						.getChild(i)));
+						.getChild(i), genericVariables));
 			}
 		}
 		return new Type.Variable(text, lowerBounds, new SourceLocation(

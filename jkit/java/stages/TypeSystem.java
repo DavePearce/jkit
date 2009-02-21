@@ -777,8 +777,10 @@ public class TypeSystem {
 								.parameterTypes().size() <= (concreteParameterTypes
 								.size() + 1))) {										
 					
+					System.out.println("CANDIDATE (1): " + name + " : " + m_type);
+					
 					// First, substitute class type parameters							
-					Type.Function mt = (Type.Function) substitute(m_type, binding);										
+					Type.Function mt = (Type.Function) substitute(m_type, binding);														
 					
 					// Second, substitute method type parameters
 					Type.Function concreteFunctionType = new Type.Function(mt.returnType(),
@@ -788,7 +790,7 @@ public class TypeSystem {
 							concreteFunctionType, mt, m.isVariableArity(),
 							loader));
 					
-					System.out.println("CANDIDATE: " + name + " : " + mt);
+					System.out.println("CANDIDATE (2): " + name + " : " + mt);
 					
 					// Third, identify and substitute any remaining generic variables
 					// for java.lang.Object. This corresponds to unsafe

@@ -517,7 +517,7 @@ public class TypeResolution {
 		return new jkit.jil.Type.Array(resolve(t.element()));
 	}
 	
-	protected jkit.jil.Type.Wildcard resolve(jkit.java.tree.Type.Wildcard t) {		
+	protected jkit.jil.Type.Wildcard resolve(jkit.java.tree.Type.Wildcard t) {				
 		return new jkit.jil.Type.Wildcard((Type.Reference) resolve(t
 				.lowerBound()), (Type.Reference) resolve(t.upperBound()));
 	}

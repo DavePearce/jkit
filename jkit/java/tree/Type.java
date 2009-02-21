@@ -216,7 +216,7 @@ public class Type extends SyntacticElementImpl {
 		private Reference lowerBound;
 		private Reference upperBound;
 
-		public Wildcard(Reference lowerBound, Reference upperBound,Attribute... attributes) {
+		public Wildcard(Reference lowerBound, Reference upperBound, Attribute... attributes) {
 			super(attributes);
 			this.lowerBound = lowerBound;
 			this.upperBound = upperBound;
