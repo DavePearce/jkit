@@ -405,12 +405,8 @@ public class JavaFileReader {
 		while (idx < method.getChildCount()
 				&& method.getChild(idx).getType() == PARAMETER) {
 			Tree c = method.getChild(idx);
-			List<Modifier> pModifiers = parseModifiers(c.getChild(0), genericVariables);
-			System.out.println("PARSING: " + c.getChild(1).getChild(0));
-			Type t = parseType(c.getChild(1), genericVariables);
-			if(t instanceof Type.Variable) {
-				System.out.println("GOT TYPE VARIABLE");
-			}
+			List<Modifier> pModifiers = parseModifiers(c.getChild(0), genericVariables);			
+			Type t = parseType(c.getChild(1), genericVariables);		
 			String n = c.getChild(2).getText();
 
 			for (int i = 3; i < c.getChildCount(); i = i + 2) {
@@ -1572,7 +1568,7 @@ public class JavaFileReader {
 			Type.Reference upperBound = null;
 
 			if (child.getChildCount() > 0
-					&& child.getChild(0).getType() == EXTENDS) {				
+					&& child.getChild(0).getType() == EXTENDS) {			
 				lowerBound = parseClassVarType(child.getChild(0).getChild(0), genericVariables);				
 			} else if (child.getChildCount() > 0
 					&& child.getChild(0).getType() == SUPER) {

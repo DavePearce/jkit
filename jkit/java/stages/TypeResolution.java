@@ -166,7 +166,7 @@ public class TypeResolution {
 		
 		d.attributes().add(
 				new Type.Function(returnType, parameterTypes,
-						new ArrayList<Type.Variable>()));
+						new ArrayList<Type.Variable>()));		
 		
 		// Now, explore the method body for any other things to resolve.
 		doStatement(d.body());
@@ -485,7 +485,7 @@ public class TypeResolution {
 		} else if(t instanceof jkit.java.tree.Type.Wildcard) {
 			return resolve((jkit.java.tree.Type.Wildcard)t);
 		} else if(t instanceof jkit.java.tree.Type.Variable) {
-			
+			return resolve((jkit.java.tree.Type.Variable)t);
 		}
 		
 		return null;
@@ -518,8 +518,9 @@ public class TypeResolution {
 	}
 	
 	protected jkit.jil.Type.Wildcard resolve(jkit.java.tree.Type.Wildcard t) {				
-		return new jkit.jil.Type.Wildcard((Type.Reference) resolve(t
-				.lowerBound()), (Type.Reference) resolve(t.upperBound()));
+		 jkit.jil.Type.Wildcard r = new jkit.jil.Type.Wildcard((Type.Reference) resolve(t
+				.lowerBound()), (Type.Reference) resolve(t.upperBound()));		 
+		 return r;
 	}
 	
 	protected jkit.jil.Type.Variable resolve(jkit.java.tree.Type.Variable t) {		
