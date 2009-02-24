@@ -9,7 +9,7 @@
       <attribute name="Built-By" value="${user.name}"/>
       <attribute name="Main-Class" value="jkit.Main"/>
     </manifest>
-    <jar destfile="lib/jkit.jar" basedir="." includes="jkit/**/*.class,mocha/**/*.class" manifest="tmp/MANIFEST.MF"/>
+    <jar destfile="lib/jkit.jar" basedir="." includes="jkit/**/*.class,jkit/**/*.java" manifest="tmp/MANIFEST.MF"/>
   </target>
 
   <target name="doc">

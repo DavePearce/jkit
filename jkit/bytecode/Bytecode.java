@@ -25,7 +25,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.Map;
 
-import jkit.jkil.Type;
+import jkit.jil.Type;
 import jkit.util.Pair;
 
 public abstract class Bytecode {
@@ -153,11 +153,11 @@ public abstract class Bytecode {
 		
 		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  Map<Constant.Info,Integer> constantPool) {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			write_u1(out,IALOAD + typeArrayOffset(type.elementType()));
+			write_u1(out,IALOAD + typeArrayOffset(type.element()));
 			return out.toByteArray();
 		}
 		
-		public String toString() { return typeArrayChar(type.elementType()) + "aload"; }
+		public String toString() { return typeArrayChar(type.element()) + "aload"; }
 	}
 	
 	/**
@@ -170,11 +170,11 @@ public abstract class Bytecode {
 		
 		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  Map<Constant.Info,Integer> constantPool) {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			write_u1(out,IASTORE + typeArrayOffset(type.elementType()));
+			write_u1(out,IASTORE + typeArrayOffset(type.element()));
 			return out.toByteArray();
 		}
 		
-		public String toString() { return typeArrayChar(type.elementType()) + "astore"; }
+		public String toString() { return typeArrayChar(type.element()) + "astore"; }
 	}
 	
 	/**
@@ -1132,7 +1132,7 @@ public abstract class Bytecode {
 					write_u2(out,idx);
 					write_u1(out,dims);
 				} else {				
-					Type elementType = atype.elementType();
+					Type elementType = atype.element();
 					
 					if(elementType instanceof Type.Reference) {
 						int idx = Constant.addPoolItem(Constant
@@ -1182,7 +1182,7 @@ public abstract class Bytecode {
 		public String toString() {			
 			if(type instanceof Type.Array) { 
 				Type.Array atype = (Type.Array) type;
-				Type elementType = atype.elementType();
+				Type elementType = atype.element();
 				if(dims > 1) {
 					return "multianewarray " + type + ", " + dims;
 				} else if(elementType instanceof Type.Reference 

@@ -1,8 +1,8 @@
 package jkit.bytecode;
 
-import jkit.java.ClassTable;
-import jkit.jkil.Clazz;
-import jkit.jkil.Type;
+import java.util.*;
+import jkit.jil.Clazz;
+import jkit.jil.Type;
 import jkit.util.Pair;
 
 /**
@@ -79,7 +79,7 @@ public class Types {
 	 * @return
 	 */
 	public static String descriptor(Type t, boolean generic) {
-		if(t instanceof Type.Boolean) {
+		if(t instanceof Type.Bool) {
 			return "Z";
 		} if(t instanceof Type.Byte) {
 			return "B";
@@ -99,21 +99,21 @@ public class Types {
 			return "V";
 		} else if(t instanceof Type.Array) {
 			Type.Array at = (Type.Array) t;
-			return "[" + descriptor(at.elementType(),generic);
-		} else if(t instanceof Type.Reference) {
-			Type.Reference ref = (Type.Reference) t;
+			return "[" + descriptor(at.element(),generic);
+		} else if(t instanceof Type.Clazz) {
+			Type.Clazz ref = (Type.Clazz) t;
 			String r = "L" + ref.pkg().replace(".","/");
-			Pair<String, Type[]>[] classes = ref.classes();
-			for (int i = 0; i != classes.length; ++i) {
+			List<Pair<String, List<Type.Reference>>> classes = ref.components();
+			for (int i = 0; i != classes.size(); ++i) {
 				if (i == 0 && r.length() > 1) {
 					r += "/";
 				} else if(i > 0) {
 					r += "$";
 				}
-				r += classes[i].first();
+				r += classes.get(i).first();
 				if(generic) {
-					Type[] gparams = classes[i].second();
-					if(gparams != null && gparams.length > 0) {
+					List<Type.Reference> gparams = classes.get(i).second();
+					if(gparams != null && gparams.size() > 0) {
 						r += "<";
 						for(Type gt : gparams) {
 							r += descriptor(gt,generic);
@@ -135,12 +135,12 @@ public class Types {
 		} else if(t instanceof Type.Variable) {
 			if(generic) {
 				Type.Variable tv = (Type.Variable) t;
-				return "T" + tv.name() + ";";
+				return "T" + tv.variable() + ";";
 			} else {
 				Type.Variable tv = (Type.Variable) t;
-				Type[] lb = tv.lowerBounds();
-				if(lb.length > 0) {
-					return descriptor(lb[0],generic);
+				List<Type.Reference> lb = tv.lowerBounds();
+				if(lb.size() > 0) {
+					return descriptor(lb.get(0),generic);
 				} else {
 					return "Ljava/lang/Object;";
 				}
@@ -160,15 +160,15 @@ public class Types {
 	public static String classSignature(Clazz clazz) {
 		String desc = "";
 		
-		Pair<String,Type[]>[] classes = clazz.type().classes();
-		if(classes[classes.length-1].second().length > 0) { 
+		List<Pair<String,List<Type.Reference>>> classes = clazz.type().components();
+		if(classes.get(classes.size()-1).second().size() > 0) { 
 			desc += "<"; 
-			for(Type t : classes[classes.length-1].second()) {
+			for(Type t : classes.get(classes.size()-1).second()) {
 				if(t instanceof Type.Variable) {
 					Type.Variable tv = (Type.Variable) t;
-					desc += tv.name() + ":";
+					desc += tv.variable() + ":";
 					// NOTE: lowerBounds() should *never* be null.
-					if(tv.lowerBounds() == null || tv.lowerBounds().length == 0) {
+					if(tv.lowerBounds() == null || tv.lowerBounds().size() == 0) {
 						desc += "Ljava/lang/Object;";
 					} else {
 						for(Type lb : tv.lowerBounds()) {
