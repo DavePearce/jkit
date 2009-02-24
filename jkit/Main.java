@@ -241,18 +241,25 @@ public class Main {
 	public void outputSourceError(String fileArg, int line, int col,
 			int width, String message) {
 		System.err.println(fileArg + ":" + line + ": " + message);
-		String l = readLine(fileArg, line);
-		System.err.println(l);
-		for (int j = 0; j < Math.min(col,l.length()); ++j) {
-			if (l.charAt(j) == '\t') {
-				System.err.print("\t");
-			} else {
-				System.err.print(" ");
-			}
+		String l = readLine(fileArg, line);		
+		if(l != null) {
+			System.err.println(l);
+			for (int j = 0; j < Math.min(col,l.length()); ++j) {
+				if (l.charAt(j) == '\t') {
+					System.err.print("\t");
+				} else {
+					System.err.print(" ");
+				}
+			}		
+			for (int j = 0; j < width; ++j)
+				System.err.print("^");
+			System.err.println("");
+		} else {
+			// We shouldn't be able to get here. But, if there is a bug in jkit
+			// itself, such that it attributes the wrong filename to the file
+			// containing the error, then we can. So, it's helpful not to throw
+			// an exception at this point ...
 		}
-		for (int j = 0; j < width; ++j)
-			System.err.print("^");
-		System.err.println("");
 	}
 
 	public String readLine(String f, int l) {
@@ -268,7 +275,7 @@ public class Main {
 		try {
 			LineNumberReader lin = new LineNumberReader(in);
 			String line = "";
-			while (lin.getLineNumber() < l) {
+			while (lin.getLineNumber() < l && line != null) {
 				line = lin.readLine();
 			}
 			return line;

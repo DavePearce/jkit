@@ -168,18 +168,18 @@ public class JavaCompiler implements Compiler {
 			// tree.
 			long start = System.currentTimeMillis();						
 			JavaFile jfile = parseSourceFile(filename);
-			logTimedMessage("Parsed " + filename.getPath(),(System.currentTimeMillis() - start));
+			logTimedMessage("[" + filename.getPath() + "] Parsing completed ",(System.currentTimeMillis() - start));
 			
 			// Second, we need to resolve types. That is, for each class
 			// reference type, determine what package it's in.				
 			start = System.currentTimeMillis();
 			List<Clazz> skeletons = discoverSkeletons(jfile,loader);			
-			logTimedMessage("Skeleton discovery completed",(System.currentTimeMillis()-start));
+			logTimedMessage("[" + filename.getPath() + "] Skeleton discovery completed",(System.currentTimeMillis()-start));
 			
 			// Third, we need to resolve all types found in the src file.
 			start = System.currentTimeMillis();
 			resolveTypes(jfile,loader);					
-			logTimedMessage("Type resolution completed",(System.currentTimeMillis()-start));
+			logTimedMessage("[" + filename.getPath() + "] Type resolution completed",(System.currentTimeMillis()-start));
 			
 			// Fourth, we need to build the skeletons of the classes. This is
 			// necessary to resolve the scope of a particular variable.
@@ -188,7 +188,7 @@ public class JavaCompiler implements Compiler {
 			// 2) determine what fields are declared.			
 			start = System.currentTimeMillis();
 			buildSkeletons(jfile,loader);			
-			logTimedMessage("Skeleton construction completed",(System.currentTimeMillis()-start));
+			logTimedMessage("[" + filename.getPath() + "] Skeleton construction completed",(System.currentTimeMillis()-start));
 						
 			// Fifth, perform the scope resolution itself. The aim here is, for
 			// each variable access, to determine whether it is a local
@@ -197,25 +197,25 @@ public class JavaCompiler implements Compiler {
 			// (e.g. for anonymous inner classes).
 			start = System.currentTimeMillis();
 			resolveScopes(jfile,loader);			
-			logTimedMessage("Scope resolution completed",(System.currentTimeMillis()-start));
+			logTimedMessage("[" + filename.getPath() + "] Scope resolution completed",(System.currentTimeMillis()-start));
 			
 			// Sixth, propagate the type information throughout all expressions
 			// in the class file, including those in the method bodies and field
 			// initialisers.
 			start = System.currentTimeMillis();
 			propagateTypes(jfile,loader);			
-			logTimedMessage("Type propagation completed",(System.currentTimeMillis()-start));
+			logTimedMessage("[" + filename.getPath() + "] Type propagation completed",(System.currentTimeMillis()-start));
 			
 			// Seventh, check whether the types are being used correctly. If not,
 			// report a syntax error.
 			start = System.currentTimeMillis();
 			checkTypes(jfile,loader);
-			logTimedMessage("Type checking completed",(System.currentTimeMillis()-start));
+			logTimedMessage("[" + filename.getPath() + "] Type checking completed",(System.currentTimeMillis()-start));
 			
 			// Eigth, write out the compiled class file.
 			start = System.currentTimeMillis();
 			String outFile = writeOutputFile(jfile, filename);			
-			logTimedMessage("Wrote " + outFile,(System.currentTimeMillis()-start));
+			logTimedMessage("[" + filename.getPath() + "] Wrote " + outFile,(System.currentTimeMillis()-start));
 			
 			compiling.remove(filename);
 			
