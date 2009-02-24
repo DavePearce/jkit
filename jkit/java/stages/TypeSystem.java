@@ -57,7 +57,9 @@ public class TypeSystem {
 		} 
 				
 		// Now, we have to do the harder cases.
-		
+		if(t2 instanceof Type.Array && t1 instanceof Type.Clazz) {
+			return new Type.Clazz("java.lang","Object").equals(t1);
+		}
 		
 		return false;
 	}
@@ -1083,8 +1085,8 @@ public class TypeSystem {
 					
 					mt = (Type.Function) substitute(mt, bind(
 							concreteFunctionType, mt, m.isVariableArity(),
-							loader));
-				
+							loader));						
+					
 					mts.add(new Triple<Clazz, Method, Type.Function>(c, m, mt));					 				
 				}
 			}
