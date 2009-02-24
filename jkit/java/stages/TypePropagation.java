@@ -164,8 +164,7 @@ public class TypePropagation {
 		
 		List<Triple<String, Integer, Expr>> defs = def.definitions();
 		for(int i=0;i!=defs.size();++i) {
-			Triple<String, Integer, Expr> d = defs.get(i);
-			doExpression(d.third());
+			Triple<String, Integer, Expr> d = defs.get(i);			
 			
 			// calculate the actual type of this variable.
 			Type nt = t;						
@@ -173,13 +172,20 @@ public class TypePropagation {
 				nt = new Type.Array(nt);
 			}
 			
+			
 			// perform type inference (if necesssary)
-			if(d.third() != null && isUnknownConstant(d.third())) {
-				Expr c = unknownConstantInference(d.third(), nt,
-						(SourceLocation) d.third
-								.attribute(SourceLocation.class));
+			if(d.third() != null) {
+				if(isUnknownConstant(d.third())) {			
+					Expr c = unknownConstantInference(d.third(), nt,
+							(SourceLocation) d.third
+							.attribute(SourceLocation.class));
+					defs.set(i,new Triple(d.first(),d.second(),c));
+				} else if(d.third() instanceof Value.Array) {
+					doArrayVal(nt,(Value.Array) d.third());
+				} else {
+					doExpression(d.third());					
+				}
 				
-				defs.set(i,new Triple(d.first(),d.second(),c));
 			}
 		}
 	}
@@ -285,8 +291,6 @@ public class TypePropagation {
 			doNullVal((Value.Null)e);
 		} else if(e instanceof Value.TypedArray) {
 			doTypedArrayVal((Value.TypedArray)e);
-		} else if(e instanceof Value.Array) {
-			doArrayVal((Value.Array)e);
 		} else if(e instanceof Value.Class) {
 			doClassVal((Value.Class) e);
 		} else if(e instanceof Expr.LocalVariable) {
@@ -501,8 +505,38 @@ public class TypePropagation {
 		e.attributes().add((Type) e.type().attribute(Type.class));
 	}
 	
-	protected void doArrayVal(Value.Array e) {		
-		// not sure what to do here.
+	
+	/**
+	 * Dealing with Array Value's requireas a special method, where the result
+	 * type of the ArrayVal is known. This is important since the type of an
+	 * array initialiser is actually computed from the type of the
+	 * variable/field/... that it's being assigned to. For example, in the
+	 * following:
+	 * <p>
+	 * 
+	 * <pre>
+	 * Object[] x = { 1, 2, 3 };
+	 * </pre>
+	 * 
+	 * </p>
+	 * 
+	 * the type of ArrayVal must be Object[], not int[] (which would otherwise
+	 * be inferred).
+	 * 
+	 * @param type
+	 *            --- type to cast the lhs into
+	 * @param e
+	 *            --- Array expression
+	 * @return
+	 */
+	protected void doArrayVal(Type lhs, Value.Array e) {		
+		for(int i=0;i!=e.values().size();++i) {
+			Expr v = e.values().get(i);
+			doExpression(v);			
+			e.values().set(i,implicitCast(v,lhs));			
+		}
+		
+		e.attributes().add(lhs);
 	}
 	
 	protected void doClassVal(Value.Class e) {
