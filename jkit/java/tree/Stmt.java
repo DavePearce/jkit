@@ -564,6 +564,10 @@ public interface Stmt extends SyntacticElement {
 			return condition;
 		}
 
+		public void setCondition(Expr e) {
+			condition = e;
+		}
+		
 		public List<Stmt> statements() {
 			return statements;
 		}

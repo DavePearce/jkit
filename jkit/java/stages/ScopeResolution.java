@@ -505,7 +505,7 @@ public class ScopeResolution {
 	protected void doSwitch(Stmt.Switch sw, JavaFile file) {
 		sw.setCondition(doExpression(sw.condition(), file));
 		for(Case c : sw.cases()) {
-			doExpression(c.condition(), file);
+			c.setCondition(doExpression(c.condition(), file));
 			for(Stmt s : c.statements()) {
 				doStatement(s, file);
 			}
