@@ -1251,7 +1251,7 @@ public class TypeSystem {
 	 * @param t
 	 * @return
 	 */
-	protected int arrayDepth(Type t) {
+	public static int arrayDepth(Type t) {
 		if(t instanceof Type.Array) {
 			Type.Array _t = (Type.Array) t;
 			return 1 + arrayDepth(_t.element());

@@ -530,9 +530,17 @@ public class TypePropagation {
 	 * @return
 	 */
 	protected void doArrayVal(Type lhs, Value.Array e) {		
+		if(!(lhs instanceof Type.Array)) {
+			syntax_error("cannot assign array value to type " + lhs,e);
+		}		
 		for(int i=0;i!=e.values().size();++i) {
 			Expr v = e.values().get(i);
-			doExpression(v);			
+			if(v instanceof Value.Array) {
+				Type.Array ta = (Type.Array) lhs;
+				doArrayVal(ta,(Value.Array)v);
+			} else {
+				doExpression(v);
+			}
 			e.values().set(i,implicitCast(v,lhs));			
 		}
 		
