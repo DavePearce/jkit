@@ -122,7 +122,7 @@ public class SkeletonBuilder {
 			}
 		} catch(ClassNotFoundException cne) {
 			syntax_error("internal failure (skeleton for \"" + type
-					+ "\" not found", c, cne);
+					+ "\" not found)", c, cne);
 		}
 	}
 

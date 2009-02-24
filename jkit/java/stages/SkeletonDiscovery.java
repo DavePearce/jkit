@@ -80,10 +80,10 @@ public class SkeletonDiscovery {
 		components.add(new Pair(c.name(), new ArrayList()));
 		Type.Clazz type = new Type.Clazz(pkg,components);
 		
-		for(Decl d : c.declarations()) {
-			doDeclaration(d,pkg,parent);
+		for(Decl d : c.declarations()) {			
+			skeletons.addAll(doDeclaration(d,pkg,type));
 		}				
-		
+				
 		/**
 		 * Now, construct the skeleton for this class! 
 		 */

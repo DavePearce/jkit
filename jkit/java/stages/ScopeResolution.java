@@ -657,9 +657,18 @@ public class ScopeResolution {
 		if(target == null && e.name().equals("super")) {
 			// Special case. We're invoking the super constructor. There's not
 			// much we can do here.
+			Type.Clazz thisType = ((ClassScope) findEnclosingScope(ClassScope.class)).type;
+			try {
+				e.attributes().add(getSuperClass(thisType));
+			} catch(ClassNotFoundException cne) {
+				syntax_error(cne.getMessage(), e, cne);
+			}
+		} else if(target == null && e.name().equals("this")) {
+			// Special case. We're invoking the super constructor. There's not
+			// much we can do here.
 			Type thisType = ((ClassScope) findEnclosingScope(ClassScope.class)).type;
-			e.attributes().add(thisType);			
-		} else if(target == null) {			
+			e.attributes().add(thisType);
+		} else if(target == null) {					
 			boolean isThis = true;
 			
 			// Now, we need to determine whether or not this method invocation

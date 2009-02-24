@@ -418,12 +418,10 @@ public class TypePropagation {
 		String e_name = e.name();
 		
 		try {		
-			if(e.name().equals("super")) {
-				// special case when calling the super constructor. The method
-				// name we're looking for is not "super"; rather, it's the name
-				// of the receivers super class.
-				receiver = getSuperClass((Type.Clazz) e.attribute(Type.class));
-				e_name = receiver.components().get(receiver.components().size()-1).first();
+			if(e.name().equals("super") || e.name().equals("this")) {				
+				receiver = (Type.Clazz) e.attribute(Type.class);
+				e_name = receiver.components().get(
+						receiver.components().size() - 1).first();
 			} else {
 				 receiver = (Type.Clazz) e.target().attribute(Type.class);
 			}
