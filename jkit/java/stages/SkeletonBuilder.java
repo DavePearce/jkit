@@ -144,7 +144,7 @@ public class SkeletonBuilder {
 
 	protected void doField(Decl.Field d, Clazz skeleton) {
 		Decl.Field f = (Decl.Field) d;
-		Type t = (Type) f.attribute(Type.class);
+		Type t = (Type) f.type().attribute(Type.class);
 		skeleton.fields().add(
 				new Field(f.name(), t, f.modifiers(), new ArrayList(f
 						.attributes())));

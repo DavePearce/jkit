@@ -37,13 +37,13 @@ public class TypeSystem {
 	public boolean subtype(Type t1, Type t2, ClassLoader loader)
 			throws ClassNotFoundException {
 		if(loader == null) {
-			throw new IllegalArgumentException("loader cannot be null.");
+			throw new IllegalArgumentException("loader cannot be null");
 		}
 		if(t1 == null) {
-			throw new IllegalArgumentException("t1 cannot be null.");
+			throw new IllegalArgumentException("t1 cannot be null");
 		}
 		if(t2 == null) {
-			throw new IllegalArgumentException("t2 cannot be null.");
+			throw new IllegalArgumentException("t2 cannot be null");
 		}	
 		// First, do the easy cases ...		
 		if(t1 instanceof Type.Reference && t2 instanceof Type.Null) {
@@ -84,10 +84,10 @@ public class TypeSystem {
      */
 	public boolean subtype(Type.Primitive t1, Type.Primitive t2) {		
 		if(t1 == null) {
-			throw new IllegalArgumentException("t1 cannot be null.");
+			throw new IllegalArgumentException("t1 cannot be null");
 		}
 		if(t2 == null) {
-			throw new IllegalArgumentException("t2 cannot be null.");
+			throw new IllegalArgumentException("t2 cannot be null");
 		}	
 		if(t1.getClass() == t2.getClass()) {
 			return true;
@@ -120,13 +120,13 @@ public class TypeSystem {
 	public boolean subtype(Type.Array t1, Type.Array t2, ClassLoader loader)
 			throws ClassNotFoundException {
 		if(loader == null) {
-			throw new IllegalArgumentException("loader cannot be null.");
+			throw new IllegalArgumentException("loader cannot be null");
 		}
 		if(t1 == null) {
-			throw new IllegalArgumentException("t1 cannot be null.");
+			throw new IllegalArgumentException("t1 cannot be null");
 		}
 		if(t2 == null) {
-			throw new IllegalArgumentException("t2 cannot be null.");
+			throw new IllegalArgumentException("t2 cannot be null");
 		}	
 		return subtype(t1.element(), t2.element(), loader);
 	}
@@ -143,13 +143,13 @@ public class TypeSystem {
 	public boolean subtype(Type.Clazz t1, Type.Clazz t2, ClassLoader loader)
 			throws ClassNotFoundException {
 		if(loader == null) {
-			throw new IllegalArgumentException("loader cannot be null.");
+			throw new IllegalArgumentException("loader cannot be null");
 		}
 		if(t1 == null) {
-			throw new IllegalArgumentException("t1 cannot be null.");
+			throw new IllegalArgumentException("t1 cannot be null");
 		}
 		if(t2 == null) {
-			throw new IllegalArgumentException("t2 cannot be null.");
+			throw new IllegalArgumentException("t2 cannot be null");
 		}	
 		
 		Type.Clazz rt = reduce(t1,t2,loader); 
@@ -258,13 +258,13 @@ public class TypeSystem {
 	protected ArrayList<BindConstraint> innerBind(Type concrete, Type template,
 			ClassLoader loader) throws ClassNotFoundException {		
 		if(concrete == null) {
-			throw new IllegalArgumentException("concrete cannot be null.");
+			throw new IllegalArgumentException("concrete cannot be null");
 		}
 		if(template == null) {
-			throw new IllegalArgumentException("template cannot be null.");
+			throw new IllegalArgumentException("template cannot be null");
 		}
 		if(loader == null) {
-			throw new IllegalArgumentException("loader cannot be null.");
+			throw new IllegalArgumentException("loader cannot be null");
 		}		
 		// =====================================================================
 		if (template instanceof Type.Variable
@@ -289,13 +289,13 @@ public class TypeSystem {
 	protected ArrayList<BindConstraint> innerBind(Type.Reference concrete, Type.Variable template,
 			ClassLoader loader) {
 		if(concrete == null) {
-			throw new IllegalArgumentException("concrete cannot be null.");
+			throw new IllegalArgumentException("concrete cannot be null");
 		}
 		if(template == null) {
-			throw new IllegalArgumentException("template cannot be null.");
+			throw new IllegalArgumentException("template cannot be null");
 		}
 		if(loader == null) {
-			throw new IllegalArgumentException("loader cannot be null.");
+			throw new IllegalArgumentException("loader cannot be null");
 		}
 		// =====================================================================
 		// Ok, we've reached a type variable, so we can now bind this with
@@ -372,13 +372,13 @@ public class TypeSystem {
 	protected ArrayList<BindConstraint> innerBind(Type.Clazz concrete,
 			Type.Clazz template, ClassLoader loader) throws ClassNotFoundException {
 		if(concrete == null) {
-			throw new IllegalArgumentException("concrete cannot be null.");
+			throw new IllegalArgumentException("concrete cannot be null");
 		}
 		if(template == null) {
-			throw new IllegalArgumentException("template cannot be null.");
+			throw new IllegalArgumentException("template cannot be null");
 		}
 		if(loader == null) {
-			throw new IllegalArgumentException("loader cannot be null.");
+			throw new IllegalArgumentException("loader cannot be null");
 		}
 		// =====================================================================
 		concrete = reduce(template, concrete, loader);		
@@ -418,10 +418,10 @@ public class TypeSystem {
 	 * class types (see above).
 	 * 
 	 * @param concrete
-	 *            --- the concrete (i.e. instantiated) type. Must be non-null.
+	 *            --- the concrete (i.e. instantiated) type. Must be non-null
 	 * @param template
 	 *            --- the template (i.e. having generic parameters) type. Must
-	 *            be non-null.
+	 *            be non-null
 	 * @param variableArity
 	 *            --- True if the function type has variable arity.
 	 * @return
@@ -431,13 +431,13 @@ public class TypeSystem {
 	public Map<String, Type.Reference> bind(Type.Function concrete,
 			Type.Function template, boolean variableArity, ClassLoader loader) throws ClassNotFoundException {
 		if(concrete == null) {
-			throw new IllegalArgumentException("concrete cannot be null.");
+			throw new IllegalArgumentException("concrete cannot be null");
 		}
 		if(template == null) {
-			throw new IllegalArgumentException("template cannot be null.");
+			throw new IllegalArgumentException("template cannot be null");
 		}
 		if(loader == null) {
-			throw new IllegalArgumentException("loader cannot be null.");
+			throw new IllegalArgumentException("loader cannot be null");
 		}
 		
 		// first, do return type
@@ -929,13 +929,13 @@ public class TypeSystem {
 	public boolean hasMethod(Type.Clazz receiver, String name,
 			ClassLoader loader) throws ClassNotFoundException {
 		if(loader == null) {
-			throw new IllegalArgumentException("loader cannot be null.");
+			throw new IllegalArgumentException("loader cannot be null");
 		}
 		if(name == null) {
-			throw new IllegalArgumentException("name cannot be null.");
+			throw new IllegalArgumentException("name cannot be null");
 		}
 		if(receiver == null) {
-			throw new IllegalArgumentException("receiver cannot be null.");
+			throw new IllegalArgumentException("receiver cannot be null");
 		}		
 		while(receiver != null) {
 			Clazz c = loader.loadClass(receiver);
@@ -957,7 +957,7 @@ public class TypeSystem {
 	 * @param name
 	 *            Method name
 	 * @param concreteParameterTypes 
-	 *            The actual parameter types to match against.  Must be non-null.  
+	 *            The actual parameter types to match against.  Must be non-null  
 	 * @return A triple (C,M,T), where M is the method being invoked, C it's
 	 *         enclosing class, and T is the actual type of the method. Note
 	 *         that T can vary from M.type, since it may contain appropriate
@@ -972,16 +972,16 @@ public class TypeSystem {
 			List<Type> concreteParameterTypes, ClassLoader loader)
 			throws ClassNotFoundException, MethodNotFoundException {
 		if(loader == null) {
-			throw new IllegalArgumentException("loader cannot be null.");
+			throw new IllegalArgumentException("loader cannot be null");
 		}
 		if(name == null) {
-			throw new IllegalArgumentException("name cannot be null.");
+			throw new IllegalArgumentException("name cannot be null");
 		}
 		if(receiver == null) {
-			throw new IllegalArgumentException("receiver cannot be null.");
+			throw new IllegalArgumentException("receiver cannot be null");
 		}
 		if(concreteParameterTypes == null) {
-			throw new IllegalArgumentException("concreteParameterTypes cannot be null.");
+			throw new IllegalArgumentException("concreteParameterTypes cannot be null");
 		}		
 		
 		// Phase 1: traverse heirarchy whilst ignoring autoboxing and varargs
@@ -1107,7 +1107,7 @@ public class TypeSystem {
 	/**
 	 * The problem here is, given a list of similar functions, to select the
 	 * most appropriate match for the given parameter types. If there is no
-	 * appropriate match, simply return null.
+	 * appropriate match, simply return null
 	 */
 	protected Triple<Clazz, Method, Type.Function> matchMethod(
 			List<Type> parameterTypes,
@@ -1194,9 +1194,9 @@ public class TypeSystem {
 	 * Identify the field with the given name in the given clazz.
 	 * 
 	 * @param owner
-	 *            enclosing class.  Must be non-null.
+	 *            enclosing class.  Must be non-null
 	 * @param name
-	 *            Field name.  Must be non-null.
+	 *            Field name.  Must be non-null
 	 * @return (C,F,T) where C is the enclosing class, F is the field being
 	 *         accessed, and T is type of that field with appropriate type
 	 *         subsititions based on the owner reference given.
@@ -1209,13 +1209,13 @@ public class TypeSystem {
 			String name, ClassLoader loader) throws ClassNotFoundException,
 			FieldNotFoundException {
 		if(loader == null) {
-			throw new IllegalArgumentException("loader cannot be null.");
+			throw new IllegalArgumentException("loader cannot be null");
 		}
 		if(name == null) {
-			throw new IllegalArgumentException("name cannot be null.");
+			throw new IllegalArgumentException("name cannot be null");
 		}
 		if(owner == null) {
-			throw new IllegalArgumentException("receiver cannot be null.");
+			throw new IllegalArgumentException("receiver cannot be null");
 		}	
 		// traverse class hierarchy looking for field
 		ArrayList<Type.Clazz> worklist = new ArrayList<Type.Clazz>();

@@ -243,7 +243,7 @@ public class Main {
 		System.err.println(fileArg + ":" + line + ": " + message);
 		String l = readLine(fileArg, line);
 		System.err.println(l);
-		for (int j = 0; j < col; ++j) {
+		for (int j = 0; j < Math.min(col,l.length()); ++j) {
 			if (l.charAt(j) == '\t') {
 				System.err.print("\t");
 			} else {
