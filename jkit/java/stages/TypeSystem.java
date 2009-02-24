@@ -572,6 +572,16 @@ public class TypeSystem {
 		return t1;
 	}
 	
+	/**
+	 * Given two types t1 and t2, compute the common supertype t3, such that t3 >=
+	 * t2, t3 >= t1 and there is no other common super type t4 where t3 >= t4.
+	 * 
+	 * @param t1
+	 * @param t2
+	 * @param loader
+	 * @return
+	 * @throws ClassNotFoundException
+	 */
 	public Type.Reference greatestSupertype(Type.Reference t1, Type.Reference t2,
 			ClassLoader loader) throws ClassNotFoundException {		
 		List<Type.Reference> t1supertypes = listSupertypes(t1,loader);
@@ -590,6 +600,40 @@ public class TypeSystem {
 		return null;
 	}
 	
+	/**
+	 * The aim of this method is to list the super types of t1. For example, if:
+	 * 
+	 * <pre>
+	 * t1 = java.util.ArrayList&lt;String&gt;
+	 * </pre>
+	 * 
+	 * Then, the resulting list looks like this:
+	 * 
+	 * <pre>
+	 * java.util.ArrayList&lt;String&gt;
+	 * java.util.AbstractList&lt;String&gt;
+	 * java.io.Serializable
+	 * java.lang.Cloneable
+	 * java.lang.Iterable&lt;String&gt;
+	 * java.util.List&lt;String&gt;
+	 * java.util.RandomAccess
+	 * java.util.AbstractList&lt;String&gt;
+	 * java.util.AbstractCollection&lt;String&gt;
+	 * java.lang.Object
+	 * </pre>
+	 * 
+	 * Observe, that the top element of this list will occur at index 0.
+	 * Therefore, listSuperTypes(t1).get(0) always returns t1. The elements are
+	 * loaded onto the list according to a breadth-first traversal.
+	 * 
+	 * @param t1
+	 *            --- type whose supertypes we're interested in.
+	 * @param loader
+	 *            --- ClassLoader. Needed for loading classes to allow traversal
+	 *            of the class heirarchy
+	 * @return
+	 * @throws ClassNotFoundException
+	 */
 	public List<Type.Reference> listSupertypes(Type.Reference t1,
 			ClassLoader loader) throws ClassNotFoundException {
 		ArrayList<Type.Reference> types = new ArrayList();		
@@ -600,11 +644,11 @@ public class TypeSystem {
 			return types;
 		} else {
 
-			ArrayList<Type.Clazz> worklist = new ArrayList();
+			LinkedList<Type.Clazz> worklist = new LinkedList();
 			worklist.add((Type.Clazz) t1);
 
 			while(!worklist.isEmpty()) {
-				Type.Clazz type = worklist.remove(worklist.size() - 1);
+				Type.Clazz type = worklist.removeFirst();
 				types.add(type);
 				Clazz c = loader.loadClass(type);
 
