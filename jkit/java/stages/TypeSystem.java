@@ -205,32 +205,51 @@ public class TypeSystem {
 	protected static interface BindConstraint {}
 	
 	protected static class EqualityConstraint implements BindConstraint {
-		public Type.Reference lhs;
-		public Type.Reference rhs;
-		public EqualityConstraint(Type.Reference lhs, Type.Reference rhs) { 
-			this.lhs = lhs;
-			this.rhs = rhs;
+		public Type.Reference type;
+		public String var;
+		public EqualityConstraint(String rhs, Type.Reference lhs) { 
+			this.type = lhs;
+			this.var = rhs;
 		}
 		public String toString() { 
-			return lhs.toString() + " = " + rhs.toString(); 
+			return var + " = " + type.toString(); 
 		}
 	}
 	/**
-	 * A subtype constraint indicates that the lhs type must be a subtype of the
-	 * rhs constraint.
+	 * A lower bound constraint indicates that the variable in question must be
+	 * a subtype of the lower bound given.
 	 * 
 	 * @author djp
 	 * 
 	 */
-	protected static class SubtypeConstraint implements BindConstraint {
-		public Type.Reference lhs;
-		public Type.Reference rhs;
-		public SubtypeConstraint(Type.Reference lhs, Type.Reference rhs) { 
-			this.lhs = lhs;
-			this.rhs = rhs;
+	protected static class LowerBoundConstraint implements BindConstraint {
+		public Type.Reference lowerBound;
+		public String var;
+		public LowerBoundConstraint(String rhs, Type.Reference lhs) { 
+			this.lowerBound = lhs;
+			this.var = rhs;
 		}
 		public String toString() { 
-			return lhs.toString() + " :> " + rhs.toString(); 
+			return var + " <: " + lowerBound.toString(); 
+		}		
+	}
+	
+	/**
+	 * An upper bound constraint indicates that the variable in question must be
+	 * a supertype of the upper bound given.
+	 * 
+	 * @author djp
+	 * 
+	 */
+	protected static class UpperBoundConstraint implements BindConstraint {
+		public Type.Reference upperBound;
+		public String var;
+		public UpperBoundConstraint(String rhs, Type.Reference lhs) { 
+			this.upperBound = lhs;
+			this.var = rhs;
+		}
+		public String toString() { 
+			return var + " :> " + upperBound.toString() + " <: "; 
 		}		
 	}
 	
@@ -285,7 +304,7 @@ public class TypeSystem {
 						.variable())) {
 			// The above condition simple prevents redundant constraints of the
 			// form "T = T".
-			constraints.add(new EqualityConstraint(concrete,template));
+			constraints.add(new EqualityConstraint(template.variable(),concrete));
 		}				
 		
 		return constraints;
@@ -316,7 +335,33 @@ public class TypeSystem {
 						_concrete.lowerBound(), template.lowerBound(), loader));
 			}
 		} else if(concrete instanceof Type.Reference) {
-			// This is the complex case. We need to impose bounds on the type.			
+			// This is the complex case. We need to impose bounds on the type.	
+			if(template.lowerBound() != null) {
+				for (BindConstraint c : innerBind(concrete, template
+						.lowerBound(), loader)) {
+					
+					if(c instanceof EqualityConstraint) {
+						EqualityConstraint _c = (EqualityConstraint) c;
+						constraints.add(new UpperBoundConstraint(_c.var,_c.type));
+					} else {
+						// not sure what to do here!
+						throw new RuntimeException("internal failure (bind algorithm incomplete!)");
+					}
+				}
+			}
+			
+			if(template.upperBound() != null) {
+				for (BindConstraint c : innerBind(concrete, template
+						.upperBound(), loader)) {					
+					if(c instanceof EqualityConstraint) {
+						EqualityConstraint _c = (EqualityConstraint) c;
+						constraints.add(new LowerBoundConstraint(_c.var,_c.type));
+					} else {
+						// not sure what to do here!
+						throw new RuntimeException("internal failure (bind algorithm incomplete!)");
+					}
+				}
+			}
 		}
 		
 		return constraints;
@@ -439,27 +484,83 @@ public class TypeSystem {
 			ArrayList<BindConstraint> constraints, ClassLoader loader)
 			throws ClassNotFoundException {
 		HashMap<String, Type.Reference> binding = new HashMap();
-
+		HashSet<String> fixed = new HashSet<String>();
+		HashSet<String> lower = new HashSet<String>();
+		
 		// First, go through and eliminate all simple equality constraints
 		// To optimise this properly, we need to use a proper fast union find
 		// algorithm for performing the unification.
 		
 		for(int i=0;i!=constraints.size();++i) {
 			if(constraints.get(i) instanceof EqualityConstraint) {
-				EqualityConstraint c = (EqualityConstraint) constraints.get(i);
-				if(c.rhs instanceof Type.Variable) {
-					// Easiest case
-					Type.Variable var = (Type.Variable) c.rhs;
-					Type.Reference oldVal = binding.get(var.variable());
-					if(oldVal != null && !oldVal.equals(c.lhs)) {
-						throw new BindError("cannot bind " + var.variable()
-								+ " to " + oldVal + " and " + c.lhs);
-					} else {
-						binding.put(var.variable(),c.lhs);
-					}
-				} else if(c.rhs instanceof Type.Clazz) {
-					
-				}				
+				EqualityConstraint c = (EqualityConstraint) constraints.get(i);				
+				Type.Reference oldVal = binding.get(c.var);
+				if(oldVal != null && !oldVal.equals(c.type)) {
+					throw new BindError("cannot bind " + c.var
+							+ " to " + oldVal + " and " + c.type);
+				} else {
+					binding.put(c.var,c.type);
+					fixed.add(c.var);
+				}									 				
+			}
+		}
+		
+		// Second, apply all lower bound constraints 
+		for(int i=0;i!=constraints.size();++i) {
+			if(constraints.get(i) instanceof LowerBoundConstraint) {
+				LowerBoundConstraint c = (LowerBoundConstraint) constraints.get(i);				
+				Type.Reference oldVal = binding.get(c.var);
+				if(oldVal != null) {
+					if (!subtype(c.lowerBound, oldVal, loader)) {	
+						if(fixed.contains(c.var)) {
+							throw new BindError("cannot bind " + c.var
+									+ " to " + oldVal + " and " + c.lowerBound);
+						} else {
+							// Ok, try to improve the lower bound then
+							Type.Reference newLowerBound = leastSubtype(c.lowerBound,oldVal,loader);
+
+							if(newLowerBound == null) {
+								throw new BindError("cannot bind " + c.var
+										+ " to " + oldVal + " and " + c.lowerBound);
+							} else {
+								lower.add(c.var);
+								binding.put(c.var, newLowerBound);
+							}
+						}
+					} 
+				} else {
+					binding.put(c.var,c.lowerBound);						
+				}									 				
+			}
+		}
+		
+		fixed.addAll(lower);
+		
+		// Finally, apply all upper bound constraints 
+		for(int i=0;i!=constraints.size();++i) {
+			if(constraints.get(i) instanceof UpperBoundConstraint) {
+				UpperBoundConstraint c = (UpperBoundConstraint) constraints.get(i);				
+				Type.Reference oldVal = binding.get(c.var);
+				if(oldVal != null) {
+					if (!subtype(oldVal, c.upperBound, loader)) {	
+						if(fixed.contains(c.var)) {
+							throw new BindError("cannot bind " + c.var
+									+ " to " + oldVal + " and " + c.upperBound);
+						} else {
+							// Ok, try to improve the lower bound then
+							Type.Reference newUpperBound = greatestSupertype(c.upperBound,oldVal,loader);
+
+							if(newUpperBound == null) {
+								throw new BindError("cannot bind " + c.var
+										+ " to " + oldVal + " and " + c.upperBound);
+							} else {
+								binding.put(c.var, newUpperBound);
+							}
+						}
+					} 
+				} else {
+					binding.put(c.var,c.upperBound);						
+				}									 				
 			}
 		}
 		

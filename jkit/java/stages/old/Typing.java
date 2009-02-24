@@ -639,7 +639,7 @@ public class Typing extends Translator {
      * follows the Java Language Specification 5.6.1:
      * 
      * @param lhs
-     * @param rhs
+     * @param var
      * @return
      */
 	public Type.Primitive unaryNumericPromotion(Type lhs) {
