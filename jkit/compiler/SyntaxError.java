@@ -46,7 +46,7 @@ public class SyntaxError extends RuntimeException {
 	 */
 	public SyntaxError(String msg, int line, int column) {
 		this.msg = msg;
-		this.filename = "unknown";
+		this.filename = null;
 		this.line=line;		
 		this.column=column;
 		this.width=1;
@@ -65,7 +65,7 @@ public class SyntaxError extends RuntimeException {
 	public SyntaxError(String msg, int line, int column, Throwable ex) {
 		super(ex);
 		this.msg = msg;
-		this.filename = "unknown";
+		this.filename = null;
 		this.line=line;		
 		this.column=column;
 		this.width=1;
@@ -84,7 +84,7 @@ public class SyntaxError extends RuntimeException {
 	 */
 	public SyntaxError(String msg, int line, int column, int width) {
 		this.msg = msg;
-		this.filename = "unknown";
+		this.filename = null;
 		this.line=line;		
 		this.column=column;
 		this.width=width;

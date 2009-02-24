@@ -221,8 +221,12 @@ public class JavaCompiler implements Compiler {
 			
 			return skeletons; // to be completed			
 		} catch(SyntaxError se) {
-			throw new SyntaxError(se.msg(), filename.getPath(), se.line(), se
-					.column(), se.width(), se);			
+			if(se.fileName() == null) {
+				throw new SyntaxError(se.msg(), filename.getPath(), se.line(), se
+					.column(), se.width(), se);
+			} else {
+				throw se;
+			}
 		} 
 	}
 	
@@ -348,7 +352,9 @@ public class JavaCompiler implements Compiler {
 		logout.print(msg);
 		logout.print(" ");
 		
-		for(int i=0;i<(80-msg.length());++i) {
+		String t = Long.toString(time);
+		
+		for(int i=0;i<(80-msg.length()-t.length());++i) {
 			logout.print(".");
 		}
 		logout.print(" [");
