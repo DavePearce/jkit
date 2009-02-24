@@ -500,7 +500,22 @@ public class TypePropagation {
 	}
 	
 	protected void doTypedArrayVal(Value.TypedArray e) {		
-		e.attributes().add((Type) e.type().attribute(Type.class));
+		Type type = (Type) e.type().attribute(Type.class);
+		if(!(type instanceof Type.Array)) {
+			syntax_error("cannot assign array value to type " + type,e);
+		}		
+		for(int i=0;i!=e.values().size();++i) {
+			Expr v = e.values().get(i);
+			if(v instanceof Value.Array) {
+				Type.Array ta = (Type.Array) type;
+				doArrayVal(ta,(Value.Array)v);
+			} else {
+				doExpression(v);
+			}
+			e.values().set(i,implicitCast(v,type));			
+		}
+
+		e.attributes().add(type);
 	}
 	
 	

@@ -819,10 +819,18 @@ public class ScopeResolution {
 	}
 	
 	protected Expr doTypedArrayVal(Value.TypedArray e, JavaFile file) {
+		for(int i=0;i!=e.values().size();++i) {
+			Expr v = e.values().get(i);			
+			e.values().set(i,doExpression(v,file));			
+		}
 		return e;
 	}
 	
 	protected Expr doArrayVal(Value.Array e, JavaFile file) {
+		for(int i=0;i!=e.values().size();++i) {
+			Expr v = e.values().get(i);			
+			e.values().set(i,doExpression(v,file));			
+		}
 		return e;
 	}
 	
