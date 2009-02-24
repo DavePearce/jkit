@@ -423,6 +423,7 @@ public class TypePropagation {
 			} else {
 				 receiver = (Type.Clazz) e.target().attribute(Type.class);
 			}
+			
 			Type.Function f = types.resolveMethod(receiver, e_name,
 					parameterTypes, loader).third();
 
@@ -445,7 +446,7 @@ public class TypePropagation {
 		} catch(TypeSystem.BindError be) {
 			// This can happen if the parameters supplied to bind, which is
 			// called by resolveMethod are somehow not "base equivalent"
-			syntax_error("internal failure (" + be.getMessage() + ")",e,be);
+			syntax_error(be.getMessage(),e,be);
 		} catch(IllegalArgumentException be) {
 			// This can happen if the parameters supplied to bind, which is
 			// called by resolveMethod are somehow not "base equivalent"

@@ -462,8 +462,21 @@ public class TypeSystem {
 		if(variableArity) {			
 			Type cType = concreteParams.get(paramLength); // hack for now.			
 			Type.Array vaType = (Type.Array) templateParams.get(paramLength);
-			Type elementType = vaType.element();						
-			constraints.addAll(innerBind(cType,elementType,loader));							
+			
+			if(arrayDepth(cType) == arrayDepth(vaType)) {
+				// In this situation, we're actually passing the variable arity
+				// parameter array in directly, rather than indirectly.  e.g.
+				// 
+				// <pre>
+				// public void test(String... xs) { ... }
+				// public void main(String[] args) { test(args) }
+				// </pre>
+				// Here, args is being passed in directly.
+				constraints.addAll(innerBind(cType,vaType,loader));
+			} else {
+				Type elementType = vaType.element();
+				constraints.addAll(innerBind(cType,elementType,loader));							
+			}
 		}
 		
 		return solveBindingConstraints(constraints, loader);
@@ -648,7 +661,7 @@ public class TypeSystem {
 			worklist.add((Type.Clazz) t1);
 
 			while(!worklist.isEmpty()) {
-				Type.Clazz type = worklist.removeFirst();
+				Type.Clazz type = worklist.removeFirst(); // to ensure BFS traversal
 				types.add(type);
 				Clazz c = loader.loadClass(type);
 
@@ -1068,15 +1081,9 @@ public class TypeSystem {
 					Type.Function concreteFunctionType = new Type.Function(mt.returnType(),
 							concreteParameterTypes, new ArrayList<Type.Variable>());
 					
-					System.out.println("BINDING: " + name + " : " + bind(
-							concreteFunctionType, mt, m.isVariableArity(),
-							loader));
-					
 					mt = (Type.Function) substitute(mt, bind(
 							concreteFunctionType, mt, m.isVariableArity(),
 							loader));
-					
-					System.out.println("CANDIDATE: " + name + " : " + mt);					
 				
 					mts.add(new Triple<Clazz, Method, Type.Function>(c, m, mt));					 				
 				}
@@ -1237,4 +1244,20 @@ public class TypeSystem {
 		throw new FieldNotFoundException(name, owner.toString());
 	}
 
+	/**
+	 * Return the depth of array nesting. E.g. "int" has 0 depth, "int[]" has
+	 * depth 1, "int[][]" has depth 2, etc.
+	 * 
+	 * @param t
+	 * @return
+	 */
+	protected int arrayDepth(Type t) {
+		if(t instanceof Type.Array) {
+			Type.Array _t = (Type.Array) t;
+			return 1 + arrayDepth(_t.element());
+		} else {
+			return 0;
+		}
+	}
+	
 }
