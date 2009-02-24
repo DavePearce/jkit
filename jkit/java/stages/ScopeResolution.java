@@ -571,8 +571,31 @@ public class ScopeResolution {
 	protected Expr doDeref(Expr.Deref e, JavaFile file) {
 		Expr target = doExpression(e.target(), file);
 		
+		if(target instanceof Expr.UnresolvedVariable) {
+			// We can get here, if the target represents a package, rather than
+			// a complete class. For example, in the expression
+			// "java.lang.String.class", we initially have "java" as an
+			// unresolved variable. What we need to do is amalgamate all the
+			// package pieces together to form a proper class variable.
+			Expr.UnresolvedVariable uv = (Expr.UnresolvedVariable) target;
+			if(loader.isPackage(uv.value() + "." + e.name())) {
+				return new Expr.UnresolvedVariable(uv.value() + "." + e.name(),
+						new ArrayList(e.attributes()));
+			} else {
+				try {
+					// Ok, need to sanity test that this is indeed a class.
+					jkit.jil.Clazz c = loader.loadClass(new Type.Clazz(uv.value(),e.name()));
+					Expr r = new Expr.ClassVariable(uv.value() + "." + e.name(),new ArrayList(e.attributes()));
+					r.attributes().add(c.type());
+					return r;
+				} catch(ClassNotFoundException cne) {
+					syntax_error(cne.getMessage(),e,cne);
+				}
+			}
+		}
+		
 		if(target instanceof Expr.ClassVariable) {
-			// The question we need to consider here is. If we're dereference a
+			// The question we need to consider here is. If we're dereferencing a
 			// ClassVariable, then does it actually contain the field given, or is
 			// it an inner class?						
 			Expr.ClassVariable cv = (Expr.ClassVariable) target;
@@ -906,16 +929,21 @@ public class ScopeResolution {
 		// this to be a ClassVariable. So, we check whether or not it actually
 		// could represent a class.
 					
-		try {			
+		try {						
 			Type.Clazz c = loader.resolve(e.value(), imports);
 			Expr r = new Expr.ClassVariable(e.value(),new ArrayList(e.attributes()));
 			r.attributes().add(c);
 			return r;
 		} catch(ClassNotFoundException ex) {			
 			// no, can't find any class which could represent this variable.
-			syntax_error("Cannot find symbol - variable \"" + e.value() + "\"",
-					e, ex);
-			return null; // so very dead!!!
+			// Maybe it's a package.
+			if(loader.isPackage(e.value())) {
+				return e;
+			} else {
+				syntax_error("Cannot find symbol - variable \"" + e.value() + "\"",
+						e, ex);
+				return null; // so very dead!!!
+			}		
 		}
 	}
 
