@@ -174,7 +174,7 @@ public class TypeResolution {
 
 	protected void doField(Field d) {
 		doExpression(d.initialiser());		
-		d.attributes().add(resolve(d.type()));
+		d.type().attributes().add(resolve(d.type()));
 	}
 	
 	protected void doStatement(Stmt e) {
@@ -440,9 +440,18 @@ public class TypeResolution {
 	
 	protected void doNullVal(Value.Null e) {}
 	
-	protected void doTypedArrayVal(Value.TypedArray e) {}
+	protected void doTypedArrayVal(Value.TypedArray e) {
+		e.type().attributes().add(resolve(e.type()));
+		for(Expr v : e.values()) {
+			doExpression(v);
+		}
+	}
 	
-	protected void doArrayVal(Value.Array e) {}
+	protected void doArrayVal(Value.Array e) {
+		for(Expr v : e.values()) {
+			doExpression(v);
+		}
+	}
 	
 	protected void doClassVal(Value.Class e) {
 		e.value().attributes().add(resolve(e.value()));

@@ -86,7 +86,15 @@ public class TypePropagation {
 	}
 
 	protected void doField(Field d) {
-		doExpression(d.initialiser());
+		Expr init = d.initialiser();
+		Type type = (Type) d.type().attribute(Type.class);
+		
+		// special case for dealing with array values.
+		if(init instanceof Value.Array) {
+			doArrayVal(type,(Value.Array) init);
+		} else {
+			doExpression(d.initialiser());
+		}
 	}
 	
 	protected void doStatement(Stmt e) {
