@@ -192,6 +192,49 @@ public class TypeSystem {
      *             a BindError if the binding is not constructable.
      */
 	public Map<String, Type.Reference> bind(Type concrete, Type template,
+			ClassLoader loader) throws ClassNotFoundException {
+				
+		// At this point, we must compute the innerBinding and, from this,
+		// determine the final binding
+		ArrayList<BindConstraint> constraints = innerBind(concrete,template,loader);		
+		HashMap<String,Type.Reference> r = solveBindingConstraints(constraints, loader);
+		// System.out.println("BINDING: " + r);		
+		return r;
+	}
+	
+	protected static interface BindConstraint {}
+	
+	protected static class EqualityConstraint implements BindConstraint {
+		public Type.Reference lhs;
+		public Type.Reference rhs;
+		public EqualityConstraint(Type.Reference lhs, Type.Reference rhs) { 
+			this.lhs = lhs;
+			this.rhs = rhs;
+		}
+		public String toString() { 
+			return lhs.toString() + " = " + rhs.toString(); 
+		}
+	}
+	/**
+	 * A subtype constraint indicates that the lhs type must be a subtype of the
+	 * rhs constraint.
+	 * 
+	 * @author djp
+	 * 
+	 */
+	protected static class SubtypeConstraint implements BindConstraint {
+		public Type.Reference lhs;
+		public Type.Reference rhs;
+		public SubtypeConstraint(Type.Reference lhs, Type.Reference rhs) { 
+			this.lhs = lhs;
+			this.rhs = rhs;
+		}
+		public String toString() { 
+			return lhs.toString() + " :> " + rhs.toString(); 
+		}		
+	}
+	
+	protected ArrayList<BindConstraint> innerBind(Type concrete, Type template,
 			ClassLoader loader) throws ClassNotFoundException {		
 		if(concrete == null) {
 			throw new IllegalArgumentException("concrete cannot be null.");
@@ -206,23 +249,23 @@ public class TypeSystem {
 		if (template instanceof Type.Variable
 				&& concrete instanceof Type.Reference) {
 			// Observe, we can only bind a generic variable to a reference type.
-			return bind((Type.Reference) concrete, (Type.Variable) template,
+			return innerBind((Type.Reference) concrete, (Type.Variable) template,
 					loader);
 		} else if (template instanceof Type.Wildcard) {
-			// NEED TO HANDLE LOWER AND UPPER BOUNDS.
-			return null;
+			return innerBind(concrete, (Type.Wildcard) template,
+					loader);
 		} else if (template instanceof Type.Clazz
 				&& concrete instanceof Type.Clazz) {
-			return bind((Type.Clazz) concrete, (Type.Clazz) template, loader);
+			return innerBind((Type.Clazz) concrete, (Type.Clazz) template, loader);
 		} else if (template instanceof Type.Array
 				&& concrete instanceof Type.Array) {
-			return bind((Type.Array) concrete, (Type.Array) template, loader);
+			return innerBind((Type.Array) concrete, (Type.Array) template, loader);
 		} else {
-			return new HashMap<String, Type.Reference>();
+			return new ArrayList<BindConstraint>();
 		}
 	}
 	
-	public Map<String, Type.Reference> bind(Type.Reference concrete, Type.Variable template,
+	protected ArrayList<BindConstraint> innerBind(Type.Reference concrete, Type.Variable template,
 			ClassLoader loader) {
 		if(concrete == null) {
 			throw new IllegalArgumentException("concrete cannot be null.");
@@ -236,17 +279,50 @@ public class TypeSystem {
 		// =====================================================================
 		// Ok, we've reached a type variable, so we can now bind this with
 		// what we already have.
-		HashMap<String,Type.Reference> binding = new HashMap<String,Type.Reference>();
-		binding.put(template.variable(), concrete);
-		return binding;
+		ArrayList<BindConstraint> constraints = new ArrayList<BindConstraint>();
+		if (!(concrete instanceof Type.Variable)
+				|| !((Type.Variable) concrete).variable().equals(template
+						.variable())) {
+			// The above condition simple prevents redundant constraints of the
+			// form "T = T".
+			constraints.add(new EqualityConstraint(concrete,template));
+		}				
+		
+		return constraints;
 	}
 	
-	public Map<String, Type.Reference> bind(Type.Array concrete, Type.Array template,
+	protected ArrayList<BindConstraint> innerBind(Type.Array concrete, Type.Array template,
 			ClassLoader loader) throws ClassNotFoundException {
-		return bind(concrete.element(),template.element(),loader);
+		return innerBind(concrete.element(),template.element(),loader);
 	}
 	
-	public Map<String, Type.Reference> bind(Type.Clazz concrete,
+	protected ArrayList<BindConstraint> innerBind(Type concrete,
+			Type.Wildcard template, ClassLoader loader)
+			throws ClassNotFoundException {
+		ArrayList<BindConstraint> constraints = new ArrayList();
+		
+		if (concrete instanceof Type.Wildcard) {
+			// Does this case make sense? How can we have a concrete type with a
+			// wildcard? Well, a return type being passed straight into a
+			// parameter would give rise to one example. Also, a field passed as
+			// a parameter.
+			Type.Wildcard _concrete = (Type.Wildcard) concrete;
+			if (template.upperBound() != null && _concrete.upperBound() != null) {
+				constraints.addAll(innerBind(
+						_concrete.upperBound(), template.upperBound(), loader));
+			}
+			if (template.lowerBound() != null && _concrete.lowerBound() != null) {
+				constraints.addAll(innerBind(
+						_concrete.lowerBound(), template.lowerBound(), loader));
+			}
+		} else if(concrete instanceof Type.Reference) {
+			// This is the complex case. We need to impose bounds on the type.			
+		}
+		
+		return constraints;
+	}
+	
+	protected ArrayList<BindConstraint> innerBind(Type.Clazz concrete,
 			Type.Clazz template, ClassLoader loader) throws ClassNotFoundException {
 		if(concrete == null) {
 			throw new IllegalArgumentException("concrete cannot be null.");
@@ -258,23 +334,16 @@ public class TypeSystem {
 			throw new IllegalArgumentException("loader cannot be null.");
 		}
 		// =====================================================================
-		concrete = reduce(concrete, template, loader);
-
-		HashMap<String,Type.Reference> binding = new HashMap<String,Type.Reference>();
+		concrete = reduce(template, concrete, loader);		
 		
-		if (concrete != null) {
-			
+		ArrayList<BindConstraint> constraints = new ArrayList<BindConstraint>();
+		
+		if (concrete != null) {			
 			for(int i=0;i!=concrete.components().size();++i) {
 				Pair<String,List<Type.Reference>> c = concrete.components().get(i);
 				Pair<String,List<Type.Reference>> t = template.components().get(i);
 				List<Type.Reference> cs = c.second();
 				List<Type.Reference> ts = t.second();
-
-				// this maybe too strict for erased types.
-				if (!c.first().equals(t.first())) {
-					throw new BindError("Cannot bind " + concrete + " to "
-							+ template);
-				}
 
 				for (int j = 0; j != Math.max(cs.size(), ts.size()); ++j) {
 					// We need to deal with the case of erased types. For
@@ -285,29 +354,17 @@ public class TypeSystem {
 							"java.lang", "Object") : cs.get(j);
 					Type.Reference tr = ts.size() <= j ? new Type.Clazz(
 							"java.lang", "Object") : ts.get(j);
-
-					Map<String, Type.Reference> newBinding = bind(cr, tr,
-							loader);
-
-					for (String key : newBinding.keySet()) {
-						Type.Reference oldVal = binding.get(key);
-						if (oldVal == null) {
-							binding.put(key, newBinding.get(key));
-						} else {
-							if (!newBinding.get(key).equals(oldVal)) {
-								throw new BindError("cannot bind \"" + concrete
-										+ "\" to \"" + template + "\", " + key
-										+ " assigned different types");
-							}
-						}
-					}
+							
+					constraints.addAll(innerBind(cr, tr,
+							loader));
 				}							
 			}
 		}
 		
-		return binding;
+		return constraints;
 	}
-		
+	
+	
 	/**
 	 * This method builds a binding between a concrete function type, and a
 	 * "template" type. It works in much the same way as for the bind method on
@@ -338,7 +395,8 @@ public class TypeSystem {
 		
 		// first, do return type
 		
-		Map<String, Type.Reference> binding = bind(concrete.returnType(),template.returnType(),loader);		
+		ArrayList<BindConstraint> constraints = innerBind(concrete.returnType(),
+				template.returnType(), loader);		
 		
 		// second, do type parameters
 		
@@ -347,60 +405,142 @@ public class TypeSystem {
 		
 		int paramLength = templateParams.size();
 		
-		if((!variableArity || concreteParams.size() < templateParams.size()) && 
-				concreteParams.size() != templateParams.size()) {
-			throw new IllegalArgumentException(
-					"Parameters to TypeSystem.bind() are not base equivalent ("
-							+ concrete + ", " + template + ")");	
-		} else if(variableArity) {
-			paramLength--;
-		}
+		if(variableArity) { paramLength--; }
 		
-		for(int i=0;i!=paramLength;++i) {
+		for(int i=0;i!=Math.min(paramLength,concreteParams.size());++i) {
 			Type cp = concreteParams.get(i);
 			Type tp = templateParams.get(i);
-			Map<String,Type.Reference> newBinding = bind(cp,tp,loader);
-			
-			for (String key : newBinding.keySet()) {
-				Type.Reference oldVal = binding.get(key);
-				if (oldVal == null) {
-					binding.put(key, newBinding.get(key));
-				} else {
-					if (!newBinding.get(key).equals(oldVal)) {
-						throw new BindError("cannot bind \"" + concrete
-								+ "\" to \"" + template + "\", " + key
-								+ " assigned different types");
-					}
-				}
-			}			
+			constraints.addAll(innerBind(cp,tp,loader));																		
 		}
 		
 		// At this point, we need to consider variable arity methods. 
 		if(variableArity) {			
-			Type cType = concreteParams.get(paramLength); // hack for now.
-			
+			Type cType = concreteParams.get(paramLength); // hack for now.			
 			Type.Array vaType = (Type.Array) templateParams.get(paramLength);
-			Type elementType = vaType.element();
-			
-			Map<String,Type.Reference> newBinding = bind(cType,elementType,loader);
-			
-			for (String key : newBinding.keySet()) {
-				Type.Reference oldVal = binding.get(key);
-				if (oldVal == null) {
-					binding.put(key, newBinding.get(key));
-				} else {
-					if (!newBinding.get(key).equals(oldVal)) {
-						throw new BindError("cannot bind \"" + concrete
-								+ "\" to \"" + template + "\", " + key
-								+ " assigned different types");
+			Type elementType = vaType.element();						
+			constraints.addAll(innerBind(cType,elementType,loader));							
+		}
+		
+		return solveBindingConstraints(constraints, loader);
+	}
+	
+	/**
+	 * This is essentially the heart of the algorithm for solving binding
+	 * constraints. Essentially, it employs full unifcation, as well as
+	 * computing least upper and greatest lower bounds. It can certainly be
+	 * significantly optimised.
+	 * 
+	 * @param constraints
+	 * @param loader
+	 * @return
+	 * @throws ClassNotFoundException
+	 */
+	protected HashMap<String, Type.Reference> solveBindingConstraints(
+			ArrayList<BindConstraint> constraints, ClassLoader loader)
+			throws ClassNotFoundException {
+		HashMap<String, Type.Reference> binding = new HashMap();
+
+		// First, go through and eliminate all simple equality constraints
+		// To optimise this properly, we need to use a proper fast union find
+		// algorithm for performing the unification.
+		
+		for(int i=0;i!=constraints.size();++i) {
+			if(constraints.get(i) instanceof EqualityConstraint) {
+				EqualityConstraint c = (EqualityConstraint) constraints.get(i);
+				if(c.rhs instanceof Type.Variable) {
+					// Easiest case
+					Type.Variable var = (Type.Variable) c.rhs;
+					Type.Reference oldVal = binding.get(var.variable());
+					if(oldVal != null && !oldVal.equals(c.lhs)) {
+						throw new BindError("cannot bind " + var.variable()
+								+ " to " + oldVal + " and " + c.lhs);
+					} else {
+						binding.put(var.variable(),c.lhs);
 					}
-				}
-			}				
+				} else if(c.rhs instanceof Type.Clazz) {
+					
+				}				
+			}
 		}
 		
 		return binding;
 	}
 	
+	public Type.Reference leastSubtype(Type.Reference t1, Type.Reference t2,
+			ClassLoader loader) {
+		return t1;
+	}
+	
+	public Type.Reference greatestSupertype(Type.Reference t1, Type.Reference t2,
+			ClassLoader loader) throws ClassNotFoundException {		
+		List<Type.Reference> t1supertypes = listSupertypes(t1,loader);
+		List<Type.Reference> t2supertypes = listSupertypes(t2,loader);
+		
+		for(Type.Reference t1s : t1supertypes) {
+			for(Type.Reference t2s : t2supertypes) {
+				if(t1s.equals(t2s)) {
+					return t1s;
+				}
+			}
+		}
+		
+		// Shouldn't get here, since we're always meet at java.lang.Object
+		
+		return null;
+	}
+	
+	public List<Type.Reference> listSupertypes(Type.Reference t1,
+			ClassLoader loader) throws ClassNotFoundException {
+		ArrayList<Type.Reference> types = new ArrayList();		
+		
+		if(t1 instanceof Type.Array) {
+			types.add(t1);
+			types.add(new Type.Clazz("java.lang","Object"));
+			return types;
+		} else {
+
+			ArrayList<Type.Clazz> worklist = new ArrayList();
+			worklist.add((Type.Clazz) t1);
+
+			while(!worklist.isEmpty()) {
+				Type.Clazz type = worklist.remove(worklist.size() - 1);
+				types.add(type);
+				Clazz c = loader.loadClass(type);
+
+				// The current type we're visiting is not a match. Therefore, we
+				// need to explore its supertypes as well. A key issue
+				// in doing this, is that we must preserve the appropriate types
+				// according to the class declaration in question. For example,
+				// suppose we're checking:
+				// 
+				//         subtype(List<String>,ArrayList<String>)
+				// 
+				// then, we'll start with ArrayList<String> and we'll want to move
+				// that here to be List<String>. The key issue is what determines
+				// how we decide what the appropriate generic parameters for List
+				// should be. To do that, we must look at the declaration for class
+				// ArrayList, where we'll notice something like this:
+				//
+				// <pre> 
+				// class ArrayList<T> implements List<T> { ... }
+				// </pre>
+				// 
+				// We need to use this template --- namely that the first generic
+				// parameter of ArrayList maps to the first of List --- in order to
+				// determine the proper supertype for ArrayList<String>. This is
+				// what the binding / substitution stuff is for.			
+				Map<String,Type.Reference> binding = bind(type, c.type(),loader);			
+				if (c.superClass() != null) {				
+					worklist.add((Type.Clazz) substitute(c.superClass(), binding));
+				}
+				for (Type.Clazz t : c.interfaces()) {
+					worklist.add((Type.Clazz) substitute(t, binding));				
+				}			
+			}
+
+			return types;
+		}
+	}
 	
 	public static class BindError extends RuntimeException {
 		public BindError(String m) {
@@ -560,9 +700,9 @@ public class TypeSystem {
 	 * null), then we know that t2 is not a subtype of t1.
 	 * 
 	 * @param t1
-	 *            --- type to be reduced
-	 * @param t2
 	 *            --- type to reduce to
+	 * @param t2
+	 *            --- type to be reduced
 	 * @return the reduced type, or null if there is none.
 	 */
 	protected Type.Clazz reduce(Type.Clazz t1, Type.Clazz t2, ClassLoader loader)
@@ -575,11 +715,11 @@ public class TypeSystem {
         // proceed up the class heirarchy visiting all supertypes (i.e. classes
         // + interfaces) of t2 until either we reach t1, or java.lang.Object.		
 		while(!worklist.isEmpty()) {
-			Type.Clazz type = worklist.remove(worklist.size() - 1);					
-			if(baseEquivalent(type, t1)) {
+			Type.Clazz type = worklist.remove(worklist.size() - 1);			
+			if(baseEquivalent(type, t1)) {				
 				return type;
-			}
-						
+			}									
+			
 			Clazz c = loader.loadClass(type);
 						
 			// The current type we're visiting is not a match. Therefore, we
@@ -604,8 +744,7 @@ public class TypeSystem {
             // parameter of ArrayList maps to the first of List --- in order to
             // determine the proper supertype for ArrayList<String>. This is
             // what the binding / substitution stuff is for.			
-			Map<String,Type.Reference> binding = bind(type, c.type(),loader);
-			
+			Map<String,Type.Reference> binding = bind(type, c.type(),loader);			
 			if (c.superClass() != null) {				
 				worklist.add((Type.Clazz) substitute(c.superClass(), binding));
 			}
@@ -784,28 +923,17 @@ public class TypeSystem {
 					Type.Function concreteFunctionType = new Type.Function(mt.returnType(),
 							concreteParameterTypes, new ArrayList<Type.Variable>());
 					
+					System.out.println("BINDING: " + name + " : " + bind(
+							concreteFunctionType, mt, m.isVariableArity(),
+							loader));
+					
 					mt = (Type.Function) substitute(mt, bind(
 							concreteFunctionType, mt, m.isVariableArity(),
 							loader));
 					
-					System.out.println("CANDIDATE: " + name + " : " + mt);
-					
-					// Third, identify and substitute any remaining generic variables
-					// for java.lang.Object. This corresponds to unsafe
-                    // operations that will compile in e.g. javac
-					
-					/**
-					 * TO BE COMPLETED (this code did work before)
-					 *
-					 * Set<Type.Variable> freeVars = mt.freeVariables();					
-					 * HashMap<String,Type> freeVarMap = new HashMap<String,Type>();
-					 * for(Type.Variable fv : freeVars) {
-					 * 	freeVarMap.put(fv.name(),Type.referenceType("java.lang","Object"));
-					 * }
-					 * mt = 	(Type.Function) mt.substitute(freeVarMap);
-					 */
+					System.out.println("CANDIDATE: " + name + " : " + mt);					
 				
-					 mts.add(new Triple<Clazz, Method, Type.Function>(c, m, mt));					 				
+					mts.add(new Triple<Clazz, Method, Type.Function>(c, m, mt));					 				
 				}
 			}
 
@@ -862,7 +990,7 @@ public class TypeSystem {
 							&& ((p1 instanceof Type.Primitive && !(p2 instanceof Type.Primitive)) || (p2 instanceof Type.Primitive && !(p1 instanceof Type.Primitive)))) {
 						continue outer;
 					}
-					if (nparams != null && !subtype(nparams[j],p1,loader)) {
+					if (nparams != null && !subtype(nparams[j], p1, loader)) {
 						continue outer;
 					}
 				}
