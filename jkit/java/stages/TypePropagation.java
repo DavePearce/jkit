@@ -92,7 +92,7 @@ public class TypePropagation {
 		// special case for dealing with array values.
 		if(init instanceof Value.Array) {
 			doArrayVal(type,(Value.Array) init);
-		} else {
+		} else if(init != null) {
 			doExpression(init);			
 			d.setInitialiser(implicitCast(init,type));			
 		}
@@ -1038,38 +1038,13 @@ public class TypePropagation {
 					throw new RuntimeException("Unreachable code reached!");
 				}
 			}
-		} else if(e_t instanceof Type.Primitive && t instanceof Type.Clazz) {				
-			if (isWrapper(t) && unboxedType((Type.Clazz) t) instanceof Type.Byte && e_t instanceof Type.Byte) {
-				ArrayList<Expr> params = new ArrayList<Expr>();
-				params.add(e);
-				return new Expr.New(fromJilType(boxedType((Type.Primitive)e_t)),null,params,new ArrayList<Decl>(), t, e.attribute(SourceLocation.class));
-			} else if (isWrapper(t) && unboxedType((Type.Clazz) t) instanceof Type.Char && e_t instanceof Type.Char) {
-				ArrayList<Expr> params = new ArrayList<Expr>();
-				params.add(e);
-				return new Expr.New(fromJilType(boxedType((Type.Primitive)e_t)),null,params,new ArrayList<Decl>(), t, e.attribute(SourceLocation.class));
-			} else if (isWrapper(t) && unboxedType((Type.Clazz) t) instanceof Type.Short && e_t instanceof Type.Short) {
-				ArrayList<Expr> params = new ArrayList<Expr>();
-				params.add(e);
-				return new Expr.New(fromJilType(boxedType((Type.Primitive)e_t)),null,params,new ArrayList<Decl>(), t, e.attribute(SourceLocation.class));
-			} else if (isWrapper(t) && unboxedType((Type.Clazz) t) instanceof Type.Int && e_t instanceof Type.Int) {				
-				ArrayList<Expr> params = new ArrayList<Expr>();
-				params.add(e);;
-				return new Expr.New(fromJilType(boxedType((Type.Primitive)e_t)),null,params,new ArrayList<Decl>(), t, e.attribute(SourceLocation.class));
-			} else if (isWrapper(t) && unboxedType((Type.Clazz) t) instanceof Type.Long && e_t instanceof Type.Long) {
-				ArrayList<Expr> params = new ArrayList<Expr>();
-				params.add(e);
-				return new Expr.New(fromJilType(boxedType((Type.Primitive)e_t)),null,params,new ArrayList<Decl>(), t, e.attribute(SourceLocation.class));
-			} else if (isWrapper(t) && unboxedType((Type.Clazz) t) instanceof Type.Float && e_t instanceof Type.Float) {
-				ArrayList<Expr> params = new ArrayList<Expr>();
-				params.add(e);
-				return new Expr.New(fromJilType(boxedType((Type.Primitive)e_t)),null,params,new ArrayList<Decl>(), t, e.attribute(SourceLocation.class));
-			} else if (isWrapper(t) && unboxedType((Type.Clazz) t) instanceof Type.Double && e_t instanceof Type.Double) {
-				ArrayList<Expr> params = new ArrayList<Expr>();
-				params.add(e);
-				return new Expr.New(fromJilType(boxedType((Type.Primitive)e_t)),null,params,new ArrayList<Decl>(), t, e.attribute(SourceLocation.class));
-			} else {
-				throw new RuntimeException("Unreachable code reached! (" + e_t + ", " + t + ")");
-			}			
+		} else if(e_t instanceof Type.Primitive && t instanceof Type.Clazz) {							
+			ArrayList<Expr> params = new ArrayList<Expr>();
+			params.add(e);
+			return new Expr.New(fromJilType(boxedType((Type.Primitive) e_t)),
+					null, params, new ArrayList<Decl>(),
+					boxedType((Type.Primitive) e_t), e
+							.attribute(SourceLocation.class));			
 		} 
 		
 		return e;

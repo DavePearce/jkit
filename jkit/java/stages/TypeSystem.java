@@ -1061,8 +1061,8 @@ public class TypeSystem {
 
 		// Traverse type hierarchy building a list of potential methods
 		while (!worklist.isEmpty()) {
-			Type.Clazz type = worklist.remove(0);			
-			Clazz c = loader.loadClass(type);
+			Type.Clazz type = worklist.remove(0);
+			Clazz c = loader.loadClass(type);			
 			List<jkit.jil.Method> methods = c.methods(name);
 			Map<String,Type.Reference> binding = bind(type, c.type(),loader);
 			
