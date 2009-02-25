@@ -93,7 +93,8 @@ public class TypePropagation {
 		if(init instanceof Value.Array) {
 			doArrayVal(type,(Value.Array) init);
 		} else {
-			doExpression(d.initialiser());
+			doExpression(init);			
+			d.setInitialiser(implicitCast(init,type));			
 		}
 	}
 	
@@ -191,7 +192,9 @@ public class TypePropagation {
 				} else if(d.third() instanceof Value.Array) {
 					doArrayVal(nt,(Value.Array) d.third());
 				} else {
-					doExpression(d.third());					
+					doExpression(d.third());
+					defs.set(i, new Triple(d.first(), d.second(), implicitCast(
+							d.third(), nt)));
 				}
 				
 			}
@@ -1035,35 +1038,35 @@ public class TypePropagation {
 					throw new RuntimeException("Unreachable code reached!");
 				}
 			}
-		} else if(e_t instanceof Type.Primitive && t instanceof Type.Clazz) {		
+		} else if(e_t instanceof Type.Primitive && t instanceof Type.Clazz) {				
 			if (isWrapper(t) && unboxedType((Type.Clazz) t) instanceof Type.Byte && e_t instanceof Type.Byte) {
 				ArrayList<Expr> params = new ArrayList<Expr>();
 				params.add(e);
-				return new Expr.New(fromJilType(boxedType((Type.Primitive)e_t)),null,params,new ArrayList<Decl>(), e_t, e.attribute(SourceLocation.class));
+				return new Expr.New(fromJilType(boxedType((Type.Primitive)e_t)),null,params,new ArrayList<Decl>(), t, e.attribute(SourceLocation.class));
 			} else if (isWrapper(t) && unboxedType((Type.Clazz) t) instanceof Type.Char && e_t instanceof Type.Char) {
 				ArrayList<Expr> params = new ArrayList<Expr>();
 				params.add(e);
-				return new Expr.New(fromJilType(boxedType((Type.Primitive)e_t)),null,params,new ArrayList<Decl>(), e_t, e.attribute(SourceLocation.class));
+				return new Expr.New(fromJilType(boxedType((Type.Primitive)e_t)),null,params,new ArrayList<Decl>(), t, e.attribute(SourceLocation.class));
 			} else if (isWrapper(t) && unboxedType((Type.Clazz) t) instanceof Type.Short && e_t instanceof Type.Short) {
 				ArrayList<Expr> params = new ArrayList<Expr>();
 				params.add(e);
-				return new Expr.New(fromJilType(boxedType((Type.Primitive)e_t)),null,params,new ArrayList<Decl>(), e_t, e.attribute(SourceLocation.class));
-			} else if (isWrapper(t) && unboxedType((Type.Clazz) t) instanceof Type.Int && e_t instanceof Type.Int) {
+				return new Expr.New(fromJilType(boxedType((Type.Primitive)e_t)),null,params,new ArrayList<Decl>(), t, e.attribute(SourceLocation.class));
+			} else if (isWrapper(t) && unboxedType((Type.Clazz) t) instanceof Type.Int && e_t instanceof Type.Int) {				
 				ArrayList<Expr> params = new ArrayList<Expr>();
-				params.add(e);
-				return new Expr.New(fromJilType(boxedType((Type.Primitive)e_t)),null,params,new ArrayList<Decl>(), e_t, e.attribute(SourceLocation.class));
+				params.add(e);;
+				return new Expr.New(fromJilType(boxedType((Type.Primitive)e_t)),null,params,new ArrayList<Decl>(), t, e.attribute(SourceLocation.class));
 			} else if (isWrapper(t) && unboxedType((Type.Clazz) t) instanceof Type.Long && e_t instanceof Type.Long) {
 				ArrayList<Expr> params = new ArrayList<Expr>();
 				params.add(e);
-				return new Expr.New(fromJilType(boxedType((Type.Primitive)e_t)),null,params,new ArrayList<Decl>(), e_t, e.attribute(SourceLocation.class));
+				return new Expr.New(fromJilType(boxedType((Type.Primitive)e_t)),null,params,new ArrayList<Decl>(), t, e.attribute(SourceLocation.class));
 			} else if (isWrapper(t) && unboxedType((Type.Clazz) t) instanceof Type.Float && e_t instanceof Type.Float) {
 				ArrayList<Expr> params = new ArrayList<Expr>();
 				params.add(e);
-				return new Expr.New(fromJilType(boxedType((Type.Primitive)e_t)),null,params,new ArrayList<Decl>(), e_t, e.attribute(SourceLocation.class));
+				return new Expr.New(fromJilType(boxedType((Type.Primitive)e_t)),null,params,new ArrayList<Decl>(), t, e.attribute(SourceLocation.class));
 			} else if (isWrapper(t) && unboxedType((Type.Clazz) t) instanceof Type.Double && e_t instanceof Type.Double) {
 				ArrayList<Expr> params = new ArrayList<Expr>();
 				params.add(e);
-				return new Expr.New(fromJilType(boxedType((Type.Primitive)e_t)),null,params,new ArrayList<Decl>(), e_t, e.attribute(SourceLocation.class));
+				return new Expr.New(fromJilType(boxedType((Type.Primitive)e_t)),null,params,new ArrayList<Decl>(), t, e.attribute(SourceLocation.class));
 			} else {
 				throw new RuntimeException("Unreachable code reached! (" + e_t + ", " + t + ")");
 			}			
@@ -1222,7 +1225,7 @@ public class TypePropagation {
      * @param jt
      * @return
      */
-	protected jkit.java.tree.Type fromJilType(jkit.jil.Type t) {
+	protected jkit.java.tree.Type fromJilType(jkit.jil.Type t) {		
 		if(t instanceof jkit.jil.Type.Primitive) {
 			return fromJilType((jkit.jil.Type.Primitive)t);
 		} else if(t instanceof jkit.jil.Type.Array) {
@@ -1259,17 +1262,17 @@ public class TypePropagation {
 		return new jkit.java.tree.Type.Array(fromJilType(at.element()),at);
 	}
 	
-	protected jkit.java.tree.Type.Clazz fromJilType(jkit.jil.Type.Clazz jt) {
+	protected jkit.java.tree.Type.Clazz fromJilType(jkit.jil.Type.Clazz jt) {			
 		// I will make it fully qualified for simplicity.
 		ArrayList<Pair<String,List<jkit.java.tree.Type.Reference>>> ncomponents = new ArrayList();
 		// So, we need to split out the package into the component parts
 		String pkg = jt.pkg();
 		int idx = 0;
-		int start = 0;
-		while((idx = pkg.indexOf('.',idx)) != -1) {
-			ncomponents.add(new Pair(pkg.substring(start,idx),new ArrayList()));
-			start = idx;
-		}
+		int start = 0;		
+		while((idx = pkg.indexOf('.',start)) != -1) {
+			ncomponents.add(new Pair(pkg.substring(start,idx),new ArrayList()));			
+			start = idx+1;
+		}		
 		
 		// Now, complete the components list
 		for(Pair<String,List<jkit.jil.Type.Reference>> c : jt.components()) {

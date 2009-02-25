@@ -407,14 +407,26 @@ public interface Decl extends SyntacticElement {
 		public String name() {
 			return name;
 		}
+		
+		public void setName(String name) {
+			this.name = name;
+		}
 
 		public Type type() {
 			return type;
 		}
 
+		public void setType(Type t) {
+			this.type = t;			
+		}
+
 		public Expr initialiser() {
 			return initialiser;
 		}		
+		
+		public void setInitialiser(Expr init) {
+			this.initialiser = init;
+		}
 		
 		/**
 	     * Check whether this method has one of the "base" modifiers (e.g. static,

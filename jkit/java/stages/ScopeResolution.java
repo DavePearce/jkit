@@ -317,7 +317,7 @@ public class ScopeResolution {
 		}
 		
 		scopes.push(myScope);
-		doExpression(d.initialiser(), file);
+		d.setInitialiser(doExpression(d.initialiser(), file));		
 		scopes.pop();
 	}
 	
@@ -429,7 +429,7 @@ public class ScopeResolution {
 					.modifiers()));
 									
 			Expr e = doExpression(d.third(), file);
-			defs.set(i, new Triple(d.first(),d.second(),e));
+			defs.set(i, new Triple(d.first(),d.second(),e));			
 		}		
 	}
 	

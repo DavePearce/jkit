@@ -88,6 +88,18 @@ public class TypeChecking {
 
 	protected void checkField(Field d) {
 		checkExpression(d.initialiser());
+		
+		Type lhs_t = (Type) d.type().attribute(Type.class);
+		Type rhs_t = (Type) d.initialiser().attribute(Type.class);
+		
+		try {			
+			if (!types.subtype(lhs_t, rhs_t, loader)) {
+				syntax_error(
+						"required type " + lhs_t + ", found type " + rhs_t, d);
+			}
+		} catch (ClassNotFoundException ex) {
+			syntax_error(ex.getMessage(), d);
+		}	
 	}
 	
 	protected void checkStatement(Stmt e) {
