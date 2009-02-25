@@ -382,7 +382,7 @@ public class ClassLoader {
 								.currentTimeMillis()
 								- time);
 												
-						// Update our knowledge base of classes.												
+						// Update our knowledge base of classes.
 						classtable.put(refName(clazz.type()), clazz);						
 						return clazz;										
 					} else if(compiler.isCompiling(srcFile)) {

@@ -429,8 +429,9 @@ public class TypeSystem {
 	 *             a BindError if the binding is not constructable.
 	 */
 	public Map<String, Type.Reference> bind(Type.Function concrete,
-			Type.Function template, boolean variableArity, ClassLoader loader) throws ClassNotFoundException {
-		if(concrete == null) {
+			Type.Function template, boolean variableArity, ClassLoader loader)
+			throws ClassNotFoundException {
+		if (concrete == null) {
 			throw new IllegalArgumentException("concrete cannot be null");
 		}
 		if(template == null) {

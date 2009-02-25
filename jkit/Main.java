@@ -24,7 +24,6 @@ package jkit;
 import java.io.*;
 import java.util.*;
 
-import jkit.bytecode.ClassFileWriter;
 import jkit.compiler.Stage;
 import jkit.compiler.SyntaxError;
 import jkit.compiler.ClassLoader;

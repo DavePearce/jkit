@@ -498,11 +498,11 @@ public class TypePropagation {
 			// This can happen if the parameters supplied to bind, which is
 			// called by resolveMethod are somehow not "base equivalent"
 			syntax_error(be.getMessage(),e,be);
-		} catch(IllegalArgumentException be) {
-			// This can happen if the parameters supplied to bind, which is
-			// called by resolveMethod are somehow not "base equivalent"
+		} catch(Exception be) {
+			// General catch all. The reason for having it is so we can
+			// attribute the cause of the internal failure with a line number.
 			syntax_error("internal failure (" + be.getMessage() + ")",e,be);
-		}		
+		} 
 	}
 	
 	protected void doInstanceOf(Expr.InstanceOf e) {

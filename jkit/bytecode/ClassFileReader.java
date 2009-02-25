@@ -329,8 +329,8 @@ public class ClassFileReader {
 			}
 		}				
 		
-		Type.Function type = parseMethodDescriptor(desc);
-						
+		Type.Function type = parseMethodDescriptor(desc);		
+		
 		return new Method(name, type, listModifiers(modifiers, true), exceptions);
 	}
 	

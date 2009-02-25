@@ -164,10 +164,24 @@ public class TypeResolution {
 			returnType = resolve(d.returnType());
 			d.returnType().attributes().add(returnType);			
 		}
-							
-		for(Triple<String,List<Modifier>,jkit.java.tree.Type> p : d.parameters()) {
+		
+		int paramLength = d.parameters().size();
+		
+		if(d.isVariableArity()) { paramLength--; }
+		
+		for (int i = 0; i != paramLength; ++i) {
+			Triple<String, List<Modifier>, jkit.java.tree.Type> p = d
+					.parameters().get(i);
 			Type pt = resolve(p.third());
-			p.third().attributes().add(pt);				
+			p.third().attributes().add(pt);
+			parameterTypes.add(pt);
+		}
+		
+		if(d.isVariableArity()) {
+			Triple<String, List<Modifier>, jkit.java.tree.Type> p = d
+					.parameters().get(paramLength);
+			Type pt = new Type.Array(resolve(p.third()));
+			p.third().attributes().add(pt);
 			parameterTypes.add(pt);
 		}
 		

@@ -141,7 +141,7 @@ public class SkeletonBuilder {
 		for(jkit.java.tree.Type.Clazz tc : m.exceptions()) {
 			exceptions.add((Type.Clazz)tc.attribute(Type.class));
 		}
-		 
+		
 		skeleton.methods().add(
 				new Method(m.name(), t, m.modifiers(), exceptions,
 						new ArrayList(m.attributes())));
