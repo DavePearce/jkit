@@ -64,6 +64,11 @@ public class TypePropagation {
 			doMethod((Method)d);
 		} else if(d instanceof Field) {
 			doField((Field)d);
+		} else if (d instanceof Decl.StaticInitialiserBlock) {
+			doStaticInitialiserBlock((Decl.StaticInitialiserBlock) d);
+		} else {
+			syntax_error("internal failure (unknown declaration \"" + d
+					+ "\" encountered)",d);
 		}
 	}
 	
@@ -104,6 +109,14 @@ public class TypePropagation {
 				d.setInitialiser(implicitCast(init,type));					
 			}
 			
+		}
+	}
+	
+	protected void doStaticInitialiserBlock(Decl.StaticInitialiserBlock d) {
+		// will need to add code here for dealing with classes nested in
+		// methods.
+		for (Stmt s : d.statements()) {
+			doStatement(s);
 		}
 	}
 	

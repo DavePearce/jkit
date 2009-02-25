@@ -170,8 +170,10 @@ public class JavaFileReader {
 				break;
 			case STATIC :
 				// static initialiser block
-				declarations.add(new Decl.StaticInitialiserBlock(
-						parseBlock(decl.getChild(0), genericVariables).statements()));
+				declarations.add(new Decl.StaticInitialiserBlock(parseBlock(
+					decl.getChild(0), genericVariables).statements(),
+					new SourceLocation(decl.getLine(), decl
+							.getCharPositionInLine())));
 				break;
 			case BLOCK :
 				// non-static initialiser block

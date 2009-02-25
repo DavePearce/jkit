@@ -51,11 +51,20 @@ public class SkeletonDiscovery {
 			return doMethod((Decl.Method)d,pkg,parent);
 		} else if(d instanceof Decl.Field) {
 			return doField((Field)d,pkg,parent);
+		} else if(d instanceof Decl.StaticInitialiserBlock) {
+			return doStaticInitialiserBlock((Decl.StaticInitialiserBlock)d,pkg,parent);
 		} else {
 			syntax_error("internal failure (unknown declaration \"" + d
 					+ "\" encountered)",d);
 			return null; // dead code.
 		}
+	}
+	
+	protected List<Clazz> doStaticInitialiserBlock(
+			Decl.StaticInitialiserBlock d, String pkg, Type.Clazz parent) {
+		// will need to add code here for dealing with classes nested in
+		// methods.
+		return new ArrayList<Clazz>();
 	}
 	
 	protected List<Clazz> doEnum(Decl.Enum d, String pkg, Type.Clazz parent) {
