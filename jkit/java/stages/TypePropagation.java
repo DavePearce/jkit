@@ -256,23 +256,27 @@ public class TypePropagation {
 	
 	protected void doIf(Stmt.If stmt) {
 		doExpression(stmt.condition());
+		stmt.setCondition(implicitCast(stmt.condition(), new Type.Bool()));
 		doStatement(stmt.trueStatement());
 		doStatement(stmt.falseStatement());
 	}
 	
 	protected void doWhile(Stmt.While stmt) {
 		doExpression(stmt.condition());
+		stmt.setCondition(implicitCast(stmt.condition(), new Type.Bool()));
 		doStatement(stmt.body());		
 	}
 	
 	protected void doDoWhile(Stmt.DoWhile stmt) {
 		doExpression(stmt.condition());
+		stmt.setCondition(implicitCast(stmt.condition(), new Type.Bool()));
 		doStatement(stmt.body());
 	}
 	
 	protected void doFor(Stmt.For stmt) {		
 		doStatement(stmt.initialiser());
 		doExpression(stmt.condition());
+		stmt.setCondition(implicitCast(stmt.condition(), new Type.Bool()));
 		doStatement(stmt.increment());
 		doStatement(stmt.body());	
 	}
