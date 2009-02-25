@@ -175,6 +175,8 @@ public class ClassLoader {
 				// try and resolve the class
 				ref = resolveClassName(imp.substring(0, imp.length() - 2),className);												
 			} else {
+				// The aim of this piece of code is to replicate the way javac
+				// works.
 				String impName = imp.substring(imp.lastIndexOf('.') + 1, imp
 						.length());
 				String tmp = className.replace('$', '.');

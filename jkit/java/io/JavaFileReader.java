@@ -127,7 +127,7 @@ public class JavaFileReader {
 					}
 					// make sure later imports get higher priority
 					// in the search.
-					imports.add(0, new Pair(static_import, filter));
+					imports.add(new Pair(static_import, filter));
 					break;
 				}
 				case PACKAGE :
