@@ -204,6 +204,8 @@ public class TypePropagation {
 
 		Type lhs_t = (Type) def.lhs().attribute(Type.class);
 		
+		def.setRhs(implicitCast(def.rhs(),lhs_t));				
+		
 		// perform type inference (if necesssary)
 		if(isUnknownConstant(def.rhs())) {
 			Expr c = unknownConstantInference(def.rhs(), lhs_t,
