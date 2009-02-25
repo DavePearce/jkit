@@ -331,7 +331,22 @@ public class ScopeResolution {
 	protected void doInitialiserBlock(Decl.InitialiserBlock d,
 			JavaFile file) {
 		
-		scopes.push(new Scope());
+		Scope myScope = new Scope();
+				
+		// put in a type for the special "this" variable, and "super"
+		// variable (if appropriate).
+		ArrayList<Modifier> ms = new ArrayList<Modifier>();
+		ms.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL));
+		ClassScope cs = ((ClassScope) findEnclosingScope(ClassScope.class));
+		Pair<Type, List<Modifier>> p = new Pair(cs.type,ms);
+		myScope.variables.put("this",p);
+		
+		// now, we'll add super as a variable (if there is a super class).
+		if(cs.superType != null) {
+			myScope.variables.put("super",new Pair(cs.superType,new ArrayList()));
+		}	
+		
+		scopes.push(myScope);
 		
 		for (Stmt s : d.statements()) {
 			doStatement(s, file);
@@ -394,8 +409,8 @@ public class ScopeResolution {
 		} else if(e instanceof Decl.Clazz) {
 			doClass((Decl.Clazz)e, file);
 		} else if(e != null) {
-			throw new RuntimeException("Invalid statement encountered: "
-					+ e.getClass());
+			syntax_error("Invalid statement encountered: "
+					+ e.getClass(),e);
 		}		
 	}
 	
@@ -592,8 +607,8 @@ public class ScopeResolution {
 			// force brackets			
 			return doAssignment((Stmt.Assignment) e, file);			
 		} else if(e != null) {
-			throw new RuntimeException("Invalid expression encountered: "
-					+ e.getClass());
+			syntax_error("Invalid expression encountered: "
+					+ e.getClass(),e);			
 		}
 		
 		return null;

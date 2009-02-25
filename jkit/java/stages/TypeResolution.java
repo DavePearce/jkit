@@ -242,8 +242,8 @@ public class TypeResolution {
 		} else if(e instanceof Decl.Clazz) {
 			doClass((Decl.Clazz)e);
 		} else if(e != null) {
-			throw new RuntimeException("Invalid statement encountered: "
-					+ e.getClass());
+			syntax_error("Invalid statement encountered: "
+					+ e.getClass(),e);
 		}		
 	}
 	
@@ -400,8 +400,8 @@ public class TypeResolution {
 			// force brackets			
 			doAssignment((Stmt.Assignment) e);			
 		} else if(e != null) {
-			throw new RuntimeException("Invalid expression encountered: "
-					+ e.getClass());
+			syntax_error("Invalid expression encountered: "
+					+ e.getClass(),e);
 		}
 	}
 	
