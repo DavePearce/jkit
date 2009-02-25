@@ -422,6 +422,7 @@ public class TypeResolution {
 	
 	protected void doCast(Expr.Cast e) {
 		e.type().attributes().add(resolve(e.type()));
+		doExpression(e.expr());
 	}
 	
 	protected void doBoolVal(Value.Bool e) {}
