@@ -330,20 +330,26 @@ public class ScopeResolution {
 	
 	protected void doInitialiserBlock(Decl.InitialiserBlock d,
 			JavaFile file) {
-		// will need to add code here for dealing with classes nested in
-		// methods.
+		
+		scopes.push(new Scope());
+		
 		for (Stmt s : d.statements()) {
 			doStatement(s, file);
 		}
+		
+		scopes.pop();
 	}
 	
 	protected void doStaticInitialiserBlock(Decl.StaticInitialiserBlock d,
 			JavaFile file) {
-		// will need to add code here for dealing with classes nested in
-		// methods.
+		
+		scopes.push(new Scope());
+		
 		for (Stmt s : d.statements()) {
 			doStatement(s, file);
 		}
+		
+		scopes.pop();
 	}
 	
 	protected void doStatement(Stmt e, JavaFile file) {
