@@ -599,24 +599,33 @@ public class TypeSystem {
 	 */
 	public Type.Reference greatestSupertype(Type.Reference t1, Type.Reference t2,
 			ClassLoader loader) throws ClassNotFoundException {		
-		List<Type.Reference> t1supertypes = listSupertypes(t1,loader);
-		List<Type.Reference> t2supertypes = listSupertypes(t2,loader);
+		Set<Type.Reference> t1supertypes = listSupertypes(t1,loader);
+		Set<Type.Reference> t2supertypes = listSupertypes(t2,loader);
+	
+		// An interesting question here, is whether we need to use an
+		// intersection type to deal with the possibility of multiple possible
+		// subtypes.
+		
+		Type.Reference st = null;
 		
 		for(Type.Reference t1s : t1supertypes) {
-			for(Type.Reference t2s : t2supertypes) {
+			for(Type.Reference t2s : t2supertypes) {				
 				if(t1s.equals(t2s)) {
-					return t1s;
+					if(st == null) {
+						st = t1s;
+					} else if(subtype(st,t1s,loader)) {
+						st = t1s;
+					}
 				}
 			}
-		}
+		}		
 		
-		// Shouldn't get here, since we're always meet at java.lang.Object
-		
-		return null;
+		return st;
 	}
 	
 	/**
-	 * The aim of this method is to list the super types of t1. For example, if:
+	 * The aim of this method is to identify the super types of t1. For example,
+	 * if:
 	 * 
 	 * <pre>
 	 * t1 = java.util.ArrayList&lt;String&gt;
@@ -637,10 +646,6 @@ public class TypeSystem {
 	 * java.lang.Object
 	 * </pre>
 	 * 
-	 * Observe, that the top element of this list will occur at index 0.
-	 * Therefore, listSuperTypes(t1).get(0) always returns t1. The elements are
-	 * loaded onto the list according to a breadth-first traversal.
-	 * 
 	 * @param t1
 	 *            --- type whose supertypes we're interested in.
 	 * @param loader
@@ -649,9 +654,9 @@ public class TypeSystem {
 	 * @return
 	 * @throws ClassNotFoundException
 	 */
-	public List<Type.Reference> listSupertypes(Type.Reference t1,
+	public HashSet<Type.Reference> listSupertypes(Type.Reference t1,
 			ClassLoader loader) throws ClassNotFoundException {
-		ArrayList<Type.Reference> types = new ArrayList();		
+		HashSet<Type.Reference> types = new HashSet();		
 		
 		if(t1 instanceof Type.Array) {
 			types.add(t1);

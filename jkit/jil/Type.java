@@ -39,6 +39,10 @@ public interface Type extends Attribute {
 		public boolean equals(Object o) {
 			return o instanceof Type.Null;
 		}
+		
+		public int hashCode() {
+			return 0;
+		}
 	}	 
 	
 	/**
@@ -56,6 +60,10 @@ public interface Type extends Attribute {
 		public boolean equals(Object o) {
 			return o instanceof Type.Void;
 		}
+		
+		public int hashCode() {
+			return 1;
+		}
 	}
 	/**
 	 * Represents the Java type "boolean"
@@ -69,6 +77,10 @@ public interface Type extends Attribute {
 		
 		public boolean equals(Object o) {
 			return o instanceof Type.Bool;
+		}
+		
+		public int hashCode() {
+			return 2;
 		}
 	}
 	
@@ -86,6 +98,10 @@ public interface Type extends Attribute {
 		public boolean equals(Object o) {
 			return o instanceof Type.Byte;
 		}
+		
+		public int hashCode() {
+			return 3;
+		}
 	}
 	
 	/**
@@ -100,6 +116,10 @@ public interface Type extends Attribute {
 		
 		public boolean equals(Object o) {
 			return o instanceof Type.Char;
+		}
+		
+		public int hashCode() {
+			return 4;
 		}
 	}
 	
@@ -116,6 +136,10 @@ public interface Type extends Attribute {
 		public boolean equals(Object o) {
 			return o instanceof Type.Short;
 		}
+		
+		public int hashCode() {
+			return 5;
+		}
 	}
 
 	/**
@@ -130,6 +154,10 @@ public interface Type extends Attribute {
 		
 		public boolean equals(Object o) {
 			return o instanceof Type.Int;
+		}
+		
+		public int hashCode() {
+			return 6;
 		}
 	}
 	
@@ -146,6 +174,10 @@ public interface Type extends Attribute {
 		public boolean equals(Object o) {
 			return o instanceof Type.Long;
 		}
+		
+		public int hashCode() {
+			return 7;
+		}
 	}
 	
 	/**
@@ -161,6 +193,10 @@ public interface Type extends Attribute {
 		public boolean equals(Object o) {
 			return o instanceof Type.Float;
 		}
+		
+		public int hashCode() {
+			return 8;
+		}
 	}
 	
 	/**
@@ -175,6 +211,10 @@ public interface Type extends Attribute {
 		
 		public boolean equals(Object o) {
 			return o instanceof Type.Double;
+		}
+		
+		public int hashCode() {
+			return 9;
 		}
 	}
 	
@@ -205,6 +245,10 @@ public interface Type extends Attribute {
 				return element.equals(a.element);
 			}
 			return false;
+		}
+		
+		public int hashCode() {
+			return 1 + element.hashCode();
 		}
 	}
 	
@@ -283,6 +327,14 @@ public interface Type extends Attribute {
 			}
 			return false;
 		}
+		
+		public int hashCode() {
+			int hc = 0;
+			for (Pair<String, List<Type.Reference>> n : components) {
+				hc ^= n.first().hashCode();
+			}
+			return hc;
+		}
 	}
 	
 	/**
@@ -342,6 +394,17 @@ public interface Type extends Attribute {
 			}
 			return r;
 		}
+		
+		public int hashCode() {
+			int hc = 0;
+			if(lowerBound != null) {
+				hc ^= lowerBound.hashCode();
+			}
+			if(upperBound != null) {
+				hc ^= upperBound.hashCode();
+			}
+			return hc;
+		}
 	}
 	
 	/**
@@ -393,6 +456,10 @@ public interface Type extends Attribute {
 				}
 				return r + ")";				
 			}
+		}
+		
+		public int hashCode() {
+			return variable.hashCode();
 		}
 	}
 	
@@ -464,6 +531,14 @@ public interface Type extends Attribute {
 			}
 			r+= ")";
 			return r;
+		}
+		
+		public int hashCode() {
+			int hc = 0;
+			for(Type t : parameters) {
+				hc ^= t.hashCode();
+			}
+			return hc;
 		}
 	}	
 }

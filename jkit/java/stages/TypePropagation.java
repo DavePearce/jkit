@@ -854,11 +854,11 @@ public class TypePropagation {
 		} else if(lhs_t instanceof Type.Reference && rhs_t instanceof Type.Reference) {
 			// At this point, we have some class types and we need to determine
 			// their greatest lower bound.
-			Type rt;
+			Type rt;			
 			if(lhs_t instanceof Type.Clazz && rhs_t instanceof Type.Clazz) {
-				try {
+				try {					
 					rt = types.greatestSupertype((Type.Clazz) lhs_t,
-							(Type.Clazz) rhs_t, loader);
+							(Type.Clazz) rhs_t, loader);					
 				} catch(ClassNotFoundException cne) {
 					syntax_error(cne.getMessage(),e,cne);
 					return; // dead code

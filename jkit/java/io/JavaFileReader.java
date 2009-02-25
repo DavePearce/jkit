@@ -683,13 +683,13 @@ public class JavaFileReader {
 			}
 			vardefs.add(new Triple<String, Integer, Expr>(
 					myName, dims, myInitialiser));
-		}
+		}				
 		
 		return new Stmt.VarDef(
 				modifiers,
 				type,
 				vardefs,
-				new SourceLocation(tree.getLine(), tree.getCharPositionInLine()));
+				new SourceLocation(tree.getChild(1).getLine(), tree.getChild(1).getCharPositionInLine()));
 	}
 
 	/**
