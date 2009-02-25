@@ -210,7 +210,7 @@ public class TypeChecking {
 					if (!types.subtype(nt, i_t, loader)) {
 						syntax_error("required type " + nt + ", found type " + i_t, def);
 					}
-				} catch (Exception ex) {
+				} catch (ClassNotFoundException ex) {
 					syntax_error(ex.getMessage(), def);
 				}	
 			}
