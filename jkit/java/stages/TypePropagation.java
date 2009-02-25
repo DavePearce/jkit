@@ -468,12 +468,12 @@ public class TypePropagation {
 		
 		try {		
 			if(e.name().equals("super") || e.name().equals("this")) {				
-				receiver = (Type.Clazz) e.attribute(Type.class);
+				receiver = (Type.Clazz) e.attribute(Type.class);				
 				e_name = receiver.components().get(
 						receiver.components().size() - 1).first();
 			} else {
 				 receiver = (Type.Clazz) e.target().attribute(Type.class);
-			}
+			}							
 			
 			Type.Function f = types.resolveMethod(receiver, e_name,
 					parameterTypes, loader).third();
@@ -505,7 +505,7 @@ public class TypePropagation {
 		}		
 	}
 	
-	protected void doInstanceOf(Expr.InstanceOf e) {		
+	protected void doInstanceOf(Expr.InstanceOf e) {
 		doExpression(e.lhs());
 		e.attributes().add(new Type.Bool());
 	}
@@ -699,7 +699,8 @@ public class TypePropagation {
 				} else if (e.op() == Expr.BinOp.EQ || e.op() == Expr.BinOp.NEQ) {
 					e.attributes().add(new Type.Bool());
 				} else {
-					// some kind of error here.
+					syntax_error("operands have invalid types " + lhs_t + " and "
+						+ rhs_t, e);
 				}
 				break;
 			}
@@ -719,6 +720,9 @@ public class TypePropagation {
 						&& (isString(lhs_t) || isString(rhs_t))) {
 					e.attributes().add(new Type.Clazz("java.lang", "String"));
 					e.setOp(Expr.BinOp.CONCAT);
+				} else {
+					syntax_error("operands have invalid types " + lhs_t + " and "
+						+ rhs_t, e);
 				}
 				break;
 			}
@@ -732,16 +736,18 @@ public class TypePropagation {
 					e.setLhs(implicitCast(e.lhs(), rt_left));
 					e.setRhs(implicitCast(e.rhs(), new Type.Int()));
 					e.attributes().add(rt_left);
+				} else {
+					syntax_error("operands have invalid types " + lhs_t + " and " + rhs_t,e);
 				}
 				break;
 			}
 			case Expr.BinOp.LAND:
 			case Expr.BinOp.LOR:
-			{
-				Type rt = binaryNumericPromotion(lhs_t,rhs_t);
-				e.setLhs(implicitCast(e.lhs(),rt));
-				e.setRhs(implicitCast(e.rhs(),rt));
-				e.attributes().add(new Type.Bool());				
+			{				
+				e.setLhs(implicitCast(e.lhs(),new Type.Bool()));
+				e.setRhs(implicitCast(e.rhs(),new Type.Bool()));
+				e.attributes().add(new Type.Bool());
+				break;
 			}
 			case Expr.BinOp.AND:
 			case Expr.BinOp.OR:
@@ -753,7 +759,10 @@ public class TypePropagation {
 					e.setLhs(implicitCast(e.lhs(),rt));
 					e.setRhs(implicitCast(e.rhs(),rt));
 					e.attributes().add(rt);						
-				} 
+				} else {
+					syntax_error("operands have invalid types " + lhs_t + " and "
+						+ rhs_t, e);
+				}
 				break;
 			}					
 		}

@@ -441,6 +441,7 @@ public class TypeResolution {
 	
 	protected void doInstanceOf(Expr.InstanceOf e) {		
 		e.rhs().attributes().add(resolve(e.rhs()));
+		doExpression(e.lhs());
 	}
 	
 	protected void doCast(Expr.Cast e) {
