@@ -272,14 +272,7 @@ public class ScopeResolution {
 		int count = 1;
 		for (Triple<String, List<Modifier>, jkit.java.tree.Type> t : d
 				.parameters()) {
-			Type type = (Type) t.third().attribute(Type.class);
-
-			// if this method has variable arity, and this is the last parameter
-			// in the declaration, then we need to upgrade it's type to be an
-			// array.
-			if(count++ == d.parameters().size() && d.isVariableArity()) {				
-				type = new Type.Array(type);
-			}
+			Type type = (Type) t.third().attribute(Type.class);			
 			
 			Pair<Type, List<Modifier>> p = new Pair(type, t.second());
 			params.put(t.first(), p);

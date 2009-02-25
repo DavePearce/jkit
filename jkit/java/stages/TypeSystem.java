@@ -439,7 +439,7 @@ public class TypeSystem {
 		}
 		if(loader == null) {
 			throw new IllegalArgumentException("loader cannot be null");
-		}
+		}	
 		
 		// first, do return type
 		
@@ -464,7 +464,7 @@ public class TypeSystem {
 		// At this point, we need to consider variable arity methods. 
 		if(variableArity) {			
 			Type cType = concreteParams.get(paramLength); // hack for now.			
-			Type.Array vaType = (Type.Array) templateParams.get(paramLength);
+			Type.Array vaType = (Type.Array) templateParams.get(paramLength);		
 			
 			if(arrayDepth(cType) == arrayDepth(vaType)) {
 				// In this situation, we're actually passing the variable arity
