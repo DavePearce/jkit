@@ -168,18 +168,25 @@ public class ClassLoader {
 			throws ClassNotFoundException {		
 		if(className.contains(".")) {
 			throw new IllegalArgumentException("className cannot contain \".\"");
-		}
+		}		
 		for (String imp : imports) {
 			Type.Clazz ref = null;
 			if (imp.endsWith(".*")) {
 				// try and resolve the class
 				ref = resolveClassName(imp.substring(0, imp.length() - 2),className);												
-			} else if (imp.endsWith("." + className)) {				
-				// strip off class name itself				
-				String pkg = imp.substring(0, imp.length()
-						- (1 + className.length()));
-				// now try and resolve it.
-				ref = resolveClassName(pkg,className);				
+			} else {
+				String tmp = className.replace('$', '.');
+				while(tmp.length() > 0) {					
+					if (imp.endsWith("." + tmp)) {						
+						// strip off class name itself				
+						String pkg = imp.substring(0, imp.length()
+								- (1 + tmp.length()));
+						// now try and resolve it.
+						ref = resolveClassName(pkg,className);
+						break;
+					}
+					tmp = tmp.substring(0,Math.max(0,tmp.lastIndexOf('.')));
+				}
 			}
 			if(ref != null) { return ref; }
 		}
