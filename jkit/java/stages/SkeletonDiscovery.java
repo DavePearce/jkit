@@ -51,6 +51,8 @@ public class SkeletonDiscovery {
 			return doMethod((Decl.Method)d,pkg,parent);
 		} else if(d instanceof Decl.Field) {
 			return doField((Field)d,pkg,parent);
+		} else if(d instanceof Decl.InitialiserBlock) {
+			return doInitialiserBlock((Decl.InitialiserBlock)d,pkg,parent);
 		} else if(d instanceof Decl.StaticInitialiserBlock) {
 			return doStaticInitialiserBlock((Decl.StaticInitialiserBlock)d,pkg,parent);
 		} else {
@@ -58,13 +60,6 @@ public class SkeletonDiscovery {
 					+ "\" encountered)",d);
 			return null; // dead code.
 		}
-	}
-	
-	protected List<Clazz> doStaticInitialiserBlock(
-			Decl.StaticInitialiserBlock d, String pkg, Type.Clazz parent) {
-		// will need to add code here for dealing with classes nested in
-		// methods.
-		return new ArrayList<Clazz>();
 	}
 	
 	protected List<Clazz> doEnum(Decl.Enum d, String pkg, Type.Clazz parent) {
@@ -115,7 +110,18 @@ public class SkeletonDiscovery {
 	protected List<Clazz> doField(Decl.Field d, String pkg, Type.Clazz parent) {
 		return new ArrayList();
 	}
-
+	
+	protected List<Clazz> doInitialiserBlock(Decl.InitialiserBlock d,
+			String pkg, Type.Clazz parent) {		
+		return new ArrayList<Clazz>();
+	}
+	
+	protected List<Clazz> doStaticInitialiserBlock(
+			Decl.StaticInitialiserBlock d, String pkg, Type.Clazz parent) {		
+		return new ArrayList<Clazz>();
+	}
+	
+	
 	/**
      * This method is just to factor out the code for looking up the source
      * location and throwing an exception based on that.

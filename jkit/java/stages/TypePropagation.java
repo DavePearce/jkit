@@ -64,6 +64,8 @@ public class TypePropagation {
 			doMethod((Method)d);
 		} else if(d instanceof Field) {
 			doField((Field)d);
+		} else if (d instanceof Decl.InitialiserBlock) {
+			doInitialiserBlock((Decl.InitialiserBlock) d);
 		} else if (d instanceof Decl.StaticInitialiserBlock) {
 			doStaticInitialiserBlock((Decl.StaticInitialiserBlock) d);
 		} else {
@@ -109,6 +111,14 @@ public class TypePropagation {
 				d.setInitialiser(implicitCast(init,type));					
 			}
 			
+		}
+	}
+	
+	protected void doInitialiserBlock(Decl.InitialiserBlock d) {
+		// will need to add code here for dealing with classes nested in
+		// methods.
+		for (Stmt s : d.statements()) {
+			doStatement(s);
 		}
 	}
 	

@@ -223,6 +223,8 @@ public class ScopeResolution {
 			doMethod((Method)d, file);
 		} else if(d instanceof Field) {
 			doField((Field)d, file);
+		} else if (d instanceof Decl.InitialiserBlock) {
+			doInitialiserBlock((Decl.InitialiserBlock) d, file);
 		} else if (d instanceof Decl.StaticInitialiserBlock) {
 			doStaticInitialiserBlock((Decl.StaticInitialiserBlock) d, file);
 		} else {
@@ -324,6 +326,15 @@ public class ScopeResolution {
 		scopes.push(myScope);
 		d.setInitialiser(doExpression(d.initialiser(), file));		
 		scopes.pop();
+	}
+	
+	protected void doInitialiserBlock(Decl.InitialiserBlock d,
+			JavaFile file) {
+		// will need to add code here for dealing with classes nested in
+		// methods.
+		for (Stmt s : d.statements()) {
+			doStatement(s, file);
+		}
 	}
 	
 	protected void doStaticInitialiserBlock(Decl.StaticInitialiserBlock d,

@@ -60,6 +60,8 @@ public class SkeletonBuilder {
 			doMethod((Decl.Method)d, skeleton);
 		} else if(d instanceof Decl.Field) {
 			doField((Decl.Field)d, skeleton);
+		} else if (d instanceof Decl.InitialiserBlock) {
+			doInitialiserBlock((Decl.InitialiserBlock) d, skeleton);
 		} else if (d instanceof Decl.StaticInitialiserBlock) {
 			doStaticInitialiserBlock((Decl.StaticInitialiserBlock) d, skeleton);
 		} else {
@@ -155,6 +157,15 @@ public class SkeletonBuilder {
 						.attributes())));
 
 		doExpression(d.initialiser(), skeleton);
+	}
+	
+	protected void doInitialiserBlock(Decl.InitialiserBlock d,
+			Clazz skeleton) {
+		// will need to add code here for dealing with classes nested in
+		// methods.
+		for (Stmt s : d.statements()) {
+			doStatement(s, skeleton);
+		}
 	}
 	
 	protected void doStaticInitialiserBlock(Decl.StaticInitialiserBlock d,
