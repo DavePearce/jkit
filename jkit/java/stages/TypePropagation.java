@@ -1091,7 +1091,7 @@ public class TypePropagation {
 				case Expr.BinOp.SHL:
 				case Expr.BinOp.SHR:
 				case Expr.BinOp.USHR:								
-					return isUnknownConstant(bop.lhs()); 								
+					return isUnknownConstant(bop.lhs()) && isUnknownConstant(bop.rhs()); 								
 			}
 		} else if(e instanceof Expr.UnOp) {
 			Expr.UnOp uop = (Expr.UnOp) e;
