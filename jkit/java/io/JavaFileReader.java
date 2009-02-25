@@ -913,16 +913,21 @@ public class JavaFileReader {
 	public Stmt parseIncDec(Tree stmt, HashSet<String> genericVariables) {
 		Expr.UnOp lhs = (Expr.UnOp) parseExpression(stmt, genericVariables);
 		Expr lval = lhs.expr();
+		// the following is need to prevent aliasing of subexpressions in the
+		// assignment statement constructed.
+		Expr lvalClone = ((Expr.UnOp) parseExpression(stmt, genericVariables))
+				.expr();
 		SourceLocation loc = new SourceLocation(stmt.getLine(), stmt
 				.getCharPositionInLine());
+		
 		if (lhs.op() == Expr.UnOp.POSTDEC
 				|| lhs.op() == Expr.UnOp.PREDEC) {
-			return new Stmt.Assignment(lval,
+			return new Stmt.Assignment(lvalClone,
 					new Expr.BinOp(Expr.BinOp.SUB, lval,
 							new Value.Int(1, loc), loc), loc);
 		} else {
 			// must be preinc or postinc
-			return new Stmt.Assignment(lval,
+			return new Stmt.Assignment(lvalClone,
 					new Expr.BinOp(Expr.BinOp.ADD, lval,
 							new Value.Int(1, loc), loc), loc);
 		}
