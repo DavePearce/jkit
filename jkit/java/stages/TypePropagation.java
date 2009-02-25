@@ -90,11 +90,20 @@ public class TypePropagation {
 		Type type = (Type) d.type().attribute(Type.class);
 		
 		// special case for dealing with array values.
-		if(init instanceof Value.Array) {
-			doArrayVal(type,(Value.Array) init);
-		} else if(init != null) {
-			doExpression(init);			
-			d.setInitialiser(implicitCast(init,type));			
+		// perform type inference (if necesssary)
+		if(init != null) {
+			if(isUnknownConstant(init)) {			
+				Expr c = unknownConstantInference(init, type,
+						(SourceLocation) init
+						.attribute(SourceLocation.class));
+				d.setInitialiser(c);
+			} else if(init instanceof Value.Array) {
+				doArrayVal(type,(Value.Array) init);
+			} else {
+				doExpression(init);			
+				d.setInitialiser(implicitCast(init,type));					
+			}
+			
 		}
 	}
 	

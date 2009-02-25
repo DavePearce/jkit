@@ -614,6 +614,8 @@ public class JavaFileWriter {
 		
 		if(e instanceof Value.Bool) {
 			writeBoolVal((Value.Bool)e);
+		} else if(e instanceof Value.Byte) {
+			writeByteVal((Value.Byte)e);
 		} else if(e instanceof Value.Char) {
 			writeCharVal((Value.Char)e);
 		} else if(e instanceof Value.Short) {
@@ -804,6 +806,10 @@ public class JavaFileWriter {
 		} else {
 			write("false");
 		}
+	}
+	
+	protected void writeByteVal(Value.Byte e) {		
+		write(Integer.toString(e.value()));
 	}
 	
 	protected void writeCharVal(Value.Char e) {

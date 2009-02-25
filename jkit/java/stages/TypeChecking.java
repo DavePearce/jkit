@@ -358,6 +358,8 @@ public class TypeChecking {
 	protected void checkExpression(Expr e) {	
 		if(e instanceof Value.Bool) {
 			checkBoolVal((Value.Bool)e);
+		} else if(e instanceof Value.Byte) {
+			checkByteVal((Value.Byte)e);
 		} else if(e instanceof Value.Char) {
 			checkCharVal((Value.Char)e);
 		} else if(e instanceof Value.Int) {
@@ -489,6 +491,10 @@ public class TypeChecking {
 	}
 	
 	protected void checkBoolVal(Value.Bool e) {
+		// do nothing!
+	}
+	
+	protected void checkByteVal(Value.Byte e) {
 		// do nothing!
 	}
 	
