@@ -464,9 +464,23 @@ public class TypeChecking {
 		Type e_t = (Type) e.expr().attribute(Type.class);
 		Type c_t = (Type) e.type().attribute(Type.class);
 		try {
+			if(e_t instanceof Type.Clazz && c_t instanceof Type.Clazz) {
+				jkit.jil.Clazz c_c = loader.loadClass((Type.Clazz) c_t);
+				jkit.jil.Clazz e_c = loader.loadClass((Type.Clazz) e_t);
+				
+				// the trick here, is that javac will never reject a cast
+				// between an interface and a class or interface. However, if we
+				// have a cast from one class to another class, then it will
+				// reject this if neither is a subclass of the other.
+				if(c_c.isInterface() || e_c.isInterface()) {					
+					// cast cannot fail here.
+					return;
+				}
+			}
+			
 			if (!(types.subtype(c_t, e_t, loader) || types.subtype(e_t, c_t,
 					loader))) {
-				syntax_error("inconvertible types: " + e_t + ", " + e.type(), e);
+				syntax_error("inconvertible types: " + e_t + ", " + c_t, e);
 			}
 		} catch(ClassNotFoundException ex) {
 			syntax_error (ex.getMessage(),e);

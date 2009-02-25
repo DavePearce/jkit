@@ -62,8 +62,14 @@ public class SkeletonDiscovery {
 		return doClass(d,pkg,parent);
 	}
 	
-	protected List<Clazz> doInterface(Decl.Interface d, String pkg, Type.Clazz parent) {
-		return doClass(d,pkg,parent);
+	protected List<Clazz> doInterface(Decl.Interface d, String pkg,
+			Type.Clazz parent) {
+		List<Clazz> cs = doClass(d, pkg, parent);
+		cs.get(cs.size() - 1).modifiers()
+				.add(
+						new jkit.jil.Modifier.Base(
+								java.lang.reflect.Modifier.INTERFACE));
+		return cs;
 	}
 	
 	protected List<Clazz> doClass(Decl.Clazz c, String pkg, Type.Clazz parent) {
