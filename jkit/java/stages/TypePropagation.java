@@ -463,16 +463,31 @@ public class TypePropagation {
 		// the method in the class hierarchy. This lookup procedure is seriously
 		// non-trivial, and is implemented in the TypeSystem module.
 			
-		Type.Clazz receiver = null;
+		Type.Reference receiver = null;
 		String e_name = e.name();
 		
 		try {		
 			if(e.name().equals("super") || e.name().equals("this")) {				
-				receiver = (Type.Clazz) e.attribute(Type.class);				
-				e_name = receiver.components().get(
-						receiver.components().size() - 1).first();
+				Type.Clazz r = (Type.Clazz) e.attribute(Type.class);				
+				e_name = r.components().get(r.components().size() - 1).first();
+				receiver = r;
 			} else {
-				 receiver = (Type.Clazz) e.target().attribute(Type.class);
+				Type rt = (Type) e.target().attribute(Type.class);
+				
+				if(rt instanceof Type.Variable) {
+					// in this situation, we're trying to dereference a generic
+					// variable. Therefore, we choose the largest type which
+					// this could possibly, and assume the receiver is this type.
+					Type.Variable vt = (Type.Variable) rt;										
+					
+					if(vt.lowerBound() != null) {
+						receiver = vt.lowerBound(); 
+					} else {
+						receiver = new Type.Clazz("java.lang","Object");
+					}
+				} else {
+					receiver = (Type.Clazz) e.target().attribute(Type.class);
+				}
 			}							
 			
 			Type.Function f = types.resolveMethod(receiver, e_name,

@@ -1,6 +1,7 @@
 package jkit.java.tree;
 
 import java.util.*;
+
 import jkit.jil.Attribute;
 import jkit.jil.SyntacticElementImpl;
 import jkit.util.Pair;
@@ -252,30 +253,53 @@ public class Type extends SyntacticElementImpl {
      */
 	public static class Variable extends Reference {
 		private String variable;
-		private List<Reference> lowerBounds;
+		private Reference lowerBound;
 
-		public Variable(String variable, List<Reference> lowerBounds,
+		public Variable(String variable, Reference lowerBound,
 				Attribute... attributes) {
 			super(attributes);
 			this.variable = variable;
-			this.lowerBounds = lowerBounds;
+			this.lowerBound = lowerBound;
 		}
 
 		public String variable() {
 			return variable;
 		}
 
-		public List<Reference> lowerBounds() {
-			return lowerBounds;
+		public Reference lowerBound() {
+			return lowerBound;
 		}		
 		
 		public boolean equals(Object o) {
 			if (o instanceof Variable) {
 				Variable v = (Variable) o;
 				return variable.equals(v.variable)
-						&& lowerBounds.equals(v.lowerBounds);
+						&& lowerBound.equals(v.lowerBound);
 			}
 			return false;
 		}		
+	}
+	
+	/**
+	 * An intersection type represents a (unknown) type which known to be a
+	 * subtype of several types. For example, given types T1 and T2, then their
+	 * intersection type is T1 & T2. The intersection type represents an object
+	 * which is *both* an instance of T1 and an instance of T2. Thus, we always
+	 * have that T1 :> T1 & T2 and T2 :> T1 & T2.
+	 * 
+	 * @author djp
+	 */
+	public static class Intersection extends Reference {
+		private List<Type.Reference> bounds;
+		
+		public Intersection(List<Type.Reference> bounds,
+				Attribute... attributes) {
+			super(attributes);
+			this.bounds = bounds;
+		}
+		
+		public List<Type.Reference> bounds() {
+			return bounds;
+		}					
 	}
 }

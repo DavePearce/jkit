@@ -973,9 +973,10 @@ public class TypeSystem {
 	 *             If it cannot find a matching method.
 	 */
 	public Triple<Clazz, Method, Type.Function> resolveMethod(
-			Type.Clazz receiver, String name,
+			Type.Reference receiver, String name,
 			List<Type> concreteParameterTypes, ClassLoader loader)
 			throws ClassNotFoundException, MethodNotFoundException {
+		
 		if(loader == null) {
 			throw new IllegalArgumentException("loader cannot be null");
 		}
@@ -990,8 +991,8 @@ public class TypeSystem {
 		}		
 		
 		// Phase 1: traverse heirarchy whilst ignoring autoboxing and varargs
-		Triple<jkit.jil.Clazz, jkit.jil.Method, Type.Function> methodInfo = resolveMethod(receiver,
-				name, concreteParameterTypes, false, false, loader);
+		Triple<jkit.jil.Clazz, jkit.jil.Method, Type.Function> methodInfo = resolveMethod(
+				receiver, name, concreteParameterTypes, false, false, loader);
 
 		if (methodInfo == null) {
 			// Phase 2: Ok, phase 1 failed, so now consider autoboxing.
@@ -1054,10 +1055,36 @@ public class TypeSystem {
 	 * @throws ClassNotFoundException
 	 */
 	protected Triple<Clazz, Method, Type.Function> resolveMethod(
-			Type.Clazz receiver, String name,
+			Type.Reference receiver, String name,
 			List<Type> concreteParameterTypes, boolean autoboxing,
 			boolean varargs, ClassLoader loader) throws ClassNotFoundException {				
 		
+		if(receiver instanceof Type.Clazz) {
+			return resolveMethod((Type.Clazz) receiver, name,
+					concreteParameterTypes, autoboxing, varargs, loader);
+		} else if(receiver instanceof Type.Intersection) {
+			Type.Intersection it = (Type.Intersection) receiver;
+			for(Type.Reference b : it.bounds()) {
+				Triple<Clazz, Method, Type.Function> r = resolveMethod(b, name,
+						concreteParameterTypes, autoboxing, varargs, loader);
+				if(r != null) {
+					return r;
+				}
+			}
+		} else {
+			// interesting question as to what we should do if there's an array
+			// here.
+		}
+		
+		// failure
+		return null;		
+	}
+
+	protected Triple<Clazz, Method, Type.Function> resolveMethod(
+			Type.Clazz receiver, String name,
+			List<Type> concreteParameterTypes, boolean autoboxing,
+			boolean varargs, ClassLoader loader) throws ClassNotFoundException {				
+
 		// traverse class hierarchy looking for field
 		ArrayList<Type.Clazz> worklist = new ArrayList<Type.Clazz>();
 		worklist.add(receiver);
@@ -1091,6 +1118,8 @@ public class TypeSystem {
 					mt = (Type.Function) substitute(mt, bind(
 							concreteFunctionType, mt, m.isVariableArity(),
 							loader));											
+					
+					System.out.println("CANDIDATE: " + mt);
 					
 					mts.add(new Triple<Clazz, Method, Type.Function>(c, m, mt));					 				
 				}

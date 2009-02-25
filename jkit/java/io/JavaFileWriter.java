@@ -957,7 +957,9 @@ public class JavaFileWriter {
 			writeWildcardType((Type.Wildcard)t);
 		} else if(t instanceof Type.Variable) {
 			writeVariableType((Type.Variable)t);
-		} else if(t instanceof Type.Primitive) {
+		} else if(t instanceof Type.Intersection) {
+			writeIntersectionType((Type.Intersection)t);
+		} else if(t instanceof Type.Primitive) {		
 			writePrimitiveType((Type.Primitive)t);
 		}
 	}
@@ -1001,19 +1003,30 @@ public class JavaFileWriter {
 		}		
 	}
 	
-	protected void writeVariableType(Type.Variable vt) {
-		write(vt.variable());
-		
-		if(vt.lowerBounds().size() > 0) {
-			write(" extends ");
+	protected void writeIntersectionType(Type.Intersection vt) {
+		if(vt.bounds().size() > 1) {
+			write("(");
 			boolean firstTime = true;
-			for(Type lb : vt.lowerBounds()) {
+			for(Type.Reference b : vt.bounds()) {
 				if(!firstTime) {
 					write(" & ");
 				}
 				firstTime=false;
-				writeType(lb);	
-			}			
+				writeType(b);
+			}
+			write(")");
+		} else {
+			writeType(vt.bounds().get(0));
+		}
+		 	
+	}
+	
+	protected void writeVariableType(Type.Variable vt) {
+		write(vt.variable());
+		
+		if(vt.lowerBound() != null) {
+			write(" extends ");
+			writeType(vt.lowerBound());			
 		} 	
 	}
 	

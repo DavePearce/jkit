@@ -534,9 +534,19 @@ public class TypeResolution {
 			return resolve((jkit.java.tree.Type.Wildcard)t);
 		} else if(t instanceof jkit.java.tree.Type.Variable) {
 			return resolve((jkit.java.tree.Type.Variable)t);
+		} else if(t instanceof jkit.java.tree.Type.Intersection) {
+			return resolve((jkit.java.tree.Type.Intersection)t);
 		}
 		
 		return null;
+	}
+	
+	protected jkit.jil.Type.Intersection resolve(jkit.java.tree.Type.Intersection pt) {
+		ArrayList<jkit.jil.Type.Reference> bounds = new ArrayList();
+		for(jkit.java.tree.Type.Reference b : pt.bounds()) {
+			bounds.add((Type.Reference) resolve(b));
+		}
+		return new jkit.jil.Type.Intersection(bounds);
 	}
 	
 	protected jkit.jil.Type.Primitive resolve(jkit.java.tree.Type.Primitive pt) {
@@ -572,14 +582,11 @@ public class TypeResolution {
 	}
 	
 	protected jkit.jil.Type.Variable resolve(jkit.java.tree.Type.Variable t) {		
-		List<Type.Reference> args = null;
-		if(t.lowerBounds() != null) {
-			args = new ArrayList<Type.Reference>();
-			for(jkit.java.tree.Type.Reference r : t.lowerBounds()) {
-				args.add((Type.Reference) resolve(r));
-			}
+		Type.Reference arg = null;
+		if(t.lowerBound() != null) {					
+			arg = (Type.Reference) resolve(t.lowerBound());
 		}
-		return new jkit.jil.Type.Variable(t.variable(),args);
+		return new jkit.jil.Type.Variable(t.variable(),arg);
 	}
 	
 	/**

@@ -492,7 +492,7 @@ public class ClassFileReader {
 			// this is a type variable
 			int start = ++pos;
 			while(descriptor.charAt(pos) != ';') { ++pos; }			
-			Type type = new Type.Variable(descriptor.substring(start,pos), new ArrayList<Type.Reference>());
+			Type type = new Type.Variable(descriptor.substring(start,pos), null);
 			return new Pair<Type,Integer>(type,pos+1);
 		} else if(c == '+') {			
 			// FIXME: added wildcard upper bound
@@ -606,11 +606,13 @@ public class ClassFileReader {
 			ArrayList<Type.Reference> is = new ArrayList<Type.Reference>();
 			is.add(lowerBound);
 			for(int i=0;i!=ints.size();++i) { is.add(ints.get(i)); }
-			return new Pair<Type.Variable, Integer>(new Type.Variable(id,is),pos);
+			Type.Intersection it = new Type.Intersection(is);
+			return new Pair<Type.Variable, Integer>(new Type.Variable(id,it),pos);
 		} else {
 			ArrayList<Type.Reference> is = new ArrayList<Type.Reference>();
 			is.add(lowerBound);
-			return new Pair<Type.Variable, Integer>(new Type.Variable(id,is),pos);	
+			Type.Intersection it = new Type.Intersection(is);
+			return new Pair<Type.Variable, Integer>(new Type.Variable(id,it),pos);	
 		}		
 	}
 	

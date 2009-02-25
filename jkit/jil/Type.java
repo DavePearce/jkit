@@ -416,50 +416,103 @@ public interface Type extends Attribute {
      */
 	public static class Variable extends SyntacticElementImpl implements Reference {
 		private String variable;
-		private List<Type.Reference> lowerBounds;
+		private Type.Reference lowerBound;
 
-		public Variable(String variable, List<Type.Reference> lowerBounds,
+		public Variable(String variable, Type.Reference lowerBound,
 				Attribute... attributes) {
 			super(attributes);
 			this.variable = variable;
-			this.lowerBounds = lowerBounds;
+			this.lowerBound = lowerBound;
 		}
 
 		public String variable() {
 			return variable;
 		}
 
-		public List<Type.Reference> lowerBounds() {
-			return lowerBounds;
+		public Type.Reference lowerBound() {
+			return lowerBound;
 		}		
 		
 		public boolean equals(Object o) {			
 			if (o instanceof Variable) {
 				Variable v = (Variable) o;
 				return variable.equals(v.variable)
-						&& lowerBounds.equals(v.lowerBounds);
+						&& lowerBound == v.lowerBound
+						&& (lowerBound == null || lowerBound
+								.equals(v.lowerBound));
 			}
 			return false;
 		}
 		
 		public String toString() {
-			if(lowerBounds == null || lowerBounds.size() == 0) {
+			if(lowerBound == null) {
 				return variable;
-			} else {
-				String r = variable + " extends (";
-				boolean firstTime = true;
-				for(Type t : lowerBounds) {
-					if(!firstTime) {
-						r += " & ";
-					}
-					r += t.toString();
-				}
-				return r + ")";				
+			} else {					
+				return variable + " extends " + lowerBound;				
 			}
 		}
 		
 		public int hashCode() {
 			return variable.hashCode();
+		}
+	}
+	
+	/**
+	 * An intersection type represents a (unknown) type which known to be a
+	 * subtype of several types. For example, given types T1 and T2, then their
+	 * intersection type is T1 & T2. The intersection type represents an object
+	 * which is *both* an instance of T1 and an instance of T2. Thus, we always
+	 * have that T1 :> T1 & T2 and T2 :> T1 & T2.
+	 * 
+	 * @author djp
+	 */
+	public static class Intersection extends SyntacticElementImpl implements Reference {
+		private List<Type.Reference> bounds;
+		
+		public Intersection(List<Type.Reference> bounds,
+				Attribute... attributes) {
+			super(attributes);
+			this.bounds = bounds;
+		}
+		
+		public List<Type.Reference> bounds() {
+			return bounds;
+		}
+		
+		public String toString() {
+			String r = "";
+			if(bounds.size() > 1) { r += "("; }
+			boolean firstTime = true;
+			for(Type.Reference b : bounds) {
+				if(!firstTime) { r += " & "; }
+				firstTime = false;
+				r += b.toString();
+			}
+			if(bounds.size() > 1) { r += ")"; }
+			return r;
+		}
+		
+		public boolean equals(Object o) {
+			if(o instanceof Intersection) {
+				Intersection t = (Intersection) o;
+				if(t.bounds.size() == bounds.size()) {
+					for(int i=0;i!=bounds.size();++i) {
+						if(!t.bounds.get(i).equals(bounds.get(i))) {
+							return false;
+						}
+					}
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		public int hashCode() {
+			int hc = 0;
+			for(Type.Reference r : bounds) {
+				hc ^= r.hashCode();
+			}
+			return hc;
 		}
 	}
 	

@@ -1621,7 +1621,7 @@ public class JavaFileReader {
 			} else if (ct.equals("double")) {
 				r = new Type.Double(loc);
 			} else if(genericVariables.contains(ct)) {
-				return new Type.Variable(ct,new ArrayList<Type.Reference>(),loc);
+				return new Type.Variable(ct,null,loc);
 			} else {
 
 				// === NON-PRIMITIVE TYPES ===
@@ -1659,8 +1659,9 @@ public class JavaFileReader {
 		if(type.getChildCount() == 1 && genericVariables.contains(type.getChild(0).getText())) {
 			SourceLocation loc = new SourceLocation(type.getLine(), type
 					.getCharPositionInLine());
+			
 			return new Type.Variable(type.getChild(0).getText(),
-					new ArrayList<Type.Reference>(),loc);
+					null,loc);
 		} else {
 			return parseClassType(type,genericVariables);
 		}
@@ -1713,8 +1714,13 @@ public class JavaFileReader {
 						.getChild(i), genericVariables));
 			}
 		}
-		return new Type.Variable(text, lowerBounds, new SourceLocation(
-				type.getLine(), type.getCharPositionInLine()));
+		
+		// here, we need to build an intersection type.
+		SourceLocation loc = new SourceLocation(type.getLine(), type
+				.getCharPositionInLine());
+		Type.Reference lowerBound = new Type.Intersection(lowerBounds, loc);
+		
+		return new Type.Variable(text, lowerBound, loc);
 	}
 
 	public static void printTree(Tree ast, int n, int line) {
