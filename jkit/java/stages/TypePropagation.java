@@ -692,7 +692,7 @@ public class TypePropagation {
 			{
 				if ((lhs_t instanceof Type.Primitive || isWrapper(lhs_t))
 						&& (rhs_t instanceof Type.Primitive || isWrapper(rhs_t))) {
-					Type rt = binaryNumericPromotion(lhs_t, rhs_t);
+					Type rt = binaryNumericPromotion(lhs_t, rhs_t, e);
 					e.setLhs(implicitCast(e.lhs(), rt));
 					e.setRhs(implicitCast(e.rhs(), rt));
 					e.attributes().add(new Type.Bool());
@@ -712,7 +712,7 @@ public class TypePropagation {
 			{						
 				if ((lhs_t instanceof Type.Primitive || isWrapper(lhs_t))
 						&& (rhs_t instanceof Type.Primitive || isWrapper(rhs_t))) {
-					Type rt = binaryNumericPromotion(lhs_t, rhs_t);
+					Type rt = binaryNumericPromotion(lhs_t, rhs_t, e);
 					e.setLhs(implicitCast(e.lhs(), rt));
 					e.setRhs(implicitCast(e.rhs(), rt));
 					e.attributes().add(rt);
@@ -732,7 +732,7 @@ public class TypePropagation {
 			{					
 				if ((lhs_t instanceof Type.Primitive || isWrapper(lhs_t))
 						&& (rhs_t instanceof Type.Primitive || isWrapper(rhs_t))) {
-					Type rt_left = unaryNumericPromotion(lhs_t);
+					Type rt_left = unaryNumericPromotion(lhs_t, e);
 					e.setLhs(implicitCast(e.lhs(), rt_left));
 					e.setRhs(implicitCast(e.rhs(), new Type.Int()));
 					e.attributes().add(rt_left);
@@ -755,7 +755,7 @@ public class TypePropagation {
 			{								
 				if ((lhs_t instanceof Type.Primitive || isWrapper(lhs_t))
 						&& (rhs_t instanceof Type.Primitive || isWrapper(rhs_t))) {
-					Type rt = binaryNumericPromotion(lhs_t, rhs_t);
+					Type rt = binaryNumericPromotion(lhs_t, rhs_t, e);
 					e.setLhs(implicitCast(e.lhs(),rt));
 					e.setRhs(implicitCast(e.rhs(),rt));
 					e.attributes().add(rt);						
@@ -845,12 +845,38 @@ public class TypePropagation {
 				e.attributes().add(rhs_t);
 				return;
 			}
-		} else {
-			Type rt = binaryNumericPromotion(lhs_t,rhs_t);
+		} else if ((isWrapper(lhs_t) || isWrapper(rhs_t))
+				&& (lhs_t instanceof Type.Primitive || rhs_t instanceof Type.Primitive)) {
+			Type rt = binaryNumericPromotion(lhs_t,rhs_t,e);
 			e.attributes().add(rt);
 			e.setTrueBranch(implicitCast(e.trueBranch(),rt));
 			e.setFalseBranch(implicitCast(e.falseBranch(),rt));
-		}				
+		} else if(lhs_t instanceof Type.Reference && rhs_t instanceof Type.Reference) {
+			// At this point, we have some class types and we need to determine
+			// their greatest lower bound.
+			Type rt;
+			if(lhs_t instanceof Type.Clazz && rhs_t instanceof Type.Clazz) {
+				try {
+					rt = types.greatestSupertype((Type.Clazz) lhs_t,
+							(Type.Clazz) rhs_t, loader);
+				} catch(ClassNotFoundException cne) {
+					syntax_error(cne.getMessage(),e,cne);
+					return; // dead code
+				}				
+			} else if(lhs_t instanceof Type.Clazz || rhs_t instanceof Type.Clazz) {
+				rt = new Type.Clazz("java.lang","Object");
+			} else if(lhs_t.equals(rhs_t)) {
+				rt = lhs_t;
+			} else {
+				syntax_error("cannot determine result type for ternary operator",e);
+				return; // dead code
+			}
+			
+			e.attributes().add(rt);
+		} else {
+			// i'm not sure how you can get here.
+			syntax_error("cannot determine result type for ternary operator",e);
+		}
 	}
 	
 	/**
@@ -910,10 +936,10 @@ public class TypePropagation {
      * @param var
      * @return
      */
-	public Type.Primitive unaryNumericPromotion(Type lhs) {
+	public Type.Primitive unaryNumericPromotion(Type lhs, SyntacticElement e) {
 		// First, we must unbox either operand if they are boxed.		
 		if(lhs instanceof Type.Clazz) {
-			lhs = unboxedType((Type.Clazz) lhs);
+			lhs = unboxedType((Type.Clazz) lhs,e);
 		}
 		
 		if (lhs instanceof Type.Char || lhs instanceof Type.Short
@@ -933,14 +959,14 @@ public class TypePropagation {
      * @param rhs
      * @return
      */
-	public Type.Primitive binaryNumericPromotion(Type lhs, Type rhs) {
+	public Type.Primitive binaryNumericPromotion(Type lhs, Type rhs, SyntacticElement e) {
 		
 		// First, we must unbox either operand if they are boxed.
 		if(lhs instanceof Type.Clazz) {
-			lhs = unboxedType((Type.Clazz) lhs);
+			lhs = unboxedType((Type.Clazz) lhs,e);
 		}
 		if(rhs instanceof Type.Clazz) {
-			rhs = unboxedType((Type.Clazz) rhs);
+			rhs = unboxedType((Type.Clazz) rhs,e);
 		}
 		
 		// Second, convert to the appropriate type
@@ -1000,7 +1026,7 @@ public class TypePropagation {
 	 * @param p
 	 * @return
 	 */
-	protected Type.Primitive unboxedType(Type.Clazz p) {
+	protected Type.Primitive unboxedType(Type.Clazz p, SyntacticElement e) {
 		assert isWrapper(p);		
 		String type = p.components().get(p.components().size()-1).first();
 		
@@ -1021,8 +1047,9 @@ public class TypePropagation {
 		} else if(type.equals("Double")) {
 			return new Type.Double();
 		} else {
-			throw new RuntimeException("Unknown boxed type \"" + p.toString()
-					+ "\" encountered.");
+			syntax_error("unknown boxed type \"" + p.toString()
+					+ "\" encountered.",e);
+			return null; // very dead!
 		}
 	}
 	
