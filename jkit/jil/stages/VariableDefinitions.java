@@ -1,13 +1,9 @@
-package jkit.jkil.stages;
+package jkit.jil.stages;
 
 import java.util.*;
 
 import jkit.compiler.InternalException;
 import jkit.compiler.Stage;
-import jkit.jkil.Clazz;
-import jkit.jkil.FlowGraph;
-import jkit.jkil.Method;
-import jkit.jkil.FlowGraph.*;
 import jkit.util.dfa.*;
 
 /**

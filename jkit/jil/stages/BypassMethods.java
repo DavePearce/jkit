@@ -1,4 +1,4 @@
-package jkit.jkil.stages;
+package jkit.jil.stages;
 
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -7,11 +7,6 @@ import jkit.compiler.ClassTable;
 import jkit.compiler.InternalException;
 import jkit.compiler.MethodNotFoundException;
 import jkit.compiler.Stage;
-import jkit.jkil.Clazz;
-import jkit.jkil.FlowGraph;
-import jkit.jkil.Method;
-import jkit.jkil.Type;
-import jkit.jkil.FlowGraph.*;
 import jkit.util.*;
 
 /**

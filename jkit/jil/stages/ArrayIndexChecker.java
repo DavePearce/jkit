@@ -1,4 +1,4 @@
-package jkit.jkil.stages;
+package jkit.jil.stages;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,13 +10,6 @@ import com.sun.org.apache.xml.internal.utils.IntVector;
 
 import jkit.compiler.InternalException;
 import jkit.compiler.Stage;
-import jkit.jkil.Clazz;
-import jkit.jkil.FlowGraph;
-import jkit.jkil.Method;
-import jkit.jkil.Type;
-import jkit.jkil.TypeElement;
-import jkit.jkil.FlowGraph.*;
-import jkit.jkil.FlowGraph.Number;
 import jkit.util.dfa.BackwardAnalysis;
 import jkit.util.dfa.UnionFlowSet;
 

@@ -97,7 +97,7 @@ public class Mocha {
 					new jkit.java.stages.old.ForEachLoop(),
 					new jkit.java.stages.old.Exceptions(),
 					new jkit.java.stages.old.Subtyping(),
-					new jkit.jkil.stages.VariableDefinitions());
+					new jkit.jil.stages.VariableDefinitions());
 			readClass = JavaFileReader.class;
 		} else {
 			p = new Pipeline(MochaFileReader.class, 
