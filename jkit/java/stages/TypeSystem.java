@@ -54,12 +54,11 @@ public class TypeSystem {
 			return subtype((Type.Primitive) t1, (Type.Primitive) t2);
 		} else if(t1 instanceof Type.Array && t2 instanceof Type.Array) {
 			return subtype((Type.Array) t1, (Type.Array) t2, loader);
-		} 
-				
-		// Now, we have to do the harder cases.
-		if(t2 instanceof Type.Array && t1 instanceof Type.Clazz) {
+		} else if(t2 instanceof Type.Array && t1 instanceof Type.Clazz) {
 			return new Type.Clazz("java.lang","Object").equals(t1);
-		} 		
+		} else if(t1 instanceof Type.Variable && t2 instanceof Type.Variable) {
+			return t1.equals(t2);
+		}
 		
 		return false;
 	}
@@ -1091,7 +1090,7 @@ public class TypeSystem {
 					
 					mt = (Type.Function) substitute(mt, bind(
 							concreteFunctionType, mt, m.isVariableArity(),
-							loader));						
+							loader));											
 					
 					mts.add(new Triple<Clazz, Method, Type.Function>(c, m, mt));					 				
 				}
@@ -1141,8 +1140,8 @@ public class TypeSystem {
 				for (int j = 0; j != numToCheck; ++j) {
 					Type p1 = mps[j];
 					Type p2 = params[j];
-
-					if (!subtype(p1,p2,loader)) {
+					
+					if (!subtype(p1,p2,loader)) {					
 						continue outer;
 					}
 					
