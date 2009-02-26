@@ -284,11 +284,13 @@ public class TypeChecking {
 		checkExpression(stmt.condition());
 		checkStatement(stmt.trueStatement());		
 		checkStatement(stmt.falseStatement());		
-				
-		Type c_t = (Type) stmt.condition().attribute(Type.class);
 		
-		if(!(c_t instanceof Type.Bool)) {
-			syntax_error("required type boolean, found " + c_t, stmt);								
+		if(stmt.condition() != null) {
+			Type c_t = (Type) stmt.condition().attribute(Type.class);
+
+			if(!(c_t instanceof Type.Bool)) {
+				syntax_error("required type boolean, found " + c_t, stmt);								
+			}
 		}
 	}
 	
@@ -296,10 +298,12 @@ public class TypeChecking {
 		checkExpression(stmt.condition());
 		checkStatement(stmt.body());
 
-		Type c_t = (Type) stmt.condition().attribute(Type.class);
+		if(stmt.condition() != null) {
+			Type c_t = (Type) stmt.condition().attribute(Type.class);
 
-		if (!(c_t instanceof Type.Bool)) {
-			syntax_error("required type boolean, found " + c_t, stmt);
+			if (!(c_t instanceof Type.Bool)) {
+				syntax_error("required type boolean, found " + c_t, stmt);
+			}
 		}
 	}
 	
@@ -307,10 +311,12 @@ public class TypeChecking {
 		checkExpression(stmt.condition());
 		checkStatement(stmt.body());
 
-		Type c_t = (Type) stmt.condition().attribute(Type.class);
+		if(stmt.condition() != null) {
+			Type c_t = (Type) stmt.condition().attribute(Type.class);
 
-		if (!(c_t instanceof Type.Bool)) {
-			syntax_error("required type boolean, found " + c_t, stmt);			
+			if (!(c_t instanceof Type.Bool)) {
+				syntax_error("required type boolean, found " + c_t, stmt);			
+			}
 		}
 	}
 	
@@ -320,10 +326,12 @@ public class TypeChecking {
 		checkStatement(stmt.increment());
 		checkStatement(stmt.body());
 
-		Type c_t = (Type) stmt.condition().attribute(Type.class);
+		if(stmt.condition() != null) {
+			Type c_t = (Type) stmt.condition().attribute(Type.class);
 
-		if (!(c_t instanceof Type.Bool)) {
-			syntax_error("required type boolean, found " + c_t, stmt);			
+			if (!(c_t instanceof Type.Bool)) {
+				syntax_error("required type boolean, found " + c_t, stmt);			
+			}
 		}
 	}
 	

@@ -298,7 +298,7 @@ public class TypePropagation {
 	
 	protected void doFor(Stmt.For stmt) {		
 		doStatement(stmt.initialiser());
-		doExpression(stmt.condition());
+		doExpression(stmt.condition());		
 		stmt.setCondition(implicitCast(stmt.condition(), new Type.Bool()));
 		doStatement(stmt.increment());
 		doStatement(stmt.body());	
@@ -1080,6 +1080,7 @@ public class TypePropagation {
 	 * @return
 	 */
 	protected Expr implicitCast(Expr e, Type t) {
+		if(e == null) { return null; }
 		Type e_t = (Type) e.attribute(Type.class);
 		// insert implicit casts for primitive types.
 		if (!e_t.equals(t)
