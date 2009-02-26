@@ -226,7 +226,7 @@ public interface Type extends Attribute {
      * @author djp
      */
 	public static class Array implements Reference {		
-		private Type element;
+		private final Type element;
 		
 		public Array(Type element) {
 			this.element = element;			
@@ -259,8 +259,8 @@ public interface Type extends Attribute {
      * 
      */
 	public static class Clazz implements Reference {		
-		private String pkg;
-		private List<Pair<String, List<Type.Reference>>> components;
+		private final String pkg;
+		private final List<Pair<String, List<Type.Reference>>> components;
 		
 		public Clazz(String pkg, List<Pair<String, List<Type.Reference>>> components) {
 			this.pkg = pkg;
@@ -275,12 +275,7 @@ public interface Type extends Attribute {
 		
 		public List<Pair<String, List<Type.Reference>>> components() {
 			return components;
-		}
-		
-		public void setComponents(
-				List<Pair<String, List<Type.Reference>>> components) {
-			this.components = components;
-		}
+		}		
 		
 		/**
          * Return the package. If no package, then the value is simply "",
@@ -347,8 +342,8 @@ public interface Type extends Attribute {
      * 
      */
 	public static class Wildcard implements Reference {
-		private Type.Reference lowerBound;
-		private Type.Reference upperBound;
+		private final Type.Reference lowerBound;
+		private final Type.Reference upperBound;
 
 		public Wildcard(Type.Reference lowerBound, Type.Reference upperBound) {			
 			this.lowerBound = lowerBound;
@@ -415,8 +410,8 @@ public interface Type extends Attribute {
      * 
      */
 	public static class Variable extends SyntacticElementImpl implements Reference {
-		private String variable;
-		private Type.Reference lowerBound;
+		private final String variable;
+		private final Type.Reference lowerBound;
 
 		public Variable(String variable, Type.Reference lowerBound,
 				Attribute... attributes) {
@@ -467,12 +462,12 @@ public interface Type extends Attribute {
 	 * @author djp
 	 */
 	public static class Intersection extends SyntacticElementImpl implements Reference {
-		private List<Type.Reference> bounds;
+		private final ArrayList<Type.Reference> bounds;
 		
 		public Intersection(List<Type.Reference> bounds,
 				Attribute... attributes) {
 			super(attributes);
-			this.bounds = bounds;
+			this.bounds = new ArrayList<Type.Reference>(bounds);
 		}
 		
 		public List<Type.Reference> bounds() {

@@ -1718,9 +1718,15 @@ public class JavaFileReader {
 		// here, we need to build an intersection type.
 		SourceLocation loc = new SourceLocation(type.getLine(), type
 				.getCharPositionInLine());
-		Type.Reference lowerBound = new Type.Intersection(lowerBounds, loc);
 		
-		return new Type.Variable(text, lowerBound, loc);
+		if(lowerBounds.size() > 1) {
+			Type.Intersection lowerBound = new Type.Intersection(lowerBounds, loc);
+			return new Type.Variable(text, lowerBound, loc);
+		} else if(lowerBounds.size() == 1) {
+			return new Type.Variable(text, lowerBounds.get(0), loc);		
+		} else {
+			return new Type.Variable(text, null, loc);
+		}
 	}
 
 	public static void printTree(Tree ast, int n, int line) {

@@ -44,7 +44,8 @@ public class TypeSystem {
 		}
 		if(t2 == null) {
 			throw new IllegalArgumentException("t2 cannot be null");
-		}	
+		}			
+			
 		// First, do the easy cases ...		
 		if(t1 instanceof Type.Reference && t2 instanceof Type.Null) {
 			return true; // null is a subtype of all references.
@@ -56,6 +57,13 @@ public class TypeSystem {
 			return subtype((Type.Array) t1, (Type.Array) t2, loader);
 		} else if(t2 instanceof Type.Array && t1 instanceof Type.Clazz) {
 			return new Type.Clazz("java.lang","Object").equals(t1);
+		}  else if(t2 instanceof Type.Variable && t1 instanceof Type.Clazz) {
+			Type.Variable tv = (Type.Variable) t2;
+			if(tv.lowerBound() != null) {
+				return subtype(t1,tv.lowerBound(),loader);
+			} else {
+				return new Type.Clazz("java.lang","Object").equals(t1);
+			}
 		} else if(t1 instanceof Type.Variable && t2 instanceof Type.Variable) {
 			return t1.equals(t2);
 		}
