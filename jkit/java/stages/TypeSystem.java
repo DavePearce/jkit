@@ -1100,7 +1100,7 @@ public class TypeSystem {
 			
 			for (jkit.jil.Method m : methods) {
 				// try to rule out as many impossible candidates as possible
-				Type.Function m_type = m.type();
+				Type.Function m_type = m.type();				
 				
 				if (m_type.parameterTypes().size() == concreteParameterTypes
 						.size()
@@ -1117,9 +1117,7 @@ public class TypeSystem {
 					
 					mt = (Type.Function) substitute(mt, bind(
 							concreteFunctionType, mt, m.isVariableArity(),
-							loader));											
-					
-					System.out.println("CANDIDATE: " + mt);
+							loader));																
 					
 					mts.add(new Triple<Clazz, Method, Type.Function>(c, m, mt));					 				
 				}

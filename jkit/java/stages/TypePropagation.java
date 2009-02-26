@@ -482,7 +482,7 @@ public class TypePropagation {
 					
 					if(vt.lowerBound() != null) {
 						receiver = vt.lowerBound(); 
-					} else {
+					} else {						
 						receiver = new Type.Clazz("java.lang","Object");
 					}
 				} else {

@@ -151,14 +151,11 @@ public class ScopeResolution {
 	 */
 	private static class Scope {
 		public final HashMap<String,Pair<Type,List<Modifier>>> variables;
-		public final HashMap<String,Type.Variable> typeVars;
 		public Scope() {
 			this.variables = new HashMap<String,Pair<Type,List<Modifier>>>();
-			this.typeVars = new HashMap<String,Type.Variable>();
 		}
 		public Scope(HashMap<String,Pair<Type,List<Modifier>>> variables) {
 			this.variables = variables;
-			this.typeVars = new HashMap<String,Type.Variable>();
 		}
 	}
 	
@@ -257,14 +254,7 @@ public class ScopeResolution {
 				
 		// And, push on a scope representing this class definition.
 		ClassScope myScope = new ClassScope(myType,superType,c.isStatic()); 
-		scopes.add(myScope);
-		
-		// Add my generic variables (sorry, a bit yucky)
-		for (Type.Reference _v : myType.components().get(
-				myType.components().size() - 1).second()) {
-			Type.Variable v = (Type.Variable) _v; // this must be true			
-			myScope.typeVars.put(v.variable(), v);
-		}
+		scopes.add(myScope);				
 		
 		for(Decl d : c.declarations()) {
 			doDeclaration(d, file);
@@ -282,17 +272,10 @@ public class ScopeResolution {
 		
 		scopes.push(myScope);
 		
-		int count = 1;
-				
-		// Add my generic variables (sorry, a bit yucky)
-		for (Type.Variable v : myType.typeArguments()) {			
-			myScope.typeVars.put(v.variable(), v);
-		}		
-		
 		for (Triple<String, List<Modifier>, jkit.java.tree.Type> t : d
 				.parameters()) {
 			Type type = (Type) t.third().attribute(Type.class);						
-			Pair<Type, List<Modifier>> p = new Pair(substituteTypeVars(type), t
+			Pair<Type, List<Modifier>> p = new Pair(type, t
 					.second());			
 			myScope.variables.put(t.first(), p);
 		}		
@@ -1029,75 +1012,7 @@ public class ScopeResolution {
 		e.setFalseBranch(doExpression(e.falseBranch(), file));
 		return e;
 	}
-		
-	/**
-	 * The aim of this method is to substitute occurences of type variables for
-	 * their "full" generic type. For example, consider this code:
-	 * 
-	 * <pre>
-	 * public class Test&lt;T extends String&gt; {
-	 *  public void add(T x) { ... }
-	 * }
-	 * </pre>
-	 * 
-	 * Here, the declared type of variable x is "T". However, the full type of
-	 * variable x is "T extends String". Having the full type is crucial to
-	 * being able to resolve method invocations, for example, on that variable.
-	 * Therefore, this method identifies occurrences of a variable and replaces
-	 * it with the version from the actual declaration.
-	 * 
-	 * @param t
-	 * @return
-	 */
-	protected Type substituteTypeVars(Type t) {
-		if(t instanceof Type.Array) {
-			return substituteTypeVars((Type.Array)t);
-		} else if(t instanceof Type.Clazz) {
-			return substituteTypeVars((Type.Clazz)t);
-		} else if(t instanceof Type.Variable) {
-			return substituteTypeVars((Type.Variable)t);
-		} else if(t instanceof Type.Wildcard) {
-			return substituteTypeVars((Type.Wildcard)t);
-		}
-		
-		return t;
-	}
-	
-	protected Type substituteTypeVars(Type.Array t) {
-		return new Type.Array(substituteTypeVars(t));
-	}
-	
-	protected Type substituteTypeVars(Type.Clazz t) {
-		ArrayList<Pair<String, List<Type.Reference>>> ncomponents = new ArrayList();
-		
-		for(Pair<String, List<Type.Reference>> p : t.components()) {
-			ArrayList<Type.Reference> vars = new ArrayList();
-			for(Type.Reference r : p.second()) {
-				vars.add((Type.Reference) substituteTypeVars(r));
-			}
-			ncomponents.add(new Pair(p.first(),vars));
-		}
-		
-		return new Type.Clazz(t.pkg(),ncomponents);
-	}
-	
-	protected Type substituteTypeVars(Type.Wildcard t) {
-		return new Type.Wildcard((Type.Reference) substituteTypeVars(t.lowerBound()),
-				(Type.Reference) substituteTypeVars(t.upperBound()));
-	}
-	
-	protected Type substituteTypeVars(Type.Variable t) {
-		for(int i=scopes.size()-1;i>=0;--i) {
-			Scope scope = scopes.get(i);
-			Type.Variable v = scope.typeVars.get(t.variable());
-			if(v != null) {
-				return v;
-			}
-		}
-		// this is probably a syntax error.
-		return t;
-	}
-	
+				
 	protected Scope findEnclosingScope() {
 		return scopes.get(scopes.size()-1);
 	}

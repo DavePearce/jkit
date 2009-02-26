@@ -61,7 +61,16 @@ public class TypeResolution {
 	private TypeSystem types;
 	// the classes stack is used to keep track of the full type for the inner
 	// classes.
-	private Stack<Type.Clazz> scopes = new Stack<Type.Clazz>();
+	
+	private static class Scope {
+		public final HashMap<String,Type.Variable> typeVars = new HashMap();
+		public Type.Clazz type;	
+		
+		public Scope() { type = null; }
+		public Scope(Type.Clazz type) { this.type = type; }
+	}
+	
+	private Stack<Scope> scopes = new Stack<Scope>();
 	private LinkedList<String> imports = new LinkedList<String>();
 	
 	public TypeResolution(ClassLoader loader, TypeSystem types) {
@@ -79,7 +88,7 @@ public class TypeResolution {
 		
 		// The first entry on to the classes stack is a dummy to set the package
 		// for remaining classes.		
-		scopes.push(new Type.Clazz(file.pkg(),new ArrayList()));		
+		scopes.push(new Scope(new Type.Clazz(file.pkg(), new ArrayList())));		
 		
 		// Now, examine all the declarations contain here-in
 		for(Decl d : file.declarations()) {			
@@ -114,30 +123,36 @@ public class TypeResolution {
 		// First, add myself to the import list, since that means we'll search
 		// in my class for types before searching anywhere else i've declared
 		// and/or on the CLASSPATH.
-		Type.Clazz parentType = scopes.peek();		
+		Type.Clazz parentType = getEnclosingClass();		
 		
 		imports.addFirst(computeImportDecl(parentType,c.name()));
 		
-		// Second, build my fully qualified type!		
+		// Second, create my scope.				
+		Scope myScope = new Scope();
+		scopes.push(myScope);
+		
+		// Third, build my fully qualified type!
 		List<Pair<String, List<Type.Reference>>> components = new ArrayList(parentType.components());
-		ArrayList<Type.Reference> typevars = new ArrayList<Type.Reference>();
+		ArrayList<Type.Reference> typevars = new ArrayList<Type.Reference>();		
 		for(jkit.java.tree.Type.Variable v : c.typeParameters()) {
-			typevars.add((Type.Reference) resolve(v));
-		}		
+			Type.Variable tv = (Type.Variable) substituteTypeVars(resolve(v));
+			typevars.add(tv);
+			myScope.typeVars.put(tv.variable(), tv);
+		}
 		components.add(new Pair(c.name(),typevars));
 		Type.Clazz myType = new Type.Clazz(parentType.pkg(),components);
 		c.attributes().add(myType); // record the type
 		
-		scopes.push(myType);
+		myScope.type = myType;		
 		
 		// 1) resolve types in my declared super class.
 		if(c.superclass() != null) {
-			c.superclass().attributes().add(resolve(c.superclass()));
+			c.superclass().attributes().add(substituteTypeVars(resolve(c.superclass())));
 		}		
 
 		// 2) resolve types in my declared interfaces
 		for(jkit.java.tree.Type.Clazz i : c.interfaces()) {
-			i.attributes().add(resolve(i));
+			i.attributes().add(substituteTypeVars(resolve(i)));
 		}			 						
 		
 		// 3) resolve types in my other declarations (e.g. fields, methods,inner
@@ -151,17 +166,30 @@ public class TypeResolution {
 	}
 
 	protected void doMethod(Method d) {
-		// First, resolve return type and parameter types. 
-		for(jkit.java.tree.Type.Clazz e : d.exceptions()) {
-			e.attributes().add(resolve(e));
+		Scope myScope = new Scope();		
+		scopes.push(myScope);
+		
+		
+		// Add my generic variables (sorry, a bit yucky)
+		ArrayList<Type.Variable> typeVars = new ArrayList<Type.Variable>();
+		for (jkit.java.tree.Type.Variable v : d.typeParameters()) {
+			Type.Variable tv = (Type.Variable) substituteTypeVars(resolve(v));
+			myScope.typeVars.put(v.variable(), tv);
+			typeVars.add(tv);
+			v.attributes().add(tv);
 		}		
 		
+		// First, resolve return type and parameter types. 
+		for(jkit.java.tree.Type.Clazz e : d.exceptions()) {
+			e.attributes().add(substituteTypeVars(resolve(e)));
+		}		
+				
 		Type returnType = new Type.Void();
 		List<Type> parameterTypes = new ArrayList<Type>();
 		
 		if(d.returnType() != null) {
 			// The return type may be null iff this is a constructor.
-			returnType = resolve(d.returnType());
+			returnType = substituteTypeVars(resolve(d.returnType()));
 			d.returnType().attributes().add(returnType);			
 		}
 		
@@ -172,7 +200,7 @@ public class TypeResolution {
 		for (int i = 0; i != paramLength; ++i) {
 			Triple<String, List<Modifier>, jkit.java.tree.Type> p = d
 					.parameters().get(i);
-			Type pt = resolve(p.third());
+			Type pt = substituteTypeVars(resolve(p.third()));
 			p.third().attributes().add(pt);
 			parameterTypes.add(pt);
 		}
@@ -187,15 +215,17 @@ public class TypeResolution {
 		
 		d.attributes().add(
 				new Type.Function(returnType, parameterTypes,
-						new ArrayList<Type.Variable>()));		
+						typeVars));		
 		
 		// Now, explore the method body for any other things to resolve.
 		doStatement(d.body());
+		
+		scopes.pop();
 	}
 
 	protected void doField(Field d) {
 		doExpression(d.initialiser());		
-		d.type().attributes().add(resolve(d.type()));
+		d.type().attributes().add(substituteTypeVars(resolve(d.type())));
 	}
 	
 	protected void doInitialiserBlock(Decl.InitialiserBlock d) {
@@ -280,13 +310,13 @@ public class TypeResolution {
 		doBlock(block.finaly());		
 		
 		for(Stmt.CatchBlock cb : block.handlers()) {
-			cb.type().attributes().add(resolve(cb.type()));
+			cb.type().attributes().add(substituteTypeVars(resolve(cb.type())));
 			doBlock(cb);			
 		}
 	}
 	
 	protected void doVarDef(Stmt.VarDef def) {
-		Type t = resolve(def.type());		
+		Type t = substituteTypeVars(resolve(def.type()));		
 		def.type().attributes().add(t);
 		
 		List<Triple<String, Integer, Expr>> defs = def.definitions();
@@ -349,7 +379,7 @@ public class TypeResolution {
 	}
 	
 	protected void doForEach(Stmt.ForEach stmt) {
-		Type t = resolve(stmt.type());
+		Type t = substituteTypeVars(resolve(stmt.type()));
 		stmt.type().attributes().add(t);
 		doExpression(stmt.source());
 		doStatement(stmt.body());
@@ -431,7 +461,7 @@ public class TypeResolution {
 	
 	protected void doNew(Expr.New e) {
 		// First, figure out the type being created.		
-		Type t = resolve(e.type());			
+		Type t = substituteTypeVars(resolve(e.type()));			
 		e.type().attributes().add(t);
 		
 		// Second, recurse through any parameters supplied ...
@@ -454,12 +484,12 @@ public class TypeResolution {
 	}
 	
 	protected void doInstanceOf(Expr.InstanceOf e) {		
-		e.rhs().attributes().add(resolve(e.rhs()));
+		e.rhs().attributes().add(substituteTypeVars(resolve(e.rhs())));
 		doExpression(e.lhs());
 	}
 	
 	protected void doCast(Expr.Cast e) {
-		e.type().attributes().add(resolve(e.type()));
+		e.type().attributes().add(substituteTypeVars(resolve(e.type())));
 		doExpression(e.expr());
 	}
 	
@@ -480,7 +510,7 @@ public class TypeResolution {
 	protected void doNullVal(Value.Null e) {}
 	
 	protected void doTypedArrayVal(Value.TypedArray e) {
-		e.type().attributes().add(resolve(e.type()));
+		e.type().attributes().add(substituteTypeVars(resolve(e.type())));
 		for(Expr v : e.values()) {
 			doExpression(v);
 		}
@@ -493,7 +523,7 @@ public class TypeResolution {
 	}
 	
 	protected void doClassVal(Value.Class e) {
-		e.value().attributes().add(resolve(e.value()));
+		e.value().attributes().add(substituteTypeVars(resolve(e.value())));
 	}
 	
 	protected void doVariable(Expr.UnresolvedVariable e) {					
@@ -694,6 +724,84 @@ public class TypeResolution {
 			syntax_error("unable to find class " + className,ct,e);
 			return null;
 		}
+	}
+	
+	/**
+	 * The aim of this method is to substitute occurences of type variables for
+	 * their "full" generic type. For example, consider this code:
+	 * 
+	 * <pre>
+	 * public class Test&lt;T extends String&gt; {
+	 *  public void add(T x) { ... }
+	 * }
+	 * </pre>
+	 * 
+	 * Here, the declared type of variable x is "T". However, the full type of
+	 * variable x is "T extends String". Having the full type is crucial to
+	 * being able to resolve method invocations, for example, on that variable.
+	 * Therefore, this method identifies occurrences of a variable and replaces
+	 * it with the version from the actual declaration.
+	 * 
+	 * @param t
+	 * @return
+	 */
+	protected Type substituteTypeVars(Type t) {
+		if(t instanceof Type.Array) {
+			return substituteTypeVars((Type.Array)t);
+		} else if(t instanceof Type.Clazz) {
+			return substituteTypeVars((Type.Clazz)t);
+		} else if(t instanceof Type.Variable) {
+			return substituteTypeVars((Type.Variable)t);
+		} else if(t instanceof Type.Wildcard) {
+			return substituteTypeVars((Type.Wildcard)t);
+		}
+		
+		return t;
+	}
+	
+	protected Type substituteTypeVars(Type.Array t) {
+		return new Type.Array(substituteTypeVars(t));
+	}
+	
+	protected Type substituteTypeVars(Type.Clazz t) {
+		ArrayList<Pair<String, List<Type.Reference>>> ncomponents = new ArrayList();
+		
+		for(Pair<String, List<Type.Reference>> p : t.components()) {
+			ArrayList<Type.Reference> vars = new ArrayList();
+			for(Type.Reference r : p.second()) {
+				vars.add((Type.Reference) substituteTypeVars(r));
+			}
+			ncomponents.add(new Pair(p.first(),vars));
+		}
+		
+		return new Type.Clazz(t.pkg(),ncomponents);
+	}
+	
+	protected Type substituteTypeVars(Type.Wildcard t) {
+		return new Type.Wildcard((Type.Reference) substituteTypeVars(t.lowerBound()),
+				(Type.Reference) substituteTypeVars(t.upperBound()));
+	}
+	
+	protected Type substituteTypeVars(Type.Variable t) {
+		for(int i=scopes.size()-1;i>=0;--i) {
+			Scope scope = scopes.get(i);
+			Type.Variable v = scope.typeVars.get(t.variable());
+			if(v != null) {
+				return v;
+			}
+		}
+		// this is probably a syntax error.
+		return t;
+	}
+	
+	protected Type.Clazz getEnclosingClass() {
+		for(int i=scopes.size()-1;i>=0;--i) {
+			Scope c = scopes.get(i);
+			if(c.type != null) {
+				return c.type;
+			}
+		}
+		return null;
 	}
 	
 	/**
