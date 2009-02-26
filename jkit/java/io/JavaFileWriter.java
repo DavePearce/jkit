@@ -1015,7 +1015,7 @@ public class JavaFileWriter {
 				writeType(b);
 			}
 			write(")");
-		} else {
+		} else if(!vt.bounds().isEmpty()){
 			writeType(vt.bounds().get(0));
 		}
 		 	

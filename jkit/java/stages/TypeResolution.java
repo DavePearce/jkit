@@ -760,7 +760,7 @@ public class TypeResolution {
 	}
 	
 	protected Type substituteTypeVars(Type.Array t) {
-		return new Type.Array(substituteTypeVars(t));
+		return new Type.Array(substituteTypeVars(t.element()));
 	}
 	
 	protected Type substituteTypeVars(Type.Clazz t) {
