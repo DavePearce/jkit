@@ -237,8 +237,8 @@ public class JavaCompiler implements Compiler {
 
 			// Eigth, eliminate side effects from expressions
 			start = System.currentTimeMillis();
-			eliminateSideEffects(jfile, loader);
-			logTimedMessage("[" + filename.getPath() + "] Side effects eliminated. ",
+			generateJilCode(jfile, loader);
+			logTimedMessage("[" + filename.getPath() + "] Jil code generated. ",
 					(System.currentTimeMillis() - start));
 
 			
@@ -346,13 +346,13 @@ public class JavaCompiler implements Compiler {
 
 	/**
 	 * This is the eigth stage in the compilation pipeline --- we are now
-	 * beginning the process of code-generation. In this stage, we eliminate all
-	 * side-effects from expressions.
+	 * beginning the process of code-generation. In this stage, we generate jil
+	 * code from the java source file.
 	 * 
 	 * @param jfile
 	 * @param loader
 	 */
-	protected void eliminateSideEffects(JavaFile jfile, ClassLoader loader) {
+	protected void generateJilCode(JavaFile jfile, ClassLoader loader) {
 		new CodeGeneration().apply(jfile);
 	}
 
