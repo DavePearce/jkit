@@ -16,7 +16,7 @@ import jkit.java.stages.TypeResolution;
 import jkit.java.stages.ScopeResolution;
 import jkit.java.stages.TypePropagation;
 import jkit.java.stages.TypeSystem;
-import jkit.java.stages.RemoveSideEffects;
+import jkit.java.stages.CodeGeneration;
 import jkit.jil.*;
 
 /**
@@ -353,7 +353,7 @@ public class JavaCompiler implements Compiler {
 	 * @param loader
 	 */
 	protected void eliminateSideEffects(JavaFile jfile, ClassLoader loader) {
-		new RemoveSideEffects().apply(jfile);
+		new CodeGeneration().apply(jfile);
 	}
 
 	/**

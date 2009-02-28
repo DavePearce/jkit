@@ -49,7 +49,7 @@ import jkit.util.Triple;
  * @author djp
  * 
  */
-public class RemoveSideEffects {
+public class CodeGeneration {
 
 	public void apply(JavaFile file) {
 		// Now, traverse the declarations
