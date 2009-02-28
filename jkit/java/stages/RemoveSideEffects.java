@@ -15,6 +15,7 @@ import jkit.java.tree.Decl.Method;
 import jkit.java.tree.Stmt.Case;
 import jkit.jil.SourceLocation;
 import jkit.jil.SyntacticElement;
+import jkit.util.Pair;
 import jkit.util.Triple;
 
 /**
@@ -194,7 +195,7 @@ public class RemoveSideEffects {
 		}		
 	}
 	
-	protected Expr doAssignment(Stmt.Assignment def) {
+	protected Pair<Expr,List<Stmt>> doAssignment(Stmt.Assignment def) {
 		def.setLhs(doExpression(def.lhs()));	
 		def.setRhs(doExpression(def.rhs()));
 		return def;
@@ -264,7 +265,7 @@ public class RemoveSideEffects {
 		// should check that case conditions are final constants here.
 	}
 	
-	protected Expr doExpression(Expr e) {	
+	protected Pair<Expr,List<Stmt>> doExpression(Expr e) {	
 		if(e instanceof Value.Bool) {
 			return doBoolVal((Value.Bool)e);
 		} else if(e instanceof Value.Char) {
@@ -288,9 +289,11 @@ public class RemoveSideEffects {
 		} else if(e instanceof Value.Class) {
 			return doClassVal((Value.Class) e);
 		} else if(e instanceof Expr.LocalVariable) {
-			doLocalVariable((Expr.LocalVariable)e);
+			return doLocalVariable((Expr.LocalVariable)e);
 		} else if(e instanceof Expr.NonLocalVariable) {
-			doNonLocalVariable((Expr.NonLocalVariable)e);
+			return doNonLocalVariable((Expr.NonLocalVariable)e);
+		} else if(e instanceof Expr.ClassVariable) {
+			return doClassVariable((Expr.ClassVariable)e);
 		} else if(e instanceof Expr.UnOp) {
 			return doUnOp((Expr.UnOp)e);
 		} else if(e instanceof Expr.BinOp) {
@@ -320,24 +323,33 @@ public class RemoveSideEffects {
 		return null;
 	}
 	
-	protected Expr doDeref(Expr.Deref e) {
-		e.setTarget(doExpression(e.target()));		
-		return e;
+	protected Pair<Expr,List<Stmt>> doDeref(Expr.Deref e) {
+		Pair<Expr,List<Stmt>> target = doExpression(e.target());
+		e.setTarget(target.first());		
+		return new Pair(e,target.second());
 	}
 	
-	protected Expr doArrayIndex(Expr.ArrayIndex e) {
-		e.setTarget(doExpression(e.target()));
-		e.setIndex(doExpression(e.index()));
+	protected Pair<Expr,List<Stmt>> doArrayIndex(Expr.ArrayIndex e) {
+		Pair<Expr,List<Stmt>> target = doExpression(e.target());
+		Pair<Expr,List<Stmt>> index = doExpression(e.index());
+		e.setTarget(target.first());
+		e.setIndex(index.first());
 		
-		return e;
+		List<Stmt> r = target.second();
+		r.addAll(index.second());
+		
+		return new Pair(e,r);
 	}
 	
-	protected Expr doNew(Expr.New e) {
+	protected Pair<Expr,List<Stmt>> doNew(Expr.New e) {
 		// Second, recurse through any parameters supplied ...
+		ArrayList<Stmt> r = new ArrayList();
 		List<Expr> parameters = e.parameters();
 		for(int i=0;i!=parameters.size();++i) {
 			Expr p = parameters.get(i);
-			parameters.set(i,doExpression(p));
+			Pair<Expr,List<Stmt>> tmp = doExpression(p);
+			parameters.set(i,tmp.first());
+			r.addAll(tmp.second());
 		}
 		
 		if(e.declarations().size() > 0) {
@@ -346,103 +358,129 @@ public class RemoveSideEffects {
 			}			
 		}
 		
-		return e;
+		return new Pair(e,r);
 	}
 	
-	protected Expr doInvoke(Expr.Invoke e) {						
-		e.setTarget(doExpression(e.target()));		
+	protected Pair<Expr,List<Stmt>> doInvoke(Expr.Invoke e) {
+		ArrayList<Stmt> r = new ArrayList();
+		
+		Pair<Expr,List<Stmt>> tmp = doExpression(e.target());
+		e.setTarget(tmp.first());		
+		
+		r.addAll(tmp.second());
 		
 		List<Expr> parameters = e.parameters();
 		for(int i=0;i!=parameters.size();++i) {
 			Expr p = parameters.get(i);
-			parameters.set(i, doExpression(p));
+			tmp = doExpression(p);
+			parameters.set(i, tmp.first());
+			r.addAll(tmp.second());
 		}				
 		
-		return e;
+		return new Pair(e,r);
 	}
 	
-	protected Expr doInstanceOf(Expr.InstanceOf e) {
-		e.setLhs(doExpression(e.lhs()));
-		return e;
+	protected Pair<Expr,List<Stmt>> doInstanceOf(Expr.InstanceOf e) {
+		Pair<Expr,List<Stmt>> expr = doExpression(e.lhs());
+		e.setLhs(expr.first());
+		return new Pair(e,expr.second());
 	}
 	
-	protected Expr doCast(Expr.Cast e) {
-		e.setExpr(doExpression(e.expr()));
-		return e;
+	protected Pair<Expr,List<Stmt>> doCast(Expr.Cast e) {
+		Pair<Expr,List<Stmt>> expr = doExpression(e.expr()); 
+		e.setExpr(expr.first());
+		return new Pair(e,expr.second());
 	}
 	
-	protected Expr doBoolVal(Value.Bool e) {
-		return e;
+	protected Pair<Expr,List<Stmt>> doBoolVal(Value.Bool e) {
+		return new Pair(e, new ArrayList<Stmt>());
 	}
 	
-	protected Expr doCharVal(Value.Char e) {
-		return e;
+	protected Pair<Expr,List<Stmt>> doCharVal(Value.Char e) {
+		return new Pair(e, new ArrayList<Stmt>());		
 	}
 	
-	protected Expr doIntVal(Value.Int e) {
-		return e;
+	protected Pair<Expr,List<Stmt>> doIntVal(Value.Int e) {
+		return new Pair(e, new ArrayList<Stmt>());
 	}
 	
-	protected Expr doLongVal(Value.Long e) {
-		return e;
+	protected Pair<Expr,List<Stmt>> doLongVal(Value.Long e) {
+		return new Pair(e, new ArrayList<Stmt>());
 	}
 	
-	protected Expr doFloatVal(Value.Float e) {
-		return e;
+	protected Pair<Expr,List<Stmt>> doFloatVal(Value.Float e) {
+		return new Pair(e, new ArrayList<Stmt>());
 	}
 	
-	protected Expr doDoubleVal(Value.Double e) {
-		return e;
+	protected Pair<Expr,List<Stmt>> doDoubleVal(Value.Double e) {
+		return new Pair(e, new ArrayList<Stmt>());
 	}
 	
-	protected Expr doStringVal(Value.String e) {
-		return e;
+	protected Pair<Expr,List<Stmt>> doStringVal(Value.String e) {
+		return new Pair(e, new ArrayList<Stmt>());
 	}
 	
-	protected Expr doNullVal(Value.Null e) {
-		return e;
+	protected Pair<Expr,List<Stmt>> doNullVal(Value.Null e) {
+		return new Pair(e, new ArrayList<Stmt>());
 	}
 	
-	protected Expr doTypedArrayVal(Value.TypedArray e) {
+	protected Pair<Expr,List<Stmt>> doTypedArrayVal(Value.TypedArray e) {
+		ArrayList<Stmt> r = new ArrayList<Stmt>();
+		for(int i=0;i!=e.values().size();++i) {
+			Expr v = e.values().get(i);
+			Pair<Expr,List<Stmt>> p = doExpression(v);
+			e.values().set(i,p.first());
+			r.addAll(p.second());
+		}
+		return new Pair(e,r);
+	}
+	
+	protected Pair<Expr,List<Stmt>> doArrayVal(Value.Array e) {
+		ArrayList<Stmt> r = new ArrayList<Stmt>();
 		for(int i=0;i!=e.values().size();++i) {
 			Expr v = e.values().get(i);			
-			e.values().set(i,doExpression(v));			
+			Pair<Expr,List<Stmt>> p = doExpression(v);
+			e.values().set(i,p.first());
+			r.addAll(p.second());
 		}
-		return e;
+		return new Pair(e,r);
 	}
 	
-	protected Expr doArrayVal(Value.Array e) {
-		for(int i=0;i!=e.values().size();++i) {
-			Expr v = e.values().get(i);			
-			e.values().set(i,doExpression(v));			
-		}
-		return e;
-	}
-	
-	protected Expr doClassVal(Value.Class e) {
-		return e;
+	protected Pair<Expr,List<Stmt>> doClassVal(Value.Class e) {
+		return new Pair(e, new ArrayList<Stmt>());
 	}
 		
-	protected void doLocalVariable(Expr.LocalVariable e) {}
+	protected Pair<Expr,List<Stmt>> doLocalVariable(Expr.LocalVariable e) {
+		return new Pair(e, new ArrayList<Stmt>());		
+	}
 
-	protected void doNonLocalVariable(Expr.NonLocalVariable e) {}
+	protected Pair<Expr,List<Stmt>> doNonLocalVariable(Expr.NonLocalVariable e) {
+		return new Pair(e, new ArrayList<Stmt>());		
+	}
 	
-	protected Expr doUnOp(Expr.UnOp e) {		
-		e.setExpr(doExpression(e.expr()));
-		return e;
+	protected Pair<Expr,List<Stmt>> doClassVariable(Expr.ClassVariable e) {
+		return new Pair(e, new ArrayList<Stmt>());
+	}
+	
+	protected Pair<Expr,List<Stmt>> doUnOp(Expr.UnOp e) {		
+		Pair<Expr,List<Stmt>> r = doExpression(e.expr());
+		e.setExpr(r.first());
+		return new Pair(e,r.second());
 	}
 		
-	protected Expr doBinOp(Expr.BinOp e) {				
-		e.setLhs(doExpression(e.lhs()));
-		e.setRhs(doExpression(e.rhs()));
-		return e;
+	protected Pair<Expr,List<Stmt>> doBinOp(Expr.BinOp e) {				
+		Pair<Expr,List<Stmt>> lhs = doExpression(e.lhs());
+		Pair<Expr,List<Stmt>> rhs = doExpression(e.rhs());
+		e.setLhs(lhs.first());
+		e.setRhs(rhs.first());
+		List<Stmt> r = lhs.second();
+		r.addAll(rhs.second());
+		return new Pair(e,r);
 	}
 	
-	protected Expr doTernOp(Expr.TernOp e) {	
-		e.setCondition(doExpression(e.condition()));
-		e.setTrueBranch(doExpression(e.trueBranch()));
-		e.setFalseBranch(doExpression(e.falseBranch()));
-		return e;
+	protected Pair<Expr,List<Stmt>> doTernOp(Expr.TernOp e) {	
+		syntax_error("internal failure --- problem processing ternary operator.",e);
+		return null;
 	}
 	
 	/**
