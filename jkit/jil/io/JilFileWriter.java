@@ -2,7 +2,7 @@ package jkit.jil.io;
 
 import java.io.*;
 import java.util.List;
-
+import jkit.util.Pair;
 import jkit.jil.tree.*;
 
 /**
@@ -73,13 +73,20 @@ public class JilFileWriter {
 		output.print(type.returnType() + " " + m.name());
 		output.print("(");
 		boolean firstTime=true;
-		for(Type p : type.parameterTypes()) {
+		
+		List<Type> paramTypes = type.parameterTypes();
+		List<Pair<String,List<Modifier>>> params = m.parameters();
+		
+		for(int i = 0; i != params.size();++i) {
 			if(!firstTime) {
 				output.print(", ");
 			}
 			firstTime=false;
-			output.print(p);
+			writeModifiers(params.get(i).second());			
+			output.print(paramTypes.get(i));
+			output.print(" " + params.get(i).first());
 		}
+		
 		output.println(") {");
 		
 		output.println("\t}");

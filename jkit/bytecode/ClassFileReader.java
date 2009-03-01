@@ -336,7 +336,10 @@ public class ClassFileReader {
 		
 		Type.Function type = parseMethodDescriptor(desc);		
 		
-		return new Method(name, type, listModifiers(modifiers, true), exceptions);
+		// There is a bug here, since we need to provide information about the
+		// parameters supplied.
+		return new Method(name, type, new ArrayList(), listModifiers(modifiers,
+				true), exceptions);
 	}
 	
 	/**

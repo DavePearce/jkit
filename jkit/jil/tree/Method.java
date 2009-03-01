@@ -1,31 +1,41 @@
 package jkit.jil.tree;
 
 import java.util.List;
-
+import jkit.util.Pair;
 
 public class Method extends SyntacticElementImpl {
 	private String name;
 	private Type.Function type;
 	private List<Modifier> modifiers;
 	private List<Type.Clazz> exceptions;
+	private List<Pair<String, List<Modifier>>> parameters; // names of
+															// parameters in
+															// order of
+															// appearance.
 	
 	/**
-     * Construct an object representing a field of a JVM class.
-     * 
-     * @param name -
-     *            The name of the method.
-     * @param type -
-     *            The (fully generic) function type of this method.
-     * @param modifiers -
-     *            Any modifiers of the method (e.g. public, static, etc)
-     * @param exceptions -
-     *            The (non-null) list of exceptions thrown by this method.
-     */
-	public Method(String name, Type.Function type, List<Modifier> modifiers,
-			List<Type.Clazz> exceptions, Attribute... attributes) {
+	 * Construct an object representing a field of a JVM class.
+	 * 
+	 * @param name -
+	 *            The name of the method.
+	 * @param type -
+	 *            The (fully generic) function type of this method.
+	 * @param parameters -
+	 *            The names of the parameter variables, in order of their
+	 *            appearance. It must hold that parameters.size() ==
+	 *            type.parameterTypes().size().
+	 * @param modifiers -
+	 *            Any modifiers of the method (e.g. public, static, etc)
+	 * @param exceptions -
+	 *            The (non-null) list of exceptions thrown by this method.
+	 */
+	public Method(String name, Type.Function type, List<Pair<String,List<Modifier>>> parameters,
+			List<Modifier> modifiers, List<Type.Clazz> exceptions,
+			Attribute... attributes) {
 		super(attributes);
 		this.name = name;
 		this.type = type;
+		this.parameters = parameters;
 		this.modifiers = modifiers;
 		this.exceptions = exceptions;
 	}
@@ -37,18 +47,25 @@ public class Method extends SyntacticElementImpl {
      *            The name of the method.
      * @param type -
      *            The (fully generic) function type of this method.
+     * @param parameters -
+	 *            The names of the parameter variables, in order of their
+	 *            appearance. It must hold that parameters.size() ==
+	 *            type.parameterTypes().size().
      * @param modifiers -
      *            Any modifiers of the method (e.g. public, static, etc)
      * @param exceptions -
      *            The (non-null) list of exceptions thrown by this method.
      */
-	public Method(String name, Type.Function type, List<Modifier> modifiers,			
-			List<Type.Clazz> exceptions, List<Attribute> attributes) {
+	public Method(String name, Type.Function type,
+			List<Pair<String, List<Modifier>>> parameters,
+			List<Modifier> modifiers, List<Type.Clazz> exceptions,
+			List<Attribute> attributes) {
 		super(attributes);
 		this.name = name;
 		this.type = type;
 		this.modifiers = modifiers;
 		this.exceptions = exceptions;
+		this.parameters = parameters;
 	}
 	
 	/**
@@ -71,13 +88,22 @@ public class Method extends SyntacticElementImpl {
 	}
 	
 	/**
-     * Access the modifiers contained in this field object. The returned list
+     * Access the modifiers contained in this method object. The returned list
      * may be modified by adding, or removing modifiers. The returned list is
      * always non-null.
      * 
      * @return
      */
 	public List<Modifier> modifiers() { return modifiers; }
+	
+	/**
+	 * Access the names of the parameter variables to this method object. These
+	 * are needed to distinguish the other local variables from those which are
+	 * parameters.
+	 * 
+	 * @return
+	 */
+	public List<Pair<String,List<Modifier>>> parameters() { return parameters; }
 	
 	/**
      * Access the modifiers contained in this field object. The returned list

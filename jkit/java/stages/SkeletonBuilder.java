@@ -135,16 +135,21 @@ public class SkeletonBuilder {
 
 	protected void doMethod(Decl.Method d, Clazz skeleton) {		
 		Decl.Method m = (Decl.Method) d;
-		Type.Function t = (Type.Function) m.attribute(Type.class);
+		Type.Function type = (Type.Function) m.attribute(Type.class);
 		List<Type.Clazz> exceptions = new ArrayList<Type.Clazz>();
+		List<Pair<String,List<Modifier>>> parameters = new ArrayList();
+		
+		for(Triple<String,List<Modifier>,jkit.java.tree.Type> t : d.parameters()) {
+			parameters.add(new Pair(t.first(),t.second()));
+		}
 		
 		for(jkit.java.tree.Type.Clazz tc : m.exceptions()) {
 			exceptions.add((Type.Clazz)tc.attribute(Type.class));
 		}
 		
 		skeleton.methods().add(
-				new Method(m.name(), t, m.modifiers(), exceptions,
-						new ArrayList(m.attributes())));
+				new Method(m.name(), type, parameters, m.modifiers(),
+						exceptions, new ArrayList(m.attributes())));
 		
 		doStatement(d.body(), skeleton);
 	}
