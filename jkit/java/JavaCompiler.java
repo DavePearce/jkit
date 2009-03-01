@@ -356,7 +356,7 @@ public class JavaCompiler implements Compiler {
 	 * @param loader
 	 */
 	protected void generateJilCode(JavaFile jfile, ClassLoader loader) {
-		new CodeGeneration().apply(jfile);
+		new CodeGeneration(loader).apply(jfile);
 	}
 
 	/**
