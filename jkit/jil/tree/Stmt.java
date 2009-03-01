@@ -1,5 +1,6 @@
 package jkit.jil.tree;
 
+import java.util.*;
 
 public interface Stmt extends SyntacticElement {
 	
@@ -9,17 +10,24 @@ public interface Stmt extends SyntacticElement {
 	 * @author djp
 	 *
 	 */
-	public static final class Assignment extends SyntacticElementImpl implements
+	public static final class Assign extends SyntacticElementImpl implements
 			Stmt {
 		private Expr lhs, rhs;
 
-		public Assignment(Expr lhs, Expr rhs,
+		public Assign(Expr lhs, Expr rhs,
 				Attribute... attributes) {
 			super(attributes);
 			this.lhs = lhs;
 			this.rhs = rhs;
 		}
 
+		public Assign(Expr lhs, Expr rhs,
+				List<Attribute> attributes) {
+			super(attributes);
+			this.lhs = lhs;
+			this.rhs = rhs;
+		}
+		
 		public Expr lhs() {
 			return lhs;
 		}
@@ -47,6 +55,11 @@ public interface Stmt extends SyntacticElement {
 			super(attributes);
 			this.expr = expr;
 		}
+		
+		public Return(Expr expr, List<Attribute> attributes) {
+			super(attributes);
+			this.expr = expr;
+		}
 
 		public Expr expr() {
 			return expr;
@@ -71,6 +84,11 @@ public interface Stmt extends SyntacticElement {
 			this.expr = expr;
 		}
 
+		public Throw(Expr expr, List<Attribute> attributes) {
+			super(attributes);
+			this.expr = expr;
+		}
+		
 		public Expr expr() {
 			return expr;
 		}
@@ -94,6 +112,11 @@ public interface Stmt extends SyntacticElement {
 			this.label = label;
 		}
 
+		public Goto(String label, List<Attribute> attributes) {
+			super(attributes);
+			this.label = label;
+		}
+		
 		public String label() {
 			return label;
 		}
@@ -119,12 +142,40 @@ public interface Stmt extends SyntacticElement {
 			this.label = label;
 		}
 
+		public IfGoto(Expr condition, String label, List<Attribute> attributes) {
+			super(attributes);
+			this.condition = condition;
+			this.label = label;
+		}
+		
 		public Expr condition() {
 			return condition;
 		}
 		
 		public void setCondition(Expr expr) {
 			this.condition = expr;
+		}
+		
+		public String label() {
+			return label;
+		}
+		
+		public void setLabel(String label) {
+			this.label = label;
+		}
+	}
+	
+	public static final class Label extends SyntacticElementImpl implements Stmt {
+		private String label;
+
+		public Label(String label, Attribute... attributes) {
+			super(attributes);
+			this.label = label;
+		}
+
+		public Label(String label, List<Attribute> attributes) {
+			super(attributes);
+			this.label = label;
 		}
 		
 		public String label() {

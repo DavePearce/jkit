@@ -908,6 +908,7 @@ public class ScopeResolution {
 					
 					// Ok, this variable access corresponds to a field load.
 					if(isThis && !isStatic) {
+						System.out.println("GOT HERE FOR " + e.value());
 						Expr thisvar = new Expr.LocalVariable("this",
 								new ArrayList(e.attributes()));
 						thisvar.attributes().add(cs.type);
@@ -945,6 +946,8 @@ public class ScopeResolution {
 				if(isThis) {				
 					r = new Expr.LocalVariable(e.value(),
 							new ArrayList(e.attributes()));
+					r.attributes().add(s.variables.get(e.value()).first());
+					return r;
 				} else {
 					// Check whether or not the non-local variable is declared
 					// final (as this is a Java requirement).
@@ -956,14 +959,14 @@ public class ScopeResolution {
 										+ e.value()
 										+ "\" accessed from inner class; needs to be declared final",
 								e);
-					}											
+					}
+					// Yes, it does.
+					r = new Expr.NonLocalVariable(e.value(), new ArrayList(e
+							.attributes()));	
+					// add the variables type here.
+					r.attributes().add(s.variables.get(e.value()).first());
+					return r;
 				}
-				// Yes, it does.
-				r = new Expr.NonLocalVariable(e.value(), new ArrayList(e
-						.attributes()));	
-				// add the variables type here.
-				r.attributes().add(s.variables.get(e.value()).first());
-				return r;
 			} else if(s instanceof MethodScope) {
 				isStatic = ((MethodScope)s).isStatic;
 			} else if(s instanceof FieldScope) {

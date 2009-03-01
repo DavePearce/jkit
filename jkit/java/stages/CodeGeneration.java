@@ -8,12 +8,7 @@ import jkit.java.io.JavaFile;
 import jkit.java.tree.Decl;
 import jkit.java.*;
 import jkit.jil.*;
-import jkit.jil.tree.Clazz;
-import jkit.jil.tree.Expr;
-import jkit.jil.tree.SourceLocation;
-import jkit.jil.tree.Stmt;
-import jkit.jil.tree.SyntacticElement;
-import jkit.jil.tree.Type;
+import jkit.jil.tree.*;
 import jkit.util.Pair;
 import jkit.util.Triple;
 
@@ -35,17 +30,17 @@ public class CodeGeneration {
 	public void apply(JavaFile file) {
 		// Now, traverse the declarations
 		for(Decl d : file.declarations()) {
-			doDeclaration(d);
+			doDeclaration(d, null);
 		}		
 	}
 	
-	protected void doDeclaration(Decl d) {
+	protected void doDeclaration(Decl d, Clazz parent) {
 		if(d instanceof Decl.Interface) {
 			doInterface((Decl.Interface)d);
 		} else if(d instanceof Decl.Clazz) {
 			doClass((Decl.Clazz)d);
 		} else if(d instanceof Decl.Method) {
-			doMethod((Decl.Method)d);
+			doMethod((Decl.Method)d, parent);
 		} else if(d instanceof Decl.Field) {
 			doField((Decl.Field)d);
 		} else if (d instanceof Decl.InitialiserBlock) {
@@ -67,17 +62,28 @@ public class CodeGeneration {
 		try {
 			// We, need to update the skeleton so that any methods and fields
 			// discovered below this are attributed to this class!			
-			Clazz skeleton = loader.loadClass(type);	
+			Clazz skeleton = loader.loadClass(type);
+			
+			for(Decl d : c.declarations()) {
+				doDeclaration(d, skeleton);
+			}
 		} catch(ClassNotFoundException cne) {
 			syntax_error("internal failure (skeleton not found for " + type,c,cne);
-		}
-		for(Decl d : c.declarations()) {
-			doDeclaration(d);
-		}		
+		}			
 	}
 
-	protected void doMethod(Decl.Method d) {			
-		doStatement(d.body());		
+	protected void doMethod(Decl.Method d, Clazz parent) {			
+		Type.Function type = (Type.Function) d.attribute(Type.class);
+		List<Stmt> stmts = doStatement(d.body());
+		
+		// Now, add this statement list to the jil method representing this java
+		// method.
+		
+		for(Method m : parent.methods()) {
+			if(m.type().equals(type)) {
+				m.body().addAll(stmts);
+			}
+		}			
 	}
 
 	protected List<Stmt> doField(Decl.Field d) {		
@@ -98,154 +104,253 @@ public class CodeGeneration {
 		}		
 	}
 	
-	protected void doStatement(jkit.java.tree.Stmt e) {
+	protected List<Stmt> doStatement(jkit.java.tree.Stmt e) {
 		if(e instanceof jkit.java.tree.Stmt.SynchronisedBlock) {
-			doSynchronisedBlock((jkit.java.tree.Stmt.SynchronisedBlock)e);
+			return doSynchronisedBlock((jkit.java.tree.Stmt.SynchronisedBlock)e);
 		} else if(e instanceof jkit.java.tree.Stmt.TryCatchBlock) {
-			doTryCatchBlock((jkit.java.tree.Stmt.TryCatchBlock)e);
+			return doTryCatchBlock((jkit.java.tree.Stmt.TryCatchBlock)e);
 		} else if(e instanceof jkit.java.tree.Stmt.Block) {
-			doBlock((jkit.java.tree.Stmt.Block)e);
+			return doBlock((jkit.java.tree.Stmt.Block)e);
 		} else if(e instanceof jkit.java.tree.Stmt.VarDef) {
-			doVarDef((jkit.java.tree.Stmt.VarDef) e);
+			return doVarDef((jkit.java.tree.Stmt.VarDef) e);
 		} else if(e instanceof jkit.java.tree.Stmt.Assignment) {
-			doAssignment((jkit.java.tree.Stmt.Assignment) e);
+			return doAssignment((jkit.java.tree.Stmt.Assignment) e).second();
 		} else if(e instanceof jkit.java.tree.Stmt.Return) {
-			doReturn((jkit.java.tree.Stmt.Return) e);
+			return doReturn((jkit.java.tree.Stmt.Return) e);
 		} else if(e instanceof jkit.java.tree.Stmt.Throw) {
-			doThrow((jkit.java.tree.Stmt.Throw) e);
+			return doThrow((jkit.java.tree.Stmt.Throw) e);
 		} else if(e instanceof jkit.java.tree.Stmt.Assert) {
-			doAssert((jkit.java.tree.Stmt.Assert) e);
+			return doAssert((jkit.java.tree.Stmt.Assert) e);
 		} else if(e instanceof jkit.java.tree.Stmt.Break) {
-			doBreak((jkit.java.tree.Stmt.Break) e);
+			return doBreak((jkit.java.tree.Stmt.Break) e);
 		} else if(e instanceof jkit.java.tree.Stmt.Continue) {
-			doContinue((jkit.java.tree.Stmt.Continue) e);
+			return doContinue((jkit.java.tree.Stmt.Continue) e);
 		} else if(e instanceof jkit.java.tree.Stmt.Label) {
-			doLabel((jkit.java.tree.Stmt.Label) e);
+			return doLabel((jkit.java.tree.Stmt.Label) e);
 		} else if(e instanceof jkit.java.tree.Stmt.If) {
-			doIf((jkit.java.tree.Stmt.If) e);
+			return doIf((jkit.java.tree.Stmt.If) e);
 		} else if(e instanceof jkit.java.tree.Stmt.For) {
-			doFor((jkit.java.tree.Stmt.For) e);
+			return doFor((jkit.java.tree.Stmt.For) e);
 		} else if(e instanceof jkit.java.tree.Stmt.ForEach) {
-			doForEach((jkit.java.tree.Stmt.ForEach) e);
+			return doForEach((jkit.java.tree.Stmt.ForEach) e);
 		} else if(e instanceof jkit.java.tree.Stmt.While) {
-			doWhile((jkit.java.tree.Stmt.While) e);
+			return doWhile((jkit.java.tree.Stmt.While) e);
 		} else if(e instanceof jkit.java.tree.Stmt.DoWhile) {
-			doDoWhile((jkit.java.tree.Stmt.DoWhile) e);
+			return doDoWhile((jkit.java.tree.Stmt.DoWhile) e);
 		} else if(e instanceof jkit.java.tree.Stmt.Switch) {
-			doSwitch((jkit.java.tree.Stmt.Switch) e);
+			return doSwitch((jkit.java.tree.Stmt.Switch) e);
 		} else if(e instanceof jkit.java.tree.Expr.Invoke) {
-			doInvoke((jkit.java.tree.Expr.Invoke) e);
+			return doInvoke((jkit.java.tree.Expr.Invoke) e).second();
 		} else if(e instanceof jkit.java.tree.Expr.New) {
-			doNew((jkit.java.tree.Expr.New) e);
+			return doNew((jkit.java.tree.Expr.New) e).second();
 		} else if(e instanceof Decl.Clazz) {
-			doClass((Decl.Clazz)e);
+			doClass((Decl.Clazz)e);			
 		} else if(e != null) {
 			syntax_error("Invalid statement encountered: "
 					+ e.getClass(),e);
 		}		
+		return new ArrayList<Stmt>();
 	}
 	
-	protected void doBlock(jkit.java.tree.Stmt.Block block) {
+	protected List<Stmt> doBlock(jkit.java.tree.Stmt.Block block) {
+		ArrayList<Stmt> r = new ArrayList<Stmt>();
 		if(block != null) {		
 			// now process every statement in this block.
 			for(jkit.java.tree.Stmt s : block.statements()) {
-				doStatement(s);
+				r.addAll(doStatement(s));
 			}		
 		}
+		return r;
 	}
 	
-	protected void doCatchBlock(jkit.java.tree.Stmt.CatchBlock block) {
+	protected List<Stmt> doCatchBlock(jkit.java.tree.Stmt.CatchBlock block) {
+		ArrayList<Stmt> r = new ArrayList<Stmt>();
 		if(block != null) {			
 			// now process every statement in this block.
 			for(jkit.java.tree.Stmt s : block.statements()) {
-				doStatement(s);
+				r.addAll(doStatement(s));
 			}		
 		}
+		return r;
 	}
 	
-	protected void doSynchronisedBlock(jkit.java.tree.Stmt.SynchronisedBlock block) {
-		doBlock(block);
+	protected List<Stmt> doSynchronisedBlock(jkit.java.tree.Stmt.SynchronisedBlock block) {
+		ArrayList<Stmt> r = new ArrayList<Stmt>();
+		r.addAll(doBlock(block));
 		doExpression(block.expr());
+		// need to add synch enter and leave here ?
+		return r;
 	}
 	
-	protected void doTryCatchBlock(jkit.java.tree.Stmt.TryCatchBlock block) {
-		doBlock(block);		
-		doBlock(block.finaly());		
+	protected List<Stmt> doTryCatchBlock(jkit.java.tree.Stmt.TryCatchBlock block) {
+		ArrayList<Stmt> r = new ArrayList<Stmt>();
+		r.addAll(doBlock(block));		
+		r.addAll(doBlock(block.finaly()));		
+		
+		// OK, MAJOR BUGS HERE ...
 		
 		for(jkit.java.tree.Stmt.CatchBlock cb : block.handlers()) {
-			doCatchBlock(cb);
+			r.addAll(doCatchBlock(cb));
 		}
+		return r;
 	}
 	
-	protected void doVarDef(jkit.java.tree.Stmt.VarDef def) {
+	protected List<Stmt> doVarDef(jkit.java.tree.Stmt.VarDef def) {
+		Type type = (Type) def.attribute(Type.class);
 		List<Triple<String, Integer, jkit.java.tree.Expr>> defs = def.definitions();
+		ArrayList<Stmt> r = new ArrayList<Stmt>();
 		for(int i=0;i!=defs.size();++i) {
 			Triple<String, Integer, jkit.java.tree.Expr> d = defs.get(i);
-			Pair<Expr,List<Stmt>> e = doExpression(d.third());
-			defs.set(i, new Triple(d.first(),d.second(),e));			
-		}		
+			Type nt = type;
+													
+			for(int j=0;j!=d.second();++j) {
+				nt = new Type.Array(nt);
+			}
+
+			if(d.third() != null) {
+				Pair<Expr,List<Stmt>> e = doExpression(d.third());
+				r.addAll(e.second());
+				r.add(new Stmt.Assign(new Expr.Variable(d.first(), nt, def
+					.attributes()), e.first()));
+			}
+		}
+		
+		return r;
 	}
 	
 	protected Pair<Expr,List<Stmt>> doAssignment(jkit.java.tree.Stmt.Assignment def) {
-		doExpression(def.lhs());	
-		doExpression(def.rhs());
-		return null; // needs fixing!!
+		ArrayList<Stmt> r = new ArrayList<Stmt>();
+		Pair<Expr,List<Stmt>> lhs = doExpression(def.lhs());	
+		Pair<Expr,List<Stmt>> rhs = doExpression(def.rhs());
+		r.addAll(lhs.second());
+		r.addAll(rhs.second());
+		r.add(new Stmt.Assign(lhs.first(),rhs.first(),def.attributes()));
+		return new Pair(rhs.first(),r);
 	}
 	
-	protected void doReturn(jkit.java.tree.Stmt.Return ret) {
-		doExpression(ret.expr());
+	protected List<Stmt> doReturn(jkit.java.tree.Stmt.Return ret) {
+		ArrayList<Stmt> r = new ArrayList<Stmt>();
+		if(ret.expr() != null) {
+			Pair<Expr,List<Stmt>> expr = doExpression(ret.expr());
+			r.addAll(expr.second());
+			r.add(new Stmt.Return(expr.first(),ret.attributes()));
+		} else {
+			r.add(new Stmt.Return(null,ret.attributes()));
+		}
+		return r;
 	}
 	
-	protected void doThrow(jkit.java.tree.Stmt.Throw ret) {
-		doExpression(ret.expr());
+	protected List<Stmt> doThrow(jkit.java.tree.Stmt.Throw ret) {
+		ArrayList<Stmt> r = new ArrayList<Stmt>();
+		Pair<Expr,List<Stmt>> expr = doExpression(ret.expr());
+		r.addAll(expr.second());
+		r.add(new Stmt.Throw(expr.first(),ret.attributes()));
+		return r;
 	}
 	
-	protected void doAssert(jkit.java.tree.Stmt.Assert ret) {
-		doExpression(ret.expr());
+	protected List<Stmt> doAssert(jkit.java.tree.Stmt.Assert ret) {
+		ArrayList<Stmt> r = new ArrayList<Stmt>();
+		Pair<Expr,List<Stmt>> expr = doExpression(ret.expr());
+		
+		// need to do some real code generation here.
+		
+		return r;
 	}
 	
-	protected void doBreak(jkit.java.tree.Stmt.Break brk) {
-		// nothing	
+	protected List<Stmt> doBreak(jkit.java.tree.Stmt.Break brk) {
+		ArrayList<Stmt> r = new ArrayList<Stmt>();
+		
+		// need to do some real code generation here.
+		
+		return r;
 	}
 	
-	protected void doContinue(jkit.java.tree.Stmt.Continue brk) {
-		// nothing
+	protected List<Stmt> doContinue(jkit.java.tree.Stmt.Continue brk) {
+		ArrayList<Stmt> r = new ArrayList<Stmt>();
+		
+		// need to do some real code generation here.
+		
+		return r;
 	}
 	
-	protected void doLabel(jkit.java.tree.Stmt.Label lab) {						
-		doStatement(lab.statement());
+	protected List<Stmt> doLabel(jkit.java.tree.Stmt.Label lab) {						
+		List<Stmt> r = doStatement(lab.statement());
+		r.add(0, new Stmt.Label(lab.label(), lab.attributes()));
+		return r;
 	}
 	
-	protected void doIf(jkit.java.tree.Stmt.If stmt) {
-		doExpression(stmt.condition());
-		doStatement(stmt.trueStatement());
-		doStatement(stmt.falseStatement());
+	protected List<Stmt> doIf(jkit.java.tree.Stmt.If stmt) {
+		ArrayList<Stmt> r = new ArrayList<Stmt>();
+		
+		Pair<Expr,List<Stmt>> cond = doExpression(stmt.condition());
+		List<Stmt> tbranch = doStatement(stmt.trueStatement());
+		List<Stmt> fbranch = doStatement(stmt.falseStatement());
+		
+		r.addAll(cond.second());
+		
+		if(stmt.falseStatement() == null) {
+			r.add(new Stmt.IfGoto(
+					new Expr.UnOp(cond.first(), Expr.UnOp.NOT, new Type.Bool(),
+					stmt.condition().attributes()), "???? exit", stmt.attributes()));
+			r.addAll(tbranch);
+		} else if(stmt.trueStatement() == null) {
+			r.add(new Stmt.IfGoto(cond.first(),"???? exit",stmt.attributes()));
+			r.addAll(fbranch);
+		} else {
+			r.add(new Stmt.IfGoto(cond.first(),"????",stmt.attributes()));
+			r.addAll(fbranch);
+			r.add(new Stmt.Goto("???? exit",stmt.attributes()));
+			r.add(new Stmt.Label("????",stmt.attributes()));
+			r.addAll(tbranch);
+		}
+		
+		r.add(new Stmt.Label("??? exit",stmt.attributes()));
+		return r;
+		
 	}
 	
-	protected void doWhile(jkit.java.tree.Stmt.While stmt) {
-		doExpression(stmt.condition());
-		doStatement(stmt.body());		
+	protected List<Stmt> doWhile(jkit.java.tree.Stmt.While stmt) {
+		ArrayList<Stmt> r = new ArrayList<Stmt>();
+		
+		Pair<Expr,List<Stmt>> cond = doExpression(stmt.condition());
+		r.addAll(doStatement(stmt.body()));
+		
+		return r;
 	}
 	
-	protected void doDoWhile(jkit.java.tree.Stmt.DoWhile stmt) {
-		doExpression(stmt.condition());
-		doStatement(stmt.body());
+	protected List<Stmt> doDoWhile(jkit.java.tree.Stmt.DoWhile stmt) {
+		ArrayList<Stmt> r = new ArrayList<Stmt>();
+		
+		Pair<Expr,List<Stmt>> cond = doExpression(stmt.condition());
+		r.addAll(doStatement(stmt.body()));
+		
+		return r;
 	}
 	
-	protected void doFor(jkit.java.tree.Stmt.For stmt) {
-		doStatement(stmt.initialiser());
-		doExpression(stmt.condition());
-		doStatement(stmt.increment());
-		doStatement(stmt.body());		
+	protected List<Stmt> doFor(jkit.java.tree.Stmt.For stmt) {
+		ArrayList<Stmt> r = new ArrayList<Stmt>();
+		
+		r.addAll(doStatement(stmt.initialiser()));
+		Pair<Expr,List<Stmt>> cond = doExpression(stmt.condition());
+		r.addAll(doStatement(stmt.increment()));
+		r.addAll(doStatement(stmt.body()));	
+		
+		return r;
 	}
 	
-	protected void doForEach(jkit.java.tree.Stmt.ForEach stmt) {
-		doExpression(stmt.source());
-		doStatement(stmt.body());		
+	protected List<Stmt> doForEach(jkit.java.tree.Stmt.ForEach stmt) {
+		ArrayList<Stmt> r = new ArrayList<Stmt>();
+		
+		Pair<Expr,List<Stmt>> src = doExpression(stmt.source());
+		r.addAll(doStatement(stmt.body()));	
+		
+		return r;
 	}
 	
-	protected void doSwitch(jkit.java.tree.Stmt.Switch sw) {
-		doExpression(sw.condition());
+	protected List<Stmt> doSwitch(jkit.java.tree.Stmt.Switch sw) {
+		ArrayList<Stmt> r = new ArrayList<Stmt>();
+		
+		Pair<Expr,List<Stmt>> cond = doExpression(sw.condition());
 		for(jkit.java.tree.Stmt.Case c : sw.cases()) {
 			doExpression(c.condition());
 			for(jkit.java.tree.Stmt s : c.statements()) {
@@ -253,7 +358,7 @@ public class CodeGeneration {
 			}
 		}
 		
-		// should check that case conditions are final constants here.
+		return r;
 	}
 	
 	protected Pair<Expr,List<Stmt>> doExpression(jkit.java.tree.Expr e) {	
@@ -349,7 +454,7 @@ public class CodeGeneration {
 		
 		if(e.declarations().size() > 0) {
 			for(Decl d : e.declarations()) {
-				doDeclaration(d);
+				doDeclaration(d, null); // bug here
 			}			
 		}
 		
@@ -466,8 +571,11 @@ public class CodeGeneration {
 				.attributes()), new ArrayList<Stmt>());
 	}
 
-	protected Pair<Expr,List<Stmt>> doNonLocalVariable(jkit.java.tree.Expr.NonLocalVariable e) {
-		syntax_error("internal failure (support for non-local variables not implemented!)",e);
+	protected Pair<Expr, List<Stmt>> doNonLocalVariable(
+			jkit.java.tree.Expr.NonLocalVariable e) {
+		syntax_error(
+				"internal failure (support for non-local variables not implemented!)",
+				e);
 		return null;
 	}
 	

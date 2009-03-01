@@ -1,6 +1,6 @@
 package jkit.jil.tree;
 
-import java.util.List;
+import java.util.*;
 import jkit.util.Pair;
 
 public class Method extends SyntacticElementImpl {
@@ -8,10 +8,8 @@ public class Method extends SyntacticElementImpl {
 	private Type.Function type;
 	private List<Modifier> modifiers;
 	private List<Type.Clazz> exceptions;
-	private List<Pair<String, List<Modifier>>> parameters; // names of
-															// parameters in
-															// order of
-															// appearance.
+	private List<Pair<String, List<Modifier>>> parameters; 
+	private List<Stmt> body = new ArrayList<Stmt>();
 	
 	/**
 	 * Construct an object representing a field of a JVM class.
@@ -113,6 +111,12 @@ public class Method extends SyntacticElementImpl {
      * @return
      */
 	public List<Type.Clazz> exceptions() { return exceptions; }
+	
+	/**
+	 * Access the statements that make up the body of this method.
+	 * @return
+	 */
+	public List<Stmt> body() { return body; }
 	
 	/**
      * Check whether this method has one of the "base" modifiers (e.g. static,

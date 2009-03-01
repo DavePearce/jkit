@@ -89,10 +89,35 @@ public class JilFileWriter {
 		
 		output.println(") {");
 		
+		for(Stmt s : m.body()) {
+			write(s);
+		}
+		
 		output.println("\t}");
 		
 	}
 	
+	protected void write(Stmt s) {
+		if(s instanceof Stmt.Assign) {
+			write((Stmt.Assign)s);
+		} else if(s instanceof Stmt.Return) {
+			write((Stmt.Return)s);
+		} else if(s instanceof Stmt.Throw) {
+			write((Stmt.Return)s);
+		}
+	}
+	
+	protected void write(Stmt.Assign s) {
+		output.println("\t\t?? = ??");
+	}
+	
+	protected void write(Stmt.Return s) {
+		output.println("\t\treturn ???");
+	}
+	
+	protected void write(Stmt.Throw s) {
+		output.println("\t\tthrow ???");
+	}
 	protected void writeModifiers(List<Modifier> modifiers) {
 		for (Modifier x : modifiers) {
 			if (x instanceof Modifier.Base) {
