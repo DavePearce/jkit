@@ -29,6 +29,11 @@ import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 import jkit.jil.*;
+import jkit.jil.tree.Clazz;
+import jkit.jil.tree.Field;
+import jkit.jil.tree.Method;
+import jkit.jil.tree.Modifier;
+import jkit.jil.tree.Type;
 import jkit.util.*;
 
 public class ClassFileReader {	

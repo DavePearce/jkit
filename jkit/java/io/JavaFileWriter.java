@@ -9,6 +9,7 @@ import jkit.java.tree.Stmt;
 import jkit.java.tree.Type;
 import jkit.java.tree.Value;
 import jkit.jil.*;
+import jkit.jil.tree.Modifier;
 import jkit.util.*; 
 
 /**

@@ -1,6 +1,7 @@
-package jkit.jil;
+package jkit.jil.tree;
 
 import java.util.*;
+
 
 public class Clazz extends SyntacticElementImpl {
 	private List<Modifier> modifiers;

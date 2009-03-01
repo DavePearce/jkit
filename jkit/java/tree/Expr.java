@@ -2,9 +2,9 @@ package jkit.java.tree;
 
 import java.util.List;
 
-import jkit.jil.Attribute;
-import jkit.jil.SyntacticElement;
-import jkit.jil.SyntacticElementImpl;
+import jkit.jil.tree.Attribute;
+import jkit.jil.tree.SyntacticElement;
+import jkit.jil.tree.SyntacticElementImpl;
 
 public interface Expr extends SyntacticElement {
 	/**

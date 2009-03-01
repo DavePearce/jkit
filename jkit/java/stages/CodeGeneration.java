@@ -8,6 +8,12 @@ import jkit.java.io.JavaFile;
 import jkit.java.tree.Decl;
 import jkit.java.*;
 import jkit.jil.*;
+import jkit.jil.tree.Clazz;
+import jkit.jil.tree.Expr;
+import jkit.jil.tree.SourceLocation;
+import jkit.jil.tree.Stmt;
+import jkit.jil.tree.SyntacticElement;
+import jkit.jil.tree.Type;
 import jkit.util.Pair;
 import jkit.util.Triple;
 

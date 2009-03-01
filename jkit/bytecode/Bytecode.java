@@ -25,7 +25,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.Map;
 
-import jkit.jil.Type;
+import jkit.jil.tree.Type;
 import jkit.util.Pair;
 
 public abstract class Bytecode {

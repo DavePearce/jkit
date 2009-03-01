@@ -1,6 +1,6 @@
 package jkit.compiler;
 
-import jkit.jil.Clazz;
+import jkit.jil.tree.Clazz;
 
 public interface Stage {
 	public String description();

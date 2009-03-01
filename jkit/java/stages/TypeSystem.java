@@ -5,10 +5,10 @@ import java.util.*;
 import jkit.compiler.ClassLoader;
 import jkit.compiler.FieldNotFoundException;
 import jkit.compiler.MethodNotFoundException;
-import jkit.jil.Type;
-import jkit.jil.Clazz;
-import jkit.jil.Method;
-import jkit.jil.Field;
+import jkit.jil.tree.Clazz;
+import jkit.jil.tree.Field;
+import jkit.jil.tree.Method;
+import jkit.jil.tree.Type;
 import jkit.util.Pair;
 import jkit.util.Triple;
 
@@ -999,7 +999,7 @@ public class TypeSystem {
 		}		
 		
 		// Phase 1: traverse heirarchy whilst ignoring autoboxing and varargs
-		Triple<jkit.jil.Clazz, jkit.jil.Method, Type.Function> methodInfo = resolveMethod(
+		Triple<jkit.jil.tree.Clazz, jkit.jil.tree.Method, Type.Function> methodInfo = resolveMethod(
 				receiver, name, concreteParameterTypes, false, false, loader);
 
 		if (methodInfo == null) {
@@ -1103,10 +1103,10 @@ public class TypeSystem {
 		while (!worklist.isEmpty()) {
 			Type.Clazz type = worklist.remove(0);
 			Clazz c = loader.loadClass(type);			
-			List<jkit.jil.Method> methods = c.methods(name);
+			List<jkit.jil.tree.Method> methods = c.methods(name);
 			Map<String,Type.Reference> binding = bind(type, c.type(),loader);
 			
-			for (jkit.jil.Method m : methods) {
+			for (jkit.jil.tree.Method m : methods) {
 				// try to rule out as many impossible candidates as possible
 				Type.Function m_type = m.type();				
 				

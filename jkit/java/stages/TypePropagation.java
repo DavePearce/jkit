@@ -15,10 +15,10 @@ import jkit.java.tree.Value;
 import jkit.java.tree.Decl.*;
 import jkit.java.tree.Stmt.Case;
 import jkit.util.*;
-import jkit.jil.SyntacticElement;
-import jkit.jil.Type;
-import jkit.jil.Modifier;
-import jkit.jil.SourceLocation;
+import jkit.jil.tree.Modifier;
+import jkit.jil.tree.SourceLocation;
+import jkit.jil.tree.SyntacticElement;
+import jkit.jil.tree.Type;
 
 /**
  * The purpose of this operation, is to propagate type information throughout
@@ -404,7 +404,7 @@ public class TypePropagation {
 			} else {
 				// now, perform field lookup!
 				try {
-					Triple<jkit.jil.Clazz, jkit.jil.Field, Type> r = types
+					Triple<jkit.jil.tree.Clazz, jkit.jil.tree.Field, Type> r = types
 							.resolveField(target, e.name(), loader);
 					e.attributes().add(r.third());			
 				} catch(ClassNotFoundException cne) {
@@ -1288,44 +1288,44 @@ public class TypePropagation {
      * @param jt
      * @return
      */
-	protected jkit.java.tree.Type fromJilType(jkit.jil.Type t) {		
-		if(t instanceof jkit.jil.Type.Primitive) {
-			return fromJilType((jkit.jil.Type.Primitive)t);
-		} else if(t instanceof jkit.jil.Type.Array) {
-			return fromJilType((jkit.jil.Type.Array)t);
-		} else if(t instanceof jkit.jil.Type.Clazz) {
-			return fromJilType((jkit.jil.Type.Clazz)t);
+	protected jkit.java.tree.Type fromJilType(jkit.jil.tree.Type t) {		
+		if(t instanceof jkit.jil.tree.Type.Primitive) {
+			return fromJilType((jkit.jil.tree.Type.Primitive)t);
+		} else if(t instanceof jkit.jil.tree.Type.Array) {
+			return fromJilType((jkit.jil.tree.Type.Array)t);
+		} else if(t instanceof jkit.jil.tree.Type.Clazz) {
+			return fromJilType((jkit.jil.tree.Type.Clazz)t);
 		}
 		throw new RuntimeException("Need to finish fromJilType off!");
 	}
 	
-	protected jkit.java.tree.Type.Primitive fromJilType(jkit.jil.Type.Primitive pt) {
-		if(pt instanceof jkit.jil.Type.Void) {
+	protected jkit.java.tree.Type.Primitive fromJilType(jkit.jil.tree.Type.Primitive pt) {
+		if(pt instanceof jkit.jil.tree.Type.Void) {
 			return new jkit.java.tree.Type.Void(pt);
-		} else if(pt instanceof jkit.jil.Type.Bool) {
+		} else if(pt instanceof jkit.jil.tree.Type.Bool) {
 			return new jkit.java.tree.Type.Bool(pt);
-		} else if(pt instanceof jkit.jil.Type.Byte) {
+		} else if(pt instanceof jkit.jil.tree.Type.Byte) {
 			return new jkit.java.tree.Type.Byte(pt);
-		} else if(pt instanceof jkit.jil.Type.Char) {
+		} else if(pt instanceof jkit.jil.tree.Type.Char) {
 			return new jkit.java.tree.Type.Char(pt);
-		} else if(pt instanceof jkit.jil.Type.Short) {
+		} else if(pt instanceof jkit.jil.tree.Type.Short) {
 			return new jkit.java.tree.Type.Short(pt);
-		} else if(pt instanceof jkit.jil.Type.Int) {
+		} else if(pt instanceof jkit.jil.tree.Type.Int) {
 			return new jkit.java.tree.Type.Int(pt);
-		} else if(pt instanceof jkit.jil.Type.Long) {
+		} else if(pt instanceof jkit.jil.tree.Type.Long) {
 			return new jkit.java.tree.Type.Long(pt);
-		} else if(pt instanceof jkit.jil.Type.Float) {
+		} else if(pt instanceof jkit.jil.tree.Type.Float) {
 			return new jkit.java.tree.Type.Float(pt);
 		} else {
 			return new jkit.java.tree.Type.Double(pt);
 		}
 	}
 	
-	protected jkit.java.tree.Type.Array fromJilType(jkit.jil.Type.Array at) {
+	protected jkit.java.tree.Type.Array fromJilType(jkit.jil.tree.Type.Array at) {
 		return new jkit.java.tree.Type.Array(fromJilType(at.element()),at);
 	}
 	
-	protected jkit.java.tree.Type.Clazz fromJilType(jkit.jil.Type.Clazz jt) {			
+	protected jkit.java.tree.Type.Clazz fromJilType(jkit.jil.tree.Type.Clazz jt) {			
 		// I will make it fully qualified for simplicity.
 		ArrayList<Pair<String,List<jkit.java.tree.Type.Reference>>> ncomponents = new ArrayList();
 		// So, we need to split out the package into the component parts
@@ -1338,9 +1338,9 @@ public class TypePropagation {
 		}		
 		
 		// Now, complete the components list
-		for(Pair<String,List<jkit.jil.Type.Reference>> c : jt.components()) {
+		for(Pair<String,List<jkit.jil.tree.Type.Reference>> c : jt.components()) {
 			ArrayList<jkit.java.tree.Type.Reference> l = new ArrayList();
-			for(jkit.jil.Type.Reference r : c.second()) {
+			for(jkit.jil.tree.Type.Reference r : c.second()) {
 				l.add((jkit.java.tree.Type.Reference)fromJilType(r));
 			}
 			ncomponents.add(new Pair(c.first(),l));
@@ -1371,7 +1371,7 @@ public class TypePropagation {
 	 * @return
 	 */
 	protected Type.Clazz getSuperClass(Type.Clazz c) throws ClassNotFoundException {
-		jkit.jil.Clazz cc = loader.loadClass(c);
+		jkit.jil.tree.Clazz cc = loader.loadClass(c);
 		return cc.superClass();
 	}
 	

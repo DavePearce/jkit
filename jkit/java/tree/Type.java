@@ -2,8 +2,8 @@ package jkit.java.tree;
 
 import java.util.*;
 
-import jkit.jil.Attribute;
-import jkit.jil.SyntacticElementImpl;
+import jkit.jil.tree.Attribute;
+import jkit.jil.tree.SyntacticElementImpl;
 import jkit.util.Pair;
 
 /**

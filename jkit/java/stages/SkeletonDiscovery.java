@@ -8,10 +8,10 @@ import jkit.compiler.SyntaxError;
 import jkit.java.io.JavaFile;
 import jkit.java.tree.Decl;
 import jkit.java.tree.Decl.Field;
-import jkit.jil.Clazz;
-import jkit.jil.SourceLocation;
-import jkit.jil.SyntacticElement;
-import jkit.jil.Type;
+import jkit.jil.tree.Clazz;
+import jkit.jil.tree.SourceLocation;
+import jkit.jil.tree.SyntacticElement;
+import jkit.jil.tree.Type;
 import jkit.util.Pair;
 
 /**
@@ -71,7 +71,7 @@ public class SkeletonDiscovery {
 		List<Clazz> cs = doClass(d, pkg, parent);
 		cs.get(cs.size() - 1).modifiers()
 				.add(
-						new jkit.jil.Modifier.Base(
+						new jkit.jil.tree.Modifier.Base(
 								java.lang.reflect.Modifier.INTERFACE));
 		return cs;
 	}

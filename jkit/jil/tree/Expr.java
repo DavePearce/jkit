@@ -1,6 +1,20 @@
-package jkit.jil;
+package jkit.jil.tree;
 
 import java.util.List;
+
+import jkit.jil.tree.Type.Array;
+import jkit.jil.tree.Type.Bool;
+import jkit.jil.tree.Type.Byte;
+import jkit.jil.tree.Type.Char;
+import jkit.jil.tree.Type.Clazz;
+import jkit.jil.tree.Type.Double;
+import jkit.jil.tree.Type.Float;
+import jkit.jil.tree.Type.Int;
+import jkit.jil.tree.Type.Long;
+import jkit.jil.tree.Type.Null;
+import jkit.jil.tree.Type.Primitive;
+import jkit.jil.tree.Type.Reference;
+import jkit.jil.tree.Type.Short;
 
 public interface Expr extends SyntacticElement {
 	

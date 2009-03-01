@@ -1,4 +1,5 @@
-package jkit.jil;
+package jkit.jil.tree;
+
 
 public interface Stmt extends SyntacticElement {
 	

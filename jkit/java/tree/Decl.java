@@ -5,10 +5,10 @@ import java.util.List;
 
 import jkit.java.tree.Type.Clazz;
 import jkit.java.tree.Type.Variable;
-import jkit.jil.Attribute;
-import jkit.jil.Modifier;
-import jkit.jil.SyntacticElement;
-import jkit.jil.SyntacticElementImpl;
+import jkit.jil.tree.Attribute;
+import jkit.jil.tree.Modifier;
+import jkit.jil.tree.SyntacticElement;
+import jkit.jil.tree.SyntacticElementImpl;
 import jkit.util.Triple;
 
 public interface Decl extends SyntacticElement {

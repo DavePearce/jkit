@@ -3,6 +3,8 @@ package jkit.java.tree;
 import java.util.List;
 
 import jkit.jil.*;
+import jkit.jil.tree.Attribute;
+import jkit.jil.tree.SyntacticElementImpl;
 
 public interface Value extends Expr {
 	

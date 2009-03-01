@@ -1,6 +1,7 @@
-package jkit.jil;
+package jkit.jil.tree;
 
 import java.util.List;
+
 
 public class Method extends SyntacticElementImpl {
 	private String name;

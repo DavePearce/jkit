@@ -35,6 +35,8 @@ import jkit.java.tree.Decl.*;
 import jkit.util.Pair;
 import jkit.util.Triple;
 import jkit.jil.*;
+import jkit.jil.tree.Modifier;
+import jkit.jil.tree.SourceLocation;
 
 import org.antlr.runtime.*;
 import org.antlr.runtime.tree.*;

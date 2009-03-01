@@ -2,7 +2,8 @@ package jkit.compiler;
 
 import java.io.*;
 import java.util.*;
-import jkit.jil.Clazz;
+
+import jkit.jil.tree.Clazz;
 
 /**
  * A compiler is an object responsible for compiling a particular source file.

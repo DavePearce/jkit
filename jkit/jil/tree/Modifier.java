@@ -1,4 +1,4 @@
-package jkit.jil;
+package jkit.jil.tree;
 
 import java.util.List;
 

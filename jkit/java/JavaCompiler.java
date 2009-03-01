@@ -18,6 +18,9 @@ import jkit.java.stages.TypePropagation;
 import jkit.java.stages.TypeSystem;
 import jkit.java.stages.CodeGeneration;
 import jkit.jil.*;
+import jkit.jil.tree.Clazz;
+import jkit.jil.tree.SourceLocation;
+import jkit.jil.tree.SyntacticElement;
 
 /**
  * A Java compiler is responsible for compiling Java source files into class

@@ -11,13 +11,13 @@ import jkit.java.tree.Expr;
 import jkit.java.tree.Stmt;
 import jkit.java.tree.Value;
 import jkit.java.tree.Stmt.Case;
-import jkit.jil.Clazz;
-import jkit.jil.Method;
-import jkit.jil.Field;
-import jkit.jil.Modifier;
-import jkit.jil.Type;
-import jkit.jil.SourceLocation;
-import jkit.jil.SyntacticElement;
+import jkit.jil.tree.Clazz;
+import jkit.jil.tree.Field;
+import jkit.jil.tree.Method;
+import jkit.jil.tree.Modifier;
+import jkit.jil.tree.SourceLocation;
+import jkit.jil.tree.SyntacticElement;
+import jkit.jil.tree.Type;
 import jkit.util.*;
 
 /**

@@ -1,8 +1,9 @@
 package jkit.bytecode;
 
 import java.util.*;
-import jkit.jil.Clazz;
-import jkit.jil.Type;
+
+import jkit.jil.tree.Clazz;
+import jkit.jil.tree.Type;
 import jkit.util.Pair;
 
 /**

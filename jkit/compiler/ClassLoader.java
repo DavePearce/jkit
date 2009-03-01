@@ -6,8 +6,8 @@ import java.util.jar.JarFile;
 import java.io.*;
 
 import jkit.bytecode.ClassFileReader;
-import jkit.jil.Clazz;
-import jkit.jil.Type;
+import jkit.jil.tree.Clazz;
+import jkit.jil.tree.Type;
 import jkit.util.Pair;
 
 /**

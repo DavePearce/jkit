@@ -14,10 +14,10 @@ import jkit.java.tree.Decl.Field;
 import jkit.java.tree.Decl.Interface;
 import jkit.java.tree.Decl.Method;
 import jkit.java.tree.Stmt.Case;
-import jkit.jil.Modifier;
-import jkit.jil.SourceLocation;
-import jkit.jil.SyntacticElement;
-import jkit.jil.Type;
+import jkit.jil.tree.Modifier;
+import jkit.jil.tree.SourceLocation;
+import jkit.jil.tree.SyntacticElement;
+import jkit.jil.tree.Type;
 import jkit.util.Pair;
 import jkit.util.Triple;
 
@@ -553,7 +553,7 @@ public class TypeResolution {
 	 * @param file
 	 * @return
 	 */
-	protected jkit.jil.Type resolve(jkit.java.tree.Type t) {
+	protected jkit.jil.tree.Type resolve(jkit.java.tree.Type t) {
 		if(t instanceof jkit.java.tree.Type.Primitive) {
 			return resolve((jkit.java.tree.Type.Primitive)t);
 		} else if(t instanceof jkit.java.tree.Type.Clazz) {
@@ -571,52 +571,52 @@ public class TypeResolution {
 		return null;
 	}
 	
-	protected jkit.jil.Type.Intersection resolve(jkit.java.tree.Type.Intersection pt) {
-		ArrayList<jkit.jil.Type.Reference> bounds = new ArrayList();
+	protected jkit.jil.tree.Type.Intersection resolve(jkit.java.tree.Type.Intersection pt) {
+		ArrayList<jkit.jil.tree.Type.Reference> bounds = new ArrayList();
 		for(jkit.java.tree.Type.Reference b : pt.bounds()) {
 			bounds.add((Type.Reference) resolve(b));
 		}
-		return new jkit.jil.Type.Intersection(bounds);
+		return new jkit.jil.tree.Type.Intersection(bounds);
 	}
 	
-	protected jkit.jil.Type.Primitive resolve(jkit.java.tree.Type.Primitive pt) {
+	protected jkit.jil.tree.Type.Primitive resolve(jkit.java.tree.Type.Primitive pt) {
 		if(pt instanceof jkit.java.tree.Type.Void) {
-			return new jkit.jil.Type.Void();
+			return new jkit.jil.tree.Type.Void();
 		} else if(pt instanceof jkit.java.tree.Type.Bool) {
-			return new jkit.jil.Type.Bool();
+			return new jkit.jil.tree.Type.Bool();
 		} else if(pt instanceof jkit.java.tree.Type.Byte) {
-			return new jkit.jil.Type.Byte();
+			return new jkit.jil.tree.Type.Byte();
 		} else if(pt instanceof jkit.java.tree.Type.Char) {
-			return new jkit.jil.Type.Char();
+			return new jkit.jil.tree.Type.Char();
 		} else if(pt instanceof jkit.java.tree.Type.Short) {
-			return new jkit.jil.Type.Short();
+			return new jkit.jil.tree.Type.Short();
 		} else if(pt instanceof jkit.java.tree.Type.Int) {
-			return new jkit.jil.Type.Int();
+			return new jkit.jil.tree.Type.Int();
 		} else if(pt instanceof jkit.java.tree.Type.Long) {
-			return new jkit.jil.Type.Long();
+			return new jkit.jil.tree.Type.Long();
 		} else if(pt instanceof jkit.java.tree.Type.Float) {
-			return new jkit.jil.Type.Float();
+			return new jkit.jil.tree.Type.Float();
 		} else {
-			return new jkit.jil.Type.Double();
+			return new jkit.jil.tree.Type.Double();
 		}
 	}
 	
-	protected jkit.jil.Type.Array resolve(jkit.java.tree.Type.Array t) {
-		return new jkit.jil.Type.Array(resolve(t.element()));
+	protected jkit.jil.tree.Type.Array resolve(jkit.java.tree.Type.Array t) {
+		return new jkit.jil.tree.Type.Array(resolve(t.element()));
 	}
 	
-	protected jkit.jil.Type.Wildcard resolve(jkit.java.tree.Type.Wildcard t) {				
-		 jkit.jil.Type.Wildcard r = new jkit.jil.Type.Wildcard((Type.Reference) resolve(t
+	protected jkit.jil.tree.Type.Wildcard resolve(jkit.java.tree.Type.Wildcard t) {				
+		 jkit.jil.tree.Type.Wildcard r = new jkit.jil.tree.Type.Wildcard((Type.Reference) resolve(t
 				.lowerBound()), (Type.Reference) resolve(t.upperBound()));		 
 		 return r;
 	}
 	
-	protected jkit.jil.Type.Variable resolve(jkit.java.tree.Type.Variable t) {		
+	protected jkit.jil.tree.Type.Variable resolve(jkit.java.tree.Type.Variable t) {		
 		Type.Reference arg = null;
 		if(t.lowerBound() != null) {					
 			arg = (Type.Reference) resolve(t.lowerBound());
 		}
-		return new jkit.jil.Type.Variable(t.variable(),arg);
+		return new jkit.jil.tree.Type.Variable(t.variable(),arg);
 	}
 	
 	/**
@@ -647,8 +647,8 @@ public class TypeResolution {
 	 *            determine the import list.
 	 * @return
 	 */
-	protected jkit.jil.Type.Reference resolve(jkit.java.tree.Type.Clazz ct) {		
-		ArrayList<Pair<String,List<jkit.jil.Type.Reference>>> ncomponents = new ArrayList();
+	protected jkit.jil.tree.Type.Reference resolve(jkit.java.tree.Type.Clazz ct) {		
+		ArrayList<Pair<String,List<jkit.jil.tree.Type.Reference>>> ncomponents = new ArrayList();
 		String className = "";
 		String pkg = "";
 				
@@ -668,14 +668,14 @@ public class TypeResolution {
 				// now, rebuild the component list
 				Pair<String, List<jkit.java.tree.Type.Reference>> component = ct
 						.components().get(i);
-				ArrayList<jkit.jil.Type.Reference> nvars = new ArrayList();
+				ArrayList<jkit.jil.tree.Type.Reference> nvars = new ArrayList();
 
 				for (jkit.java.tree.Type.Reference r : component.second()) {					
-					nvars.add((jkit.jil.Type.Reference) resolve(r));
+					nvars.add((jkit.jil.tree.Type.Reference) resolve(r));
 				}
 
 				ncomponents
-						.add(new Pair<String, List<jkit.jil.Type.Reference>>(
+						.add(new Pair<String, List<jkit.jil.tree.Type.Reference>>(
 								component.first(), nvars));
 			}
 		}
@@ -686,7 +686,7 @@ public class TypeResolution {
 		} else if(pkg.length() > 0) {
 			// could add "containsClass" check here. Need to modify
 			// classLoader though.
-			return new jkit.jil.Type.Clazz(pkg,ncomponents);			
+			return new jkit.jil.tree.Type.Clazz(pkg,ncomponents);			
 		}
 		
 		// So, at this point, it seems there was no package information in the
@@ -709,9 +709,9 @@ public class TypeResolution {
 			// following loop combines all the information we have together to
 			// achieve this.
 			
-			List<Pair<String,List<jkit.jil.Type.Reference>>> rcomponents = r.components();
+			List<Pair<String,List<jkit.jil.tree.Type.Reference>>> rcomponents = r.components();
 			for(int i=0;i!=r.components().size();++i) {
-				Pair<String,List<jkit.jil.Type.Reference>> p = rcomponents.get(i); 
+				Pair<String,List<jkit.jil.tree.Type.Reference>> p = rcomponents.get(i); 
 				if(p.first().equals(ncomponents.get(i).first())) {
 					break;
 				} else {
@@ -719,7 +719,7 @@ public class TypeResolution {
 				}
 			}
 			
-			return new jkit.jil.Type.Clazz(r.pkg(),ncomponents);					
+			return new jkit.jil.tree.Type.Clazz(r.pkg(),ncomponents);					
 		} catch(ClassNotFoundException e) {
 			syntax_error("unable to find class " + className,ct,e);
 			return null;

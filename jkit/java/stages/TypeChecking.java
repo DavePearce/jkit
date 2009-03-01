@@ -13,9 +13,9 @@ import jkit.java.tree.Value;
 import jkit.java.tree.Decl.*;
 import jkit.java.tree.Expr.*;
 import jkit.java.tree.Stmt.*;
-import jkit.jil.Type;
-import jkit.jil.SyntacticElement;
-import jkit.jil.SourceLocation;
+import jkit.jil.tree.SourceLocation;
+import jkit.jil.tree.SyntacticElement;
+import jkit.jil.tree.Type;
 import jkit.util.Triple;
 
 /**
@@ -473,8 +473,8 @@ public class TypeChecking {
 		Type c_t = (Type) e.type().attribute(Type.class);
 		try {
 			if(e_t instanceof Type.Clazz && c_t instanceof Type.Clazz) {
-				jkit.jil.Clazz c_c = loader.loadClass((Type.Clazz) c_t);
-				jkit.jil.Clazz e_c = loader.loadClass((Type.Clazz) e_t);
+				jkit.jil.tree.Clazz c_c = loader.loadClass((Type.Clazz) c_t);
+				jkit.jil.tree.Clazz e_c = loader.loadClass((Type.Clazz) e_t);
 				
 				// the trick here, is that javac will never reject a cast
 				// between an interface and a class or interface. However, if we

@@ -25,7 +25,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
-import jkit.jil.Type;
+import jkit.jil.tree.Type;
 
 public class Constant {
 	

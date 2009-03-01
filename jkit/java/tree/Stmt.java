@@ -4,6 +4,10 @@ import java.util.List;
 
 import jkit.java.tree.Type.Clazz;
 import jkit.jil.*;
+import jkit.jil.tree.Attribute;
+import jkit.jil.tree.Modifier;
+import jkit.jil.tree.SyntacticElement;
+import jkit.jil.tree.SyntacticElementImpl;
 import jkit.util.Triple;
 
 public interface Stmt extends SyntacticElement {
