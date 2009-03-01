@@ -18,6 +18,7 @@ import jkit.java.stages.TypePropagation;
 import jkit.java.stages.TypeSystem;
 import jkit.java.stages.CodeGeneration;
 import jkit.jil.*;
+import jkit.jil.io.*;
 import jkit.jil.tree.Clazz;
 import jkit.jil.tree.SourceLocation;
 import jkit.jil.tree.SyntacticElement;
@@ -245,14 +246,14 @@ public class JavaCompiler implements Compiler {
 					(System.currentTimeMillis() - start));
 
 			
-			// Eigth, write out the compiled class file.
-			start = System.currentTimeMillis();
-			String outFile = writeOutputFile(jfile, filename);
-			logTimedMessage("[" + filename.getPath() + "] Wrote " + outFile,
+			// Eigth, write out the compiled class file(s).			
+			for(Clazz clazz : skeletons) {
+				start = System.currentTimeMillis();
+				String outFile = writeOutputFile(clazz, filename);
+				logTimedMessage("[" + filename.getPath() + "] Wrote " + outFile,
 					(System.currentTimeMillis() - start));
-
-			
-			
+			}
+						
 			compiling.remove(filename);
 
 			return skeletons; // to be completed
@@ -366,7 +367,7 @@ public class JavaCompiler implements Compiler {
 	 * @param jfile
 	 * @param loader
 	 */
-	public String writeOutputFile(JavaFile jfile, File inputFile)
+	public String writeOutputFile(Clazz clazz, File inputFile)
 			throws IOException {
 		// This is currently a hack
 		File outputFile;
@@ -384,7 +385,8 @@ public class JavaCompiler implements Compiler {
 		}
 
 		// write the file!!
-		new JavaFileWriter(new FileWriter(outputFile)).write(jfile);
+		// new JavaFileWriter(new FileWriter(outputFile)).write(jfile);
+		new JilFileWriter(new FileWriter(outputFile)).write(clazz);
 		return outputFile.getPath();
 	}
 
