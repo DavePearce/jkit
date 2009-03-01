@@ -279,6 +279,9 @@ public class CodeGeneration {
 		return r;
 	}
 	
+	static protected int ifexit_label = 0;
+	static protected int iftrue_label = 0;
+	
 	protected List<Stmt> doIf(jkit.java.tree.Stmt.If stmt) {
 		ArrayList<Stmt> r = new ArrayList<Stmt>();
 		
@@ -291,20 +294,20 @@ public class CodeGeneration {
 		if(stmt.falseStatement() == null) {
 			r.add(new Stmt.IfGoto(
 					new Expr.UnOp(cond.first(), Expr.UnOp.NOT, new Type.Bool(),
-					stmt.condition().attributes()), "???? exit", stmt.attributes()));
+					stmt.condition().attributes()), "ifexit" + ifexit_label, stmt.attributes()));
 			r.addAll(tbranch);
 		} else if(stmt.trueStatement() == null) {
-			r.add(new Stmt.IfGoto(cond.first(),"???? exit",stmt.attributes()));
+			r.add(new Stmt.IfGoto(cond.first(),"ifexit" + ifexit_label,stmt.attributes()));
 			r.addAll(fbranch);
 		} else {
-			r.add(new Stmt.IfGoto(cond.first(),"????",stmt.attributes()));
+			r.add(new Stmt.IfGoto(cond.first(),"iftrue" + iftrue_label,stmt.attributes()));
 			r.addAll(fbranch);
-			r.add(new Stmt.Goto("???? exit",stmt.attributes()));
-			r.add(new Stmt.Label("????",stmt.attributes()));
+			r.add(new Stmt.Goto("ifexit" + ifexit_label,stmt.attributes()));
+			r.add(new Stmt.Label("iftrue" + iftrue_label++,stmt.attributes()));
 			r.addAll(tbranch);
 		}
 		
-		r.add(new Stmt.Label("??? exit",stmt.attributes()));
+		r.add(new Stmt.Label("ifexit" + ifexit_label++,stmt.attributes()));
 		return r;
 		
 	}

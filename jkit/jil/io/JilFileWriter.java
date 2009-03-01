@@ -104,6 +104,12 @@ public class JilFileWriter {
 			write((Stmt.Return)s);
 		} else if(s instanceof Stmt.Throw) {
 			write((Stmt.Return)s);
+		} else if(s instanceof Stmt.IfGoto) {
+			write((Stmt.IfGoto)s);
+		} else if(s instanceof Stmt.Goto) {
+			write((Stmt.Goto)s);
+		} else if(s instanceof Stmt.Label) {
+			write((Stmt.Label)s);
 		}
 	}
 	
@@ -133,6 +139,20 @@ public class JilFileWriter {
 		output.println(";");
 	}
 	
+	protected void write(Stmt.Goto s) {
+		output.println("\t\tgoto " + s.label() + ";");
+	}
+	
+	protected void write(Stmt.IfGoto s) {
+		output.print("\t\tif(");
+		write(s.condition());
+		output.println(") goto " + s.label() + ";");
+	}
+	
+	protected void write(Stmt.Label s) {
+		output.println("\t" + s.label() + ":");
+	}
+	
 	protected void write(Expr e) {
 		if(e instanceof Expr.Bool) {
 			write((Expr.Bool)e);
@@ -154,6 +174,8 @@ public class JilFileWriter {
 			write((Expr.Null)e);
 		} else if(e instanceof Expr.Variable) {		
 			write((Expr.Variable)e);
+		} else if(e instanceof Expr.UnOp) {
+			write((Expr.UnOp)e);
 		} else if(e instanceof Expr.BinOp) {
 			write((Expr.BinOp)e);
 		}
@@ -199,6 +221,13 @@ public class JilFileWriter {
 	
 	protected void write(Expr.Variable v) {
 		output.write(v.value());
+	}
+	
+	public static final String[] unopstr={"!","~","-","++","--","++","--"};	
+	
+	protected void write(Expr.UnOp e) {
+		output.write(unopstr[e.op()]);
+		writeExpressionWithBracketsIfNecessary(e.expr());					
 	}
 	
 	protected static final String[] binopstr = {"+", "-", "*", "/", "%", "<<",
