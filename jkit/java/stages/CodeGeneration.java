@@ -183,7 +183,7 @@ public class CodeGeneration {
 	protected Pair<Expr,List<Stmt>> doAssignment(jkit.java.tree.Stmt.Assignment def) {
 		doExpression(def.lhs());	
 		doExpression(def.rhs());
-		return def;
+		return null; // needs fixing!!
 	}
 	
 	protected void doReturn(jkit.java.tree.Stmt.Return ret) {
@@ -310,27 +310,34 @@ public class CodeGeneration {
 	
 	protected Pair<Expr,List<Stmt>> doDeref(jkit.java.tree.Expr.Deref e) {
 		Pair<Expr,List<Stmt>> target = doExpression(e.target());
-		return new Pair<Expr,List<Stmt>>(e,target.second());
+		Type type = (Type) e.attribute(Type.class);
+		return new Pair<Expr, List<Stmt>>(new Expr.Deref(target.first(), e
+				.name(), type, e.attributes()), target.second());
 	}
 	
 	protected Pair<Expr,List<Stmt>> doArrayIndex(jkit.java.tree.Expr.ArrayIndex e) {
 		Pair<Expr,List<Stmt>> target = doExpression(e.target());
 		Pair<Expr,List<Stmt>> index = doExpression(e.index());
+		Type type = (Type) e.attribute(Type.class);
 		
 		List<Stmt> r = target.second();
 		r.addAll(index.second());
 		
-		return new Pair<Expr,List<Stmt>>(e,r);
+		return new Pair<Expr, List<Stmt>>(new Expr.ArrayIndex(target.first(),
+				index.first(), type, e.attributes()), r);
 	}
 	
 	protected Pair<Expr,List<Stmt>> doNew(jkit.java.tree.Expr.New e) {
 		// Second, recurse through any parameters supplied ...
 		ArrayList<Stmt> r = new ArrayList();
-		List<Expr> parameters = e.parameters();
+		ArrayList<Expr> nparameters = new ArrayList();			
+		Type.Reference type = (Type.Reference) e.attribute(Type.class);
+		List<jkit.java.tree.Expr> parameters = e.parameters();
+		
 		for(int i=0;i!=parameters.size();++i) {
-			Expr p = parameters.get(i);
+			jkit.java.tree.Expr p = parameters.get(i);
 			Pair<Expr,List<Stmt>> tmp = doExpression(p);
-			parameters.set(i,tmp.first());
+			nparameters.add(tmp.first());
 			r.addAll(tmp.second());
 		}
 		
@@ -340,124 +347,148 @@ public class CodeGeneration {
 			}			
 		}
 		
-		return new Pair<Expr,List<Stmt>>(e,r);
+		return new Pair<Expr,List<Stmt>>(new Expr.New(type,nparameters,e.attributes()),r);
 	}
 	
 	protected Pair<Expr,List<Stmt>> doInvoke(jkit.java.tree.Expr.Invoke e) {
 		ArrayList<Stmt> r = new ArrayList();
+		ArrayList<Expr> nparameters = new ArrayList();
+		Type type = (Type) e.attribute(Type.class);		
+
+		Pair<Expr,List<Stmt>> target = doExpression(e.target());
+		r.addAll(target.second());
 		
-		Pair<Expr,List<Stmt>> tmp = doExpression(e.target());
-		e.setTarget(tmp.first());		
-		
-		r.addAll(tmp.second());
-		
-		List<Expr> parameters = e.parameters();
+		List<jkit.java.tree.Expr> parameters = e.parameters();
 		for(int i=0;i!=parameters.size();++i) {
-			Expr p = parameters.get(i);
-			tmp = doExpression(p);
-			parameters.set(i, tmp.first());
+			jkit.java.tree.Expr p = parameters.get(i);
+			Pair<Expr,List<Stmt>> tmp = doExpression(p);
+			nparameters.add(tmp.first());
 			r.addAll(tmp.second());
 		}				
 		
-		return new Pair<Expr,List<Stmt>>(e,r);
+		return new Pair<Expr, List<Stmt>>(new Expr.Invoke(target.first(), e
+				.name(), nparameters, type, e.attributes()), r);
 	}
 	
 	protected Pair<Expr,List<Stmt>> doInstanceOf(jkit.java.tree.Expr.InstanceOf e) {
-		Pair<Expr,List<Stmt>> expr = doExpression(e.lhs());
-		e.setLhs(expr.first());
-		return new Pair<Expr,List<Stmt>>(e,expr.second());
+		Pair<Expr,List<Stmt>> lhs = doExpression(e.lhs());
+		Type type = (Type) e.attribute(Type.class);
+		Type rhs = (Type) e.rhs().attribute(Type.class);
+		return new Pair<Expr, List<Stmt>>(new Expr.InstanceOf(lhs.first(), rhs,
+				type, e.attributes()), lhs.second());
 	}
 	
 	protected Pair<Expr,List<Stmt>> doCast(jkit.java.tree.Expr.Cast e) {
-		Pair<Expr,List<Stmt>> expr = doExpression(e.expr()); 
-		e.setExpr(expr.first());
-		return new Pair<Expr,List<Stmt>>(e,expr.second());
+		Pair<Expr,List<Stmt>> expr = doExpression(e.expr());		
+		Type type = (Type) e.attribute(Type.class);
+		return new Pair<Expr, List<Stmt>>(new Expr.Cast(expr.first(),
+				type, e.attributes()), expr.second());		
 	}
 	
 	protected Pair<Expr,List<Stmt>> doBoolVal(jkit.java.tree.Value.Bool e) {
-		return new Pair<Expr,List<Stmt>>(e, new ArrayList<Stmt>());
+		return new Pair<Expr, List<Stmt>>(new Expr.Bool(e.value()),
+				new ArrayList<Stmt>());
 	}
 	
 	protected Pair<Expr,List<Stmt>> doCharVal(jkit.java.tree.Value.Char e) {
-		return new Pair<Expr,List<Stmt>>(e, new ArrayList<Stmt>());		
+		return new Pair<Expr,List<Stmt>>(new Expr.Char(e.value()), new ArrayList<Stmt>());		
 	}
 	
 	protected Pair<Expr,List<Stmt>> doIntVal(jkit.java.tree.Value.Int e) {
-		return new Pair<Expr,List<Stmt>>(e, new ArrayList<Stmt>());
+		return new Pair<Expr,List<Stmt>>(new Expr.Int(e.value()), new ArrayList<Stmt>());
 	}
 	
 	protected Pair<Expr,List<Stmt>> doLongVal(jkit.java.tree.Value.Long e) {
-		return new Pair<Expr,List<Stmt>>(e, new ArrayList<Stmt>());
+		return new Pair<Expr,List<Stmt>>(new Expr.Long(e.value()), new ArrayList<Stmt>());
 	}
 	
 	protected Pair<Expr,List<Stmt>> doFloatVal(jkit.java.tree.Value.Float e) {
-		return new Pair<Expr,List<Stmt>>(e, new ArrayList<Stmt>());
+		return new Pair<Expr,List<Stmt>>(new Expr.Float(e.value()), new ArrayList<Stmt>());
 	}
 	
 	protected Pair<Expr,List<Stmt>> doDoubleVal(jkit.java.tree.Value.Double e) {
-		return new Pair<Expr,List<Stmt>>(e, new ArrayList<Stmt>());
+		return new Pair<Expr,List<Stmt>>(new Expr.Double(e.value()), new ArrayList<Stmt>());
 	}
 	
 	protected Pair<Expr,List<Stmt>> doStringVal(jkit.java.tree.Value.String e) {
-		return new Pair<Expr,List<Stmt>>(e, new ArrayList<Stmt>());
+		return new Pair<Expr,List<Stmt>>(new Expr.StringVal(e.value()), new ArrayList<Stmt>());
 	}
 	
 	protected Pair<Expr,List<Stmt>> doNullVal(jkit.java.tree.Value.Null e) {
-		return new Pair<Expr,List<Stmt>>(e, new ArrayList<Stmt>());
+		return new Pair<Expr,List<Stmt>>(new Expr.Null(), new ArrayList<Stmt>());
 	}
 	
 	protected Pair<Expr,List<Stmt>> doTypedArrayVal(jkit.java.tree.Value.TypedArray e) {
 		ArrayList<Stmt> r = new ArrayList<Stmt>();
+		ArrayList<Expr> params = new ArrayList();
+		Type.Array type = (Type.Array) e.attribute(Type.class);
+		
 		for(int i=0;i!=e.values().size();++i) {
-			Expr v = e.values().get(i);
+			jkit.java.tree.Expr v = e.values().get(i);
 			Pair<Expr,List<Stmt>> p = doExpression(v);
-			e.values().set(i,p.first());
+			params.add(p.first());
 			r.addAll(p.second());
 		}
-		return new Pair<Expr,List<Stmt>>(e,r);
+		return new Pair<Expr,List<Stmt>>(new Expr.Array(params,type,e.attributes()),r);
 	}
 	
 	protected Pair<Expr,List<Stmt>> doArrayVal(jkit.java.tree.Value.Array e) {
 		ArrayList<Stmt> r = new ArrayList<Stmt>();
+		ArrayList<Expr> params = new ArrayList();
+		Type.Array type = (Type.Array) e.attribute(Type.class);
+
 		for(int i=0;i!=e.values().size();++i) {
-			Expr v = e.values().get(i);			
+			jkit.java.tree.Expr v = e.values().get(i);			
 			Pair<Expr,List<Stmt>> p = doExpression(v);
-			e.values().set(i,p.first());
+			params.add(p.first());
 			r.addAll(p.second());
 		}
-		return new Pair<Expr,List<Stmt>>(e,r);
+		
+		return new Pair<Expr,List<Stmt>>(new Expr.Array(params,type,e.attributes()),r);
 	}
 	
 	protected Pair<Expr,List<Stmt>> doClassVal(jkit.java.tree.Value.Class e) {
-		return new Pair<Expr,List<Stmt>>(e, new ArrayList<Stmt>());
+		Type.Clazz type = (Type.Clazz) e.attribute(Type.class);		
+		return new Pair<Expr, List<Stmt>>(new Expr.Class(type, e.attributes()),
+				new ArrayList<Stmt>());
 	}
 		
-	protected Pair<Expr,List<Stmt>> doLocalVariable(jkit.java.tree.Expr.LocalVariable e) {
-		return new Pair<Expr,List<Stmt>>(e, new ArrayList<Stmt>());		
+	protected Pair<Expr, List<Stmt>> doLocalVariable(
+			jkit.java.tree.Expr.LocalVariable e) {
+		Type type = (Type) e.attribute(Type.class);
+		return new Pair<Expr, List<Stmt>>(new Expr.Variable(e.value(), type, e
+				.attributes()), new ArrayList<Stmt>());
 	}
 
 	protected Pair<Expr,List<Stmt>> doNonLocalVariable(jkit.java.tree.Expr.NonLocalVariable e) {
-		return new Pair<Expr,List<Stmt>>(e, new ArrayList<Stmt>());		
+		syntax_error("internal failure (support for non-local variables not implemented!)",e);
+		return null;
 	}
 	
 	protected Pair<Expr,List<Stmt>> doClassVariable(jkit.java.tree.Expr.ClassVariable e) {
-		return new Pair<Expr,List<Stmt>>(e, new ArrayList<Stmt>());
+		Type.Clazz type = (Type.Clazz) e.attribute(Type.class);
+		return new Pair<Expr, List<Stmt>>(new Expr.Class(type, e.attributes()),
+				new ArrayList<Stmt>());
 	}
 	
 	protected Pair<Expr,List<Stmt>> doUnOp(jkit.java.tree.Expr.UnOp e) {		
-		Pair<Expr,List<Stmt>> r = doExpression(e.expr());
-		e.setExpr(r.first());
-		return new Pair<Expr,List<Stmt>>(e,r.second());
+		Pair<Expr,List<Stmt>> r = doExpression(e.expr());	
+		Type.Primitive type = (Type.Primitive) e.attribute(Type.class);
+		
+		return new Pair<Expr, List<Stmt>>(new Expr.UnOp(r.first(), e.op(),
+				type, e.attributes()), r.second());
 	}
 		
 	protected Pair<Expr,List<Stmt>> doBinOp(jkit.java.tree.Expr.BinOp e) {				
 		Pair<Expr,List<Stmt>> lhs = doExpression(e.lhs());
 		Pair<Expr,List<Stmt>> rhs = doExpression(e.rhs());
-		e.setLhs(lhs.first());
-		e.setRhs(rhs.first());
+		Type.Primitive type = (Type.Primitive) e.attribute(Type.class);
+		
 		List<Stmt> r = lhs.second();
 		r.addAll(rhs.second());
-		return new Pair<Expr,List<Stmt>>(e,r);
+		
+		return new Pair<Expr, List<Stmt>>(new Expr.BinOp(lhs.first(), rhs
+				.first(), e.op(), type, e.attributes()), r);
 	}
 	
 	protected Pair<Expr,List<Stmt>> doTernOp(jkit.java.tree.Expr.TernOp e) {	
