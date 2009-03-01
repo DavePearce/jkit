@@ -191,6 +191,10 @@ public class JilFileWriter {
 			write((Expr.ArrayIndex)e);
 		} else if(e instanceof Expr.Deref) {
 			write((Expr.Deref)e);
+		} else if(e instanceof Expr.Invoke) {
+			write((Expr.Invoke)e);
+		} else if(e instanceof Expr.New) {
+			write((Expr.New)e);
 		} else {
 			throw new RuntimeException("Invalid expression encountered: "
 					+ e.getClass());
@@ -286,6 +290,37 @@ public class JilFileWriter {
 		write(e.target());
 		output.print(".");
 		output.print(e.name());						
+	}
+	
+	protected void write(Expr.Invoke e) {
+		write(e.target());
+		output.print(".");
+		output.print(e.name());
+		output.print("(");
+		boolean firstTime=true;
+		for(Expr p : e.parameters()) {
+			if(!firstTime) {
+				output.print(", ");
+			}
+			firstTime=false;
+			write(p);
+		}
+		output.print(")");
+	}
+	
+	protected void write(Expr.New e) {
+		output.print("new ");
+		output.print(e.type());
+		output.print("(");
+		boolean firstTime=true;
+		for(Expr p : e.parameters()) {
+			if(!firstTime) {
+				output.print(", ");
+			}
+			firstTime=false;
+			write(p);
+		}
+		output.print(")");
 	}
 	
 	protected void writeModifiers(List<Modifier> modifiers) {

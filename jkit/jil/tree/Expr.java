@@ -418,6 +418,14 @@ public interface Expr extends SyntacticElement {
 		public void setType(Type type) {
 			this.type = type;
 		}
+		
+		public List<Expr> parameters() {
+			return parameters;
+		}
+		
+		public void setParameters(List<Expr> parameters) {
+			this.parameters = parameters;
+		}
 	}
 
 	/**
