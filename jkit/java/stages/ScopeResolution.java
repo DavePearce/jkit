@@ -907,8 +907,7 @@ public class ScopeResolution {
 							.resolveField(cs.type, e.value(), loader);
 					
 					// Ok, this variable access corresponds to a field load.
-					if(isThis && !isStatic) {
-						System.out.println("GOT HERE FOR " + e.value());
+					if(isThis && !isStatic) {						
 						Expr thisvar = new Expr.LocalVariable("this",
 								new ArrayList(e.attributes()));
 						thisvar.attributes().add(cs.type);

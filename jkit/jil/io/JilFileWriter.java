@@ -110,6 +110,9 @@ public class JilFileWriter {
 			write((Stmt.Goto)s);
 		} else if(s instanceof Stmt.Label) {
 			write((Stmt.Label)s);
+		} else {
+			throw new RuntimeException("Invalid statement encountered: "
+					+ s.getClass());
 		}
 	}
 	
@@ -178,6 +181,19 @@ public class JilFileWriter {
 			write((Expr.UnOp)e);
 		} else if(e instanceof Expr.BinOp) {
 			write((Expr.BinOp)e);
+		} else if(e instanceof Expr.InstanceOf) {
+			write((Expr.InstanceOf)e);
+		} else if(e instanceof Expr.Cast) {
+			write((Expr.Cast)e);
+		} else if(e instanceof Expr.Convert) {
+			write((Expr.Convert)e);
+		} else if(e instanceof Expr.ArrayIndex) {
+			write((Expr.ArrayIndex)e);
+		} else if(e instanceof Expr.Deref) {
+			write((Expr.Deref)e);
+		} else {
+			throw new RuntimeException("Invalid expression encountered: "
+					+ e.getClass());
 		}
 	}
 	
@@ -241,6 +257,35 @@ public class JilFileWriter {
 		output.write(binopstr[e.op()]);
 		output.write(" ");
 		writeExpressionWithBracketsIfNecessary(e.rhs());	
+	}
+	
+	protected void write(Expr.InstanceOf e) {
+		writeExpressionWithBracketsIfNecessary(e.lhs());
+		output.write(" instanceof ");
+		output.print(e.rhs());
+	}
+	
+	protected void write(Expr.Cast e) {
+		output.print("(" + e.type() + ") ");
+		writeExpressionWithBracketsIfNecessary(e.expr());				
+	}
+	
+	protected void write(Expr.Convert e) {
+		output.print("[" + e.type() + "]");
+		writeExpressionWithBracketsIfNecessary(e.expr());				
+	}
+	
+	protected void write(Expr.ArrayIndex e) {
+		write(e.target());
+		output.print("[");
+		write(e.index());
+		output.print("]");					
+	}
+	
+	protected void write(Expr.Deref e) {
+		write(e.target());
+		output.print(".");
+		output.print(e.name());						
 	}
 	
 	protected void writeModifiers(List<Modifier> modifiers) {
