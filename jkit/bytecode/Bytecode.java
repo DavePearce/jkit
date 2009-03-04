@@ -1149,7 +1149,7 @@ public abstract class Bytecode {
 					else {
 						write_u1(out,NEWARRAY);		
 						
-						if(elementType instanceof Type.Boolean) {
+						if(elementType instanceof Type.Bool) {
 							write_u1(out, T_BOOLEAN);
 						} else if(elementType instanceof Type.Char) {
 							write_u1(out, T_CHAR);
@@ -1383,7 +1383,7 @@ public abstract class Bytecode {
 			return 'a';
 		} else if(type instanceof Type.Int || type instanceof Type.Byte
 				|| type instanceof Type.Char || type instanceof Type.Short
-				|| type instanceof Type.Boolean || type instanceof Type.Byte) {
+				|| type instanceof Type.Bool || type instanceof Type.Byte) {
 			return 'i';
 		} else if(type instanceof Type.Long) {
 			return 'l';
@@ -1404,7 +1404,7 @@ public abstract class Bytecode {
 			return 4;
 		} else if(type instanceof Type.Int || type instanceof Type.Byte
 				|| type instanceof Type.Char || type instanceof Type.Short
-				|| type instanceof Type.Boolean || type instanceof Type.Byte) {
+				|| type instanceof Type.Bool || type instanceof Type.Byte) {
 			return 0;
 		} else if(type instanceof Type.Long) {
 			return 1;
@@ -1434,7 +1434,7 @@ public abstract class Bytecode {
 			return 4; //same as array
 		} else if(type instanceof Type.Byte) {
 			return 5;
-		} else if(type instanceof Type.Boolean) {
+		} else if(type instanceof Type.Bool) {
 			return 5; //same as byte
 		} else if(type instanceof Type.Char) {
 			return 6;		

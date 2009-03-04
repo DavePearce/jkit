@@ -186,4 +186,51 @@ public interface Stmt extends SyntacticElement {
 			this.label = label;
 		}
 	}
+	
+	public static final class Nop extends SyntacticElementImpl implements Stmt {
+	}
+	
+	public static final class Lock extends SyntacticElementImpl implements Stmt {
+		private Expr expr;
+
+		public Lock(Expr expr, Attribute... attributes) {
+			super(attributes);
+			this.expr = expr;
+		}
+
+		public Lock(Expr expr, List<Attribute> attributes) {
+			super(attributes);
+			this.expr = expr;
+		}
+		
+		public Expr expr() {
+			return expr;
+		}
+		
+		public void setExpr(Expr expr) {
+			this.expr = expr;
+		}
+	}
+	
+	public static final class Unlock extends SyntacticElementImpl implements Stmt {
+		private Expr expr;
+
+		public Unlock(Expr expr, Attribute... attributes) {
+			super(attributes);
+			this.expr = expr;
+		}
+
+		public Unlock(Expr expr, List<Attribute> attributes) {
+			super(attributes);
+			this.expr = expr;
+		}
+		
+		public Expr expr() {
+			return expr;
+		}
+		
+		public void setExpr(Expr expr) {
+			this.expr = expr;
+		}
+	}
 }

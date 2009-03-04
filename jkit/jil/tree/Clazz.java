@@ -280,5 +280,13 @@ public class Clazz extends SyntacticElementImpl {
 	public boolean isSynchronized() {
 		return hasModifier(java.lang.reflect.Modifier.SYNCHRONIZED);
 	}		
+	
+	/**
+	 * Check whether or not this is an inner class.
+	 * @return
+	 */
+	public boolean isInnerClass() {
+		return type.components().size() > 1;
+	}
 
 }
