@@ -287,6 +287,8 @@ public interface Expr extends SyntacticElement {
 		public static final int NEQ = 16;
 		public static final int LAND = 17;
 		public static final int LOR = 18;
+		
+		public static final int CONCAT = 19;
 
 		protected Expr lhs;
 		protected Expr rhs;
@@ -622,7 +624,7 @@ public interface Expr extends SyntacticElement {
 			this.value = value;
 			this.type = type;
 		}
-		
+				
 		public Type.Primitive type() {
 			return type;
 		}
