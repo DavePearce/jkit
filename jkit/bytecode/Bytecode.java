@@ -514,12 +514,12 @@ public abstract class Bytecode {
      * invokeinterface bytecodes
      */
 	public static final class Invoke extends Bytecode {
-		public final Type.Reference owner;
+		public final Type.Clazz owner;
 		public final Type.Function type;
 		public final String name;
 		public final int mode;
 		
-		public Invoke(Type.Reference owner, String name, Type.Function type, int mode) {
+		public Invoke(Type.Clazz owner, String name, Type.Function type, int mode) {
 			assert mode >= 1 && mode <= 3;
 			this.owner = owner;
 			this.type = type;

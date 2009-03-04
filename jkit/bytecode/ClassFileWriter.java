@@ -28,12 +28,14 @@ import jkit.compiler.FieldNotFoundException;
 import jkit.compiler.MethodNotFoundException;
 
 import jkit.jil.tree.*;
+import jkit.jil.util.*;
 import jkit.util.*;
 
 public class ClassFileWriter {
 	protected final OutputStream output;
 	protected final BytecodeOptimiser optimiser;
-	
+	protected final ClassLoader loader;
+	protected final boolean outputText;
 	protected final int version;
 
 	/**
@@ -43,10 +45,12 @@ public class ClassFileWriter {
 	 * @param o
 	 *            Output stream for class bytes
 	 */
-	public ClassFileWriter(OutputStream o) {
+	public ClassFileWriter(OutputStream o, ClassLoader loader) {
 		output = o;
 		version = 49;
 		optimiser = new SimpleOptimiser();
+		outputText = false;
+		this.loader = loader;
 	}
 
 	/**
@@ -65,23 +69,29 @@ public class ClassFileWriter {
      * <tr><td>optimiser</td><td>jkit.util.bytecode.SimpleOptimiser</td></tr>
      * </table>            
      */
-	public ClassFileWriter(OutputStream o, List<Pair<String,String>> options) 
-	throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+	public ClassFileWriter(OutputStream o, ClassLoader loader,
+			List<Pair<String, String>> options) throws ClassNotFoundException,
+			InstantiationException, IllegalAccessException {
 		output = o;
 		int myVersion = 49;
+		boolean myOutputText = false;
 		BytecodeOptimiser myOptimiser = new SimpleOptimiser();
-		
+
 		for (Pair<String, String> option : options) {
 			if (option.first().equals("version")) {
 				myVersion = Integer.parseInt(option.second());
 			} else if (option.first().equals("optimiser")) {
 				myOptimiser = (BytecodeOptimiser) Class
 						.forName(option.second()).newInstance();
+			} else if (option.first().equals("outputText")) {
+				myOutputText = Boolean.parseBoolean(option.second());
 			}
 		}
-		
+
 		version = myVersion;
 		optimiser = myOptimiser;
+		outputText = myOutputText;
+		this.loader = loader;
 	}
 	
 	public void writeClass(Clazz clazz) throws IOException {
@@ -679,9 +689,9 @@ public class ClassFileWriter {
 			switch (bop.op()) {
 			case Expr.BinOp.LAND: {
 				String exitLabel = "CL" + condLabelCount++;
-				int ms_lhs = translateConditionalBranch(Expr.invertBoolean(bop
+				int ms_lhs = translateConditionalBranch(Exprs.invertBoolean(bop
 						.lhs()), exitLabel, varmap, bytecodes);
-				int ms_rhs = translateConditionalBranch(Expr.invertBoolean(bop
+				int ms_rhs = translateConditionalBranch(Exprs.invertBoolean(bop
 						.rhs()), exitLabel, varmap, bytecodes);
 				bytecodes.add(new Bytecode.Goto(trueLabel));
 				bytecodes.add(new Bytecode.Label(exitLabel));
@@ -741,7 +751,7 @@ public class ClassFileWriter {
 			Expr.UnOp uop = (Expr.UnOp) condition;
 			if (uop.op() == Expr.UnOp.NOT) {
 				// First attempt to eliminate the NOT altogether!
-				Expr e1 = FlowGraph.eliminateNot(uop);
+				Expr e1 = Exprs.eliminateNot(uop);
 
 				if (e1 instanceof Expr.UnOp) {
 					Expr.UnOp e2 = (Expr.UnOp) e1;
@@ -851,15 +861,7 @@ public class ClassFileWriter {
 		int stackUsed = 0; // stack slots used by store results
 		int maxStack = 0; // max stack required for this statement
 
-		// Figure out what method is being called. This is
-		// necessary to determine whether or not it's a static invocation.
-		Triple<Clazz, Method, Type.Function> minfo = FlowGraph
-				.resolveMethod(stmt);
-
-		Method method = minfo.second();
-		Type.Function actualMethodT = minfo.second().type();
-
-		if (!method.isStatic()) {
+		if (!stmt.isStatic()) {
 			// must be non-static invocation
 			maxStack = translateExpression(stmt.target(), varmap, bytecodes);
 			stackUsed++; // it's a reference, so don't worry about slot size
@@ -872,29 +874,33 @@ public class ClassFileWriter {
 												   // since don't account for
 												   // our slot
 		}
-		if (method.isStatic()) {
+		
+		Type.Clazz targetT = (Type.Clazz) stmt.target().type(); 
+		String targetName = targetT.components().get(targetT.components().size()-1).first();
+		
+		if (stmt.isStatic()) {
 			// STATIC
-			bytecodes.add(new Bytecode.Invoke(minfo.first().type(), stmt.name,
-					actualMethodT, Bytecode.STATIC));
+			bytecodes.add(new Bytecode.Invoke(
+					targetT, stmt.name(), stmt.funType(), Bytecode.STATIC));
 		} else if (stmt.target().type() instanceof Type.Clazz
-				&& stmt.name().equals(((Type.Clazz) stmt.target().type()).name())) {
+				&& stmt.name().equals(targetName)) {
 			// this is a constructor call
-			bytecodes.add(new Bytecode.Invoke(minfo.first().type(), "<init>",
-					actualMethodT, Bytecode.SPECIAL));
+			bytecodes.add(new Bytecode.Invoke(targetT, "<init>",
+					stmt.funType(), Bytecode.SPECIAL));
 		} else {
 			// check whether this is an interface or a class call.
-			if (minfo.first().isInterface()) {
-				bytecodes.add(new Bytecode.Invoke(minfo.first().type(),
-						stmt.name(), actualMethodT, Bytecode.INTERFACE));
+			if (stmt.isInterface()) {
+				bytecodes.add(new Bytecode.Invoke(targetT, stmt.name(), stmt
+						.funType(), Bytecode.INTERFACE));
 			} else {
-				bytecodes.add(new Bytecode.Invoke(minfo.first().type(), stmt
-						.name(), actualMethodT,
-						stmt.polymorphic() ? Bytecode.VIRTUAL
+				bytecodes.add(new Bytecode.Invoke(targetT, stmt
+						.name(), stmt.funType(),
+						stmt.isPolymorphic() ? Bytecode.VIRTUAL
 								: Bytecode.SPECIAL));
 			}
 		}
 
-		Type retT = actualMethodT.returnType();
+		Type retT = stmt.funType().returnType();
 				
 		if (!(retT instanceof Type.Void)) {
 			// Need to account for space occupied by return type!
@@ -936,7 +942,7 @@ public class ClassFileWriter {
 		if (ret.expr() != null) {
 			int ms = translateExpression(ret.expr(), varmap,
 					bytecodes);
-			bytecodes.add(new Bytecode.Return(ret.expr().type));
+			bytecodes.add(new Bytecode.Return(ret.expr().type()));
 			return ms;
 		} else {
 			bytecodes.add(new Bytecode.Return(null));
@@ -954,17 +960,17 @@ public class ClassFileWriter {
 			assert varmap.keySet().contains(var.value());
 			int slot = varmap.get(var.value());
 			maxStack = translateExpression(stmt.rhs(), varmap, bytecodes);
-			bytecodes.add(new Bytecode.Store(slot, stmt.lhs().type));
+			bytecodes.add(new Bytecode.Store(slot, stmt.lhs().type()));
 		} else if (stmt.lhs() instanceof Expr.Deref) {
 			Expr.Deref der = (Expr.Deref) stmt.lhs();
 			int ms_lhs = translateExpression(der.target(), varmap,
 					bytecodes);
-			int ms_rhs = translateExpression(stmt.rhs, varmap,
+			int ms_rhs = translateExpression(stmt.rhs(), varmap,
 					bytecodes);
 			// figure out the type of the field involved
 			Type.Reference lhs_t = (Type.Reference) der.target().type();
-			// FIXME: distinguish static from nonstatic field access.
-			if (fieldInfo.second().isStatic()) {
+
+			if (der.isStatic()) {
 				bytecodes.add(new Bytecode.PutField(lhs_t, der.name(), der
 						.type(), Bytecode.STATIC));
 			} else {
@@ -1032,9 +1038,20 @@ public class ClassFileWriter {
 
 		int maxStack = 0;
 
-		if (expr instanceof Expr.Number) {
-			bytecodes.add(new Bytecode.LoadConst(
-					((Expr.Number) expr).value()));
+		if (expr instanceof Expr.Bool) {
+			bytecodes.add(new Bytecode.LoadConst(((Expr.Bool) expr).value()));
+			maxStack = 1;
+		} else if (expr instanceof Expr.Byte) {
+			bytecodes.add(new Bytecode.LoadConst(((Expr.Byte) expr).value()));
+			maxStack = 1;
+		} else if (expr instanceof Expr.Char) {
+			bytecodes.add(new Bytecode.LoadConst(((Expr.Char) expr).value()));
+			maxStack = 1;
+		} else if (expr instanceof Expr.Short) {
+			bytecodes.add(new Bytecode.LoadConst(((Expr.Short) expr).value()));
+			maxStack = 1;
+		} else if (expr instanceof Expr.Int) {
+			bytecodes.add(new Bytecode.LoadConst(((Expr.Int) expr).value()));
 			maxStack = 1;
 		} else if (expr instanceof Expr.Long) {
 			bytecodes.add(new Bytecode.LoadConst(((Expr.Long) expr).value()));
@@ -1129,37 +1146,30 @@ public class ClassFileWriter {
 		if (tmp_t instanceof Type.Reference) {
 			Type.Reference lhs_t = (Type.Reference) tmp_t;
 
-			// Figure out what field is being referenced
-			Triple<Clazz, Field, Type> fieldInfo = ClassTable.resolveField(
-					lhs_t, def.name());
-
-			Field field = fieldInfo.second();
-			Type actualFieldType = field.type();
-			Type desiredFieldType = fieldInfo.third();
-
-			if (field.isStatic()) {
+			if (def.isStatic()) {
 				// This is a static field load					
 				bytecodes.add(new Bytecode.GetField(lhs_t, def.name(),
-						actualFieldType, Bytecode.STATIC));
-				maxStack = Types.slotSize(actualFieldType);		
+						def.type(), Bytecode.STATIC));
+				maxStack = Types.slotSize(def.type());		
 			} else {
 				// Non-static field load
 				maxStack = translateExpression(def.target(), varmap,
 						bytecodes);
 
 				bytecodes.add(new Bytecode.GetField(lhs_t, def.name(),
-						actualFieldType, Bytecode.NONSTATIC));
-
-				if (actualFieldType instanceof Type.Variable
-						&& !(desiredFieldType instanceof Type.Variable)
-						&& !desiredFieldType.equals(new Type.Clazz("java.lang",
-								"Object"))) {
-					// Ok, actual type is a (generic) type variable. Need to
-					// cast to the desired type!
-					bytecodes.add(new Bytecode.CheckCast(desiredFieldType));					
-				}
+						def.type(), Bytecode.NONSTATIC));
 				
-				maxStack = Math.max(maxStack,Types.slotSize(actualFieldType));	
+				// FIXME: generic type conversions
+//				if (actualFieldType instanceof Type.Variable
+//						&& !(def.type() instanceof Type.Variable)
+//						&& !def.type().equals(new Type.Clazz("java.lang",
+//								"Object"))) {
+//					// Ok, actual type is a (generic) type variable. Need to
+//					// cast to the desired type!
+//					bytecodes.add(new Bytecode.CheckCast(def.type()));					
+//				}
+				
+				maxStack = Math.max(maxStack,Types.slotSize(def.type()));	
 			}
 		} else if (tmp_t instanceof Type.Array && def.name().equals("length")) {
 			maxStack = translateExpression(def.target(), varmap,
@@ -1179,8 +1189,8 @@ public class ClassFileWriter {
 		
 		List<Expr> params = new ArrayList<Expr>();
 		params.add(new Expr.Int(av.values().size()));
-		int maxStack = translateNew(new Expr.New(av.type(), params), varmap,
-				bytecodes, true);
+		int maxStack = translateNew(new Expr.New(av.type(), params, null),
+				varmap, bytecodes, true);
 
 		int index = 0;
 		for (Expr e : av.values()) {
@@ -1216,13 +1226,8 @@ public class ClassFileWriter {
 				paramTypes.add(p.type());
 			}
 
-			// Find the appropriate construction method.
-
-			Triple<Clazz, Method, Type.Function> minfo = ClassTable
-					.resolveMethod(type, type.name(), paramTypes);
-			Type.Function actualMethodT = minfo.second().type();
-			// call the appropriate constructor
-			bytecodes.add(new Bytecode.Invoke(type, "<init>", actualMethodT,
+						// call the appropriate constructor
+			bytecodes.add(new Bytecode.Invoke(type, "<init>", news.funType(),
 					Bytecode.SPECIAL));
 		} else if (news.type() instanceof Type.Array) {
 			int usedStack = 0;
@@ -1233,7 +1238,8 @@ public class ClassFileWriter {
 				usedStack += Types.slotSize(p.type());
 			}
 
-			bytecodes.add(new Bytecode.New(news.type(), news.parameters().size()));
+			bytecodes.add(new Bytecode.New(news.type(), news.parameters()
+					.size()));
 		}
 
 		if (!needReturnValue) {
@@ -1268,9 +1274,6 @@ public class ClassFileWriter {
 			bytecodes.add(new Bytecode.Label(exitLabel));
 			return maxStack;
 		}
-		case Expr.BinOp.CONCAT:
-			return translateStringConcatenate(bop, varmap, 
-					bytecodes);
 		}
 
 		// must be a standard arithmetic operation.
@@ -1281,59 +1284,6 @@ public class ClassFileWriter {
 
 		bytecodes.add(new Bytecode.BinOp(bop.op(), bop.type()));
 		return Math.max(ms_lhs, ms_rhs + Types.slotSize(bop.type()));
-	}
-
-	protected int translateStringConcatenate(Expr.BinOp bop,
-			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes) {
-
-		Type.Reference builder = new Type.Clazz("java.lang",
-				"StringBuilder");
-
-		bytecodes.add(new Bytecode.New(builder));
-		bytecodes.add(new Bytecode.Dup(builder));
-
-		int maxStack = 3;
-
-		Triple<Clazz, Method, Type.Function> minfo = ClassTable.resolveMethod(
-				builder, "StringBuilder", new LinkedList<Type>());
-		Type.Function actualMethodT = minfo.second().type();
-		bytecodes.add(new Bytecode.Invoke(builder, "<init>", actualMethodT,
-				Bytecode.SPECIAL));
-
-		int ms = translateStringConcatenateSubExpr(builder, bop, varmap,
-				bytecodes);
-
-		minfo = ClassTable.resolveMethod(builder, "toString",
-				new LinkedList<Type>());
-		actualMethodT = minfo.second().type();
-		bytecodes.add(new Bytecode.Invoke(builder, "toString", actualMethodT,
-				Bytecode.VIRTUAL));
-
-		return Math.max(maxStack, ms + 1);
-	}
-
-	protected int translateStringConcatenateSubExpr(Type.Reference builder,
-			Expr expr, HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes) {
-		
-		int ms;
-		if (expr instanceof Expr.BinOp && ((Expr.BinOp) expr).op() == Expr.BinOp.CONCAT) {
-			Expr.BinOp bop = (Expr.BinOp) expr;
-			int ml = translateStringConcatenateSubExpr(builder, bop.lhs(),
-					varmap, bytecodes);
-			int mr = translateStringConcatenateSubExpr(builder, bop.rhs(),
-					varmap, bytecodes);
-			ms = Math.max(ml, mr);
-		} else {
-			ms = translateExpression(expr, varmap, bytecodes);
-			List<Type> params = new LinkedList<Type>();
-			params.add(expr.type());
-			Triple<Clazz, Method, Type.Function> minfo = ClassTable
-					.resolveMethod(builder, "append", params);
-			Type.Function actualMethodT = minfo.second().type();
-			bytecodes.add(new Bytecode.Invoke(builder, "append", actualMethodT,
-					Bytecode.VIRTUAL));
-		}
-		return ms;
 	}
 
 	protected int translateUnaryOp(Expr.UnOp uop, HashMap<String, Integer> varmap,

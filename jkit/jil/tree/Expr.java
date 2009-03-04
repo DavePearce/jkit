@@ -287,8 +287,6 @@ public interface Expr extends SyntacticElement {
 		public static final int NEQ = 16;
 		public static final int LAND = 17;
 		public static final int LOR = 18;
-		
-		public static final int CONCAT = 19;
 
 		protected Expr lhs;
 		protected Expr rhs;
@@ -358,7 +356,13 @@ public interface Expr extends SyntacticElement {
 		protected String name;
 		protected List<Expr> parameters;
 		protected Type type; 		
-
+		protected Type.Function funType;
+		protected int mode;
+		
+		public final int STATIC = 1;
+		public final int INTERFACE = 2;
+		public final int POLYMORPHIC = 4;
+		
 		/**
 		 * Construct a method which may, or may not be polymorphic.
 		 * 
@@ -368,14 +372,20 @@ public interface Expr extends SyntacticElement {
 		 *            The name of the method
 		 * @param parameters
 		 *            The parameters of the method
+		 * @param isStatic
+		 *            Indicates whether this represents a static invocation or
+		 *            not.
 		 */
 		public Invoke(Expr target, String name, List<Expr> parameters,
-				Type type, Attribute... attributes) {
+				int mode, Type.Function funType, Type type,
+				Attribute... attributes) {
 			super(attributes);
 			this.target = target;
 			this.name = name;
 			this.parameters = parameters;
 			this.type = type;
+			this.funType = funType;
+			this.mode = mode;
 		}
 
 		/**
@@ -421,6 +431,30 @@ public interface Expr extends SyntacticElement {
 			this.type = type;
 		}
 		
+		public Type.Function funType() {
+			return funType;
+		}
+		
+		public void setFunType(Type.Function funtype) {
+			this.funType = funtype;
+		}
+		
+		public boolean isStatic() {
+			return mode == STATIC;
+		}
+		
+		public boolean isInterface() {
+			return mode == STATIC;
+		}
+		
+		public boolean isPolymorphic() {
+			return mode == POLYMORPHIC;
+		}
+		
+		public void setMode(int mode) {
+			this.mode = mode;
+		}
+		
 		public List<Expr> parameters() {
 			return parameters;
 		}
@@ -443,7 +477,8 @@ public interface Expr extends SyntacticElement {
 		private Type.Reference type;
 		private Expr context;
 		private List<Expr> parameters;
-	
+		private Type.Function funType;
+		
 		/**
 		 * Create an AST node represent a new statement or expression.
 		 * 
@@ -452,13 +487,19 @@ public interface Expr extends SyntacticElement {
 		 *            Integer[]
 		 * @param parameters -
 		 *            The parameters (if any) supplied to the constructor.
-		 *            Should be an empty (i.e. non-null) list .
+		 *            Should be an empty (i.e. non-null) list.
+		 * @param funType
+		 *            The static type of the constructor to be called. Note, if
+		 *            this new call is for an array, then you can pass null
+		 *            here.
 		 */
-		public New(Type.Reference type, List<Expr> parameters, Attribute... attributes) {
+		public New(Type.Reference type, List<Expr> parameters,
+				Type.Function funType, Attribute... attributes) {
 			super(attributes);
 			this.type = type;
 			this.context = context;
 			this.parameters = parameters;
+			this.funType = funType;
 		}
 
 		/**
@@ -471,11 +512,13 @@ public interface Expr extends SyntacticElement {
 		 *            The parameters (if any) supplied to the constructor.
 		 *            Should be an empty (i.e. non-null) list .
 		 */
-		public New(Type.Reference type, List<Expr> parameters, List<Attribute> attributes) {
+		public New(Type.Reference type, List<Expr> parameters,
+				Type.Function funType, List<Attribute> attributes) {
 			super(attributes);
 			this.type = type;
 			this.context = context;
 			this.parameters = parameters;			
+			this.funType = funType;
 		}
 		
 		public Type.Reference type() {
@@ -486,6 +529,14 @@ public interface Expr extends SyntacticElement {
 			this.type = type;
 		}
 
+		public Type.Function funType() {
+			return funType;
+		}
+
+		public void setFunType(Type.Function funType) {
+			this.funType = funType;
+		}
+		
 		public List<Expr> parameters() {
 			return parameters;
 		}
@@ -513,19 +564,24 @@ public interface Expr extends SyntacticElement {
 		protected Expr target;
 		protected String name;
 		protected Type type;
-
-		public Deref(Expr lhs, String rhs, Type type, Attribute... attributes) {
+		protected boolean isStatic;
+		
+		public Deref(Expr lhs, String rhs, boolean isStatic, Type type,
+				Attribute... attributes) {
 			super(attributes);
 			this.target = lhs;
 			this.name = rhs;
 			this.type = type;
+			this.isStatic = isStatic;
 		}
 
-		public Deref(Expr lhs, String rhs, Type type, List<Attribute> attributes) {
+		public Deref(Expr lhs, String rhs, Type type, boolean isStatic,
+				List<Attribute> attributes) {
 			super(attributes);
 			this.target = lhs;
 			this.name = rhs;
 			this.type = type;
+			this.isStatic = isStatic;
 		}
 		
 		public Expr target() {
@@ -550,6 +606,14 @@ public interface Expr extends SyntacticElement {
 
 		public void setType(Type type) {
 			this.type = type;
+		}
+		
+		public boolean isStatic() {
+			return isStatic;
+		}
+		
+		public void setIsStatic(boolean isStatic) {
+			this.isStatic = isStatic;
 		}
 	}
 
