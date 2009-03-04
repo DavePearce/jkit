@@ -17,22 +17,21 @@
 // write to the Free Software Foundation, Inc., 59 Temple Place, 
 // Suite 330, Boston, MA  02111-1307  USA
 //
-// (C) David James Pearce, 2007. 
+// (C) David James Pearce, 2009. 
 
 package jkit.bytecode;
 
 import java.io.*;
 import java.util.*;
 
-import jkit.compiler.FieldNotFoundException;
-import jkit.compiler.MethodNotFoundException;
-
+import jkit.compiler.ClassLoader;
 import jkit.jil.tree.*;
 import jkit.jil.util.*;
 import jkit.util.*;
 
 public class ClassFileWriter {
 	protected final OutputStream output;
+	protected final PrintWriter printer;
 	protected final BytecodeOptimiser optimiser;
 	protected final ClassLoader loader;
 	protected final boolean outputText;
@@ -51,6 +50,7 @@ public class ClassFileWriter {
 		optimiser = new SimpleOptimiser();
 		outputText = false;
 		this.loader = loader;
+		printer = null;
 	}
 
 	/**
@@ -76,7 +76,8 @@ public class ClassFileWriter {
 		int myVersion = 49;
 		boolean myOutputText = false;
 		BytecodeOptimiser myOptimiser = new SimpleOptimiser();
-
+		PrintWriter myPrinter = null;
+		
 		for (Pair<String, String> option : options) {
 			if (option.first().equals("version")) {
 				myVersion = Integer.parseInt(option.second());
@@ -85,76 +86,132 @@ public class ClassFileWriter {
 						.forName(option.second()).newInstance();
 			} else if (option.first().equals("outputText")) {
 				myOutputText = Boolean.parseBoolean(option.second());
+				myPrinter = new PrintWriter(o);
 			}
 		}
 
 		version = myVersion;
 		optimiser = myOptimiser;
 		outputText = myOutputText;
-		this.loader = loader;
+		printer = myPrinter;
+		this.loader = loader;		
 	}
 	
-	public void writeClass(Clazz clazz) throws IOException {
-		HashMap<Constant.Info, Integer> constantPool = buildConstantPool(clazz);
+	public void write(Clazz clazz) throws IOException {
+		if(outputText) {
+			writeTextClass(clazz);			
+		} else {
+			HashMap<Constant.Info, Integer> constantPool = buildConstantPool(clazz);
 
-		// build reverse map
+			// build reverse map
+			Constant.Info[] poolSequence = new Constant.Info[constantPool.size()];
+			for (Map.Entry<Constant.Info, Integer> e : constantPool.entrySet()) {
+				poolSequence[e.getValue()] = e.getKey();
+			}
+
+			write_u1(0xCA);
+			write_u1(0xFE);
+			write_u1(0xBA);
+			write_u1(0xBE);
+			write_u4(version);
+			write_u2(constantPool.size());
+			// now, write the constant pool
+			for (Constant.Info c : poolSequence) {
+				if (c != null) { // item at index 0 is always null
+					output.write(c.toBytes(constantPool));
+				}
+			}
+			// ok, done that now write more stuff
+			writeModifiers(clazz.modifiers());
+			write_u2(constantPool.get(Constant.buildClass(clazz.type())));
+			if (clazz.superClass() != null) {
+				write_u2(constantPool.get(Constant.buildClass(clazz.superClass())));
+			}
+			write_u2(clazz.interfaces().size());
+			for (Type.Reference i : clazz.interfaces()) {
+				write_u2(constantPool.get(Constant.buildClass(i)));
+			}
+
+			write_u2(clazz.fields().size());
+			for (Field f : clazz.fields()) {
+				writeField(f, constantPool);
+			}
+
+			write_u2(clazz.methods().size());
+			for (Method m : clazz.methods()) {
+				writeMethod(clazz, m, constantPool);
+			}
+
+			int nattributes = 0;
+
+			if(needClassSignature(clazz)) { nattributes++; }
+
+			// FIXME: support for inner classes
+			// if(clazz.inners().size() > 0 || clazz.isInnerClass()) { nattributes++; }
+
+
+			write_u2(nattributes);		
+			if (needClassSignature(clazz)) {			
+				writeClassSignature(clazz, constantPool);
+			}
+
+			// FIXME: support for inner classes
+			// if (clazz.inners().size() > 0 || clazz.isInnerClass()) {			
+			//	writeInnerClassAttribute(clazz, constantPool);
+			// }
+
+			output.flush();
+		}
+	}
+
+	protected void writeTextClass(Clazz jc) throws IOException {
+		HashMap<Constant.Info, Integer> constantPool = buildConstantPool(jc);
 		Constant.Info[] poolSequence = new Constant.Info[constantPool.size()];
 		for (Map.Entry<Constant.Info, Integer> e : constantPool.entrySet()) {
 			poolSequence[e.getValue()] = e.getKey();
 		}
 
-		write_u1(0xCA);
-		write_u1(0xFE);
-		write_u1(0xBA);
-		write_u1(0xBE);
-		write_u4(version);
-		write_u2(constantPool.size());
-		// now, write the constant pool
 		for (Constant.Info c : poolSequence) {
 			if (c != null) { // item at index 0 is always null
-				output.write(c.toBytes(constantPool));
+				printer.println(c);
 			}
 		}
-		// ok, done that now write more stuff
-		writeModifiers(clazz.modifiers());
-		write_u2(constantPool.get(Constant.buildClass(clazz.type())));
-		if (clazz.superClass() != null) {
-			write_u2(constantPool.get(Constant.buildClass(clazz.superClass())));
-		}
-		write_u2(clazz.interfaces().size());
-		for (Type.Reference i : clazz.interfaces()) {
-			write_u2(constantPool.get(Constant.buildClass(i)));
-		}
-		write_u2(clazz.fields().size());
-		for (Field f : clazz.fields()) {
-			writeField(f, constantPool);
-		}
-		write_u2(clazz.methods().size());
-		for (Method m : clazz.methods()) {
-			writeMethod(clazz, m, constantPool);
-		}
-
-		int nattributes = 0;
 		
-		if(needClassSignature(clazz)) { nattributes++; }
-		
-		// FIXME: support for inner classes
-		// if(clazz.inners().size() > 0 || clazz.isInnerClass()) { nattributes++; }
-		
-		write_u2(nattributes);
-		
-		if (needClassSignature(clazz)) {			
-			writeClassSignature(clazz, constantPool);
+		printer.print("\nclass " + jc.type() + " ");
+		if(jc.superClass() != null) {
+			printer.println("");
+			printer.print("\t extends " + jc.superClass());
 		}
-
-		// FIXME: support for inner classes
-		// if (clazz.inners().size() > 0 || clazz.isInnerClass()) {			
-		//	writeInnerClassAttribute(clazz, constantPool);
-		// }
+		if(jc.interfaces().size() > 0) {
+			printer.println("");
+			printer.print("\t implements ");
+			boolean firstTime=true;
+			for(Type.Clazz i : jc.interfaces()) {
+				if(!firstTime) {
+					printer.print(", ");
+				}
+				firstTime=false;
+				printer.print(i);
+			}			
+		}				
 		
-		output.flush();
+		printer.println(" {\n");
+		
+		for(Field f : jc.fields()) {
+			writeTextField(f);
+		}
+		
+		printer.println("");
+		
+		for(Method m : jc.methods()) {
+			writeTextMethod(jc,m,constantPool);
+		}
+	
+		printer.println("}");
+		
+		printer.flush();
 	}
-
+	
 	protected void writeClassSignature(Clazz clazz,
 			HashMap<Constant.Info, Integer> pmap) throws IOException {		
 		write_u2(pmap.get(new Constant.Utf8("Signature")));
@@ -249,6 +306,14 @@ public class ClassFileWriter {
 //		}
 	}
 
+	protected void writeTextField(Field f) {
+		printer.print("\t");
+		writeTextModifiers(f.modifiers());
+		printer.print(f.type());
+		printer.println(" " + f.name() + ";");		
+	
+	}
+	
 	protected void writeMethod(Clazz c, Method m,
 			HashMap<Constant.Info, Integer> pmap) throws IOException {
 
@@ -289,6 +354,37 @@ public class ClassFileWriter {
 		}
 	}
 
+	protected void writeTextMethod(Clazz clazz, Method method,
+			HashMap<Constant.Info, Integer> pmap) throws IOException {
+		printer.print("\t");
+		writeTextModifiers(method.modifiers());
+		Type.Function type = method.type(); 
+		printer.print(type.returnType() + " " + method.name());
+		printer.print("(");
+		boolean firstTime=true;
+		
+		List<Type> paramTypes = type.parameterTypes();
+		List<Pair<String,List<Modifier>>> params = method.parameters();
+		
+		for(int i = 0; i != params.size();++i) {
+			if(!firstTime) {
+				printer.print(", ");
+			}
+			firstTime=false;
+			writeTextModifiers(params.get(i).second());			
+			printer.print(paramTypes.get(i));
+			printer.print(" " + params.get(i).first());
+		}
+		
+		printer.println(") {");
+		
+		if(method.body() != null) {
+			writeTextCodeAttribute(clazz,method,pmap);
+		}		
+		
+		printer.println("\t}");
+	}
+	
 	protected void writeExceptionsAttribute(Clazz c, Method method,
 			HashMap<Constant.Info, Integer> constantPool) throws IOException {
 
@@ -440,6 +536,43 @@ public class ClassFileWriter {
 //			}
 		}
 		write_u2(0); // no attributes for now
+	}
+
+	protected void writeTextCodeAttribute(Clazz c, Method method,
+			HashMap<Constant.Info, Integer> constantPool) throws IOException {
+
+		// This method is a little tricky. The basic strategy is to first
+		// translate each statement into it's bytecode representation. One
+		// difficulty here, is that we must defer calculating the targets of
+		// branch statements until after this is done, since we can't do the
+		// calculation without exact values.
+
+		// === TRANSLATE BYTECODES ===
+
+		int maxLocals = 0;// method.code().localVariables().size();
+		
+		// FIXME: support for local variables
+//		for (LocalVarDef lvd : method.code().localVariables()) {
+//			maxLocals += Types.slotSize(lvd.type());
+//		}
+		
+		if (!method.isStatic()) {
+			maxLocals++;
+		}
+
+		ArrayList<Bytecode> bytecodes = new ArrayList<Bytecode>();
+		ArrayList<ExceptionHandler> handlers = new ArrayList<ExceptionHandler>();
+
+		int maxStack = translateMethodCode(c, method, bytecodes, handlers);
+
+		printer.println("\t\tmaxstack = " + maxStack + ", maxLocals = "
+				+ maxLocals);
+		
+		for(Bytecode b : bytecodes) {
+			printer.println("\t\t" + b);
+		}
+
+		// need to dump out exception handlers here.
 	}
 
 	/**
@@ -1537,4 +1670,52 @@ public class ClassFileWriter {
 		output.write((w >> 8) & 0xFF);
 		output.write(w & 0xFF);
 	}
+	
+	protected void writeTextModifiers(List<Modifier> modifiers) {
+		for (Modifier x : modifiers) {
+			if (x instanceof Modifier.Base) {
+				int mod = ((Modifier.Base) x).modifier();
+				if ((mod & java.lang.reflect.Modifier.PRIVATE) != 0) {
+					printer.print("private ");
+				}
+				if ((mod & java.lang.reflect.Modifier.PROTECTED) != 0) {
+					printer.print("protected ");
+				}
+				if ((mod & java.lang.reflect.Modifier.PUBLIC) != 0) {
+					printer.print("public ");
+				}
+				if ((mod & java.lang.reflect.Modifier.STATIC) != 0) {
+					printer.print("static ");
+				}
+				if ((mod & java.lang.reflect.Modifier.ABSTRACT) != 0) {
+					printer.print("abstract ");
+				}
+				if ((mod & java.lang.reflect.Modifier.FINAL) != 0) {
+					printer.print("final ");
+				}
+				if ((mod & java.lang.reflect.Modifier.NATIVE) != 0) {
+					printer.print("native ");
+				}
+				if ((mod & java.lang.reflect.Modifier.STRICT) != 0) {
+					printer.print("strictfp ");
+				}
+				if ((mod & java.lang.reflect.Modifier.SYNCHRONIZED) != 0) {
+					printer.print("synchronized ");
+				}
+				if ((mod & java.lang.reflect.Modifier.TRANSIENT) != 0) {
+					printer.print("transient ");
+				}
+				if ((mod & java.lang.reflect.Modifier.VOLATILE) != 0) {
+					printer.print("volatile ");
+				}
+			} else if (x instanceof Modifier.Annotation) {
+				Modifier.Annotation a = (Modifier.Annotation) x;
+				printer.print("@");
+				printer.print(a.name());
+			} else {
+				// do nothing
+			}
+		}
+	}
+
 }

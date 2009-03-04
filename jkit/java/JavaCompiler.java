@@ -9,6 +9,7 @@ import jkit.compiler.ClassLoader;
 import jkit.java.io.JavaFile;
 import jkit.java.io.JavaFileReader;
 import jkit.java.io.JavaFileWriter;
+import jkit.bytecode.ClassFileWriter;
 import jkit.java.stages.SkeletonDiscovery;
 import jkit.java.stages.SkeletonBuilder;
 import jkit.java.stages.TypeChecking;
@@ -17,6 +18,7 @@ import jkit.java.stages.ScopeResolution;
 import jkit.java.stages.TypePropagation;
 import jkit.java.stages.TypeSystem;
 import jkit.java.stages.CodeGeneration;
+import jkit.util.*;
 import jkit.jil.*;
 import jkit.jil.io.*;
 import jkit.jil.tree.Clazz;
@@ -357,7 +359,7 @@ public class JavaCompiler implements Compiler {
 	 * @param loader
 	 */
 	protected void generateJilCode(JavaFile jfile, ClassLoader loader) {
-		new CodeGeneration(loader).apply(jfile);
+		new CodeGeneration(loader, new TypeSystem()).apply(jfile);
 	}
 
 	/**
@@ -386,7 +388,21 @@ public class JavaCompiler implements Compiler {
 
 		// write the file!!
 		// new JavaFileWriter(new FileWriter(outputFile)).write(jfile);
-		new JilFileWriter(new FileWriter(outputFile)).write(clazz);
+		// new JilFileWriter(new FileWriter(outputFile)).write(clazz);
+		
+		List<Pair<String,String>> options = new ArrayList<Pair<String,String>>();
+		options.add(new Pair("outputText","true"));
+		OutputStream out = new FileOutputStream(outputFile);
+		try {
+			new ClassFileWriter(out, loader,
+					options).write(clazz);
+		} catch(ClassNotFoundException e) {
+			throw new RuntimeException("internal failure - " + e,e);
+		} catch(IllegalAccessException e) {
+			throw new RuntimeException("internal failure - " + e,e);
+		} catch(InstantiationException e) {
+			throw new RuntimeException("internal failure - " + e,e);
+		}
 		return outputFile.getPath();
 	}
 

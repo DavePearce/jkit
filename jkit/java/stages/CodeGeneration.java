@@ -2,6 +2,7 @@ package jkit.java.stages;
 
 import java.util.*;
 
+import jkit.compiler.FieldNotFoundException;
 import jkit.compiler.SyntaxError;
 import jkit.compiler.ClassLoader;
 import jkit.java.io.JavaFile;
@@ -9,6 +10,7 @@ import jkit.java.tree.Decl;
 import jkit.java.*;
 import jkit.jil.*;
 import jkit.jil.tree.*;
+import jkit.jil.tree.Type;
 import jkit.util.Pair;
 import jkit.util.Triple;
 
@@ -22,9 +24,11 @@ import jkit.util.Triple;
  */
 public class CodeGeneration {
 	private ClassLoader loader = null;
+	private TypeSystem types = null;
 	
-	public CodeGeneration(ClassLoader loader) {
+	public CodeGeneration(ClassLoader loader, TypeSystem types) {
 		this.loader = loader;
+		this.types = types;
 	}
 	
 	public void apply(JavaFile file) {
@@ -425,8 +429,22 @@ public class CodeGeneration {
 	protected Pair<Expr,List<Stmt>> doDeref(jkit.java.tree.Expr.Deref e) {
 		Pair<Expr,List<Stmt>> target = doExpression(e.target());
 		Type type = (Type) e.attribute(Type.class);
-		return new Pair<Expr, List<Stmt>>(new Expr.Deref(target.first(), e
-				.name(), type, e.attributes()), target.second());
+		Type.Clazz targetT = (Type.Clazz) e.target().attribute(Type.class);
+		
+		try {
+			Triple<jkit.jil.tree.Clazz, jkit.jil.tree.Field, Type> r = types
+					.resolveField(targetT, e.name(), loader);
+
+			return new Pair<Expr, List<Stmt>>(new Expr.Deref(target.first(), e
+					.name(), type, r.second().isStatic(), e.attributes()),
+					target.second());
+		} catch(ClassNotFoundException cne) {
+			syntax_error(cne.getMessage(),e,cne);				
+		} catch(FieldNotFoundException fne) {	
+			// this must be an error...
+			syntax_error("field does not exist: " + type + "." + e.name(),e,fne);		
+		}
+		return null; // dead code		
 	}
 	
 	protected Pair<Expr,List<Stmt>> doArrayIndex(jkit.java.tree.Expr.ArrayIndex e) {
@@ -461,7 +479,11 @@ public class CodeGeneration {
 			}			
 		}
 		
-		return new Pair<Expr,List<Stmt>>(new Expr.New(type,nparameters,e.attributes()),r);
+		Type.Function funType = (Type.Function) e
+				.attribute(Type.Function.class);
+		
+		return new Pair<Expr, List<Stmt>>(new Expr.New(type, nparameters,
+				funType, e.attributes()), r);
 	}
 	
 	protected Pair<Expr,List<Stmt>> doInvoke(jkit.java.tree.Expr.Invoke e) {

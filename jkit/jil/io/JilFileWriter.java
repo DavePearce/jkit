@@ -93,8 +93,7 @@ public class JilFileWriter {
 			write(s);
 		}
 		
-		output.println("\t}");
-		
+		output.println("\t}");	
 	}
 	
 	protected void write(Stmt s) {
