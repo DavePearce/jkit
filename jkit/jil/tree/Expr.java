@@ -390,7 +390,7 @@ public interface Expr extends SyntacticElement {
 		}
 
 		/**
-		 * Construct a method which may, or may not be polymorphic.
+		 * Construct a polymorphic method.
 		 * 
 		 * @param target
 		 *            The expression from which the receiver is determined
@@ -407,6 +407,7 @@ public interface Expr extends SyntacticElement {
 			this.parameters = parameters;
 			this.type = type;
 			this.funType = funType;
+			this.mode = POLYMORPHIC;
 		}
 		
 		public Expr target() {

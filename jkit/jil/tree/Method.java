@@ -208,7 +208,7 @@ public class Method extends SyntacticElementImpl {
 	
 	/**
 	 * This method determines the set of local variables used within this
-	 * method.
+	 * method.  Note, this does not included parameters.
 	 * 
 	 * @return
 	 */
@@ -238,6 +238,11 @@ public class Method extends SyntacticElementImpl {
 				vars.addAll(Exprs.localVariables(a.condition()));
 			}
 		}
+		
+		for(Pair<String,List<Modifier>> p : parameters) {
+			vars.remove(p.first());
+		}
+		
 		return vars;
 	}
 
