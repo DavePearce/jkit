@@ -333,29 +333,59 @@ public class CodeGeneration {
 		r.addAll(doStatement(stmt.body()));
 		r.add(new Stmt.Goto("whileheader" + whileheader_label++, stmt
 				.attributes()));
-		r
-				.add(new Stmt.Label("whileexit" + whileexit_label++, stmt
+		r.add(new Stmt.Label("whileexit" + whileexit_label++, stmt
 						.attributes()));
 		
 		return r;
 	}
 	
+	static protected int dowhileheader_label = 0;	
+	
 	protected List<Stmt> doDoWhile(jkit.java.tree.Stmt.DoWhile stmt) {
 		ArrayList<Stmt> r = new ArrayList<Stmt>();
 		
-		Pair<Expr,List<Stmt>> cond = doExpression(stmt.condition());
+		r.add(new Stmt.Label("dowhileheader" + dowhileheader_label, stmt
+				.attributes()));
 		r.addAll(doStatement(stmt.body()));
-		
-		return r;
+		Pair<Expr, List<Stmt>> cond = doExpression(stmt.condition());
+		r.addAll(cond.second());
+		r.add(new Stmt.IfGoto(cond.first(), "dowhileheader"
+				+ dowhileheader_label++, stmt.attributes()));
+						
+		return r;		
 	}
+	
+	static protected int forheader_label = 0;
+	static protected int forexit_label = 0;
 	
 	protected List<Stmt> doFor(jkit.java.tree.Stmt.For stmt) {
 		ArrayList<Stmt> r = new ArrayList<Stmt>();
 		
-		r.addAll(doStatement(stmt.initialiser()));
-		Pair<Expr,List<Stmt>> cond = doExpression(stmt.condition());
-		r.addAll(doStatement(stmt.increment()));
-		r.addAll(doStatement(stmt.body()));	
+		if(stmt.initialiser() != null) {
+			r.addAll(doStatement(stmt.initialiser()));
+		}
+		
+		r.add(new Stmt.Label("forheader" + forheader_label, stmt
+				.attributes()));
+		
+		if(stmt.condition() != null) {
+			Pair<Expr, List<Stmt>> cond = doExpression(stmt.condition());
+			r.addAll(cond.second());
+			r.add(new Stmt.IfGoto(new Expr.UnOp(cond.first(), Expr.UnOp.NOT,
+					new Type.Bool(), stmt.condition().attributes()), "forexit"
+					+ forexit_label, stmt.attributes()));
+		}
+		
+		r.addAll(doStatement(stmt.body()));
+		
+		if(stmt.increment() != null) {
+			r.addAll(doStatement(stmt.increment()));
+		}
+		
+		r.add(new Stmt.Goto("forheader" + forheader_label++, stmt
+				.attributes()));
+		r.add(new Stmt.Label("forexit" + forexit_label++, stmt
+				.attributes()));
 		
 		return r;
 	}
