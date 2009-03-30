@@ -24,6 +24,7 @@ package jkit.bytecode;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
+import java.util.Set;
 
 import jkit.jil.tree.Type;
 
@@ -65,7 +66,7 @@ public class Constant {
 	 * @return
 	 */
 	public static Constant.Class buildClass(Type.Reference r) {		
-		java.lang.String d = Types.descriptor(r,false);		
+		java.lang.String d = ClassFile.descriptor(r,false);		
 		d = d.substring(1,d.length()-1); // remove "L" and ";"
 		return new Constant.Class(new Constant.Utf8(d));
 	}
@@ -77,7 +78,7 @@ public class Constant {
 	 * @return
 	 */
 	public static Constant.Class buildClass(Type.Array r) {		
-		java.lang.String d = Types.descriptor(r,false);				
+		java.lang.String d = ClassFile.descriptor(r,false);				
 		return new Constant.Class(new Constant.Utf8(d));
 	}
 	
@@ -93,7 +94,7 @@ public class Constant {
 			java.lang.String name, Type type) {
 		return new Constant.FieldRef(buildClass(owner), 
 				new Constant.NameType(new Constant.Utf8(name),
-				 new Constant.Utf8(Types.descriptor(type,false))));
+				 new Constant.Utf8(ClassFile.descriptor(type,false))));
 	}
 	
 	/**
@@ -107,7 +108,7 @@ public class Constant {
 	public static Constant.MethodRef buildMethodRef(Type.Reference owner, java.lang.String name, Type type) {
 		return new Constant.MethodRef(buildClass(owner), 
 				new Constant.NameType(new Constant.Utf8(name),
-				 new Constant.Utf8(Types.descriptor(type,false))));
+				 new Constant.Utf8(ClassFile.descriptor(type,false))));
 	}
 		
 	/**
@@ -121,8 +122,9 @@ public class Constant {
 	public static Constant.InterfaceMethodRef buildInterfaceMethodRef(Type.Reference owner, java.lang.String name, Type type) {
 		return new Constant.InterfaceMethodRef(buildClass(owner), 
 				new Constant.NameType(new Constant.Utf8(name),
-				 new Constant.Utf8(Types.descriptor(type,false))));
+				 new Constant.Utf8(ClassFile.descriptor(type,false))));
 	}
+	
 	/**
 	 * Recursively add a CONSTANT_Info object to a constant pool. Items used by
 	 * this item which are not already in the pool are also added.
@@ -131,47 +133,36 @@ public class Constant {
 	 * 
 	 * @return the index of the pool item
 	 */
-	public static int addPoolItem(Info item, Map<Info,java.lang.Integer> constantPool) {		
-		if(!constantPool.containsKey(item)) {
+	public static void addPoolItem(Constant.Info item, Set<Constant.Info> constantPool) {		
+		if(!constantPool.contains(item)) {
 			// item is not already in pool		
-			if(item instanceof String) {
-				String s = (String) item;
-				addPoolItem(s.str,constantPool);				
-			} else if(item instanceof Class) {
-				Class c = (Class) item;
-				addPoolItem(c.name,constantPool);
-			} else if(item instanceof FieldRef) {
-				FieldRef f = (FieldRef) item;
-				addPoolItem(f.classInfo,constantPool);
-				addPoolItem(f.nameType,constantPool);				
-			} else if(item instanceof MethodRef) {
-				MethodRef m = (MethodRef) item;
-				addPoolItem(m.classInfo,constantPool);
-				addPoolItem(m.nameType,constantPool);				
-			} else if(item instanceof InterfaceMethodRef) {
-				InterfaceMethodRef m = (InterfaceMethodRef) item;
-				addPoolItem(m.classInfo,constantPool);
-				addPoolItem(m.nameType,constantPool);				
-			} else if(item instanceof NameType) {
-				NameType nt = (NameType) item;
-				addPoolItem(nt.desc,constantPool);
-				addPoolItem(nt.name,constantPool);								
-			} 
-			int index = constantPool.size();
-			constantPool.put(item,index);
-			
-			if(item instanceof Constant.Long || item instanceof Constant.Double) {
-				// need to add a "dummy" item here, since Longs and Doubles
-				// take two slots in the constant pool
-				constantPool.put(new Constant.Dummy(),index+1);
-			}
-			
-			return index;
-		} else {
-			return constantPool.get(item);
-		}
+			if(item instanceof Constant.String) {
+				Constant.String s = (Constant.String) item;
+				addPoolItem(s.str, constantPool);				
+			} else if(item instanceof Constant.Class) {
+				Constant.Class c = (Constant.Class) item;
+				addPoolItem(c.name, constantPool);
+			} else if(item instanceof Constant.FieldRef) {
+				Constant.FieldRef f = (Constant.FieldRef) item;
+				addPoolItem(f.classInfo, constantPool);
+				addPoolItem(f.nameType, constantPool);				
+			} else if(item instanceof Constant.MethodRef) {
+				Constant.MethodRef m = (Constant.MethodRef) item;
+				addPoolItem(m.classInfo, constantPool);
+				addPoolItem(m.nameType, constantPool);				
+			} else if(item instanceof Constant.InterfaceMethodRef) {
+				Constant.InterfaceMethodRef m = (Constant.InterfaceMethodRef) item;
+				addPoolItem(m.classInfo, constantPool);
+				addPoolItem(m.nameType, constantPool);				
+			} else if(item instanceof Constant.NameType) {
+				Constant.NameType nt = (Constant.NameType) item;
+				addPoolItem(nt.desc, constantPool);
+				addPoolItem(nt.name, constantPool);								
+			} 			
+			constantPool.add(item);						
+		} 
 	}
-	
+		
 	public static abstract class Info {
 		/**
 		 * Convert this pool item into bytes.
