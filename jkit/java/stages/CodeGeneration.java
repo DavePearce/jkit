@@ -317,11 +317,25 @@ public class CodeGeneration {
 		
 	}
 	
+	static protected int whileheader_label = 0;
+	static protected int whileexit_label = 0;
+	
 	protected List<Stmt> doWhile(jkit.java.tree.Stmt.While stmt) {
 		ArrayList<Stmt> r = new ArrayList<Stmt>();
 		
-		Pair<Expr,List<Stmt>> cond = doExpression(stmt.condition());
+		r.add(new Stmt.Label("whileheader" + whileheader_label, stmt
+				.attributes()));
+		Pair<Expr, List<Stmt>> cond = doExpression(stmt.condition());
+		r.addAll(cond.second());
+		r.add(new Stmt.IfGoto(new Expr.UnOp(cond.first(), Expr.UnOp.NOT,
+				new Type.Bool(), stmt.condition().attributes()), "whileexit"
+				+ whileexit_label, stmt.attributes()));
 		r.addAll(doStatement(stmt.body()));
+		r.add(new Stmt.Goto("whileheader" + whileheader_label++, stmt
+				.attributes()));
+		r
+				.add(new Stmt.Label("whileexit" + whileexit_label++, stmt
+						.attributes()));
 		
 		return r;
 	}

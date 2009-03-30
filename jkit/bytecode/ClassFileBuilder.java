@@ -277,9 +277,22 @@ public class ClassFileBuilder {
 		} else if (stmt instanceof Stmt.Unlock) {
 			return translateUnlock((Stmt.Unlock) stmt, varmap,
 					bytecodes);
+		} else if(stmt instanceof Stmt.Label) {
+			return translateLabel((Stmt.Label)stmt,varmap,bytecodes);
+		} else if(stmt instanceof Stmt.IfGoto) {
+			return translateIfGoto((Stmt.IfGoto)stmt,varmap,bytecodes);
+		} else if(stmt instanceof Stmt.Goto) {
+			return translateGoto((Stmt.Goto)stmt,varmap,bytecodes);
 		} else {
 			throw new RuntimeException("Unknown statement encountered: " + stmt);
 		}
+	}
+
+
+	protected int translateIfGoto(Stmt.IfGoto stmt,
+			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes) {
+		return translateConditionalBranch(stmt.condition(), stmt.label(),
+				varmap, bytecodes);
 	}
 
 	/**
@@ -287,9 +300,9 @@ public class ClassFileBuilder {
 	 * as if(x < 0) etc.
 	 * 
 	 * @param condition
-	 *            Conditional expression to translate
+	 *            the condition being tested
 	 * @param trueLabel
-	 *            destination branch when conditional is true
+	 *            the destination if the condition is true
 	 * @param varmap
 	 *            Maps local variables to their slot number
 	 * @param bytecodes
@@ -297,7 +310,6 @@ public class ClassFileBuilder {
 	 * @return maximum size of stack required for this statement
 	 */
 	protected static int condLabelCount = 0;
-
 	protected int translateConditionalBranch(Expr condition, String trueLabel,
 			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes) {
 
@@ -640,6 +652,18 @@ public class ClassFileBuilder {
 		return maxStack;
 	}
 
+	protected int translateLabel(Stmt.Label label, HashMap<String, Integer> varmap,
+			ArrayList<Bytecode> bytecodes) {
+		bytecodes.add(new Bytecode.Label(label.label()));
+		return 0;
+	}
+	
+	protected int translateGoto(Stmt.Goto stmt, HashMap<String, Integer> varmap,
+			ArrayList<Bytecode> bytecodes) {
+		bytecodes.add(new Bytecode.Goto(stmt.label()));
+		return 0;
+	}
+	
 	/**
 	 * This method flatterns an expression into bytecodes, such that the result
 	 * is left on top of the stack.

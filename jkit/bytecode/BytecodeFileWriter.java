@@ -111,7 +111,11 @@ public class BytecodeFileWriter {
 				+ code.maxLocals());
 
 		for (Bytecode b : code.bytecodes) {
-			output.println("\t\t" + b);
+			if(b instanceof Bytecode.Label) {
+				output.println("\t " + b);
+			} else {
+				output.println("\t\t" + b);
+			}
 		}
 
 		// need to dump out exception handlers here.
