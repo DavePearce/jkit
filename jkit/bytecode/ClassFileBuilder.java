@@ -56,6 +56,8 @@ public class ClassFileBuilder {
 
 				int maxStack = translateCode(clazz, m, bytecodes, handlers);
 			}
+			
+			cfile.methods().add(cfm);
 		}
 	}
 	
