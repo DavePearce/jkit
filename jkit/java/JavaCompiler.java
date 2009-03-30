@@ -98,7 +98,9 @@ public class JavaCompiler implements Compiler {
 	 */
 	public JavaCompiler(List<String> classpath, OutputStream logout) {
 		this.loader = new ClassLoader(classpath, this);
-		this.logout = new PrintStream(logout);
+		if(logout != null) {
+			this.logout = new PrintStream(logout);
+		}
 	}
 
 	/**
@@ -112,7 +114,9 @@ public class JavaCompiler implements Compiler {
 	public JavaCompiler(List<String> sourcepath, List<String> classpath,
 			OutputStream logout) {
 		this.loader = new ClassLoader(sourcepath, classpath, this);
-		this.logout = new PrintStream(logout);
+		if(logout != null) {
+			this.logout = new PrintStream(logout);
+		}
 	}
 
 	/**
@@ -360,7 +364,7 @@ public class JavaCompiler implements Compiler {
 	protected void generateJilCode(File srcfile, JavaFile jfile, ClassLoader loader) {
 		long start = System.currentTimeMillis();
 		new CodeGeneration(loader, new TypeSystem()).apply(jfile);
-		logTimedMessage("[" + srcfile.getPath() + "] Jil code generated. ",
+		logTimedMessage("[" + srcfile.getPath() + "] Jil generation completed ",
 				(System.currentTimeMillis() - start));
 	}
 
@@ -378,13 +382,27 @@ public class JavaCompiler implements Compiler {
 		String inf = srcfile.getPath();
 		inf = inf.substring(0, inf.length() - 5); // strip off .java
 		File outputFile = new File(rootdir, inf + ".bytecode");		
-
+		
 		// now, ensure output directory and package directories exist.
-		outputFile.getParentFile().mkdirs(); 
+		if(outputFile.getParentFile() != null) {
+			outputFile.getParentFile().mkdirs();
+		}
 
 		OutputStream out = new FileOutputStream(outputFile);		
 		ClassFile cfile = new ClassFileBuilder(loader,49).build(clazz);
-				
+		
+		logTimedMessage("[" + srcfile.getPath() + "] Bytecode generation completed",
+				(System.currentTimeMillis() - start));	
+		
+		start = System.currentTimeMillis();
+		
+		// this is where the bytecode optimisation would occur.
+		
+		logTimedMessage("[" + srcfile.getPath() + "] Bytecode optimisation completed",
+				(System.currentTimeMillis() - start));	
+		
+		start = System.currentTimeMillis();
+		
 		new BytecodeFileWriter(out).write(cfile);		
 		
 		logTimedMessage("[" + srcfile.getPath() + "] Wrote " + outputFile.getPath(),

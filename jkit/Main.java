@@ -28,6 +28,7 @@ import jkit.compiler.Stage;
 import jkit.compiler.SyntaxError;
 import jkit.compiler.ClassLoader;
 import jkit.java.JavaCompiler;
+import jkit.java.BytecodeCompiler;
 
 /**
  * The main class provides the entry point for the JKit compiler. It is
@@ -58,9 +59,11 @@ public class Main {
 	
 	public boolean compile(String[] args) {
 		ArrayList<String> classPath = null;
-		ArrayList<String> bootClassPath = null;
+		ArrayList<String> bootClassPath = null;		
 		String outputDirectory = null;		
 		boolean verbose = false;
+		boolean bytecodeOutput = false;
+		boolean jilOutput = false;	
 
 		if (args.length == 0) {
 			// no command-line arguments provided
@@ -96,6 +99,10 @@ public class Main {
 					                                       .split(File.pathSeparator));
 				} else if (arg.equals("-d")) {
 					outputDirectory = args[++i];
+				} else if (arg.equals("-bytecode")) {
+					bytecodeOutput = true;
+				} else if (arg.equals("-jil")) {
+					jilOutput = true;
 				} else {
 					throw new RuntimeException("Unknown option: " + args[i]);
 				}
@@ -104,6 +111,12 @@ public class Main {
 			}
 		}
 
+		OutputStream verbOutput = null;
+		
+		if(verbose) {
+			verbOutput = System.err;
+		}
+		
 		// ======================================================
 		// =========== Second, setup classpath properly ==========
 		// ======================================================
@@ -118,10 +131,12 @@ public class Main {
 		classPath.addAll(bootClassPath);
 		JavaCompiler compiler;
 		
-		if(verbose) {
-			compiler = new JavaCompiler(classPath,System.err);	
+		if(bytecodeOutput) {
+			compiler = new BytecodeCompiler(classPath, verbOutput);	
+		} else if(jilOutput) {
+			compiler = null; // TO DO
 		} else {
-			compiler = new JavaCompiler(classPath);
+			compiler = new JavaCompiler(classPath, verbOutput);
 		}
 		
 		if (outputDirectory != null) {
