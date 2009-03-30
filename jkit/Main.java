@@ -24,11 +24,8 @@ package jkit;
 import java.io.*;
 import java.util.*;
 
-import jkit.compiler.Stage;
 import jkit.compiler.SyntaxError;
-import jkit.compiler.ClassLoader;
-import jkit.java.JavaCompiler;
-import jkit.java.BytecodeCompiler;
+import jkit.java.*;
 
 /**
  * The main class provides the entry point for the JKit compiler. It is
@@ -134,7 +131,7 @@ public class Main {
 		if(bytecodeOutput) {
 			compiler = new BytecodeCompiler(classPath, verbOutput);	
 		} else if(jilOutput) {
-			compiler = null; // TO DO
+			compiler = new JilCompiler(classPath, verbOutput);
 		} else {
 			compiler = new JavaCompiler(classPath, verbOutput);
 		}
