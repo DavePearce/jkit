@@ -2,7 +2,6 @@ package jkit.bytecode;
 
 import java.util.*;
 
-import jkit.bytecode.ClassFileWriter.ExceptionHandler;
 import jkit.compiler.ClassLoader;
 import jkit.jil.tree.*;
 import jkit.jil.util.Exprs;
@@ -19,7 +18,7 @@ public class ClassFileBuilder {
 	
 	public ClassFile build(jkit.jil.tree.Clazz clazz) {
 		ClassFile cfile = new ClassFile(version, clazz.type(), clazz
-				.superClass(), clazz.interfaces());
+				.superClass(), clazz.interfaces(), clazz.modifiers());
 		
 		buildFields(clazz,cfile);
 		buildMethods(clazz,cfile);					
@@ -52,11 +51,11 @@ public class ClassFileBuilder {
 				}
 
 				ArrayList<Bytecode> bytecodes = new ArrayList<Bytecode>();
-				ArrayList<ExceptionHandler> handlers = new ArrayList<ExceptionHandler>();
+				ArrayList<ClassFile.Handler> handlers = new ArrayList<ClassFile.Handler>();
 
 				int maxStack = translateCode(clazz, m, bytecodes, handlers);
 				
-				ClassFile.Code codeAttr = new ClassFile.Code(maxLocals,maxStack,bytecodes);
+				ClassFile.Code codeAttr = new ClassFile.Code(maxLocals,maxStack,bytecodes,handlers);
 				cfm.attributes().add(codeAttr);
 			}
 			
@@ -83,7 +82,7 @@ public class ClassFileBuilder {
 	 *             to access a Class which cannot be found.
 	 */
 	protected int translateCode(Clazz clazz, Method method, ArrayList<Bytecode> bytecodes,
-			ArrayList<ExceptionHandler> handlers) {
+			ArrayList<ClassFile.Handler> handlers) {
 		// === CREATE TYPE ENVIRONMENT ===
 
 		// create the local variable slot mapping
@@ -194,7 +193,7 @@ public class ClassFileBuilder {
 	 * @param handlers.
 	 */
 	protected void sortAndCompactExceptionHandlers(
-			ArrayList<ExceptionHandler> handlers) {
+			ArrayList<ClassFile.Handler> handlers) {
 
 		// FIXME: support for sorting exception handlers
 		

@@ -10,20 +10,22 @@ public class ClassFile {
 	protected Type.Clazz type;
 	protected Type.Clazz superClazz;
 	protected List<Type.Clazz> interfaces;
+	protected List<Modifier> modifiers;
 	protected ArrayList<Field> fields;
 	protected ArrayList<Method> methods;	
 	
 	public ClassFile(int version, Type.Clazz type, Type.Clazz superClazz,
-			List<Type.Clazz> interfaces) {
+			List<Type.Clazz> interfaces, List<Modifier> modifiers) {
 		this.version = version;
 		this.type = type;
 		this.superClazz = superClazz;
 		this.interfaces = interfaces;
+		this.modifiers = modifiers;
 		this.fields = new ArrayList<Field>();
 		this.methods = new ArrayList<Method>();
 	}
 		
-	public Type type() {
+	public Type.Clazz type() {
 		return type;
 	}
 	
@@ -35,12 +37,20 @@ public class ClassFile {
 		return interfaces;
 	}
 	
+	public List<Modifier> modifiers() {
+		return modifiers;
+	}
+	
 	public List<Field> fields() {
 		return fields;
 	}
 
 	public List<Method> methods() {
 		return methods;
+	}
+	
+	public int version() {
+		return version;
 	}
 	
 	public static class Field {
@@ -121,15 +131,51 @@ public class ClassFile {
 		public String name();
 	}
 	
+	/**
+	 * The exception handler class is used to store the necessary information
+	 * about where control-flow is directed when an exception is raised.
+	 * 
+	 * @author djp
+	 * 
+	 */
+	public static class Handler {
+		/**
+		 * The start index of bytecodes covered by the handler.
+		 */
+		public int start;
+		/**
+		 * One past the last index covered by the handler.
+		 */
+		public int end;
+		public int label; // label for exception handler
+		public Type.Clazz exception;
+
+		public Handler(int start, int end, int label,
+				Type.Clazz exception) {
+			this.start = start;
+			this.end = end;
+			this.label = label;
+			this.exception = exception;
+		}
+	}	
+	
+	/**
+	 * This represents the Code attribute from the JVM Spec. 
+	 * 
+	 * @author djp
+	 */
 	public static class Code implements Attribute {
 		protected int maxLocals;
 		protected int maxStack;
 		protected List<Bytecode> bytecodes;
+		protected List<Handler> handlers;
 		
-		public Code(int maxLocals, int maxStack, List<Bytecode> bytecodes) {
+		public Code(int maxLocals, int maxStack, List<Bytecode> bytecodes,
+				List<Handler> handlers) {
 			this.maxLocals = maxLocals;
 			this.maxStack = maxStack;
 			this.bytecodes = bytecodes;
+			this.handlers = handlers;
 		}
 		
 		public String name() { return "Code"; }
@@ -145,33 +191,9 @@ public class ClassFile {
 		public List<Bytecode> bytecodes() { 
 			return bytecodes;
 		}
-	}
-	
-	/**
-	 * The exception handler class is used to store the necessary information
-	 * about where control-flow is directed when an exception is raised.
-	 * 
-	 * @author djp
-	 * 
-	 */
-	public static class ExceptionHandler {
-		/**
-		 * The start index of bytecodes covered by the handler.
-		 */
-		public int start;
-		/**
-		 * One past the last index covered by the handler.
-		 */
-		public int end;
-		public int label; // label for exception handler
-		public Type.Clazz exception;
-
-		public ExceptionHandler(int start, int end, int label,
-				Type.Clazz exception) {
-			this.start = start;
-			this.end = end;
-			this.label = label;
-			this.exception = exception;
+		
+		public List<Handler> handlers() {
+			return handlers;
 		}
 	}	
 	

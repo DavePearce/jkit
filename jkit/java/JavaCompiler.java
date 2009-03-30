@@ -381,7 +381,7 @@ public class JavaCompiler implements Compiler {
 		
 		String inf = srcfile.getPath();
 		inf = inf.substring(0, inf.length() - 5); // strip off .java
-		File outputFile = new File(rootdir, inf + ".bytecode");		
+		File outputFile = new File(rootdir, inf + ".class");		
 		
 		// now, ensure output directory and package directories exist.
 		if(outputFile.getParentFile() != null) {
@@ -403,7 +403,7 @@ public class JavaCompiler implements Compiler {
 		
 		start = System.currentTimeMillis();
 		
-		new BytecodeFileWriter(out).write(cfile);		
+		new ClassFileWriter(out).write(cfile);		
 		
 		logTimedMessage("[" + srcfile.getPath() + "] Wrote " + outputFile.getPath(),
 				(System.currentTimeMillis() - start));		
