@@ -18,7 +18,8 @@ public class ClassFileBuilder {
 	}
 	
 	public ClassFile build(jkit.jil.tree.Clazz clazz) {
-		ClassFile cfile = null;
+		ClassFile cfile = new ClassFile(version, clazz.type(), clazz
+				.superClass(), clazz.interfaces());
 		
 		buildFields(clazz,cfile);
 		buildMethods(clazz,cfile);					

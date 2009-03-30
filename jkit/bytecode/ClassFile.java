@@ -9,12 +9,12 @@ public class ClassFile {
 	protected int version;
 	protected Type.Clazz type;
 	protected Type.Clazz superClazz;
-	protected ArrayList<Type.Clazz> interfaces;
+	protected List<Type.Clazz> interfaces;
 	protected ArrayList<Field> fields;
 	protected ArrayList<Method> methods;	
 	
 	public ClassFile(int version, Type.Clazz type, Type.Clazz superClazz,
-			ArrayList<Type.Clazz> interfaces) {
+			List<Type.Clazz> interfaces) {
 		this.version = version;
 		this.type = type;
 		this.superClazz = superClazz;

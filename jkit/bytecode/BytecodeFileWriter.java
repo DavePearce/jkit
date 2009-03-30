@@ -22,8 +22,10 @@ public class BytecodeFileWriter {
 			poolMap.put(ci, index++);
 		}
 
+		index = 0;
 		for (Constant.Info c : constantPool) {
 			if (c != null) { // item at index 0 is always null
+				output.print("#" + ++index + "\t");
 				output.println(c);
 			}
 		}
