@@ -67,7 +67,7 @@ public abstract class Bytecode {
 		}
 		public String toString() {
 			if(slot >= 0 && slot <= 3) {
-				return typeChar(type) + "store_" + slot;
+ 				return typeChar(type) + "store_" + slot;
 			} else {
 				return typeChar(type) + "store " + slot;
 			}

@@ -106,13 +106,19 @@ public class ClassFileBuilder {
 			localVarMap.put(pp.first(), maxLocals);
 			maxLocals += ClassFile.slotSize(paramTypes.get(idx++));
 		}
-
+		
+		// determine slot allocations for local variables. 		
+		for (String var : method.localVariables()) {
+			localVarMap.put(var, maxLocals);
+			// there's a bug here, which i'm not sure how to resolve as yet.
+			maxLocals ++;
+		}
+		
 		// === TRANSLATE BYTECODES ===
 		for(Stmt s : method.body()) {
 			translateStatement(s,localVarMap,bytecodes);
 		}
 		
-
 		// Now make sure the exception handlers are compacted and
 		// also arranged in the correct order.
 		sortAndCompactExceptionHandlers(handlers);

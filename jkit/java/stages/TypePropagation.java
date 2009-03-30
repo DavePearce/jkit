@@ -211,12 +211,11 @@ public class TypePropagation {
 			Type nt = t;						
 			for(int j=0;j!=d.second();++j) {
 				nt = new Type.Array(nt);
-			}
-			
+			}						
 			
 			// perform type inference (if necesssary)
 			if(d.third() != null) {
-				if(isUnknownConstant(d.third())) {			
+				if(isUnknownConstant(d.third())) {
 					Expr c = unknownConstantInference(d.third(), nt,
 							(SourceLocation) d.third
 							.attribute(SourceLocation.class));
@@ -1275,7 +1274,6 @@ public class TypePropagation {
 				return new Expr.New(fromJilType(lhs_t),null,params,new ArrayList<Decl>(), lhs_t, loc);				
 			}
 		} 
-		
 		return new Value.Int(val,new Type.Int(),loc);
 	}
 	

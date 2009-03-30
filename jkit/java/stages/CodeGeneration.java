@@ -199,8 +199,8 @@ public class CodeGeneration {
 		return r;
 	}
 	
-	protected List<Stmt> doVarDef(jkit.java.tree.Stmt.VarDef def) {
-		Type type = (Type) def.attribute(Type.class);
+	protected List<Stmt> doVarDef(jkit.java.tree.Stmt.VarDef def) {		
+		Type type = (Type) def.type().attribute(Type.class);
 		List<Triple<String, Integer, jkit.java.tree.Expr>> defs = def.definitions();
 		ArrayList<Stmt> r = new ArrayList<Stmt>();
 		for(int i=0;i!=defs.size();++i) {
@@ -214,8 +214,9 @@ public class CodeGeneration {
 			if(d.third() != null) {
 				Pair<Expr,List<Stmt>> e = doExpression(d.third());
 				r.addAll(e.second());
-				r.add(new Stmt.Assign(new Expr.Variable(d.first(), nt, def
-					.attributes()), e.first()));
+				Expr lhs = new Expr.Variable(d.first(), nt, def
+						.attributes());
+				r.add(new Stmt.Assign(lhs, e.first()));
 			}
 		}
 		

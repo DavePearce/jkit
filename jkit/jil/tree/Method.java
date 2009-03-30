@@ -2,6 +2,7 @@ package jkit.jil.tree;
 
 import java.util.*;
 import jkit.util.Pair;
+import jkit.jil.util.*;
 
 public class Method extends SyntacticElementImpl {
 	private String name;
@@ -203,6 +204,41 @@ public class Method extends SyntacticElementImpl {
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * This method determines the set of local variables used within this
+	 * method.
+	 * 
+	 * @return
+	 */
+	public Set<String> localVariables() {
+		HashSet<String> vars = new HashSet<String>();
+		for(Stmt s : body) {
+			if(s instanceof Stmt.Assign) {
+				Stmt.Assign a = (Stmt.Assign) s;
+				vars.addAll(Exprs.localVariables(a.lhs()));
+				vars.addAll(Exprs.localVariables(a.rhs()));
+			} else if(s instanceof Stmt.Return) {
+				Stmt.Return a = (Stmt.Return) s;
+				if(a.expr() != null) {
+					vars.addAll(Exprs.localVariables(a.expr()));
+				}
+			} else if(s instanceof Stmt.Throw) {
+				Stmt.Throw a = (Stmt.Throw) s;				
+				vars.addAll(Exprs.localVariables(a.expr()));				
+			} else if(s instanceof Stmt.Lock) {
+				Stmt.Lock a = (Stmt.Lock) s;
+				vars.addAll(Exprs.localVariables(a.expr()));
+			} else if(s instanceof Stmt.Unlock) {
+				Stmt.Unlock a = (Stmt.Unlock) s;
+				vars.addAll(Exprs.localVariables(a.expr()));
+			} else if(s instanceof Stmt.IfGoto) {
+				Stmt.IfGoto a = (Stmt.IfGoto) s;
+				vars.addAll(Exprs.localVariables(a.condition()));
+			}
+		}
+		return vars;
 	}
 
 }

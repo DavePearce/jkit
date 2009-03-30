@@ -1,10 +1,68 @@
 package jkit.jil.util;
 
+import java.util.*;
 import jkit.jil.tree.Expr;
 import jkit.jil.tree.Expr.*;
 import jkit.jil.tree.Type;
 
 public class Exprs {
+	/**
+	 * This method determines the set of local variables used within an
+	 * expression.
+	 * 
+	 * @param e
+	 * @return
+	 */
+	public static Set<String> localVariables(Expr e) {
+		HashSet<String> vars = new HashSet<String>(); 
+		
+		if(e instanceof Variable) {
+			Variable v = (Variable) e;			
+			vars.add(v.value());
+		} else if(e instanceof Cast) {
+			Cast c = (Cast) e;
+			vars.addAll(localVariables(c.expr()));
+		} else if(e instanceof Convert) {
+			Convert c = (Convert) e;
+			vars.addAll(localVariables(c.expr()));
+		} else if(e instanceof InstanceOf) {
+			InstanceOf c = (InstanceOf) e;
+			vars.addAll(localVariables(c.lhs()));
+		} else if(e instanceof UnOp) {
+			UnOp c = (UnOp) e;
+			vars.addAll(localVariables(c.expr()));
+		} else if(e instanceof Deref) {
+			Deref c = (Deref) e;
+			vars.addAll(localVariables(c.target()));
+		} else if(e instanceof BinOp) {
+			BinOp c = (BinOp) e;
+			vars.addAll(localVariables(c.lhs()));
+			vars.addAll(localVariables(c.rhs()));
+		} else if(e instanceof ArrayIndex) {
+			ArrayIndex c = (ArrayIndex) e;
+			vars.addAll(localVariables(c.target()));
+			vars.addAll(localVariables(c.index()));
+		} else if(e instanceof Invoke) {
+			Invoke c = (Invoke) e;
+			vars.addAll(localVariables(c.target()));
+			for(Expr p : c.parameters()) {
+				vars.addAll(localVariables(p));
+			}			
+		} else if(e instanceof New) {
+			New c = (New) e;			
+			for(Expr p : c.parameters()) {
+				vars.addAll(localVariables(p));
+			}			
+		} else if(e instanceof Array) {
+			Array c = (Array) e;			
+			for(Expr p : c.values()) {
+				vars.addAll(localVariables(p));
+			}			
+		}
+		
+		return vars;
+	}
+	
 	/**
 	 * This method simply inverts a boolean comparison.
 	 */
