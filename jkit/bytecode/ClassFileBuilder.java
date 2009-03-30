@@ -92,21 +92,20 @@ public class ClassFileBuilder {
 		int maxLocals = 0;
 		int maxStack = 0;
 
-		if (!method.isStatic()) {
+		if (!method.isStatic()) {			
 			// observe that "super" and "this" are actually aliases from a
 			// bytecode generation point of view.
 			localVarMap.put("this", maxLocals);
 			localVarMap.put("super", maxLocals++);
 		}
 
-		// determine slot allocations
-		
-		// FIXME: support for local variable declarations
-//		for (LocalVarDef vd : cfg.localVariables()) {
-//			localVarMap.put(vd.name(), maxLocals);
-//			maxLocals += ClassFile.slotSize(vd.type());
-//			environment.put(vd.name(), vd.type()); 
-//		}
+		// determine slot allocations for parameters
+		List<Type> paramTypes = method.type().parameterTypes();
+		int idx = 0;
+		for (Pair<String,List<Modifier>> pp : method.parameters()) {
+			localVarMap.put(pp.first(), maxLocals);
+			maxLocals += ClassFile.slotSize(paramTypes.get(idx++));
+		}
 
 		// === TRANSLATE BYTECODES ===
 		for(Stmt s : method.body()) {
@@ -756,8 +755,8 @@ public class ClassFileBuilder {
 		int maxStack = 0;
 		Type tmp_t = def.target().type();
 
-		if (tmp_t instanceof Type.Reference) {
-			Type.Reference lhs_t = (Type.Reference) tmp_t;
+		if (tmp_t instanceof Type.Clazz) {
+			Type.Clazz lhs_t = (Type.Clazz) tmp_t;
 
 			if (def.isStatic()) {
 				// This is a static field load					

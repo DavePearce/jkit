@@ -429,20 +429,29 @@ public class CodeGeneration {
 	protected Pair<Expr,List<Stmt>> doDeref(jkit.java.tree.Expr.Deref e) {
 		Pair<Expr,List<Stmt>> target = doExpression(e.target());
 		Type type = (Type) e.attribute(Type.class);
-		Type.Clazz targetT = (Type.Clazz) e.target().attribute(Type.class);
+		Type.Reference _targetT = (Type.Reference) e.target().attribute(Type.class);
 		
-		try {
-			Triple<jkit.jil.tree.Clazz, jkit.jil.tree.Field, Type> r = types
-					.resolveField(targetT, e.name(), loader);
+		if(_targetT instanceof Type.Clazz) {
+			Type.Clazz targetT = (Type.Clazz) _targetT;
+			try {
+				Triple<jkit.jil.tree.Clazz, jkit.jil.tree.Field, Type> r = types
+				.resolveField(targetT, e.name(), loader);
 
+				return new Pair<Expr, List<Stmt>>(new Expr.Deref(target.first(), e
+						.name(), type, r.second().isStatic(), e.attributes()),
+						target.second());
+			} catch(ClassNotFoundException cne) {
+				syntax_error(cne.getMessage(),e,cne);				
+			} catch(FieldNotFoundException fne) {	
+				// this must be an error...
+				syntax_error("field does not exist: " + type + "." + e.name(),e,fne);		
+			}
+		} else if(_targetT instanceof Type.Array && e.name().equals("length")) {
 			return new Pair<Expr, List<Stmt>>(new Expr.Deref(target.first(), e
-					.name(), type, r.second().isStatic(), e.attributes()),
+					.name(), type, false, e.attributes()),
 					target.second());
-		} catch(ClassNotFoundException cne) {
-			syntax_error(cne.getMessage(),e,cne);				
-		} catch(FieldNotFoundException fne) {	
-			// this must be an error...
-			syntax_error("field does not exist: " + type + "." + e.name(),e,fne);		
+		} else {
+			syntax_error("cannot dereference type " + _targetT,e);
 		}
 		return null; // dead code		
 	}
