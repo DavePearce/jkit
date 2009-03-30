@@ -22,6 +22,18 @@ public class ClassFile {
 		this.fields = new ArrayList<Field>();
 		this.methods = new ArrayList<Method>();
 	}
+		
+	public Type type() {
+		return type;
+	}
+	
+	public Type.Clazz superClazz() {
+		return superClazz;
+	}
+	
+	public List<Type.Clazz> interfaces() {
+		return interfaces;
+	}
 	
 	public List<Field> fields() {
 		return fields;
@@ -81,6 +93,10 @@ public class ClassFile {
 
 		public List<Modifier> modifiers() {
 			return modifiers;
+		}
+		
+		public List<List<Modifier>> parameterModifiers() {
+			return new ArrayList();
 		}
 		
 		public List<Type.Clazz> exceptions() {

@@ -638,51 +638,6 @@ public class ClassFileWriter {
 		output.write(w & 0xFF);
 	}
 	
-	protected void writeTextModifiers(List<Modifier> modifiers) {
-		for (Modifier x : modifiers) {
-			if (x instanceof Modifier.Base) {
-				int mod = ((Modifier.Base) x).modifier();
-				if ((mod & java.lang.reflect.Modifier.PRIVATE) != 0) {
-					printer.print("private ");
-				}
-				if ((mod & java.lang.reflect.Modifier.PROTECTED) != 0) {
-					printer.print("protected ");
-				}
-				if ((mod & java.lang.reflect.Modifier.PUBLIC) != 0) {
-					printer.print("public ");
-				}
-				if ((mod & java.lang.reflect.Modifier.STATIC) != 0) {
-					printer.print("static ");
-				}
-				if ((mod & java.lang.reflect.Modifier.ABSTRACT) != 0) {
-					printer.print("abstract ");
-				}
-				if ((mod & java.lang.reflect.Modifier.FINAL) != 0) {
-					printer.print("final ");
-				}
-				if ((mod & java.lang.reflect.Modifier.NATIVE) != 0) {
-					printer.print("native ");
-				}
-				if ((mod & java.lang.reflect.Modifier.STRICT) != 0) {
-					printer.print("strictfp ");
-				}
-				if ((mod & java.lang.reflect.Modifier.SYNCHRONIZED) != 0) {
-					printer.print("synchronized ");
-				}
-				if ((mod & java.lang.reflect.Modifier.TRANSIENT) != 0) {
-					printer.print("transient ");
-				}
-				if ((mod & java.lang.reflect.Modifier.VOLATILE) != 0) {
-					printer.print("volatile ");
-				}
-			} else if (x instanceof Modifier.Annotation) {
-				Modifier.Annotation a = (Modifier.Annotation) x;
-				printer.print("@");
-				printer.print(a.name());
-			} else {
-				// do nothing
-			}
-		}
-	}
+	
 
 }
