@@ -55,6 +55,9 @@ public class ClassFileBuilder {
 				ArrayList<ExceptionHandler> handlers = new ArrayList<ExceptionHandler>();
 
 				int maxStack = translateCode(clazz, m, bytecodes, handlers);
+				
+				ClassFile.Code codeAttr = new ClassFile.Code(maxLocals,maxStack,bytecodes);
+				cfm.attributes().add(codeAttr);
 			}
 			
 			cfile.methods().add(cfm);

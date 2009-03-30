@@ -124,11 +124,16 @@ public class ClassFile {
 	public static class Code implements Attribute {
 		protected int maxLocals;
 		protected int maxStack;
-		protected ArrayList<Bytecode> bytecodes;
+		protected List<Bytecode> bytecodes;
+		
+		public Code(int maxLocals, int maxStack, List<Bytecode> bytecodes) {
+			this.maxLocals = maxLocals;
+			this.maxStack = maxStack;
+			this.bytecodes = bytecodes;
+		}
 		
 		public String name() { return "Code"; }
 		
-
 		public int maxLocals() {
 			return maxLocals;
 		}
