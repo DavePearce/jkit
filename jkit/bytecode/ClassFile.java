@@ -58,22 +58,17 @@ public class ClassFile {
 	public static class Method {
 		protected String name;
 		protected Type.Function type;
-		protected int maxLocals;
-		protected int maxStack;
 		protected List<Modifier> modifiers;
-		protected ArrayList<Type.Clazz> exceptions;
-		protected ArrayList<Bytecode> bytecodes;
-		protected ArrayList<ExceptionHandler> handlers;
+		protected List<Type.Clazz> exceptions;
+		protected ArrayList<Attribute> attributes;		
 
-		public Method(String name, Type.Function type, List<Modifier> modifiers) {
+		public Method(String name, Type.Function type,
+				List<Modifier> modifiers, List<Type.Clazz> exceptions) {
 			this.name = name;
 			this.type = type;
 			this.modifiers = modifiers;
-			maxLocals = 0;
-			maxStack = 0;
-			exceptions = new ArrayList<Type.Clazz>();
-			bytecodes = new ArrayList<Bytecode>();
-			handlers = new ArrayList<ExceptionHandler>();
+			this.exceptions = exceptions;
+			attributes = new ArrayList<Attribute>();
 		}
 
 		public String name() {
@@ -92,6 +87,32 @@ public class ClassFile {
 			return exceptions;
 		}
 		
+		public Attribute attribute(Class c) {
+			for(Attribute a : attributes) {
+				if(c.isInstance(a)) {
+					return a;
+				}
+			}
+			return null;
+		}
+
+		public List<Attribute> attributes() {
+			return attributes;
+		}
+	}
+	
+	public static interface Attribute {
+		public String name();
+	}
+	
+	public static class Code implements Attribute {
+		protected int maxLocals;
+		protected int maxStack;
+		protected ArrayList<Bytecode> bytecodes;
+		
+		public String name() { return "Code"; }
+		
+
 		public int maxLocals() {
 			return maxLocals;
 		}
@@ -99,13 +120,9 @@ public class ClassFile {
 		public int maxStack() {
 			return maxStack;
 		}
-
-		public List<Bytecode> bytecodes() {
+		
+		public List<Bytecode> bytecodes() { 
 			return bytecodes;
-		}
-
-		public List<ExceptionHandler> handlers() {
-			return handlers;
 		}
 	}
 	
@@ -205,10 +222,12 @@ public class ClassFile {
 			Constant.addPoolItem(new Constant.Utf8(descriptor(m.type(),
 					false)), constantPool);
 
-			if (!m.bytecodes().isEmpty()) {
+			Code codeAttr = (Code) m.attribute(Code.class);
+			
+			if (codeAttr != null) {
 				Constant.addPoolItem(new Constant.Utf8("Code"), constantPool);
 
-				for (Bytecode b : m.bytecodes()) {
+				for (Bytecode b : codeAttr.bytecodes()) {
 					// need to do something here.
 				}
 
@@ -219,6 +238,7 @@ public class ClassFile {
 //				}
 //				}
 			}
+			
 			if(!m.exceptions().isEmpty()) {
 				Constant.addPoolItem(new Constant.Utf8("Exceptions"), constantPool);
 				for(Type.Clazz e : m.exceptions()) {
@@ -298,7 +318,7 @@ public class ClassFile {
 		return desc;
 	}
 	
-	protected boolean isGeneric(Type t) {
+	protected static boolean isGeneric(Type t) {
 		if(!(t instanceof Type.Clazz)) {
 			return false;
 		}
@@ -309,6 +329,19 @@ public class ClassFile {
 			}
 		}
 		return false;
+	}
+	
+	protected static boolean isGenericArray(Type t) {
+		if(t instanceof Type.Array) {
+			Type et = ((Type.Array)t).element();
+			if(et instanceof Type.Variable) {
+				return true;
+			} else {
+				return isGenericArray(et);
+			}
+		} 
+		
+		return false;	
 	}
 	
 	protected boolean needClassSignature() {
