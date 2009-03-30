@@ -9,7 +9,7 @@ import jkit.compiler.ClassLoader;
 import jkit.java.io.JavaFile;
 import jkit.java.io.JavaFileReader;
 import jkit.java.io.JavaFileWriter;
-import jkit.bytecode.ClassFileWriter;
+import jkit.bytecode.*;
 import jkit.java.stages.SkeletonDiscovery;
 import jkit.java.stages.SkeletonBuilder;
 import jkit.java.stages.TypeChecking;
@@ -390,19 +390,9 @@ public class JavaCompiler implements Compiler {
 		// new JavaFileWriter(new FileWriter(outputFile)).write(jfile);
 		// new JilFileWriter(new FileWriter(outputFile)).write(clazz);
 		
-		List<Pair<String,String>> options = new ArrayList<Pair<String,String>>();
-		options.add(new Pair("outputText","true"));
-		OutputStream out = new FileOutputStream(outputFile);
-		try {
-			new ClassFileWriter(out, loader,
-					options).write(clazz);
-		} catch(ClassNotFoundException e) {
-			throw new RuntimeException("internal failure - " + e,e);
-		} catch(IllegalAccessException e) {
-			throw new RuntimeException("internal failure - " + e,e);
-		} catch(InstantiationException e) {
-			throw new RuntimeException("internal failure - " + e,e);
-		}
+		OutputStream out = new FileOutputStream(outputFile);		
+		ClassFile cfile = new ClassFileBuilder(loader,49).build(clazz);
+		new BytecodeFileWriter(out).write(cfile);		
 		return outputFile.getPath();
 	}
 

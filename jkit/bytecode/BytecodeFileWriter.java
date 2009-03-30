@@ -13,7 +13,7 @@ public class BytecodeFileWriter {
 		output = new PrintWriter(o);
 	}	
 
-	protected void write(ClassFile cfile) throws IOException {
+	public void write(ClassFile cfile) throws IOException {
 		ArrayList<Constant.Info> constantPool = cfile.constantPool();
 		HashMap<Constant.Info,Integer> poolMap = new HashMap<Constant.Info,Integer>();
 		
