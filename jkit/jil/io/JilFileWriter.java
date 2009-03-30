@@ -109,6 +109,10 @@ public class JilFileWriter {
 			write((Stmt.Goto)s);
 		} else if(s instanceof Stmt.Label) {
 			write((Stmt.Label)s);
+		} else if(s instanceof Expr.Invoke) {
+			output.print("\t\t");
+			write((Expr.Invoke)s);
+			output.println();
 		} else {
 			throw new RuntimeException("Invalid statement encountered: "
 					+ s.getClass());
@@ -174,6 +178,8 @@ public class JilFileWriter {
 			write((Expr.Double)e);
 		} else if(e instanceof Expr.Null) {
 			write((Expr.Null)e);
+		} else if(e instanceof Expr.StringVal) {
+			write((Expr.StringVal)e);
 		} else if(e instanceof Expr.Variable) {		
 			write((Expr.Variable)e);
 		} else if(e instanceof Expr.UnOp) {
@@ -194,6 +200,10 @@ public class JilFileWriter {
 			write((Expr.Invoke)e);
 		} else if(e instanceof Expr.New) {
 			write((Expr.New)e);
+		} else if(e instanceof Expr.Class) {
+			write((Expr.Class)e);
+		} else if(e instanceof Expr.ClassVariable) {
+			write((Expr.ClassVariable)e);
 		} else {
 			throw new RuntimeException("Invalid expression encountered: "
 					+ e.getClass());
@@ -238,8 +248,22 @@ public class JilFileWriter {
 		output.print("null");
 	}
 	
+	protected void write(Expr.StringVal e) {
+		output.print("\"");
+		writeWithEscapes(e.value());
+		output.print("\"");
+	}
+	
 	protected void write(Expr.Variable v) {
 		output.write(v.value());
+	}
+	
+	protected void write(Expr.Class c) {
+		output.write(c.type() + ".class");
+	}
+	
+	protected void write(Expr.ClassVariable c) {
+		output.write(c.type().toString());
 	}
 	
 	public static final String[] unopstr={"!","~","-","++","--","++","--"};	

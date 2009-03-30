@@ -381,11 +381,12 @@ public class ClassFileBuilder {
 				}
 				// not elimination was successful ...
 				translateConditionalBranch(e1, trueLabel, varmap, bytecodes);
+			} else {
+				// anything else doesn't make sense
+				throw new RuntimeException(
+						"Invalid use of unary operator in conditional ("
+						+ condition + ")");
 			}
-			// anything else doesn't make sense
-			throw new RuntimeException(
-					"Invalid use of unary operator in conditional ("
-							+ condition + ")");
 		} else if (condition instanceof Expr.Invoke) {
 			translateInvoke((Expr.Invoke) condition, varmap, 
 					bytecodes, true);
@@ -494,7 +495,7 @@ public class ClassFileBuilder {
 						stmt.isPolymorphic() ? Bytecode.VIRTUAL
 								: Bytecode.SPECIAL));
 			}
-		}
+		}		
 
 		Type retT = stmt.funType().returnType();
 				

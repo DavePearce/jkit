@@ -495,6 +495,8 @@ public class TypePropagation {
 			if (!(f.returnType() instanceof Type.Void)) {
 				e.attributes().add(f.returnType());
 			}
+			
+			e.attributes().add(f); // this is a little hacky, but it works.
 		} catch(ClassNotFoundException cnfe) {
 			syntax_error(cnfe.getMessage(), e, cnfe);
 		} catch(MethodNotFoundException mfne) {

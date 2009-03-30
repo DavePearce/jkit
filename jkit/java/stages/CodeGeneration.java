@@ -144,7 +144,9 @@ public class CodeGeneration {
 		} else if(e instanceof jkit.java.tree.Stmt.Switch) {
 			return doSwitch((jkit.java.tree.Stmt.Switch) e);
 		} else if(e instanceof jkit.java.tree.Expr.Invoke) {
-			return doInvoke((jkit.java.tree.Expr.Invoke) e).second();
+			Pair<Expr, List<Stmt>> r = doInvoke((jkit.java.tree.Expr.Invoke) e);
+			r.second().add((Expr.Invoke) r.first());
+			return r.second();
 		} else if(e instanceof jkit.java.tree.Expr.New) {
 			return doNew((jkit.java.tree.Expr.New) e).second();
 		} else if(e instanceof Decl.Clazz) {
@@ -543,8 +545,9 @@ public class CodeGeneration {
 	protected Pair<Expr,List<Stmt>> doInvoke(jkit.java.tree.Expr.Invoke e) {
 		ArrayList<Stmt> r = new ArrayList();
 		ArrayList<Expr> nparameters = new ArrayList();
-		Type type = (Type) e.attribute(Type.class);		
-
+		Type type = (Type) e.attribute(Type.class);				
+		Type.Function funType = (Type.Function) e.attribute(Type.Function.class);
+		
 		Pair<Expr,List<Stmt>> target = doExpression(e.target());
 		r.addAll(target.second());
 		
@@ -557,7 +560,7 @@ public class CodeGeneration {
 		}				
 		
 		return new Pair<Expr, List<Stmt>>(new Expr.Invoke(target.first(), e
-				.name(), nparameters, type, e.attributes()), r);
+				.name(), nparameters, funType, type, e.attributes()), r);
 	}
 	
 	protected Pair<Expr,List<Stmt>> doInstanceOf(jkit.java.tree.Expr.InstanceOf e) {
@@ -660,7 +663,7 @@ public class CodeGeneration {
 	
 	protected Pair<Expr,List<Stmt>> doClassVariable(jkit.java.tree.Expr.ClassVariable e) {
 		Type.Clazz type = (Type.Clazz) e.attribute(Type.class);
-		return new Pair<Expr, List<Stmt>>(new Expr.Class(type, e.attributes()),
+		return new Pair<Expr, List<Stmt>>(new Expr.ClassVariable(type, e.attributes()),
 				new ArrayList<Stmt>());
 	}
 	

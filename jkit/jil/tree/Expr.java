@@ -68,14 +68,15 @@ public interface Expr extends SyntacticElement {
 	 * @author djp
 	 * 
 	 */
-	public static final class ClassVariable extends SyntacticElementImpl implements Expr {
+	public static final class ClassVariable extends SyntacticElementImpl
+			implements Expr {
 		private Type.Clazz type;
 
 		public ClassVariable(Type.Clazz type, Attribute... attributes) {
 			super(attributes);
 			this.type = type;
 		}
-		
+
 		public ClassVariable(Type.Clazz type, List<Attribute> attributes) {
 			super(attributes);
 			this.type = type;
@@ -399,12 +400,13 @@ public interface Expr extends SyntacticElement {
 		 *            The parameters of the method
 		 */
 		public Invoke(Expr target, String name, List<Expr> parameters,
-				Type type, List<Attribute> attributes) {
+				Type.Function funType, Type type, List<Attribute> attributes) {
 			super(attributes);
 			this.target = target;
 			this.name = name;
 			this.parameters = parameters;
 			this.type = type;
+			this.funType = funType;
 		}
 		
 		public Expr target() {
