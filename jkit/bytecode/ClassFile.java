@@ -450,7 +450,7 @@ public class ClassFile {
 				min += ClassFile.slotSize(p);
 			}
 			
-			return Math.max(max,min);
+			return Math.max(max+1,min);
 		}
 
 		/**
@@ -553,7 +553,7 @@ public class ClassFile {
 				Constant.addPoolItem(new Constant.Utf8("Code"), constantPool);
 
 				for (Bytecode b : codeAttr.bytecodes()) {
-					// need to do something here.
+					b.addPoolItems(constantPool);
 				}
 
 				// FIXME: support for exception handlers

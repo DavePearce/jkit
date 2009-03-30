@@ -24,7 +24,9 @@ package jkit.bytecode;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import jkit.bytecode.Constant;
 import jkit.jil.tree.Type;
 import jkit.util.Pair;
 
@@ -40,6 +42,16 @@ public abstract class Bytecode {
 	 * @return
 	 */
 	public abstract int stackDiff();
+	
+	/**
+	 * This method adds any constant pool items required by the bytecode to the
+	 * constantPool.
+	 * 
+	 * @param constantPool
+	 */
+	public void addPoolItems(Set<Constant.Info> constantPool) {
+		// in the default case, we do nothing.
+	}
 	
 	/** 
 	 * Translate this Java bytecode into bytes. If the bytecode requires a
@@ -117,7 +129,7 @@ public abstract class Bytecode {
 		
 		public int stackDiff() {
 			return ClassFile.slotSize(type);
-		}
+		}		
 		
 		public String toString() {
 			if(slot >= 0 && slot <= 3) {
@@ -228,6 +240,38 @@ public abstract class Bytecode {
 				return 2;
 			}
 			return 1;			
+		}
+		
+		public void addPoolItems(Set<Constant.Info> constantPool) {
+			if(constant instanceof Integer) {
+				int v = (Integer) constant;
+				if (!(v >= -1 && v <= 5) && !(v >= -128 && v <= 127)
+						&& !(v >= -32768 && v <= 32767)) { 					
+					Constant.addPoolItem(new Constant.Integer(v),constantPool);										
+				}
+			} else if (constant instanceof Long) {
+				long v = (Long) constant;
+				if (v != 0 && v != 1) {
+					Constant.addPoolItem(new Constant.Long(v), constantPool);
+				}
+			} else if(constant instanceof Float) {
+				float v = (Float) constant;
+				if(v != 0.0F && v != 1.0F && v != 2.0F) {
+					Constant.addPoolItem(new Constant.Float(v),constantPool);					
+				}
+			} else if(constant instanceof Double) {
+				double v = (Double) constant;
+				if (v != 0.0D && v != 1.0D) {
+					Constant.addPoolItem(new Constant.Double(v), constantPool);
+				}				
+			} else if(constant instanceof String) {
+				String v = (String) constant;
+				Constant.addPoolItem(new Constant.String(new Constant.Utf8(v)),
+						constantPool);				
+			} else if(constant instanceof Type) {
+				Type.Reference ref = (Type.Reference) constant;
+				Constant.addPoolItem(Constant.buildClass(ref),constantPool);
+			}
 		}
 		
 		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  
@@ -518,6 +562,11 @@ public abstract class Bytecode {
 			}
 		}
 		
+		public void addPoolItems(Set<Constant.Info> constantPool) {
+			Constant.addPoolItem(Constant.buildFieldRef(owner, name, type),
+					constantPool);
+		}
+		
 		public byte[] toBytes(int offset, 
 				Map<String,Integer> labelOffsets,  
 				Map<Constant.Info,Integer> constantPool) {
@@ -565,6 +614,11 @@ public abstract class Bytecode {
 			} else {
 				return 1 - ClassFile.slotSize(type);
 			}
+		}
+		
+		public void addPoolItems(Set<Constant.Info> constantPool) {
+			Constant.addPoolItem(Constant.buildFieldRef(owner, name, type),
+					constantPool);
 		}
 		
 		public byte[] toBytes(int offset, Map<String, Integer> labelOffsets,
@@ -620,6 +674,16 @@ public abstract class Bytecode {
 			}
 			
 			return diff;
+		}
+		
+		public void addPoolItems(Set<Constant.Info> constantPool) {
+			if(mode != INTERFACE) {
+				Constant.addPoolItem(Constant.buildMethodRef(owner, name,
+					type),constantPool);
+			} else {
+				Constant.addPoolItem(Constant.buildInterfaceMethodRef(owner, name,
+						type),constantPool);
+			}
 		}
 		
 		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  Map<Constant.Info,Integer> constantPool) {
@@ -1259,6 +1323,21 @@ public abstract class Bytecode {
 			return 1;
 		}
 		
+		public void addPoolItems(Set<Constant.Info> constantPool) {
+			if(type instanceof Type.Array) {
+				if(dims > 1) {
+					constantPool.add(Constant
+							.buildClass((Type.Array) type));
+				} else if(type instanceof Type.Reference) {
+					constantPool.add(Constant
+							.buildClass((Type.Array) type));
+				}
+			} else {
+				constantPool.add(Constant
+						.buildClass((Type.Clazz) type));
+			}
+		}
+		
 		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  
 				Map<Constant.Info,Integer> constantPool) {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();			
@@ -1373,6 +1452,16 @@ public abstract class Bytecode {
 			return 0;
 		}
 		
+		public void addPoolItems(Set<Constant.Info> constantPool) {
+			if(type instanceof Type.Reference) {
+				Constant.addPoolItem(Constant
+						.buildClass((Type.Reference) type), constantPool);
+			} else if (type instanceof Type.Array) {
+				Constant.addPoolItem(Constant
+						.buildClass((Type.Array) type), constantPool);
+			} 	
+		}
+		
 		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  
 				Map<Constant.Info,Integer> constantPool) {
 			
@@ -1410,6 +1499,16 @@ public abstract class Bytecode {
 		
 		public int stackDiff() {
 			return -1;
+		}
+		
+		public void addPoolItems(Set<Constant.Info> constantPool) {
+			if(type instanceof Type.Reference) {
+				Constant.addPoolItem(Constant
+						.buildClass((Type.Reference) type), constantPool);
+			} else {
+				Constant.addPoolItem(Constant
+						.buildClass((Type.Array) type), constantPool);
+			} 	
 		}
 		
 		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  
