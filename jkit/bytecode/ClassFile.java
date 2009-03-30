@@ -53,6 +53,96 @@ public class ClassFile {
 		return version;
 	}
 	
+	/**
+     * Check whether this method has one of the "base" modifiers (e.g. static,
+     * public, private, etc). These are found in java.lang.reflect.Modifier.
+     * 
+     * @param modifier
+     * @return true if it does!
+     */
+	public boolean hasModifier(int modifier) {
+		for(Modifier m : modifiers) {
+			if(m instanceof Modifier.Base) {
+				Modifier.Base b = (Modifier.Base) m;
+				if(b.modifier() == modifier) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Check whether this method is abstract
+	 */
+	public boolean isInterface() {
+		return hasModifier(java.lang.reflect.Modifier.INTERFACE);
+	}
+	
+	/**
+	 * Check whether this method is abstract
+	 */
+	public boolean isAbstract() {
+		return hasModifier(java.lang.reflect.Modifier.ABSTRACT);
+	}
+
+	/**
+	 * Check whether this method is final
+	 */
+	public boolean isFinal() {
+		return hasModifier(java.lang.reflect.Modifier.FINAL);
+	}
+
+	/**
+	 * Check whether this method is static
+	 */
+	public boolean isStatic() {
+		return hasModifier(java.lang.reflect.Modifier.STATIC);
+	}
+
+	/**
+	 * Check whether this method is public
+	 */
+	public boolean isPublic() {
+		return hasModifier(java.lang.reflect.Modifier.PUBLIC);
+	}
+
+	/**
+	 * Check whether this method is protected
+	 */
+	public boolean isProtected() {
+		return hasModifier(java.lang.reflect.Modifier.PROTECTED);
+	}
+
+	/**
+	 * Check whether this method is private
+	 */
+	public boolean isPrivate() {
+		return hasModifier(java.lang.reflect.Modifier.PRIVATE);
+	}
+
+	/**
+	 * Check whether this method is native
+	 */
+	public boolean isNative() {
+		return hasModifier(java.lang.reflect.Modifier.NATIVE);
+	}
+
+	/**
+	 * Check whether this method is synchronized
+	 */
+	public boolean isSynchronized() {
+		return hasModifier(java.lang.reflect.Modifier.SYNCHRONIZED);
+	}		
+	
+	/**
+	 * Check whether or not this is an inner class.
+	 * @return
+	 */
+	public boolean isInnerClass() {
+		return type.components().size() > 1;
+	}
+	
 	public static class Field {
 		protected String name;
 		protected Type type;
@@ -74,6 +164,67 @@ public class ClassFile {
 
 		public List<Modifier> modifiers() {
 			return modifiers;
+		}
+		
+		/**
+	     * Check whether this field has one of the "base" modifiers (e.g. static,
+	     * public, private, etc). These are found in java.lang.reflect.Modifier.
+	     * 
+	     * @param modifier
+	     * @return true if it does!
+	     */
+		public boolean hasModifier(int modifier) {
+			for(Modifier m : modifiers) {
+				if(m instanceof Modifier.Base) {
+					Modifier.Base b = (Modifier.Base) m;
+					if(b.modifier() == modifier) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+		
+		/**
+		 * Check whether this field is abstract
+		 */
+		public boolean isAbstract() {
+			return hasModifier(java.lang.reflect.Modifier.ABSTRACT);
+		}
+
+		/**
+		 * Check whether this field is final
+		 */
+		public boolean isFinal() {
+			return hasModifier(java.lang.reflect.Modifier.FINAL);
+		}
+
+		/**
+		 * Check whether this field is static
+		 */
+		public boolean isStatic() {
+			return hasModifier(java.lang.reflect.Modifier.STATIC);
+		}
+
+		/**
+		 * Check whether this field is public
+		 */
+		public boolean isPublic() {
+			return hasModifier(java.lang.reflect.Modifier.PUBLIC);
+		}
+
+		/**
+		 * Check whether this field is protected
+		 */
+		public boolean isProtected() {
+			return hasModifier(java.lang.reflect.Modifier.PROTECTED);
+		}
+
+		/**
+		 * Check whether this field is private
+		 */
+		public boolean isPrivate() {
+			return hasModifier(java.lang.reflect.Modifier.PRIVATE);
 		}
 	}
 	
@@ -125,6 +276,93 @@ public class ClassFile {
 		public List<Attribute> attributes() {
 			return attributes;
 		}
+		
+		/**
+	     * Check whether this method has one of the "base" modifiers (e.g. static,
+	     * public, private, etc). These are found in java.lang.reflect.Modifier.
+	     * 
+	     * @param modifier
+	     * @return true if it does!
+	     */
+		public boolean hasModifier(int modifier) {
+			for(Modifier m : modifiers) {
+				if(m instanceof Modifier.Base) {
+					Modifier.Base b = (Modifier.Base) m;
+					if(b.modifier() == modifier) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+		
+		/**
+		 * Check whether this method is abstract
+		 */
+		public boolean isAbstract() {
+			return hasModifier(java.lang.reflect.Modifier.ABSTRACT);
+		}
+
+		/**
+		 * Check whether this method is final
+		 */
+		public boolean isFinal() {
+			return hasModifier(java.lang.reflect.Modifier.FINAL);
+		}
+
+		/**
+		 * Check whether this method is static
+		 */
+		public boolean isStatic() {
+			return hasModifier(java.lang.reflect.Modifier.STATIC);
+		}
+
+		/**
+		 * Check whether this method is public
+		 */
+		public boolean isPublic() {
+			return hasModifier(java.lang.reflect.Modifier.PUBLIC);
+		}
+
+		/**
+		 * Check whether this method is protected
+		 */
+		public boolean isProtected() {
+			return hasModifier(java.lang.reflect.Modifier.PROTECTED);
+		}
+
+		/**
+		 * Check whether this method is private
+		 */
+		public boolean isPrivate() {
+			return hasModifier(java.lang.reflect.Modifier.PRIVATE);
+		}
+
+		/**
+		 * Check whether this method is native
+		 */
+		public boolean isNative() {
+			return hasModifier(java.lang.reflect.Modifier.NATIVE);
+		}
+
+		/**
+		 * Check whether this method is synchronized
+		 */
+		public boolean isSynchronized() {
+			return hasModifier(java.lang.reflect.Modifier.SYNCHRONIZED);
+		}
+
+		/**
+		 * Check whether this method has varargs
+		 */
+		public boolean isVariableArity() {
+			for(Modifier m : modifiers) {
+				if(m instanceof Modifier.VarArgs) {				
+					return true;				
+				}
+			}
+			return false;
+		}
 	}
 	
 	public static interface Attribute {
@@ -165,27 +403,71 @@ public class ClassFile {
 	 * @author djp
 	 */
 	public static class Code implements Attribute {
-		protected int maxLocals;
-		protected int maxStack;
 		protected List<Bytecode> bytecodes;
 		protected List<Handler> handlers;
+		protected Method method; // enclosing method
 		
-		public Code(int maxLocals, int maxStack, List<Bytecode> bytecodes,
-				List<Handler> handlers) {
-			this.maxLocals = maxLocals;
-			this.maxStack = maxStack;
+		public Code(List<Bytecode> bytecodes,
+				List<Handler> handlers, Method method) {			
 			this.bytecodes = bytecodes;
 			this.handlers = handlers;
+			this.method = method;
 		}
 		
 		public String name() { return "Code"; }
 		
+		/**
+		 * Determine the maximum number of local variable slots required for
+		 * this method.
+		 * 
+		 * @return
+		 */
 		public int maxLocals() {
-			return maxLocals;
+			int max = 0;
+			for(Bytecode b :  bytecodes) {
+				if(b instanceof Bytecode.Store) {
+					Bytecode.Store s = (Bytecode.Store) b;
+					max = Math.max(max, s.slot + ClassFile.slotSize(s.type) - 1);
+				} else if(b instanceof Bytecode.Load) {
+					Bytecode.Load l = (Bytecode.Load) b;
+					max = Math.max(max, l.slot + ClassFile.slotSize(l.type) - 1);					
+				} else if(b instanceof Bytecode.Iinc) {
+					Bytecode.Iinc l = (Bytecode.Iinc) b;
+					max = Math.max(max, l.slot);					
+				}
+			}
+			
+			// The reason for the following, is that we must compute the
+			// *minimal* number of slots required. Essentially, this is enough
+			// to hold the "this" pointer (if appropriate) and the parameters
+			// supplied. The issue is that the bytecodes might not actually
+			// access all of the parameters supplied, so just looking at them
+			// might produce an underestimate.
+			
+			int min = method.isStatic() ? 0 : 1;
+			
+			for(Type p :  method.type().parameterTypes()) {
+				min += ClassFile.slotSize(p);
+			}
+			
+			return Math.max(max,min);
 		}
 
+		/**
+		 * Determine the maximum number of stack slots required for this method.
+		 * 
+		 * @return
+		 */
 		public int maxStack() {
-			return maxStack;
+			// This algorithm computes a conservative over approximation. In
+			// theory, we can do better, but there's little need to.
+			int max = 0;
+			int current = 0;
+			for(Bytecode b : bytecodes) {
+				current = current + b.stackDiff();
+				max = Math.max(current,max);
+			}
+			return max;
 		}
 		
 		public List<Bytecode> bytecodes() { 

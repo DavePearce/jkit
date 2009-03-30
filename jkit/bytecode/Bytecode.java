@@ -30,6 +30,17 @@ import jkit.util.Pair;
 
 public abstract class Bytecode {
 	
+	/**
+	 * This method determines the change in stack resulting from this bytecode.
+	 * For example, +1 indicates the instruction puts one thing onto the stack.
+	 * Likewise, -2 means this instruction takes two things off the stack. The
+	 * primary purpose of this method is to help compute the maxStack
+	 * requirement for a method.
+	 * 
+	 * @return
+	 */
+	public abstract int stackDiff();
+	
 	/** 
 	 * Translate this Java bytecode into bytes. If the bytecode requires a
 	 * constant pool item which is not present in the constantPool map, then the
@@ -61,10 +72,16 @@ public abstract class Bytecode {
 	public final static class Store extends Bytecode {
 		public final int slot;
 		public final Type type;
+		
 		public Store(int slot, Type type) {
 			this.slot=slot;
 			this.type=type;
 		}
+		
+		public int stackDiff() {
+			return -ClassFile.slotSize(type);
+		}
+		
 		public String toString() {
 			if(slot >= 0 && slot <= 3) {
  				return typeChar(type) + "store_" + slot;
@@ -96,6 +113,10 @@ public abstract class Bytecode {
 		public Load(int slot, Type type) {
 			this.slot=slot;
 			this.type=type;
+		}
+		
+		public int stackDiff() {
+			return ClassFile.slotSize(type);
 		}
 		
 		public String toString() {
@@ -130,6 +151,11 @@ public abstract class Bytecode {
 			this.increment = increment;
 		}
 		
+
+		public int stackDiff() {
+			return 0;
+		}
+		
 		public String toString() {
 			return "iinc " + slot + ", " + increment;
 		}
@@ -157,6 +183,10 @@ public abstract class Bytecode {
 			return out.toByteArray();
 		}
 		
+		public int stackDiff() {
+			return ClassFile.slotSize(type)-2;
+		}
+		
 		public String toString() { return typeArrayChar(type.element()) + "aload"; }
 	}
 	
@@ -167,6 +197,10 @@ public abstract class Bytecode {
 		public final Type.Array type;
 		
 		public ArrayStore(Type.Array type) { this.type = type; }
+		
+		public int stackDiff() {
+			return -2 - ClassFile.slotSize(type);
+		}
 		
 		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  Map<Constant.Info,Integer> constantPool) {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -188,6 +222,13 @@ public abstract class Bytecode {
 			assert constant == null || constant instanceof Number || constant instanceof String;
 			this.constant = constant; 
 		}				
+		
+		public int stackDiff() {
+			if (constant instanceof Long && constant instanceof Double) {
+				return 2;
+			}
+			return 1;			
+		}
 		
 		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  
 				Map<Constant.Info,Integer> constantPool) {
@@ -326,10 +367,21 @@ public abstract class Bytecode {
 		public final Type type;
 		public Return(Type type) { this.type = type; }		
 		
-		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  Map<Constant.Info,Integer> constantPool) {
+		public int stackDiff() {
+			if(type == null) { return 0; }
+			else {
+				return ClassFile.slotSize(type);
+			}
+		}
+		
+		public byte[] toBytes(int offset, Map<String, Integer> labelOffsets,
+				Map<Constant.Info, Integer> constantPool) {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			if(type == null) { write_u1(out,RETURN); } 
-			else { write_u1(out,IRETURN + typeOffset(type)); }
+			if (type == null) {
+				write_u1(out, RETURN);
+			} else {
+				write_u1(out, IRETURN + typeOffset(type));
+			}
 			return out.toByteArray();
 		}
 		
@@ -351,12 +403,19 @@ public abstract class Bytecode {
 			return new byte[0];
 		}
 		public String toString() { return name + ":"; }
+		public int stackDiff() {
+			return 0;
+		}
 	}
 	
 	public static final class Neg extends Bytecode {
 		public final Type type;
 		
 		public Neg(Type type) { this.type = type; }
+		
+		public int stackDiff() {
+			return 0;
+		}
 		
 		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  Map<Constant.Info,Integer> constantPool) {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -396,6 +455,11 @@ public abstract class Bytecode {
 			this.op = op;
 			this.type = type;
 		}
+		
+		public int stackDiff() {
+			return -ClassFile.slotSize(type);
+		}
+		
 		public byte[] toBytes(int offset, Map<String, Integer> labelOffsets,
 				Map<Constant.Info, Integer> constantPool) {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -446,6 +510,14 @@ public abstract class Bytecode {
 			this.mode = mode;
 		}
 		
+		public int stackDiff() {
+			if(mode == STATIC) {
+				return -ClassFile.slotSize(type);
+			} else {
+				return -1 - ClassFile.slotSize(type);
+			}
+		}
+		
 		public byte[] toBytes(int offset, 
 				Map<String,Integer> labelOffsets,  
 				Map<Constant.Info,Integer> constantPool) {
@@ -487,16 +559,25 @@ public abstract class Bytecode {
 			this.mode = mode;
 		}
 		
-		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  Map<Constant.Info,Integer> constantPool) {
-			ByteArrayOutputStream out = new ByteArrayOutputStream();			
-			int idx = constantPool.get(Constant.buildFieldRef(owner, name,
-					type));
+		public int stackDiff() {
 			if(mode == STATIC) {
-				write_u1(out,GETSTATIC);
+				return ClassFile.slotSize(type);
 			} else {
-				write_u1(out,GETFIELD);
+				return 1 - ClassFile.slotSize(type);
 			}
-			write_u2(out,idx); 
+		}
+		
+		public byte[] toBytes(int offset, Map<String, Integer> labelOffsets,
+				Map<Constant.Info, Integer> constantPool) {
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			int idx = constantPool.get(Constant
+					.buildFieldRef(owner, name, type));
+			if (mode == STATIC) {
+				write_u1(out, GETSTATIC);
+			} else {
+				write_u1(out, GETFIELD);
+			}
+			write_u2(out, idx);
 			return out.toByteArray();
 		}
 		
@@ -525,6 +606,20 @@ public abstract class Bytecode {
 			this.type = type;
 			this.name = name;
 			this.mode = mode;
+		}
+		
+		public int stackDiff() {
+			int diff = mode == STATIC ? 0 : -1;
+			
+			if(!(type.returnType() instanceof Type.Void)) {
+				diff += ClassFile.slotSize(type.returnType());
+			}
+			
+			for(Type pt : type.parameterTypes()) {
+				diff -= ClassFile.slotSize(pt);
+			}
+			
+			return diff;
 		}
 		
 		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  Map<Constant.Info,Integer> constantPool) {
@@ -585,6 +680,10 @@ public abstract class Bytecode {
 			this.from = from;
 			this.to = to;
 		}	
+		
+		public int stackDiff() {
+			return ClassFile.slotSize(to) - ClassFile.slotSize(from);
+		}
 		
 		public byte[] toBytes(int offset, Map<String, Integer> labelOffsets,
 				Map<Constant.Info, Integer> constantPool) {
@@ -732,6 +831,10 @@ public abstract class Bytecode {
 	public static class Goto extends Branch {
 		public Goto(String label) { super(label); }
 		
+		public int stackDiff() {
+			return 0;
+		}
+		
 		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  Map<Constant.Info,Integer> constantPool) {
 			if (!labelOffsets.keySet().contains(label)) {
 				throw new IllegalArgumentException("Unable to resolve label \"" + label
@@ -774,6 +877,10 @@ public abstract class Bytecode {
 			super(label);
 			assert cond >=0 && cond <= LE;			
 			this.cond=cond;
+		}
+		
+		public int stackDiff() {
+			return -1;
 		}
 		
 		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  Map<Constant.Info,Integer> constantPool) {
@@ -827,6 +934,10 @@ public abstract class Bytecode {
 				(type instanceof Type.Long && op == 0);
 			this.type=type;
 			this.op = op;
+		}
+		
+		public int stackDiff() {
+			return 1 - ClassFile.slotSize(type);
 		}
 		
 		public byte[] toBytes(int offset, Map<String, Integer> labelOffsets,
@@ -893,6 +1004,10 @@ public abstract class Bytecode {
 			this.type = type;
 		}
 		
+		public int stackDiff() {
+			return 1-(2*ClassFile.slotSize(type));
+		}
+		
 		public byte[] toBytes(int offset, Map<String, Integer> labelOffsets,
 				Map<Constant.Info, Integer> constantPool) {
 			assert labelOffsets.containsKey(label);
@@ -949,6 +1064,10 @@ public abstract class Bytecode {
 			else {
 				this.type = LOOKUPSWITCH;
 			}
+		}
+		
+		public int stackDiff() {
+			return -1;
 		}
 		
 		public int getSize(int offset) {
@@ -1023,6 +1142,10 @@ public abstract class Bytecode {
 		
 		public Pop(Type type) { this.type = type; }
 		
+		public int stackDiff() {
+			return -ClassFile.slotSize(type);
+		}
+		
 		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  
 				Map<Constant.Info,Integer> constantPool) {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -1050,6 +1173,10 @@ public abstract class Bytecode {
 		
 		public Dup(Type type) { this.type = type; }
 		
+		public int stackDiff() {
+			return ClassFile.slotSize(type);
+		}
+		
 		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  
 				Map<Constant.Info,Integer> constantPool) {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -1073,6 +1200,10 @@ public abstract class Bytecode {
 	 * Represents the dupx1 bytecode
 	 */
 	public static final class DupX1 extends Bytecode {
+		public int stackDiff() {
+			return 1;
+		}
+		
 		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  
 				Map<Constant.Info,Integer> constantPool) {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -1089,6 +1220,10 @@ public abstract class Bytecode {
 	 * Represents the dupx2 bytecode
 	 */
 	public static final class DupX2 extends Bytecode {
+		public int stackDiff() {
+			return 2;
+		}
+		
 		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  
 				Map<Constant.Info,Integer> constantPool) {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -1118,6 +1253,10 @@ public abstract class Bytecode {
 			assert type instanceof Type.Reference || type instanceof Type.Array;
 			this.type = type;
 			this.dims = dims;
+		}
+		
+		public int stackDiff() {
+			return 1;
 		}
 		
 		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  
@@ -1200,7 +1339,11 @@ public abstract class Bytecode {
 	/**
 	 * Represents the arraylength bytecode
 	 */
-	public static final class ArrayLength extends Bytecode {				
+	public static final class ArrayLength extends Bytecode {
+		public int stackDiff() {
+			return 1;
+		}
+		
 		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  Map<Constant.Info,Integer> constantPool) {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			write_u1(out,ARRAYLENGTH);
@@ -1224,6 +1367,10 @@ public abstract class Bytecode {
 		public CheckCast(Type type) {
 			assert type instanceof Type.Reference || type instanceof Type.Array;			
 			this.type = type; 
+		}
+		
+		public int stackDiff() {
+			return 0;
 		}
 		
 		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  
@@ -1261,6 +1408,10 @@ public abstract class Bytecode {
 		
 		public InstanceOf(Type type) { this.type = type; }
 		
+		public int stackDiff() {
+			return -1;
+		}
+		
 		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  
 				Map<Constant.Info,Integer> constantPool) {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();			
@@ -1290,6 +1441,10 @@ public abstract class Bytecode {
 	 * Represents the nop bytecode.
 	 */
 	public static final class Nop extends Bytecode {
+		public int stackDiff() {
+			return 0;
+		}
+		
 		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  
 				Map<Constant.Info,Integer> constantPool) {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -1306,6 +1461,10 @@ public abstract class Bytecode {
 	 * Represents the athrow bytecode.
 	 */
 	public static final class Throw extends Bytecode {
+		public int stackDiff() {
+			return 1; // this is slightly annoying, since it's not always needed!!
+		}
+		
 		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  
 				Map<Constant.Info,Integer> constantPool) {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -1322,6 +1481,9 @@ public abstract class Bytecode {
 	 * Represents a monitorenter bytecode
 	 */
 	public static final class MonitorEnter extends Bytecode {
+		public int stackDiff() {
+			return -1;
+		}
 		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  
 				Map<Constant.Info,Integer> constantPool) {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -1338,6 +1500,10 @@ public abstract class Bytecode {
 	 * Represents a monitorexit bytecode
 	 */
 	public static final class MonitorExit extends Bytecode {
+		public int stackDiff() {
+			return -1;
+		}
+		
 		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  
 				Map<Constant.Info,Integer> constantPool) {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();

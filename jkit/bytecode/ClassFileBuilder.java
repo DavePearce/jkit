@@ -39,23 +39,12 @@ public class ClassFileBuilder {
 					.modifiers(), m.exceptions());
 			
 			if(m.body() != null) {
-				int maxLocals = 0;// method.code().localVariables().size();
-				
-				// FIXME: support for local variables
-//				for (LocalVarDef lvd : method.code().localVariables()) {
-//					maxLocals += ClassFile.slotSize(lvd.type());
-//				}
-				
-				if (!m.isStatic()) {
-					maxLocals++;
-				}
-
 				ArrayList<Bytecode> bytecodes = new ArrayList<Bytecode>();
 				ArrayList<ClassFile.Handler> handlers = new ArrayList<ClassFile.Handler>();
 
-				int maxStack = translateCode(clazz, m, bytecodes, handlers);
+				translateCode(clazz, m, bytecodes, handlers);
 				
-				ClassFile.Code codeAttr = new ClassFile.Code(maxLocals,maxStack,bytecodes,handlers);
+				ClassFile.Code codeAttr = new ClassFile.Code(bytecodes,handlers,cfm);
 				cfm.attributes().add(codeAttr);
 			}
 			
@@ -81,15 +70,14 @@ public class ClassFileBuilder {
 	 *             MethodNotFoundException, FieldNotFoundException If it needs
 	 *             to access a Class which cannot be found.
 	 */
-	protected int translateCode(Clazz clazz, Method method, ArrayList<Bytecode> bytecodes,
-			ArrayList<ClassFile.Handler> handlers) {
+	protected void translateCode(Clazz clazz, Method method,
+			ArrayList<Bytecode> bytecodes, ArrayList<ClassFile.Handler> handlers) {
 		// === CREATE TYPE ENVIRONMENT ===
 
 		// create the local variable slot mapping
 		HashMap<String, Integer> localVarMap = new HashMap<String, Integer>();		
 
 		int maxLocals = 0;
-		int maxStack = 0;
 
 		if (!method.isStatic()) {			
 			// observe that "super" and "this" are actually aliases from a
@@ -118,11 +106,17 @@ public class ClassFileBuilder {
 			translateStatement(s,localVarMap,bytecodes);
 		}
 		
+		// At this point, add a return statement (if there is none, and we're
+		// returning void)
+		if (method.type().returnType() instanceof Type.Void
+				&& (bytecodes.isEmpty() || !(bytecodes
+						.get(bytecodes.size() - 1) instanceof Bytecode.Return))) {
+			bytecodes.add(new Bytecode.Return(null));
+		}
+		
 		// Now make sure the exception handlers are compacted and
 		// also arranged in the correct order.
 		sortAndCompactExceptionHandlers(handlers);
-
-		return maxStack;
 	}
 	
 	/**
@@ -250,48 +244,46 @@ public class ClassFileBuilder {
 	 *            Java bytecodes representing statement appended onto this
 	 * @param varmap
 	 *            maps local variable names to their slot numbers.
-	 * @return the maximum stack size required by this statement.
 	 */
-	protected int translateStatement(Stmt stmt,
+	protected void translateStatement(Stmt stmt,
 			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes) {
 		if (stmt instanceof Stmt.Return) {
-			return translateReturn((Stmt.Return) stmt, varmap,
+			translateReturn((Stmt.Return) stmt, varmap,
 					bytecodes);
 		} else if (stmt instanceof Stmt.Assign) {
-			return translateAssign((Stmt.Assign) stmt, varmap,
+			translateAssign((Stmt.Assign) stmt, varmap,
 					bytecodes);
 		} else if (stmt instanceof Expr.Invoke) {
-			return translateInvoke((Expr.Invoke) stmt, varmap,
+			translateInvoke((Expr.Invoke) stmt, varmap,
 					bytecodes, false);
 		} else if (stmt instanceof Expr.New) {
-			return translateNew((Expr.New) stmt, varmap, bytecodes,
+			translateNew((Expr.New) stmt, varmap, bytecodes,
 					false);
 		} else if (stmt instanceof Stmt.Nop) {
 			bytecodes.add(new Bytecode.Nop());
-			return 0;
 		} else if (stmt instanceof Stmt.Throw) {
-			return translateThrow((Stmt.Throw) stmt, varmap, bytecodes);
+			translateThrow((Stmt.Throw) stmt, varmap, bytecodes);
 		} else if (stmt instanceof Stmt.Lock) {
-			return translateLock((Stmt.Lock) stmt, varmap, bytecodes);
+			translateLock((Stmt.Lock) stmt, varmap, bytecodes);
 		} else if (stmt instanceof Stmt.Unlock) {
-			return translateUnlock((Stmt.Unlock) stmt, varmap,
+			translateUnlock((Stmt.Unlock) stmt, varmap,
 					bytecodes);
 		} else if(stmt instanceof Stmt.Label) {
-			return translateLabel((Stmt.Label)stmt,varmap,bytecodes);
+			translateLabel((Stmt.Label)stmt,varmap,bytecodes);
 		} else if(stmt instanceof Stmt.IfGoto) {
-			return translateIfGoto((Stmt.IfGoto)stmt,varmap,bytecodes);
+			translateIfGoto((Stmt.IfGoto)stmt,varmap,bytecodes);
 		} else if(stmt instanceof Stmt.Goto) {
-			return translateGoto((Stmt.Goto)stmt,varmap,bytecodes);
+			translateGoto((Stmt.Goto)stmt,varmap,bytecodes);
 		} else {
 			throw new RuntimeException("Unknown statement encountered: " + stmt);
 		}
 	}
 
 
-	protected int translateIfGoto(Stmt.IfGoto stmt,
+	protected void translateIfGoto(Stmt.IfGoto stmt,
 			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes) {
-		return translateConditionalBranch(stmt.condition(), stmt.label(),
-				varmap, bytecodes);
+		translateConditionalBranch(stmt.condition(), stmt.label(), varmap,
+				bytecodes);
 	}
 
 	/**
@@ -306,10 +298,9 @@ public class ClassFileBuilder {
 	 *            Maps local variables to their slot number
 	 * @param bytecodes
 	 *            bytecodes representing this statement are appended onto this
-	 * @return maximum size of stack required for this statement
 	 */
 	protected static int condLabelCount = 0;
-	protected int translateConditionalBranch(Expr condition, String trueLabel,
+	protected void translateConditionalBranch(Expr condition, String trueLabel,
 			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes) {
 
 		if (condition instanceof Expr.BinOp) {
@@ -318,20 +309,18 @@ public class ClassFileBuilder {
 			switch (bop.op()) {
 			case Expr.BinOp.LAND: {
 				String exitLabel = "CL" + condLabelCount++;
-				int ms_lhs = translateConditionalBranch(Exprs.invertBoolean(bop
+				translateConditionalBranch(Exprs.invertBoolean(bop
 						.lhs()), exitLabel, varmap, bytecodes);
-				int ms_rhs = translateConditionalBranch(Exprs.invertBoolean(bop
+				translateConditionalBranch(Exprs.invertBoolean(bop
 						.rhs()), exitLabel, varmap, bytecodes);
 				bytecodes.add(new Bytecode.Goto(trueLabel));
 				bytecodes.add(new Bytecode.Label(exitLabel));
-				return Math.max(ms_lhs, ms_rhs);
 			}
 			case Expr.BinOp.LOR: {
-				int ms_lhs = translateConditionalBranch(bop.lhs(), trueLabel,
+				translateConditionalBranch(bop.lhs(), trueLabel,
 						varmap, bytecodes);
-				int ms_rhs = translateConditionalBranch(bop.rhs(), trueLabel,
-						varmap, bytecodes);
-				return Math.max(ms_lhs, ms_rhs);
+				translateConditionalBranch(bop.rhs(), trueLabel,
+						varmap, bytecodes);				
 			}
 			}
 
@@ -339,10 +328,10 @@ public class ClassFileBuilder {
 			// here. For example, using ifnull and ifnotnull bytecodes. Also,
 			// using ifeq when comparing directly against zero.
 
-			int ms_lhs = translateExpression(bop.lhs(), varmap, 
+			translateExpression(bop.lhs(), varmap, 
 					bytecodes);
 
-			int ms_rhs = translateExpression(bop.rhs(), varmap, 
+			translateExpression(bop.rhs(), varmap, 
 					bytecodes);
 
 			Type cmpT = bop.lhs().type();
@@ -374,8 +363,6 @@ public class ClassFileBuilder {
 			} else {
 				bytecodes.add(new Bytecode.IfCmp(code, cmpT, trueLabel));
 			}
-			return Math.max(ms_lhs, ms_rhs + ClassFile.slotSize(bop.lhs().type()));
-
 		} else if (condition instanceof Expr.UnOp) {
 			Expr.UnOp uop = (Expr.UnOp) condition;
 			if (uop.op() == Expr.UnOp.NOT) {
@@ -386,44 +373,38 @@ public class ClassFileBuilder {
 					Expr.UnOp e2 = (Expr.UnOp) e1;
 					if (e2.op() == Expr.UnOp.NOT) {
 						// not elimination was unsuccessful
-						int ms = translateExpression(uop.expr(), varmap,
+						translateExpression(uop.expr(), varmap,
 								bytecodes);
 						bytecodes
-								.add(new Bytecode.If(Bytecode.If.EQ, trueLabel));
-						return ms;
+								.add(new Bytecode.If(Bytecode.If.EQ, trueLabel));						
 					}
 				}
 				// not elimination was successful ...
-				return translateConditionalBranch(e1, trueLabel, varmap,
-						bytecodes);
-
+				translateConditionalBranch(e1, trueLabel, varmap, bytecodes);
 			}
 			// anything else doesn't make sense
 			throw new RuntimeException(
 					"Invalid use of unary operator in conditional ("
 							+ condition + ")");
 		} else if (condition instanceof Expr.Invoke) {
-			int ms = translateInvoke((Expr.Invoke) condition, varmap, 
+			translateInvoke((Expr.Invoke) condition, varmap, 
 					bytecodes, true);
-			bytecodes.add(new Bytecode.If(Bytecode.If.NE, trueLabel));
-			return ms;
+			bytecodes.add(new Bytecode.If(Bytecode.If.NE, trueLabel));			
 		} else if (condition instanceof Expr.InstanceOf) {
-			int ms = translateExpression(condition, varmap, 
+			translateExpression(condition, varmap, 
 					bytecodes);
-			bytecodes.add(new Bytecode.If(Bytecode.If.NE, trueLabel));
-			return ms;
+			bytecodes.add(new Bytecode.If(Bytecode.If.NE, trueLabel));			
 		} else if (condition instanceof Expr.Bool 
 					|| condition instanceof Expr.ArrayIndex
 					|| condition instanceof Expr.Variable
 					|| condition instanceof Expr.Deref) {
-			int ms = translateExpression(condition, varmap,
+			translateExpression(condition, varmap,
 					bytecodes);
-			bytecodes.add(new Bytecode.If(Bytecode.If.NE, trueLabel));
-			return ms;
-		} 
-
-		throw new RuntimeException("Unknown conditional expression ("
+			bytecodes.add(new Bytecode.If(Bytecode.If.NE, trueLabel));			
+		} else {
+			throw new RuntimeException("Unknown conditional expression ("
 				+ condition + ")");
+		}
 	}
 
 	/**
@@ -438,13 +419,10 @@ public class ClassFileBuilder {
 	 *            Maps local variables to their slot number
 	 * @param bytecodes
 	 *            bytecodes representing this statement are appended onto this
-	 * @return maximum size of stack required for this statement
 	 */
-	protected int translateSwitch(Expr[] conditions, String[] labels,
+	protected void translateSwitch(Expr[] conditions, String[] labels,
 			HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes) {
-
-		int maxStack = 0; // max stack required for this statement
 
 		Expr expr = null;
 		for (Expr c : conditions) {
@@ -455,9 +433,8 @@ public class ClassFileBuilder {
 			}
 		}
 
-		int ms = translateExpression(expr, varmap, bytecodes);
-		maxStack = Math.max(ms, maxStack);
-
+		translateExpression(expr, varmap, bytecodes);
+		
 		String def = null;
 		List<Pair<Integer, String>> cases = new ArrayList<Pair<Integer, String>>();
 		for (int i = 0; i < conditions.length; i++) {
@@ -479,29 +456,19 @@ public class ClassFileBuilder {
 		});
 
 		bytecodes.add(new Bytecode.Switch(def, cases));
-
-		return maxStack;
 	}
 
-	protected int translateInvoke(Expr.Invoke stmt,
+	protected void translateInvoke(Expr.Invoke stmt,
 			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes,
 			boolean needReturnValue) {
 
-		int stackUsed = 0; // stack slots used by store results
-		int maxStack = 0; // max stack required for this statement
-
 		if (!stmt.isStatic()) {
 			// must be non-static invocation
-			maxStack = translateExpression(stmt.target(), varmap, bytecodes);
-			stackUsed++; // it's a reference, so don't worry about slot size
+			translateExpression(stmt.target(), varmap, bytecodes);
 		}
 		// translate parameters
 		for (Expr p : stmt.parameters()) {
-			int ms = translateExpression(p, varmap, bytecodes);
-			maxStack = Math.max(ms + stackUsed, maxStack);
-			stackUsed += ClassFile.slotSize(p.type()); // this is correct here,
-												   // since don't account for
-												   // our slot
+			translateExpression(p, varmap, bytecodes);
 		}
 		
 		Type.Clazz targetT = (Type.Clazz) stmt.target().type(); 
@@ -532,8 +499,7 @@ public class ClassFileBuilder {
 		Type retT = stmt.funType().returnType();
 				
 		if (!(retT instanceof Type.Void)) {
-			// Need to account for space occupied by return type!
-			maxStack = Math.max(ClassFile.slotSize(retT) + stackUsed, maxStack);
+			// Need to account for space occupied by return type!			
 			if (!needReturnValue) {
 				// the return value is not required, so we need to pop it from
 				// the stack
@@ -553,8 +519,6 @@ public class ClassFileBuilder {
 				bytecodes.add(new Bytecode.CheckCast(stmt.type()));								
 			}
 		}
-
-		return maxStack;
 	}
 
 	/**
@@ -565,37 +529,30 @@ public class ClassFileBuilder {
 	 * @param bytecodes
 	 * @return
 	 */
-	protected int translateReturn(Stmt.Return ret,
+	protected void translateReturn(Stmt.Return ret,
 			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes) {
 
 		if (ret.expr() != null) {
-			int ms = translateExpression(ret.expr(), varmap,
-					bytecodes);
+			translateExpression(ret.expr(), varmap, bytecodes);
 			bytecodes.add(new Bytecode.Return(ret.expr().type()));
-			return ms;
 		} else {
 			bytecodes.add(new Bytecode.Return(null));
-			return 0;
 		}
 	}
 
-	protected int translateAssign(Stmt.Assign stmt,
+	protected void translateAssign(Stmt.Assign stmt,
 			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes) {
-
-		int maxStack = 0;
 
 		if (stmt.lhs() instanceof Expr.Variable) {
 			Expr.Variable var = (Expr.Variable) stmt.lhs();
 			assert varmap.keySet().contains(var.value());
 			int slot = varmap.get(var.value());
-			maxStack = translateExpression(stmt.rhs(), varmap, bytecodes);
+			translateExpression(stmt.rhs(), varmap, bytecodes);
 			bytecodes.add(new Bytecode.Store(slot, stmt.lhs().type()));
 		} else if (stmt.lhs() instanceof Expr.Deref) {
 			Expr.Deref der = (Expr.Deref) stmt.lhs();
-			int ms_lhs = translateExpression(der.target(), varmap,
-					bytecodes);
-			int ms_rhs = translateExpression(stmt.rhs(), varmap,
-					bytecodes);
+			translateExpression(der.target(), varmap, bytecodes);
+			translateExpression(stmt.rhs(), varmap, bytecodes);
 			// figure out the type of the field involved
 			Type.Reference lhs_t = (Type.Reference) der.target().type();
 
@@ -606,61 +563,44 @@ public class ClassFileBuilder {
 				bytecodes.add(new Bytecode.PutField(lhs_t, der.name(), der
 						.type(), Bytecode.NONSTATIC));
 			}
-			maxStack = Math.max(ms_lhs, ms_rhs + 1);
-
 		} else if (stmt.lhs() instanceof Expr.ArrayIndex) {
 			Expr.ArrayIndex ai = (Expr.ArrayIndex) stmt.lhs();
-			int ms_arr = translateExpression(ai.target(), varmap,
-					bytecodes);
-			int ms_idx = translateExpression(ai.index(), varmap,
-					bytecodes);
-			int ms_rhs = translateExpression(stmt.rhs(), varmap,
-					bytecodes);
+			translateExpression(ai.target(), varmap, bytecodes);
+			translateExpression(ai.index(), varmap, bytecodes);
+			translateExpression(stmt.rhs(), varmap, bytecodes);
 			bytecodes.add(new Bytecode.ArrayStore((Type.Array) ai.target()
-					.type()));
-			maxStack = Math.max(ms_arr, Math.max(ms_idx + 1, ms_rhs + 2));
+					.type()));			
 		} else {
 			throw new RuntimeException("Unknown lval encountered");
 		}
-		return maxStack;
 	}
 
-	protected int translateThrow(Stmt.Throw stmt,
+	protected void translateThrow(Stmt.Throw stmt,
 			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes) {
-		int maxStack = translateExpression(stmt.expr(), varmap, 
-				bytecodes);
+		translateExpression(stmt.expr(), varmap, bytecodes);
 		bytecodes.add(new Bytecode.Throw());
-		return maxStack;
 	}
 
-	protected int translateLock(Stmt.Lock stmt, HashMap<String, Integer> varmap,
+	protected void translateLock(Stmt.Lock stmt, HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes) {
-		int maxStack = translateExpression(stmt.expr(), varmap, 
-				bytecodes);
-		
+		translateExpression(stmt.expr(), varmap, bytecodes);
 		bytecodes.add(new Bytecode.MonitorEnter());
-		return maxStack;
 	}
 
-	protected int translateUnlock(Stmt.Unlock stmt, HashMap<String, Integer> varmap,
+	protected void translateUnlock(Stmt.Unlock stmt, HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes) {
-		int maxStack = translateExpression(stmt.expr(), varmap, 
-				bytecodes);
-		
+		translateExpression(stmt.expr(), varmap, bytecodes);
 		bytecodes.add(new Bytecode.MonitorExit());
-		return maxStack;
 	}
 
-	protected int translateLabel(Stmt.Label label, HashMap<String, Integer> varmap,
+	protected void translateLabel(Stmt.Label label, HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes) {
 		bytecodes.add(new Bytecode.Label(label.label()));
-		return 0;
 	}
 	
-	protected int translateGoto(Stmt.Goto stmt, HashMap<String, Integer> varmap,
+	protected void translateGoto(Stmt.Goto stmt, HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes) {
 		bytecodes.add(new Bytecode.Goto(stmt.label()));
-		return 0;
 	}
 	
 	/**
@@ -674,98 +614,71 @@ public class ClassFileBuilder {
 	 *            translated bytecodes are appended to this
 	 * @return the maximum stack size required for this expression
 	 */
-	protected int translateExpression(Expr expr,
+	protected void translateExpression(Expr expr,
 			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes) {
-
-		int maxStack = 0;
 
 		if (expr instanceof Expr.Bool) {
 			bytecodes.add(new Bytecode.LoadConst(((Expr.Bool) expr).value()));
-			maxStack = 1;
 		} else if (expr instanceof Expr.Byte) {
 			bytecodes.add(new Bytecode.LoadConst(((Expr.Byte) expr).value()));
-			maxStack = 1;
 		} else if (expr instanceof Expr.Char) {
 			bytecodes.add(new Bytecode.LoadConst(((Expr.Char) expr).value()));
-			maxStack = 1;
 		} else if (expr instanceof Expr.Short) {
 			bytecodes.add(new Bytecode.LoadConst(((Expr.Short) expr).value()));
-			maxStack = 1;
 		} else if (expr instanceof Expr.Int) {
 			bytecodes.add(new Bytecode.LoadConst(((Expr.Int) expr).value()));
-			maxStack = 1;
 		} else if (expr instanceof Expr.Long) {
 			bytecodes.add(new Bytecode.LoadConst(((Expr.Long) expr).value()));
-			maxStack = 2;
 		} else if (expr instanceof Expr.Float) {
 			bytecodes.add(new Bytecode.LoadConst(((Expr.Float) expr).value()));
-			maxStack = 1;
 		} else if (expr instanceof Expr.Double) {
 			bytecodes.add(new Bytecode.LoadConst(((Expr.Double) expr).value()));
-			maxStack = 2;
 		} else if (expr instanceof Expr.Null) {
 			bytecodes.add(new Bytecode.LoadConst(null));
-			maxStack = 1;
 		} else if (expr instanceof Expr.StringVal) {
 			bytecodes.add(new Bytecode.LoadConst(((Expr.StringVal) expr).value()));
-			maxStack = 1;
 		} else if (expr instanceof Expr.Array) {
-			return translateArrayVal((Expr.Array) expr, varmap, 
-					bytecodes);
+			translateArrayVal((Expr.Array) expr, varmap, bytecodes);
 		} else if (expr instanceof Expr.Class) {
-			return translateClassVal((Expr.Class) expr, varmap,
-					bytecodes);			
+			translateClassVal((Expr.Class) expr, varmap, bytecodes);
 		} else if (expr instanceof Expr.Variable) {
 			Expr.Variable lv = (Expr.Variable) expr;
 			if (varmap.containsKey(lv.value())) {
-				bytecodes.add(new Bytecode.Load(varmap.get(lv.value()), lv.type()));
-				maxStack = ClassFile.slotSize(lv.type());
+				bytecodes.add(new Bytecode.Load(varmap.get(lv.value()), lv.type()));				
 			} else {
 				throw new RuntimeException(
 						"internal failure (looking for variable " + lv.value()
 								+ ") " + expr);
 			}
 		} else if (expr instanceof Expr.New) {
-			maxStack = translateNew((Expr.New) expr, varmap, bytecodes,
-					true);
+			translateNew((Expr.New) expr, varmap, bytecodes,true);
 		} else if (expr instanceof Expr.Deref) {
-			maxStack = translateDeref((Expr.Deref) expr, varmap, 
-					bytecodes);
+			translateDeref((Expr.Deref) expr, varmap, bytecodes);
 		} else if (expr instanceof Expr.ArrayIndex) {
 			Expr.ArrayIndex ai = (Expr.ArrayIndex) expr;
-			int ms_arr = translateExpression(ai.target(), varmap, 
-					bytecodes);
-			int ms_idx = translateExpression(ai.index(), varmap, 
-					bytecodes);
+			translateExpression(ai.target(), varmap, bytecodes);
+			translateExpression(ai.index(), varmap, bytecodes);
 			Type arr_t = ai.target().type();
-			bytecodes.add(new Bytecode.ArrayLoad((Type.Array) arr_t));
-			maxStack = Math.max(ms_arr, ms_idx + ClassFile.slotSize(arr_t));
+			bytecodes.add(new Bytecode.ArrayLoad((Type.Array) arr_t));			
 		} else if (expr instanceof Expr.Invoke) {
-			maxStack = translateInvoke((Expr.Invoke) expr, varmap, 
-					bytecodes, true);
+			translateInvoke((Expr.Invoke) expr, varmap, bytecodes, true);
 		} else if (expr instanceof Expr.UnOp) {
-			maxStack = translateUnaryOp((Expr.UnOp) expr, varmap,
-					bytecodes);
+			translateUnaryOp((Expr.UnOp) expr, varmap,bytecodes);
 		} else if (expr instanceof Expr.BinOp) {
-			maxStack = translateBinaryOp((Expr.BinOp) expr, varmap,
-					bytecodes);
+			translateBinaryOp((Expr.BinOp) expr, varmap,bytecodes);
 		} else if (expr instanceof Expr.InstanceOf) {
 			Expr.InstanceOf iof = (Expr.InstanceOf) expr;
-			int ms = translateExpression(iof.lhs(), varmap, 
-					bytecodes);
+			translateExpression(iof.lhs(), varmap, bytecodes);
 			bytecodes.add(new Bytecode.InstanceOf(iof.rhs()));
-			maxStack = ms;
 		} else if (expr instanceof Expr.Cast) {
-			maxStack = translateCast((Expr.Cast) expr, varmap,
-					bytecodes);
+			translateCast((Expr.Cast) expr, varmap,bytecodes);
 		} else {
 			throw new RuntimeException("Unknown expression encountered ("
 					+ expr + ")");
 		}
-		return maxStack;
 	}
 
-	public int translateClassVal(Expr.Class cval,  HashMap<String, Integer> varmap,
+	public void translateClassVal(Expr.Class cval,  HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes) {
 		if(cval.type() instanceof Type.Primitive) {
 			// FIXME: fix class access to primitive types
@@ -775,13 +688,10 @@ public class ClassFileBuilder {
 		} else {
 			bytecodes.add(new Bytecode.LoadConst(cval.type()));
 		}
-		return 1;
 	}
 	
-	public int translateDeref(Expr.Deref def, HashMap<String, Integer> varmap,
+	public void translateDeref(Expr.Deref def, HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes) {
-
-		int maxStack = 0;
 		Type tmp_t = def.target().type();
 
 		if (tmp_t instanceof Type.Clazz) {
@@ -790,12 +700,10 @@ public class ClassFileBuilder {
 			if (def.isStatic()) {
 				// This is a static field load					
 				bytecodes.add(new Bytecode.GetField(lhs_t, def.name(),
-						def.type(), Bytecode.STATIC));
-				maxStack = ClassFile.slotSize(def.type());		
+						def.type(), Bytecode.STATIC));				
 			} else {
 				// Non-static field load
-				maxStack = translateExpression(def.target(), varmap,
-						bytecodes);
+				translateExpression(def.target(), varmap, bytecodes);
 
 				bytecodes.add(new Bytecode.GetField(lhs_t, def.name(),
 						def.type(), Bytecode.NONSTATIC));
@@ -808,47 +716,37 @@ public class ClassFileBuilder {
 //					// Ok, actual type is a (generic) type variable. Need to
 //					// cast to the desired type!
 //					bytecodes.add(new Bytecode.CheckCast(def.type()));					
-//				}
-				
-				maxStack = Math.max(maxStack,ClassFile.slotSize(def.type()));	
+//				}				
 			}
 		} else if (tmp_t instanceof Type.Array && def.name().equals("length")) {
-			maxStack = translateExpression(def.target(), varmap,
-					bytecodes);
+			translateExpression(def.target(), varmap, bytecodes);
 			bytecodes.add(new Bytecode.ArrayLength());
 		} else {
 			throw new RuntimeException(
 					"Attempt to dereference variable with type "
 							+ tmp_t.toString());
 		}
-
-		return maxStack;
 	}
 
-	public int translateArrayVal(Expr.Array av, HashMap<String, Integer> varmap,
+	public void translateArrayVal(Expr.Array av, HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes) {
 		
 		List<Expr> params = new ArrayList<Expr>();
 		params.add(new Expr.Int(av.values().size()));
-		int maxStack = translateNew(new Expr.New(av.type(), params, null),
-				varmap, bytecodes, true);
+		translateNew(new Expr.New(av.type(), params, null), varmap, bytecodes,
+				true);
 
 		int index = 0;
 		for (Expr e : av.values()) {
 			bytecodes.add(new Bytecode.Dup(av.type()));
 			bytecodes.add(new Bytecode.LoadConst(index++));
-			int ms = translateExpression(e, varmap, bytecodes);
-			bytecodes.add(new Bytecode.ArrayStore((Type.Array) av.type()));
-			maxStack = Math.max(maxStack, 3 + ms);
+			translateExpression(e, varmap, bytecodes);
+			bytecodes.add(new Bytecode.ArrayStore((Type.Array) av.type()));			
 		}
-
-		return maxStack;
 	}
 
-	public int translateNew(Expr.New news, HashMap<String, Integer> varmap,
+	public void translateNew(Expr.New news, HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes, boolean needReturnValue) {
-
-		int maxStack = 0;
 
 		if (news.type() instanceof Type.Clazz) {
 			Type.Clazz type = (Type.Clazz) news.type();
@@ -856,14 +754,9 @@ public class ClassFileBuilder {
 			bytecodes.add(new Bytecode.New(news.type()));
 			bytecodes.add(new Bytecode.Dup(news.type()));
 
-			maxStack = 3;
-			int usedStack = 3;
-
 			ArrayList<Type> paramTypes = new ArrayList<Type>();
 			for (Expr p : news.parameters()) {
-				int ms = translateExpression(p, varmap, bytecodes);
-				maxStack = Math.max(ms + usedStack, maxStack);
-				usedStack += ClassFile.slotSize(p.type());
+				translateExpression(p, varmap, bytecodes);
 				paramTypes.add(p.type());
 			}
 
@@ -874,9 +767,7 @@ public class ClassFileBuilder {
 			int usedStack = 0;
 
 			for (Expr p : news.parameters()) {
-				int ms = translateExpression(p, varmap, bytecodes);
-				maxStack = Math.max(ms + usedStack, maxStack);
-				usedStack += ClassFile.slotSize(p.type());
+				translateExpression(p, varmap, bytecodes);				
 			}
 
 			bytecodes.add(new Bytecode.New(news.type(), news.parameters()
@@ -888,10 +779,9 @@ public class ClassFileBuilder {
 			// the stack
 			bytecodes.add(new Bytecode.Pop(news.type()));
 		}
-		return maxStack;
 	}
 
-	protected int translateBinaryOp(Expr.BinOp bop, HashMap<String, Integer> varmap,
+	protected void translateBinaryOp(Expr.BinOp bop, HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes) {
 
 		// second, translate the binary operator.
@@ -906,28 +796,22 @@ public class ClassFileBuilder {
 		case Expr.BinOp.LOR: {
 			String trueLabel = "CL" + condLabelCount++;
 			String exitLabel = "CL" + condLabelCount++;
-			int maxStack = translateConditionalBranch(bop, trueLabel, varmap,
-					bytecodes);
+			translateConditionalBranch(bop, trueLabel, varmap, bytecodes);
 			bytecodes.add(new Bytecode.LoadConst(0));
 			bytecodes.add(new Bytecode.Goto(exitLabel));
 			bytecodes.add(new Bytecode.Label(trueLabel));
 			bytecodes.add(new Bytecode.LoadConst(1));
 			bytecodes.add(new Bytecode.Label(exitLabel));
-			return maxStack;
 		}
 		}
 
 		// must be a standard arithmetic operation.
-		int ms_lhs = translateExpression(bop.lhs(), varmap,
-				bytecodes);
-		int ms_rhs = translateExpression(bop.rhs(), varmap,
-				bytecodes);
-
-		bytecodes.add(new Bytecode.BinOp(bop.op(), bop.type()));
-		return Math.max(ms_lhs, ms_rhs + ClassFile.slotSize(bop.type()));
+		translateExpression(bop.lhs(), varmap, bytecodes);
+		translateExpression(bop.rhs(), varmap, bytecodes);
+		bytecodes.add(new Bytecode.BinOp(bop.op(), bop.type()));		
 	}
 
-	protected int translateUnaryOp(Expr.UnOp uop, HashMap<String, Integer> varmap,
+	protected void translateUnaryOp(Expr.UnOp uop, HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes) {
 		// second, translate the operation.
 		// FIXME: resolve operator type
@@ -936,26 +820,22 @@ public class ClassFileBuilder {
 		case Expr.UnOp.NOT:
 			String trueLabel = "CL" + condLabelCount++;
 			String exitLabel = "CL" + condLabelCount++;
-			int ms = translateConditionalBranch(uop, trueLabel, varmap,
-					bytecodes);
+			translateConditionalBranch(uop, trueLabel, varmap, bytecodes);
 			bytecodes.add(new Bytecode.LoadConst(0));
 			bytecodes.add(new Bytecode.Goto(exitLabel));
 			bytecodes.add(new Bytecode.Label(trueLabel));
 			bytecodes.add(new Bytecode.LoadConst(1));
-			bytecodes.add(new Bytecode.Label(exitLabel));
-			return ms;
+			bytecodes.add(new Bytecode.Label(exitLabel));			
 		}
 
 		// first, translate the expression.
-		int maxStack = translateExpression(uop.expr(), varmap,
-				bytecodes);
+		translateExpression(uop.expr(), varmap, bytecodes);
 
 		switch (uop.op()) {
 		case Expr.UnOp.INV:
 			bytecodes.add(new Bytecode.LoadConst(new Integer(-1)));
 			bytecodes
-					.add(new Bytecode.BinOp(Bytecode.BinOp.XOR, new Type.Int()));
-			maxStack = Math.max(maxStack, 2);
+					.add(new Bytecode.BinOp(Bytecode.BinOp.XOR, new Type.Int()));			
 			break;
 		case Expr.UnOp.NEG:
 			bytecodes.add(new Bytecode.Neg(uop.type()));
@@ -964,14 +844,12 @@ public class ClassFileBuilder {
 			throw new RuntimeException("Unknown unary expression encountered ("
 					+ uop + ")");
 		}
-
-		return maxStack;
 	}
 
-	protected int translateCast(Expr.Cast cast, HashMap<String, Integer> varmap,
+	protected void translateCast(Expr.Cast cast, HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes) {
 		
-		int maxStack = translateExpression(cast.expr(), varmap, bytecodes);
+		translateExpression(cast.expr(), varmap, bytecodes);
 
 		Type srcType = cast.expr().type();
 		// Now, do implicit conversions
@@ -981,9 +859,7 @@ public class ClassFileBuilder {
 					(Type.Primitive) cast.type()));
 		} else {
 			bytecodes.add(new Bytecode.CheckCast(cast.type()));
-		} 
-		
-		return Math.max(maxStack, ClassFile.slotSize(cast.type()));
+		} 		
 	}
 
 }
