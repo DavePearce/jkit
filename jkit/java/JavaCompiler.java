@@ -40,7 +40,7 @@ public class JavaCompiler implements Compiler {
 	 * The class loader is needed to locate required types and classes in the
 	 * file system.
 	 */
-	private ClassLoader loader;
+	protected ClassLoader loader;
 
 	/**
 	 * The compilation queue is a list of files which are scheduled for
@@ -51,7 +51,7 @@ public class JavaCompiler implements Compiler {
 	 * "C2.java" is automatically removed from the queue, thus preventing it
 	 * from being compiled again.
 	 */
-	private ArrayList<String> compilationQueue = new ArrayList<String>();
+	protected ArrayList<String> compilationQueue = new ArrayList<String>();
 
 	/**
 	 * The compiling set gives a full list of files which are currently being
@@ -60,18 +60,18 @@ public class JavaCompiler implements Compiler {
 	 * recursive compiles. [ALTHOUGH I THINK THERE MAYBE A BETTER WAY OF DOING
 	 * THIS]
 	 */
-	private Set<String> compiling = new HashSet<String>();
+	protected Set<String> compiling = new HashSet<String>();
 
 	/**
 	 * The output directory for class files.
 	 */
-	private File outputDirectory = null;
+	protected File outputDirectory = null;
 
 	/**
 	 * The logout output stream is used to write log information about the
 	 * status of compilation. The default stream just discards everything.
 	 */
-	private PrintStream logout = new PrintStream(new OutputStream() {
+	protected PrintStream logout = new PrintStream(new OutputStream() {
 		public void write(byte[] b) { /* don't do anything! */
 		}
 
@@ -181,79 +181,46 @@ public class JavaCompiler implements Compiler {
 		try {
 			// First, parse the Java source file to yield an abstract syntax
 			// tree.
-			long start = System.currentTimeMillis();
+			
 			JavaFile jfile = parseSourceFile(filename);
-			logTimedMessage("[" + filename.getPath() + "] Parsing completed ",
-					(System.currentTimeMillis() - start));
-
+			
 			// Second, we need to resolve types. That is, for each class
-			// reference type, determine what package it's in.
-			start = System.currentTimeMillis();
-			List<Clazz> skeletons = discoverSkeletons(jfile, loader);
-			logTimedMessage("[" + filename.getPath()
-					+ "] Skeleton discovery completed", (System
-					.currentTimeMillis() - start));
-
-			// Third, we need to resolve all types found in the src file.
-			start = System.currentTimeMillis();
-			resolveTypes(jfile, loader);
-			logTimedMessage("[" + filename.getPath()
-					+ "] Type resolution completed", (System
-					.currentTimeMillis() - start));
+			// reference type, determine what package it's in.			
+			List<Clazz> skeletons = discoverSkeletons(filename, jfile, loader);			
+			
+			// Third, we need to resolve all types found in the src file.			
+			resolveTypes(filename, jfile, loader);
 
 			// Fourth, we need to build the skeletons of the classes. This is
 			// necessary to resolve the scope of a particular variable.
 			// Specifically, during scope resolution, we need to be able to:
 			// 1) traverse the class heirarchy
-			// 2) determine what fields are declared.
-			start = System.currentTimeMillis();
-			buildSkeletons(jfile, loader);
-			logTimedMessage("[" + filename.getPath()
-					+ "] Skeleton construction completed", (System
-					.currentTimeMillis() - start));
+			// 2) determine what fields are declared.			
+			buildSkeletons(filename, jfile, loader);			
 
 			// Fifth, perform the scope resolution itself. The aim here is, for
 			// each variable access, to determine whether it is a local
 			// variable access, an inherited field access, an enclosing field
 			// access, or an access to a local variable in an enclosing scope
 			// (e.g. for anonymous inner classes).
-			start = System.currentTimeMillis();
-			resolveScopes(jfile, loader);
-			logTimedMessage("[" + filename.getPath()
-					+ "] Scope resolution completed", (System
-					.currentTimeMillis() - start));
-
+			resolveScopes(filename, jfile, loader);
+			
 			// Sixth, propagate the type information throughout all expressions
 			// in the class file, including those in the method bodies and field
-			// initialisers.
-			start = System.currentTimeMillis();
-			propagateTypes(jfile, loader);
-			logTimedMessage("[" + filename.getPath()
-					+ "] Type propagation completed", (System
-					.currentTimeMillis() - start));
+			// initialisers.			
+			propagateTypes(filename, jfile, loader);			
 
 			// Seventh, check whether the types are being used correctly. If
 			// not,
 			// report a syntax error.
-			start = System.currentTimeMillis();
-			checkTypes(jfile, loader);
-			logTimedMessage("[" + filename.getPath()
-					+ "] Type checking completed",
-					(System.currentTimeMillis() - start));
-
+			checkTypes(filename, jfile, loader);
+		
 			// Eigth, eliminate side effects from expressions
-			start = System.currentTimeMillis();
-			generateJilCode(jfile, loader);
-			logTimedMessage("[" + filename.getPath() + "] Jil code generated. ",
-					(System.currentTimeMillis() - start));
-
+			generateJilCode(filename, jfile, loader);
 			
 			// Eigth, write out the compiled class file(s).			
 			for(Clazz clazz : skeletons) {
-				start = System.currentTimeMillis();
-				String outFile = writeOutputFile(clazz, filename);
-				logTimedMessage("[" + filename.getPath() + "] Wrote " + outFile,
-					(System.currentTimeMillis() - start));
+				writeOutputFile(filename, clazz, outputDirectory);				
 			}
 						
 			compiling.remove(filename);
@@ -278,10 +245,15 @@ public class JavaCompiler implements Compiler {
 	 * @return
 	 */
 	protected JavaFile parseSourceFile(File srcFile) throws IOException,
-			SyntaxError {
-		// Now, construct the reader!
+			SyntaxError {		
+		long start = System.currentTimeMillis();
+				
 		JavaFileReader reader = new JavaFileReader(srcFile.getPath());
-		return reader.read();
+		JavaFile jfile = reader.read();
+		logTimedMessage("[" + srcFile.getPath() + "] Parsing completed ",
+				(System.currentTimeMillis() - start));
+		
+		return jfile;
 	}
 
 	/**
@@ -291,8 +263,14 @@ public class JavaCompiler implements Compiler {
 	 * @param jfile
 	 * @param loader
 	 */
-	protected List<Clazz> discoverSkeletons(JavaFile jfile, ClassLoader loader) {
-		return new SkeletonDiscovery().apply(jfile, loader);
+	protected List<Clazz> discoverSkeletons(File srcfile, JavaFile jfile,
+			ClassLoader loader) {
+		long start = System.currentTimeMillis();
+		List<Clazz> r = new SkeletonDiscovery().apply(jfile, loader);
+		logTimedMessage("[" + srcfile.getPath()
+				+ "] Skeleton discovery completed", (System
+				.currentTimeMillis() - start));
+		return r;
 	}
 
 	/**
@@ -302,8 +280,12 @@ public class JavaCompiler implements Compiler {
 	 * @param jfile
 	 * @param loader
 	 */
-	protected void resolveTypes(JavaFile jfile, ClassLoader loader) {
+	protected void resolveTypes(File srcfile, JavaFile jfile, ClassLoader loader) {
+		long start = System.currentTimeMillis();
 		new TypeResolution(loader, new TypeSystem()).apply(jfile);
+		logTimedMessage("[" + srcfile.getPath()
+				+ "] Type resolution completed", (System
+				.currentTimeMillis() - start));
 	}
 
 	/**
@@ -314,8 +296,12 @@ public class JavaCompiler implements Compiler {
 	 * @param jfile
 	 * @param loader
 	 */
-	protected void buildSkeletons(JavaFile jfile, ClassLoader loader) {
+	protected void buildSkeletons(File srcfile, JavaFile jfile, ClassLoader loader) {
+		long start = System.currentTimeMillis();
 		new SkeletonBuilder(loader).apply(jfile);
+		logTimedMessage("[" + srcfile.getPath()
+				+ "] Skeleton construction completed", (System
+				.currentTimeMillis() - start));
 	}
 
 	/**
@@ -324,8 +310,12 @@ public class JavaCompiler implements Compiler {
 	 * an inherited field access, an enclosing field access, or an access to a
 	 * local variable in an enclosing scope (e.g. for anonymous inner classes).
 	 */
-	protected void resolveScopes(JavaFile jfile, ClassLoader loader) {
+	protected void resolveScopes(File srcfile, JavaFile jfile, ClassLoader loader) {
+		long start = System.currentTimeMillis();
 		new ScopeResolution(loader, new TypeSystem()).apply(jfile);
+		logTimedMessage("[" + srcfile.getPath()
+				+ "] Scope resolution completed", (System
+				.currentTimeMillis() - start));
 	}
 
 	/**
@@ -335,8 +325,12 @@ public class JavaCompiler implements Compiler {
 	 * @param jfile
 	 * @param loader
 	 */
-	protected void propagateTypes(JavaFile jfile, ClassLoader loader) {
+	protected void propagateTypes(File srcfile, JavaFile jfile, ClassLoader loader) {
+		long start = System.currentTimeMillis();
 		new TypePropagation(loader, new TypeSystem()).apply(jfile);
+		logTimedMessage("[" + srcfile.getPath()
+				+ "] Type propagation completed", (System
+				.currentTimeMillis() - start));
 	}
 
 	/**
@@ -346,8 +340,13 @@ public class JavaCompiler implements Compiler {
 	 * @param jfile
 	 * @param loader
 	 */
-	protected void checkTypes(JavaFile jfile, ClassLoader loader) {
+	protected void checkTypes(File srcfile, JavaFile jfile, ClassLoader loader) {
+		long start = System.currentTimeMillis();
 		new TypeChecking(loader, new TypeSystem()).apply(jfile);
+		logTimedMessage("[" + srcfile.getPath()
+				+ "] Type checking completed",
+				(System.currentTimeMillis() - start));
+
 	}
 
 	/**
@@ -358,8 +357,11 @@ public class JavaCompiler implements Compiler {
 	 * @param jfile
 	 * @param loader
 	 */
-	protected void generateJilCode(JavaFile jfile, ClassLoader loader) {
+	protected void generateJilCode(File srcfile, JavaFile jfile, ClassLoader loader) {
+		long start = System.currentTimeMillis();
 		new CodeGeneration(loader, new TypeSystem()).apply(jfile);
+		logTimedMessage("[" + srcfile.getPath() + "] Jil code generated. ",
+				(System.currentTimeMillis() - start));
 	}
 
 	/**
@@ -369,31 +371,24 @@ public class JavaCompiler implements Compiler {
 	 * @param jfile
 	 * @param loader
 	 */
-	public String writeOutputFile(Clazz clazz, File inputFile)
+	public void writeOutputFile(File srcfile, Clazz clazz, File rootdir)
 			throws IOException {
-		// This is currently a hack
-		File outputFile;
-
-		if (outputDirectory == null) {
-			String inf = inputFile.getPath();
-			inf = inf.substring(0, inf.length() - 5); // strip off .java
-			outputFile = new File(inf + ".jout"); // to avoid overwriting
-			// input files.
-		} else {
-			outputFile = new File(outputDirectory, inputFile.getPath());
-			outputFile.getParentFile().mkdirs(); // ensure output directory
-			// and package
-			// directories exist.
-		}
-
-		// write the file!!
-		// new JavaFileWriter(new FileWriter(outputFile)).write(jfile);
-		// new JilFileWriter(new FileWriter(outputFile)).write(clazz);
+		long start = System.currentTimeMillis();
 		
+		String inf = srcfile.getPath();
+		inf = inf.substring(0, inf.length() - 5); // strip off .java
+		File outputFile = new File(rootdir, inf + ".bytecode");		
+
+		// now, ensure output directory and package directories exist.
+		outputFile.getParentFile().mkdirs(); 
+
 		OutputStream out = new FileOutputStream(outputFile);		
 		ClassFile cfile = new ClassFileBuilder(loader,49).build(clazz);
+				
 		new BytecodeFileWriter(out).write(cfile);		
-		return outputFile.getPath();
+		
+		logTimedMessage("[" + srcfile.getPath() + "] Wrote " + outputFile.getPath(),
+				(System.currentTimeMillis() - start));		
 	}
 
 	/**
