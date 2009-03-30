@@ -203,7 +203,7 @@ public abstract class Bytecode {
 					write_u1(out,SIPUSH);
 					write_u2(out,v);
 				} else {
-					int idx = Constant.addPoolItem(new Constant.Integer(v),constantPool);					
+					int idx = constantPool.get(new Constant.Integer(v));					
 					if(idx < 255) {
 						write_u1(out,LDC);					
 						write_u1(out,idx);
@@ -217,7 +217,7 @@ public abstract class Bytecode {
 				if(v == 0 || v == 1) {
 					write_u1(out,LCONST_0 + (int) v);
 				} else {
-					int idx = Constant.addPoolItem(new Constant.Long(v),constantPool);
+					int idx = constantPool.get(new Constant.Long(v));
 					write_u1(out,LDC2_W);
 					write_u2(out,idx);
 				}
@@ -230,7 +230,7 @@ public abstract class Bytecode {
 				} else if(v == 2.0F) {
 					write_u1(out,FCONST_2);
 				} else {
-					int idx = Constant.addPoolItem(new Constant.Float(v),constantPool);
+					int idx = constantPool.get(new Constant.Float(v));
 					if(idx < 255) {
 						write_u1(out,LDC);
 						write_u1(out,idx);
@@ -246,13 +246,13 @@ public abstract class Bytecode {
 				} else if(v == 1.0D) {
 					write_u1(out,DCONST_1);
 				} else {
-					int idx = Constant.addPoolItem(new Constant.Double(v),constantPool);
+					int idx = constantPool.get(new Constant.Double(v));
 					write_u1(out,LDC2_W);
 					write_u2(out,idx);
 				}				
 			} else if(constant instanceof String) {
 				String v = (String) constant;
-				int idx = Constant.addPoolItem(new Constant.String(new Constant.Utf8(v)),constantPool);
+				int idx = constantPool.get(new Constant.String(new Constant.Utf8(v)));
 				if(idx < 255) {
 					write_u1(out,LDC);				
 					write_u1(out,idx);
@@ -262,7 +262,7 @@ public abstract class Bytecode {
 				}
 			} else if(constant instanceof Type) {
 				Type.Reference ref = (Type.Reference) constant;
-				int idx = Constant.addPoolItem(Constant.buildClass(ref), constantPool);
+				int idx = constantPool.get(Constant.buildClass(ref));
 				write_u1(out, LDC_W);
 				write_u2(out, idx);
 			} else {
@@ -450,8 +450,8 @@ public abstract class Bytecode {
 				Map<String,Integer> labelOffsets,  
 				Map<Constant.Info,Integer> constantPool) {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();			
-			int idx = Constant.addPoolItem(Constant.buildFieldRef(owner, name,
-					type), constantPool);
+			int idx = constantPool.get(Constant.buildFieldRef(owner, name,
+					type));
 			if(mode == STATIC) {
 				write_u1(out,PUTSTATIC);
 			} else {
@@ -489,8 +489,8 @@ public abstract class Bytecode {
 		
 		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  Map<Constant.Info,Integer> constantPool) {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();			
-			int idx = Constant.addPoolItem(Constant.buildFieldRef(owner, name,
-					type), constantPool);
+			int idx = constantPool.get(Constant.buildFieldRef(owner, name,
+					type));
 			if(mode == STATIC) {
 				write_u1(out,GETSTATIC);
 			} else {
@@ -531,11 +531,11 @@ public abstract class Bytecode {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();			
 			int idx;
 			if(mode != INTERFACE) {
-				idx = Constant.addPoolItem(Constant.buildMethodRef(owner, name,
-					type), constantPool);
+				idx = constantPool.get(Constant.buildMethodRef(owner, name,
+					type));
 			} else {
-				idx = Constant.addPoolItem(Constant.buildInterfaceMethodRef(owner, name,
-						type), constantPool);
+				idx = constantPool.get(Constant.buildInterfaceMethodRef(owner, name,
+						type));
 			}
 			if(mode == STATIC) {
 				write_u1(out,INVOKESTATIC);				 
@@ -550,7 +550,7 @@ public abstract class Bytecode {
 			if(mode == INTERFACE) {
 				int ps = 1; // 1 for the "this" reference!
 				for(Type t : type.parameterTypes()) {
-					ps += Types.slotSize(t);
+					ps += ClassFile.slotSize(t);
 				}
 				write_u1(out,ps);
 				write_u1(out,0);
@@ -1026,7 +1026,7 @@ public abstract class Bytecode {
 		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  
 				Map<Constant.Info,Integer> constantPool) {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			if(Types.slotSize(type) > 1) {
+			if(ClassFile.slotSize(type) > 1) {
 				write_u1(out,POP2);
 			} else {
 				write_u1(out,POP);
@@ -1035,7 +1035,7 @@ public abstract class Bytecode {
 		}
 		
 		public String toString() {			
-			if(Types.slotSize(type) > 1) { return "pop2"; } 
+			if(ClassFile.slotSize(type) > 1) { return "pop2"; } 
 			else {
 				return "pop";
 			}			
@@ -1053,7 +1053,7 @@ public abstract class Bytecode {
 		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  
 				Map<Constant.Info,Integer> constantPool) {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			if(Types.slotSize(type) > 1) {
+			if(ClassFile.slotSize(type) > 1) {
 				write_u1(out,DUP2);
 			} else {
 				write_u1(out,DUP);
@@ -1062,7 +1062,7 @@ public abstract class Bytecode {
 		}
 		
 		public String toString() {			
-			if(Types.slotSize(type) > 1) { return "dup2"; } 
+			if(ClassFile.slotSize(type) > 1) { return "dup2"; } 
 			else {
 				return "dup";
 			}			
@@ -1126,8 +1126,8 @@ public abstract class Bytecode {
 			if(type instanceof Type.Array) {
 				Type.Array atype = (Type.Array) type;
 				if(dims > 1) {
-					int idx = Constant.addPoolItem(Constant
-								.buildClass((Type.Array) type), constantPool);
+					int idx = constantPool.get(Constant
+								.buildClass((Type.Array) type));
 					write_u1(out,MULTIANEWARRAY);
 					write_u2(out,idx);
 					write_u1(out,dims);
@@ -1135,14 +1135,14 @@ public abstract class Bytecode {
 					Type elementType = atype.element();
 					
 					if(elementType instanceof Type.Reference) {
-						int idx = Constant.addPoolItem(Constant
-								.buildClass((Type.Reference) elementType), constantPool);
+						int idx = constantPool.get(Constant
+								.buildClass((Type.Reference) elementType));
 						write_u1(out,ANEWARRAY);
 						write_u2(out,idx);
 					}
 					else if (elementType instanceof Type.Array) {
-						int idx = Constant.addPoolItem(Constant
-								.buildClass((Type.Array) elementType), constantPool);
+						int idx = constantPool.get(Constant
+								.buildClass((Type.Array) elementType));
 						write_u1(out,ANEWARRAY);
 						write_u2(out,idx);
 					}
@@ -1171,8 +1171,8 @@ public abstract class Bytecode {
 					}
 				}									
 			} else {
-			int idx = Constant.addPoolItem(Constant
-						.buildClass((Type.Reference) type), constantPool);
+			int idx = constantPool.get(Constant
+						.buildClass((Type.Reference) type));
 				write_u1(out,NEW);
 				write_u2(out,idx);
 			}
@@ -1233,11 +1233,11 @@ public abstract class Bytecode {
 			int idx;
 			
 			if(type instanceof Type.Reference) {
-				idx = Constant.addPoolItem(Constant
-						.buildClass((Type.Reference) type), constantPool);
+				idx = constantPool.get(Constant
+						.buildClass((Type.Reference) type));
 			} else if (type instanceof Type.Array) {
-				idx = Constant.addPoolItem(Constant
-						.buildClass((Type.Array) type), constantPool);
+				idx = constantPool.get(Constant
+						.buildClass((Type.Array) type));
 			} else {
 				throw new RuntimeException("Unhandled constant type: " + type);
 			}
@@ -1268,11 +1268,11 @@ public abstract class Bytecode {
 			int idx;
 			
 			if(type instanceof Type.Reference) {
-				idx = Constant.addPoolItem(Constant
-						.buildClass((Type.Reference) type), constantPool);
+				idx = constantPool.get(Constant
+						.buildClass((Type.Reference) type));
 			} else {
-				idx = Constant.addPoolItem(Constant
-						.buildClass((Type.Array) type), constantPool);
+				idx = constantPool.get(Constant
+						.buildClass((Type.Array) type));
 			}			
 			
 			write_u1(out,INSTANCEOF);
