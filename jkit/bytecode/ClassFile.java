@@ -445,4 +445,19 @@ public class ClassFile {
 		 
 		throw new RuntimeException("Invalid type passed to Types.descriptor(): " + t);
 	}
+	
+	/**
+	 * Determine the slot size for the corresponding Java type.
+	 * 
+	 * @param type
+	 *            The type to determine the slot size for.
+	 * @return the slot size in slots.
+	 */
+	public static int slotSize(Type type) {
+		if (type instanceof Type.Double || type instanceof Type.Long) {
+			return 2;
+		} else {
+			return 1;
+		}
+	}
 }
