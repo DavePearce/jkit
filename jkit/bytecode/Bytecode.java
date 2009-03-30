@@ -276,8 +276,16 @@ public abstract class Bytecode {
 		
 		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  
 				Map<Constant.Info,Integer> constantPool) {
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			if(constant instanceof Integer) {
+			ByteArrayOutputStream out = new ByteArrayOutputStream();						
+			
+			if(constant instanceof Boolean) {
+				Boolean b = (Boolean) constant;
+				if(b) {
+					write_u1(out,ICONST_1);
+				} else {
+					write_u1(out,ICONST_0);
+				}
+			} else if(constant instanceof Integer) {
 				int v = (Integer) constant;
 				if(v >= -1 && v <= 5) { 
 					write_u1(out,ICONST_0 + v); 
@@ -357,7 +365,14 @@ public abstract class Bytecode {
 		}
 		
 		public String toString() {
-			if(constant instanceof Integer) {
+			if(constant instanceof Boolean) {
+				Boolean b = (Boolean) constant;
+				if(b) {
+					return "iconst_1";					
+				} else {
+					return "iconst_0";					
+				}
+			} else if(constant instanceof Integer) {
 				int v = (Integer) constant;
 				if(v >= -1 && v <= 5) { 
 					return "iconst_" + v;

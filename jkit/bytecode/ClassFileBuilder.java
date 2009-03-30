@@ -302,7 +302,7 @@ public class ClassFileBuilder {
 	protected static int condLabelCount = 0;
 	protected void translateConditionalBranch(Expr condition, String trueLabel,
 			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes) {
-
+		
 		if (condition instanceof Expr.BinOp) {
 			Expr.BinOp bop = (Expr.BinOp) condition;
 
@@ -315,12 +315,14 @@ public class ClassFileBuilder {
 						.rhs()), exitLabel, varmap, bytecodes);
 				bytecodes.add(new Bytecode.Goto(trueLabel));
 				bytecodes.add(new Bytecode.Label(exitLabel));
+				return;
 			}
 			case Expr.BinOp.LOR: {
 				translateConditionalBranch(bop.lhs(), trueLabel,
 						varmap, bytecodes);
 				translateConditionalBranch(bop.rhs(), trueLabel,
-						varmap, bytecodes);				
+						varmap, bytecodes);
+				return;
 			}
 			}
 
@@ -378,9 +380,10 @@ public class ClassFileBuilder {
 						bytecodes
 								.add(new Bytecode.If(Bytecode.If.EQ, trueLabel));						
 					}
+				} else {
+					// not elimination was successful ...
+					translateConditionalBranch(e1, trueLabel, varmap, bytecodes);
 				}
-				// not elimination was successful ...
-				translateConditionalBranch(e1, trueLabel, varmap, bytecodes);
 			} else {
 				// anything else doesn't make sense
 				throw new RuntimeException(
@@ -618,7 +621,7 @@ public class ClassFileBuilder {
 	protected void translateExpression(Expr expr,
 			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes) {
 
-		if (expr instanceof Expr.Bool) {
+		if (expr instanceof Expr.Bool) {			
 			bytecodes.add(new Bytecode.LoadConst(((Expr.Bool) expr).value()));
 		} else if (expr instanceof Expr.Byte) {
 			bytecodes.add(new Bytecode.LoadConst(((Expr.Byte) expr).value()));
@@ -673,6 +676,8 @@ public class ClassFileBuilder {
 			bytecodes.add(new Bytecode.InstanceOf(iof.rhs()));
 		} else if (expr instanceof Expr.Cast) {
 			translateCast((Expr.Cast) expr, varmap,bytecodes);
+		} else if (expr instanceof Expr.Convert) {
+			translateConvert((Expr.Convert) expr, varmap,bytecodes);
 		} else {
 			throw new RuntimeException("Unknown expression encountered ("
 					+ expr + ")");
@@ -863,4 +868,45 @@ public class ClassFileBuilder {
 		} 		
 	}
 
+	protected void translateConvert(Expr.Convert cast, HashMap<String, Integer> varmap,
+			ArrayList<Bytecode> bytecodes) {
+		translateExpression(cast.expr(), varmap, bytecodes);
+
+		Type to = cast.type();
+		Type from = cast.expr().type();
+		// Now, do implicit conversions
+		if((from instanceof Type.Int || from instanceof Type.Short
+				|| from instanceof Type.Byte || from instanceof Type.Char) && 
+				(to instanceof Type.Long 
+						|| to instanceof Type.Float 
+						|| to instanceof Type.Double 
+						|| (to instanceof Type.Char && !(from instanceof Type.Char)) 
+						|| (to instanceof Type.Short && !(from instanceof Type.Short))
+						|| (to instanceof Type.Byte && !(from instanceof Type.Byte)))) {
+			
+			bytecodes.add(new Bytecode.Conversion((Type.Primitive) from,
+					(Type.Primitive) to));	
+		} else if(from instanceof Type.Long && 
+				(to instanceof Type.Char 
+						|| to instanceof Type.Byte 
+						|| to instanceof Type.Short 
+						|| to instanceof Type.Int 
+						|| to instanceof Type.Float 
+						|| to instanceof Type.Double)) {
+			bytecodes.add(new Bytecode.Conversion((Type.Primitive) from,
+					(Type.Primitive) to));	
+		} else if (from instanceof Type.Float
+				&& (to instanceof Type.Char || to instanceof Type.Byte
+						|| to instanceof Type.Short || to instanceof Type.Int
+						|| to instanceof Type.Long || to instanceof Type.Double)) {
+			bytecodes.add(new Bytecode.Conversion((Type.Primitive) from,
+					(Type.Primitive) to));	
+		} else if (from instanceof Type.Double
+				&& (to instanceof Type.Char || to instanceof Type.Byte
+						|| to instanceof Type.Short || to instanceof Type.Int
+						|| to instanceof Type.Long || to instanceof Type.Float)) {
+			bytecodes.add(new Bytecode.Conversion((Type.Primitive) from,
+					(Type.Primitive) to));	
+		} 
+	}
 }

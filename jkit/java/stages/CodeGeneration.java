@@ -452,6 +452,8 @@ public class CodeGeneration {
 			return doTernOp((jkit.java.tree.Expr.TernOp)e);
 		} else if(e instanceof jkit.java.tree.Expr.Cast) {
 			return doCast((jkit.java.tree.Expr.Cast)e);
+		} else if(e instanceof jkit.java.tree.Expr.Convert) {
+			return doConvert((jkit.java.tree.Expr.Convert)e);
 		} else if(e instanceof jkit.java.tree.Expr.InstanceOf) {
 			return doInstanceOf((jkit.java.tree.Expr.InstanceOf)e);
 		} else if(e instanceof jkit.java.tree.Expr.Invoke) {
@@ -559,8 +561,15 @@ public class CodeGeneration {
 			r.addAll(tmp.second());
 		}				
 		
-		return new Pair<Expr, List<Stmt>>(new Expr.Invoke(target.first(), e
-				.name(), nparameters, funType, type, e.attributes()), r);
+		if (target.first() instanceof Expr.ClassVariable) {
+			return new Pair<Expr, List<Stmt>>(new Expr.Invoke(target.first(), e
+					.name(), nparameters, Expr.Invoke.STATIC, funType, type, e
+					.attributes()), r);
+		} else {
+			return new Pair<Expr, List<Stmt>>(new Expr.Invoke(target.first(), e
+					.name(), nparameters, Expr.Invoke.POLYMORPHIC, funType, type, e
+					.attributes()), r);
+		}
 	}
 	
 	protected Pair<Expr,List<Stmt>> doInstanceOf(jkit.java.tree.Expr.InstanceOf e) {
@@ -576,6 +585,13 @@ public class CodeGeneration {
 		Type type = (Type) e.attribute(Type.class);
 		return new Pair<Expr, List<Stmt>>(new Expr.Cast(expr.first(),
 				type, e.attributes()), expr.second());		
+	}
+	
+	protected Pair<Expr,List<Stmt>> doConvert(jkit.java.tree.Expr.Convert e) {
+		Pair<Expr,List<Stmt>> expr = doExpression(e.expr());		
+		Type.Primitive type = (Type.Primitive) e.attribute(Type.class);
+		return new Pair<Expr, List<Stmt>>(new Expr.Convert(type, expr.first(),
+				e.attributes()), expr.second());		
 	}
 	
 	protected Pair<Expr,List<Stmt>> doBoolVal(jkit.java.tree.Value.Bool e) {

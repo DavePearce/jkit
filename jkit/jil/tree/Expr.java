@@ -143,6 +143,12 @@ public interface Expr extends SyntacticElement {
 			this.type = type;
 		}
 
+		public Convert(Type.Primitive type, Expr expr, List<Attribute> attributes) {
+			super(attributes);
+			this.expr = expr;
+			this.type = type;
+		}
+		
 		public Expr expr() {
 			return expr;
 		}
@@ -360,9 +366,9 @@ public interface Expr extends SyntacticElement {
 		protected Type.Function funType;
 		protected int mode;
 		
-		public final int STATIC = 1;
-		public final int INTERFACE = 2;
-		public final int POLYMORPHIC = 4;
+		public static final int STATIC = 1;
+		public static final int INTERFACE = 2;
+		public static final int POLYMORPHIC = 4;
 		
 		/**
 		 * Construct a method which may, or may not be polymorphic.
@@ -388,9 +394,9 @@ public interface Expr extends SyntacticElement {
 			this.funType = funType;
 			this.mode = mode;
 		}
-
+		
 		/**
-		 * Construct a polymorphic method.
+		 * Construct a method which may, or may not be polymorphic.
 		 * 
 		 * @param target
 		 *            The expression from which the receiver is determined
@@ -398,16 +404,20 @@ public interface Expr extends SyntacticElement {
 		 *            The name of the method
 		 * @param parameters
 		 *            The parameters of the method
+		 * @param isStatic
+		 *            Indicates whether this represents a static invocation or
+		 *            not.
 		 */
 		public Invoke(Expr target, String name, List<Expr> parameters,
-				Type.Function funType, Type type, List<Attribute> attributes) {
+				int mode, Type.Function funType, Type type,
+				List<Attribute> attributes) {
 			super(attributes);
 			this.target = target;
 			this.name = name;
 			this.parameters = parameters;
 			this.type = type;
 			this.funType = funType;
-			this.mode = POLYMORPHIC;
+			this.mode = mode;
 		}
 		
 		public Expr target() {
@@ -447,7 +457,7 @@ public interface Expr extends SyntacticElement {
 		}
 		
 		public boolean isInterface() {
-			return mode == STATIC;
+			return mode == INTERFACE;
 		}
 		
 		public boolean isPolymorphic() {
