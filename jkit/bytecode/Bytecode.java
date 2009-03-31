@@ -285,6 +285,15 @@ public abstract class Bytecode {
 				} else {
 					write_u1(out,ICONST_0);
 				}
+			} else if(constant instanceof Character) {
+				int v = (int) ((Character)constant);				
+				if(v >= -128 && v <= 127) {
+					write_u1(out,BIPUSH);
+					write_u1(out,v);
+				} else {
+					write_u1(out,SIPUSH);
+					write_u2(out,v);
+				}
 			} else if(constant instanceof Integer) {
 				int v = (Integer) constant;
 				if(v >= -1 && v <= 5) { 
@@ -372,6 +381,13 @@ public abstract class Bytecode {
 				} else {
 					return "iconst_0";					
 				}
+			} else if(constant instanceof Character) {
+				int v = (int) ((Character)constant);				
+				if(v >= -128 && v <= 127) {
+					return "bipush " + v;
+				} else {
+					return "sipush " + v;					
+				}				
 			} else if(constant instanceof Integer) {
 				int v = (Integer) constant;
 				if(v >= -1 && v <= 5) { 
