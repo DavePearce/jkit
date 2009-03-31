@@ -623,10 +623,6 @@ public class TypeChecking {
 		Type e_t = (Type) e.attribute(Type.class);
 		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
 
-		if(lhs_t == null || rhs_t == null) {
-			syntax_error("Location is...",e);
-		}
-		
 		if ((lhs_t instanceof Type.Primitive || rhs_t instanceof Type.Primitive)
 				&& !lhs_t.equals(rhs_t)) {
 			if ((lhs_t instanceof Type.Long
@@ -640,9 +636,7 @@ public class TypeChecking {
 				throw new SyntaxError("Operand types do not go together: "
 					+ rhs_t + " and " + lhs_t,loc.line(),loc.column());		
 			}
-		}
-		
-		if((lhs_t instanceof Type.Char || lhs_t instanceof Type.Byte 
+		} else if((lhs_t instanceof Type.Char || lhs_t instanceof Type.Byte 
 				|| lhs_t instanceof Type.Int || lhs_t instanceof Type.Long 
 				|| lhs_t instanceof Type.Short || lhs_t instanceof Type.Float
 				|| lhs_t instanceof Type.Double) && 
@@ -702,6 +696,8 @@ public class TypeChecking {
 					} 
 				}					
 			}
+		} else {
+			syntax_error("operand types do not go together: " + lhs_t + ", " + rhs_t,e);
 		}
 	}
 	

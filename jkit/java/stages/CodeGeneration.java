@@ -694,14 +694,52 @@ public class CodeGeneration {
 	protected Pair<Expr,List<Stmt>> doBinOp(jkit.java.tree.Expr.BinOp e) {				
 		Pair<Expr,List<Stmt>> lhs = doExpression(e.lhs());
 		Pair<Expr,List<Stmt>> rhs = doExpression(e.rhs());
-		Type.Primitive type = (Type.Primitive) e.attribute(Type.class);
+		Type _type = (Type) e.attribute(Type.class);
 		
-		List<Stmt> r = lhs.second();
-		r.addAll(rhs.second());
-		
-		return new Pair<Expr, List<Stmt>>(new Expr.BinOp(lhs.first(), rhs
-				.first(), e.op(), type, e.attributes()), r);
+		if(_type instanceof Type.Primitive) {
+			Type.Primitive type = (Type.Primitive) _type;
+
+			List<Stmt> r = lhs.second();
+			r.addAll(rhs.second());
+
+			return new Pair<Expr, List<Stmt>>(new Expr.BinOp(lhs.first(), rhs
+					.first(), e.op(), type, e.attributes()), r);
+		} else if(e.op() == jkit.java.tree.Expr.BinOp.CONCAT) {
+			// ok, this is string concatenation
+		} else {
+			syntax_error("internal failure --- problem processing binary operator",e);
+			return null;
+		}
 	}
+	
+	protected int doStringConcat(jkit.java.tree.Expr.BinOp bop){
+
+		Type.Clazz builder = new Type.Clazz("java.lang",
+				"StringBuilder");
+
+		bytecodes.add(new Bytecode.New(builder));
+		bytecodes.add(new Bytecode.Dup(builder));
+
+		int maxStack = 3;
+
+		Triple<Clazz, Method, Type.Function> minfo = ClassTable.resolveMethod(
+				builder, "StringBuilder", new LinkedList<Type>());
+		Type.Function actualMethodT = minfo.second().type();
+		bytecodes.add(new Bytecode.Invoke(builder, "<init>", actualMethodT,
+				Bytecode.SPECIAL));
+
+		int ms = translateStringConcatenateSubExpr(builder, bop, varmap,
+				environment, bytecodes);
+
+		minfo = ClassTable.resolveMethod(builder, "toString",
+				new LinkedList<Type>());
+		actualMethodT = minfo.second().type();
+		bytecodes.add(new Bytecode.Invoke(builder, "toString", actualMethodT,
+				Bytecode.VIRTUAL));
+
+		return Math.max(maxStack, ms + 1);
+	}
+
 	
 	protected Pair<Expr,List<Stmt>> doTernOp(jkit.java.tree.Expr.TernOp e) {	
 		syntax_error("internal failure --- problem processing ternary operator.",e);
