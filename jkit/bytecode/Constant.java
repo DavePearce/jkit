@@ -133,13 +133,13 @@ public class Constant {
 	 * 
 	 * @return the index of the pool item
 	 */
-	public static void addPoolItem(Constant.Info item, Set<Constant.Info> constantPool) {		
-		if(!constantPool.contains(item)) {
+	public static void addPoolItem(Constant.Info item, Set<Constant.Info> constantPool) {						
+		if(!constantPool.contains(item)) {			
 			// item is not already in pool		
 			if(item instanceof Constant.String) {
 				Constant.String s = (Constant.String) item;
 				addPoolItem(s.str, constantPool);				
-			} else if(item instanceof Constant.Class) {
+			}else if(item instanceof Constant.Class) {				
 				Constant.Class c = (Constant.Class) item;
 				addPoolItem(c.name, constantPool);
 			} else if(item instanceof Constant.FieldRef) {
@@ -149,7 +149,7 @@ public class Constant {
 			} else if(item instanceof Constant.MethodRef) {
 				Constant.MethodRef m = (Constant.MethodRef) item;
 				addPoolItem(m.classInfo, constantPool);
-				addPoolItem(m.nameType, constantPool);				
+				addPoolItem(m.nameType, constantPool);		
 			} else if(item instanceof Constant.InterfaceMethodRef) {
 				Constant.InterfaceMethodRef m = (Constant.InterfaceMethodRef) item;
 				addPoolItem(m.classInfo, constantPool);
@@ -158,7 +158,7 @@ public class Constant {
 				Constant.NameType nt = (Constant.NameType) item;
 				addPoolItem(nt.desc, constantPool);
 				addPoolItem(nt.name, constantPool);								
-			} 			
+			} 											
 			constantPool.add(item);						
 		} 
 	}
@@ -198,6 +198,7 @@ public class Constant {
 			}
 			return bout.toByteArray();
 		}
+		
 		public java.lang.String toString() { return "Utf8(" + str + ")"; }
 	}
 	
@@ -294,15 +295,16 @@ public class Constant {
 		public Class(java.lang.String n) { name = new Utf8(n); }
 		
 		public boolean equals(Object o) {
-			if(o instanceof Class) {
-				return name.equals(((Class)o).name);
+			if(o instanceof Constant.Class) {
+				return name.equals(((Constant.Class)o).name);
 			} else return false;			
 		}
 		public int hashCode() { return name.hashCode(); }		
+		
 		public byte[] toBytes(Map<Info,java.lang.Integer> constantPool)  {
 			assert constantPool.containsKey(name);
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			write_u1(bout,CONSTANT_Class);			
+			write_u1(bout,CONSTANT_Class);	
 			write_u2(bout,constantPool.get(name));
 			return bout.toByteArray();
 		}

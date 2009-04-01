@@ -523,6 +523,21 @@ public interface Type extends Attribute {
 		private final Type returnType;
 		private final List<Type.Variable> typeArgs;
 		
+		public Function(Type returnType, Type... parameters) {
+			this.returnType = returnType;
+			this.parameters = new ArrayList<Type>();
+			this.typeArgs = new ArrayList();
+			for(Type t : parameters) {
+				this.parameters.add(t);
+			}
+		}
+		
+		public Function(Type returnType, List<Type> parameters) {
+			this.returnType = returnType;
+			this.parameters = parameters;
+			this.typeArgs = new ArrayList();
+		}
+		
 		public Function(Type returnType, List<Type> parameters, List<Type.Variable> typeArgs) {
 			this.returnType = returnType;
 			this.parameters = parameters;

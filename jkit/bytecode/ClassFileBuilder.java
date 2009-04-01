@@ -766,7 +766,7 @@ public class ClassFileBuilder {
 				paramTypes.add(p.type());
 			}
 
-						// call the appropriate constructor
+			// call the appropriate constructor
 			bytecodes.add(new Bytecode.Invoke(type, "<init>", news.funType(),
 					Bytecode.SPECIAL));
 		} else if (news.type() instanceof Type.Array) {

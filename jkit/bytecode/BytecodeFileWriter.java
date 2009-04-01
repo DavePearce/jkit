@@ -32,12 +32,10 @@ public class BytecodeFileWriter {
 		
 		output.print("\nclass " + cfile.type() + " ");
 		if(cfile.superClazz() != null) {
-			output.println("");
-			output.print("\t extends " + cfile.superClazz());
+			output.print(" extends " + cfile.superClazz());
 		}
 		if(cfile.interfaces().size() > 0) {
-			output.println("");
-			output.print("\t implements ");
+			output.print(" implements ");
 			boolean firstTime=true;
 			for(Type.Clazz i : cfile.interfaces()) {
 				if(!firstTime) {
@@ -48,13 +46,15 @@ public class BytecodeFileWriter {
 			}			
 		}				
 		
-		output.println(" {\n");
+		output.println(" {");
 		
 		for(ClassFile.Field f : cfile.fields()) {
 			writeField(f);
 		}
 		
-		output.println("");
+		if(!cfile.fields().isEmpty()) {
+			output.println("");
+		}
 		
 		for(ClassFile.Method m : cfile.methods()) {
 			writeMethod(cfile,m,poolMap);
@@ -66,7 +66,7 @@ public class BytecodeFileWriter {
 	}
 	
 	protected void writeField(ClassFile.Field f) {
-		output.print("\t");
+		output.print("  ");
 		writeModifiers(f.modifiers());
 		output.print(f.type());
 		output.println(" " + f.name() + ";");		
@@ -75,7 +75,7 @@ public class BytecodeFileWriter {
 
 	protected void writeMethod(ClassFile clazz, ClassFile.Method method,
 			HashMap<Constant.Info, Integer> poolMap) throws IOException {
-		output.print("\t");
+		output.print("  ");
 		writeModifiers(method.modifiers());
 		Type.Function type = method.type(); 
 		output.print(type.returnType() + " " + method.name());
@@ -101,20 +101,20 @@ public class BytecodeFileWriter {
 			writeCodeAttribute(codeAttr,poolMap);
 		}		
 		
-		output.println("\t}");
+		output.println("  }");
 	}
 	
 	protected void writeCodeAttribute(ClassFile.Code code,
 			HashMap<Constant.Info, Integer> poolMap) throws IOException {
 
-		output.println("\t\tstack = " + code.maxStack() + ", locals = "
+		output.println("    stack = " + code.maxStack() + ", locals = "
 				+ code.maxLocals());
 
 		for (Bytecode b : code.bytecodes) {
 			if(b instanceof Bytecode.Label) {
-				output.println("\t " + b);
+				output.println("   " + b);
 			} else {
-				output.println("\t\t" + b);
+				output.println("    " + b);
 			}
 		}
 

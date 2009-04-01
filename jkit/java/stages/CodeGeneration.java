@@ -692,11 +692,12 @@ public class CodeGeneration {
 	}
 		
 	protected Pair<Expr,List<Stmt>> doBinOp(jkit.java.tree.Expr.BinOp e) {				
-		Pair<Expr,List<Stmt>> lhs = doExpression(e.lhs());
-		Pair<Expr,List<Stmt>> rhs = doExpression(e.rhs());
 		Type _type = (Type) e.attribute(Type.class);
 		
 		if(_type instanceof Type.Primitive) {
+			Pair<Expr,List<Stmt>> lhs = doExpression(e.lhs());
+			Pair<Expr,List<Stmt>> rhs = doExpression(e.rhs());
+			
 			Type.Primitive type = (Type.Primitive) _type;
 
 			List<Stmt> r = lhs.second();
@@ -705,39 +706,59 @@ public class CodeGeneration {
 			return new Pair<Expr, List<Stmt>>(new Expr.BinOp(lhs.first(), rhs
 					.first(), e.op(), type, e.attributes()), r);
 		} else if(e.op() == jkit.java.tree.Expr.BinOp.CONCAT) {
-			// ok, this is string concatenation
+			return doStringConcat(e);
 		} else {
 			syntax_error("internal failure --- problem processing binary operator",e);
 			return null;
 		}
 	}
 	
-	protected int doStringConcat(jkit.java.tree.Expr.BinOp bop){
-
+	protected Pair<Expr,List<Stmt>> doStringConcat(jkit.java.tree.Expr.BinOp bop){
+		
+		// This method is evidence as to why Java sucks as a programming
+		// language. It should be easy to construct datatypes, as I'm doing
+		// here, but lack of good notation makes it awkward in Java. Sure, there
+		// are some hacks to can do to improve the situation but basically it's
+		// screwed.
+		
+		Pair<Expr,List<Stmt>> lhs = doExpression(bop.lhs());
+		Pair<Expr,List<Stmt>> rhs = doExpression(bop.rhs());
+		
+		List<Stmt> stmts = lhs.second();
+		stmts.addAll(lhs.second());
+		stmts.addAll(rhs.second());
+		
 		Type.Clazz builder = new Type.Clazz("java.lang",
 				"StringBuilder");
+						
+		stmts.add(new Stmt.Assign(new Expr.Variable("$$", builder),
+				new Expr.New(builder, new ArrayList<Expr>(),
+						new Type.Function(new Type.Void()), bop.attributes())));
+		
+		ArrayList<Expr> params = new ArrayList<Expr>();
+		params.add(lhs.first());
+		
+		stmts.add(new Expr.Invoke(new Expr.Variable("$$", builder), "append",
+				params, Expr.Invoke.POLYMORPHIC, new Type.Function(
+						new Type.Clazz("java.lang", "StringBuilder"), lhs
+								.first().type()), new Type.Clazz("java.lang",
+						"StringBuilder")));
 
-		bytecodes.add(new Bytecode.New(builder));
-		bytecodes.add(new Bytecode.Dup(builder));
+		params = new ArrayList<Expr>();
+		params.add(rhs.first());
 
-		int maxStack = 3;
+		Expr r = new Expr.Invoke(new Expr.Variable("$$", builder), "append",
+				params, Expr.Invoke.POLYMORPHIC, new Type.Function(
+						new Type.Clazz("java.lang", "StringBuilder"), rhs
+								.first().type()), new Type.Clazz("java.lang",
+						"StringBuilder"));
 
-		Triple<Clazz, Method, Type.Function> minfo = ClassTable.resolveMethod(
-				builder, "StringBuilder", new LinkedList<Type>());
-		Type.Function actualMethodT = minfo.second().type();
-		bytecodes.add(new Bytecode.Invoke(builder, "<init>", actualMethodT,
-				Bytecode.SPECIAL));
-
-		int ms = translateStringConcatenateSubExpr(builder, bop, varmap,
-				environment, bytecodes);
-
-		minfo = ClassTable.resolveMethod(builder, "toString",
-				new LinkedList<Type>());
-		actualMethodT = minfo.second().type();
-		bytecodes.add(new Bytecode.Invoke(builder, "toString", actualMethodT,
-				Bytecode.VIRTUAL));
-
-		return Math.max(maxStack, ms + 1);
+		r = new Expr.Invoke(r, "toString", new ArrayList<Expr>(),
+				Expr.Invoke.POLYMORPHIC, new Type.Function(new Type.Clazz(
+						"java.lang", "String")), new Type.Clazz("java.lang",
+						"String"));
+		
+		return new Pair<Expr,List<Stmt>>(r,stmts);
 	}
 
 	

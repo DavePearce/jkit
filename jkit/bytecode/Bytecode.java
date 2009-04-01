@@ -1357,15 +1357,15 @@ public abstract class Bytecode {
 		public void addPoolItems(Set<Constant.Info> constantPool) {
 			if(type instanceof Type.Array) {
 				if(dims > 1) {
-					constantPool.add(Constant
-							.buildClass((Type.Array) type));
+					Constant.addPoolItem(Constant
+							.buildClass((Type.Array) type),constantPool);
 				} else if(type instanceof Type.Reference) {
-					constantPool.add(Constant
-							.buildClass((Type.Array) type));
+					Constant.addPoolItem(Constant
+							.buildClass((Type.Reference) type),constantPool);					
 				}
 			} else {
-				constantPool.add(Constant
-						.buildClass((Type.Clazz) type));
+				Constant.addPoolItem(Constant
+						.buildClass((Type.Clazz) type),constantPool);				
 			}
 		}
 		
