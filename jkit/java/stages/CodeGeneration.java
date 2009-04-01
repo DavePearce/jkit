@@ -721,11 +721,56 @@ public class CodeGeneration {
 	}
 	
 	protected Pair<Expr,List<Stmt>> doUnOp(jkit.java.tree.Expr.UnOp e) {		
-		Pair<Expr,List<Stmt>> r = doExpression(e.expr());	
+		Pair<Expr, List<Stmt>> r = doExpression(e.expr());		
 		Type.Primitive type = (Type.Primitive) e.attribute(Type.class);
-		
-		return new Pair<Expr, List<Stmt>>(new Expr.UnOp(r.first(), e.op(),
-				type, e.attributes()), r.second());
+		List<Stmt> stmts = r.second();
+		jkit.java.tree.Expr.LocalVariable lval;
+
+		switch (e.op()) {
+		case jkit.java.tree.Expr.UnOp.PREDEC:
+		{
+			lval = (jkit.java.tree.Expr.LocalVariable) e.expr();			
+			Expr.Variable lhs = new Expr.Variable(lval.value(),type,lval.attributes());
+			Expr rhs = new Expr.BinOp(lhs, new Expr.Int(1), Expr.BinOp.SUB,
+					type, e.attributes());
+			stmts.add(new Stmt.Assign(lhs,rhs,e.attributes()));
+			return new Pair<Expr, List<Stmt>>(r.first(),stmts);		
+		}
+		case jkit.java.tree.Expr.UnOp.PREINC:
+		{
+			lval = (jkit.java.tree.Expr.LocalVariable) e.expr();
+			Expr.Variable lhs = new Expr.Variable(lval.value(),type,lval.attributes());
+			Expr rhs = new Expr.BinOp(lhs, new Expr.Int(1), Expr.BinOp.ADD,
+					type, e.attributes());
+			stmts.add(new Stmt.Assign(lhs,rhs,e.attributes()));
+			return new Pair<Expr, List<Stmt>>(r.first(),stmts);
+		}
+		case jkit.java.tree.Expr.UnOp.POSTINC:
+		{
+			lval = (jkit.java.tree.Expr.LocalVariable) e.expr();
+			Expr.Variable tmp = new Expr.Variable("$tmp",type,lval.attributes());
+			Expr.Variable lhs = new Expr.Variable(lval.value(),type,lval.attributes());
+			stmts.add(new Stmt.Assign(tmp,lhs,e.attributes()));			
+			Expr rhs = new Expr.BinOp(lhs, new Expr.Int(1), Expr.BinOp.ADD,
+					type, e.attributes());
+			stmts.add(new Stmt.Assign(lhs,rhs,e.attributes()));
+			return new Pair<Expr, List<Stmt>>(tmp,stmts);		
+		}
+		case jkit.java.tree.Expr.UnOp.POSTDEC:
+		{
+			 lval = (jkit.java.tree.Expr.LocalVariable) e.expr();
+			 Expr.Variable tmp = new Expr.Variable("$tmp",type,lval.attributes());
+				Expr.Variable lhs = new Expr.Variable(lval.value(),type,lval.attributes());
+				stmts.add(new Stmt.Assign(tmp,lhs,e.attributes()));			
+				Expr rhs = new Expr.BinOp(lhs, new Expr.Int(1), Expr.BinOp.SUB,
+						type, e.attributes());
+				stmts.add(new Stmt.Assign(lhs,rhs,e.attributes()));
+				return new Pair<Expr, List<Stmt>>(tmp,stmts);
+		}
+		default:
+			return new Pair<Expr, List<Stmt>>(new Expr.UnOp(r.first(), e.op(),
+					type, e.attributes()), r.second());
+		}		
 	}
 		
 	protected Pair<Expr,List<Stmt>> doBinOp(jkit.java.tree.Expr.BinOp e) {				

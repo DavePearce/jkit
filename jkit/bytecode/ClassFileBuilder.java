@@ -825,8 +825,6 @@ public class ClassFileBuilder {
 
 	protected void translateUnaryOp(Expr.UnOp uop, HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes) {
-		// second, translate the operation.
-		// FIXME: resolve operator type
 
 		switch (uop.op()) {
 		case Expr.UnOp.NOT:
@@ -837,7 +835,8 @@ public class ClassFileBuilder {
 			bytecodes.add(new Bytecode.Goto(exitLabel));
 			bytecodes.add(new Bytecode.Label(trueLabel));
 			bytecodes.add(new Bytecode.LoadConst(1));
-			bytecodes.add(new Bytecode.Label(exitLabel));			
+			bytecodes.add(new Bytecode.Label(exitLabel));	
+			return;
 		}
 
 		// first, translate the expression.
@@ -854,7 +853,7 @@ public class ClassFileBuilder {
 			break;
 		default:
 			throw new RuntimeException("Unknown unary expression encountered ("
-					+ uop + ")");
+					+ uop + ", " + uop.op() + ")");
 		}
 	}
 
