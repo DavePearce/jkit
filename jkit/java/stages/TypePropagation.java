@@ -527,14 +527,15 @@ public class TypePropagation {
 				}
 			}							
 			
-			Type.Function f = types.resolveMethod(receiver, e_name,
-					parameterTypes, loader).third();
-
+			Triple<jkit.jil.tree.Clazz,jkit.jil.tree.Method,Type.Function> r = types.resolveMethod(receiver, e_name,
+					parameterTypes, loader);
+			Type.Function f = r.third();
+			
 			if (!(f.returnType() instanceof Type.Void)) {
 				e.attributes().add(f.returnType());
 			}
 			
-			e.attributes().add(f); // this is a little hacky, but it works.
+			e.attributes().add(r.second().type()); // this is a little hacky, but it works.
 		} catch(ClassNotFoundException cnfe) {
 			syntax_error(cnfe.getMessage(), e, cnfe);
 		} catch(MethodNotFoundException mfne) {

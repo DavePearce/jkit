@@ -6,6 +6,7 @@ import jkit.compiler.ClassLoader;
 import jkit.jil.tree.*;
 import jkit.jil.util.Exprs;
 import jkit.util.Pair;
+import jkit.util.Triple;
 
 public class ClassFileBuilder {
 	protected final ClassLoader loader;
@@ -481,8 +482,11 @@ public class ClassFileBuilder {
 			translateExpression(p, varmap, bytecodes);
 		}
 		
-		Type.Clazz targetT = (Type.Clazz) stmt.target().type(); 
-		String targetName = targetT.components().get(targetT.components().size()-1).first();
+		Type.Clazz targetT = (Type.Clazz) stmt.target().type();
+		String targetName = targetT.components().get(
+				targetT.components().size() - 1).first();
+		
+		// Ok, now we're good to go.
 		
 		if (stmt.isStatic()) {
 			// STATIC
@@ -913,5 +917,5 @@ public class ClassFileBuilder {
 			bytecodes.add(new Bytecode.Conversion((Type.Primitive) from,
 					(Type.Primitive) to));	
 		} 
-	}
+	}		
 }

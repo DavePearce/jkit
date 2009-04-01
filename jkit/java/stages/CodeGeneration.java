@@ -459,14 +459,14 @@ public class CodeGeneration {
 			// information on the iterator. The easiest way to do this is to
 			// look up the iterator() method in the src class, and use it's
 			// return type.
-			iter = new Expr.Variable(iterLab, new Type.Clazz("java.lang",
+			iter = new Expr.Variable(iterLab, new Type.Clazz("java.util",
 					"Iterator"));
 			stmts
 					.add(new Stmt.Assign(iter, new Expr.Invoke(src.first(),
 							"iterator", new ArrayList<Expr>(),
 							Expr.Invoke.POLYMORPHIC, new Type.Function(
-									new Type.Clazz("java.lang", "Iterator")),
-							new Type.Clazz("java.lang", "Iterator")), stmt
+									new Type.Clazz("java.util", "Iterator")),
+							new Type.Clazz("java.util", "Iterator")), stmt
 							.attributes()));
 		}				
 		
@@ -487,16 +487,18 @@ public class CodeGeneration {
 					iter, loopVar.type())));
 		} else {
 			Expr hasnext = new Expr.Invoke(iter, "hasNext",
-					new ArrayList<Expr>(), Expr.Invoke.POLYMORPHIC,
+					new ArrayList<Expr>(), Expr.Invoke.INTERFACE,
 					new Type.Function(new Type.Bool()), new Type.Bool(), stmt
 							.attributes());
 			stmts.add(new Stmt.IfGoto(new Expr.UnOp(hasnext, Expr.UnOp.NOT, 
 					new Type.Bool()), exitLab));
 			
 			Expr next = new Expr.Invoke(iter, "next", new ArrayList<Expr>(),
-					Expr.Invoke.POLYMORPHIC, new Type.Function(loopVar.type()),
-					loopVar.type(), stmt.attributes());
-			stmts.add(new Stmt.Assign(loopVar, next, stmt.attributes()));			
+					Expr.Invoke.INTERFACE, new Type.Function(new Type.Clazz(
+							"java.lang", "Object")), loopVar.type(), stmt
+							.attributes());
+			Expr cast = new Expr.Cast(next,loopVar.type());
+			stmts.add(new Stmt.Assign(loopVar, cast, stmt.attributes()));			
 		}
 		
 		// Third, do body
