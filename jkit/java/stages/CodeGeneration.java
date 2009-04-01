@@ -26,6 +26,18 @@ public class CodeGeneration {
 	private ClassLoader loader = null;
 	private TypeSystem types = null;
 	
+	private static class Scope {}
+	private static class LoopScope extends Scope {
+		public String continueLab;
+		public String exitLab;
+		public LoopScope(String cl, String el) {
+			continueLab = cl;
+			exitLab = el;
+		}
+	}
+	
+	private final Stack<Scope> scopes = new Stack<Scope>();
+	
 	public CodeGeneration(ClassLoader loader, TypeSystem types) {
 		this.loader = loader;
 		this.types = types;
@@ -323,36 +335,45 @@ public class CodeGeneration {
 	static protected int whileexit_label = 0;
 	
 	protected List<Stmt> doWhile(jkit.java.tree.Stmt.While stmt) {
+		String headerLab = "whileheader" + whileheader_label++;
+		String exitLab = "whileexit" + whileexit_label++;
 		ArrayList<Stmt> r = new ArrayList<Stmt>();
 		
-		r.add(new Stmt.Label("whileheader" + whileheader_label, stmt
+		r.add(new Stmt.Label(headerLab, stmt
 				.attributes()));
 		Pair<Expr, List<Stmt>> cond = doExpression(stmt.condition());
 		r.addAll(cond.second());
 		r.add(new Stmt.IfGoto(new Expr.UnOp(cond.first(), Expr.UnOp.NOT,
-				new Type.Bool(), stmt.condition().attributes()), "whileexit"
-				+ whileexit_label, stmt.attributes()));
-		r.addAll(doStatement(stmt.body()));
-		r.add(new Stmt.Goto("whileheader" + whileheader_label++, stmt
+				new Type.Bool(), stmt.condition().attributes()), exitLab, stmt
 				.attributes()));
-		r.add(new Stmt.Label("whileexit" + whileexit_label++, stmt
+		scopes.push(new LoopScope(headerLab,exitLab));
+		r.addAll(doStatement(stmt.body()));
+		scopes.pop();
+		r.add(new Stmt.Goto(headerLab, stmt
+				.attributes()));
+		r.add(new Stmt.Label(exitLab, stmt
 						.attributes()));
 		
 		return r;
 	}
 	
 	static protected int dowhileheader_label = 0;	
+	static protected int dowhileexit_label = 0;
 	
 	protected List<Stmt> doDoWhile(jkit.java.tree.Stmt.DoWhile stmt) {
+		String headerLab = "dowhileheader" + dowhileheader_label++;
+		String exitLab = "dowhileexit" + dowhileexit_label++;
+		
 		ArrayList<Stmt> r = new ArrayList<Stmt>();
 		
-		r.add(new Stmt.Label("dowhileheader" + dowhileheader_label, stmt
+		r.add(new Stmt.Label(headerLab, stmt
 				.attributes()));
+		scopes.push(new LoopScope(headerLab,exitLab));
 		r.addAll(doStatement(stmt.body()));
+		scopes.pop();
 		Pair<Expr, List<Stmt>> cond = doExpression(stmt.condition());
 		r.addAll(cond.second());
-		r.add(new Stmt.IfGoto(cond.first(), "dowhileheader"
-				+ dowhileheader_label++, stmt.attributes()));
+		r.add(new Stmt.IfGoto(cond.first(), headerLab, stmt.attributes()));
 						
 		return r;		
 	}
@@ -361,32 +382,37 @@ public class CodeGeneration {
 	static protected int forexit_label = 0;
 	
 	protected List<Stmt> doFor(jkit.java.tree.Stmt.For stmt) {
+		String headerLab = "forheader" + forheader_label++;
+		String exitLab = "forexit" + forexit_label++;
+		
 		ArrayList<Stmt> r = new ArrayList<Stmt>();
 		
 		if(stmt.initialiser() != null) {
 			r.addAll(doStatement(stmt.initialiser()));
 		}
 		
-		r.add(new Stmt.Label("forheader" + forheader_label, stmt
+		r.add(new Stmt.Label(headerLab, stmt
 				.attributes()));
 		
 		if(stmt.condition() != null) {
 			Pair<Expr, List<Stmt>> cond = doExpression(stmt.condition());
 			r.addAll(cond.second());
 			r.add(new Stmt.IfGoto(new Expr.UnOp(cond.first(), Expr.UnOp.NOT,
-					new Type.Bool(), stmt.condition().attributes()), "forexit"
-					+ forexit_label, stmt.attributes()));
+					new Type.Bool(), stmt.condition().attributes()), exitLab,
+					stmt.attributes()));
 		}
 		
+		scopes.push(new LoopScope(headerLab,exitLab));
 		r.addAll(doStatement(stmt.body()));
+		scopes.pop();
 		
 		if(stmt.increment() != null) {
 			r.addAll(doStatement(stmt.increment()));
 		}
 		
-		r.add(new Stmt.Goto("forheader" + forheader_label++, stmt
+		r.add(new Stmt.Goto(headerLab, stmt
 				.attributes()));
-		r.add(new Stmt.Label("forexit" + forexit_label++, stmt
+		r.add(new Stmt.Label(exitLab, stmt
 				.attributes()));
 		
 		return r;
