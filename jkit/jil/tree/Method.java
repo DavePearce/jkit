@@ -288,6 +288,16 @@ public class Method extends SyntacticElementImpl {
 						biguns.add(e.getKey());
 					}
 				}
+			} else if(s instanceof Expr.Invoke) {
+				Expr.Invoke a = (Expr.Invoke) s;
+				Map<String,Type> env = Exprs.localVariables(a);
+				vars.addAll(env.keySet());
+				for(Map.Entry<String,Type> e : env.entrySet()) {
+					if (e.getValue() instanceof Type.Double
+							|| e.getValue() instanceof Type.Long) {
+						biguns.add(e.getKey());
+					}
+				}
 			}
 		}
 		

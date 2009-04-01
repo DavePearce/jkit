@@ -25,13 +25,11 @@ public class JilFileWriter {
 	
 	public void write(Clazz jc) {
 		output.print("class " + jc.type() + " ");
-		if(jc.superClass() != null) {
-			output.println("");
-			output.print("\t extends " + jc.superClass());
+		if(jc.superClass() != null) {			
+			output.print(" extends " + jc.superClass());
 		}
-		if(jc.interfaces().size() > 0) {
-			output.println("");
-			output.print("\t implements ");
+		if(jc.interfaces().size() > 0) {			
+			output.print(" implements ");
 			boolean firstTime=true;
 			for(Type.Clazz i : jc.interfaces()) {
 				if(!firstTime) {
@@ -42,13 +40,15 @@ public class JilFileWriter {
 			}			
 		}				
 		
-		output.println(" {\n");
+		output.println(" {");
 		
 		for(Field f : jc.fields()) {
 			write(f);
 		}
 		
-		output.println("");
+		if(!jc.fields().isEmpty()) {
+			output.println("");
+		}
 		
 		for(Method m : jc.methods()) {
 			write(m);
@@ -180,6 +180,8 @@ public class JilFileWriter {
 			write((Expr.Null)e);
 		} else if(e instanceof Expr.StringVal) {
 			write((Expr.StringVal)e);
+		} else if(e instanceof Expr.Array) {
+			write((Expr.Array)e);
 		} else if(e instanceof Expr.Variable) {		
 			write((Expr.Variable)e);
 		} else if(e instanceof Expr.UnOp) {
@@ -252,6 +254,19 @@ public class JilFileWriter {
 		output.print("\"");
 		writeWithEscapes(e.value());
 		output.print("\"");
+	}
+	
+	protected void write(Expr.Array ae) {
+		output.print("new " + ae.type() + "{");
+		boolean firstTime=true;
+		for(Expr e : ae.values()) {
+			if(!firstTime) {
+				output.print(", ");
+			}
+			firstTime=false;
+			write(e);
+		}
+		output.print("}");
 	}
 	
 	protected void write(Expr.Variable v) {
