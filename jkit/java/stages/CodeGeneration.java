@@ -279,7 +279,12 @@ public class CodeGeneration {
 	protected List<Stmt> doBreak(jkit.java.tree.Stmt.Break brk) {
 		ArrayList<Stmt> r = new ArrayList<Stmt>();
 		
-		// need to do some real code generation here.
+		if(brk.label() == null) {
+			LoopScope ls = (LoopScope) findEnclosingScope(LoopScope.class);
+			r.add(new Stmt.Goto(ls.exitLab,brk.attributes()));
+		} else {
+			r.add(new Stmt.Goto(brk.label(),brk.attributes()));
+		}
 		
 		return r;
 	}
@@ -287,7 +292,13 @@ public class CodeGeneration {
 	protected List<Stmt> doContinue(jkit.java.tree.Stmt.Continue brk) {
 		ArrayList<Stmt> r = new ArrayList<Stmt>();
 		
-		// need to do some real code generation here.
+		if(brk.label() == null) {
+			LoopScope ls = (LoopScope) findEnclosingScope(LoopScope.class);
+			r.add(new Stmt.Goto(ls.continueLab,brk.attributes()));
+		} else {
+			// this must be broken.
+			r.add(new Stmt.Goto(brk.label(),brk.attributes()));
+		}
 		
 		return r;
 	}
@@ -792,6 +803,16 @@ public class CodeGeneration {
 		syntax_error("internal failure --- problem processing ternary operator.",e);
 		return null;
 	}
+	
+	protected Scope findEnclosingScope(Class c) {
+		for(int i=scopes.size()-1;i>=0;--i) {
+			Scope s = scopes.get(i);
+			if(s.getClass().equals(c)) {
+				return s;
+			}
+		}
+		return null;
+	}	
 	
 	/**
      * This method is just to factor out the code for looking up the source
