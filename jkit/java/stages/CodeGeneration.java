@@ -460,14 +460,14 @@ public class CodeGeneration {
 			// look up the iterator() method in the src class, and use it's
 			// return type.
 			iter = new Expr.Variable(iterLab, new Type.Clazz("java.util",
-					"Iterator"));
+					"Iterator"));			 
+
 			stmts
 					.add(new Stmt.Assign(iter, new Expr.Invoke(src.first(),
 							"iterator", new ArrayList<Expr>(),
-							Expr.Invoke.POLYMORPHIC, new Type.Function(
-									new Type.Clazz("java.util", "Iterator")),
-							new Type.Clazz("java.util", "Iterator")), stmt
-							.attributes()));
+							new Type.Function(new Type.Clazz("java.util",
+									"Iterator")), new Type.Clazz("java.util",
+									"Iterator")), stmt.attributes()));
 		}				
 		
 		stmts.add(new Stmt.Label(headerLab, stmt
@@ -487,17 +487,15 @@ public class CodeGeneration {
 					iter, loopVar.type())));
 		} else {
 			Expr hasnext = new Expr.Invoke(iter, "hasNext",
-					new ArrayList<Expr>(), Expr.Invoke.INTERFACE,
-					new Type.Function(new Type.Bool()), new Type.Bool(), stmt
-							.attributes());
-			stmts.add(new Stmt.IfGoto(new Expr.UnOp(hasnext, Expr.UnOp.NOT, 
+					new ArrayList<Expr>(), new Type.Function(new Type.Bool()),
+					new Type.Bool(), stmt.attributes());
+			stmts.add(new Stmt.IfGoto(new Expr.UnOp(hasnext, Expr.UnOp.NOT,
 					new Type.Bool()), exitLab));
-			
+
 			Expr next = new Expr.Invoke(iter, "next", new ArrayList<Expr>(),
-					Expr.Invoke.INTERFACE, new Type.Function(new Type.Clazz(
-							"java.lang", "Object")), loopVar.type(), stmt
-							.attributes());
-			Expr cast = new Expr.Cast(next,loopVar.type());
+					new Type.Function(new Type.Clazz("java.lang", "Object")),
+					loopVar.type(), stmt.attributes());
+			Expr cast = new Expr.Cast(next, loopVar.type());
 			stmts.add(new Stmt.Assign(loopVar, cast, stmt.attributes()));			
 		}
 		
@@ -684,11 +682,11 @@ public class CodeGeneration {
 		
 		if (target.first() instanceof Expr.ClassVariable) {
 			return new Pair<Expr, List<Stmt>>(new Expr.Invoke(target.first(), e
-					.name(), nparameters, Expr.Invoke.STATIC, funType, type, e
+					.name(), nparameters, funType, type, e
 					.attributes()), r);
 		} else {
 			return new Pair<Expr, List<Stmt>>(new Expr.Invoke(target.first(), e
-					.name(), nparameters, Expr.Invoke.POLYMORPHIC, funType, type, e
+					.name(), nparameters, funType, type, e
 					.attributes()), r);
 		}
 	}
@@ -905,24 +903,21 @@ public class CodeGeneration {
 		params.add(lhs.first());
 		
 		stmts.add(new Expr.Invoke(new Expr.Variable("$$", builder), "append",
-				params, Expr.Invoke.POLYMORPHIC, new Type.Function(
-						new Type.Clazz("java.lang", "StringBuilder"), lhs
-								.first().type()), new Type.Clazz("java.lang",
-						"StringBuilder")));
+				params, new Type.Function(new Type.Clazz("java.lang",
+						"StringBuilder"), lhs.first().type()), new Type.Clazz(
+						"java.lang", "StringBuilder")));
 
 		params = new ArrayList<Expr>();
 		params.add(rhs.first());
 
 		Expr r = new Expr.Invoke(new Expr.Variable("$$", builder), "append",
-				params, Expr.Invoke.POLYMORPHIC, new Type.Function(
-						new Type.Clazz("java.lang", "StringBuilder"), rhs
-								.first().type()), new Type.Clazz("java.lang",
-						"StringBuilder"));
+				params, new Type.Function(new Type.Clazz("java.lang",
+						"StringBuilder"), rhs.first().type()), new Type.Clazz(
+						"java.lang", "StringBuilder"));
 
 		r = new Expr.Invoke(r, "toString", new ArrayList<Expr>(),
-				Expr.Invoke.POLYMORPHIC, new Type.Function(new Type.Clazz(
-						"java.lang", "String")), new Type.Clazz("java.lang",
-						"String"));
+				new Type.Function(new Type.Clazz("java.lang", "String")),
+				new Type.Clazz("java.lang", "String"));
 		
 		return new Pair<Expr,List<Stmt>>(r,stmts);
 	}

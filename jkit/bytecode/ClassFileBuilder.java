@@ -472,67 +472,66 @@ public class ClassFileBuilder {
 	protected void translateInvoke(Expr.Invoke stmt,
 			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes,
 			boolean needReturnValue) {
-
-		if (!stmt.isStatic()) {
-			// must be non-static invocation
-			translateExpression(stmt.target(), varmap, bytecodes);
-		}
-		// translate parameters
-		for (Expr p : stmt.parameters()) {
-			translateExpression(p, varmap, bytecodes);
-		}
 		
 		Type.Clazz targetT = (Type.Clazz) stmt.target().type();
-		String targetName = targetT.components().get(
-				targetT.components().size() - 1).first();
 		
-		// Ok, now we're good to go.
-		
-		if (stmt.isStatic()) {
-			// STATIC
-			bytecodes.add(new Bytecode.Invoke(
-					targetT, stmt.name(), stmt.funType(), Bytecode.STATIC));
-		} else if (stmt.target().type() instanceof Type.Clazz
-				&& stmt.name().equals(targetName)) {
-			// this is a constructor call
-			bytecodes.add(new Bytecode.Invoke(targetT, "<init>",
-					stmt.funType(), Bytecode.SPECIAL));
-		} else {
-			// check whether this is an interface or a class call.
-			if (stmt.isInterface()) {
-				bytecodes.add(new Bytecode.Invoke(targetT, stmt.name(), stmt
-						.funType(), Bytecode.INTERFACE));
+		try {			
+			int dispatchMode = determineDispatchMode(targetT, stmt.name(), stmt
+					.funType());
+			if (dispatchMode != DISPATCH_STATIC) {
+				// must be non-static invocation
+				translateExpression(stmt.target(), varmap, bytecodes);
+			}
+			// translate parameters
+			for (Expr p : stmt.parameters()) {
+				translateExpression(p, varmap, bytecodes);
+			}
+			
+			if (dispatchMode == DISPATCH_STATIC) {
+				// STATIC
+				bytecodes.add(new Bytecode.Invoke(targetT, stmt.name(),
+						stmt.funType(), Bytecode.STATIC));
+			} else if (dispatchMode == DISPATCH_INTERFACE) {
+				bytecodes.add(new Bytecode.Invoke(targetT, stmt.name(),
+						stmt.funType(), Bytecode.INTERFACE));
 			} else {
-				bytecodes.add(new Bytecode.Invoke(targetT, stmt
-						.name(), stmt.funType(),
-						stmt.isPolymorphic() ? Bytecode.VIRTUAL
-								: Bytecode.SPECIAL));
+				bytecodes.add(new Bytecode.Invoke(targetT, stmt.name(),
+						stmt.funType(), Bytecode.VIRTUAL));
 			}
-		}		
 
-		Type retT = stmt.funType().returnType();
-				
-		if (!(retT instanceof Type.Void)) {
-			// Need to account for space occupied by return type!			
-			if (!needReturnValue) {
-				// the return value is not required, so we need to pop it from
-				// the stack
-				bytecodes.add(new Bytecode.Pop(retT));
-			} else if ((retT instanceof Type.Variable ||
-						ClassFile.isGenericArray(retT))
-					&& !(stmt.type() instanceof Type.Variable)
-					&& !stmt.type().equals(
-							new Type.Clazz("java.lang", "Object"))) {				
-				// Here, the actual return type is a (generic) type variable
-				// (e.g. T or T[]), and we're expecting it to return a real
-                // value (e.g. String, substituted for T). This issue is
-				// that, because of erasure, the returned type will be Object
-				// and we need to cast it to whatever it needs to be (e.g.
-				// String). Note, if the value substituted for T is actually
-				// Object, then we just do nothing!
-				bytecodes.add(new Bytecode.CheckCast(stmt.type()));								
+			Type retT = stmt.funType().returnType();
+
+			if (!(retT instanceof Type.Void)) {
+				// Need to account for space occupied by return type!
+				if (!needReturnValue) {
+					// the return value is not required, so we need to pop
+					// it from
+					// the stack
+					bytecodes.add(new Bytecode.Pop(retT));
+				} else if ((retT instanceof Type.Variable || ClassFile
+						.isGenericArray(retT))
+						&& !(stmt.type() instanceof Type.Variable)
+						&& !stmt.type().equals(
+								new Type.Clazz("java.lang", "Object"))) {
+					// Here, the actual return type is a (generic) type
+					// variable
+					// (e.g. T or T[]), and we're expecting it to return a
+					// real
+					// value (e.g. String, substituted for T). This issue is
+					// that, because of erasure, the returned type will be
+					// Object
+					// and we need to cast it to whatever it needs to be
+					// (e.g.
+					// String). Note, if the value substituted for T is
+					// actually
+					// Object, then we just do nothing!
+					bytecodes.add(new Bytecode.CheckCast(stmt.type()));
+				}
 			}
-		}
+		} catch (ClassNotFoundException cnfe) {
+			throw new RuntimeException("internal error:"
+					+ cnfe.getMessage());
+		}		
 	}
 
 	/**
@@ -918,4 +917,38 @@ public class ClassFileBuilder {
 					(Type.Primitive) to));	
 		} 
 	}		
+	
+	/**
+	 * The purpose of this method is to determine the dispatch mode required for
+	 * this particular method call.
+	 * 
+	 * @param receiver
+	 * @param funType
+	 * @return 0 for virtual, 1 for interface, 2 for static
+	 */
+	protected final int DISPATCH_VIRTUAL = 0;
+	protected final int DISPATCH_INTERFACE = 1;
+	protected final int DISPATCH_STATIC = 2;
+	
+	protected int determineDispatchMode(Type.Clazz receiver, String name,
+			Type.Function funType) throws ClassNotFoundException {
+
+		String fdesc = ClassFile.descriptor(funType, false);
+		
+		while (receiver != null) {
+			Clazz c = loader.loadClass(receiver);
+			if(c.isInterface()) {
+				return DISPATCH_INTERFACE;
+			}			
+			for (Method m : c.methods(name)) {
+				String mdesc = ClassFile.descriptor(m.type(), false);						
+				if (fdesc.equals(mdesc)) {
+					return m.isStatic() ? DISPATCH_STATIC : DISPATCH_VIRTUAL;
+				}
+			}
+			receiver = c.superClass();
+		}
+
+		return DISPATCH_INTERFACE;
+	}
 }

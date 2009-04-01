@@ -363,13 +363,8 @@ public interface Expr extends SyntacticElement {
 		protected String name;
 		protected List<Expr> parameters;
 		protected Type type; 		
-		protected Type.Function funType;
-		protected int mode;
-		
-		public static final int STATIC = 1;
-		public static final int INTERFACE = 2;
-		public static final int POLYMORPHIC = 4;
-		
+		protected Type.Function funType;		
+				
 		/**
 		 * Construct a method which may, or may not be polymorphic.
 		 * 
@@ -379,20 +374,15 @@ public interface Expr extends SyntacticElement {
 		 *            The name of the method
 		 * @param parameters
 		 *            The parameters of the method
-		 * @param isStatic
-		 *            Indicates whether this represents a static invocation or
-		 *            not.
 		 */
 		public Invoke(Expr target, String name, List<Expr> parameters,
-				int mode, Type.Function funType, Type type,
-				Attribute... attributes) {
+				Type.Function funType, Type type, Attribute... attributes) {
 			super(attributes);
 			this.target = target;
 			this.name = name;
 			this.parameters = parameters;
 			this.type = type;
 			this.funType = funType;
-			this.mode = mode;
 		}
 		
 		/**
@@ -404,20 +394,15 @@ public interface Expr extends SyntacticElement {
 		 *            The name of the method
 		 * @param parameters
 		 *            The parameters of the method
-		 * @param isStatic
-		 *            Indicates whether this represents a static invocation or
-		 *            not.
 		 */
 		public Invoke(Expr target, String name, List<Expr> parameters,
-				int mode, Type.Function funType, Type type,
-				List<Attribute> attributes) {
+				Type.Function funType, Type type, List<Attribute> attributes) {
 			super(attributes);
 			this.target = target;
 			this.name = name;
 			this.parameters = parameters;
 			this.type = type;
 			this.funType = funType;
-			this.mode = mode;
 		}
 		
 		public Expr target() {
@@ -450,23 +435,7 @@ public interface Expr extends SyntacticElement {
 		
 		public void setFunType(Type.Function funtype) {
 			this.funType = funtype;
-		}
-		
-		public boolean isStatic() {
-			return mode == STATIC;
-		}
-		
-		public boolean isInterface() {
-			return mode == INTERFACE;
-		}
-		
-		public boolean isPolymorphic() {
-			return mode == POLYMORPHIC;
-		}
-		
-		public void setMode(int mode) {
-			this.mode = mode;
-		}
+		}		
 		
 		public List<Expr> parameters() {
 			return parameters;
