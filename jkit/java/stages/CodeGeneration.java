@@ -877,6 +877,8 @@ public class CodeGeneration {
 		}
 	}
 	
+	protected static int stringbuilder_label = 0;
+	
 	protected Pair<Expr,List<Stmt>> doStringConcat(jkit.java.tree.Expr.BinOp bop){
 		
 		// This method is evidence as to why Java sucks as a programming
@@ -884,7 +886,7 @@ public class CodeGeneration {
 		// here, but lack of good notation makes it awkward in Java. Sure, there
 		// are some hacks to can do to improve the situation but basically it's
 		// screwed.
-		
+		String builderLab = "$builder" + stringbuilder_label++;
 		Pair<Expr,List<Stmt>> lhs = doExpression(bop.lhs());
 		Pair<Expr,List<Stmt>> rhs = doExpression(bop.rhs());
 		
@@ -895,22 +897,22 @@ public class CodeGeneration {
 		Type.Clazz builder = new Type.Clazz("java.lang",
 				"StringBuilder");
 						
-		stmts.add(new Stmt.Assign(new Expr.Variable("$$", builder),
+		stmts.add(new Stmt.Assign(new Expr.Variable(builderLab, builder),
 				new Expr.New(builder, new ArrayList<Expr>(),
 						new Type.Function(new Type.Void()), bop.attributes())));
 		
 		ArrayList<Expr> params = new ArrayList<Expr>();
 		params.add(lhs.first());
 		
-		stmts.add(new Expr.Invoke(new Expr.Variable("$$", builder), "append",
+		stmts.add(new Expr.Invoke(new Expr.Variable(builderLab, builder), "append",
 				params, new Type.Function(new Type.Clazz("java.lang",
 						"StringBuilder"), lhs.first().type()), new Type.Clazz(
 						"java.lang", "StringBuilder")));
 
 		params = new ArrayList<Expr>();
 		params.add(rhs.first());
-
-		Expr r = new Expr.Invoke(new Expr.Variable("$$", builder), "append",
+		
+		Expr r = new Expr.Invoke(new Expr.Variable(builderLab, builder), "append",
 				params, new Type.Function(new Type.Clazz("java.lang",
 						"StringBuilder"), rhs.first().type()), new Type.Clazz(
 						"java.lang", "StringBuilder"));
