@@ -95,10 +95,16 @@ public class ClassFileBuilder {
 		}
 		
 		// determine slot allocations for local variables. 		
-		for (String var : method.localVariables()) {
-			localVarMap.put(var, maxLocals);
-			// there's a bug here, which i'm not sure how to resolve as yet.
+		for (Pair<String,Boolean> p : method.localVariables()) {
+			localVarMap.put(p.first(), maxLocals);
 			maxLocals ++;
+			// The following represents a conservative assumption regarding
+			// slotSize which will not be optimal is some cases. For example,
+			// when a variable with the same name is used as a variable of type
+			// long, and elsewhere used as a variable of type e.g. int.
+			if(p.second()) {
+				maxLocals ++;
+			}
 		}
 		
 		// === TRANSLATE BYTECODES ===

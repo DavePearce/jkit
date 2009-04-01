@@ -212,30 +212,82 @@ public class Method extends SyntacticElementImpl {
 	 * 
 	 * @return
 	 */
-	public Set<String> localVariables() {
+	public List<Pair<String,Boolean>> localVariables() {
 		HashSet<String> vars = new HashSet<String>();
+		HashSet<String> biguns = new HashSet(); 
+		
 		for(Stmt s : body) {
 			if(s instanceof Stmt.Assign) {
 				Stmt.Assign a = (Stmt.Assign) s;
-				vars.addAll(Exprs.localVariables(a.lhs()));
-				vars.addAll(Exprs.localVariables(a.rhs()));
+				Map<String,Type> env1 = Exprs.localVariables(a.lhs());
+				Map<String,Type> env2 = Exprs.localVariables(a.rhs());
+				vars.addAll(env1.keySet());
+				vars.addAll(env2.keySet());
+				for(Map.Entry<String,Type> e : env1.entrySet()) {
+					if (e.getValue() instanceof Type.Double
+							|| e.getValue() instanceof Type.Long) {
+						biguns.add(e.getKey());
+					}
+				}				
+				for(Map.Entry<String,Type> e : env2.entrySet()) {
+					if (e.getValue() instanceof Type.Double
+							|| e.getValue() instanceof Type.Long) {
+						biguns.add(e.getKey());
+					}
+				}
+				
 			} else if(s instanceof Stmt.Return) {
 				Stmt.Return a = (Stmt.Return) s;
 				if(a.expr() != null) {
-					vars.addAll(Exprs.localVariables(a.expr()));
+					Map<String,Type> env = Exprs.localVariables(a.expr());
+					vars.addAll(env.keySet());
+					for(Map.Entry<String,Type> e : env.entrySet()) {
+						if (e.getValue() instanceof Type.Double
+								|| e.getValue() instanceof Type.Long) {
+							biguns.add(e.getKey());
+						}
+					}	
 				}
 			} else if(s instanceof Stmt.Throw) {
 				Stmt.Throw a = (Stmt.Throw) s;				
-				vars.addAll(Exprs.localVariables(a.expr()));				
+				Map<String,Type> env = Exprs.localVariables(a.expr());
+				vars.addAll(env.keySet());
+				for(Map.Entry<String,Type> e : env.entrySet()) {
+					if (e.getValue() instanceof Type.Double
+							|| e.getValue() instanceof Type.Long) {
+						biguns.add(e.getKey());
+					}
+				}
 			} else if(s instanceof Stmt.Lock) {
 				Stmt.Lock a = (Stmt.Lock) s;
-				vars.addAll(Exprs.localVariables(a.expr()));
+				Map<String,Type> env = Exprs.localVariables(a.expr());
+				vars.addAll(env.keySet());
+				for(Map.Entry<String,Type> e : env.entrySet()) {
+					if (e.getValue() instanceof Type.Double
+							|| e.getValue() instanceof Type.Long) {
+						biguns.add(e.getKey());
+					}
+				}
 			} else if(s instanceof Stmt.Unlock) {
 				Stmt.Unlock a = (Stmt.Unlock) s;
-				vars.addAll(Exprs.localVariables(a.expr()));
+				Map<String,Type> env = Exprs.localVariables(a.expr());
+				vars.addAll(env.keySet());
+				for(Map.Entry<String,Type> e : env.entrySet()) {
+					if (e.getValue() instanceof Type.Double
+							|| e.getValue() instanceof Type.Long) {
+						biguns.add(e.getKey());
+					}
+				}
 			} else if(s instanceof Stmt.IfGoto) {
 				Stmt.IfGoto a = (Stmt.IfGoto) s;
-				vars.addAll(Exprs.localVariables(a.condition()));
+				Map<String,Type> env = Exprs.localVariables(a.condition());
+				vars.addAll(env.keySet());
+				for(Map.Entry<String,Type> e : env.entrySet()) {
+					if (e.getValue() instanceof Type.Double
+							|| e.getValue() instanceof Type.Long) {
+						biguns.add(e.getKey());
+					}
+				}
 			}
 		}
 		
@@ -243,7 +295,17 @@ public class Method extends SyntacticElementImpl {
 			vars.remove(p.first());
 		}
 		
-		return vars;
+		ArrayList<Pair<String,Boolean>> r = new ArrayList();
+		
+		for(String var : vars) {
+			if(biguns.contains(var)) {
+				r.add(new Pair(var,true));
+			} else {
+				r.add(new Pair(var,false));
+			}
+		}
+		
+		return r;
 	}
 
 }

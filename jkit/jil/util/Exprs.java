@@ -13,50 +13,50 @@ public class Exprs {
 	 * @param e
 	 * @return
 	 */
-	public static Set<String> localVariables(Expr e) {
-		HashSet<String> vars = new HashSet<String>(); 
+	public static Map<String,Type> localVariables(Expr e) {
+		HashMap<String,Type> vars = new HashMap<String,Type>(); 
 		
 		if(e instanceof Variable) {
 			Variable v = (Variable) e;			
-			vars.add(v.value());
+			vars.put(v.value(),v.type());
 		} else if(e instanceof Cast) {
 			Cast c = (Cast) e;
-			vars.addAll(localVariables(c.expr()));
+			vars.putAll(localVariables(c.expr()));
 		} else if(e instanceof Convert) {
 			Convert c = (Convert) e;
-			vars.addAll(localVariables(c.expr()));
+			vars.putAll(localVariables(c.expr()));
 		} else if(e instanceof InstanceOf) {
 			InstanceOf c = (InstanceOf) e;
-			vars.addAll(localVariables(c.lhs()));
+			vars.putAll(localVariables(c.lhs()));
 		} else if(e instanceof UnOp) {
 			UnOp c = (UnOp) e;
-			vars.addAll(localVariables(c.expr()));
+			vars.putAll(localVariables(c.expr()));
 		} else if(e instanceof Deref) {
 			Deref c = (Deref) e;
-			vars.addAll(localVariables(c.target()));
+			vars.putAll(localVariables(c.target()));
 		} else if(e instanceof BinOp) {
 			BinOp c = (BinOp) e;
-			vars.addAll(localVariables(c.lhs()));
-			vars.addAll(localVariables(c.rhs()));
+			vars.putAll(localVariables(c.lhs()));
+			vars.putAll(localVariables(c.rhs()));
 		} else if(e instanceof ArrayIndex) {
 			ArrayIndex c = (ArrayIndex) e;
-			vars.addAll(localVariables(c.target()));
-			vars.addAll(localVariables(c.index()));
+			vars.putAll(localVariables(c.target()));
+			vars.putAll(localVariables(c.index()));
 		} else if(e instanceof Invoke) {
 			Invoke c = (Invoke) e;
-			vars.addAll(localVariables(c.target()));
+			vars.putAll(localVariables(c.target()));
 			for(Expr p : c.parameters()) {
-				vars.addAll(localVariables(p));
+				vars.putAll(localVariables(p));
 			}			
 		} else if(e instanceof New) {
 			New c = (New) e;			
 			for(Expr p : c.parameters()) {
-				vars.addAll(localVariables(p));
+				vars.putAll(localVariables(p));
 			}			
 		} else if(e instanceof Array) {
 			Array c = (Array) e;			
 			for(Expr p : c.values()) {
-				vars.addAll(localVariables(p));
+				vars.putAll(localVariables(p));
 			}			
 		}
 		
