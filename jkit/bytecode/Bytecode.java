@@ -236,10 +236,10 @@ public abstract class Bytecode {
 		}				
 		
 		public int stackDiff() {
-			if (constant instanceof Long && constant instanceof Double) {
+			if (constant instanceof Long || constant instanceof Double) {
 				return 2;
 			}
-			return 1;			
+			return 1;
 		}
 		
 		public void addPoolItems(Set<Constant.Info> constantPool) {

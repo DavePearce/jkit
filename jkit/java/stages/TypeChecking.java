@@ -696,6 +696,15 @@ public class TypeChecking {
 					} 
 				}					
 			}
+		} else if(lhs_t instanceof Type.Bool && rhs_t instanceof Type.Bool) {
+			switch(e.op()) {
+			case BinOp.LOR:
+			case BinOp.LAND:
+				// OK
+				break;
+			default:
+				syntax_error("operand types do not go together: " + lhs_t + ", " + rhs_t,e);
+			}
 		} else {
 			syntax_error("operand types do not go together: " + lhs_t + ", " + rhs_t,e);
 		}
