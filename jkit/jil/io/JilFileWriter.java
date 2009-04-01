@@ -121,6 +121,11 @@ public class JilFileWriter {
 	
 	protected void write(Stmt.Assign s) {
 		output.print("\t\t");
+		
+		if(s.lhs() instanceof Expr.Variable) {
+			output.print(s.rhs().type() + " ");
+		}
+		
 		write(s.lhs());
 		output.print(" = ");
 		write(s.rhs());

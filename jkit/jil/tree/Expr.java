@@ -588,7 +588,7 @@ public interface Expr extends SyntacticElement {
 			this.isStatic = isStatic;
 		}
 
-		public Deref(Expr lhs, String rhs, Type type, boolean isStatic,
+		public Deref(Expr lhs, String rhs, boolean isStatic, Type type, 
 				List<Attribute> attributes) {
 			super(attributes);
 			this.target = lhs;

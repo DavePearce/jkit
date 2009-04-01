@@ -438,8 +438,46 @@ public class TypePropagation {
 		e.attributes().add(t);
 		
 		// Second, recurse through any parameters supplied ...
+		ArrayList<Type> parameterTypes = new ArrayList<Type>();
+		
 		for(Expr p : e.parameters()) {
 			doExpression(p);
+			parameterTypes.add((Type) p.attribute(Type.class));
+		}
+		
+		if(t instanceof Type.Clazz) {
+			Type.Clazz tc = (Type.Clazz) t;
+			try {
+				String constructorName = tc.components().get(tc.components().size()-1).first();
+				Type.Function f = types.resolveMethod(tc, constructorName,
+						parameterTypes, loader).third();
+
+				e.attributes().add(f); // this is a little hacky, but it works.
+				
+			} catch(ClassNotFoundException cnfe) {
+				syntax_error(cnfe.getMessage(), e, cnfe);
+			} catch(MethodNotFoundException mfne) {
+				String msg = "constructor not found: " + tc + "(";
+				boolean firstTime = true;
+				for (Type pt : parameterTypes) {
+					if (!firstTime) {
+						msg += ", ";
+					}
+					firstTime = false;
+					msg += pt;
+				}
+				syntax_error(msg + ")", e, mfne);
+			} catch(TypeSystem.BindError be) {
+				// This can happen if the parameters supplied to bind, which is
+				// called by resolveMethod are somehow not "base equivalent"
+				syntax_error(be.getMessage(),e,be);
+			} catch(Exception be) {
+				// General catch all. The reason for having it is so we can
+				// attribute the cause of the internal failure with a line number.
+				syntax_error("internal failure (" + be.getMessage() + ")",e,be);
+			} 
+		} else if(t instanceof Type.Array) {
+			// need to do something here also ...
 		}
 		
 		// Third, check whether this is constructing an anonymous class ...

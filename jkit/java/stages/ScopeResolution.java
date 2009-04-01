@@ -532,10 +532,11 @@ public class ScopeResolution {
 	
 	protected void doForEach(Stmt.ForEach stmt, JavaFile file) {
 		Scope myScope = new Scope();
-		scopes.push(myScope);
+		scopes.push(myScope);				
 		
 		myScope.variables.put(stmt.var(), new Pair((Type) stmt.type()
 				.attribute(Type.class), stmt.modifiers()));
+		
 		stmt.setSource(doExpression(stmt.source(), file));
 		doStatement(stmt.body(), file);
 		

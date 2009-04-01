@@ -429,13 +429,95 @@ public class CodeGeneration {
 		return r;
 	}
 	
+	static protected int forallheader_label = 0;
+	static protected int forallexit_label = 0;
+	static protected int foralliter_label = 0;
+	
 	protected List<Stmt> doForEach(jkit.java.tree.Stmt.ForEach stmt) {
-		ArrayList<Stmt> r = new ArrayList<Stmt>();
+		String headerLab = "forallheader" + forallheader_label++;
+		String exitLab = "forallexit" + forallexit_label++;
+		String iterLab = "foralliter" + foralliter_label++;
+		
+		ArrayList<Stmt> stmts = new ArrayList<Stmt>();
 		
 		Pair<Expr,List<Stmt>> src = doExpression(stmt.source());
-		r.addAll(doStatement(stmt.body()));	
+		Expr.Variable loopVar = new Expr.Variable(stmt.var(), (Type) stmt
+				.type().attribute(Type.class), stmt.attributes());
 		
-		return r;
+		Type srcType = src.first().type();				
+		
+		stmts.addAll(src.second());
+		Expr.Variable iter;
+		
+		if (srcType instanceof Type.Array) {
+			iter = new Expr.Variable(iterLab, new Type.Int());
+			stmts
+					.add(new Stmt.Assign(iter, new Expr.Int(0), stmt
+							.attributes()));
+		} else {
+			// the following needs to be expanded upon, so as to include generic
+			// information on the iterator. The easiest way to do this is to
+			// look up the iterator() method in the src class, and use it's
+			// return type.
+			iter = new Expr.Variable(iterLab, new Type.Clazz("java.lang",
+					"Iterator"));
+			stmts
+					.add(new Stmt.Assign(iter, new Expr.Invoke(src.first(),
+							"iterator", new ArrayList<Expr>(),
+							Expr.Invoke.POLYMORPHIC, new Type.Function(
+									new Type.Clazz("java.lang", "Iterator")),
+							new Type.Clazz("java.lang", "Iterator")), stmt
+							.attributes()));
+		}				
+		
+		stmts.add(new Stmt.Label(headerLab, stmt
+				.attributes()));
+		
+		// Second, do condition
+		
+		if (srcType instanceof Type.Array) {
+			Expr arrlength = new Expr.Deref(src.first(),"length",false,new Type.Int(), stmt
+					.attributes());
+			Expr gecmp = new Expr.BinOp(iter,arrlength,Expr.BinOp.GTEQ,new Type.Bool(), stmt
+					.attributes());
+			stmts.add(new Stmt.IfGoto(gecmp,exitLab, stmt
+					.attributes()));
+			
+			stmts.add(new Stmt.Assign(loopVar, new Expr.ArrayIndex(src.first(),
+					iter, loopVar.type())));
+		} else {
+			Expr hasnext = new Expr.Invoke(iter, "hasNext",
+					new ArrayList<Expr>(), Expr.Invoke.POLYMORPHIC,
+					new Type.Function(new Type.Bool()), new Type.Bool(), stmt
+							.attributes());
+			stmts.add(new Stmt.IfGoto(new Expr.UnOp(hasnext, Expr.UnOp.NOT, 
+					new Type.Bool()), exitLab));
+			
+			Expr next = new Expr.Invoke(iter, "next", new ArrayList<Expr>(),
+					Expr.Invoke.POLYMORPHIC, new Type.Function(loopVar.type()),
+					loopVar.type(), stmt.attributes());
+			stmts.add(new Stmt.Assign(loopVar, next, stmt.attributes()));			
+		}
+		
+		// Third, do body
+		
+		scopes.push(new LoopScope(headerLab,exitLab));
+		stmts.addAll(doStatement(stmt.body()));	
+		scopes.pop();
+		
+		// Fourth, do increment
+		if (srcType instanceof Type.Array) {
+			Expr.BinOp rhs = new Expr.BinOp(iter, new Expr.Int(1),
+					Expr.BinOp.ADD, new Type.Int(), stmt.attributes());
+			stmts.add(new Stmt.Assign(iter,rhs,stmt.attributes()));
+		} 
+		
+		stmts.add(new Stmt.Goto(headerLab,stmt.attributes()));
+		
+		stmts.add(new Stmt.Label(exitLab, stmt
+				.attributes()));
+		
+		return stmts;
 	}
 	
 	protected List<Stmt> doSwitch(jkit.java.tree.Stmt.Switch sw) {
@@ -524,7 +606,7 @@ public class CodeGeneration {
 				.resolveField(targetT, e.name(), loader);
 
 				return new Pair<Expr, List<Stmt>>(new Expr.Deref(target.first(), e
-						.name(), type, r.second().isStatic(), e.attributes()),
+						.name(),r.second().isStatic(), type,  e.attributes()),
 						target.second());
 			} catch(ClassNotFoundException cne) {
 				syntax_error(cne.getMessage(),e,cne);				
@@ -534,7 +616,7 @@ public class CodeGeneration {
 			}
 		} else if(_targetT instanceof Type.Array && e.name().equals("length")) {
 			return new Pair<Expr, List<Stmt>>(new Expr.Deref(target.first(), e
-					.name(), type, false, e.attributes()),
+					.name(), false, type,  e.attributes()),
 					target.second());
 		} else {
 			syntax_error("cannot dereference type " + _targetT,e);
