@@ -358,7 +358,7 @@ public interface Expr extends SyntacticElement {
 	 * @author djp
 	 * 
 	 */
-	public static final class Invoke extends SyntacticElementImpl implements Expr, Stmt {
+	public static class Invoke extends SyntacticElementImpl implements Expr, Stmt {
 		protected Expr target;
 		protected String name;
 		protected List<Expr> parameters;
@@ -374,6 +374,12 @@ public interface Expr extends SyntacticElement {
 		 *            The name of the method
 		 * @param parameters
 		 *            The parameters of the method
+		 * @param funType
+		 *            The function type of the method being called.
+		 * @param type
+		 *            the return type from this expression. Note that this can
+		 *            differ from the return type of funType, especially in the
+		 *            case of generics.
 		 */
 		public Invoke(Expr target, String name, List<Expr> parameters,
 				Type.Function funType, Type type, Attribute... attributes) {
@@ -394,6 +400,12 @@ public interface Expr extends SyntacticElement {
 		 *            The name of the method
 		 * @param parameters
 		 *            The parameters of the method
+		 * @param funType
+		 *            The function type of the method being called.
+		 * @param type
+		 *            the return type from this expression. Note that this can
+		 *            differ from the return type of funType, especially in the
+		 *            case of generics.
 		 */
 		public Invoke(Expr target, String name, List<Expr> parameters,
 				Type.Function funType, Type type, List<Attribute> attributes) {
@@ -446,6 +458,66 @@ public interface Expr extends SyntacticElement {
 		}
 	}
 
+	/**
+	 * A special invoke represents a method call that will be translated into an
+	 * invokespecial bytecode. It may seem unnecessary to have this explicit in
+	 * the JIL intermediate representation. However, in some cases, the user
+	 * needs to be able to state this explicitly. For example, consider explicit
+	 * super-class method calls. E.g. "super.add()" from a class extending
+	 * ArrayList. In this case, the method call is "non-polymorphic". That is,
+	 * it does not adhere to the normal dynamic dispatch rules, and will not
+	 * dynamically dispatch based on the actual type of the receiver. This must
+	 * be so, since otherwise any such super call would likely end causing an
+	 * infinte loop!
+	 * 
+	 * @author djp
+	 * 
+	 */
+	public static final class SpecialInvoke extends Invoke {
+		/**
+		 * Construct a method which may, or may not be polymorphic.
+		 * 
+		 * @param target
+		 *            The expression from which the receiver is determined
+		 * @param name
+		 *            The name of the method
+		 * @param parameters
+		 *            The parameters of the method
+		 * @param funType
+		 *            The function type of the method being called.
+		 * @param type
+		 *            the return type from this expression. Note that this can
+		 *            differ from the return type of funType, especially in the
+		 *            case of generics.
+		 */
+		public SpecialInvoke(Expr target, String name, List<Expr> parameters,
+				Type.Function funType, Type type, Attribute... attributes) {
+			super(target,name,parameters,funType,type,attributes);
+		}
+		
+		/**
+		 * Construct a method which may, or may not be polymorphic.
+		 * 
+		 * @param target
+		 *            The expression from which the receiver is determined
+		 * @param name
+		 *            The name of the method
+		 * @param parameters
+		 *            The parameters of the method
+		 * @param funType
+		 *            The function type of the method being called.
+		 * @param type
+		 *            the return type from this expression. Note that this can
+		 *            differ from the return type of funType, especially in the
+		 *            case of generics.
+		 */
+		public SpecialInvoke(Expr target, String name, List<Expr> parameters,
+				Type.Function funType, Type type, List<Attribute> attributes) {
+			super(target,name,parameters,funType,type,attributes);			
+		}
+	}
+		
+	
 	/**
 	 * Represents the new operator. The parameters provided are either passed to
 	 * that object's constructor, or are used to determine the necessary array

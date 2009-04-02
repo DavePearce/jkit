@@ -339,6 +339,9 @@ public class JilFileWriter {
 		write(e.target());
 		output.print(".");
 		output.print(e.name());
+		if (e instanceof Expr.SpecialInvoke) {
+			output.print("!");
+		}
 		output.print("(");
 		boolean firstTime=true;
 		for(Expr p : e.parameters()) {

@@ -36,7 +36,13 @@ public class ClassFileBuilder {
 	
 	protected void buildMethods(Clazz clazz, ClassFile cfile) {
 		for (Method m : clazz.methods()) {
-			ClassFile.Method cfm = new ClassFile.Method(m.name(), m.type(), m
+			String m_name = m.name();
+			if(m_name.equals(clazz.name())) {
+				// this is a constructor call, so we need to use a different
+				// name.
+				m_name = "<init>";
+			}
+			ClassFile.Method cfm = new ClassFile.Method(m_name, m.type(), m
 					.modifiers(), m.exceptions());
 			
 			if(m.body() != null) {
@@ -107,7 +113,7 @@ public class ClassFileBuilder {
 				maxLocals ++;
 			}
 		}
-		
+
 		// === TRANSLATE BYTECODES ===
 		for(Stmt s : method.body()) {
 			translateStatement(s,localVarMap,bytecodes);
@@ -475,9 +481,18 @@ public class ClassFileBuilder {
 		
 		Type.Clazz targetT = (Type.Clazz) stmt.target().type();
 		
+		if(stmt.name().equals("super")) {
+			// catch explicit super constructor call.
+			translateExpression(stmt.target(), varmap, bytecodes);
+			bytecodes.add(new Bytecode.Invoke(targetT, "<init>",
+					stmt.funType(), Bytecode.SPECIAL));
+			return;
+		} 
+		
 		try {			
 			int dispatchMode = determineDispatchMode(targetT, stmt.name(), stmt
-					.funType());
+					.funType());						
+				
 			if (dispatchMode != DISPATCH_STATIC) {
 				// must be non-static invocation
 				translateExpression(stmt.target(), varmap, bytecodes);
@@ -487,7 +502,10 @@ public class ClassFileBuilder {
 				translateExpression(p, varmap, bytecodes);
 			}
 			
-			if (dispatchMode == DISPATCH_STATIC) {
+			if(stmt instanceof Expr.SpecialInvoke) {
+				bytecodes.add(new Bytecode.Invoke(targetT, stmt.name(),
+						stmt.funType(), Bytecode.SPECIAL));
+			} else if (dispatchMode == DISPATCH_STATIC) {
 				// STATIC
 				bytecodes.add(new Bytecode.Invoke(targetT, stmt.name(),
 						stmt.funType(), Bytecode.STATIC));
@@ -656,7 +674,7 @@ public class ClassFileBuilder {
 			translateClassVal((Expr.Class) expr, varmap, bytecodes);
 		} else if (expr instanceof Expr.Variable) {
 			Expr.Variable lv = (Expr.Variable) expr;
-			if (varmap.containsKey(lv.value())) {
+			if (varmap.containsKey(lv.value())) {				
 				bytecodes.add(new Bytecode.Load(varmap.get(lv.value()), lv.type()));				
 			} else {
 				throw new RuntimeException(

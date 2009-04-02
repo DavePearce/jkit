@@ -305,6 +305,9 @@ public class Method extends SyntacticElementImpl {
 			vars.remove(p.first());
 		}
 		
+		vars.remove("this"); // these are implicit
+		vars.remove("super"); // these are implicit 
+		
 		ArrayList<Pair<String,Boolean>> r = new ArrayList();
 		
 		for(String var : vars) {

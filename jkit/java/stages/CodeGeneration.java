@@ -91,6 +91,23 @@ public class CodeGeneration {
 	protected void doMethod(Decl.Method d, Clazz parent) {			
 		Type.Function type = (Type.Function) d.attribute(Type.class);
 		List<Stmt> stmts = doStatement(d.body());
+		// First, off. If this is a constructor, then check whether there is an
+		// explicit super constructor call or not.  If not, then add one.
+		if (d.name().equals(parent.name())) {
+			if (stmts.size() == 0 || !(stmts.get(0) instanceof Expr.Invoke)) {
+				stmts.add(0, new Expr.Invoke(new Expr.Variable("super", parent
+						.superClass()), "super", new ArrayList<Expr>(),
+						new Type.Function(new Type.Void()), new Type.Void()));
+			} else {
+				Expr.Invoke sc = (Expr.Invoke) stmts.get(0);
+				if (!sc.name().equals("super")) {
+					stmts.add(0, new Expr.Invoke(new Expr.Variable("super",
+							parent.superClass()), "super",
+							new ArrayList<Expr>(), new Type.Function(
+									new Type.Void()), new Type.Void()));
+				}
+			}
+		}				
 		
 		// Now, add this statement list to the jil method representing this java
 		// method.
@@ -680,9 +697,16 @@ public class CodeGeneration {
 			r.addAll(tmp.second());
 		}				
 		
-		if (target.first() instanceof Expr.ClassVariable) {
+		Expr rec = target.first();
+		
+		if (rec instanceof Expr.ClassVariable) {
 			return new Pair<Expr, List<Stmt>>(new Expr.Invoke(target.first(), e
 					.name(), nparameters, funType, type, e
+					.attributes()), r);
+		} else if (rec instanceof Expr.Variable
+				&& ((Expr.Variable) rec).value().equals("super")) {
+			return new Pair<Expr, List<Stmt>>(new Expr.SpecialInvoke(target
+					.first(), e.name(), nparameters, funType, type, e
 					.attributes()), r);
 		} else {
 			return new Pair<Expr, List<Stmt>>(new Expr.Invoke(target.first(), e
