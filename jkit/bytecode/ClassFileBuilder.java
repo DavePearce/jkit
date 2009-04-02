@@ -983,7 +983,9 @@ public class ClassFileBuilder {
 	}
 	
 	protected static boolean isGeneric(Type t) {
-		if(!(t instanceof Type.Clazz)) {
+		if (t instanceof Type.Variable) {
+			return true;
+		} else if (!(t instanceof Type.Clazz)) {
 			return false;
 		}
 		Type.Clazz ref = (Type.Clazz) t;

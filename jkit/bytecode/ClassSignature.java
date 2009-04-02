@@ -1,6 +1,7 @@
 package jkit.bytecode;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -86,5 +87,10 @@ public class ClassSignature implements Attribute {
 			desc += ClassFile.descriptor(t, true);
 		}
 		return desc;
+	}
+	
+	public void print(PrintWriter output, Map<Constant.Info, Integer> constantPool) {
+		output.println("Signature: "
+				+ constantPool.get(new Constant.Utf8(classSignature())));
 	}
 }

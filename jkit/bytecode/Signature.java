@@ -1,6 +1,6 @@
 package jkit.bytecode;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,5 +33,10 @@ public class Signature implements Attribute {
 		Constant.addPoolItem(
 				new Constant.Utf8(ClassFile.descriptor(type, true)),
 				constantPool);
+	}
+	
+	public void print(PrintWriter output, Map<Constant.Info, Integer> constantPool) {
+		output.println("Signature: " + constantPool.get(new Constant.Utf8(ClassFile
+				.descriptor(type, true))));
 	}
 }

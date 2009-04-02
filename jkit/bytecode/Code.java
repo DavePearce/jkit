@@ -2,6 +2,7 @@ package jkit.bytecode;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
 
 import jkit.bytecode.ClassFile.Method;
@@ -104,6 +105,34 @@ public class Code implements Attribute {
 //		}
 	}
 	
+	/**
+	 * The exception handler class is used to store the necessary information
+	 * about where control-flow is directed when an exception is raised.
+	 * 
+	 * @author djp
+	 * 
+	 */
+	public static class Handler {
+		/**
+		 * The start index of bytecodes covered by the handler.
+		 */
+		public int start;
+		/**
+		 * One past the last index covered by the handler.
+		 */
+		public int end;
+		public int label; // label for exception handler
+		public Type.Clazz exception;
+
+		public Handler(int start, int end, int label,
+				Type.Clazz exception) {
+			this.start = start;
+			this.end = end;
+			this.label = label;
+			this.exception = exception;
+		}
+	}	
+	
 	public void write(BinaryOutputStream writer,
 			Map<Constant.Info, Integer> constantPool) throws IOException {
 
@@ -199,31 +228,17 @@ public class Code implements Attribute {
 		writer.write_u2(0); // no attributes for now
 	}
 	
-	/**
-	 * The exception handler class is used to store the necessary information
-	 * about where control-flow is directed when an exception is raised.
-	 * 
-	 * @author djp
-	 * 
-	 */
-	public static class Handler {
-		/**
-		 * The start index of bytecodes covered by the handler.
-		 */
-		public int start;
-		/**
-		 * One past the last index covered by the handler.
-		 */
-		public int end;
-		public int label; // label for exception handler
-		public Type.Clazz exception;
+	public void print(PrintWriter output, Map<Constant.Info, Integer> constantPool) {
+		output.println("  Code:");
+		output.println("    stack = " + maxStack() + ", locals = "
+				+ maxLocals());
 
-		public Handler(int start, int end, int label,
-				Type.Clazz exception) {
-			this.start = start;
-			this.end = end;
-			this.label = label;
-			this.exception = exception;
+		for (Bytecode b : bytecodes) {
+			if(b instanceof Bytecode.Label) {
+				output.println("   " + b);
+			} else {
+				output.println("    " + b);
+			}
 		}
-	}	
+	}		
 }	

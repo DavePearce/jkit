@@ -427,7 +427,10 @@ public class ClassFile {
 			Constant.addPoolItem(new Constant.Utf8(f.name()), constantPool);
 			Constant.addPoolItem(
 					new Constant.Utf8(descriptor(f.type(), false)),
-					constantPool);					
+					constantPool);
+			for(Attribute a : f.attributes()) {
+				a.addPoolItems(constantPool);
+			}
 		}
 		
 		for(Method m : methods) {

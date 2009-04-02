@@ -46,18 +46,25 @@ public class BytecodeFileWriter {
 			}			
 		}				
 		
+		output.println();
+		
+		for(Attribute a : cfile.attributes()) {
+			a.print(output,poolMap);
+		}
+		
 		output.println(" {");
 		
 		for(ClassFile.Field f : cfile.fields()) {
-			writeField(f);
+			writeField(f,poolMap);
 		}
 		
 		if(!cfile.fields().isEmpty()) {
-			output.println("");
+			output.println();
 		}
 		
 		for(ClassFile.Method m : cfile.methods()) {
 			writeMethod(cfile,m,poolMap);
+			output.println();
 		}
 	
 		output.println("}");
@@ -65,12 +72,15 @@ public class BytecodeFileWriter {
 		output.flush();
 	}
 	
-	protected void writeField(ClassFile.Field f) {
+	protected void writeField(ClassFile.Field f,
+			HashMap<Constant.Info, Integer> poolMap) throws IOException {
 		output.print("  ");
 		writeModifiers(f.modifiers());
 		output.print(f.type());
-		output.println(" " + f.name() + ";");		
-	
+		output.println(" " + f.name() + ";");
+		for(Attribute a : f.attributes()) {
+			a.print(output,poolMap);
+		}
 	}
 
 	protected void writeMethod(ClassFile clazz, ClassFile.Method method,
@@ -94,32 +104,12 @@ public class BytecodeFileWriter {
 			output.print(paramTypes.get(i));
 		}
 		
-		output.println(") {");
+		output.println(");");
 		
-		ClassFile.Code codeAttr = (ClassFile.Code) method.attribute(ClassFile.Code.class);
-		if(codeAttr != null) {
-			writeCodeAttribute(codeAttr,poolMap);
-		}		
-		
-		output.println("  }");
-	}
-	
-	protected void writeCodeAttribute(ClassFile.Code code,
-			HashMap<Constant.Info, Integer> poolMap) throws IOException {
-
-		output.println("    stack = " + code.maxStack() + ", locals = "
-				+ code.maxLocals());
-
-		for (Bytecode b : code.bytecodes) {
-			if(b instanceof Bytecode.Label) {
-				output.println("   " + b);
-			} else {
-				output.println("    " + b);
-			}
-		}
-
-		// need to dump out exception handlers here.
-	}
+		for(Attribute a : method.attributes()) {
+			a.print(output,poolMap);
+		}					
+	}	
 
 	protected void writeModifiers(List<Modifier> modifiers) {
 		for (Modifier x : modifiers) {

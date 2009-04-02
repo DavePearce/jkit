@@ -23,4 +23,15 @@ public interface Attribute {
 	 * @param constantPool
 	 */
 	public void addPoolItems(Set<Constant.Info> constantPool);
+	
+	/**
+	 * This method is used to print the contents of the attribute in
+	 * human-readable form, similar to that produced by "javap".
+	 * 
+	 * @param output
+	 * @param constantPool
+	 * @throws IOException
+	 */
+	public void print(PrintWriter output, Map<Constant.Info, Integer> constantPool)
+			throws IOException;
 }
