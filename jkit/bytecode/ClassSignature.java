@@ -8,12 +8,12 @@ import java.util.Set;
 import jkit.jil.tree.*;
 import jkit.util.Pair;
 
-public class Signature implements Attribute {
+public class ClassSignature implements Attribute {
 	protected Type.Clazz type;
 	protected Type.Clazz superClazz;
 	protected List<Type.Clazz> interfaces;
 	
-	public Signature(Type.Clazz type, Type.Clazz superClazz, List<Type.Clazz> interfaces) {
+	public ClassSignature(Type.Clazz type, Type.Clazz superClazz, List<Type.Clazz> interfaces) {
 		this.type = type;
 		this.superClazz = superClazz;
 		this.interfaces = interfaces;
