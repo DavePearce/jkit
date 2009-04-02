@@ -656,13 +656,12 @@ public class TypePropagation {
 				Type.Array ta = (Type.Array) type;
 				doArrayVal(ta,(Value.Array)v);
 			} else if (isUnknownConstant(v)) {
-				Expr c = unknownConstantInference(v, type.element(),
-						(SourceLocation) v.attribute(SourceLocation.class));
-				e.values().set(i, c);
+				v = unknownConstantInference(v, type.element(),
+						(SourceLocation) v.attribute(SourceLocation.class));				
 			} else {
-				doExpression(v);
-				e.values().set(i,implicitCast(v,type.element()));
+				doExpression(v);				
 			}			
+			e.values().set(i,implicitCast(v,type.element()));
 		}
 
 		e.attributes().add(type);
@@ -703,14 +702,12 @@ public class TypePropagation {
 				Type.Array ta = (Type.Array) lhs;
 				doArrayVal(ta,(Value.Array)v);
 			} else if(isUnknownConstant(v)) {			
-					Expr c = unknownConstantInference(v, lhs.element(),
-							(SourceLocation) v
-							.attribute(SourceLocation.class));					
-					e.values().set(i,c);
+				v = unknownConstantInference(v, lhs.element(),
+						(SourceLocation) v.attribute(SourceLocation.class));										
 			} else {
-				doExpression(v);
-				e.values().set(i,implicitCast(v,lhs.element()));
-			}								
+				doExpression(v);				
+			}					
+			e.values().set(i,implicitCast(v,lhs.element()));
 		}
 		
 		e.attributes().add(lhs);
