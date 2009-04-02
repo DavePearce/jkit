@@ -68,6 +68,10 @@ public class ClassFileBuilder {
 				cfm.attributes().add(new Signature(m.type()));
 			}
 			
+			if (!m.exceptions().isEmpty()) {
+				cfm.attributes().add(new Exceptions(m.exceptions()));
+			}
+			
 			cfile.methods().add(cfm);
 		}
 	}

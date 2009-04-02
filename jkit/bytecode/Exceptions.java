@@ -1,6 +1,7 @@
 package jkit.bytecode;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
 
 import jkit.jil.tree.Type;
@@ -45,5 +46,19 @@ public class Exceptions implements Attribute {
 		for (Type.Clazz e : exceptions) {
 			Constant.addPoolItem(Constant.buildClass(e), constantPool);
 		}
+	}
+	
+	public void print(PrintWriter output, Map<Constant.Info, Integer> constantPool) {
+		output.println("  Exceptions:");
+		boolean firstTime = true; 
+		output.print("   ");
+		for(Type.Clazz e : exceptions) {
+			if(!firstTime) {
+				output.print(", ");
+			}
+			firstTime=false;
+			output.print(e);
+		}
+		output.println();
 	}
 }
