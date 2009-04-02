@@ -101,7 +101,7 @@ public class ClassFileWriter {
 		}
 
 		 if (cfile.inners().size() > 0 || cfile.isInnerClass()) {			
-			writeInnerClassAttribute(cfile, constantPool);
+			writeInnerClassAttribute(cfile, poolMap);
 		 }
 
 		output.flush();
@@ -122,7 +122,7 @@ public class ClassFileWriter {
      * @param pmap
      */
 	protected void writeInnerClassAttribute(ClassFile clazz,
-			HashMap<Constant.Info, Integer> pmap) throws IOException {
+			Map<Constant.Info, Integer> pmap) throws IOException {
 		write_u2(pmap.get(new Constant.Utf8("InnerClasses")));
 		
 		int ninners = clazz.inners().size() + clazz.type().components().size()
@@ -205,8 +205,7 @@ public class ClassFileWriter {
 		write_u2(pmap.get(new Constant.Utf8(ClassFile.descriptor(m.type(), false))));
 
 		int nattrs = 0;
-		ClassFile.Code codeAttr = (ClassFile.Code) m
-				.attribute(ClassFile.Code.class);
+		Code codeAttr = (Code) m.attribute(Code.class);
 		
 		if (codeAttr != null) {
 			nattrs++;

@@ -372,120 +372,6 @@ public class ClassFile {
 		}
 	}
 	
-	public static interface Attribute {
-		public String name();
-	}
-	
-	/**
-	 * The exception handler class is used to store the necessary information
-	 * about where control-flow is directed when an exception is raised.
-	 * 
-	 * @author djp
-	 * 
-	 */
-	public static class Handler {
-		/**
-		 * The start index of bytecodes covered by the handler.
-		 */
-		public int start;
-		/**
-		 * One past the last index covered by the handler.
-		 */
-		public int end;
-		public int label; // label for exception handler
-		public Type.Clazz exception;
-
-		public Handler(int start, int end, int label,
-				Type.Clazz exception) {
-			this.start = start;
-			this.end = end;
-			this.label = label;
-			this.exception = exception;
-		}
-	}	
-	
-	/**
-	 * This represents the Code attribute from the JVM Spec. 
-	 * 
-	 * @author djp
-	 */
-	public static class Code implements Attribute {
-		protected List<Bytecode> bytecodes;
-		protected List<Handler> handlers;
-		protected Method method; // enclosing method
-		
-		public Code(List<Bytecode> bytecodes,
-				List<Handler> handlers, Method method) {			
-			this.bytecodes = bytecodes;
-			this.handlers = handlers;
-			this.method = method;
-		}
-		
-		public String name() { return "Code"; }
-		
-		/**
-		 * Determine the maximum number of local variable slots required for
-		 * this method.
-		 * 
-		 * @return
-		 */
-		public int maxLocals() {
-			int max = 0;
-			for(Bytecode b :  bytecodes) {
-				if(b instanceof Bytecode.Store) {
-					Bytecode.Store s = (Bytecode.Store) b;
-					max = Math.max(max, s.slot + ClassFile.slotSize(s.type) - 1);
-				} else if(b instanceof Bytecode.Load) {
-					Bytecode.Load l = (Bytecode.Load) b;
-					max = Math.max(max, l.slot + ClassFile.slotSize(l.type) - 1);					
-				} else if(b instanceof Bytecode.Iinc) {
-					Bytecode.Iinc l = (Bytecode.Iinc) b;
-					max = Math.max(max, l.slot);					
-				}
-			}
-			
-			// The reason for the following, is that we must compute the
-			// *minimal* number of slots required. Essentially, this is enough
-			// to hold the "this" pointer (if appropriate) and the parameters
-			// supplied. The issue is that the bytecodes might not actually
-			// access all of the parameters supplied, so just looking at them
-			// might produce an underestimate.
-			
-			int min = method.isStatic() ? 0 : 1;
-			
-			for(Type p :  method.type().parameterTypes()) {
-				min += ClassFile.slotSize(p);
-			}
-			
-			return Math.max(max+1,min);
-		}
-
-		/**
-		 * Determine the maximum number of stack slots required for this method.
-		 * 
-		 * @return
-		 */
-		public int maxStack() {
-			// This algorithm computes a conservative over approximation. In
-			// theory, we can do better, but there's little need to.
-			int max = 0;
-			int current = 0;
-			for(Bytecode b : bytecodes) {
-				current = current + b.stackDiff();
-				max = Math.max(current,max);
-			}
-			return max;
-		}
-		
-		public List<Bytecode> bytecodes() { 
-			return bytecodes;
-		}
-		
-		public List<Handler> handlers() {
-			return handlers;
-		}
-	}	
-	
 	/**
 	 * This method builds a constant pool for this class file.
 	 * 
@@ -554,7 +440,7 @@ public class ClassFile {
 			Constant.addPoolItem(new Constant.Utf8(descriptor(m.type(),
 					false)), constantPool);
 
-			Code codeAttr = (Code) m.attribute(Code.class);
+			Attribute.Code codeAttr = (Attribute.Code) m.attribute(Attribute.Code.class);
 			
 			if (codeAttr != null) {
 				Constant.addPoolItem(new Constant.Utf8("Code"), constantPool);

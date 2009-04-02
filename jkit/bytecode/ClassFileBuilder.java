@@ -47,11 +47,11 @@ public class ClassFileBuilder {
 			
 			if(m.body() != null) {
 				ArrayList<Bytecode> bytecodes = new ArrayList<Bytecode>();
-				ArrayList<ClassFile.Handler> handlers = new ArrayList<ClassFile.Handler>();
+				ArrayList<Code.Handler> handlers = new ArrayList<Code.Handler>();
 
 				translateCode(clazz, m, bytecodes, handlers);
 				
-				ClassFile.Code codeAttr = new ClassFile.Code(bytecodes,handlers,cfm);
+				Code codeAttr = new Code(bytecodes,handlers,cfm);
 				cfm.attributes().add(codeAttr);
 			}
 			
@@ -78,7 +78,7 @@ public class ClassFileBuilder {
 	 *             to access a Class which cannot be found.
 	 */
 	protected void translateCode(Clazz clazz, Method method,
-			ArrayList<Bytecode> bytecodes, ArrayList<ClassFile.Handler> handlers) {
+			ArrayList<Bytecode> bytecodes, ArrayList<Code.Handler> handlers) {
 		// === CREATE TYPE ENVIRONMENT ===
 
 		// create the local variable slot mapping
@@ -200,7 +200,7 @@ public class ClassFileBuilder {
 	 * @param handlers.
 	 */
 	protected void sortAndCompactExceptionHandlers(
-			ArrayList<ClassFile.Handler> handlers) {
+			ArrayList<Code.Handler> handlers) {
 
 		// FIXME: support for sorting exception handlers
 		

@@ -402,7 +402,7 @@ public class JavaCompiler implements Compiler {
 		
 		start = System.currentTimeMillis();
 		
-		new ClassFileWriter(out).write(cfile);		
+		new ClassFileWriter(out,loader).write(cfile);		
 		
 		logTimedMessage("[" + outputFile.getPath() + "] Wrote " + outputFile.getPath(),
 				(System.currentTimeMillis() - start));		
