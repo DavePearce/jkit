@@ -644,19 +644,25 @@ public class TypePropagation {
 	}
 	
 	protected void doTypedArrayVal(Value.TypedArray e) {		
-		Type type = (Type) e.type().attribute(Type.class);
-		if(!(type instanceof Type.Array)) {
-			syntax_error("cannot assign array value to type " + type,e);
+		Type _type = (Type) e.type().attribute(Type.class);
+		if(!(_type instanceof Type.Array)) {
+			syntax_error("cannot assign array value to type " + _type,e);
 		}		
+		Type.Array type = (Type.Array) _type;
+		
 		for(int i=0;i!=e.values().size();++i) {
 			Expr v = e.values().get(i);
 			if(v instanceof Value.Array) {
 				Type.Array ta = (Type.Array) type;
 				doArrayVal(ta,(Value.Array)v);
+			} else if (isUnknownConstant(v)) {
+				Expr c = unknownConstantInference(v, type.element(),
+						(SourceLocation) v.attribute(SourceLocation.class));
+				e.values().set(i, c);
 			} else {
 				doExpression(v);
-			}
-			e.values().set(i,implicitCast(v,type));			
+				e.values().set(i,implicitCast(v,type.element()));
+			}			
 		}
 
 		e.attributes().add(type);
@@ -696,10 +702,15 @@ public class TypePropagation {
 			if(v instanceof Value.Array) {
 				Type.Array ta = (Type.Array) lhs;
 				doArrayVal(ta,(Value.Array)v);
+			} else if(isUnknownConstant(v)) {			
+					Expr c = unknownConstantInference(v, lhs.element(),
+							(SourceLocation) v
+							.attribute(SourceLocation.class));					
+					e.values().set(i,c);
 			} else {
 				doExpression(v);
-			}			
-			e.values().set(i,implicitCast(v,lhs.element()));			
+				e.values().set(i,implicitCast(v,lhs.element()));
+			}								
 		}
 		
 		e.attributes().add(lhs);

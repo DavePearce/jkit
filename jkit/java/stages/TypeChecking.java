@@ -514,7 +514,7 @@ public class TypeChecking {
 		try {
 			if(!types.subtype(c_t,rhs_t, loader)) {
 				if(rhs_t instanceof Type.Primitive) {
-					throw new SyntaxError("possible loss of precision",loc.line(),loc.column());
+					throw new SyntaxError("possible loss of precision (" + rhs_t + "=>" + c_t+")",loc.line(),loc.column());
 				} else {
 					throw new SyntaxError("incompatible types",loc.line(),loc.column());
 				}

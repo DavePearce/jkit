@@ -231,6 +231,10 @@ public class JilFileWriter {
 		output.write("'");		
 	}
 	
+	protected void write(Expr.Byte b) {
+		output.print(b.value());
+	}
+	
 	protected void write(Expr.Short s) {
 		output.print(s.value() + "S");
 	}
