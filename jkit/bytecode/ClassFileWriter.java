@@ -127,6 +127,12 @@ public class ClassFileWriter {
 	}
 
 	protected void writeModifiers(List<Modifier> modifiers) throws IOException {
+		writeModifiers(modifiers,output);
+	}
+	
+	// static so that it can be reused.
+	public static void writeModifiers(List<Modifier> modifiers,
+			BinaryOutputStream output) throws IOException {
 		int mods = 0;
 
 		for (Modifier x : modifiers) {
