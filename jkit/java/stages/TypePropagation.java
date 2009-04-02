@@ -89,7 +89,7 @@ public class TypePropagation {
 	}
 
 	protected void doMethod(Method d) {
-		doStatement(d.body());
+		doStatement(d.body(),d);
 	}
 
 	protected void doField(Field d) {
@@ -118,7 +118,7 @@ public class TypePropagation {
 		// will need to add code here for dealing with classes nested in
 		// methods.
 		for (Stmt s : d.statements()) {
-			doStatement(s);
+			doStatement(s, null);
 		}
 	}
 	
@@ -126,45 +126,45 @@ public class TypePropagation {
 		// will need to add code here for dealing with classes nested in
 		// methods.
 		for (Stmt s : d.statements()) {
-			doStatement(s);
+			doStatement(s, null);
 		}
 	}
 	
-	protected void doStatement(Stmt e) {
+	protected void doStatement(Stmt e, Method m) {
 		if(e instanceof Stmt.SynchronisedBlock) {
-			doSynchronisedBlock((Stmt.SynchronisedBlock)e);
+			doSynchronisedBlock((Stmt.SynchronisedBlock)e, m);
 		} else if(e instanceof Stmt.TryCatchBlock) {
-			doTryCatchBlock((Stmt.TryCatchBlock)e);
+			doTryCatchBlock((Stmt.TryCatchBlock)e, m);
 		} else if(e instanceof Stmt.Block) {
-			doBlock((Stmt.Block)e);
+			doBlock((Stmt.Block)e, m);
 		} else if(e instanceof Stmt.VarDef) {
-			doVarDef((Stmt.VarDef) e);
+			doVarDef((Stmt.VarDef) e, m);
 		} else if(e instanceof Stmt.Assignment) {
-			doAssignment((Stmt.Assignment) e);
+			doAssignment((Stmt.Assignment) e, m);
 		} else if(e instanceof Stmt.Return) {
-			doReturn((Stmt.Return) e);
+			doReturn((Stmt.Return) e, m);
 		} else if(e instanceof Stmt.Throw) {
-			doThrow((Stmt.Throw) e);
+			doThrow((Stmt.Throw) e, m);
 		} else if(e instanceof Stmt.Assert) {
-			doAssert((Stmt.Assert) e);
+			doAssert((Stmt.Assert) e, m);
 		} else if(e instanceof Stmt.Break) {
-			doBreak((Stmt.Break) e);
+			doBreak((Stmt.Break) e, m);
 		} else if(e instanceof Stmt.Continue) {
-			doContinue((Stmt.Continue) e);
+			doContinue((Stmt.Continue) e, m);
 		} else if(e instanceof Stmt.Label) {
-			doLabel((Stmt.Label) e);
+			doLabel((Stmt.Label) e, m);
 		} else if(e instanceof Stmt.If) {
-			doIf((Stmt.If) e);
+			doIf((Stmt.If) e, m);
 		} else if(e instanceof Stmt.For) {
-			doFor((Stmt.For) e);
+			doFor((Stmt.For) e, m);
 		} else if(e instanceof Stmt.ForEach) {
-			doForEach((Stmt.ForEach) e);
+			doForEach((Stmt.ForEach) e, m);
 		} else if(e instanceof Stmt.While) {
-			doWhile((Stmt.While) e);
+			doWhile((Stmt.While) e, m);
 		} else if(e instanceof Stmt.DoWhile) {
-			doDoWhile((Stmt.DoWhile) e);
+			doDoWhile((Stmt.DoWhile) e, m);
 		} else if(e instanceof Stmt.Switch) {
-			doSwitch((Stmt.Switch) e);
+			doSwitch((Stmt.Switch) e, m);
 		} else if(e instanceof Expr.Invoke) {
 			doInvoke((Expr.Invoke) e);
 		} else if(e instanceof Expr.New) {
@@ -177,30 +177,30 @@ public class TypePropagation {
 		}		
 	}
 	
-	protected void doBlock(Stmt.Block block) {
+	protected void doBlock(Stmt.Block block, Method m) {
 		if(block != null) {			
 			// now process every statement in this block.
 			for(Stmt s : block.statements()) {
-				doStatement(s);
+				doStatement(s, m);
 			}
 		}
 	}
 	
-	protected void doSynchronisedBlock(Stmt.SynchronisedBlock block) {
-		doBlock(block);
+	protected void doSynchronisedBlock(Stmt.SynchronisedBlock block, Method m) {
+		doBlock(block,m);
 		doExpression(block.expr());
 	}
 	
-	protected void doTryCatchBlock(Stmt.TryCatchBlock block) {
-		doBlock(block);
-		doBlock(block.finaly());
+	protected void doTryCatchBlock(Stmt.TryCatchBlock block, Method m) {
+		doBlock(block,m);
+		doBlock(block.finaly(),m);
 
 		for (Stmt.CatchBlock cb : block.handlers()) {			
-			doBlock(cb);
+			doBlock(cb,m);
 		}
 	}
 	
-	protected void doVarDef(Stmt.VarDef def) {
+	protected void doVarDef(Stmt.VarDef def, Method m) {
 		Type t = (Type) def.type().attribute(Type.class);
 		
 		List<Triple<String, Integer, Expr>> defs = def.definitions();
@@ -232,7 +232,7 @@ public class TypePropagation {
 		}
 	}
 	
-	protected void doAssignment(Stmt.Assignment def) {
+	protected void doAssignment(Stmt.Assignment def, Method m) {
 		doExpression(def.lhs());	
 		doExpression(def.rhs());			
 
@@ -252,68 +252,76 @@ public class TypePropagation {
 		def.attributes().add(lhs_t);
 	}
 	
-	protected void doReturn(Stmt.Return ret) {
+	protected void doReturn(Stmt.Return ret, Method m) {
+		if(ret.expr() != null) {
+			// We need to do an implict cast here to account for autoboxing, and
+			// other conversions. For example, a method declared to return
+			// Integer that actually returns "1" must box this at the point of
+			// return.
+			doExpression(ret.expr());
+			ret.setExpr(implicitCast(ret.expr(), (Type) m.returnType()
+					.attribute(Type.class)));
+		}
+	}
+	
+	protected void doThrow(Stmt.Throw ret, Method m) {
 		doExpression(ret.expr());
 	}
 	
-	protected void doThrow(Stmt.Throw ret) {
+	protected void doAssert(Stmt.Assert ret, Method m) {
 		doExpression(ret.expr());
 	}
 	
-	protected void doAssert(Stmt.Assert ret) {
-		doExpression(ret.expr());
-	}
-	
-	protected void doBreak(Stmt.Break brk) {
+	protected void doBreak(Stmt.Break brk, Method m) {
 		// nothing	
 	}
 	
-	protected void doContinue(Stmt.Continue brk) {
+	protected void doContinue(Stmt.Continue brk, Method m) {
 		// nothing
 	}
 	
-	protected void doLabel(Stmt.Label lab) {						
-		doStatement(lab.statement());
+	protected void doLabel(Stmt.Label lab, Method m) {						
+		doStatement(lab.statement(),m);
 	}
 	
-	protected void doIf(Stmt.If stmt) {
+	protected void doIf(Stmt.If stmt, Method m) {
 		doExpression(stmt.condition());
 		stmt.setCondition(implicitCast(stmt.condition(), new Type.Bool()));
-		doStatement(stmt.trueStatement());
-		doStatement(stmt.falseStatement());
+		doStatement(stmt.trueStatement(),m);
+		doStatement(stmt.falseStatement(),m);
 	}
 	
-	protected void doWhile(Stmt.While stmt) {
+	protected void doWhile(Stmt.While stmt, Method m) {
 		doExpression(stmt.condition());
 		stmt.setCondition(implicitCast(stmt.condition(), new Type.Bool()));
-		doStatement(stmt.body());		
+		doStatement(stmt.body(),m);		
 	}
 	
-	protected void doDoWhile(Stmt.DoWhile stmt) {
+	protected void doDoWhile(Stmt.DoWhile stmt, Method m) {
 		doExpression(stmt.condition());
 		stmt.setCondition(implicitCast(stmt.condition(), new Type.Bool()));
-		doStatement(stmt.body());
+		doStatement(stmt.body(),m);
 	}
 	
-	protected void doFor(Stmt.For stmt) {		
-		doStatement(stmt.initialiser());
+	protected void doFor(Stmt.For stmt, Method m) {		
+		doStatement(stmt.initialiser(),m);
 		doExpression(stmt.condition());		
 		stmt.setCondition(implicitCast(stmt.condition(), new Type.Bool()));
-		doStatement(stmt.increment());
-		doStatement(stmt.body());	
+		doStatement(stmt.increment(),m);
+		doStatement(stmt.body(),m);	
 	}
 	
-	protected void doForEach(Stmt.ForEach stmt) {
+	protected void doForEach(Stmt.ForEach stmt, Method m) {
 		doExpression(stmt.source());
-		doStatement(stmt.body());
+		doStatement(stmt.body(),m);
 	}
 	
-	protected void doSwitch(Stmt.Switch sw) {
+	protected void doSwitch(Stmt.Switch sw, Method m) {
 		doExpression(sw.condition());
 		for(Case c : sw.cases()) {
 			doExpression(c.condition());
 			for(Stmt s : c.statements()) {
-				doStatement(s);
+				doStatement(s,m);
 			}
 		}
 		
@@ -367,7 +375,7 @@ public class TypePropagation {
 			doDeref((Expr.Deref) e);
 		} else if(e instanceof Stmt.Assignment) {
 			// force brackets			
-			doAssignment((Stmt.Assignment) e);			
+			doAssignment((Stmt.Assignment) e, null);			
 		} else if(e != null) {
 			syntax_error("Internal failure (invalid expression \"" + e.getClass() + "\" encountered)",e);			
 		}
