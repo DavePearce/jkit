@@ -448,11 +448,26 @@ public class TypePropagation {
 		if(t instanceof Type.Clazz) {
 			Type.Clazz tc = (Type.Clazz) t;
 			try {
-				String constructorName = tc.components().get(tc.components().size()-1).first();
-				Type.Function f = types.resolveMethod(tc, constructorName,
-						parameterTypes, loader).second().type();
-
-				e.attributes().add(f); // this is a little hacky, but it works.
+				String constructorName = tc.components().get(
+						tc.components().size() - 1).first();
+				Triple<jkit.jil.tree.Clazz, jkit.jil.tree.Method, Type.Function> r = types
+						.resolveMethod(tc, constructorName, parameterTypes,
+								loader);
+				Type.Function f = r.third();
+				
+				// At this stage, we have (finally) figured out what method is to be
+				// called. There are a few things that remain to be done, however.
+				// Firstly, we must add any implicitCasts that are required for
+				// boxing conversions.  
+					
+				List<Expr> e_parameters = e.parameters();
+				List<Type> ft_parameters = f.parameterTypes();
+				for (int i = 0; i != e_parameters.size(); ++i) {
+					Type pt = ft_parameters.get(i);
+					e_parameters.set(i, implicitCast(e_parameters.get(i), pt));
+				}
+				
+				e.attributes().add(r.second().type()); // this is a little hacky, but it works.
 				
 			} catch(ClassNotFoundException cnfe) {
 				syntax_error(cnfe.getMessage(), e, cnfe);
@@ -527,9 +542,23 @@ public class TypePropagation {
 				}
 			}							
 			
-			Triple<jkit.jil.tree.Clazz,jkit.jil.tree.Method,Type.Function> r = types.resolveMethod(receiver, e_name,
-					parameterTypes, loader);
+			Triple<jkit.jil.tree.Clazz, jkit.jil.tree.Method, Type.Function> r = types
+					.resolveMethod(receiver, e_name, parameterTypes, loader);
 			Type.Function f = r.third();
+			
+			// At this stage, we have (finally) figured out what method is to be
+			// called. There are a few things that remain to be done, however.
+			// Firstly, we must add any implicitCasts that are required for
+			// boxing conversions.  
+				
+			List<Expr> e_parameters = e.parameters();
+			List<Type> ft_parameters = f.parameterTypes();
+			for (int i = 0; i != e_parameters.size(); ++i) {
+				Type pt = ft_parameters.get(i);
+				e_parameters.set(i, implicitCast(e_parameters.get(i), pt));
+			}
+			
+			// Secondly, we must add type information to the expression.
 			
 			if (!(f.returnType() instanceof Type.Void)) {
 				e.attributes().add(f.returnType());
