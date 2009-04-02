@@ -22,6 +22,7 @@ import jkit.util.*;
 import jkit.jil.*;
 import jkit.jil.io.*;
 import jkit.jil.tree.Clazz;
+import jkit.jil.tree.Type;
 import jkit.jil.tree.SourceLocation;
 import jkit.jil.tree.SyntacticElement;
 
@@ -223,8 +224,8 @@ public class JavaCompiler implements Compiler {
 			generateJilCode(filename, jfile, loader);
 			
 			// Eigth, write out the compiled class file(s).			
-			for(Clazz clazz : skeletons) {
-				writeOutputFile(filename, clazz, outputDirectory);				
+			for(Clazz clazz : skeletons) {				
+				writeOutputFile(createBasename(clazz.type()), clazz, outputDirectory);				
 			}
 						
 			compiling.remove(filename);
@@ -375,13 +376,11 @@ public class JavaCompiler implements Compiler {
 	 * @param jfile
 	 * @param loader
 	 */
-	public void writeOutputFile(File srcfile, Clazz clazz, File rootdir)
+	public void writeOutputFile(String baseName, Clazz clazz, File rootdir)
 			throws IOException {
 		long start = System.currentTimeMillis();
 		
-		String inf = srcfile.getPath();
-		inf = inf.substring(0, inf.length() - 5); // strip off .java
-		File outputFile = new File(rootdir, inf + ".class");		
+		File outputFile = new File(rootdir, baseName + ".class");		
 		
 		// now, ensure output directory and package directories exist.
 		if(outputFile.getParentFile() != null) {
@@ -391,21 +390,21 @@ public class JavaCompiler implements Compiler {
 		OutputStream out = new FileOutputStream(outputFile);		
 		ClassFile cfile = new ClassFileBuilder(loader,49).build(clazz);
 		
-		logTimedMessage("[" + srcfile.getPath() + "] Bytecode generation completed",
+		logTimedMessage("[" + outputFile.getPath() + "] Bytecode generation completed",
 				(System.currentTimeMillis() - start));	
 		
 		start = System.currentTimeMillis();
 		
 		// this is where the bytecode optimisation would occur.
 		
-		logTimedMessage("[" + srcfile.getPath() + "] Bytecode optimisation completed",
+		logTimedMessage("[" + outputFile.getPath() + "] Bytecode optimisation completed",
 				(System.currentTimeMillis() - start));	
 		
 		start = System.currentTimeMillis();
 		
 		new ClassFileWriter(out).write(cfile);		
 		
-		logTimedMessage("[" + srcfile.getPath() + "] Wrote " + outputFile.getPath(),
+		logTimedMessage("[" + outputFile.getPath() + "] Wrote " + outputFile.getPath(),
 				(System.currentTimeMillis() - start));		
 	}
 
@@ -431,6 +430,28 @@ public class JavaCompiler implements Compiler {
 		logout.print(" [");
 		logout.print(time);
 		logout.println("ms]");
+	}
+	
+	/**
+	 * Create a string suitable as a filename for this class.
+	 * 
+	 * @param c
+	 * @return
+	 */
+	public String createBasename(Type.Clazz tc) {
+		String filename = tc.pkg().replace('.', File.pathSeparatorChar);
+		if(!filename.equals("")) {
+			filename = filename + File.pathSeparatorChar;
+		}
+		boolean firstTime=true;
+		for(Pair<String,List<Type.Reference>> c : tc.components()) {
+			if(!firstTime) {
+				filename += "$";
+			}
+			firstTime=false;
+			filename += c.first();
+		}
+		return filename;
 	}
 
 	/**

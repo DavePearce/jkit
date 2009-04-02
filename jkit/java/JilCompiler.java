@@ -49,13 +49,11 @@ public class JilCompiler extends JavaCompiler {
 	 * @param jfile
 	 * @param loader
 	 */
-	public void writeOutputFile(File srcfile, Clazz clazz, File rootdir)
+	public void writeOutputFile(String baseName, Clazz clazz, File rootdir)
 			throws IOException {
 		long start = System.currentTimeMillis();
 		
-		String inf = srcfile.getPath();
-		inf = inf.substring(0, inf.length() - 5); // strip off .java
-		File outputFile = new File(rootdir, inf + ".jil");		
+		File outputFile = new File(rootdir, baseName + ".jil");		
 		
 		// now, ensure output directory and package directories exist.
 		if(outputFile.getParentFile() != null) {
@@ -65,7 +63,7 @@ public class JilCompiler extends JavaCompiler {
 		OutputStream out = new FileOutputStream(outputFile);		
 		new JilFileWriter(out).write(clazz);	
 		
-		logTimedMessage("[" + srcfile.getPath() + "] Wrote " + outputFile.getPath(),
+		logTimedMessage("[" + outputFile.getPath() + "] Wrote " + outputFile.getPath(),
 				(System.currentTimeMillis() - start));	
 	}
 }
