@@ -153,11 +153,13 @@ public class ClassFile {
 		protected String name;
 		protected Type type;
 		protected List<Modifier> modifiers;
+		protected ArrayList<Attribute> attributes;
 		
 		public Field(String name, Type type, List<Modifier> modifiers) {
 			this.name = name;
 			this.type = type;
 			this.modifiers = modifiers;
+			this.attributes = new ArrayList<Attribute>();
 		}
 		
 		public String name() {
@@ -170,6 +172,10 @@ public class ClassFile {
 
 		public List<Modifier> modifiers() {
 			return modifiers;
+		}
+		
+		public List<Attribute> attributes() {
+			return attributes;
 		}
 		
 		/**
@@ -421,12 +427,7 @@ public class ClassFile {
 			Constant.addPoolItem(new Constant.Utf8(f.name()), constantPool);
 			Constant.addPoolItem(
 					new Constant.Utf8(descriptor(f.type(), false)),
-					constantPool);
-			
-			if (isGeneric(f.type())) {
-				Constant.addPoolItem(new Constant.Utf8(descriptor(f.type(),
-						true)), constantPool);
-			}
+					constantPool);					
 		}
 		
 		for(Method m : methods) {
@@ -437,12 +438,7 @@ public class ClassFile {
 
 			for(Attribute a : m.attributes()) {
 				a.addPoolItems(constantPool);
-			}
-			
-			if (isGeneric(m.type().returnType())) {
-				Constant.addPoolItem(new Constant.Utf8(descriptor(m.type(),
-						true)), constantPool);
-			}
+			}			
 		}
 		
 		for(Attribute a : attributes) {
@@ -461,47 +457,6 @@ public class ClassFile {
 		}
 		
 		return pool;
-	}
-	
-	
-	
-	protected static boolean isGeneric(Type t) {
-		if(!(t instanceof Type.Clazz)) {
-			return false;
-		}
-		Type.Clazz ref = (Type.Clazz) t;
-		for(Pair<String, List<Type.Reference>> p : ref.components()) {
-			if(p.second().size() > 0) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	protected static boolean isGenericArray(Type t) {
-		if(t instanceof Type.Array) {
-			Type et = ((Type.Array)t).element();
-			if(et instanceof Type.Variable) {
-				return true;
-			} else {
-				return isGenericArray(et);
-			}
-		} 
-		
-		return false;	
-	}
-	
-	protected boolean needClassSignature() {
-		if (isGeneric(type)
-				|| (superClazz != null && isGeneric(superClazz))) {
-			return true;
-		}
-		for (Type.Reference t : interfaces) {
-			if (isGeneric(t)) {
-				return true;
-			}
-		}
-		return false;
 	}
 	
 	/**

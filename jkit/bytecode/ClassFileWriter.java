@@ -96,35 +96,19 @@ public class ClassFileWriter {
 		output.flush();
 	}
 	
-	protected void writeField(ClassFile.Field f, HashMap<Constant.Info, Integer> pmap)
-			throws IOException {
+	protected void writeField(ClassFile.Field f,
+			HashMap<Constant.Info, Integer> constantPool) throws IOException {
 		writeModifiers(f.modifiers());
-		output.write_u2(pmap.get(new Constant.Utf8(f.name())));
-		output.write_u2(pmap.get(new Constant.Utf8(ClassFile.descriptor(f.type(), false))));
-		
-		// FIXME: support for constant values
-		// int attrNum = ((isGeneric(f.type())) ? 1 : 0) + ((f.constantValue() != null) ? 1 : 0);
-		
-		int attrNum = ((ClassFile.isGeneric(f.type())) ? 1 : 0);
+		output.write_u2(constantPool.get(new Constant.Utf8(f.name())));
+		output.write_u2(constantPool.get(new Constant.Utf8(ClassFile
+				.descriptor(f.type(), false))));
+
 		// Write number of attributes
-		output.write_u2(attrNum);
-		// We only need to write a Signature attribute if the field has generic params
-		if (ClassFile.isGeneric(f.type())) {
-			output.write_u2(pmap.get(new Constant.Utf8("Signature")));
-			output.write_u4(2);
-			output.write_u2(pmap.get(new Constant.Utf8(ClassFile.descriptor(f.type(),
-					true))));
+		output.write_u2(f.attributes().size());
+
+		for (Attribute a : f.attributes()) {
+			a.write(output, constantPool);
 		}
-		// FIXME: support for constant values
-//		if(f.constantValue() != null) {
-//			output.write_u2(pmap.get(new Constant.Utf8("ConstantValue")));
-//			output.write_u4(2);
-//			if(f.constantValue() instanceof java.lang.Number) {
-//				output.write_u2(pmap.get(Constant.fromNumber((java.lang.Number) f.constantValue())));
-//			} else {
-//				output.write_u2(pmap.get(Constant.fromString((String) f.constantValue())));
-//			}
-//		}
 	}
 
 	protected void writeMethod(ClassFile.Method m,
@@ -141,11 +125,6 @@ public class ClassFileWriter {
 			a.write(output, constantPool);
 		}
 	}
-	
-
-	// ============================================================
-	// OTHER HELPER METHODS
-	// ============================================================
 
 	protected void writeModifiers(List<Modifier> modifiers) throws IOException {
 		int mods = 0;

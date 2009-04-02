@@ -27,8 +27,7 @@ public class ClassSignature implements Attribute {
 			Map<Constant.Info, Integer> constantPool) throws IOException {
 		writer.write_u2(constantPool.get(new Constant.Utf8("Signature")));
 		writer.write_u4(2);
-		writer.write_u2(constantPool.get(new Constant.Utf8(ClassFile
-				.descriptor(type, true))));
+		writer.write_u2(constantPool.get(new Constant.Utf8(classSignature())));
 	}
 	
 	public void addPoolItems(Set<Constant.Info> constantPool) {

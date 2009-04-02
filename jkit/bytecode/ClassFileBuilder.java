@@ -21,6 +21,12 @@ public class ClassFileBuilder {
 		ClassFile cfile = new ClassFile(version, clazz.type(), clazz
 				.superClass(), clazz.interfaces(), clazz.modifiers());
 		
+		if(needClassSignature(clazz)) {
+			cfile.attributes().add(
+					new ClassSignature(clazz.type(), clazz.superClass(), clazz
+							.interfaces()));
+		}
+		
 		buildFields(clazz,cfile);
 		buildMethods(clazz,cfile);					
 		
@@ -29,8 +35,11 @@ public class ClassFileBuilder {
 	
 	protected void buildFields(Clazz clazz, ClassFile cfile) {
 		for (Field f : clazz.fields()) {
-			cfile.fields().add(
-					new ClassFile.Field(f.name(), f.type(), f.modifiers()));						
+			ClassFile.Field cf = new ClassFile.Field(f.name(), f.type(), f.modifiers()); 
+			cfile.fields().add(cf);
+			if(isGeneric(f.type())) {
+				cf.attributes().add(new Signature(f.type()));
+			}
 		}
 	}
 	
@@ -53,6 +62,10 @@ public class ClassFileBuilder {
 				
 				Code codeAttr = new Code(bytecodes,handlers,cfm);
 				cfm.attributes().add(codeAttr);
+			}
+			
+			if (isGeneric(m.type())) {
+				cfm.attributes().add(new Signature(m.type()));
 			}
 			
 			cfile.methods().add(cfm);
@@ -526,8 +539,7 @@ public class ClassFileBuilder {
 					// it from
 					// the stack
 					bytecodes.add(new Bytecode.Pop(retT));
-				} else if ((retT instanceof Type.Variable || ClassFile
-						.isGenericArray(retT))
+				} else if ((retT instanceof Type.Variable || isGenericArray(retT))
 						&& !(stmt.type() instanceof Type.Variable)
 						&& !stmt.type().equals(
 								new Type.Clazz("java.lang", "Object"))) {
@@ -968,5 +980,45 @@ public class ClassFileBuilder {
 		}
 
 		return DISPATCH_INTERFACE;
+	}
+	
+	protected static boolean isGeneric(Type t) {
+		if(!(t instanceof Type.Clazz)) {
+			return false;
+		}
+		Type.Clazz ref = (Type.Clazz) t;
+		for(Pair<String, List<Type.Reference>> p : ref.components()) {
+			if(p.second().size() > 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	protected static boolean isGenericArray(Type t) {
+		if(t instanceof Type.Array) {
+			Type et = ((Type.Array)t).element();
+			if(et instanceof Type.Variable) {
+				return true;
+			} else {
+				return isGenericArray(et);
+			}
+		} 
+		
+		return false;	
+	}
+	
+	
+	protected boolean needClassSignature(Clazz c) {
+		if (isGeneric(c.type())
+				|| (c.superClass() != null && isGeneric(c.superClass()))) {
+			return true;
+		}
+		for (Type.Reference t : c.interfaces()) {
+			if (isGeneric(t)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
