@@ -450,7 +450,7 @@ public class TypePropagation {
 			try {
 				String constructorName = tc.components().get(tc.components().size()-1).first();
 				Type.Function f = types.resolveMethod(tc, constructorName,
-						parameterTypes, loader).third();
+						parameterTypes, loader).second().type();
 
 				e.attributes().add(f); // this is a little hacky, but it works.
 				
