@@ -58,7 +58,7 @@ public class CodeGeneration {
 		} else if(d instanceof Decl.Method) {
 			doMethod((Decl.Method)d, parent);
 		} else if(d instanceof Decl.Field) {
-			doField((Decl.Field)d);
+			doField((Decl.Field)d, parent);
 		} else if (d instanceof Decl.InitialiserBlock) {
 			doInitialiserBlock((Decl.InitialiserBlock) d);
 		} else if (d instanceof Decl.StaticInitialiserBlock) {
@@ -80,8 +80,21 @@ public class CodeGeneration {
 			// discovered below this are attributed to this class!			
 			Clazz skeleton = loader.loadClass(type);
 			
+			// I do fields after everything else, so as to simplify the process
+			// of adding field initialisers to constructors. This is because it
+			// means I can be sure that the constructor has been otherwise
+			// completely generated, so all I need is to add initialisers at
+			// beginning, after super call (if there is one).
 			for(Decl d : c.declarations()) {
-				doDeclaration(d, skeleton);
+				if(!(d instanceof Decl.Field)) {
+					doDeclaration(d, skeleton);
+				}
+			}
+			
+			for(Decl d : c.declarations()) {
+				if(d instanceof Decl.Field) {
+					doDeclaration(d, skeleton);
+				}
 			}
 		} catch(ClassNotFoundException cne) {
 			syntax_error("internal failure (skeleton not found for " + type,c,cne);
@@ -94,19 +107,11 @@ public class CodeGeneration {
 		// First, off. If this is a constructor, then check whether there is an
 		// explicit super constructor call or not.  If not, then add one.
 		if (d.name().equals(parent.name())) {
-			if (stmts.size() == 0 || !(stmts.get(0) instanceof Expr.Invoke)) {
+			if(!superCallFirst(stmts)) {			
 				stmts.add(0, new Expr.Invoke(new Expr.Variable("super", parent
 						.superClass()), "super", new ArrayList<Expr>(),
 						new Type.Function(new Type.Void()), new Type.Void()));
-			} else {
-				Expr.Invoke sc = (Expr.Invoke) stmts.get(0);
-				if (!sc.name().equals("super")) {
-					stmts.add(0, new Expr.Invoke(new Expr.Variable("super",
-							parent.superClass()), "super",
-							new ArrayList<Expr>(), new Type.Function(
-									new Type.Void()), new Type.Void()));
-				}
-			}
+			} 
 		}				
 		
 		// Now, add this statement list to the jil method representing this java
@@ -119,10 +124,34 @@ public class CodeGeneration {
 		}			
 	}
 
-	protected List<Stmt> doField(Decl.Field d) {		
+	protected void doField(Decl.Field d, Clazz parent) {		
 		Pair<Expr,List<Stmt>> tmp = doExpression(d.initialiser());
-		// bug here, as we need to assign to this field.
-		return tmp.second();
+		Type fieldT = (Type) d.type().attribute(Type.class);
+		boolean isStatic = d.isStatic();
+		
+		if(tmp != null) {
+			// This field has an initialiser. Therefore, we need to add it to
+			// the beginning of all constructors. One issue is that, if the
+			// first statement of a constructor is a super call (which is should
+			// normally be), then we need to put the statements after that.
+			for(Method m : parent.methods()) {
+				if(m.name().equals(parent.name())) {
+					List<Stmt> body = m.body();
+					Expr.Deref df = new Expr.Deref(new Expr.Variable("this",
+							parent.type()), d.name(), isStatic, fieldT, d
+							.attributes());
+					Stmt.Assign ae = new Stmt.Assign(df, tmp.first(), d
+							.attributes());
+					if(superCallFirst(body)) {
+						body.add(1,ae);
+						body.addAll(1,tmp.second());
+					} else {
+						body.add(1,ae);
+						body.addAll(0,tmp.second());
+					}
+				}
+			}
+		}				
 	}
 	
 	protected void doInitialiserBlock(Decl.InitialiserBlock d) {
@@ -963,6 +992,18 @@ public class CodeGeneration {
 		}
 		return null;
 	}	
+	
+	protected boolean superCallFirst(List<Stmt> stmts) {
+		if (stmts.size() == 0 || !(stmts.get(0) instanceof Expr.Invoke)) {
+			return false;
+		} else {
+			Expr.Invoke sc = (Expr.Invoke) stmts.get(0);
+			if (!sc.name().equals("super")) {
+				return false;
+			}
+		}
+		return true;
+	}
 	
 	/**
      * This method is just to factor out the code for looking up the source
