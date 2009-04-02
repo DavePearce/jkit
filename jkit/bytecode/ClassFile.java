@@ -10,16 +10,19 @@ public class ClassFile {
 	protected Type.Clazz type;
 	protected Type.Clazz superClazz;
 	protected List<Type.Clazz> interfaces;
+	protected List<Pair<Type.Clazz,List<Modifier>>> inners;
 	protected List<Modifier> modifiers;
 	protected ArrayList<Field> fields;
 	protected ArrayList<Method> methods;	
 	
 	public ClassFile(int version, Type.Clazz type, Type.Clazz superClazz,
-			List<Type.Clazz> interfaces, List<Modifier> modifiers) {
+			List<Type.Clazz> interfaces, List<Pair<Type.Clazz,List<Modifier>>> inners,
+			List<Modifier> modifiers) {
 		this.version = version;
 		this.type = type;
 		this.superClazz = superClazz;
 		this.interfaces = interfaces;
+		this.inners = inners;
 		this.modifiers = modifiers;
 		this.fields = new ArrayList<Field>();
 		this.methods = new ArrayList<Method>();
@@ -35,6 +38,10 @@ public class ClassFile {
 	
 	public List<Type.Clazz> interfaces() {
 		return interfaces;
+	}
+	
+	public List<Pair<Type.Clazz,List<Modifier>>> inners() {
+		return inners;
 	}
 	
 	public List<Modifier> modifiers() {

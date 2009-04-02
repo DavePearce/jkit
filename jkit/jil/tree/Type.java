@@ -275,7 +275,11 @@ public interface Type extends Attribute {
 		
 		public List<Pair<String, List<Type.Reference>>> components() {
 			return components;
-		}		
+		}
+		
+		public Pair<String, List<Type.Reference>> lastComponent() {
+			return components.get(components.size()-1);
+		}
 		
 		/**
          * Return the package. If no package, then the value is simply "",

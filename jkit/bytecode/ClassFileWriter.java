@@ -31,6 +31,7 @@ import jkit.util.*;
 
 public class ClassFileWriter {
 	protected final OutputStream output;
+	protected final ClassLoader loader;
 
 	/**
 	 * Construct a ClassFileWriter Object that the given output stream to write
@@ -39,8 +40,9 @@ public class ClassFileWriter {
 	 * @param o
 	 *            Output stream for class bytes
 	 */
-	public ClassFileWriter(OutputStream o) {
+	public ClassFileWriter(OutputStream o, ClassLoader loader) {
 		output = o;		
+		this.loader = loader;
 	}
 	
 	public void write(ClassFile cfile) throws IOException {
@@ -90,8 +92,7 @@ public class ClassFileWriter {
 
 		if(cfile.needClassSignature()) { nattributes++; }
 
-		// FIXME: support for inner classes
-		// if(clazz.inners().size() > 0 || clazz.isInnerClass()) { nattributes++; }
+		if(cfile.inners().size() > 0 || cfile.isInnerClass()) { nattributes++; }
 
 
 		write_u2(nattributes);		
@@ -99,10 +100,9 @@ public class ClassFileWriter {
 			writeClassSignature(cfile, poolMap);
 		}
 
-		// FIXME: support for inner classes
-		// if (clazz.inners().size() > 0 || clazz.isInnerClass()) {			
-		//	writeInnerClassAttribute(clazz, constantPool);
-		// }
+		 if (cfile.inners().size() > 0 || cfile.isInnerClass()) {			
+			writeInnerClassAttribute(cfile, constantPool);
+		 }
 
 		output.flush();
 	}
@@ -121,13 +121,12 @@ public class ClassFileWriter {
      * @param clazz
      * @param pmap
      */
-	protected void writeInnerClassAttribute(Clazz clazz,
+	protected void writeInnerClassAttribute(ClassFile clazz,
 			HashMap<Constant.Info, Integer> pmap) throws IOException {
 		write_u2(pmap.get(new Constant.Utf8("InnerClasses")));
 		
-		// FIXME: support for inner classes
-		// int ninners = clazz.inners().size() + clazz.type().components().size() - 1;
-		int ninners = clazz.type().components().size() - 1;
+		int ninners = clazz.inners().size() + clazz.type().components().size()
+				- 1;
 		
 		write_u4(2 + (8 * ninners));
 		write_u2(ninners);
@@ -147,27 +146,24 @@ public class ClassFileWriter {
 				write_u2(pmap.get(Constant.buildClass(outer)));
 				write_u2(pmap.get(new Constant.Utf8(inner.components().get(
 						inner.components().size() - 1).first())));
-				// FIXME: support for inner classes
-				// try {
+				try {
 					// This dependence on ClassTable here is annoying really.
-				//	Clazz innerC = ClassTable.findClass(inner);
-				//	write_u2(innerC.modifiers());
-				//} catch(ClassNotFoundException e) {
+					Clazz innerC = loader.loadClass(inner);
+					writeModifiers(innerC.modifiers());
+				} catch(ClassNotFoundException e) {
 					write_u2(0); // this is a problem!!!!
-				// }
+				 }
 				inner = outer;				
 			}
 		}		
 		
-		// FIXME: support for inner classes
-		/*
-		for(Triple<Type.Reference,Integer,Boolean> i : clazz.inners()) {
+		for(Pair<Type.Clazz,List<Modifier>> i : clazz.inners()) {
 			write_u2(pmap.get(Constant.buildClass(i.first())));
 			write_u2(pmap.get(Constant.buildClass(clazz.type())));
-			write_u2(pmap.get(new Constant.Utf8(i.first().name())));
-			write_u2(i.second());			
-		}
-		*/
+			String name = i.first().lastComponent().first();
+			write_u2(pmap.get(new Constant.Utf8(name)));
+			writeModifiers(i.second());			
+		}		
 	}
 	
 	protected void writeField(ClassFile.Field f, HashMap<Constant.Info, Integer> pmap)
