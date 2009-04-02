@@ -219,7 +219,7 @@ public class TypePropagation {
 					Expr c = unknownConstantInference(d.third(), nt,
 							(SourceLocation) d.third
 							.attribute(SourceLocation.class));
-					defs.set(i,new Triple(d.first(),d.second(),c));
+					defs.set(i, new Triple(d.first(), d.second(), c));
 				} else if(d.third() instanceof Value.Array) {
 					doArrayVal(nt,(Value.Array) d.third());
 				} else {
@@ -1131,37 +1131,45 @@ public class TypePropagation {
 			if (r.pkg().equals("java.lang") && r.components().size() == 1) {
 				String c = r.components().get(0).first();
 				if (c.equals("Byte")) {
+					Type.Function funType = new Type.Function(new Type.Byte());
 					return implicitCast(new Expr.Invoke(e, "byteValue",
 							new ArrayList<Expr>(), new ArrayList(),
-							new Type.Byte()), t);
+							new Type.Byte(), funType), t);
 				} else if (c.equals("Character")) {
+					Type.Function funType = new Type.Function(new Type.Char());
 					return implicitCast(new Expr.Invoke(e, "charValue",
 							new ArrayList<Expr>(), new ArrayList(),
-							new Type.Char()), t);
+							new Type.Char(), funType), t);
 				} else if (c.equals("Short")) {
+					Type.Function funType = new Type.Function(new Type.Short());
 					return implicitCast(new Expr.Invoke(e, "shortValue",
 							new ArrayList<Expr>(), new ArrayList(),
-							new Type.Short()), t);
+							new Type.Short(), funType), t);
 				} else if (c.equals("Integer")) {
+					Type.Function funType = new Type.Function(new Type.Int());
 					return implicitCast(new Expr.Invoke(e, "intValue",
 							new ArrayList<Expr>(), new ArrayList(),
-							new Type.Int()), t);
+							new Type.Int(), funType), t);
 				} else if (c.equals("Long")) {
+					Type.Function funType = new Type.Function(new Type.Long());
 					return implicitCast(new Expr.Invoke(e, "longValue",
 							new ArrayList<Expr>(), new ArrayList(),
-							new Type.Long()), t);
+							new Type.Long(), funType), t);
 				} else if (c.equals("Float")) {
+					Type.Function funType = new Type.Function(new Type.Float());
 					return implicitCast(new Expr.Invoke(e, "floatValue",
 							new ArrayList<Expr>(), new ArrayList(),
-							new Type.Float()), t);
+							new Type.Float(), funType), t);
 				} else if (c.equals("Double")) {
+					Type.Function funType = new Type.Function(new Type.Double());
 					return implicitCast(new Expr.Invoke(e, "doubleValue",
 							new ArrayList<Expr>(), new ArrayList(),
-							new Type.Double()), t);
+							new Type.Double(), funType), t);
 				} else if (c.equals("Boolean")) {
+					Type.Function funType = new Type.Function(new Type.Bool());
 					return implicitCast(new Expr.Invoke(e, "booleanValue",
 							new ArrayList<Expr>(), new ArrayList(),
-							new Type.Bool()), t);
+							new Type.Bool(), funType), t);
 				} else {
 					throw new RuntimeException("Unreachable code reached!");
 				}
@@ -1169,9 +1177,10 @@ public class TypePropagation {
 		} else if(e_t instanceof Type.Primitive && t instanceof Type.Clazz) {							
 			ArrayList<Expr> params = new ArrayList<Expr>();
 			params.add(e);
+			Type.Function funType = new Type.Function(new Type.Void(),e_t);
 			return new Expr.New(fromJilType(boxedType((Type.Primitive) e_t)),
 					null, params, new ArrayList<Decl>(),
-					boxedType((Type.Primitive) e_t), e
+					boxedType((Type.Primitive) e_t), funType, e
 							.attribute(SourceLocation.class));			
 		} 
 		
@@ -1304,16 +1313,24 @@ public class TypePropagation {
 			if(s.equals("Byte") && val >= -128 && val <= 127) {
 				ArrayList<Expr> params = new ArrayList<Expr>();
 				params.add(new Value.Byte((byte)val));
-				return new Expr.New(fromJilType(lhs_t),null,params,new ArrayList<Decl>(), lhs_t, loc);				
+				Type.Function funType = new Type.Function(new Type.Void(),new Type.Byte());
+				return new Expr.New(fromJilType(lhs_t),null,params,new ArrayList<Decl>(), lhs_t, funType, loc);				
 			} else if(s.equals("Character") && val >= 0 && val <= 65535) {
 				ArrayList<Expr> params = new ArrayList<Expr>();
-				params.add(new Value.Byte((byte)val));
-				return new Expr.New(fromJilType(lhs_t),null,params,new ArrayList<Decl>(), lhs_t, loc);				
-			} else if(s.equals("Short") && val >= -32768 && val <= 32768) {
+				params.add(new Value.Char((char)val));
+				Type.Function funType = new Type.Function(new Type.Void(),new Type.Char());
+				return new Expr.New(fromJilType(lhs_t),null,params,new ArrayList<Decl>(), lhs_t, funType, loc);				
+			} else if(s.equals("Short") && val >= Short.MIN_VALUE && val <= Short.MAX_VALUE) {
 				ArrayList<Expr> params = new ArrayList<Expr>();
-				params.add(new Value.Byte((byte)val));
-				return new Expr.New(fromJilType(lhs_t),null,params,new ArrayList<Decl>(), lhs_t, loc);				
-			}
+				params.add(new Value.Short((short)val));
+				Type.Function funType = new Type.Function(new Type.Void(),new Type.Short());
+				return new Expr.New(fromJilType(lhs_t),null,params,new ArrayList<Decl>(), lhs_t, funType, loc);				
+			} else if(s.equals("Integer") && val >= Integer.MIN_VALUE && val <= Integer.MAX_VALUE) {
+				ArrayList<Expr> params = new ArrayList<Expr>();
+				params.add(new Value.Int(val));
+				Type.Function funType = new Type.Function(new Type.Void(),new Type.Int());
+				return new Expr.New(fromJilType(lhs_t),null,params,new ArrayList<Decl>(), lhs_t, funType, loc);				
+			} 
 		} 
 		return new Value.Int(val,new Type.Int(),loc);
 	}

@@ -22,7 +22,7 @@ public class TypeSystem {
 	
 	/**
      * This method determines whether t1 :> t2; that is, whether t2 is a subtype
-     * of t1 or not, following the class heirarchy. Observe that this relation
+     * of t1 or not, following the class hierarchy. Observe that this relation
      * is reflexive, transitive and anti-symmetric:
      * 
      * 1) t1 :> t1 always holds
