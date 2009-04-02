@@ -492,9 +492,11 @@ public class TypeChecking {
 				return;
 			} else if (c_t instanceof Type.Primitive
 					&& e_t instanceof Type.Primitive) {
-				if (c_t instanceof Type.Byte && e_t instanceof Type.Char) {
+				if (e_t instanceof Type.Char
+						&& (c_t instanceof Type.Byte || c_t instanceof Type.Short)) {
 					return;
-				} else if (c_t instanceof Type.Char && e_t instanceof Type.Byte) {
+				} else if (c_t instanceof Type.Char
+						&& (e_t instanceof Type.Byte || e_t instanceof Type.Short)) {
 					return;
 				}
 			} 
