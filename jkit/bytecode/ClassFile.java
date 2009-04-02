@@ -9,20 +9,18 @@ public class ClassFile {
 	protected int version;
 	protected Type.Clazz type;
 	protected Type.Clazz superClazz;
-	protected List<Type.Clazz> interfaces;
-	protected List<Pair<Type.Clazz,List<Modifier>>> inners;
+	protected List<Type.Clazz> interfaces;	
 	protected List<Modifier> modifiers;
+	protected List<Attribute> attributes;
 	protected ArrayList<Field> fields;
 	protected ArrayList<Method> methods;	
 	
 	public ClassFile(int version, Type.Clazz type, Type.Clazz superClazz,
-			List<Type.Clazz> interfaces, List<Pair<Type.Clazz,List<Modifier>>> inners,
-			List<Modifier> modifiers) {
+			List<Type.Clazz> interfaces, List<Modifier> modifiers) {
 		this.version = version;
 		this.type = type;
 		this.superClazz = superClazz;
-		this.interfaces = interfaces;
-		this.inners = inners;
+		this.interfaces = interfaces;		
 		this.modifiers = modifiers;
 		this.fields = new ArrayList<Field>();
 		this.methods = new ArrayList<Method>();
@@ -40,8 +38,8 @@ public class ClassFile {
 		return interfaces;
 	}
 	
-	public List<Pair<Type.Clazz,List<Modifier>>> inners() {
-		return inners;
+	public List<Attribute> attributes() {
+		return attributes;
 	}
 	
 	public List<Modifier> modifiers() {
@@ -391,11 +389,6 @@ public class ClassFile {
 		for (Type.Reference i : interfaces) {
 			Constant.addPoolItem(Constant.buildClass(i), constantPool);
 		}
-
-		if (needClassSignature()) {
-			Constant.addPoolItem(
-					new Constant.Utf8(classSignature()),constantPool);
-		}
 		
 		// FIXME: support for inner classes
 //		if (clazz.inners().size() > 0 || clazz.isInnerClass()) {
@@ -428,6 +421,7 @@ public class ClassFile {
 			Constant.addPoolItem(
 					new Constant.Utf8(descriptor(f.type(), false)),
 					constantPool);
+			
 			if (isGeneric(f.type())) {
 				Constant.addPoolItem(new Constant.Utf8(descriptor(f.type(),
 						true)), constantPool);
@@ -440,33 +434,18 @@ public class ClassFile {
 			Constant.addPoolItem(new Constant.Utf8(descriptor(m.type(),
 					false)), constantPool);
 
-			Attribute.Code codeAttr = (Attribute.Code) m.attribute(Attribute.Code.class);
-			
-			if (codeAttr != null) {
-				Constant.addPoolItem(new Constant.Utf8("Code"), constantPool);
-
-				for (Bytecode b : codeAttr.bytecodes()) {
-					b.addPoolItems(constantPool);
-				}
-
-				// FIXME: support for exception handlers
-//				for(ExceptionHandler h : handlers) {
-//				if(!h.exception.unqualifiedName().equals("java.lang.Throwable")) {
-//				Constant.addPoolItem(Constant.buildClass(h.exception), constantPool);
-//				}
-//				}
+			for(Attribute a : m.attributes()) {
+				a.addPoolItems(constantPool);
 			}
 			
-			if(!m.exceptions().isEmpty()) {
-				Constant.addPoolItem(new Constant.Utf8("Exceptions"), constantPool);
-				for(Type.Clazz e : m.exceptions()) {
-					Constant.addPoolItem(Constant.buildClass(e), constantPool);	
-				}
-			}
 			if (isGeneric(m.type().returnType())) {
 				Constant.addPoolItem(new Constant.Utf8(descriptor(m.type(),
 						true)), constantPool);
 			}
+		}
+		
+		for(Attribute a : attributes) {
+			a.addPoolItems(constantPool);
 		}
 		
 		// Finally, we need to flatten the constant pool
@@ -483,58 +462,7 @@ public class ClassFile {
 		return pool;
 	}
 	
-	/**
-	 * This method constructors a class signature string from a clazz.
-	 * 
-	 * @param clazz
-	 * @return
-	 */
-	public String classSignature() {
-		String desc = "";
-		
-		List<Pair<String,List<Type.Reference>>> classes = type.components();
-		if(classes.get(classes.size()-1).second().size() > 0) { 
-			desc += "<"; 
-			for(Type t : classes.get(classes.size()-1).second()) {
-				if(t instanceof Type.Variable) {
-					Type.Variable tv = (Type.Variable) t;
-					desc += tv.variable() + ":";
-					// NOTE: lowerBounds() should *never* be null.
-					if(tv.lowerBound() == null) {
-						desc += "Ljava/lang/Object;";
-					} else {
-						Type lb = tv.lowerBound();
-						// The following check is needed to deal with the case
-						// where the type bounds are only interfaces. In this
-						// case, there must be an extra colon indicating the
-						// absence of super class. It's actually really annoying
-						// since it couples this code with ClassTable ... grrr.
-						
-						/*
-						 * This code is temporarily bypassed ... it needs to be fixed! 
-						try {
-							Clazz tmp = ClassTable.findClass((Type.Reference) lb);
-							if(tmp.isInterface()) { desc += ":"; }
-							desc += Types.descriptor(lb, true);
-						} catch(ClassNotFoundException ce) {
-							throw new RuntimeException("Type bound " + lb + " not found");
-						}
-						*/						
-					}
-				} else {
-					throw new RuntimeException("Type Variable required in Class Signature!");
-				}
-			}
-			desc += ">";
-		}
-		if (superClazz != null) {
-			desc += descriptor(superClazz, true);
-		}
-		for (Type t : interfaces) {
-			desc += descriptor(t, true);
-		}
-		return desc;
-	}
+	
 	
 	protected static boolean isGeneric(Type t) {
 		if(!(t instanceof Type.Clazz)) {

@@ -3,9 +3,9 @@ package jkit.bytecode;
 import java.util.*;
 import java.io.*;
 
-public abstract class Attribute {
-	public abstract String name();
-
+public interface Attribute {
+	public String name();
+	
 	/**
 	 * This method requires the attribute to write itself to the binary stream.
 	 * 
@@ -13,6 +13,14 @@ public abstract class Attribute {
 	 * @returns the number of bytes written.
 	 * @throws IOException
 	 */
-	public abstract void write(BinaryWriter writer,
+	public void write(BinaryWriter writer,
 			Map<Constant.Info, Integer> constantPool) throws IOException;
+	
+	/**
+	 * When this method is called, the attribute must add all items that it
+	 * needs to the constant pool.
+	 * 
+	 * @param constantPool
+	 */
+	public void addPoolItems(Set<Constant.Info> constantPool);
 }

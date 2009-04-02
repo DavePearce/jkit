@@ -12,7 +12,7 @@ import jkit.jil.tree.Type;
  * 
  * @author djp
  */
-public class Code extends Attribute {
+public class Code implements Attribute {
 
 	protected List<Bytecode> bytecodes;
 	protected List<Handler> handlers;
@@ -89,6 +89,21 @@ public class Code extends Attribute {
 		return handlers;
 	}
 
+	public void addPoolItems(Set<Constant.Info> constantPool) {
+		Constant.addPoolItem(new Constant.Utf8("Code"), constantPool);
+
+		for (Bytecode b : bytecodes()) {
+			b.addPoolItems(constantPool);
+		}
+
+		// FIXME: support for exception handlers
+//		for(ExceptionHandler h : handlers) {
+//		if(!h.exception.unqualifiedName().equals("java.lang.Throwable")) {
+//		Constant.addPoolItem(Constant.buildClass(h.exception), constantPool);
+//		}
+//		}
+	}
+	
 	public void write(BinaryWriter writer,
 			Map<Constant.Info, Integer> constantPool) throws IOException {
 
