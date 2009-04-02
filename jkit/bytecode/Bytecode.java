@@ -285,8 +285,21 @@ public abstract class Bytecode {
 				} else {
 					write_u1(out,ICONST_0);
 				}
+			} else if(constant instanceof Byte) {
+				int v = (int) ((Byte)constant);								
+				write_u1(out,BIPUSH);
+				write_u1(out,v);			
 			} else if(constant instanceof Character) {
 				int v = (int) ((Character)constant);				
+				if(v >= -128 && v <= 127) {
+					write_u1(out,BIPUSH);
+					write_u1(out,v);
+				} else {
+					write_u1(out,SIPUSH);
+					write_u2(out,v);
+				}
+			} else if(constant instanceof Short) {
+				int v = (int) ((Short)constant);				
 				if(v >= -128 && v <= 127) {
 					write_u1(out,BIPUSH);
 					write_u1(out,v);

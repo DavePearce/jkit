@@ -588,8 +588,12 @@ public class CodeGeneration {
 	protected Pair<Expr,List<Stmt>> doExpression(jkit.java.tree.Expr e) {	
 		if(e instanceof jkit.java.tree.Value.Bool) {
 			return doBoolVal((jkit.java.tree.Value.Bool)e);
+		} else if(e instanceof jkit.java.tree.Value.Byte) {
+			return doByteVal((jkit.java.tree.Value.Byte)e);
 		} else if(e instanceof jkit.java.tree.Value.Char) {
 			return doCharVal((jkit.java.tree.Value.Char)e);
+		} else if(e instanceof jkit.java.tree.Value.Short) {
+			return doShortVal((jkit.java.tree.Value.Short)e);
 		} else if(e instanceof jkit.java.tree.Value.Int) {
 			return doIntVal((jkit.java.tree.Value.Int)e);
 		} else if(e instanceof jkit.java.tree.Value.Long) {
@@ -778,6 +782,14 @@ public class CodeGeneration {
 	
 	protected Pair<Expr,List<Stmt>> doCharVal(jkit.java.tree.Value.Char e) {
 		return new Pair<Expr,List<Stmt>>(new Expr.Char(e.value()), new ArrayList<Stmt>());		
+	}
+	
+	protected Pair<Expr,List<Stmt>> doByteVal(jkit.java.tree.Value.Byte e) {
+		return new Pair<Expr,List<Stmt>>(new Expr.Byte(e.value()), new ArrayList<Stmt>());		
+	}
+	
+	protected Pair<Expr,List<Stmt>> doShortVal(jkit.java.tree.Value.Short e) {
+		return new Pair<Expr,List<Stmt>>(new Expr.Short(e.value()), new ArrayList<Stmt>());		
 	}
 	
 	protected Pair<Expr,List<Stmt>> doIntVal(jkit.java.tree.Value.Int e) {

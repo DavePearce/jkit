@@ -486,10 +486,20 @@ public class TypeChecking {
 				}
 			}
 			
-			if (!(types.subtype(c_t, e_t, loader) || types.subtype(e_t, c_t,
-					loader))) {
-				syntax_error("inconvertible types: " + e_t + ", " + c_t, e);
-			}
+			if (types.subtype(c_t, e_t, loader)
+					|| types.subtype(e_t, c_t, loader)) {
+				// this is OK
+				return;
+			} else if (c_t instanceof Type.Primitive
+					&& e_t instanceof Type.Primitive) {
+				if (c_t instanceof Type.Byte && e_t instanceof Type.Char) {
+					return;
+				} else if (c_t instanceof Type.Char && e_t instanceof Type.Byte) {
+					return;
+				}
+			} 
+			
+			syntax_error("inconvertible types: " + e_t + ", " + c_t, e);			
 		} catch(ClassNotFoundException ex) {
 			syntax_error (ex.getMessage(),e);
 		}
