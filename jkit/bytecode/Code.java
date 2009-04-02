@@ -104,7 +104,7 @@ public class Code implements Attribute {
 //		}
 	}
 	
-	public void write(BinaryWriter writer,
+	public void write(BinaryOutputStream writer,
 			Map<Constant.Info, Integer> constantPool) throws IOException {
 
 		// This method is a little tricky. The basic strategy is to first

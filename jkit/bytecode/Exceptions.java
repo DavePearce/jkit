@@ -23,7 +23,7 @@ public class Exceptions implements Attribute {
 	 * @returns the number of bytes written.
 	 * @throws IOException
 	 */
-	public void write(BinaryWriter writer,
+	public void write(BinaryOutputStream writer,
 			Map<Constant.Info, Integer> constantPool) throws IOException {
 		
 		writer.write_u2(constantPool.get(new Constant.Utf8("Exceptions")));

@@ -3,31 +3,15 @@ package jkit.bytecode;
 import java.io.*;
 import java.io.OutputStream;
 
-public class BinaryWriter extends Writer {
+public class BinaryOutputStream extends OutputStream {
 	protected Writer output;
 	
-	public BinaryWriter(Writer output) {
+	public BinaryOutputStream(Writer output) {
 		this.output = output;
 	}
 	
-	public BinaryWriter(OutputStream output) {
+	public BinaryOutputStream(OutputStream output) {
 		this.output = new OutputStreamWriter(output);
-	}
-	
-	public void close() throws IOException {
-		output.close();
-	}
-	
-	public void flush() throws IOException {
-		output.flush();
-	}
-	
-	public void write(char[] cs) throws IOException {
-		output.write(cs);
-	}
-	
-	public void write(char[] cs, int off, int length) throws IOException {
-		output.write(cs,off,length);
 	}
 	
 	public void write(int i) throws IOException {

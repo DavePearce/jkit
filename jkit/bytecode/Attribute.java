@@ -13,7 +13,7 @@ public interface Attribute {
 	 * @returns the number of bytes written.
 	 * @throws IOException
 	 */
-	public void write(BinaryWriter writer,
+	public void write(BinaryOutputStream writer,
 			Map<Constant.Info, Integer> constantPool) throws IOException;
 	
 	/**

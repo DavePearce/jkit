@@ -23,7 +23,7 @@ public class Signature implements Attribute {
 		return "Signature";
 	}
 	
-	public void write(BinaryWriter writer,
+	public void write(BinaryOutputStream writer,
 			Map<Constant.Info, Integer> constantPool) throws IOException {
 		writer.write_u2(constantPool.get(new Constant.Utf8("Signature")));
 		writer.write_u4(2);

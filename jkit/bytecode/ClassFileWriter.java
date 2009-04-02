@@ -30,7 +30,7 @@ import jkit.jil.util.*;
 import jkit.util.*;
 
 public class ClassFileWriter {
-	protected final BinaryWriter output;
+	protected final BinaryOutputStream output;
 	protected final ClassLoader loader;
 
 	/**
@@ -41,7 +41,7 @@ public class ClassFileWriter {
 	 *            Output stream for class bytes
 	 */
 	public ClassFileWriter(Writer o, ClassLoader loader) {
-		output = new BinaryWriter(o);		
+		output = new BinaryOutputStream(o);		
 		this.loader = loader;
 	}
 	
@@ -53,7 +53,7 @@ public class ClassFileWriter {
 	 *            Output stream for class bytes
 	 */
 	public ClassFileWriter(OutputStream o, ClassLoader loader) {
-		output = new BinaryWriter(o);		
+		output = new BinaryOutputStream(o);		
 		this.loader = loader;
 	}
 	
