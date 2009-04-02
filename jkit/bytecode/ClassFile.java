@@ -11,7 +11,7 @@ public class ClassFile {
 	protected Type.Clazz superClazz;
 	protected List<Type.Clazz> interfaces;	
 	protected List<Modifier> modifiers;
-	protected List<Attribute> attributes;
+	protected ArrayList<Attribute> attributes;
 	protected ArrayList<Field> fields;
 	protected ArrayList<Method> methods;	
 	
@@ -24,6 +24,7 @@ public class ClassFile {
 		this.modifiers = modifiers;
 		this.fields = new ArrayList<Field>();
 		this.methods = new ArrayList<Method>();
+		this.attributes = new ArrayList<Attribute>();
 	}
 		
 	public Type.Clazz type() {

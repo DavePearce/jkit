@@ -40,18 +40,6 @@ public class ClassFileWriter {
 	 * @param o
 	 *            Output stream for class bytes
 	 */
-	public ClassFileWriter(Writer o, ClassLoader loader) {
-		output = new BinaryOutputStream(o);		
-		this.loader = loader;
-	}
-	
-	/**
-	 * Construct a ClassFileWriter Object that the given output stream to write
-	 * ClassFiles.
-	 * 
-	 * @param o
-	 *            Output stream for class bytes
-	 */
 	public ClassFileWriter(OutputStream o, ClassLoader loader) {
 		output = new BinaryOutputStream(o);		
 		this.loader = loader;
@@ -102,7 +90,7 @@ public class ClassFileWriter {
 
 		output.write_u2(cfile.attributes.size());
 		for(Attribute a : cfile.attributes()) {
-			a.write(null, poolMap);
+			a.write(output, poolMap);
 		}
 		
 		output.flush();
@@ -143,13 +131,14 @@ public class ClassFileWriter {
 			HashMap<Constant.Info, Integer> constantPool) throws IOException {
 
 		writeModifiers(m.modifiers());
-		output.write_u2(constantPool.get(new Constant.Utf8(m.name())));		
-		output.write_u2(constantPool.get(new Constant.Utf8(ClassFile.descriptor(m.type(), false))));
+		output.write_u2(constantPool.get(new Constant.Utf8(m.name())));
+		output.write_u2(constantPool.get(new Constant.Utf8(ClassFile
+				.descriptor(m.type(), false))));
 
 		output.write_u2(m.attributes.size());
-		
-		for(Attribute a : m.attributes) {
-			a.write(null, constantPool);
+
+		for (Attribute a : m.attributes) {
+			a.write(output, constantPool);
 		}
 	}
 	

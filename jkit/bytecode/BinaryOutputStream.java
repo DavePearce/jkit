@@ -4,14 +4,10 @@ import java.io.*;
 import java.io.OutputStream;
 
 public class BinaryOutputStream extends OutputStream {
-	protected Writer output;
-	
-	public BinaryOutputStream(Writer output) {
-		this.output = output;
-	}
+	protected OutputStream output;
 	
 	public BinaryOutputStream(OutputStream output) {
-		this.output = new OutputStreamWriter(output);
+		this.output = output;
 	}
 	
 	public void write(int i) throws IOException {
