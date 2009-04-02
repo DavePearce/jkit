@@ -969,23 +969,45 @@ public class CodeGeneration {
 						
 		stmts.add(new Stmt.Assign(new Expr.Variable(builderLab, builder),
 				new Expr.New(builder, new ArrayList<Expr>(),
-						new Type.Function(new Type.Void()), bop.attributes())));
+						new Type.Function(new Type.Void()), bop.attributes())));					
 		
-		ArrayList<Expr> params = new ArrayList<Expr>();
-		params.add(lhs.first());
-		
-		stmts.add(new Expr.Invoke(new Expr.Variable(builderLab, builder), "append",
-				params, new Type.Function(new Type.Clazz("java.lang",
-						"StringBuilder"), lhs.first().type()), new Type.Clazz(
-						"java.lang", "StringBuilder")));
+		Type lhs_t = lhs.first().type(); 
+		if(lhs_t instanceof Type.Primitive || isString(lhs_t)) {
+			ArrayList<Expr> params = new ArrayList<Expr>();
+			params.add(lhs.first());
+			stmts.add(new Expr.Invoke(new Expr.Variable(builderLab, builder), "append",
+					params, new Type.Function(new Type.Clazz("java.lang",
+					"StringBuilder"), lhs.first().type()), new Type.Clazz(
+							"java.lang", "StringBuilder")));
+		} else {
+			ArrayList<Expr> params = new ArrayList<Expr>();
+			params.add(lhs.first());
+			stmts.add(new Expr.Invoke(new Expr.Variable(builderLab, builder),
+					"append", params, new Type.Function(new Type.Clazz(
+							"java.lang", "StringBuilder"), new Type.Clazz(
+							"java.lang", "Object")), new Type.Clazz(
+							"java.lang", "StringBuilder")));	
+		}
 
-		params = new ArrayList<Expr>();
-		params.add(rhs.first());
-		
-		Expr r = new Expr.Invoke(new Expr.Variable(builderLab, builder), "append",
-				params, new Type.Function(new Type.Clazz("java.lang",
-						"StringBuilder"), rhs.first().type()), new Type.Clazz(
-						"java.lang", "StringBuilder"));
+		// Now, do the right hand side
+		Expr r;
+		Type rhs_t = rhs.first().type(); 
+		if(rhs_t instanceof Type.Primitive || isString(rhs_t)) {
+			ArrayList<Expr> params = new ArrayList<Expr>();
+			params.add(rhs.first());
+			r = new Expr.Invoke(new Expr.Variable(builderLab, builder), "append",
+					params, new Type.Function(new Type.Clazz("java.lang",
+					"StringBuilder"), rhs_t), new Type.Clazz(
+							"java.lang", "StringBuilder"));
+		} else {
+			ArrayList<Expr> params = new ArrayList<Expr>();
+			params.add(rhs.first());
+			r = new Expr.Invoke(new Expr.Variable(builderLab, builder),
+					"append", params, new Type.Function(new Type.Clazz(
+							"java.lang", "StringBuilder"), new Type.Clazz(
+							"java.lang", "Object")), new Type.Clazz(
+							"java.lang", "StringBuilder"));
+		}
 
 		r = new Expr.Invoke(r, "toString", new ArrayList<Expr>(),
 				new Type.Function(new Type.Clazz("java.lang", "String")),
@@ -1020,6 +1042,21 @@ public class CodeGeneration {
 			}
 		}
 		return true;
+	}
+	
+	/**
+     * Check wither a given type is a reference to java.lang.String or not.
+     * 
+     * @param t
+     * @return
+     */
+	protected static boolean isString(Type t) {
+		if(t instanceof Type.Clazz) {
+			Type.Clazz c = (Type.Clazz) t;
+			 return c.pkg().equals("java.lang") && c.components().size() == 1
+					&& c.components().get(0).first().equals("String");			
+		}
+		return false;
 	}
 	
 	/**

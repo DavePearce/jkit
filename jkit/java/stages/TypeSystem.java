@@ -8,6 +8,7 @@ import jkit.compiler.MethodNotFoundException;
 import jkit.jil.tree.Clazz;
 import jkit.jil.tree.Field;
 import jkit.jil.tree.Method;
+import jkit.jil.tree.SyntacticElement;
 import jkit.jil.tree.Type;
 import jkit.util.Pair;
 import jkit.util.Triple;
@@ -21,19 +22,29 @@ import jkit.util.Triple;
 public class TypeSystem {
 	
 	/**
-     * This method determines whether t1 :> t2; that is, whether t2 is a subtype
-     * of t1 or not, following the class hierarchy. Observe that this relation
-     * is reflexive, transitive and anti-symmetric:
-     * 
-     * 1) t1 :> t1 always holds
-     * 2) if t1 :> t2 and t2 :> t3, then t1 :> t3
-     * 3) if t1 :> t2 then not t2 :> t1 (unless t1 == t2)
-     * 
-     * @param t1
-     * @param t2
-     * @return
-     * @throws ClassNotFoundException
-     */
+	 * <p>
+	 * This method determines whether t1 :> t2; that is, whether t2 is a subtype
+	 * of t1 or not, following the class hierarchy. Observe that this relation
+	 * is reflexive, transitive and anti-symmetric:
+	 * </p>
+	 * 
+	 * <ol>
+	 * <li> t1 :> t1 always holds</li>
+	 * <li> if t1 :> t2 and t2 :> t3, then t1 :> t3</li>
+	 * <li> if t1 :> t2 then not t2 :> t1 (unless t1 == t2)</li>
+	 * </ol>
+	 * 
+	 * <p>
+	 * <b>Note</b>, this method does not consider auto-boxing. Thus, it is not the case
+	 * that int <: java.lang.Integer. To including autoboxing information, use
+	 * boxSubtype().
+	 * </p>
+	 * 
+	 * @param t1
+	 * @param t2
+	 * @return
+	 * @throws ClassNotFoundException
+	 */
 	public boolean subtype(Type t1, Type t2, ClassLoader loader)
 			throws ClassNotFoundException {
 		if(loader == null) {
@@ -166,6 +177,74 @@ public class TypeSystem {
 		}
 		
 		return false;
+	}
+	
+	/**
+	 * <p>This method determines whether or not type t1 :> t2 under autoboxing.
+	 * Thus, it is very similar to the subtype() method above, except that it
+	 * also considers autoboxing, whereas subtype() does not.</p>
+	 * 
+	 * @param t1
+	 * @param t2
+	 * @return
+	 */
+	public boolean boxSubtype(Type t1, Type t2, ClassLoader loader)
+			throws ClassNotFoundException {
+		
+		if (t1 instanceof Type.Primitive && isWrapper(t2)) {
+			t2 = unboxedType((Type.Clazz) t2);
+		} else if (t2 instanceof Type.Primitive && isWrapper(t1)) {
+			t1 = unboxedType((Type.Clazz) t1);
+		} 
+		
+		return subtype(t1, t2, loader);		
+	}
+	
+	/**
+	 * Determine whether or not the given type is a wrapper for a primitive
+	 * type.  E.g. java.lang.Integer is a wrapper for int.
+	 * 
+	 * @param t
+	 * @return
+	 */
+	protected boolean isWrapper(Type t) {
+		if(!(t instanceof Type.Clazz)) {
+			return false;
+		}
+		return null != unboxedType((Type.Clazz)t);
+	}
+	
+	/**
+	 * Given a primitive wrapper class (i.e. a boxed type), return the unboxed
+	 * equivalent. For example, java.lang.Integer yields int, whilst
+	 * java.lang.Boolean yields bool.
+	 * 
+	 * @param p
+	 * @return
+	 */
+	protected Type.Primitive unboxedType(Type.Clazz p) {		
+		if (p.pkg().equals("java.lang") && p.components().size() == 1) {
+			String type = p.components().get(p.components().size() - 1).first();
+
+			if (type.equals("Boolean")) {
+				return new Type.Bool();
+			} else if (type.equals("Byte")) {
+				return new Type.Byte();
+			} else if (type.equals("Character")) {
+				return new Type.Char();
+			} else if (type.equals("Short")) {
+				return new Type.Short();
+			} else if (type.equals("Integer")) {
+				return new Type.Int();
+			} else if (type.equals("Long")) {
+				return new Type.Long();
+			} else if (type.equals("Float")) {
+				return new Type.Float();
+			} else if (type.equals("Double")) {
+				return new Type.Double();
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -1175,15 +1254,12 @@ public class TypeSystem {
 				for (int j = 0; j != numToCheck; ++j) {
 					Type p1 = mps[j];
 					Type p2 = params[j];
-					
-					if (!subtype(p1,p2,loader)) {					
+
+					if (!(autoboxing && boxSubtype(p1, p2, loader))
+							&& !subtype(p1, p2, loader)) {
 						continue outer;
 					}
 					
-					if (!autoboxing
-							&& ((p1 instanceof Type.Primitive && !(p2 instanceof Type.Primitive)) || (p2 instanceof Type.Primitive && !(p1 instanceof Type.Primitive)))) {
-						continue outer;
-					}
 					if (nparams != null && !subtype(nparams[j], p1, loader)) {
 						continue outer;
 					}

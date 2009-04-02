@@ -717,7 +717,7 @@ public class TypeChecking {
 			default:
 				syntax_error("operand types do not go together: " + lhs_t + ", " + rhs_t,e);
 			}
-		} else if(isStringType(lhs_t) && isStringType(rhs_t) && e.op() == Expr.BinOp.CONCAT) {
+		} else if((isStringType(lhs_t) || isStringType(rhs_t)) && e.op() == Expr.BinOp.CONCAT) {
 			// OK
 		} else {
 			syntax_error("operand types do not go together: " + lhs_t + ", " + rhs_t,e);
