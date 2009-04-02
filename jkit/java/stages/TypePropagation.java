@@ -603,9 +603,12 @@ public class TypePropagation {
 	}
 	
 	protected void doCast(Expr.Cast e) {
+		Type ct = (Type) e.type().attribute(Type.class);
 		doExpression(e.expr());
-		// may need to insert an implicit cast here...
-		e.attributes().add(e.type().attribute(Type.class));
+		// the implicit cast is required to deal with boxing/unboxing (amongst
+		// other things?)
+		e.setExpr(implicitCast(e.expr(),ct));
+		e.attributes().add(ct);
 	}
 	
 	protected void doBoolVal(Value.Bool e) {
@@ -1211,7 +1214,7 @@ public class TypePropagation {
 					throw new RuntimeException("Unreachable code reached!");
 				}
 			}
-		} else if(e_t instanceof Type.Primitive && t instanceof Type.Clazz) {							
+		} else if(e_t instanceof Type.Primitive && t instanceof Type.Clazz) {
 			ArrayList<Expr> params = new ArrayList<Expr>();
 			params.add(e);
 			Type.Function funType = new Type.Function(new Type.Void(),e_t);

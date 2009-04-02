@@ -486,8 +486,8 @@ public class TypeChecking {
 				}
 			}
 			
-			if (types.subtype(c_t, e_t, loader)
-					|| types.subtype(e_t, c_t, loader)) {
+			if (types.boxSubtype(c_t, e_t, loader)
+					|| types.boxSubtype(e_t, c_t, loader)) {
 				// this is OK
 				return;
 			} else if (c_t instanceof Type.Primitive

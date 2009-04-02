@@ -195,6 +195,12 @@ public class TypeSystem {
 			t2 = unboxedType((Type.Clazz) t2);
 		} else if (t2 instanceof Type.Primitive && isWrapper(t1)) {
 			t1 = unboxedType((Type.Clazz) t1);
+		} else if (t1 instanceof Type.Primitive && t2 instanceof Type.Clazz) {
+			t1 = boxedType((Type.Primitive)t1);
+			return subtype(t1, t2, loader);		
+		} else if (t2 instanceof Type.Primitive && t1 instanceof Type.Clazz) {
+			t2 = boxedType((Type.Primitive)t2);
+			return subtype(t1, t2, loader);		
 		} 
 		
 		return subtype(t1, t2, loader);		
@@ -245,6 +251,35 @@ public class TypeSystem {
 			}
 		}
 		return null;
+	}
+	
+	/**
+     * Given a primitive type, determine the equivalent boxed type. For example,
+     * the primitive type int yields the type java.lang.Integer. For simplicity
+     * in the code using this, it returns in the form a java.Type, rather than a
+     * jil.Type.
+     * 
+     * @param p
+     * @return
+     */
+	public static Type.Reference boxedType(Type.Primitive p) {
+		if(p instanceof Type.Bool) {
+			return new Type.Clazz("java.lang","Boolean");
+		} else if(p instanceof Type.Byte) {
+			return new Type.Clazz("java.lang","Byte");
+		} else if(p instanceof Type.Char) {
+			return new Type.Clazz("java.lang","Character");
+		} else if(p instanceof Type.Short) {
+			return new Type.Clazz("java.lang","Short");
+		} else if(p instanceof Type.Int) {
+			return new Type.Clazz("java.lang","Integer");
+		} else if(p instanceof Type.Long) {
+			return new Type.Clazz("java.lang","Long");
+		} else if(p instanceof Type.Float) {
+			return new Type.Clazz("java.lang","Float");
+		} else {
+			return new Type.Clazz("java.lang","Double");
+		}
 	}
 	
 	/**
