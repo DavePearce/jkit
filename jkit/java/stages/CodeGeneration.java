@@ -85,17 +85,22 @@ public class CodeGeneration {
 			// means I can be sure that the constructor has been otherwise
 			// completely generated, so all I need is to add initialisers at
 			// beginning, after super call (if there is one).
+			ArrayList<Decl.Field> fields = new ArrayList<Decl.Field>();
 			for(Decl d : c.declarations()) {
 				if(!(d instanceof Decl.Field)) {
 					doDeclaration(d, skeleton);
+				} else {
+					fields.add((Decl.Field)d);
 				}
 			}
 			
-			for(Decl d : c.declarations()) {
-				if(d instanceof Decl.Field) {
-					doDeclaration(d, skeleton);
-				}
-			}
+			// Note, I iterate the field declarations in reverse order to ensure
+			// that field initialisers are added to constructors in the right
+			// order.
+			for(int i=fields.size();i>0;--i) {
+				Decl.Field d = fields.get(i-1);
+				doDeclaration(d, skeleton);				
+			}			
 		} catch(ClassNotFoundException cne) {
 			syntax_error("internal failure (skeleton not found for " + type,c,cne);
 		}			

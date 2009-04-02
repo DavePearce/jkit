@@ -10,9 +10,8 @@ public class JKit extends TestHarness {
 												
 	@Test public void ClassSignature_1() { runTest("ClassSignature_1"); }
 	@Test public void ClassSignature_2() { runTest("ClassSignature_2"); }
-
-	// Fails because: side-effects in field initialiser 
-	@Ignore("Known Bug") @Test public void FieldInit_1() { runTest("FieldInit_1"); }
+	
+	@Test public void FieldInit_1() { runTest("FieldInit_1"); }
 	@Test public void FieldSignature_1() { runTest("FieldSignature_1"); }
 	@Test public void FieldSignature_2() { runTest("FieldSignature_2"); }
 	
