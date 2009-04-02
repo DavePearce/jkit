@@ -67,7 +67,9 @@ public class TypeSystem {
 		} else if(t1 instanceof Type.Array && t2 instanceof Type.Array) {
 			return subtype((Type.Array) t1, (Type.Array) t2, loader);
 		} else if(t2 instanceof Type.Array && t1 instanceof Type.Clazz) {
-			return new Type.Clazz("java.lang","Object").equals(t1);
+			return new Type.Clazz("java.lang", "Object").equals(t1)
+					|| new Type.Clazz("java.lang", "Cloneable").equals(t1)
+					|| new Type.Clazz("java.io", "Serializable").equals(t1);
 		}  else if(t2 instanceof Type.Variable && t1 instanceof Type.Clazz) {
 			Type.Variable tv = (Type.Variable) t2;
 			if(tv.lowerBound() != null) {
