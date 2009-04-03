@@ -2,7 +2,7 @@ package jkit.jil.tree;
 
 import java.util.*;
 
-public class JilClazz extends SyntacticElementImpl implements jkit.compiler.Clazz {
+public class JilClass extends SyntacticElementImpl implements jkit.compiler.Clazz {
 	private List<Modifier> modifiers;
 	private Type.Clazz type;
 	private Type.Clazz superClass; // maybe null if no supertype (i.e. this is java.lang.Object)
@@ -35,7 +35,7 @@ public class JilClazz extends SyntacticElementImpl implements jkit.compiler.Claz
      *            Any methods contained in this object. This list should be
      *            non-null regardless.
      */
-	public JilClazz(Type.Clazz type, List<Modifier> modifiers,
+	public JilClass(Type.Clazz type, List<Modifier> modifiers,
 			Type.Clazz superClass, List<Type.Clazz> interfaces,
 			List<JilField> fields, List<JilMethod> methods, Attribute... attributes) {		
 		super(attributes);
@@ -72,7 +72,7 @@ public class JilClazz extends SyntacticElementImpl implements jkit.compiler.Claz
      *            Any methods contained in this object. This list should be
      *            non-null regardless.
      */
-	public JilClazz(Type.Clazz type, List<Modifier> modifiers,
+	public JilClass(Type.Clazz type, List<Modifier> modifiers,
 			Type.Clazz superClass, List<Type.Clazz> interfaces,
 			List<JilField> fields, List<JilMethod> methods, List<Attribute> attributes) {		
 		super(attributes);

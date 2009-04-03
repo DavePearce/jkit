@@ -8,7 +8,7 @@ import jkit.compiler.SyntaxError;
 import jkit.java.io.JavaFile;
 import jkit.java.tree.Decl;
 import jkit.java.tree.Decl.Field;
-import jkit.jil.tree.JilClazz;
+import jkit.jil.tree.JilClass;
 import jkit.jil.tree.SourceLocation;
 import jkit.jil.tree.SyntacticElement;
 import jkit.jil.tree.Type;
@@ -30,8 +30,8 @@ import jkit.util.Pair;
  * 
  */
 public class SkeletonDiscovery {		
-	public List<JilClazz> apply(JavaFile file, ClassLoader loader) {
-		List<JilClazz> skeletons = new ArrayList<JilClazz>();
+	public List<JilClass> apply(JavaFile file, ClassLoader loader) {
+		List<JilClass> skeletons = new ArrayList<JilClass>();
 		// Now, traverse the declarations
 		for(Decl d : file.declarations()) {
 			skeletons.addAll(doDeclaration(d,file.pkg(),null));
@@ -40,7 +40,7 @@ public class SkeletonDiscovery {
 		return skeletons;
 	}
 	
-	protected List<JilClazz> doDeclaration(Decl d, String pkg, Type.Clazz parent) {		
+	protected List<JilClass> doDeclaration(Decl d, String pkg, Type.Clazz parent) {		
 		if(d instanceof Decl.Interface) {
 			return doInterface((Decl.Interface)d,pkg,parent);
 		} else if(d instanceof Decl.Enum) {
@@ -62,13 +62,13 @@ public class SkeletonDiscovery {
 		}
 	}
 	
-	protected List<JilClazz> doEnum(Decl.Enum d, String pkg, Type.Clazz parent) {
+	protected List<JilClass> doEnum(Decl.Enum d, String pkg, Type.Clazz parent) {
 		return doClass(d,pkg,parent);
 	}
 	
-	protected List<JilClazz> doInterface(Decl.Interface d, String pkg,
+	protected List<JilClass> doInterface(Decl.Interface d, String pkg,
 			Type.Clazz parent) {
-		List<JilClazz> cs = doClass(d, pkg, parent);
+		List<JilClass> cs = doClass(d, pkg, parent);
 		cs.get(cs.size() - 1).modifiers()
 				.add(
 						new jkit.jil.tree.Modifier.Base(
@@ -76,8 +76,8 @@ public class SkeletonDiscovery {
 		return cs;
 	}
 	
-	protected List<JilClazz> doClass(Decl.Clazz c, String pkg, Type.Clazz parent) {
-		ArrayList<JilClazz> skeletons = new ArrayList<JilClazz>();
+	protected List<JilClass> doClass(Decl.Clazz c, String pkg, Type.Clazz parent) {
+		ArrayList<JilClass> skeletons = new ArrayList<JilClass>();
 		// At this stage, type resolution has not already occurred and,
 		// hence, we have only basic (i.e. non-generic) type information
 		// available.
@@ -97,28 +97,28 @@ public class SkeletonDiscovery {
 		/**
 		 * Now, construct the skeleton for this class! 
 		 */
-		skeletons.add(new JilClazz(type, c.modifiers(), null, new ArrayList(),
+		skeletons.add(new JilClass(type, c.modifiers(), null, new ArrayList(),
 				new ArrayList(), new ArrayList()));
 						
 		return skeletons;
 	}
 
-	protected List<JilClazz> doMethod(Decl.Method d, String pkg, Type.Clazz parent) {
+	protected List<JilClass> doMethod(Decl.Method d, String pkg, Type.Clazz parent) {
 		return new ArrayList();
 	}
 
-	protected List<JilClazz> doField(Decl.Field d, String pkg, Type.Clazz parent) {
+	protected List<JilClass> doField(Decl.Field d, String pkg, Type.Clazz parent) {
 		return new ArrayList();
 	}
 	
-	protected List<JilClazz> doInitialiserBlock(Decl.InitialiserBlock d,
+	protected List<JilClass> doInitialiserBlock(Decl.InitialiserBlock d,
 			String pkg, Type.Clazz parent) {		
-		return new ArrayList<JilClazz>();
+		return new ArrayList<JilClass>();
 	}
 	
-	protected List<JilClazz> doStaticInitialiserBlock(
+	protected List<JilClass> doStaticInitialiserBlock(
 			Decl.StaticInitialiserBlock d, String pkg, Type.Clazz parent) {		
-		return new ArrayList<JilClazz>();
+		return new ArrayList<JilClass>();
 	}
 	
 	

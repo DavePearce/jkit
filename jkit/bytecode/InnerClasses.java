@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import jkit.jil.tree.JilClazz;
+import jkit.jil.tree.JilClass;
 import jkit.jil.tree.Modifier;
 import jkit.jil.tree.Type;
 import jkit.util.Pair;

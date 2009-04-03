@@ -23,7 +23,7 @@ public class JilFileWriter {
 		output = new PrintWriter(out);
 	}
 	
-	public void write(JilClazz jc) {
+	public void write(JilClass jc) {
 		output.print("class " + jc.type() + " ");
 		if(jc.superClass() != null) {			
 			output.print(" extends " + jc.superClass());

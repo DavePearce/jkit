@@ -50,7 +50,7 @@ public class CodeGeneration {
 		}		
 	}
 	
-	protected void doDeclaration(Decl d, JilClazz parent) {
+	protected void doDeclaration(Decl d, JilClass parent) {
 		if(d instanceof Decl.Interface) {
 			doInterface((Decl.Interface)d);
 		} else if(d instanceof Decl.Clazz) {
@@ -78,7 +78,7 @@ public class CodeGeneration {
 		try {
 			// We, need to update the skeleton so that any methods and fields
 			// discovered below this are attributed to this class!			
-			JilClazz skeleton = (JilClazz) loader.loadClass(type);
+			JilClass skeleton = (JilClass) loader.loadClass(type);
 			
 			// I do fields after everything else, so as to simplify the process
 			// of adding field initialisers to constructors. This is because it
@@ -106,7 +106,7 @@ public class CodeGeneration {
 		}			
 	}
 
-	protected void doMethod(Decl.Method d, JilClazz parent) {			
+	protected void doMethod(Decl.Method d, JilClass parent) {			
 		Type.Function type = (Type.Function) d.attribute(Type.class);
 		List<Stmt> stmts = doStatement(d.body());
 		// First, off. If this is a constructor, then check whether there is an
@@ -129,7 +129,7 @@ public class CodeGeneration {
 		}			
 	}
 
-	protected void doField(Decl.Field d, JilClazz parent) {		
+	protected void doField(Decl.Field d, JilClass parent) {		
 		Pair<Expr,List<Stmt>> tmp = doExpression(d.initialiser());
 		Type fieldT = (Type) d.type().attribute(Type.class);
 		boolean isStatic = d.isStatic();

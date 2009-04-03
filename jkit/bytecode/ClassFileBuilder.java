@@ -18,7 +18,7 @@ public class ClassFileBuilder {
 		this.version = version;
 	}
 	
-	public ClassFile build(jkit.jil.tree.JilClazz clazz) {
+	public ClassFile build(jkit.jil.tree.JilClass clazz) {
 		ClassFile cfile = new ClassFile(version, clazz.type(), clazz
 				.superClass(), clazz.interfaces(), clazz.modifiers());
 		
@@ -35,7 +35,7 @@ public class ClassFileBuilder {
 		return cfile;
 	}
 	
-	protected void buildInnerClasses(JilClazz clazz, ClassFile cfile) {
+	protected void buildInnerClasses(JilClass clazz, ClassFile cfile) {
 		if(clazz.isInnerClass()) {
 			System.out.println("ADDING INNER CLASS ATTRIBUTE");
 			// this is basically about building the inner classes attribute
@@ -60,7 +60,7 @@ public class ClassFileBuilder {
 		}
 	}
 	
-	protected void buildFields(JilClazz clazz, ClassFile cfile) {
+	protected void buildFields(JilClass clazz, ClassFile cfile) {
 		for (JilField f : clazz.fields()) {
 			ClassFile.Field cf = new ClassFile.Field(f.name(), f.type(), f.modifiers()); 
 			cfile.fields().add(cf);
@@ -70,7 +70,7 @@ public class ClassFileBuilder {
 		}
 	}
 	
-	protected void buildMethods(JilClazz clazz, ClassFile cfile) {
+	protected void buildMethods(JilClass clazz, ClassFile cfile) {
 		for (JilMethod m : clazz.methods()) {
 			String m_name = m.name();
 			if(m_name.equals(clazz.name())) {
@@ -121,7 +121,7 @@ public class ClassFileBuilder {
 	 *             MethodNotFoundException, FieldNotFoundException If it needs
 	 *             to access a Class which cannot be found.
 	 */
-	protected void translateCode(JilClazz clazz, JilMethod method,
+	protected void translateCode(JilClass clazz, JilMethod method,
 			ArrayList<Bytecode> bytecodes, ArrayList<Code.Handler> handlers) {
 		// === CREATE TYPE ENVIRONMENT ===
 
@@ -1042,7 +1042,7 @@ public class ClassFileBuilder {
 	}
 	
 	
-	protected boolean needClassSignature(JilClazz c) {
+	protected boolean needClassSignature(JilClass c) {
 		if (isGeneric(c.type())
 				|| (c.superClass() != null && isGeneric(c.superClass()))) {
 			return true;

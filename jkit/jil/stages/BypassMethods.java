@@ -43,8 +43,8 @@ public class BypassMethods implements Stage {
      * @param owner
      *            class to manipulate    
      */
-	public void apply(JilClazz owner) {
-		HashSet<Triple<JilClazz,JilMethod,Type.Function>> matches = new HashSet();
+	public void apply(JilClass owner) {
+		HashSet<Triple<JilClass,JilMethod,Type.Function>> matches = new HashSet();
 		
 		// First, we identify all the problem cases.
 		for(JilMethod m : owner.methods()) {
@@ -59,7 +59,7 @@ public class BypassMethods implements Stage {
 		}
 		
 		// Second, we add appropriate bypass methods.
-		for(Triple<JilClazz,JilMethod,Type.Function> p : matches) {
+		for(Triple<JilClass,JilMethod,Type.Function> p : matches) {
 			JilMethod m = generateBypass(p.first(),p.second(),p.third());
 			owner.methods().add(m);
 		}
@@ -77,11 +77,11 @@ public class BypassMethods implements Stage {
 	 * @param problems The set of problem cases being built up
 	 */
 	protected void checkForProblem(JilMethod method, Type.Reference owner,
-			Set<Triple<JilClazz, JilMethod, Type.Function>> problems) {
+			Set<Triple<JilClass, JilMethod, Type.Function>> problems) {
 		try {
 			// See if method m is defined in an interface implemented by
 			// this class.
-			Triple<JilClazz, JilMethod, Type.Function> minfo = ClassTable
+			Triple<JilClass, JilMethod, Type.Function> minfo = ClassTable
 					.resolveMethod(owner, method.name(), Arrays.asList(method
 							.type().parameterTypes()));
 			Type.Function ft = minfo.second().type();
@@ -122,7 +122,7 @@ public class BypassMethods implements Stage {
 	 *            the (concrete) instantiation of the generic method
 	 * @return
 	 */
-	protected JilMethod generateBypass(JilClazz owner, JilMethod method,
+	protected JilMethod generateBypass(JilClass owner, JilMethod method,
 			Type.Function to) {
 		// First, we substitute each type variable with java.lang.object
 		Type.Function from = method.type();

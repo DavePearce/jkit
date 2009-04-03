@@ -11,7 +11,7 @@ import jkit.java.tree.Expr;
 import jkit.java.tree.Stmt;
 import jkit.java.tree.Value;
 import jkit.java.tree.Stmt.Case;
-import jkit.jil.tree.JilClazz;
+import jkit.jil.tree.JilClass;
 import jkit.jil.tree.JilField;
 import jkit.jil.tree.JilMethod;
 import jkit.jil.tree.Modifier;
@@ -51,7 +51,7 @@ public class SkeletonBuilder {
 		}
 	}
 	
-	protected void doDeclaration(Decl d, JilClazz skeleton) {
+	protected void doDeclaration(Decl d, JilClass skeleton) {
 		if(d instanceof Decl.Interface) {
 			doInterface((Decl.Interface)d, skeleton);
 		} else if(d instanceof Decl.Clazz) {
@@ -70,16 +70,16 @@ public class SkeletonBuilder {
 		}
 	}
 			
-	protected void doInterface(Decl.Interface d, JilClazz skeleton) {
+	protected void doInterface(Decl.Interface d, JilClass skeleton) {
 		doClass(d, skeleton);
 	}
 	
-	protected void doClass(Decl.Clazz c, JilClazz skeleton) {
+	protected void doClass(Decl.Clazz c, JilClass skeleton) {
 		Type.Clazz type = (Type.Clazz) c.attribute(Type.class);
 		try {
 			// We, need to update the skeleton so that any methods and fields
 			// discovered below this are attributed to this class!			
-			skeleton = (JilClazz) loader.loadClass(type);	
+			skeleton = (JilClass) loader.loadClass(type);	
 			
 			// Next, we need to update as much information about the skeleton as
 			// we can.
@@ -155,7 +155,7 @@ public class SkeletonBuilder {
 		}
 	}
 
-	protected void doMethod(Decl.Method d, JilClazz skeleton) {		
+	protected void doMethod(Decl.Method d, JilClass skeleton) {		
 		Decl.Method m = (Decl.Method) d;
 		Type.Function type = (Type.Function) m.attribute(Type.class);
 		List<Type.Clazz> exceptions = new ArrayList<Type.Clazz>();
@@ -176,7 +176,7 @@ public class SkeletonBuilder {
 		doStatement(d.body(), skeleton);
 	}
 
-	protected void doField(Decl.Field d, JilClazz skeleton) {
+	protected void doField(Decl.Field d, JilClass skeleton) {
 		Decl.Field f = (Decl.Field) d;
 		Type t = (Type) f.type().attribute(Type.class);
 		skeleton.fields().add(
@@ -187,7 +187,7 @@ public class SkeletonBuilder {
 	}
 	
 	protected void doInitialiserBlock(Decl.InitialiserBlock d,
-			JilClazz skeleton) {
+			JilClass skeleton) {
 		// will need to add code here for dealing with classes nested in
 		// methods.
 		for (Stmt s : d.statements()) {
@@ -196,7 +196,7 @@ public class SkeletonBuilder {
 	}
 	
 	protected void doStaticInitialiserBlock(Decl.StaticInitialiserBlock d,
-			JilClazz skeleton) {
+			JilClass skeleton) {
 		// will need to add code here for dealing with classes nested in
 		// methods.
 		for (Stmt s : d.statements()) {
@@ -204,7 +204,7 @@ public class SkeletonBuilder {
 		}
 	}
 	
-	protected void doStatement(Stmt e, JilClazz skeleton) {
+	protected void doStatement(Stmt e, JilClass skeleton) {
 		if(e instanceof Stmt.SynchronisedBlock) {
 			doSynchronisedBlock((Stmt.SynchronisedBlock)e, skeleton);
 		} else if(e instanceof Stmt.TryCatchBlock) {
@@ -251,7 +251,7 @@ public class SkeletonBuilder {
 		}		
 	}
 	
-	protected void doBlock(Stmt.Block block, JilClazz skeleton) {
+	protected void doBlock(Stmt.Block block, JilClass skeleton) {
 		if(block != null) {			
 			// now process every statement in this block.
 			for(Stmt s : block.statements()) {
@@ -260,12 +260,12 @@ public class SkeletonBuilder {
 		}
 	}
 	
-	protected void doSynchronisedBlock(Stmt.SynchronisedBlock block, JilClazz skeleton) {
+	protected void doSynchronisedBlock(Stmt.SynchronisedBlock block, JilClass skeleton) {
 		doBlock(block, skeleton);
 		doExpression(block.expr(), skeleton);
 	}
 	
-	protected void doTryCatchBlock(Stmt.TryCatchBlock block, JilClazz skeleton) {
+	protected void doTryCatchBlock(Stmt.TryCatchBlock block, JilClass skeleton) {
 		doBlock(block, skeleton);
 		doBlock(block.finaly(), skeleton);
 
@@ -274,71 +274,71 @@ public class SkeletonBuilder {
 		}
 	}
 	
-	protected void doVarDef(Stmt.VarDef def, JilClazz skeleton) {
+	protected void doVarDef(Stmt.VarDef def, JilClass skeleton) {
 		List<Triple<String, Integer, Expr>> defs = def.definitions();
 		for(int i=0;i!=defs.size();++i) {			
 			doExpression(defs.get(i).third(), skeleton);			
 		}
 	}
 	
-	protected void doAssignment(Stmt.Assignment def, JilClazz skeleton) {
+	protected void doAssignment(Stmt.Assignment def, JilClass skeleton) {
 		doExpression(def.lhs(), skeleton);	
 		doExpression(def.rhs(), skeleton);			
 	}
 	
-	protected void doReturn(Stmt.Return ret, JilClazz skeleton) {
+	protected void doReturn(Stmt.Return ret, JilClass skeleton) {
 		doExpression(ret.expr(), skeleton);
 	}
 	
-	protected void doThrow(Stmt.Throw ret, JilClazz skeleton) {
+	protected void doThrow(Stmt.Throw ret, JilClass skeleton) {
 		doExpression(ret.expr(), skeleton);
 	}
 	
-	protected void doAssert(Stmt.Assert ret, JilClazz skeleton) {
+	protected void doAssert(Stmt.Assert ret, JilClass skeleton) {
 		doExpression(ret.expr(), skeleton);
 	}
 	
-	protected void doBreak(Stmt.Break brk, JilClazz skeleton) {
+	protected void doBreak(Stmt.Break brk, JilClass skeleton) {
 		// nothing	
 	}
 	
-	protected void doContinue(Stmt.Continue brk, JilClazz skeleton) {
+	protected void doContinue(Stmt.Continue brk, JilClass skeleton) {
 		// nothing
 	}
 	
-	protected void doLabel(Stmt.Label lab, JilClazz skeleton) {						
+	protected void doLabel(Stmt.Label lab, JilClass skeleton) {						
 		doStatement(lab.statement(), skeleton);
 	}
 	
-	protected void doIf(Stmt.If stmt, JilClazz skeleton) {
+	protected void doIf(Stmt.If stmt, JilClass skeleton) {
 		doExpression(stmt.condition(), skeleton);
 		doStatement(stmt.trueStatement(), skeleton);
 		doStatement(stmt.falseStatement(), skeleton);
 	}
 	
-	protected void doWhile(Stmt.While stmt, JilClazz skeleton) {
+	protected void doWhile(Stmt.While stmt, JilClass skeleton) {
 		doExpression(stmt.condition(), skeleton);
 		doStatement(stmt.body(), skeleton);		
 	}
 	
-	protected void doDoWhile(Stmt.DoWhile stmt, JilClazz skeleton) {
+	protected void doDoWhile(Stmt.DoWhile stmt, JilClass skeleton) {
 		doExpression(stmt.condition(), skeleton);
 		doStatement(stmt.body(), skeleton);
 	}
 	
-	protected void doFor(Stmt.For stmt, JilClazz skeleton) {		
+	protected void doFor(Stmt.For stmt, JilClass skeleton) {		
 		doStatement(stmt.initialiser(), skeleton);
 		doExpression(stmt.condition(), skeleton);
 		doStatement(stmt.increment(), skeleton);
 		doStatement(stmt.body(), skeleton);	
 	}
 	
-	protected void doForEach(Stmt.ForEach stmt, JilClazz skeleton) {
+	protected void doForEach(Stmt.ForEach stmt, JilClass skeleton) {
 		doExpression(stmt.source(), skeleton);
 		doStatement(stmt.body(), skeleton);
 	}
 	
-	protected void doSwitch(Stmt.Switch sw, JilClazz skeleton) {
+	protected void doSwitch(Stmt.Switch sw, JilClass skeleton) {
 		doExpression(sw.condition(), skeleton);
 		for(Case c : sw.cases()) {
 			doExpression(c.condition(), skeleton);
@@ -350,7 +350,7 @@ public class SkeletonBuilder {
 		// should check that case conditions are final constants here.
 	}
 	
-	protected void doExpression(Expr e, JilClazz skeleton) {	
+	protected void doExpression(Expr e, JilClass skeleton) {	
 		if(e instanceof Value.Bool) {
 			doBoolVal((Value.Bool)e, skeleton);
 		} else if(e instanceof Value.Char) {
@@ -404,16 +404,16 @@ public class SkeletonBuilder {
 		}
 	}
 	
-	protected void doDeref(Expr.Deref e, JilClazz skeleton) {		
+	protected void doDeref(Expr.Deref e, JilClass skeleton) {		
 		doExpression(e.target(), skeleton);					
 	}
 	
-	protected void doArrayIndex(Expr.ArrayIndex e, JilClazz skeleton) {
+	protected void doArrayIndex(Expr.ArrayIndex e, JilClass skeleton) {
 		doExpression(e.target(), skeleton);
 		doExpression(e.index(), skeleton);		
 	}
 	
-	protected void doNew(Expr.New e, JilClazz skeleton) {
+	protected void doNew(Expr.New e, JilClass skeleton) {
 		// Second, recurse through any parameters supplied ...
 		for(Expr p : e.parameters()) {
 			doExpression(p, skeleton);
@@ -428,7 +428,7 @@ public class SkeletonBuilder {
 			
 			try {				
 				
-				JilClazz c = (JilClazz) loader.loadClass(superType);
+				JilClass c = (JilClass) loader.loadClass(superType);
 							
 				ArrayList<Pair<String, List<Type.Reference>>> ncomponents = new ArrayList(
 						skeleton.type().components());
@@ -442,13 +442,13 @@ public class SkeletonBuilder {
 					// than a super class.
 					ArrayList<Type.Clazz> interfaces = new ArrayList<Type.Clazz>();
 					interfaces.add(superType);
-					skeleton = new JilClazz(myType, new ArrayList<Modifier>(),
+					skeleton = new JilClass(myType, new ArrayList<Modifier>(),
 							new Type.Clazz("java.lang", "Object"), interfaces,
 							new ArrayList<JilField>(), new ArrayList<JilMethod>(), e
 									.attributes());
 				} else {
 					// In this case, we're extending directly from a super class.
-					skeleton = new JilClazz(myType, new ArrayList<Modifier>(),
+					skeleton = new JilClass(myType, new ArrayList<Modifier>(),
 							superType, new ArrayList<Type.Clazz>(),
 							new ArrayList<JilField>(), new ArrayList<JilMethod>(), e
 									.attributes());
@@ -466,7 +466,7 @@ public class SkeletonBuilder {
 		}
 	}
 	
-	protected void doInvoke(Expr.Invoke e, JilClazz skeleton) {
+	protected void doInvoke(Expr.Invoke e, JilClass skeleton) {
 		doExpression(e.target(), skeleton);
 		
 		for(Expr p : e.parameters()) {
@@ -474,63 +474,63 @@ public class SkeletonBuilder {
 		}
 	}
 	
-	protected void doInstanceOf(Expr.InstanceOf e, JilClazz skeleton) {		
+	protected void doInstanceOf(Expr.InstanceOf e, JilClass skeleton) {		
 		doExpression(e.lhs(), skeleton);		
 	}
 	
-	protected void doCast(Expr.Cast e, JilClazz skeleton) {
+	protected void doCast(Expr.Cast e, JilClass skeleton) {
 		doExpression(e.expr(), skeleton);
 	}
 	
-	protected void doBoolVal(Value.Bool e, JilClazz skeleton) {		
+	protected void doBoolVal(Value.Bool e, JilClass skeleton) {		
 	}
 	
-	protected void doCharVal(Value.Char e, JilClazz skeleton) {		
+	protected void doCharVal(Value.Char e, JilClass skeleton) {		
 	}
 	
-	protected void doIntVal(Value.Int e, JilClazz skeleton) {		
+	protected void doIntVal(Value.Int e, JilClass skeleton) {		
 	}
 	
-	protected void doLongVal(Value.Long e, JilClazz skeleton) {				
+	protected void doLongVal(Value.Long e, JilClass skeleton) {				
 	}
 	
-	protected void doFloatVal(Value.Float e, JilClazz skeleton) {				
+	protected void doFloatVal(Value.Float e, JilClass skeleton) {				
 	}
 	
-	protected void doDoubleVal(Value.Double e, JilClazz skeleton) {				
+	protected void doDoubleVal(Value.Double e, JilClass skeleton) {				
 	}
 	
-	protected void doStringVal(Value.String e, JilClazz skeleton) {				
+	protected void doStringVal(Value.String e, JilClass skeleton) {				
 	}
 	
-	protected void doNullVal(Value.Null e, JilClazz skeleton) {		
+	protected void doNullVal(Value.Null e, JilClass skeleton) {		
 	}
 	
-	protected void doTypedArrayVal(Value.TypedArray e, JilClazz skeleton) {		
+	protected void doTypedArrayVal(Value.TypedArray e, JilClass skeleton) {		
 	}
 	
-	protected void doArrayVal(Value.Array e, JilClazz skeleton) {		
+	protected void doArrayVal(Value.Array e, JilClass skeleton) {		
 	}
 	
-	protected void doClassVal(Value.Class e, JilClazz skeleton) {
+	protected void doClassVal(Value.Class e, JilClass skeleton) {
 	}
 	
-	protected void doUnresolvedVariable(Expr.UnresolvedVariable e, JilClazz skeleton) {		
+	protected void doUnresolvedVariable(Expr.UnresolvedVariable e, JilClass skeleton) {		
 	}
 	
-	protected void doClassVariable(Expr.ClassVariable e, JilClazz skeleton) {	
+	protected void doClassVariable(Expr.ClassVariable e, JilClass skeleton) {	
 	}
 	
-	protected void doUnOp(Expr.UnOp e, JilClazz skeleton) {		
+	protected void doUnOp(Expr.UnOp e, JilClass skeleton) {		
 		doExpression(e.expr(), skeleton);		
 	}
 		
-	protected void doBinOp(Expr.BinOp e, JilClazz skeleton) {				
+	protected void doBinOp(Expr.BinOp e, JilClass skeleton) {				
 		doExpression(e.lhs(), skeleton);
 		doExpression(e.rhs(), skeleton);		
 	}
 	
-	protected void doTernOp(Expr.TernOp e, JilClazz skeleton) {		
+	protected void doTernOp(Expr.TernOp e, JilClass skeleton) {		
 		doExpression(e.condition(), skeleton);
 		doExpression(e.falseBranch(), skeleton);
 		doExpression(e.trueBranch(), skeleton);		

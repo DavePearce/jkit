@@ -1,6 +1,6 @@
 package jkit.compiler;
 
-import jkit.jil.tree.JilClazz;
+import jkit.jil.tree.JilClass;
 
 public interface Stage {
 	public String description();
@@ -11,5 +11,5 @@ public interface Stage {
      * @param owner
      *            class to manipulate    
      */
-	public void apply(JilClazz owner);	
+	public void apply(JilClass owner);	
 }

@@ -21,7 +21,7 @@ import jkit.java.stages.CodeGeneration;
 import jkit.util.*;
 import jkit.jil.*;
 import jkit.jil.io.*;
-import jkit.jil.tree.JilClazz;
+import jkit.jil.tree.JilClass;
 import jkit.jil.tree.Type;
 import jkit.jil.tree.SourceLocation;
 import jkit.jil.tree.SyntacticElement;
@@ -155,13 +155,13 @@ public class JavaCompiler implements Compiler {
 	 *            using File.separatorChar's to indicate directories).
 	 * @return
 	 */
-	public List<JilClazz> compile(List<File> filenames) throws IOException,
+	public List<JilClass> compile(List<File> filenames) throws IOException,
 			SyntaxError {
 		for (File f : filenames) {
 			compilationQueue.add(f.getPath());
 		}
 
-		ArrayList<JilClazz> classes = new ArrayList<JilClazz>();
+		ArrayList<JilClass> classes = new ArrayList<JilClass>();
 
 		while (!compilationQueue.isEmpty()) {
 			classes.addAll(compile(new File(compilationQueue.get(0))));
@@ -179,7 +179,7 @@ public class JavaCompiler implements Compiler {
 	 *            File.separatorChar's to indicate directories).
 	 * @return
 	 */
-	public List<JilClazz> compile(File filename) throws IOException, SyntaxError {
+	public List<JilClass> compile(File filename) throws IOException, SyntaxError {
 		compilationQueue.remove(filename.getPath());
 		compiling.add(filename.getCanonicalPath());
 
@@ -191,7 +191,7 @@ public class JavaCompiler implements Compiler {
 			
 			// Second, we need to resolve types. That is, for each class
 			// reference type, determine what package it's in.			
-			List<JilClazz> skeletons = discoverSkeletons(filename, jfile, loader);			
+			List<JilClass> skeletons = discoverSkeletons(filename, jfile, loader);			
 			
 			// Third, we need to resolve all types found in the src file.			
 			resolveTypes(filename, jfile, loader);
@@ -224,7 +224,7 @@ public class JavaCompiler implements Compiler {
 			generateJilCode(filename, jfile, loader);
 			
 			// Eigth, write out the compiled class file(s).			
-			for(JilClazz clazz : skeletons) {				
+			for(JilClass clazz : skeletons) {				
 				writeOutputFile(createBasename(clazz.type()), clazz, outputDirectory);				
 			}
 						
@@ -268,10 +268,10 @@ public class JavaCompiler implements Compiler {
 	 * @param jfile
 	 * @param loader
 	 */
-	protected List<JilClazz> discoverSkeletons(File srcfile, JavaFile jfile,
+	protected List<JilClass> discoverSkeletons(File srcfile, JavaFile jfile,
 			ClassLoader loader) {
 		long start = System.currentTimeMillis();
-		List<JilClazz> r = new SkeletonDiscovery().apply(jfile, loader);
+		List<JilClass> r = new SkeletonDiscovery().apply(jfile, loader);
 		logTimedMessage("[" + srcfile.getPath()
 				+ "] Skeleton discovery completed", (System
 				.currentTimeMillis() - start));
@@ -376,7 +376,7 @@ public class JavaCompiler implements Compiler {
 	 * @param jfile
 	 * @param loader
 	 */
-	public void writeOutputFile(String baseName, JilClazz clazz, File rootdir)
+	public void writeOutputFile(String baseName, JilClass clazz, File rootdir)
 			throws IOException {
 		long start = System.currentTimeMillis();
 		
