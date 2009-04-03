@@ -5,6 +5,7 @@ import java.util.*;
 import jkit.compiler.ClassLoader;
 import jkit.compiler.FieldNotFoundException;
 import jkit.compiler.SyntaxError;
+import jkit.compiler.Clazz;
 import jkit.java.io.JavaFile;
 import jkit.java.tree.Decl;
 import jkit.java.tree.Expr;
@@ -644,7 +645,7 @@ public class ScopeResolution {
 			Type.Clazz type = (Type.Clazz) target.attribute(Type.class);
 			
 			try {
-				Triple<jkit.compiler.Clazz, jkit.compiler.Clazz.Field, Type> r = types
+				Triple<Clazz, Clazz.Field, Type> r = types
 						.resolveField(type, e.name(), loader);
 				// if we get here, then there is such a field.
 				//
@@ -905,7 +906,7 @@ public class ScopeResolution {
 				ClassScope cs = (ClassScope) s;		
 				
 				try {
-					Triple<jkit.compiler.Clazz, jkit.compiler.Clazz.Field, Type> r = types
+					Triple<Clazz, Clazz.Field, Type> r = types
 							.resolveField(cs.type, e.value(), loader);
 					
 					// Ok, this variable access corresponds to a field load.
@@ -1075,7 +1076,7 @@ public class ScopeResolution {
 	 * @return
 	 */
 	protected Type.Clazz getSuperClass(Type.Clazz c) throws ClassNotFoundException {
-		jkit.compiler.Clazz cc = loader.loadClass(c);
+		Clazz cc = loader.loadClass(c);
 		return cc.superClass();
 	}
 	

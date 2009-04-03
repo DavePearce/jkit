@@ -4,7 +4,7 @@ import java.util.*;
 
 import jkit.compiler.SyntaxError;
 import jkit.compiler.ClassLoader;
-import jkit.java.*;
+import jkit.compiler.Clazz;
 import jkit.java.io.JavaFile;
 import jkit.java.tree.Decl;
 import jkit.java.tree.Expr;
@@ -473,8 +473,8 @@ public class TypeChecking {
 		Type c_t = (Type) e.type().attribute(Type.class);
 		try {
 			if(e_t instanceof Type.Clazz && c_t instanceof Type.Clazz) {
-				jkit.compiler.Clazz c_c = loader.loadClass((Type.Clazz) c_t);
-				jkit.compiler.Clazz e_c = loader.loadClass((Type.Clazz) e_t);
+				Clazz c_c = loader.loadClass((Type.Clazz) c_t);
+				Clazz e_c = loader.loadClass((Type.Clazz) e_t);
 				
 				// the trick here, is that javac will never reject a cast
 				// between an interface and a class or interface. However, if we

@@ -5,6 +5,7 @@ import java.util.*;
 import jkit.compiler.FieldNotFoundException;
 import jkit.compiler.SyntaxError;
 import jkit.compiler.ClassLoader;
+import jkit.compiler.Clazz;
 import jkit.java.io.JavaFile;
 import jkit.java.tree.Decl;
 import jkit.java.*;
@@ -657,7 +658,7 @@ public class CodeGeneration {
 		if(_targetT instanceof Type.Clazz) {
 			Type.Clazz targetT = (Type.Clazz) _targetT;
 			try {
-				Triple<jkit.compiler.Clazz, jkit.compiler.Clazz.Field, Type> r = types
+				Triple<Clazz, Clazz.Field, Type> r = types
 				.resolveField(targetT, e.name(), loader);
 
 				return new Pair<JilExpr, List<JilStmt>>(new JilExpr.Deref(target.first(), e
