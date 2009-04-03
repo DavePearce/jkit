@@ -44,10 +44,10 @@ public class BypassMethods implements Stage {
      *            class to manipulate    
      */
 	public void apply(JilClazz owner) {
-		HashSet<Triple<JilClazz,Method,Type.Function>> matches = new HashSet();
+		HashSet<Triple<JilClazz,JilMethod,Type.Function>> matches = new HashSet();
 		
 		// First, we identify all the problem cases.
-		for(Method m : owner.methods()) {
+		for(JilMethod m : owner.methods()) {
 			// Look through interfaces
 			for(Type.Reference i : owner.interfaces()) {
 				checkForProblem(m,i,matches);				 	
@@ -59,8 +59,8 @@ public class BypassMethods implements Stage {
 		}
 		
 		// Second, we add appropriate bypass methods.
-		for(Triple<JilClazz,Method,Type.Function> p : matches) {
-			Method m = generateBypass(p.first(),p.second(),p.third());
+		for(Triple<JilClazz,JilMethod,Type.Function> p : matches) {
+			JilMethod m = generateBypass(p.first(),p.second(),p.third());
 			owner.methods().add(m);
 		}
 	}
@@ -76,12 +76,12 @@ public class BypassMethods implements Stage {
 	 * @param owner The class in which to search for matching methods.
 	 * @param problems The set of problem cases being built up
 	 */
-	protected void checkForProblem(Method method, Type.Reference owner,
-			Set<Triple<JilClazz, Method, Type.Function>> problems) {
+	protected void checkForProblem(JilMethod method, Type.Reference owner,
+			Set<Triple<JilClazz, JilMethod, Type.Function>> problems) {
 		try {
 			// See if method m is defined in an interface implemented by
 			// this class.
-			Triple<JilClazz, Method, Type.Function> minfo = ClassTable
+			Triple<JilClazz, JilMethod, Type.Function> minfo = ClassTable
 					.resolveMethod(owner, method.name(), Arrays.asList(method
 							.type().parameterTypes()));
 			Type.Function ft = minfo.second().type();
@@ -122,7 +122,7 @@ public class BypassMethods implements Stage {
 	 *            the (concrete) instantiation of the generic method
 	 * @return
 	 */
-	protected Method generateBypass(JilClazz owner, Method method,
+	protected JilMethod generateBypass(JilClazz owner, JilMethod method,
 			Type.Function to) {
 		// First, we substitute each type variable with java.lang.object
 		Type.Function from = method.type();
@@ -166,7 +166,7 @@ public class BypassMethods implements Stage {
 						
 		cfg.setEntry(entry);
 		
-		return new Method(Modifier.PUBLIC,
+		return new JilMethod(Modifier.PUBLIC,
 				ftype, name,
 				new ArrayList<Type.Reference>(), null, cfg);
 	}

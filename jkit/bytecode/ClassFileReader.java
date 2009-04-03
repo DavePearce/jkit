@@ -30,8 +30,8 @@ import java.util.*;
 
 import jkit.jil.*;
 import jkit.jil.tree.JilClazz;
-import jkit.jil.tree.Field;
-import jkit.jil.tree.Method;
+import jkit.jil.tree.JilField;
+import jkit.jil.tree.JilMethod;
 import jkit.jil.tree.Modifier;
 import jkit.jil.tree.Type;
 import jkit.util.*;
@@ -137,7 +137,7 @@ public class ClassFileReader {
 		int count = read_u2(index);
 		index += 2 + (count * 2);
 				
-		ArrayList<Field> fields = parseFields(index);
+		ArrayList<JilField> fields = parseFields(index);
 				
 		count = read_u2(index);		
 		index += 2;
@@ -151,7 +151,7 @@ public class ClassFileReader {
 	    	}	    		    		    		    	
 		}
 		
-		ArrayList<Method> methods = parseMethods(index,className);
+		ArrayList<JilMethod> methods = parseMethods(index,className);
 		count = read_u2(index);	
 		index += 2;
 		
@@ -231,9 +231,9 @@ public class ClassFileReader {
 	 * 
 	 * @return
 	 */
-	protected ArrayList<Field> parseFields(int fields) {
+	protected ArrayList<JilField> parseFields(int fields) {
 		int count = read_u2(fields);
-		ArrayList<Field> r = new ArrayList<Field>();
+		ArrayList<JilField> r = new ArrayList<JilField>();
 		int index = fields + 2;		
 		for(int i=0;i!=count;++i) {
 			r.add(parseField(index));						
@@ -247,7 +247,7 @@ public class ClassFileReader {
 		return r;
 	}
 	
-	protected Field parseField(int offset) {
+	protected JilField parseField(int offset) {
 		int modifiers = read_u2(offset);		
 		String name = getString(read_u2(offset+2));
 		String desc = getString(read_u2(offset+4));
@@ -274,7 +274,7 @@ public class ClassFileReader {
 		
 		Type type = parseDescriptor(desc);		
 		
-		return new Field(name, type, listModifiers(modifiers,false));
+		return new JilField(name, type, listModifiers(modifiers,false));
 	}
 	
 	/**
@@ -282,9 +282,9 @@ public class ClassFileReader {
 	 * 
 	 * @return
 	 */
-	protected ArrayList<Method> parseMethods(int methods, String owner) {
+	protected ArrayList<JilMethod> parseMethods(int methods, String owner) {
 		int count = read_u2(methods);		
-		ArrayList<Method> r = new ArrayList<Method>();
+		ArrayList<JilMethod> r = new ArrayList<JilMethod>();
 		int index = methods + 2;
 		for(int i=0;i!=count;++i) {			
 			r.add(parseMethod(index,owner));						
@@ -298,7 +298,7 @@ public class ClassFileReader {
 		return r;
 	}
 	
-	protected Method parseMethod(int offset, String owner) {
+	protected JilMethod parseMethod(int offset, String owner) {
 		String name = getString(read_u2(offset+2));
 		String desc = getString(read_u2(offset+4));		
 		
@@ -338,7 +338,7 @@ public class ClassFileReader {
 		
 		// There is a bug here, since we need to provide information about the
 		// parameters supplied.
-		return new Method(name, type, new ArrayList(), listModifiers(modifiers,
+		return new JilMethod(name, type, new ArrayList(), listModifiers(modifiers,
 				true), exceptions);
 	}
 	

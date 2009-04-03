@@ -12,8 +12,8 @@ import jkit.java.tree.Stmt;
 import jkit.java.tree.Value;
 import jkit.java.tree.Stmt.Case;
 import jkit.jil.tree.JilClazz;
-import jkit.jil.tree.Field;
-import jkit.jil.tree.Method;
+import jkit.jil.tree.JilField;
+import jkit.jil.tree.JilMethod;
 import jkit.jil.tree.Modifier;
 import jkit.jil.tree.SourceLocation;
 import jkit.jil.tree.SyntacticElement;
@@ -122,7 +122,7 @@ public class SkeletonBuilder {
 						modifiers.add(new Modifier.Base(
 								java.lang.reflect.Modifier.PUBLIC));
 						skeleton.fields().add(
-								new Field(enc.name(), t, modifiers,
+								new JilField(enc.name(), t, modifiers,
 										new ArrayList(enc.attributes())));
 					}
 				}
@@ -134,7 +134,7 @@ public class SkeletonBuilder {
 				// Therefore, must add the default constructor.
 				List<Modifier> mods = new ArrayList<Modifier>();
 				mods.add(new Modifier.Base(java.lang.reflect.Modifier.PUBLIC));
-				Method dc = new Method(skeleton.name(), new Type.Function(
+				JilMethod dc = new JilMethod(skeleton.name(), new Type.Function(
 						new Type.Void()), new ArrayList(), mods,
 						new ArrayList<Type.Clazz>(), c.attributes());
 				// At this stage, I now create a full body for this method. It's
@@ -170,7 +170,7 @@ public class SkeletonBuilder {
 		}
 		
 		skeleton.methods().add(
-				new Method(m.name(), type, parameters, m.modifiers(),
+				new JilMethod(m.name(), type, parameters, m.modifiers(),
 						exceptions, new ArrayList(m.attributes())));
 		
 		doStatement(d.body(), skeleton);
@@ -180,7 +180,7 @@ public class SkeletonBuilder {
 		Decl.Field f = (Decl.Field) d;
 		Type t = (Type) f.type().attribute(Type.class);
 		skeleton.fields().add(
-				new Field(f.name(), t, f.modifiers(), new ArrayList(f
+				new JilField(f.name(), t, f.modifiers(), new ArrayList(f
 						.attributes())));
 
 		doExpression(d.initialiser(), skeleton);
@@ -444,13 +444,13 @@ public class SkeletonBuilder {
 					interfaces.add(superType);
 					skeleton = new JilClazz(myType, new ArrayList<Modifier>(),
 							new Type.Clazz("java.lang", "Object"), interfaces,
-							new ArrayList<Field>(), new ArrayList<Method>(), e
+							new ArrayList<JilField>(), new ArrayList<JilMethod>(), e
 									.attributes());
 				} else {
 					// In this case, we're extending directly from a super class.
 					skeleton = new JilClazz(myType, new ArrayList<Modifier>(),
 							superType, new ArrayList<Type.Clazz>(),
-							new ArrayList<Field>(), new ArrayList<Method>(), e
+							new ArrayList<JilField>(), new ArrayList<JilMethod>(), e
 									.attributes());
 				}
 				

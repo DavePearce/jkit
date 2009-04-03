@@ -42,7 +42,7 @@ public class JilFileWriter {
 		
 		output.println(" {");
 		
-		for(Field f : jc.fields()) {
+		for(JilField f : jc.fields()) {
 			write(f);
 		}
 		
@@ -50,7 +50,7 @@ public class JilFileWriter {
 			output.println("");
 		}
 		
-		for(Method m : jc.methods()) {
+		for(JilMethod m : jc.methods()) {
 			write(m);
 		}
 		
@@ -59,14 +59,14 @@ public class JilFileWriter {
 		output.flush();
 	}
 	
-	public void write(Field f) {
+	public void write(JilField f) {
 		output.print("\t");
 		writeModifiers(f.modifiers());
 		output.print(f.type());
 		output.println(" " + f.name() + ";");		
 	}
 	
-	public void write(Method m) {
+	public void write(JilMethod m) {
 		output.print("\t");
 		writeModifiers(m.modifiers());
 		Type.Function type = m.type(); 

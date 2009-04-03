@@ -643,7 +643,7 @@ public class ScopeResolution {
 			Type.Clazz type = (Type.Clazz) target.attribute(Type.class);
 			
 			try {
-				Triple<jkit.jil.tree.JilClazz, jkit.jil.tree.Field, Type> r = types
+				Triple<jkit.jil.tree.JilClazz, jkit.jil.tree.JilField, Type> r = types
 						.resolveField(type, e.name(), loader);
 				// if we get here, then there is such a field.
 				//
@@ -904,7 +904,7 @@ public class ScopeResolution {
 				ClassScope cs = (ClassScope) s;		
 				
 				try {
-					Triple<jkit.jil.tree.JilClazz, jkit.jil.tree.Field, Type> r = types
+					Triple<jkit.jil.tree.JilClazz, jkit.jil.tree.JilField, Type> r = types
 							.resolveField(cs.type, e.value(), loader);
 					
 					// Ok, this variable access corresponds to a field load.

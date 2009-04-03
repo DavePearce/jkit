@@ -7,7 +7,7 @@ public class JilClazz extends SyntacticElementImpl implements jkit.compiler.Claz
 	private Type.Clazz type;
 	private Type.Clazz superClass; // maybe null if no supertype (i.e. this is java.lang.Object)
 	private List<Type.Clazz> interfaces;
-	private List<jkit.jil.tree.Field> fields;
+	private List<jkit.jil.tree.JilField> fields;
 	private List<Method> methods;
 	
 	/**

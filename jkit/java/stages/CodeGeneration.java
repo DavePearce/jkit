@@ -122,7 +122,7 @@ public class CodeGeneration {
 		// Now, add this statement list to the jil method representing this java
 		// method.
 		
-		for(Method m : parent.methods()) {
+		for(JilMethod m : parent.methods()) {
 			if(m.type().equals(type)) {
 				m.body().addAll(stmts);
 			}
@@ -139,7 +139,7 @@ public class CodeGeneration {
 			// the beginning of all constructors. One issue is that, if the
 			// first statement of a constructor is a super call (which is should
 			// normally be), then we need to put the statements after that.
-			for(Method m : parent.methods()) {
+			for(JilMethod m : parent.methods()) {
 				if(m.name().equals(parent.name())) {
 					List<Stmt> body = m.body();
 					Expr.Deref df = new Expr.Deref(new Expr.Variable("this",
@@ -657,7 +657,7 @@ public class CodeGeneration {
 		if(_targetT instanceof Type.Clazz) {
 			Type.Clazz targetT = (Type.Clazz) _targetT;
 			try {
-				Triple<jkit.jil.tree.JilClazz, jkit.jil.tree.Field, Type> r = types
+				Triple<jkit.jil.tree.JilClazz, jkit.jil.tree.JilField, Type> r = types
 				.resolveField(targetT, e.name(), loader);
 
 				return new Pair<Expr, List<Stmt>>(new Expr.Deref(target.first(), e

@@ -3,7 +3,7 @@ package jkit.jil.tree;
 import java.util.*;
 
 
-public class Field extends SyntacticElementImpl implements jkit.compiler.Clazz.Field {
+public class JilField extends SyntacticElementImpl implements jkit.compiler.Clazz.Field {
 	private String name;
 	private Type type;
 	private List<Modifier> modifiers;
@@ -15,7 +15,7 @@ public class Field extends SyntacticElementImpl implements jkit.compiler.Clazz.F
      * @param type - The (fully generic) type of the field.
      * @param modifiers - Any modifiers of the field (e.g. public, static, etc)
      */
-	public Field(String name, Type type, List<Modifier> modifiers,
+	public JilField(String name, Type type, List<Modifier> modifiers,
 			Attribute... attributes) {
 		super(attributes);
 		this.name = name;
@@ -30,7 +30,7 @@ public class Field extends SyntacticElementImpl implements jkit.compiler.Clazz.F
      * @param type - The (fully generic) type of the field.
      * @param modifiers - Any modifiers of the field (e.g. public, static, etc)
      */
-	public Field(String name, Type type, List<Modifier> modifiers,
+	public JilField(String name, Type type, List<Modifier> modifiers,
 			List<Attribute> attributes) {
 		super(attributes);
 		this.name = name;

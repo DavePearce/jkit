@@ -39,14 +39,14 @@ public class VariableDefinitions extends ForwardAnalysis<UnionFlowSet<String>>
 	}
 	
 	public void apply(JilClazz owner) {
-		for(Method m : owner.methods()) {			
+		for(JilMethod m : owner.methods()) {			
 			if(m.code() != null) {
 				check(m,owner);
 			} 
 		}
 	}
 	
-	public void check(Method method,JilClazz owner) {
+	public void check(JilMethod method,JilClazz owner) {
 		FlowGraph cfg = method.code();
 		
 		// In the following dataflow analysis, a variable is in the flow set if
@@ -138,7 +138,7 @@ public class VariableDefinitions extends ForwardAnalysis<UnionFlowSet<String>>
 		checkUses(uses(e, p, null, null), undefs, p,null,null);
 	}
 	
-	public Set<String> uses(Expr expr, Point point, Method method, JilClazz owner) {
+	public Set<String> uses(Expr expr, Point point, JilMethod method, JilClazz owner) {
 		if(expr instanceof ArrayIndex) {
 			return uses((ArrayIndex) expr,  point, method,owner);
 		} else if(expr instanceof TernOp) {
@@ -170,60 +170,60 @@ public class VariableDefinitions extends ForwardAnalysis<UnionFlowSet<String>>
 		}		
 	}
 	
-	public Set<String> uses(ArrayIndex expr, Point point, Method method, JilClazz owner) { 
+	public Set<String> uses(ArrayIndex expr, Point point, JilMethod method, JilClazz owner) { 
 		Set<String> r = uses(expr.array,point,method,owner);
 		r.addAll(uses(expr.idx,point,method,owner));
 		return r;
 	}
-	public Set<String> uses(TernOp expr, Point point, Method method, JilClazz owner) { 
+	public Set<String> uses(TernOp expr, Point point, JilMethod method, JilClazz owner) { 
 		Set<String> r = uses(expr.cond,point,method,owner);
 		r.addAll(uses(expr.foption,point,method,owner));
 		r.addAll(uses(expr.toption,point,method,owner));
 		return r;		
 	}
-	public Set<String> uses(BinOp expr, Point point, Method method, JilClazz owner) {
+	public Set<String> uses(BinOp expr, Point point, JilMethod method, JilClazz owner) {
 		Set<String> r = uses(expr.lhs,point,method,owner);
 		r.addAll(uses(expr.rhs,point,method,owner));
 		return r; 
 	}
-	public Set<String> uses(UnOp expr, Point point, Method method, JilClazz owner) { 		
+	public Set<String> uses(UnOp expr, Point point, JilMethod method, JilClazz owner) { 		
 		return uses(expr.expr,point,method,owner); 
 	}
-	public Set<String> uses(Cast expr, Point point, Method method, JilClazz owner) { 
+	public Set<String> uses(Cast expr, Point point, JilMethod method, JilClazz owner) { 
 		return uses(expr.expr,point,method,owner);		
 	}
-	public Set<String> uses(ClassAccess expr, Point point, Method method, JilClazz owner) { 		
+	public Set<String> uses(ClassAccess expr, Point point, JilMethod method, JilClazz owner) { 		
 		return new HashSet<String>();
 	}
-	public Set<String> uses(Deref expr, Point point, Method method, JilClazz owner) { 		
+	public Set<String> uses(Deref expr, Point point, JilMethod method, JilClazz owner) { 		
 		return uses(expr.target,point,method,owner);
 	}
-	public Set<String> uses(FlowGraph.Exception expr, Point point, Method method, JilClazz owner) { 
+	public Set<String> uses(FlowGraph.Exception expr, Point point, JilMethod method, JilClazz owner) { 
 		return new HashSet<String>(); 
 	}
-	public Set<String> uses(LocalVar expr, Point point, Method method, JilClazz owner) { 
+	public Set<String> uses(LocalVar expr, Point point, JilMethod method, JilClazz owner) { 
 		HashSet<String> r = new HashSet<String>();
 		r.add(expr.name);
 		return r;
 	}
-	public Set<String> uses(InstanceOf expr, Point point, Method method, JilClazz owner) { 		
+	public Set<String> uses(InstanceOf expr, Point point, JilMethod method, JilClazz owner) { 		
 		return uses(expr.lhs,point,method,owner);
 	}
-	public Set<String> uses(Invoke expr, Point point, Method method, JilClazz owner) { 
+	public Set<String> uses(Invoke expr, Point point, JilMethod method, JilClazz owner) { 
 		Set<String> r = uses(expr.target,point,method,owner);
 		for(Expr e : expr.parameters) {
 			r.addAll(uses(e,point,method,owner));
 		}
 		return r; 		
 	}
-	public Set<String> uses(New expr, Point point, Method method, JilClazz owner) { 
+	public Set<String> uses(New expr, Point point, JilMethod method, JilClazz owner) { 
 		Set<String> r = new HashSet<String>();
 		for(Expr e : expr.parameters) {
 			r.addAll(uses(e,point,method,owner));
 		}
 		return r; 			
 	}
-	public Set<String> uses(Value expr, Point point, Method method, JilClazz owner) { 
+	public Set<String> uses(Value expr, Point point, JilMethod method, JilClazz owner) { 
 		return new HashSet<String>(); 
 	}
 
@@ -237,7 +237,7 @@ public class VariableDefinitions extends ForwardAnalysis<UnionFlowSet<String>>
 	 * @param method enclosing method
 	 * @param owner enclosing class
 	 */
-	private void checkUses(Set<String> uses, UnionFlowSet<String> undefs, Point point, Method method, JilClazz owner) {
+	private void checkUses(Set<String> uses, UnionFlowSet<String> undefs, Point point, JilMethod method, JilClazz owner) {
 		for(String v : uses) {			
 			if(undefs.contains(v)) {
 				throw new InternalException("Variable might not have been initialised",point,method,owner);

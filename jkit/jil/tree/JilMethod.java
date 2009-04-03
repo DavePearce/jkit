@@ -4,7 +4,7 @@ import java.util.*;
 import jkit.util.Pair;
 import jkit.jil.util.*;
 
-public class Method extends SyntacticElementImpl implements jkit.compiler.Clazz.Field {
+public class JilMethod extends SyntacticElementImpl implements jkit.compiler.Clazz.Field {
 	private String name;
 	private Type.Function type;
 	private List<Modifier> modifiers;
@@ -28,7 +28,7 @@ public class Method extends SyntacticElementImpl implements jkit.compiler.Clazz.
 	 * @param exceptions -
 	 *            The (non-null) list of exceptions thrown by this method.
 	 */
-	public Method(String name, Type.Function type, List<Pair<String,List<Modifier>>> parameters,
+	public JilMethod(String name, Type.Function type, List<Pair<String,List<Modifier>>> parameters,
 			List<Modifier> modifiers, List<Type.Clazz> exceptions,
 			Attribute... attributes) {
 		super(attributes);
@@ -55,7 +55,7 @@ public class Method extends SyntacticElementImpl implements jkit.compiler.Clazz.
      * @param exceptions -
      *            The (non-null) list of exceptions thrown by this method.
      */
-	public Method(String name, Type.Function type,
+	public JilMethod(String name, Type.Function type,
 			List<Pair<String, List<Modifier>>> parameters,
 			List<Modifier> modifiers, List<Type.Clazz> exceptions,
 			List<Attribute> attributes) {

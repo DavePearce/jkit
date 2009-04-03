@@ -60,7 +60,7 @@ public class ClassFileBuilder {
 	}
 	
 	protected void buildFields(JilClazz clazz, ClassFile cfile) {
-		for (Field f : clazz.fields()) {
+		for (JilField f : clazz.fields()) {
 			ClassFile.Field cf = new ClassFile.Field(f.name(), f.type(), f.modifiers()); 
 			cfile.fields().add(cf);
 			if(isGeneric(f.type())) {
@@ -70,7 +70,7 @@ public class ClassFileBuilder {
 	}
 	
 	protected void buildMethods(JilClazz clazz, ClassFile cfile) {
-		for (Method m : clazz.methods()) {
+		for (JilMethod m : clazz.methods()) {
 			String m_name = m.name();
 			if(m_name.equals(clazz.name())) {
 				// this is a constructor call, so we need to use a different
@@ -120,7 +120,7 @@ public class ClassFileBuilder {
 	 *             MethodNotFoundException, FieldNotFoundException If it needs
 	 *             to access a Class which cannot be found.
 	 */
-	protected void translateCode(JilClazz clazz, Method method,
+	protected void translateCode(JilClazz clazz, JilMethod method,
 			ArrayList<Bytecode> bytecodes, ArrayList<Code.Handler> handlers) {
 		// === CREATE TYPE ENVIRONMENT ===
 
@@ -1000,7 +1000,7 @@ public class ClassFileBuilder {
 			if(c.isInterface()) {
 				return DISPATCH_INTERFACE;
 			}			
-			for (Method m : c.methods(name)) {
+			for (JilMethod m : c.methods(name)) {
 				String mdesc = ClassFile.descriptor(m.type(), false);						
 				if (fdesc.equals(mdesc)) {
 					return m.isStatic() ? DISPATCH_STATIC : DISPATCH_VIRTUAL;
