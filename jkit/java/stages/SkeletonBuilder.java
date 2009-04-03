@@ -52,14 +52,14 @@ public class SkeletonBuilder {
 	}
 	
 	protected void doDeclaration(Decl d, JilClass skeleton) {
-		if(d instanceof Decl.Interface) {
-			doInterface((Decl.Interface)d, skeleton);
-		} else if(d instanceof Decl.Clazz) {
-			doClass((Decl.Clazz)d, skeleton);
-		} else if(d instanceof Decl.Method) {
-			doMethod((Decl.Method)d, skeleton);
-		} else if(d instanceof Decl.Field) {
-			doField((Decl.Field)d, skeleton);
+		if(d instanceof Decl.JavaInterface) {
+			doInterface((Decl.JavaInterface)d, skeleton);
+		} else if(d instanceof Decl.JavaClass) {
+			doClass((Decl.JavaClass)d, skeleton);
+		} else if(d instanceof Decl.JavaMethod) {
+			doMethod((Decl.JavaMethod)d, skeleton);
+		} else if(d instanceof Decl.JavaField) {
+			doField((Decl.JavaField)d, skeleton);
 		} else if (d instanceof Decl.InitialiserBlock) {
 			doInitialiserBlock((Decl.InitialiserBlock) d, skeleton);
 		} else if (d instanceof Decl.StaticInitialiserBlock) {
@@ -70,11 +70,11 @@ public class SkeletonBuilder {
 		}
 	}
 			
-	protected void doInterface(Decl.Interface d, JilClass skeleton) {
+	protected void doInterface(Decl.JavaInterface d, JilClass skeleton) {
 		doClass(d, skeleton);
 	}
 	
-	protected void doClass(Decl.Clazz c, JilClass skeleton) {
+	protected void doClass(Decl.JavaClass c, JilClass skeleton) {
 		Type.Clazz type = (Type.Clazz) c.attribute(Type.class);
 		try {
 			// We, need to update the skeleton so that any methods and fields
@@ -111,8 +111,8 @@ public class SkeletonBuilder {
 			
 			// Now, deal with some special cases when this is not actually a
 			// class			
-			if(c instanceof Decl.Enum) {
-				Decl.Enum ec = (Decl.Enum) c;
+			if(c instanceof Decl.JavaEnum) {
+				Decl.JavaEnum ec = (Decl.JavaEnum) c;
 				for(Decl.EnumConstant enc : ec.constants()) {
 					Type t = (Type) enc.attribute(Type.class);
 					if(enc.declarations().size() > 0) {
@@ -155,8 +155,8 @@ public class SkeletonBuilder {
 		}
 	}
 
-	protected void doMethod(Decl.Method d, JilClass skeleton) {		
-		Decl.Method m = (Decl.Method) d;
+	protected void doMethod(Decl.JavaMethod d, JilClass skeleton) {		
+		Decl.JavaMethod m = (Decl.JavaMethod) d;
 		Type.Function type = (Type.Function) m.attribute(Type.class);
 		List<Type.Clazz> exceptions = new ArrayList<Type.Clazz>();
 		List<Pair<String,List<Modifier>>> parameters = new ArrayList();
@@ -176,8 +176,8 @@ public class SkeletonBuilder {
 		doStatement(d.body(), skeleton);
 	}
 
-	protected void doField(Decl.Field d, JilClass skeleton) {
-		Decl.Field f = (Decl.Field) d;
+	protected void doField(Decl.JavaField d, JilClass skeleton) {
+		Decl.JavaField f = (Decl.JavaField) d;
 		Type t = (Type) f.type().attribute(Type.class);
 		skeleton.fields().add(
 				new JilField(f.name(), t, f.modifiers(), new ArrayList(f
@@ -243,8 +243,8 @@ public class SkeletonBuilder {
 			doInvoke((Expr.Invoke) e, skeleton);
 		} else if(e instanceof Expr.New) {
 			doNew((Expr.New) e, skeleton);
-		} else if(e instanceof Decl.Clazz) {
-			doClass((Decl.Clazz)e, skeleton);
+		} else if(e instanceof Decl.JavaClass) {
+			doClass((Decl.JavaClass)e, skeleton);
 		} else if(e != null) {
 			syntax_error("Internal failure (invalid statement \""
 					+ e.getClass() + "\" encountered)", e);			

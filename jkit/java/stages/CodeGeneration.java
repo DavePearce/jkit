@@ -51,14 +51,14 @@ public class CodeGeneration {
 	}
 	
 	protected void doDeclaration(Decl d, JilClass parent) {
-		if(d instanceof Decl.Interface) {
-			doInterface((Decl.Interface)d);
-		} else if(d instanceof Decl.Clazz) {
-			doClass((Decl.Clazz)d);
-		} else if(d instanceof Decl.Method) {
-			doMethod((Decl.Method)d, parent);
-		} else if(d instanceof Decl.Field) {
-			doField((Decl.Field)d, parent);
+		if(d instanceof Decl.JavaInterface) {
+			doInterface((Decl.JavaInterface)d);
+		} else if(d instanceof Decl.JavaClass) {
+			doClass((Decl.JavaClass)d);
+		} else if(d instanceof Decl.JavaMethod) {
+			doMethod((Decl.JavaMethod)d, parent);
+		} else if(d instanceof Decl.JavaField) {
+			doField((Decl.JavaField)d, parent);
 		} else if (d instanceof Decl.InitialiserBlock) {
 			doInitialiserBlock((Decl.InitialiserBlock) d);
 		} else if (d instanceof Decl.StaticInitialiserBlock) {
@@ -69,11 +69,11 @@ public class CodeGeneration {
 		}
 	}
 	
-	protected void doInterface(Decl.Interface d) {
+	protected void doInterface(Decl.JavaInterface d) {
 		doClass(d);
 	}
 	
-	protected void doClass(Decl.Clazz c) {
+	protected void doClass(Decl.JavaClass c) {
 		Type.Clazz type = (Type.Clazz) c.attribute(Type.class);
 		try {
 			// We, need to update the skeleton so that any methods and fields
@@ -85,12 +85,12 @@ public class CodeGeneration {
 			// means I can be sure that the constructor has been otherwise
 			// completely generated, so all I need is to add initialisers at
 			// beginning, after super call (if there is one).
-			ArrayList<Decl.Field> fields = new ArrayList<Decl.Field>();
+			ArrayList<Decl.JavaField> fields = new ArrayList<Decl.JavaField>();
 			for(Decl d : c.declarations()) {
-				if(!(d instanceof Decl.Field)) {
+				if(!(d instanceof Decl.JavaField)) {
 					doDeclaration(d, skeleton);
 				} else {
-					fields.add((Decl.Field)d);
+					fields.add((Decl.JavaField)d);
 				}
 			}
 			
@@ -98,7 +98,7 @@ public class CodeGeneration {
 			// that field initialisers are added to constructors in the right
 			// order.
 			for(int i=fields.size();i>0;--i) {
-				Decl.Field d = fields.get(i-1);
+				Decl.JavaField d = fields.get(i-1);
 				doDeclaration(d, skeleton);				
 			}			
 		} catch(ClassNotFoundException cne) {
@@ -106,7 +106,7 @@ public class CodeGeneration {
 		}			
 	}
 
-	protected void doMethod(Decl.Method d, JilClass parent) {			
+	protected void doMethod(Decl.JavaMethod d, JilClass parent) {			
 		Type.Function type = (Type.Function) d.attribute(Type.class);
 		List<JilStmt> stmts = doStatement(d.body());
 		// First, off. If this is a constructor, then check whether there is an
@@ -129,7 +129,7 @@ public class CodeGeneration {
 		}			
 	}
 
-	protected void doField(Decl.Field d, JilClass parent) {		
+	protected void doField(Decl.JavaField d, JilClass parent) {		
 		Pair<JilExpr,List<JilStmt>> tmp = doExpression(d.initialiser());
 		Type fieldT = (Type) d.type().attribute(Type.class);
 		boolean isStatic = d.isStatic();
@@ -212,8 +212,8 @@ public class CodeGeneration {
 			return r.second();
 		} else if(e instanceof jkit.java.tree.Expr.New) {
 			return doNew((jkit.java.tree.Expr.New) e).second();
-		} else if(e instanceof Decl.Clazz) {
-			doClass((Decl.Clazz)e);			
+		} else if(e instanceof Decl.JavaClass) {
+			doClass((Decl.JavaClass)e);			
 		} else if(e != null) {
 			syntax_error("Invalid statement encountered: "
 					+ e.getClass(),e);

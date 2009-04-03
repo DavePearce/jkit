@@ -55,14 +55,14 @@ public class JavaFileWriter {
 	}
 	
 	public void writeDeclaration(Decl d) {
-		if(d instanceof Decl.Enum) {
-			writeEnum((Decl.Enum) d);
-		} else if(d instanceof Decl.Clazz) {
-			writeClass((Decl.Clazz) d);
-		} else if(d instanceof Decl.Field) {
-			writeField((Decl.Field) d);
-		} else if(d instanceof Decl.Method) {
-			writeMethod((Decl.Method) d);
+		if(d instanceof Decl.JavaEnum) {
+			writeEnum((Decl.JavaEnum) d);
+		} else if(d instanceof Decl.JavaClass) {
+			writeClass((Decl.JavaClass) d);
+		} else if(d instanceof Decl.JavaField) {
+			writeField((Decl.JavaField) d);
+		} else if(d instanceof Decl.JavaMethod) {
+			writeMethod((Decl.JavaMethod) d);
 		} else if(d instanceof Decl.StaticInitialiserBlock) {
 			writeStaticInitialiserBlock((Decl.StaticInitialiserBlock)d);
 		} else if(d instanceof Decl.InitialiserBlock) {
@@ -72,11 +72,11 @@ public class JavaFileWriter {
 		}
 	}
 	
-	public void writeClass(Decl.Clazz decl) {
+	public void writeClass(Decl.JavaClass decl) {
 		
 		writeModifiers(decl.modifiers());
 		
-		if(decl instanceof Decl.Interface) {
+		if(decl instanceof Decl.JavaInterface) {
 			write("interface ");
 		} else {
 			write("class ");
@@ -97,7 +97,7 @@ public class JavaFileWriter {
 			write(">");
 		}
 		
-		if(decl instanceof Decl.Interface) {
+		if(decl instanceof Decl.JavaInterface) {
 			if(decl.interfaces().size() > 0) {
 				write(" extends ");
 				boolean firstTime = true;
@@ -137,7 +137,7 @@ public class JavaFileWriter {
 		write("}");
 	}
 	
-	protected void writeEnum(Decl.Enum decl) {
+	protected void writeEnum(Decl.JavaEnum decl) {
 		writeModifiers(decl.modifiers());
 		write("enum ");
 		write(decl.name());
@@ -225,7 +225,7 @@ public class JavaFileWriter {
 		write("}");
 	}
 	
-	protected void writeMethod(Decl.Method m) {
+	protected void writeMethod(Decl.JavaMethod m) {
 		write("\n");
 		writeModifiers(m.modifiers());
 		
@@ -289,7 +289,7 @@ public class JavaFileWriter {
 		}
 	}
 	
-	protected void writeField(Decl.Field f) {
+	protected void writeField(Decl.JavaField f) {
 		
 		writeModifiers(f.modifiers());		
 		writeType(f.type());
@@ -364,8 +364,8 @@ public class JavaFileWriter {
 			writeInvoke((Expr.Invoke) e);
 		} else if(e instanceof Expr.New) {
 			writeNew((Expr.New) e);
-		} else if(e instanceof Decl.Clazz) {
-			writeClass((Decl.Clazz)e);
+		} else if(e instanceof Decl.JavaClass) {
+			writeClass((Decl.JavaClass)e);
 		} else {
 			throw new RuntimeException("Invalid statement encountered: "
 					+ e.getClass());
@@ -736,12 +736,12 @@ public class JavaFileWriter {
 			if(e.declarations().size() > 0) {
 				write(" { ");
 				for(Decl d : e.declarations()) {				
-					if(d instanceof Decl.Clazz) {
-						writeClass((Decl.Clazz) d);
-					} else if(d instanceof Decl.Field) {
-						writeField((Decl.Field) d);
-					} else if(d instanceof Decl.Method) {
-						writeMethod((Decl.Method) d);
+					if(d instanceof Decl.JavaClass) {
+						writeClass((Decl.JavaClass) d);
+					} else if(d instanceof Decl.JavaField) {
+						writeField((Decl.JavaField) d);
+					} else if(d instanceof Decl.JavaMethod) {
+						writeMethod((Decl.JavaMethod) d);
 					} else {					
 						throw new RuntimeException(
 						"Support required for methods in anonymous inner classes");

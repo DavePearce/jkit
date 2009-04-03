@@ -47,18 +47,18 @@ public class TypeChecking {
 	}
 	
 	protected void checkDeclaration(Decl d) {
-		if(d instanceof Interface) {
-			checkInterface((Interface)d);
-		} else if(d instanceof Clazz) {
-			checkClass((Clazz)d);
-		} else if(d instanceof Method) {
-			checkMethod((Method)d);
-		} else if(d instanceof Field) {
-			checkField((Field)d);
+		if(d instanceof JavaInterface) {
+			checkInterface((JavaInterface)d);
+		} else if(d instanceof JavaClass) {
+			checkClass((JavaClass)d);
+		} else if(d instanceof JavaMethod) {
+			checkMethod((JavaMethod)d);
+		} else if(d instanceof JavaField) {
+			checkField((JavaField)d);
 		}
 	}
 	
-	protected void checkInterface(Interface c) {
+	protected void checkInterface(JavaInterface c) {
 		enclosingScopes.push(c);
 		
 		for(Decl d : c.declarations()) {
@@ -68,7 +68,7 @@ public class TypeChecking {
 		enclosingScopes.pop();
 	}
 	
-	protected void checkClass(Clazz c) {
+	protected void checkClass(JavaClass c) {
 		enclosingScopes.push(c);
 		
 		for(Decl d : c.declarations()) {
@@ -78,7 +78,7 @@ public class TypeChecking {
 		enclosingScopes.pop();
 	}
 
-	protected void checkMethod(Method d) {
+	protected void checkMethod(JavaMethod d) {
 		enclosingScopes.push(d);
 		
 		checkStatement(d.body());
@@ -86,7 +86,7 @@ public class TypeChecking {
 		enclosingScopes.pop();
 	}
 
-	protected void checkField(Field d) {
+	protected void checkField(JavaField d) {
 		checkExpression(d.initialiser());
 		
 		Type lhs_t = (Type) d.type().attribute(Type.class);
@@ -144,8 +144,8 @@ public class TypeChecking {
 			checkInvoke((Expr.Invoke) e);
 		} else if(e instanceof Expr.New) {
 			checkNew((Expr.New) e);
-		} else if(e instanceof Decl.Clazz) {
-			checkClass((Decl.Clazz)e);
+		} else if(e instanceof Decl.JavaClass) {
+			checkClass((Decl.JavaClass)e);
 		} else if(e != null) {
 			throw new RuntimeException("Invalid statement encountered: "
 					+ e.getClass());
@@ -235,7 +235,7 @@ public class TypeChecking {
 	}
 	
 	protected void checkReturn(Stmt.Return ret) {		
-		Method method = (Method) getEnclosingScope(Method.class);
+		JavaMethod method = (JavaMethod) getEnclosingScope(JavaMethod.class);
 		Type retType = (Type) method.returnType().attribute(Type.class);
 		
 		if(ret.expr() != null) { 

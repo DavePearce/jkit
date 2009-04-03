@@ -13,7 +13,7 @@ import jkit.util.Triple;
 
 public interface Decl extends SyntacticElement {
 
-	public static class Clazz extends SyntacticElementImpl implements Decl, Stmt {
+	public static class JavaClass extends SyntacticElementImpl implements Decl, Stmt {
 		private List<Modifier> modifiers;
 		private String name;
 		private List<Type.Variable> typeParameters;
@@ -21,7 +21,7 @@ public interface Decl extends SyntacticElement {
 		private List<Type.Clazz> interfaces;
 		private List<Decl> declarations;		
 
-		public Clazz(List<Modifier> modifiers, String name,
+		public JavaClass(List<Modifier> modifiers, String name,
 				List<Type.Variable> typeParameters, Type.Clazz superclass,
 				List<Type.Clazz> interfaces, List<Decl> declarations,
 				Attribute... attributes) {
@@ -134,8 +134,8 @@ public interface Decl extends SyntacticElement {
 		}		
 	}
 
-	public static class Interface extends Clazz {
-		public Interface(List<Modifier> modifiers, String name,
+	public static class JavaInterface extends JavaClass {
+		public JavaInterface(List<Modifier> modifiers, String name,
 				List<Type.Variable> typeParameters, Type.Clazz superclass,
 				List<Type.Clazz> interfaces, List<Decl> declarations,
 				Attribute... attributes) {
@@ -144,10 +144,10 @@ public interface Decl extends SyntacticElement {
 		}
 	}
 
-	public static class Enum extends Clazz {
+	public static class JavaEnum extends JavaClass {
 		private List<EnumConstant> constants;
 
-		public Enum(List<Modifier> modifiers, String name,
+		public JavaEnum(List<Modifier> modifiers, String name,
 				List<Type.Clazz> interfaces, List<EnumConstant> constants,
 				List<Decl> declarations, Attribute... attributes) {
 			super(modifiers, name, new ArrayList<Type.Variable>(), null,
@@ -219,7 +219,7 @@ public interface Decl extends SyntacticElement {
 	 * @author djp
 	 * 
 	 */
-	public static class Method extends SyntacticElementImpl  implements Decl {
+	public static class JavaMethod extends SyntacticElementImpl  implements Decl {
 		private List<Modifier> modifiers;
 		private String name;
 		private Type returnType;
@@ -228,7 +228,7 @@ public interface Decl extends SyntacticElement {
 		private List<Type.Clazz> exceptions;
 		private Stmt.Block block;
 
-		public Method(List<Modifier> modifiers, String name, Type returnType,
+		public JavaMethod(List<Modifier> modifiers, String name, Type returnType,
 				List<Triple<String, List<Modifier>, Type>> parameters,
 				boolean varargs, List<Type.Variable> typeParameters,
 				List<Type.Clazz> exceptions, Stmt.Block block,
@@ -374,8 +374,8 @@ public interface Decl extends SyntacticElement {
 	 * @author djp
 	 * 
 	 */
-	public static class Constructor extends Method {
-		public Constructor(List<Modifier> modifiers, String name,
+	public static class JavaConstructor extends JavaMethod {
+		public JavaConstructor(List<Modifier> modifiers, String name,
 				List<Triple<String, List<Modifier>, Type>> parameters, boolean varargs,
 				List<Type.Variable> typeParameters,
 				List<Type.Clazz> exceptions,
@@ -385,13 +385,13 @@ public interface Decl extends SyntacticElement {
 		}
 	}
 
-	public static class Field extends SyntacticElementImpl implements Decl {
+	public static class JavaField extends SyntacticElementImpl implements Decl {
 		private List<Modifier> modifiers;
 		private String name;
 		private Type type;
 		private Expr initialiser;
 
-		public Field(List<Modifier> modifiers, String name, Type type,
+		public JavaField(List<Modifier> modifiers, String name, Type type,
 				Expr initialiser, Attribute... attributes) {
 			super(attributes);
 			this.modifiers = modifiers;

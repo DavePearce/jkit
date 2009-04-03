@@ -191,7 +191,7 @@ public class JavaFileReader {
 		return declarations;
 	}
 
-	protected Decl.Clazz parseClass(Tree decl, HashSet<String> genericVariables) {
+	protected Decl.JavaClass parseClass(Tree decl, HashSet<String> genericVariables) {
 		
 		int idx = 0;
 		List<Modifier> modifiers = new ArrayList<Modifier>();
@@ -249,15 +249,15 @@ public class JavaFileReader {
 				.getCharPositionInLine());
 
 		if (decl.getType() == INTERFACE) {
-			return new Decl.Interface(modifiers, name, typeArgs,
+			return new Decl.JavaInterface(modifiers, name, typeArgs,
 					superclass, interfaces, declarations, loc);
 		} else {
-			return new Decl.Clazz(modifiers, name, typeArgs, superclass,
+			return new Decl.JavaClass(modifiers, name, typeArgs, superclass,
 					interfaces, declarations, loc);
 		}
 	}
 
-	protected Decl.Enum parseEnum(Tree decl, HashSet<String> genericVariables) {
+	protected Decl.JavaEnum parseEnum(Tree decl, HashSet<String> genericVariables) {
 		int idx = 0;
 		List<Modifier> modifiers = new ArrayList<Modifier>();
 		if (decl.getChild(idx).getType() == MODIFIERS) {
@@ -299,7 +299,7 @@ public class JavaFileReader {
 			declarations.addAll(parseDeclaration(decl.getChild(idx), genericVariables));
 		}
 
-		return new Decl.Enum(modifiers, name, interfaces, constants,
+		return new Decl.JavaEnum(modifiers, name, interfaces, constants,
 				declarations, new SourceLocation(decl.getLine(), decl
 						.getCharPositionInLine()));
 	}
@@ -372,7 +372,7 @@ public class JavaFileReader {
 				new SourceLocation(decl.getLine(), decl.getCharPositionInLine()));
 	}
 
-	protected Decl.Method parseMethod(Tree method, HashSet<String> genericVariables) {
+	protected Decl.JavaMethod parseMethod(Tree method, HashSet<String> genericVariables) {
 		genericVariables = (HashSet<String>) genericVariables.clone(); 
 		// === TYPE MODIFIERS ===
 
@@ -457,20 +457,20 @@ public class JavaFileReader {
 		}
 
 		if (returnType == null) {
-			return new Decl.Constructor(modifiers, name, params, varargs,
+			return new Decl.JavaConstructor(modifiers, name, params, varargs,
 					typeArgs, exceptions, block, new SourceLocation(method
 							.getLine(), method.getCharPositionInLine()));
 		} else {
-			return new Decl.Method(modifiers, name, returnType, params,
+			return new Decl.JavaMethod(modifiers, name, returnType, params,
 					varargs, typeArgs, exceptions, block, new SourceLocation(
 							method.getLine(), method.getCharPositionInLine()));
 		}
 	}
 
-	protected List<Decl.Field> parseField(Tree tree, HashSet<String> genericVariables) {
+	protected List<Decl.JavaField> parseField(Tree tree, HashSet<String> genericVariables) {
 		assert tree.getType() == FIELD;
 
-		ArrayList<Decl.Field> fields = new ArrayList<Decl.Field>();
+		ArrayList<Decl.JavaField> fields = new ArrayList<Decl.JavaField>();
 
 		// === MODIFIERS ===
 		List<Modifier> modifiers = new ArrayList<Modifier>();
@@ -502,7 +502,7 @@ public class JavaFileReader {
 				// constructors!
 				initialiser = parseExpression(child.getChild(aindx), genericVariables);
 			}
-			fields.add(new Decl.Field(modifiers, name, type, initialiser,
+			fields.add(new Decl.JavaField(modifiers, name, type, initialiser,
 					new SourceLocation(child.getLine(), child
 							.getCharPositionInLine())));
 		}

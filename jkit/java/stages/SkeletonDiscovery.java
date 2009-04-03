@@ -7,7 +7,7 @@ import jkit.compiler.ClassLoader;
 import jkit.compiler.SyntaxError;
 import jkit.java.io.JavaFile;
 import jkit.java.tree.Decl;
-import jkit.java.tree.Decl.Field;
+import jkit.java.tree.Decl.JavaField;
 import jkit.jil.tree.JilClass;
 import jkit.jil.tree.SourceLocation;
 import jkit.jil.tree.SyntacticElement;
@@ -41,16 +41,16 @@ public class SkeletonDiscovery {
 	}
 	
 	protected List<JilClass> doDeclaration(Decl d, String pkg, Type.Clazz parent) {		
-		if(d instanceof Decl.Interface) {
-			return doInterface((Decl.Interface)d,pkg,parent);
-		} else if(d instanceof Decl.Enum) {
-			return doEnum((Decl.Enum)d,pkg,parent);
-		} else if(d instanceof Decl.Clazz) {
-			return doClass((Decl.Clazz)d,pkg,parent);
-		} else if(d instanceof Decl.Method) {
-			return doMethod((Decl.Method)d,pkg,parent);
-		} else if(d instanceof Decl.Field) {
-			return doField((Field)d,pkg,parent);
+		if(d instanceof Decl.JavaInterface) {
+			return doInterface((Decl.JavaInterface)d,pkg,parent);
+		} else if(d instanceof Decl.JavaEnum) {
+			return doEnum((Decl.JavaEnum)d,pkg,parent);
+		} else if(d instanceof Decl.JavaClass) {
+			return doClass((Decl.JavaClass)d,pkg,parent);
+		} else if(d instanceof Decl.JavaMethod) {
+			return doMethod((Decl.JavaMethod)d,pkg,parent);
+		} else if(d instanceof Decl.JavaField) {
+			return doField((JavaField)d,pkg,parent);
 		} else if(d instanceof Decl.InitialiserBlock) {
 			return doInitialiserBlock((Decl.InitialiserBlock)d,pkg,parent);
 		} else if(d instanceof Decl.StaticInitialiserBlock) {
@@ -62,11 +62,11 @@ public class SkeletonDiscovery {
 		}
 	}
 	
-	protected List<JilClass> doEnum(Decl.Enum d, String pkg, Type.Clazz parent) {
+	protected List<JilClass> doEnum(Decl.JavaEnum d, String pkg, Type.Clazz parent) {
 		return doClass(d,pkg,parent);
 	}
 	
-	protected List<JilClass> doInterface(Decl.Interface d, String pkg,
+	protected List<JilClass> doInterface(Decl.JavaInterface d, String pkg,
 			Type.Clazz parent) {
 		List<JilClass> cs = doClass(d, pkg, parent);
 		cs.get(cs.size() - 1).modifiers()
@@ -76,7 +76,7 @@ public class SkeletonDiscovery {
 		return cs;
 	}
 	
-	protected List<JilClass> doClass(Decl.Clazz c, String pkg, Type.Clazz parent) {
+	protected List<JilClass> doClass(Decl.JavaClass c, String pkg, Type.Clazz parent) {
 		ArrayList<JilClass> skeletons = new ArrayList<JilClass>();
 		// At this stage, type resolution has not already occurred and,
 		// hence, we have only basic (i.e. non-generic) type information
@@ -103,11 +103,11 @@ public class SkeletonDiscovery {
 		return skeletons;
 	}
 
-	protected List<JilClass> doMethod(Decl.Method d, String pkg, Type.Clazz parent) {
+	protected List<JilClass> doMethod(Decl.JavaMethod d, String pkg, Type.Clazz parent) {
 		return new ArrayList();
 	}
 
-	protected List<JilClass> doField(Decl.Field d, String pkg, Type.Clazz parent) {
+	protected List<JilClass> doField(Decl.JavaField d, String pkg, Type.Clazz parent) {
 		return new ArrayList();
 	}
 	

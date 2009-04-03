@@ -10,10 +10,10 @@ import jkit.java.tree.Decl;
 import jkit.java.tree.Expr;
 import jkit.java.tree.Stmt;
 import jkit.java.tree.Value;
-import jkit.java.tree.Decl.Clazz;
-import jkit.java.tree.Decl.Field;
-import jkit.java.tree.Decl.Interface;
-import jkit.java.tree.Decl.Method;
+import jkit.java.tree.Decl.JavaClass;
+import jkit.java.tree.Decl.JavaField;
+import jkit.java.tree.Decl.JavaInterface;
+import jkit.java.tree.Decl.JavaMethod;
 import jkit.java.tree.Stmt.Case;
 import jkit.jil.tree.Modifier;
 import jkit.jil.tree.SourceLocation;
@@ -212,14 +212,14 @@ public class ScopeResolution {
 	}
 	
 	protected void doDeclaration(Decl d, JavaFile file) {
-		if(d instanceof Interface) {
-			doInterface((Interface)d, file);
-		} else if(d instanceof Clazz) {
-			doClass((Clazz)d, file);
-		} else if(d instanceof Method) {
-			doMethod((Method)d, file);
-		} else if(d instanceof Field) {
-			doField((Field)d, file);
+		if(d instanceof JavaInterface) {
+			doInterface((JavaInterface)d, file);
+		} else if(d instanceof JavaClass) {
+			doClass((JavaClass)d, file);
+		} else if(d instanceof JavaMethod) {
+			doMethod((JavaMethod)d, file);
+		} else if(d instanceof JavaField) {
+			doField((JavaField)d, file);
 		} else if (d instanceof Decl.InitialiserBlock) {
 			doInitialiserBlock((Decl.InitialiserBlock) d, file);
 		} else if (d instanceof Decl.StaticInitialiserBlock) {
@@ -230,11 +230,11 @@ public class ScopeResolution {
 		}
 	}
 	
-	protected void doInterface(Interface d, JavaFile file) {
+	protected void doInterface(JavaInterface d, JavaFile file) {
 		doClass(d,file);
 	}
 	
-	protected void doClass(Clazz c, JavaFile file) {
+	protected void doClass(JavaClass c, JavaFile file) {
 		Type.Clazz myType = (Type.Clazz) c.attribute(Type.class);
 		Type.Clazz superType = null;
 		
@@ -264,7 +264,7 @@ public class ScopeResolution {
 		scopes.pop();
 	}
 
-	protected void doMethod(Method d, JavaFile file) {
+	protected void doMethod(JavaMethod d, JavaFile file) {
 		
 		MethodScope myScope = new MethodScope(d.isStatic());
 		
@@ -301,7 +301,7 @@ public class ScopeResolution {
 		scopes.pop(); // leaving scope
 	}
 
-	protected void doField(Field d, JavaFile file) {
+	protected void doField(JavaField d, JavaFile file) {
 		FieldScope myScope = new FieldScope(d.isStatic());
 		
 		if (!d.isStatic()) {
@@ -400,8 +400,8 @@ public class ScopeResolution {
 			doInvoke((Expr.Invoke) e, file);
 		} else if(e instanceof Expr.New) {
 			doNew((Expr.New) e, file);
-		} else if(e instanceof Decl.Clazz) {
-			doClass((Decl.Clazz)e, file);
+		} else if(e instanceof Decl.JavaClass) {
+			doClass((Decl.JavaClass)e, file);
 		} else if(e != null) {
 			syntax_error("Invalid statement encountered: "
 					+ e.getClass(),e);

@@ -42,7 +42,7 @@ import jkit.jil.tree.Type;
 public class TypePropagation {
 	private ClassLoader loader;
 	private TypeSystem types;
-	private Stack<Clazz> scopes = new Stack<Clazz>();
+	private Stack<JavaClass> scopes = new Stack<JavaClass>();
 	
 	public TypePropagation(ClassLoader loader, TypeSystem types) {
 		this.loader = loader; 
@@ -56,14 +56,14 @@ public class TypePropagation {
 	}
 	
 	protected void doDeclaration(Decl d) {
-		if(d instanceof Interface) {
-			doInterface((Interface)d);
-		} else if(d instanceof Clazz) {
-			doClass((Clazz)d);
-		} else if(d instanceof Method) {
-			doMethod((Method)d);
-		} else if(d instanceof Field) {
-			doField((Field)d);
+		if(d instanceof JavaInterface) {
+			doInterface((JavaInterface)d);
+		} else if(d instanceof JavaClass) {
+			doClass((JavaClass)d);
+		} else if(d instanceof JavaMethod) {
+			doMethod((JavaMethod)d);
+		} else if(d instanceof JavaField) {
+			doField((JavaField)d);
 		} else if (d instanceof Decl.InitialiserBlock) {
 			doInitialiserBlock((Decl.InitialiserBlock) d);
 		} else if (d instanceof Decl.StaticInitialiserBlock) {
@@ -74,11 +74,11 @@ public class TypePropagation {
 		}
 	}
 	
-	protected void doInterface(Interface d) {
+	protected void doInterface(JavaInterface d) {
 		doClass(d);
 	}
 	
-	protected void doClass(Clazz c) {
+	protected void doClass(JavaClass c) {
 		scopes.push(c);
 		
 		for(Decl d : c.declarations()) {
@@ -88,11 +88,11 @@ public class TypePropagation {
 		scopes.pop();
 	}
 
-	protected void doMethod(Method d) {
+	protected void doMethod(JavaMethod d) {
 		doStatement(d.body(),d);
 	}
 
-	protected void doField(Field d) {
+	protected void doField(JavaField d) {
 		Expr init = d.initialiser();
 		Type type = (Type) d.type().attribute(Type.class);
 		
@@ -130,7 +130,7 @@ public class TypePropagation {
 		}
 	}
 	
-	protected void doStatement(Stmt e, Method m) {
+	protected void doStatement(Stmt e, JavaMethod m) {
 		if(e instanceof Stmt.SynchronisedBlock) {
 			doSynchronisedBlock((Stmt.SynchronisedBlock)e, m);
 		} else if(e instanceof Stmt.TryCatchBlock) {
@@ -169,15 +169,15 @@ public class TypePropagation {
 			doInvoke((Expr.Invoke) e);
 		} else if(e instanceof Expr.New) {
 			doNew((Expr.New) e);
-		} else if(e instanceof Decl.Clazz) {
-			doClass((Decl.Clazz)e);
+		} else if(e instanceof Decl.JavaClass) {
+			doClass((Decl.JavaClass)e);
 		} else if(e != null) {
 			syntax_error("Internal failure (invalid statement \""
 					+ e.getClass() + "\" encountered)", e);			
 		}		
 	}
 	
-	protected void doBlock(Stmt.Block block, Method m) {
+	protected void doBlock(Stmt.Block block, JavaMethod m) {
 		if(block != null) {			
 			// now process every statement in this block.
 			for(Stmt s : block.statements()) {
@@ -186,12 +186,12 @@ public class TypePropagation {
 		}
 	}
 	
-	protected void doSynchronisedBlock(Stmt.SynchronisedBlock block, Method m) {
+	protected void doSynchronisedBlock(Stmt.SynchronisedBlock block, JavaMethod m) {
 		doBlock(block,m);
 		doExpression(block.expr());
 	}
 	
-	protected void doTryCatchBlock(Stmt.TryCatchBlock block, Method m) {
+	protected void doTryCatchBlock(Stmt.TryCatchBlock block, JavaMethod m) {
 		doBlock(block,m);
 		doBlock(block.finaly(),m);
 
@@ -200,7 +200,7 @@ public class TypePropagation {
 		}
 	}
 	
-	protected void doVarDef(Stmt.VarDef def, Method m) {
+	protected void doVarDef(Stmt.VarDef def, JavaMethod m) {
 		Type t = (Type) def.type().attribute(Type.class);
 		
 		List<Triple<String, Integer, Expr>> defs = def.definitions();
@@ -232,7 +232,7 @@ public class TypePropagation {
 		}
 	}
 	
-	protected void doAssignment(Stmt.Assignment def, Method m) {
+	protected void doAssignment(Stmt.Assignment def, JavaMethod m) {
 		doExpression(def.lhs());	
 		doExpression(def.rhs());			
 
@@ -252,7 +252,7 @@ public class TypePropagation {
 		def.attributes().add(lhs_t);
 	}
 	
-	protected void doReturn(Stmt.Return ret, Method m) {
+	protected void doReturn(Stmt.Return ret, JavaMethod m) {
 		if(ret.expr() != null) {
 			// We need to do an implict cast here to account for autoboxing, and
 			// other conversions. For example, a method declared to return
@@ -264,46 +264,46 @@ public class TypePropagation {
 		}
 	}
 	
-	protected void doThrow(Stmt.Throw ret, Method m) {
+	protected void doThrow(Stmt.Throw ret, JavaMethod m) {
 		doExpression(ret.expr());
 	}
 	
-	protected void doAssert(Stmt.Assert ret, Method m) {
+	protected void doAssert(Stmt.Assert ret, JavaMethod m) {
 		doExpression(ret.expr());
 	}
 	
-	protected void doBreak(Stmt.Break brk, Method m) {
+	protected void doBreak(Stmt.Break brk, JavaMethod m) {
 		// nothing	
 	}
 	
-	protected void doContinue(Stmt.Continue brk, Method m) {
+	protected void doContinue(Stmt.Continue brk, JavaMethod m) {
 		// nothing
 	}
 	
-	protected void doLabel(Stmt.Label lab, Method m) {						
+	protected void doLabel(Stmt.Label lab, JavaMethod m) {						
 		doStatement(lab.statement(),m);
 	}
 	
-	protected void doIf(Stmt.If stmt, Method m) {
+	protected void doIf(Stmt.If stmt, JavaMethod m) {
 		doExpression(stmt.condition());
 		stmt.setCondition(implicitCast(stmt.condition(), new Type.Bool()));
 		doStatement(stmt.trueStatement(),m);
 		doStatement(stmt.falseStatement(),m);
 	}
 	
-	protected void doWhile(Stmt.While stmt, Method m) {
+	protected void doWhile(Stmt.While stmt, JavaMethod m) {
 		doExpression(stmt.condition());
 		stmt.setCondition(implicitCast(stmt.condition(), new Type.Bool()));
 		doStatement(stmt.body(),m);		
 	}
 	
-	protected void doDoWhile(Stmt.DoWhile stmt, Method m) {
+	protected void doDoWhile(Stmt.DoWhile stmt, JavaMethod m) {
 		doExpression(stmt.condition());
 		stmt.setCondition(implicitCast(stmt.condition(), new Type.Bool()));
 		doStatement(stmt.body(),m);
 	}
 	
-	protected void doFor(Stmt.For stmt, Method m) {		
+	protected void doFor(Stmt.For stmt, JavaMethod m) {		
 		doStatement(stmt.initialiser(),m);
 		doExpression(stmt.condition());		
 		stmt.setCondition(implicitCast(stmt.condition(), new Type.Bool()));
@@ -311,12 +311,12 @@ public class TypePropagation {
 		doStatement(stmt.body(),m);	
 	}
 	
-	protected void doForEach(Stmt.ForEach stmt, Method m) {
+	protected void doForEach(Stmt.ForEach stmt, JavaMethod m) {
 		doExpression(stmt.source());
 		doStatement(stmt.body(),m);
 	}
 	
-	protected void doSwitch(Stmt.Switch sw, Method m) {
+	protected void doSwitch(Stmt.Switch sw, JavaMethod m) {
 		doExpression(sw.condition());
 		for(Case c : sw.cases()) {
 			doExpression(c.condition());

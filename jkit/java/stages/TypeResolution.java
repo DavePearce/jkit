@@ -9,10 +9,10 @@ import jkit.java.tree.Decl;
 import jkit.java.tree.Expr;
 import jkit.java.tree.Stmt;
 import jkit.java.tree.Value;
-import jkit.java.tree.Decl.Clazz;
-import jkit.java.tree.Decl.Field;
-import jkit.java.tree.Decl.Interface;
-import jkit.java.tree.Decl.Method;
+import jkit.java.tree.Decl.JavaClass;
+import jkit.java.tree.Decl.JavaField;
+import jkit.java.tree.Decl.JavaInterface;
+import jkit.java.tree.Decl.JavaMethod;
 import jkit.java.tree.Stmt.Case;
 import jkit.jil.tree.Modifier;
 import jkit.jil.tree.SourceLocation;
@@ -97,14 +97,14 @@ public class TypeResolution {
 	}
 	
 	protected void doDeclaration(Decl d) {
-		if(d instanceof Interface) {
-			doInterface((Interface)d);
-		} else if(d instanceof Clazz) {
-			doClass((Clazz)d);
-		} else if(d instanceof Method) {
-			doMethod((Method)d);
-		} else if(d instanceof Field) {
-			doField((Field)d);
+		if(d instanceof JavaInterface) {
+			doInterface((JavaInterface)d);
+		} else if(d instanceof JavaClass) {
+			doClass((JavaClass)d);
+		} else if(d instanceof JavaMethod) {
+			doMethod((JavaMethod)d);
+		} else if(d instanceof JavaField) {
+			doField((JavaField)d);
 		} else if (d instanceof Decl.InitialiserBlock) {
 			doInitialiserBlock((Decl.InitialiserBlock) d);
 		} else if (d instanceof Decl.StaticInitialiserBlock) {
@@ -115,11 +115,11 @@ public class TypeResolution {
 		}
 	}
 	
-	protected void doInterface(Interface d) {
+	protected void doInterface(JavaInterface d) {
 		doClass(d);
 	}
 	
-	protected void doClass(Clazz c) {		
+	protected void doClass(JavaClass c) {		
 		// First, add myself to the import list, since that means we'll search
 		// in my class for types before searching anywhere else i've declared
 		// and/or on the CLASSPATH.
@@ -165,7 +165,7 @@ public class TypeResolution {
 		scopes.pop(); // undo my type
 	}
 
-	protected void doMethod(Method d) {
+	protected void doMethod(JavaMethod d) {
 		Scope myScope = new Scope();		
 		scopes.push(myScope);
 		
@@ -223,7 +223,7 @@ public class TypeResolution {
 		scopes.pop();
 	}
 
-	protected void doField(Field d) {
+	protected void doField(JavaField d) {
 		doExpression(d.initialiser());		
 		d.type().attributes().add(substituteTypeVars(resolve(d.type())));
 	}
@@ -283,8 +283,8 @@ public class TypeResolution {
 			doInvoke((Expr.Invoke) e);
 		} else if(e instanceof Expr.New) {
 			doNew((Expr.New) e);
-		} else if(e instanceof Decl.Clazz) {
-			doClass((Decl.Clazz)e);
+		} else if(e instanceof Decl.JavaClass) {
+			doClass((Decl.JavaClass)e);
 		} else if(e != null) {
 			syntax_error("Invalid statement encountered: "
 					+ e.getClass(),e);
