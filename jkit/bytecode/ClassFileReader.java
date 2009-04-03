@@ -85,7 +85,7 @@ public class ClassFileReader {
      * @throws ClassFormatError
      *             if the classfile is invalid.
      */
-	public JilClass readClass() {		
+	public ClassFile readClass() {		
 		if(read_u2(0) != 0xCAFE || read_u2(2) != 0xBABE) {
 			throw new ClassFormatError("bad magic number");
 		}
@@ -135,9 +135,9 @@ public class ClassFileReader {
 		index += 6;		
 		List<Type.Clazz> interfaces = parseInterfaces(index);		
 		int count = read_u2(index);
-		index += 2 + (count * 2);
-				
-		ArrayList<JilField> fields = parseFields(index);
+		index += 2 + (count * 2);				
+		
+		ArrayList<ClassFile.Field> fields = parseFields(index);
 				
 		count = read_u2(index);		
 		index += 2;
@@ -151,7 +151,7 @@ public class ClassFileReader {
 	    	}	    		    		    		    	
 		}
 		
-		ArrayList<JilMethod> methods = parseMethods(index,className);
+		ArrayList<ClassFile.Method> methods = parseMethods(index,className);
 		count = read_u2(index);	
 		index += 2;
 		
@@ -164,44 +164,46 @@ public class ClassFileReader {
 			}	    		    		    		    	
 		}
 	
-		ArrayList<Attribute> attributes = parseAttributes(index);
-		List<Triple<Type.Reference, Integer, Boolean>> innerClasses = new ArrayList<Triple<Type.Reference, Integer, Boolean>>();
+		ArrayList<Attribute> attributes = parseAttributes(index);		
 		
 		// now, try and figure out the full type of this class
 		
-		Attribute.Signature s = null;
+		ClassSignature s = null;
 		
 		for(Attribute a : attributes) {
-			if(a instanceof Attribute.Signature) { 
-				s = (Attribute.Signature) a; 
-			} else if(a instanceof Attribute.InnerClasses) {
-				innerClasses = ((Attribute.InnerClasses) a).innerClasses();				
-			}
+			if(a instanceof ClassSignature) { 
+				s = (ClassSignature) a; 
+			} 
 		} 	
+		
 		Type.Clazz type = parseClassDescriptor("L" + name + ";");
 		Type.Clazz superType = superClass == null ? null
 				: parseClassDescriptor("L" + superClass + ";");
 		
 		if(s != null) { 
-			Triple<List<Type.Reference>,Type.Clazz,List<Type.Clazz>> st;
-			st = parseClassSignature(s.signature());
-			interfaces = st.third();
-			superType = st.second();
+			interfaces = s.interfaces();
+			superType = s.superClass();
 			// Append generic parameters onto reference type.
 			// There is a bug here, when we have an inner class, whose outer 
 			// class has generic parameters.
-			List<Type.Reference> genericParams = st.first();
+			/* to be moved somewhere
+			List<Type.Reference> genericParams = s.type();
 			List<Pair<String,List<Type.Reference>>> classes = type.components();
 			Pair<String,List<Type.Reference>> nc = new Pair<String, List<Type.Reference>>(
 					classes.get(classes.size() - 1).first(), genericParams);
 			 
 			classes.set(classes.size()-1,nc);
-			type = new Type.Clazz(type.pkg(),classes);
-		}
+			*/
+			type = s.type();
+		}							
 		
-		JilClass c = new JilClass(type, listModifiers(modifiers,false), superType, interfaces, fields,
-				methods);		
-		return 	c;			 		
+		ClassFile cfile = new ClassFile(version, type, superType, interfaces, listModifiers(modifiers,false));
+		
+		cfile.attributes().addAll(attributes);
+		cfile.methods().addAll(methods);
+		cfile.fields().addAll(fields);
+		
+		return 	cfile;			 		
 	}
 	
     // ============================================================
@@ -231,9 +233,9 @@ public class ClassFileReader {
 	 * 
 	 * @return
 	 */
-	protected ArrayList<JilField> parseFields(int fields) {
+	protected ArrayList<ClassFile.Field> parseFields(int fields) {
 		int count = read_u2(fields);
-		ArrayList<JilField> r = new ArrayList<JilField>();
+		ArrayList<ClassFile.Field> r = new ArrayList<ClassFile.Field>();
 		int index = fields + 2;		
 		for(int i=0;i!=count;++i) {
 			r.add(parseField(index));						
@@ -247,34 +249,35 @@ public class ClassFileReader {
 		return r;
 	}
 	
-	protected JilField parseField(int offset) {
+	protected ClassFile.Field parseField(int offset) {
 		int modifiers = read_u2(offset);		
 		String name = getString(read_u2(offset+2));
 		String desc = getString(read_u2(offset+4));
 		
 		// parse attributes
 		int acount = read_u2(offset+6);
-		Attribute[] attributes = new Attribute[acount];
+		ArrayList<Attribute> attributes = new ArrayList<Attribute>();
 		int index = offset + 8;
 		for(int j=0;j!=acount;++j) {
 			int len = read_i4(index+2);
-			attributes[j] = parseAttribute(index);
+			attributes.add(parseAttribute(index));
 			index += len + 6;
 		}
 		
-		Object constValue = null;
+		Type type = parseDescriptor(desc);
 		
 		for(Attribute at : attributes) {
-			if(at instanceof Attribute.Signature) {
-				desc = ((Attribute.Signature) at).signature();
-			} else if(at instanceof Attribute.ConstantValue) {
-				constValue = ((Attribute.ConstantValue) at).constValue();		
-			}
-		}
+			if(at instanceof Signature) {
+				type = ((Signature) at).type();
+			} 
+		}					
 		
-		Type type = parseDescriptor(desc);		
+		ClassFile.Field f = new ClassFile.Field(name, type, listModifiers(
+				modifiers, false));
 		
-		return new JilField(name, type, listModifiers(modifiers,false));
+		f.attributes().addAll(attributes);
+		
+		return f;		
 	}
 	
 	/**
@@ -282,9 +285,9 @@ public class ClassFileReader {
 	 * 
 	 * @return
 	 */
-	protected ArrayList<JilMethod> parseMethods(int methods, String owner) {
+	protected ArrayList<ClassFile.Method> parseMethods(int methods, String owner) {
 		int count = read_u2(methods);		
-		ArrayList<JilMethod> r = new ArrayList<JilMethod>();
+		ArrayList<ClassFile.Method> r = new ArrayList<ClassFile.Method>();
 		int index = methods + 2;
 		for(int i=0;i!=count;++i) {			
 			r.add(parseMethod(index,owner));						
@@ -298,7 +301,7 @@ public class ClassFileReader {
 		return r;
 	}
 	
-	protected JilMethod parseMethod(int offset, String owner) {
+	protected ClassFile.Method parseMethod(int offset, String owner) {
 		String name = getString(read_u2(offset+2));
 		String desc = getString(read_u2(offset+4));		
 		
@@ -313,33 +316,29 @@ public class ClassFileReader {
 		
 		// parse attributes
 		int acount = read_u2(offset+6);
-		Attribute[] attributes = new Attribute[acount];
+		ArrayList<Attribute> attributes = new ArrayList<Attribute>();
 		int index = offset + 8;
 		for(int j=0;j!=acount;++j) {
 			int len = read_i4(index+2);
-			attributes[j] = parseAttribute(index);
+			attributes.add(parseAttribute(index));
 			index += len + 6;
 		}
-		
-		List<Type.Clazz> exceptions = new ArrayList<Type.Clazz>(); 
+				
+		Type.Function type = parseMethodDescriptor(desc);	
 		
         // we use the desc type, unless there is a 
 		// signature attribute, since this provides
 		// additional generic information
 		for(Attribute at : attributes) {
-			if(at instanceof Attribute.Signature) {				
-					desc = ((Attribute.Signature) at).signature();					
-			} else if(at instanceof Attribute.Exceptions) {
-				exceptions = ((Attribute.Exceptions) at).exceptions();				
-			}
-		}				
+			if(at instanceof Signature) {				
+					type = (Type.Function) ((Signature) at).type();					
+			} 
+		}								
 		
-		Type.Function type = parseMethodDescriptor(desc);		
-		
-		// There is a bug here, since we need to provide information about the
-		// parameters supplied.
-		return new JilMethod(name, type, new ArrayList(), listModifiers(modifiers,
-				true), exceptions);
+		ClassFile.Method cm = new ClassFile.Method(name, type, listModifiers(
+				modifiers, true));
+		cm.attributes.addAll(attributes);
+		return cm;
 	}
 	
 	/**
@@ -389,7 +388,7 @@ public class ClassFileReader {
 		return new Attribute.Unknown(name,bs);
 	}
 	
-	protected Attribute.Exceptions parseExceptions(int offset, String name) {
+	protected Exceptions parseExceptions(int offset, String name) {
 		ArrayList<Type.Clazz> exceptions = new ArrayList<Type.Clazz>();
 		int numExceptions = read_u2(offset + 6);
 		offset += 8;
@@ -397,20 +396,20 @@ public class ClassFileReader {
 			exceptions.add(parseClassDescriptor("L" + getClassName(read_u2(offset)) + ";"));
 			offset += 2;
 		}
-		return new Attribute.Exceptions(name,exceptions);
+		return new Exceptions(exceptions);
 	}
 	
-	protected Attribute.Signature parseSignature(int offset, String name) {
+	protected Signature parseSignature(int offset, String name) {
 		String sig = getString(read_u2(offset+6));
-		return new Attribute.Signature(name,sig);
+		return new Signature(name,sig);
 	}
 	
 	protected Attribute.ConstantValue parseConstantValue(int offset, String name) {
 		Object obj = getConstant(read_u2(offset+6));
 		return new Attribute.ConstantValue(name, obj);
-	}
+	}	
 	
-	protected Attribute.InnerClasses parseInnerClasses(int offset, String name) {
+	protected InnerClasses parseInnerClasses(int offset, String name) {
 		ArrayList<Triple<Type.Reference, Integer, Boolean>> inners = new ArrayList<Triple<Type.Reference, Integer, Boolean>>();		
 		offset += 6;
 		int numClasses = read_u2(offset);
@@ -1673,135 +1672,7 @@ public class ClassFileReader {
 		}
 		
 		public String name() { return name; }
-	}
-	/**
-	 * This class represents an attribute in the class file.	 
-	 */
-	protected static class Attribute {
-		private String name;	
-		
-		public Attribute(String n) {
-			name = n;
-		}
-		
-		/**
-		 * Return the attributes name
-		 * 
-		 * @return
-		 */
-		public String name() { return name; } 
-		
-		
-		/**
-		 * Class for representing signature attributes
-		 * 
-		 * @author djp	 
-		 */
-		public static class Signature extends Attribute {
-			private String sig;
-			
-			public Signature(String n, String s) { 
-				super(n);
-				sig = s;
-			}
-			
-			public String signature() { return sig; }
-		}
-		
-		/**
-		 * Class for representing exceptions attributes
-		 * 
-		 * @author djp	 
-		 */
-		public static class Exceptions extends Attribute {
-			private List<Type.Clazz> exceptions;
-			
-			public Exceptions(String n, List<Type.Clazz> exceptions) { 
-				super(n);				
-				this.exceptions = exceptions;
-			}
-			
-			public List<Type.Clazz> exceptions() { return exceptions; }
-		}
-		
-		/**
-		 * Class representing inner class attribute
-		 * 
-		 * @author djp	 
-		 */
-		public static class InnerClasses extends Attribute {
-			private List<Triple<Type.Reference,Integer,Boolean>> innerClasses;
-			
-			public InnerClasses(String n,
-					List<Triple<Type.Reference, Integer, Boolean>> innerClasses) { 
-				super(n);				
-				this.innerClasses = innerClasses;
-			}
-			
-			public List<Triple<Type.Reference,Integer,Boolean>> innerClasses() { return innerClasses; }
-		}
-		
-		public static class ConstantValue extends Attribute {
-			private Object constval;
-			
-			public ConstantValue(String n, Object val) {
-				super(n);
-				constval = val;
-			}
-			
-			public Object constValue() { return constval; }
-		}
-		
-		/**
-		 * Class for representing unknown attributes
-		 * 
-		 * @author djp	 
-		 */
-		public static class Unknown extends Attribute {
-			private byte[] bytes;
-			
-			public Unknown(String n, byte[] bs) { 
-				super(n);
-				bytes = bs;
-			}
-			
-			public byte[] bytes() { return bytes; }
-		}
-		/**
-		 * Class for representing runtime visible annotations attribute
-		 * 
-		 * @author djp	 
-		 */
-		/*
-		public static class Annotations extends Attribute {
-			private Annotation[] annotations;
-			
-			public Annotations(String n, Annotation[] as) { 
-				super(n);
-				annotations = as;
-			}
-			
-			public Annotation[] annotations() { return annotations; }
-		}
-		*/
-		/**
-		 * Class for representing parameter annotations attribute
-		 * 
-		 * @author djp	 
-		 */
-		/*
-		public static class ParameterAnnotations extends Attribute {
-			private Annotation[][] annotations;
-			
-			public ParameterAnnotations(String n, Annotation[][] as) { 
-				super(n);
-				annotations = as;
-			}
-			
-			public Annotation[][] annotations() { return annotations; }
-		}
-		*/
-	}
+	}	
 	
 	// tags for constant pool entries	
 	protected static final int CONSTANT_Class = 7;

@@ -34,4 +34,39 @@ public interface Attribute {
 	 */
 	public void print(PrintWriter output, Map<Constant.Info, Integer> constantPool)
 			throws IOException;
+	
+	/**
+	 * Class for representing unknown attributes
+	 * 
+	 * @author djp	 
+	 */
+	public static class Unknown implements Attribute {
+		private byte[] bytes;
+		private String name;
+		
+		public Unknown(String n, byte[] bs) { 
+			bytes = bs;
+			name = n;
+		}
+		
+		public String name() {
+			return name;
+		}
+		
+		public void addPoolItems(Set<Constant.Info> constantPool) {
+			// this seems a little broken, but what can we do?
+		}
+		
+		public void write(BinaryOutputStream writer,
+				Map<Constant.Info, Integer> constantPool) throws IOException {
+			writer.write(bytes);
+		}
+		
+		public void print(PrintWriter output,
+				Map<Constant.Info, Integer> constantPool) throws IOException {
+			output.println("  Unknown: ");
+			output.println("   Size: " + bytes.length);
+		}
+	}
+
 }

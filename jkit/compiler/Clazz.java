@@ -45,6 +45,15 @@ public interface Clazz {
 	public List<Type.Clazz> interfaces();
 	
 	/**
+     * Access the inner classes of this clazz. The returned list may
+     * be modified by adding, or removing interfaces. The returned list is
+     * always non-null.
+     * 
+     * @return
+     */
+	public List<Type.Clazz> inners();
+	
+	/**
      * Access the fields contained in this object. The returned list may be
      * modified by adding, or removing fields. The returned list is always
      * non-null.

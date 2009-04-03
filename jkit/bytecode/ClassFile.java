@@ -44,6 +44,12 @@ public class ClassFile implements Clazz {
 		return interfaces;
 	}
 	
+	public List<Type.Clazz> inners() {
+		// this needs to be fixed. Essentially, by looking for an InnerClasses
+		// attribute and then digging stuff out of it.
+		return new ArrayList<Type.Clazz>();
+	}
+	
 	public List<Attribute> attributes() {
 		return attributes;
 	}
@@ -268,15 +274,13 @@ public class ClassFile implements Clazz {
 		protected String name;
 		protected Type.Function type;
 		protected List<Modifier> modifiers;
-		protected List<Type.Clazz> exceptions;
 		protected ArrayList<Attribute> attributes;		
 
 		public Method(String name, Type.Function type,
-				List<Modifier> modifiers, List<Type.Clazz> exceptions) {
+				List<Modifier> modifiers) {
 			this.name = name;
 			this.type = type;
-			this.modifiers = modifiers;
-			this.exceptions = exceptions;
+			this.modifiers = modifiers;			
 			attributes = new ArrayList<Attribute>();
 		}
 

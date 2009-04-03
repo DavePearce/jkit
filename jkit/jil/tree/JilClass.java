@@ -7,6 +7,7 @@ public class JilClass extends SyntacticElementImpl implements jkit.compiler.Claz
 	private Type.Clazz type;
 	private Type.Clazz superClass; // maybe null if no supertype (i.e. this is java.lang.Object)
 	private List<Type.Clazz> interfaces;
+	private List<Type.Clazz> inners;
 	private List<JilField> fields;
 	private List<JilMethod> methods;
 	
@@ -37,12 +38,14 @@ public class JilClass extends SyntacticElementImpl implements jkit.compiler.Claz
      */
 	public JilClass(Type.Clazz type, List<Modifier> modifiers,
 			Type.Clazz superClass, List<Type.Clazz> interfaces,
-			List<JilField> fields, List<JilMethod> methods, Attribute... attributes) {		
+			List<Type.Clazz> inners, List<JilField> fields,
+			List<JilMethod> methods, Attribute... attributes) {
 		super(attributes);
 		this.type = type;
 		this.modifiers = modifiers;
 		this.superClass = superClass;
 		this.interfaces = interfaces;
+		this.inners = inners;
 		this.fields = fields;
 		this.methods = methods;
 	}
@@ -73,13 +76,14 @@ public class JilClass extends SyntacticElementImpl implements jkit.compiler.Claz
      *            non-null regardless.
      */
 	public JilClass(Type.Clazz type, List<Modifier> modifiers,
-			Type.Clazz superClass, List<Type.Clazz> interfaces,
+			Type.Clazz superClass, List<Type.Clazz> interfaces, List<Type.Clazz> inners,
 			List<JilField> fields, List<JilMethod> methods, List<Attribute> attributes) {		
 		super(attributes);
 		this.type = type;
 		this.modifiers = modifiers;
 		this.superClass = superClass;
 		this.interfaces = interfaces;
+		this.inners = inners;
 		this.fields = fields;
 		this.methods = methods;
 	}
@@ -133,6 +137,16 @@ public class JilClass extends SyntacticElementImpl implements jkit.compiler.Claz
 	public void setInterfaces(List<Type.Clazz> interfaces) {
 		this.interfaces = interfaces;
 	}
+	
+	/**
+	 * Access the inner classes contained in this Clazz. The returned list may
+	 * be modified by adding, or removing interfaces. The returned list is
+	 * always non-null.
+	 * 
+	 * @return
+	 */
+	public List<Type.Clazz> inners() { return inners; }
+	
 	
 	/**
      * Access the fields contained in this object. The returned list may be
