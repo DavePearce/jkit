@@ -7,8 +7,8 @@ public class JilClazz extends SyntacticElementImpl implements jkit.compiler.Claz
 	private Type.Clazz type;
 	private Type.Clazz superClass; // maybe null if no supertype (i.e. this is java.lang.Object)
 	private List<Type.Clazz> interfaces;
-	private List<jkit.jil.tree.JilField> fields;
-	private List<Method> methods;
+	private List<JilField> fields;
+	private List<JilMethod> methods;
 	
 	/**
      * Create an object representing a Class in the Java Virtual Machine.
@@ -37,7 +37,7 @@ public class JilClazz extends SyntacticElementImpl implements jkit.compiler.Claz
      */
 	public JilClazz(Type.Clazz type, List<Modifier> modifiers,
 			Type.Clazz superClass, List<Type.Clazz> interfaces,
-			List<Field> fields, List<Method> methods, Attribute... attributes) {		
+			List<JilField> fields, List<JilMethod> methods, Attribute... attributes) {		
 		super(attributes);
 		this.type = type;
 		this.modifiers = modifiers;
@@ -74,7 +74,7 @@ public class JilClazz extends SyntacticElementImpl implements jkit.compiler.Claz
      */
 	public JilClazz(Type.Clazz type, List<Modifier> modifiers,
 			Type.Clazz superClass, List<Type.Clazz> interfaces,
-			List<Field> fields, List<Method> methods, List<Attribute> attributes) {		
+			List<JilField> fields, List<JilMethod> methods, List<Attribute> attributes) {		
 		super(attributes);
 		this.type = type;
 		this.modifiers = modifiers;
@@ -141,7 +141,7 @@ public class JilClazz extends SyntacticElementImpl implements jkit.compiler.Claz
      * 
      * @return
      */
-	public List<Field> fields() { return fields; }
+	public List<JilField> fields() { return fields; }
 	
     /**
 	 * Attempt to find a field declared in this class with the given name;
@@ -166,7 +166,7 @@ public class JilClazz extends SyntacticElementImpl implements jkit.compiler.Claz
      * 
      * @return
      */
-	public List<Method> methods() { return methods; }
+	public List<JilMethod> methods() { return methods; }
 
 	/**
 	 * Access the methods contained in this object with a given name. The
@@ -175,9 +175,9 @@ public class JilClazz extends SyntacticElementImpl implements jkit.compiler.Claz
 	 * 
 	 * @return
 	 */
-	public List<Method> methods(String name) {
-		ArrayList<Method> r = new ArrayList();
-		for(Method m : methods) {
+	public List<JilMethod> methods(String name) {
+		ArrayList<JilMethod> r = new ArrayList();
+		for(JilMethod m : methods) {
 			if(m.name().equals(name)) {				
 				r.add(m);
 			}
