@@ -3,7 +3,7 @@ package jkit.compiler;
 import java.io.*;
 import java.util.*;
 
-import jkit.jil.tree.Clazz;
+import jkit.jil.tree.JilClazz;
 
 /**
  * A compiler is an object responsible for compiling a particular source file.
@@ -18,7 +18,7 @@ public interface Compiler {
      * 
      * @return
      */
-	public List<Clazz> compile(File srcFile) throws IOException,SyntaxError;
+	public List<JilClazz> compile(File srcFile) throws IOException,SyntaxError;
 	
 	/**
 	 * The purpose of this method is to indicate that a source file is currently

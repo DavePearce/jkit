@@ -29,7 +29,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 import jkit.jil.*;
-import jkit.jil.tree.Clazz;
+import jkit.jil.tree.JilClazz;
 import jkit.jil.tree.Field;
 import jkit.jil.tree.Method;
 import jkit.jil.tree.Modifier;
@@ -85,7 +85,7 @@ public class ClassFileReader {
      * @throws ClassFormatError
      *             if the classfile is invalid.
      */
-	public Clazz readClass() {		
+	public JilClazz readClass() {		
 		if(read_u2(0) != 0xCAFE || read_u2(2) != 0xBABE) {
 			throw new ClassFormatError("bad magic number");
 		}
@@ -199,7 +199,7 @@ public class ClassFileReader {
 			type = new Type.Clazz(type.pkg(),classes);
 		}
 		
-		Clazz c = new Clazz(type, listModifiers(modifiers,false), superType, interfaces, fields,
+		JilClazz c = new JilClazz(type, listModifiers(modifiers,false), superType, interfaces, fields,
 				methods);		
 		return 	c;			 		
 	}

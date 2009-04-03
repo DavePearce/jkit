@@ -411,7 +411,7 @@ public class TypePropagation {
 			} else {
 				// now, perform field lookup!
 				try {
-					Triple<jkit.jil.tree.Clazz, jkit.jil.tree.Field, Type> r = types
+					Triple<jkit.jil.tree.JilClazz, jkit.jil.tree.Field, Type> r = types
 							.resolveField(target, e.name(), loader);
 					e.attributes().add(r.third());			
 				} catch(ClassNotFoundException cne) {
@@ -458,7 +458,7 @@ public class TypePropagation {
 			try {
 				String constructorName = tc.components().get(
 						tc.components().size() - 1).first();
-				Triple<jkit.jil.tree.Clazz, jkit.jil.tree.Method, Type.Function> r = types
+				Triple<jkit.jil.tree.JilClazz, jkit.jil.tree.Method, Type.Function> r = types
 						.resolveMethod(tc, constructorName, parameterTypes,
 								loader);
 				Type.Function f = r.third();
@@ -550,7 +550,7 @@ public class TypePropagation {
 				}
 			}							
 			
-			Triple<jkit.jil.tree.Clazz, jkit.jil.tree.Method, Type.Function> r = types
+			Triple<jkit.jil.tree.JilClazz, jkit.jil.tree.Method, Type.Function> r = types
 					.resolveMethod(receiver, e_name, parameterTypes, loader);
 			Type.Function f = r.third();
 			
@@ -1476,7 +1476,7 @@ public class TypePropagation {
 	 * @return
 	 */
 	protected Type.Clazz getSuperClass(Type.Clazz c) throws ClassNotFoundException {
-		jkit.jil.tree.Clazz cc = loader.loadClass(c);
+		jkit.jil.tree.JilClazz cc = loader.loadClass(c);
 		return cc.superClass();
 	}
 	

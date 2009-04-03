@@ -9,7 +9,7 @@ import java.util.List;
 import jkit.bytecode.BytecodeFileWriter;
 import jkit.bytecode.ClassFile;
 import jkit.bytecode.ClassFileBuilder;
-import jkit.jil.tree.Clazz;
+import jkit.jil.tree.JilClazz;
 
 public class BytecodeCompiler extends JavaCompiler {
 	
@@ -51,7 +51,7 @@ public class BytecodeCompiler extends JavaCompiler {
 	 * @param jfile
 	 * @param loader
 	 */
-	public void writeOutputFile(String baseName, Clazz clazz, File rootdir)
+	public void writeOutputFile(String baseName, JilClazz clazz, File rootdir)
 			throws IOException {
 		long start = System.currentTimeMillis();
 		

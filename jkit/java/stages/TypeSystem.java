@@ -5,7 +5,7 @@ import java.util.*;
 import jkit.compiler.ClassLoader;
 import jkit.compiler.FieldNotFoundException;
 import jkit.compiler.MethodNotFoundException;
-import jkit.jil.tree.Clazz;
+import jkit.jil.tree.JilClazz;
 import jkit.jil.tree.Field;
 import jkit.jil.tree.Method;
 import jkit.jil.tree.SyntacticElement;
@@ -794,7 +794,7 @@ public class TypeSystem {
 			while(!worklist.isEmpty()) {
 				Type.Clazz type = worklist.removeFirst(); // to ensure BFS traversal
 				types.add(type);
-				Clazz c = loader.loadClass(type);
+				JilClazz c = loader.loadClass(type);
 
 				// The current type we're visiting is not a match. Therefore, we
 				// need to explore its supertypes as well. A key issue
@@ -1009,7 +1009,7 @@ public class TypeSystem {
 				return type;
 			}									
 			
-			Clazz c = loader.loadClass(type);
+			JilClazz c = loader.loadClass(type);
 						
 			// The current type we're visiting is not a match. Therefore, we
             // need to explore its supertypes as well. A key issue
@@ -1067,7 +1067,7 @@ public class TypeSystem {
 			throw new IllegalArgumentException("receiver cannot be null");
 		}		
 		while(receiver != null) {
-			Clazz c = loader.loadClass(receiver);
+			JilClazz c = loader.loadClass(receiver);
 			if(c.methods(name).size() > 0) {
 				return true;
 			}
@@ -1096,7 +1096,7 @@ public class TypeSystem {
 	 * @throws MethodNotFoundException
 	 *             If it cannot find a matching method.
 	 */
-	public Triple<Clazz, Method, Type.Function> resolveMethod(
+	public Triple<JilClazz, Method, Type.Function> resolveMethod(
 			Type.Reference receiver, String name,
 			List<Type> concreteParameterTypes, ClassLoader loader)
 			throws ClassNotFoundException, MethodNotFoundException {
@@ -1115,7 +1115,7 @@ public class TypeSystem {
 		}		
 		
 		// Phase 1: traverse heirarchy whilst ignoring autoboxing and varargs
-		Triple<jkit.jil.tree.Clazz, jkit.jil.tree.Method, Type.Function> methodInfo = resolveMethod(
+		Triple<jkit.jil.tree.JilClazz, jkit.jil.tree.Method, Type.Function> methodInfo = resolveMethod(
 				receiver, name, concreteParameterTypes, false, false, loader);
 
 		if (methodInfo == null) {
@@ -1178,7 +1178,7 @@ public class TypeSystem {
 	 * @return
 	 * @throws ClassNotFoundException
 	 */
-	protected Triple<Clazz, Method, Type.Function> resolveMethod(
+	protected Triple<JilClazz, Method, Type.Function> resolveMethod(
 			Type.Reference receiver, String name,
 			List<Type> concreteParameterTypes, boolean autoboxing,
 			boolean varargs, ClassLoader loader) throws ClassNotFoundException {				
@@ -1189,7 +1189,7 @@ public class TypeSystem {
 		} else if(receiver instanceof Type.Intersection) {
 			Type.Intersection it = (Type.Intersection) receiver;
 			for(Type.Reference b : it.bounds()) {
-				Triple<Clazz, Method, Type.Function> r = resolveMethod(b, name,
+				Triple<JilClazz, Method, Type.Function> r = resolveMethod(b, name,
 						concreteParameterTypes, autoboxing, varargs, loader);
 				if(r != null) {
 					return r;
@@ -1204,7 +1204,7 @@ public class TypeSystem {
 		return null;		
 	}
 
-	protected Triple<Clazz, Method, Type.Function> resolveMethod(
+	protected Triple<JilClazz, Method, Type.Function> resolveMethod(
 			Type.Clazz receiver, String name,
 			List<Type> concreteParameterTypes, boolean autoboxing,
 			boolean varargs, ClassLoader loader) throws ClassNotFoundException {				
@@ -1213,12 +1213,12 @@ public class TypeSystem {
 		ArrayList<Type.Clazz> worklist = new ArrayList<Type.Clazz>();
 		worklist.add(receiver);
 		
-		ArrayList<Triple<Clazz, Method, Type.Function>> mts = new ArrayList<Triple<Clazz, Method, Type.Function>>();
+		ArrayList<Triple<JilClazz, Method, Type.Function>> mts = new ArrayList<Triple<JilClazz, Method, Type.Function>>();
 
 		// Traverse type hierarchy building a list of potential methods
 		while (!worklist.isEmpty()) {
 			Type.Clazz type = worklist.remove(0);
-			Clazz c = loader.loadClass(type);			
+			JilClazz c = loader.loadClass(type);			
 			List<jkit.jil.tree.Method> methods = c.methods(name);
 			Map<String,Type.Reference> binding = bind(type, c.type(),loader);
 			
@@ -1243,7 +1243,7 @@ public class TypeSystem {
 							concreteFunctionType, mt, m.isVariableArity(),
 							loader));																
 					
-					mts.add(new Triple<Clazz, Method, Type.Function>(c, m, mt));					 				
+					mts.add(new Triple<JilClazz, Method, Type.Function>(c, m, mt));					 				
 				}
 			}
 
@@ -1265,9 +1265,9 @@ public class TypeSystem {
 	 * most appropriate match for the given parameter types. If there is no
 	 * appropriate match, simply return null
 	 */
-	protected Triple<Clazz, Method, Type.Function> matchMethod(
+	protected Triple<JilClazz, Method, Type.Function> matchMethod(
 			List<Type> parameterTypes,
-			List<Triple<Clazz, Method, Type.Function>> methods,
+			List<Triple<JilClazz, Method, Type.Function>> methods,
 			boolean autoboxing, ClassLoader loader)
 			throws ClassNotFoundException {
 	
@@ -1278,7 +1278,7 @@ public class TypeSystem {
 		Type[] nparams = null;
 
 		outer: for (int i = methods.size() - 1; i >= 0; --i) {
-			Triple<Clazz, Method, Type.Function> methInfo = methods.get(i);
+			Triple<JilClazz, Method, Type.Function> methInfo = methods.get(i);
 			Method m = methInfo.second();
 			Type.Function f = methInfo.third();			
 			Type[] mps = f.parameterTypes().toArray(new Type[f.parameterTypes().size()]);
@@ -1358,7 +1358,7 @@ public class TypeSystem {
 	 * @throws FieldNotFoundException
 	 *             If it cannot find the field in question
 	 */
-	public Triple<Clazz, Field, Type> resolveField(Type.Clazz owner,
+	public Triple<JilClazz, Field, Type> resolveField(Type.Clazz owner,
 			String name, ClassLoader loader) throws ClassNotFoundException,
 			FieldNotFoundException {
 		if(loader == null) {
@@ -1375,7 +1375,7 @@ public class TypeSystem {
 		worklist.add(owner);
 		while (!worklist.isEmpty()) {
 			Type.Clazz type = worklist.remove(worklist.size() - 1);			
-			Clazz c = loader.loadClass(type);			
+			JilClazz c = loader.loadClass(type);			
 			Map<String,Type.Reference> binding = bind(type, c.type(), loader);
 			Field f = c.getField(name);
 			
@@ -1385,7 +1385,7 @@ public class TypeSystem {
 				if(fieldT instanceof Type.Reference) {
 					fieldT = substitute((Type.Reference) f.type(), binding);
 				}
-				return new Triple<Clazz, Field, Type>(c, f, fieldT);
+				return new Triple<JilClazz, Field, Type>(c, f, fieldT);
 			}
 			// no match yet, so traverse super class and interfaces
 			if (c.superClass() != null) {

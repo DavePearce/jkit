@@ -17,7 +17,7 @@ public class ClassFileBuilder {
 		this.version = version;
 	}
 	
-	public ClassFile build(jkit.jil.tree.Clazz clazz) {
+	public ClassFile build(jkit.jil.tree.JilClazz clazz) {
 		ClassFile cfile = new ClassFile(version, clazz.type(), clazz
 				.superClass(), clazz.interfaces(), clazz.modifiers());
 		
@@ -34,7 +34,7 @@ public class ClassFileBuilder {
 		return cfile;
 	}
 	
-	protected void buildInnerClasses(Clazz clazz, ClassFile cfile) {
+	protected void buildInnerClasses(JilClazz clazz, ClassFile cfile) {
 		if(clazz.isInnerClass()) {
 			System.out.println("ADDING INNER CLASS ATTRIBUTE");
 			// this is basically about building the inner classes attribute
@@ -48,7 +48,7 @@ public class ClassFileBuilder {
 				List<Pair<String,List<Type.Reference>>> ncomponents = components.subList(0,i);
 				Type.Clazz ref = new Type.Clazz(inner.pkg(),ncomponents);
 				try {
-					Clazz ic = loader.loadClass(ref);
+					JilClazz ic = loader.loadClass(ref);
 					outers.add(new Pair(ic.type(),ic.modifiers()));
 				} catch(ClassNotFoundException e) {
 					// this is a problem, but for now we'll just ignore it
@@ -59,7 +59,7 @@ public class ClassFileBuilder {
 		}
 	}
 	
-	protected void buildFields(Clazz clazz, ClassFile cfile) {
+	protected void buildFields(JilClazz clazz, ClassFile cfile) {
 		for (Field f : clazz.fields()) {
 			ClassFile.Field cf = new ClassFile.Field(f.name(), f.type(), f.modifiers()); 
 			cfile.fields().add(cf);
@@ -69,7 +69,7 @@ public class ClassFileBuilder {
 		}
 	}
 	
-	protected void buildMethods(Clazz clazz, ClassFile cfile) {
+	protected void buildMethods(JilClazz clazz, ClassFile cfile) {
 		for (Method m : clazz.methods()) {
 			String m_name = m.name();
 			if(m_name.equals(clazz.name())) {
@@ -120,7 +120,7 @@ public class ClassFileBuilder {
 	 *             MethodNotFoundException, FieldNotFoundException If it needs
 	 *             to access a Class which cannot be found.
 	 */
-	protected void translateCode(Clazz clazz, Method method,
+	protected void translateCode(JilClazz clazz, Method method,
 			ArrayList<Bytecode> bytecodes, ArrayList<Code.Handler> handlers) {
 		// === CREATE TYPE ENVIRONMENT ===
 
@@ -996,7 +996,7 @@ public class ClassFileBuilder {
 		String fdesc = ClassFile.descriptor(funType, false);
 		
 		while (receiver != null) {
-			Clazz c = loader.loadClass(receiver);
+			JilClazz c = loader.loadClass(receiver);
 			if(c.isInterface()) {
 				return DISPATCH_INTERFACE;
 			}			
@@ -1041,7 +1041,7 @@ public class ClassFileBuilder {
 	}
 	
 	
-	protected boolean needClassSignature(Clazz c) {
+	protected boolean needClassSignature(JilClazz c) {
 		if (isGeneric(c.type())
 				|| (c.superClass() != null && isGeneric(c.superClass()))) {
 			return true;

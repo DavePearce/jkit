@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-import jkit.jil.tree.Clazz;
+import jkit.jil.tree.JilClazz;
 import jkit.jil.io.*;
 
 public class JilCompiler extends JavaCompiler {
@@ -49,7 +49,7 @@ public class JilCompiler extends JavaCompiler {
 	 * @param jfile
 	 * @param loader
 	 */
-	public void writeOutputFile(String baseName, Clazz clazz, File rootdir)
+	public void writeOutputFile(String baseName, JilClazz clazz, File rootdir)
 			throws IOException {
 		long start = System.currentTimeMillis();
 		
