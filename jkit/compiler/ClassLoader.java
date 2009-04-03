@@ -283,28 +283,7 @@ public class ClassLoader {
 		if (pkgInfo == null) { throw new ClassNotFoundException("Unable to load class " + name); }		
 		c = loadClass(name,pkgInfo);
 
-		if(c == null) { throw new ClassNotFoundException("Unable to load class " + name); }
-		
-		if(ref.components().size() > 1) {			
-			// Now, if this is an inner class, we need to load it's parent, so
-			// that we can finalise this classes modifiers.
-			List<Pair<String,List<Type.Reference>>> nclasses = new ArrayList<Pair<String,List<Type.Reference>>>(ref.components());			
-			Clazz parent = loadClass(new Type.Clazz(ref.pkg(), nclasses));
-
-			/**
-			 * INNER CLASSES ARE BEING IGNORED FOR NOW --- djp
-			 * 
-			// now, iterate parent's inner classes to find this one
-			for (Triple<Type.Reference, Integer, Boolean> i : parent.inners()) {
-				if (i.first().supsetEqOf(ref)) {
-					// found it
-					c.setModifiers(c.modifiers() | i.second());
-					c.setAnonymous(i.third());
-					return c;
-				}
-			}	
-			*/								
-		}
+		if(c == null) { throw new ClassNotFoundException("Unable to load class " + name); }		
 				
 		return c;
 	}
