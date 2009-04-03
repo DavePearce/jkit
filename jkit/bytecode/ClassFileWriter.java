@@ -70,8 +70,8 @@ public class ClassFileWriter {
 		// ok, done that now write more stuff
 		writeModifiers(cfile.modifiers());
 		output.write_u2(poolMap.get(Constant.buildClass(cfile.type())));
-		if (cfile.superClazz() != null) {
-			output.write_u2(poolMap.get(Constant.buildClass(cfile.superClazz())));
+		if (cfile.superClass() != null) {
+			output.write_u2(poolMap.get(Constant.buildClass(cfile.superClass())));
 		}
 		output.write_u2(cfile.interfaces().size());
 		for (Type.Reference i : cfile.interfaces()) {

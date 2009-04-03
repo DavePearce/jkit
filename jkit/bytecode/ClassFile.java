@@ -56,8 +56,27 @@ public class ClassFile implements Clazz {
 		return fields;
 	}
 
+	public Field field(String name) {
+		for(Field f : fields) {
+			if(f.name().equals(name)) {
+				return f;
+			}
+		}
+		return null;
+	}
+	
 	public List<Method> methods() {
 		return methods;
+	}
+	
+	public List<Method> methods(String name) {
+		ArrayList<Method> r = new ArrayList<Method>();
+		for(Method m : methods) {
+			if(m.name().equals(name)) {
+				r.add(m);
+			}
+		}
+		return r;
 	}
 	
 	public int version() {

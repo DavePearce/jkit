@@ -78,7 +78,7 @@ public class CodeGeneration {
 		try {
 			// We, need to update the skeleton so that any methods and fields
 			// discovered below this are attributed to this class!			
-			JilClazz skeleton = loader.loadClass(type);
+			JilClazz skeleton = (JilClazz) loader.loadClass(type);
 			
 			// I do fields after everything else, so as to simplify the process
 			// of adding field initialisers to constructors. This is because it
@@ -657,7 +657,7 @@ public class CodeGeneration {
 		if(_targetT instanceof Type.Clazz) {
 			Type.Clazz targetT = (Type.Clazz) _targetT;
 			try {
-				Triple<jkit.jil.tree.JilClazz, jkit.jil.tree.JilField, Type> r = types
+				Triple<jkit.compiler.Clazz, jkit.compiler.Clazz.Field, Type> r = types
 				.resolveField(targetT, e.name(), loader);
 
 				return new Pair<Expr, List<Stmt>>(new Expr.Deref(target.first(), e

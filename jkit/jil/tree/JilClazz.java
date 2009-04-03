@@ -150,7 +150,7 @@ public class JilClazz extends SyntacticElementImpl implements jkit.compiler.Claz
 	 * @param name
 	 * @return
 	 */
-	public Field getField(String name) {
+	public Field field(String name) {
 		for(Field f : fields) {							
 			if (f.name().equals(name)) {
 				return f;

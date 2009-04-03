@@ -336,7 +336,7 @@ public class ClassLoader {
 						// Here, there is a source file, and either there is no class
 						// file, or the class file is older than the source file.
 						// Therefore, we need to (re)compile the source file.
-						List<Clazz> cs = compiler.compile(srcFile);
+						List<? extends Clazz> cs = compiler.compile(srcFile);
 																	
 						compiler.logTimedMessage("Compiled " + srcFile, System
 								.currentTimeMillis()
@@ -382,7 +382,7 @@ public class ClassLoader {
 	 * @param jilClasses -
 	 *            The classes being added.
 	 */
-	public void register(List<Clazz> jilClasses) {
+	public void register(List<? extends Clazz> jilClasses) {
 		for(Clazz f : jilClasses) {			
 			register(f);			
 		}

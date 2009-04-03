@@ -31,8 +31,8 @@ public class BytecodeFileWriter {
 		}
 		
 		output.print("\nclass " + cfile.type() + " ");
-		if(cfile.superClazz() != null) {
-			output.print(" extends " + cfile.superClazz());
+		if(cfile.superClass() != null) {
+			output.print(" extends " + cfile.superClass());
 		}
 		if(cfile.interfaces().size() > 0) {
 			output.print(" implements ");

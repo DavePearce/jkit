@@ -473,8 +473,8 @@ public class TypeChecking {
 		Type c_t = (Type) e.type().attribute(Type.class);
 		try {
 			if(e_t instanceof Type.Clazz && c_t instanceof Type.Clazz) {
-				jkit.jil.tree.JilClazz c_c = loader.loadClass((Type.Clazz) c_t);
-				jkit.jil.tree.JilClazz e_c = loader.loadClass((Type.Clazz) e_t);
+				jkit.compiler.Clazz c_c = loader.loadClass((Type.Clazz) c_t);
+				jkit.compiler.Clazz e_c = loader.loadClass((Type.Clazz) e_t);
 				
 				// the trick here, is that javac will never reject a cast
 				// between an interface and a class or interface. However, if we

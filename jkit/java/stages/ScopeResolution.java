@@ -625,7 +625,8 @@ public class ScopeResolution {
 			} else {
 				try {
 					// Ok, need to sanity test that this is indeed a class.
-					jkit.jil.tree.JilClazz c = loader.loadClass(new Type.Clazz(uv.value(),e.name()));
+					jkit.compiler.Clazz c = loader.loadClass(new Type.Clazz(uv
+							.value(), e.name()));
 					Expr r = new Expr.ClassVariable(uv.value() + "." + e.name(),new ArrayList(e.attributes()));
 					r.attributes().add(c.type());
 					return r;
@@ -643,7 +644,7 @@ public class ScopeResolution {
 			Type.Clazz type = (Type.Clazz) target.attribute(Type.class);
 			
 			try {
-				Triple<jkit.jil.tree.JilClazz, jkit.jil.tree.JilField, Type> r = types
+				Triple<jkit.compiler.Clazz, jkit.compiler.Clazz.Field, Type> r = types
 						.resolveField(type, e.name(), loader);
 				// if we get here, then there is such a field.
 				//
@@ -904,7 +905,7 @@ public class ScopeResolution {
 				ClassScope cs = (ClassScope) s;		
 				
 				try {
-					Triple<jkit.jil.tree.JilClazz, jkit.jil.tree.JilField, Type> r = types
+					Triple<jkit.compiler.Clazz, jkit.compiler.Clazz.Field, Type> r = types
 							.resolveField(cs.type, e.value(), loader);
 					
 					// Ok, this variable access corresponds to a field load.
@@ -1074,7 +1075,7 @@ public class ScopeResolution {
 	 * @return
 	 */
 	protected Type.Clazz getSuperClass(Type.Clazz c) throws ClassNotFoundException {
-		jkit.jil.tree.JilClazz cc = loader.loadClass(c);
+		jkit.compiler.Clazz cc = loader.loadClass(c);
 		return cc.superClass();
 	}
 	

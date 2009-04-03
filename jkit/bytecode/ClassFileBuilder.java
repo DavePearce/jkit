@@ -2,6 +2,7 @@ package jkit.bytecode;
 
 import java.util.*;
 
+import jkit.compiler.Clazz;
 import jkit.compiler.ClassLoader;
 import jkit.jil.tree.*;
 import jkit.jil.util.Exprs;
@@ -48,7 +49,7 @@ public class ClassFileBuilder {
 				List<Pair<String,List<Type.Reference>>> ncomponents = components.subList(0,i);
 				Type.Clazz ref = new Type.Clazz(inner.pkg(),ncomponents);
 				try {
-					JilClazz ic = loader.loadClass(ref);
+					Clazz ic = loader.loadClass(ref);
 					outers.add(new Pair(ic.type(),ic.modifiers()));
 				} catch(ClassNotFoundException e) {
 					// this is a problem, but for now we'll just ignore it
@@ -996,11 +997,11 @@ public class ClassFileBuilder {
 		String fdesc = ClassFile.descriptor(funType, false);
 		
 		while (receiver != null) {
-			JilClazz c = loader.loadClass(receiver);
+			Clazz c = loader.loadClass(receiver);
 			if(c.isInterface()) {
 				return DISPATCH_INTERFACE;
 			}			
-			for (JilMethod m : c.methods(name)) {
+			for (Clazz.Method m : c.methods(name)) {
 				String mdesc = ClassFile.descriptor(m.type(), false);						
 				if (fdesc.equals(mdesc)) {
 					return m.isStatic() ? DISPATCH_STATIC : DISPATCH_VIRTUAL;

@@ -54,6 +54,14 @@ public interface Clazz {
 	public List<? extends Field> fields();
 	
 	/**
+	 * Access the field contained in this object with the given name. If no such
+	 * field exists, return null.
+	 * 
+	 * @return
+	 */
+	public Field field(String name);
+	
+	/**
      * Access the methods contained in this object. The returned list may be
      * modified by adding, or removing methods. The returned list is always
      * non-null.
@@ -61,6 +69,15 @@ public interface Clazz {
      * @return
      */
 	public List<? extends Method> methods();
+	
+	/**
+	 * Access the methods contained in this object with a given name. The
+	 * returned list may be modified by adding, or removing methods. The
+	 * returned list is always non-null.
+	 * 
+	 * @return
+	 */
+	public List<? extends Method> methods(String name);
 	
 	/**
      * Access the modifiers contained in this class object. The returned list

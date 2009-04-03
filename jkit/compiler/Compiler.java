@@ -18,7 +18,7 @@ public interface Compiler {
      * 
      * @return
      */
-	public List<JilClazz> compile(File srcFile) throws IOException,SyntaxError;
+	public List<? extends Clazz> compile(File srcFile) throws IOException,SyntaxError;
 	
 	/**
 	 * The purpose of this method is to indicate that a source file is currently

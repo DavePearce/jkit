@@ -79,7 +79,7 @@ public class SkeletonBuilder {
 		try {
 			// We, need to update the skeleton so that any methods and fields
 			// discovered below this are attributed to this class!			
-			skeleton = loader.loadClass(type);	
+			skeleton = (JilClazz) loader.loadClass(type);	
 			
 			// Next, we need to update as much information about the skeleton as
 			// we can.
@@ -428,7 +428,7 @@ public class SkeletonBuilder {
 			
 			try {				
 				
-				JilClazz c = loader.loadClass(superType);
+				JilClazz c = (JilClazz) loader.loadClass(superType);
 							
 				ArrayList<Pair<String, List<Type.Reference>>> ncomponents = new ArrayList(
 						skeleton.type().components());
