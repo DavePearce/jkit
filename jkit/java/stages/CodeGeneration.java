@@ -113,8 +113,8 @@ public class CodeGeneration {
 		// explicit super constructor call or not.  If not, then add one.
 		if (d.name().equals(parent.name())) {
 			if(!superCallFirst(stmts)) {			
-				stmts.add(0, new Expr.Invoke(new Expr.Variable("super", parent
-						.superClass()), "super", new ArrayList<Expr>(),
+				stmts.add(0, new JilExpr.Invoke(new JilExpr.Variable("super", parent
+						.superClass()), "super", new ArrayList<JilExpr>(),
 						new Type.Function(new Type.Void()), new Type.Void()));
 			} 
 		}				
@@ -130,7 +130,7 @@ public class CodeGeneration {
 	}
 
 	protected void doField(Decl.Field d, JilClass parent) {		
-		Pair<Expr,List<Stmt>> tmp = doExpression(d.initialiser());
+		Pair<JilExpr,List<Stmt>> tmp = doExpression(d.initialiser());
 		Type fieldT = (Type) d.type().attribute(Type.class);
 		boolean isStatic = d.isStatic();
 		
@@ -142,7 +142,7 @@ public class CodeGeneration {
 			for(JilMethod m : parent.methods()) {
 				if(m.name().equals(parent.name())) {
 					List<Stmt> body = m.body();
-					Expr.Deref df = new Expr.Deref(new Expr.Variable("this",
+					JilExpr.Deref df = new JilExpr.Deref(new JilExpr.Variable("this",
 							parent.type()), d.name(), isStatic, fieldT, d
 							.attributes());
 					Stmt.Assign ae = new Stmt.Assign(df, tmp.first(), d
@@ -207,8 +207,8 @@ public class CodeGeneration {
 		} else if(e instanceof jkit.java.tree.Stmt.Switch) {
 			return doSwitch((jkit.java.tree.Stmt.Switch) e);
 		} else if(e instanceof jkit.java.tree.Expr.Invoke) {
-			Pair<Expr, List<Stmt>> r = doInvoke((jkit.java.tree.Expr.Invoke) e);
-			r.second().add((Expr.Invoke) r.first());
+			Pair<JilExpr, List<Stmt>> r = doInvoke((jkit.java.tree.Expr.Invoke) e);
+			r.second().add((JilExpr.Invoke) r.first());
 			return r.second();
 		} else if(e instanceof jkit.java.tree.Expr.New) {
 			return doNew((jkit.java.tree.Expr.New) e).second();
@@ -277,9 +277,9 @@ public class CodeGeneration {
 			}
 
 			if(d.third() != null) {
-				Pair<Expr,List<Stmt>> e = doExpression(d.third());
+				Pair<JilExpr,List<Stmt>> e = doExpression(d.third());
 				r.addAll(e.second());
-				Expr lhs = new Expr.Variable(d.first(), nt, def
+				JilExpr lhs = new JilExpr.Variable(d.first(), nt, def
 						.attributes());
 				r.add(new Stmt.Assign(lhs, e.first()));
 			}
@@ -288,10 +288,10 @@ public class CodeGeneration {
 		return r;
 	}
 	
-	protected Pair<Expr,List<Stmt>> doAssignment(jkit.java.tree.Stmt.Assignment def) {
+	protected Pair<JilExpr,List<Stmt>> doAssignment(jkit.java.tree.Stmt.Assignment def) {
 		ArrayList<Stmt> r = new ArrayList<Stmt>();
-		Pair<Expr,List<Stmt>> lhs = doExpression(def.lhs());	
-		Pair<Expr,List<Stmt>> rhs = doExpression(def.rhs());
+		Pair<JilExpr,List<Stmt>> lhs = doExpression(def.lhs());	
+		Pair<JilExpr,List<Stmt>> rhs = doExpression(def.rhs());
 		r.addAll(lhs.second());
 		r.addAll(rhs.second());
 		r.add(new Stmt.Assign(lhs.first(),rhs.first(),def.attributes()));
@@ -301,7 +301,7 @@ public class CodeGeneration {
 	protected List<Stmt> doReturn(jkit.java.tree.Stmt.Return ret) {
 		ArrayList<Stmt> r = new ArrayList<Stmt>();
 		if(ret.expr() != null) {
-			Pair<Expr,List<Stmt>> expr = doExpression(ret.expr());
+			Pair<JilExpr,List<Stmt>> expr = doExpression(ret.expr());
 			r.addAll(expr.second());
 			r.add(new Stmt.Return(expr.first(),ret.attributes()));
 		} else {
@@ -312,7 +312,7 @@ public class CodeGeneration {
 	
 	protected List<Stmt> doThrow(jkit.java.tree.Stmt.Throw ret) {
 		ArrayList<Stmt> r = new ArrayList<Stmt>();
-		Pair<Expr,List<Stmt>> expr = doExpression(ret.expr());
+		Pair<JilExpr,List<Stmt>> expr = doExpression(ret.expr());
 		r.addAll(expr.second());
 		r.add(new Stmt.Throw(expr.first(),ret.attributes()));
 		return r;
@@ -320,7 +320,7 @@ public class CodeGeneration {
 	
 	protected List<Stmt> doAssert(jkit.java.tree.Stmt.Assert ret) {
 		ArrayList<Stmt> r = new ArrayList<Stmt>();
-		Pair<Expr,List<Stmt>> expr = doExpression(ret.expr());
+		Pair<JilExpr,List<Stmt>> expr = doExpression(ret.expr());
 		
 		// need to do some real code generation here.
 		
@@ -366,7 +366,7 @@ public class CodeGeneration {
 	protected List<Stmt> doIf(jkit.java.tree.Stmt.If stmt) {
 		ArrayList<Stmt> r = new ArrayList<Stmt>();
 		
-		Pair<Expr,List<Stmt>> cond = doExpression(stmt.condition());
+		Pair<JilExpr,List<Stmt>> cond = doExpression(stmt.condition());
 		List<Stmt> tbranch = doStatement(stmt.trueStatement());
 		List<Stmt> fbranch = doStatement(stmt.falseStatement());
 		
@@ -374,7 +374,7 @@ public class CodeGeneration {
 		
 		if(stmt.falseStatement() == null) {
 			r.add(new Stmt.IfGoto(
-					new Expr.UnOp(cond.first(), Expr.UnOp.NOT, new Type.Bool(),
+					new JilExpr.UnOp(cond.first(), JilExpr.UnOp.NOT, new Type.Bool(),
 					stmt.condition().attributes()), "ifexit" + ifexit_label, stmt.attributes()));
 			r.addAll(tbranch);
 		} else if(stmt.trueStatement() == null) {
@@ -403,9 +403,9 @@ public class CodeGeneration {
 		
 		r.add(new Stmt.Label(headerLab, stmt
 				.attributes()));
-		Pair<Expr, List<Stmt>> cond = doExpression(stmt.condition());
+		Pair<JilExpr, List<Stmt>> cond = doExpression(stmt.condition());
 		r.addAll(cond.second());
-		r.add(new Stmt.IfGoto(new Expr.UnOp(cond.first(), Expr.UnOp.NOT,
+		r.add(new Stmt.IfGoto(new JilExpr.UnOp(cond.first(), JilExpr.UnOp.NOT,
 				new Type.Bool(), stmt.condition().attributes()), exitLab, stmt
 				.attributes()));
 		scopes.push(new LoopScope(headerLab,exitLab));
@@ -433,7 +433,7 @@ public class CodeGeneration {
 		scopes.push(new LoopScope(headerLab,exitLab));
 		r.addAll(doStatement(stmt.body()));
 		scopes.pop();
-		Pair<Expr, List<Stmt>> cond = doExpression(stmt.condition());
+		Pair<JilExpr, List<Stmt>> cond = doExpression(stmt.condition());
 		r.addAll(cond.second());
 		r.add(new Stmt.IfGoto(cond.first(), headerLab, stmt.attributes()));
 						
@@ -457,9 +457,9 @@ public class CodeGeneration {
 				.attributes()));
 		
 		if(stmt.condition() != null) {
-			Pair<Expr, List<Stmt>> cond = doExpression(stmt.condition());
+			Pair<JilExpr, List<Stmt>> cond = doExpression(stmt.condition());
 			r.addAll(cond.second());
-			r.add(new Stmt.IfGoto(new Expr.UnOp(cond.first(), Expr.UnOp.NOT,
+			r.add(new Stmt.IfGoto(new JilExpr.UnOp(cond.first(), JilExpr.UnOp.NOT,
 					new Type.Bool(), stmt.condition().attributes()), exitLab,
 					stmt.attributes()));
 		}
@@ -491,31 +491,31 @@ public class CodeGeneration {
 		
 		ArrayList<Stmt> stmts = new ArrayList<Stmt>();
 		
-		Pair<Expr,List<Stmt>> src = doExpression(stmt.source());
-		Expr.Variable loopVar = new Expr.Variable(stmt.var(), (Type) stmt
+		Pair<JilExpr,List<Stmt>> src = doExpression(stmt.source());
+		JilExpr.Variable loopVar = new JilExpr.Variable(stmt.var(), (Type) stmt
 				.type().attribute(Type.class), stmt.attributes());
 		
 		Type srcType = src.first().type();				
 		
 		stmts.addAll(src.second());
-		Expr.Variable iter;
+		JilExpr.Variable iter;
 		
 		if (srcType instanceof Type.Array) {
-			iter = new Expr.Variable(iterLab, new Type.Int());
+			iter = new JilExpr.Variable(iterLab, new Type.Int());
 			stmts
-					.add(new Stmt.Assign(iter, new Expr.Int(0), stmt
+					.add(new Stmt.Assign(iter, new JilExpr.Int(0), stmt
 							.attributes()));
 		} else {
 			// the following needs to be expanded upon, so as to include generic
 			// information on the iterator. The easiest way to do this is to
 			// look up the iterator() method in the src class, and use it's
 			// return type.
-			iter = new Expr.Variable(iterLab, new Type.Clazz("java.util",
+			iter = new JilExpr.Variable(iterLab, new Type.Clazz("java.util",
 					"Iterator"));			 
 
 			stmts
-					.add(new Stmt.Assign(iter, new Expr.Invoke(src.first(),
-							"iterator", new ArrayList<Expr>(),
+					.add(new Stmt.Assign(iter, new JilExpr.Invoke(src.first(),
+							"iterator", new ArrayList<JilExpr>(),
 							new Type.Function(new Type.Clazz("java.util",
 									"Iterator")), new Type.Clazz("java.util",
 									"Iterator")), stmt.attributes()));
@@ -527,26 +527,26 @@ public class CodeGeneration {
 		// Second, do condition
 		
 		if (srcType instanceof Type.Array) {
-			Expr arrlength = new Expr.Deref(src.first(),"length",false,new Type.Int(), stmt
+			JilExpr arrlength = new JilExpr.Deref(src.first(),"length",false,new Type.Int(), stmt
 					.attributes());
-			Expr gecmp = new Expr.BinOp(iter,arrlength,Expr.BinOp.GTEQ,new Type.Bool(), stmt
+			JilExpr gecmp = new JilExpr.BinOp(iter,arrlength,JilExpr.BinOp.GTEQ,new Type.Bool(), stmt
 					.attributes());
 			stmts.add(new Stmt.IfGoto(gecmp,exitLab, stmt
 					.attributes()));
 			
-			stmts.add(new Stmt.Assign(loopVar, new Expr.ArrayIndex(src.first(),
+			stmts.add(new Stmt.Assign(loopVar, new JilExpr.ArrayIndex(src.first(),
 					iter, loopVar.type())));
 		} else {
-			Expr hasnext = new Expr.Invoke(iter, "hasNext",
-					new ArrayList<Expr>(), new Type.Function(new Type.Bool()),
+			JilExpr hasnext = new JilExpr.Invoke(iter, "hasNext",
+					new ArrayList<JilExpr>(), new Type.Function(new Type.Bool()),
 					new Type.Bool(), stmt.attributes());
-			stmts.add(new Stmt.IfGoto(new Expr.UnOp(hasnext, Expr.UnOp.NOT,
+			stmts.add(new Stmt.IfGoto(new JilExpr.UnOp(hasnext, JilExpr.UnOp.NOT,
 					new Type.Bool()), exitLab));
 
-			Expr next = new Expr.Invoke(iter, "next", new ArrayList<Expr>(),
+			JilExpr next = new JilExpr.Invoke(iter, "next", new ArrayList<JilExpr>(),
 					new Type.Function(new Type.Clazz("java.lang", "Object")),
 					loopVar.type(), stmt.attributes());
-			Expr cast = new Expr.Cast(next, loopVar.type());
+			JilExpr cast = new JilExpr.Cast(next, loopVar.type());
 			stmts.add(new Stmt.Assign(loopVar, cast, stmt.attributes()));			
 		}
 		
@@ -558,8 +558,8 @@ public class CodeGeneration {
 		
 		// Fourth, do increment
 		if (srcType instanceof Type.Array) {
-			Expr.BinOp rhs = new Expr.BinOp(iter, new Expr.Int(1),
-					Expr.BinOp.ADD, new Type.Int(), stmt.attributes());
+			JilExpr.BinOp rhs = new JilExpr.BinOp(iter, new JilExpr.Int(1),
+					JilExpr.BinOp.ADD, new Type.Int(), stmt.attributes());
 			stmts.add(new Stmt.Assign(iter,rhs,stmt.attributes()));
 		} 
 		
@@ -574,7 +574,7 @@ public class CodeGeneration {
 	protected List<Stmt> doSwitch(jkit.java.tree.Stmt.Switch sw) {
 		ArrayList<Stmt> r = new ArrayList<Stmt>();
 		
-		Pair<Expr,List<Stmt>> cond = doExpression(sw.condition());
+		Pair<JilExpr,List<Stmt>> cond = doExpression(sw.condition());
 		for(jkit.java.tree.Stmt.Case c : sw.cases()) {
 			doExpression(c.condition());
 			for(jkit.java.tree.Stmt s : c.statements()) {
@@ -585,7 +585,7 @@ public class CodeGeneration {
 		return r;
 	}
 	
-	protected Pair<Expr,List<Stmt>> doExpression(jkit.java.tree.Expr e) {	
+	protected Pair<JilExpr,List<Stmt>> doExpression(jkit.java.tree.Expr e) {	
 		if(e instanceof jkit.java.tree.Value.Bool) {
 			return doBoolVal((jkit.java.tree.Value.Bool)e);
 		} else if(e instanceof jkit.java.tree.Value.Byte) {
@@ -649,8 +649,8 @@ public class CodeGeneration {
 		return null;
 	}
 	
-	protected Pair<Expr,List<Stmt>> doDeref(jkit.java.tree.Expr.Deref e) {
-		Pair<Expr,List<Stmt>> target = doExpression(e.target());
+	protected Pair<JilExpr,List<Stmt>> doDeref(jkit.java.tree.Expr.Deref e) {
+		Pair<JilExpr,List<Stmt>> target = doExpression(e.target());
 		Type type = (Type) e.attribute(Type.class);
 		Type.Reference _targetT = (Type.Reference) e.target().attribute(Type.class);
 		
@@ -660,7 +660,7 @@ public class CodeGeneration {
 				Triple<jkit.compiler.Clazz, jkit.compiler.Clazz.Field, Type> r = types
 				.resolveField(targetT, e.name(), loader);
 
-				return new Pair<Expr, List<Stmt>>(new Expr.Deref(target.first(), e
+				return new Pair<JilExpr, List<Stmt>>(new JilExpr.Deref(target.first(), e
 						.name(),r.second().isStatic(), type,  e.attributes()),
 						target.second());
 			} catch(ClassNotFoundException cne) {
@@ -670,7 +670,7 @@ public class CodeGeneration {
 				syntax_error("field does not exist: " + type + "." + e.name(),e,fne);		
 			}
 		} else if(_targetT instanceof Type.Array && e.name().equals("length")) {
-			return new Pair<Expr, List<Stmt>>(new Expr.Deref(target.first(), e
+			return new Pair<JilExpr, List<Stmt>>(new JilExpr.Deref(target.first(), e
 					.name(), false, type,  e.attributes()),
 					target.second());
 		} else {
@@ -679,28 +679,28 @@ public class CodeGeneration {
 		return null; // dead code		
 	}
 	
-	protected Pair<Expr,List<Stmt>> doArrayIndex(jkit.java.tree.Expr.ArrayIndex e) {
-		Pair<Expr,List<Stmt>> target = doExpression(e.target());
-		Pair<Expr,List<Stmt>> index = doExpression(e.index());
+	protected Pair<JilExpr,List<Stmt>> doArrayIndex(jkit.java.tree.Expr.ArrayIndex e) {
+		Pair<JilExpr,List<Stmt>> target = doExpression(e.target());
+		Pair<JilExpr,List<Stmt>> index = doExpression(e.index());
 		Type type = (Type) e.attribute(Type.class);
 		
 		List<Stmt> r = target.second();
 		r.addAll(index.second());
 		
-		return new Pair<Expr, List<Stmt>>(new Expr.ArrayIndex(target.first(),
+		return new Pair<JilExpr, List<Stmt>>(new JilExpr.ArrayIndex(target.first(),
 				index.first(), type, e.attributes()), r);
 	}
 	
-	protected Pair<Expr,List<Stmt>> doNew(jkit.java.tree.Expr.New e) {
+	protected Pair<JilExpr,List<Stmt>> doNew(jkit.java.tree.Expr.New e) {
 		// Second, recurse through any parameters supplied ...
 		ArrayList<Stmt> r = new ArrayList();
-		ArrayList<Expr> nparameters = new ArrayList();			
+		ArrayList<JilExpr> nparameters = new ArrayList();			
 		Type.Reference type = (Type.Reference) e.attribute(Type.class);
 		List<jkit.java.tree.Expr> parameters = e.parameters();
 		
 		for(int i=0;i!=parameters.size();++i) {
 			jkit.java.tree.Expr p = parameters.get(i);
-			Pair<Expr,List<Stmt>> tmp = doExpression(p);
+			Pair<JilExpr,List<Stmt>> tmp = doExpression(p);
 			nparameters.add(tmp.first());
 			r.addAll(tmp.second());
 		}
@@ -714,151 +714,151 @@ public class CodeGeneration {
 		Type.Function funType = (Type.Function) e
 				.attribute(Type.Function.class);
 		
-		return new Pair<Expr, List<Stmt>>(new Expr.New(type, nparameters,
+		return new Pair<JilExpr, List<Stmt>>(new JilExpr.New(type, nparameters,
 				funType, e.attributes()), r);
 	}
 	
-	protected Pair<Expr,List<Stmt>> doInvoke(jkit.java.tree.Expr.Invoke e) {
+	protected Pair<JilExpr,List<Stmt>> doInvoke(jkit.java.tree.Expr.Invoke e) {
 		ArrayList<Stmt> r = new ArrayList();
-		ArrayList<Expr> nparameters = new ArrayList();
+		ArrayList<JilExpr> nparameters = new ArrayList();
 		Type type = (Type) e.attribute(Type.class);				
 		Type.Function funType = (Type.Function) e.attribute(Type.Function.class);
 		
-		Pair<Expr,List<Stmt>> target = doExpression(e.target());
+		Pair<JilExpr,List<Stmt>> target = doExpression(e.target());
 		r.addAll(target.second());
 		
 		List<jkit.java.tree.Expr> parameters = e.parameters();
 		for(int i=0;i!=parameters.size();++i) {
 			jkit.java.tree.Expr p = parameters.get(i);
-			Pair<Expr,List<Stmt>> tmp = doExpression(p);
+			Pair<JilExpr,List<Stmt>> tmp = doExpression(p);
 			nparameters.add(tmp.first());
 			r.addAll(tmp.second());
 		}				
 		
-		Expr rec = target.first();
+		JilExpr rec = target.first();
 		
-		if (rec instanceof Expr.ClassVariable) {
-			return new Pair<Expr, List<Stmt>>(new Expr.Invoke(target.first(), e
+		if (rec instanceof JilExpr.ClassVariable) {
+			return new Pair<JilExpr, List<Stmt>>(new JilExpr.Invoke(target.first(), e
 					.name(), nparameters, funType, type, e
 					.attributes()), r);
-		} else if (rec instanceof Expr.Variable
-				&& ((Expr.Variable) rec).value().equals("super")) {
-			return new Pair<Expr, List<Stmt>>(new Expr.SpecialInvoke(target
+		} else if (rec instanceof JilExpr.Variable
+				&& ((JilExpr.Variable) rec).value().equals("super")) {
+			return new Pair<JilExpr, List<Stmt>>(new JilExpr.SpecialInvoke(target
 					.first(), e.name(), nparameters, funType, type, e
 					.attributes()), r);
 		} else {
-			return new Pair<Expr, List<Stmt>>(new Expr.Invoke(target.first(), e
+			return new Pair<JilExpr, List<Stmt>>(new JilExpr.Invoke(target.first(), e
 					.name(), nparameters, funType, type, e
 					.attributes()), r);
 		}
 	}
 	
-	protected Pair<Expr,List<Stmt>> doInstanceOf(jkit.java.tree.Expr.InstanceOf e) {
-		Pair<Expr,List<Stmt>> lhs = doExpression(e.lhs());
+	protected Pair<JilExpr,List<Stmt>> doInstanceOf(jkit.java.tree.Expr.InstanceOf e) {
+		Pair<JilExpr,List<Stmt>> lhs = doExpression(e.lhs());
 		Type type = (Type) e.attribute(Type.class);
 		Type rhs = (Type) e.rhs().attribute(Type.class);
-		return new Pair<Expr, List<Stmt>>(new Expr.InstanceOf(lhs.first(), rhs,
+		return new Pair<JilExpr, List<Stmt>>(new JilExpr.InstanceOf(lhs.first(), rhs,
 				type, e.attributes()), lhs.second());
 	}
 	
-	protected Pair<Expr,List<Stmt>> doCast(jkit.java.tree.Expr.Cast e) {
-		Pair<Expr,List<Stmt>> expr = doExpression(e.expr());		
+	protected Pair<JilExpr,List<Stmt>> doCast(jkit.java.tree.Expr.Cast e) {
+		Pair<JilExpr,List<Stmt>> expr = doExpression(e.expr());		
 		Type type = (Type) e.attribute(Type.class);
-		return new Pair<Expr, List<Stmt>>(new Expr.Cast(expr.first(),
+		return new Pair<JilExpr, List<Stmt>>(new JilExpr.Cast(expr.first(),
 				type, e.attributes()), expr.second());		
 	}
 	
-	protected Pair<Expr,List<Stmt>> doConvert(jkit.java.tree.Expr.Convert e) {
-		Pair<Expr,List<Stmt>> expr = doExpression(e.expr());		
+	protected Pair<JilExpr,List<Stmt>> doConvert(jkit.java.tree.Expr.Convert e) {
+		Pair<JilExpr,List<Stmt>> expr = doExpression(e.expr());		
 		Type.Primitive type = (Type.Primitive) e.attribute(Type.class);
-		return new Pair<Expr, List<Stmt>>(new Expr.Convert(type, expr.first(),
+		return new Pair<JilExpr, List<Stmt>>(new JilExpr.Convert(type, expr.first(),
 				e.attributes()), expr.second());		
 	}
 	
-	protected Pair<Expr,List<Stmt>> doBoolVal(jkit.java.tree.Value.Bool e) {
-		return new Pair<Expr, List<Stmt>>(new Expr.Bool(e.value()),
+	protected Pair<JilExpr,List<Stmt>> doBoolVal(jkit.java.tree.Value.Bool e) {
+		return new Pair<JilExpr, List<Stmt>>(new JilExpr.Bool(e.value()),
 				new ArrayList<Stmt>());
 	}
 	
-	protected Pair<Expr,List<Stmt>> doCharVal(jkit.java.tree.Value.Char e) {
-		return new Pair<Expr,List<Stmt>>(new Expr.Char(e.value()), new ArrayList<Stmt>());		
+	protected Pair<JilExpr,List<Stmt>> doCharVal(jkit.java.tree.Value.Char e) {
+		return new Pair<JilExpr,List<Stmt>>(new JilExpr.Char(e.value()), new ArrayList<Stmt>());		
 	}
 	
-	protected Pair<Expr,List<Stmt>> doByteVal(jkit.java.tree.Value.Byte e) {
-		return new Pair<Expr,List<Stmt>>(new Expr.Byte(e.value()), new ArrayList<Stmt>());		
+	protected Pair<JilExpr,List<Stmt>> doByteVal(jkit.java.tree.Value.Byte e) {
+		return new Pair<JilExpr,List<Stmt>>(new JilExpr.Byte(e.value()), new ArrayList<Stmt>());		
 	}
 	
-	protected Pair<Expr,List<Stmt>> doShortVal(jkit.java.tree.Value.Short e) {
-		return new Pair<Expr,List<Stmt>>(new Expr.Short(e.value()), new ArrayList<Stmt>());		
+	protected Pair<JilExpr,List<Stmt>> doShortVal(jkit.java.tree.Value.Short e) {
+		return new Pair<JilExpr,List<Stmt>>(new JilExpr.Short(e.value()), new ArrayList<Stmt>());		
 	}
 	
-	protected Pair<Expr,List<Stmt>> doIntVal(jkit.java.tree.Value.Int e) {
-		return new Pair<Expr,List<Stmt>>(new Expr.Int(e.value()), new ArrayList<Stmt>());
+	protected Pair<JilExpr,List<Stmt>> doIntVal(jkit.java.tree.Value.Int e) {
+		return new Pair<JilExpr,List<Stmt>>(new JilExpr.Int(e.value()), new ArrayList<Stmt>());
 	}
 	
-	protected Pair<Expr,List<Stmt>> doLongVal(jkit.java.tree.Value.Long e) {
-		return new Pair<Expr,List<Stmt>>(new Expr.Long(e.value()), new ArrayList<Stmt>());
+	protected Pair<JilExpr,List<Stmt>> doLongVal(jkit.java.tree.Value.Long e) {
+		return new Pair<JilExpr,List<Stmt>>(new JilExpr.Long(e.value()), new ArrayList<Stmt>());
 	}
 	
-	protected Pair<Expr,List<Stmt>> doFloatVal(jkit.java.tree.Value.Float e) {
-		return new Pair<Expr,List<Stmt>>(new Expr.Float(e.value()), new ArrayList<Stmt>());
+	protected Pair<JilExpr,List<Stmt>> doFloatVal(jkit.java.tree.Value.Float e) {
+		return new Pair<JilExpr,List<Stmt>>(new JilExpr.Float(e.value()), new ArrayList<Stmt>());
 	}
 	
-	protected Pair<Expr,List<Stmt>> doDoubleVal(jkit.java.tree.Value.Double e) {
-		return new Pair<Expr,List<Stmt>>(new Expr.Double(e.value()), new ArrayList<Stmt>());
+	protected Pair<JilExpr,List<Stmt>> doDoubleVal(jkit.java.tree.Value.Double e) {
+		return new Pair<JilExpr,List<Stmt>>(new JilExpr.Double(e.value()), new ArrayList<Stmt>());
 	}
 	
-	protected Pair<Expr,List<Stmt>> doStringVal(jkit.java.tree.Value.String e) {
-		return new Pair<Expr,List<Stmt>>(new Expr.StringVal(e.value()), new ArrayList<Stmt>());
+	protected Pair<JilExpr,List<Stmt>> doStringVal(jkit.java.tree.Value.String e) {
+		return new Pair<JilExpr,List<Stmt>>(new JilExpr.StringVal(e.value()), new ArrayList<Stmt>());
 	}
 	
-	protected Pair<Expr,List<Stmt>> doNullVal(jkit.java.tree.Value.Null e) {
-		return new Pair<Expr,List<Stmt>>(new Expr.Null(), new ArrayList<Stmt>());
+	protected Pair<JilExpr,List<Stmt>> doNullVal(jkit.java.tree.Value.Null e) {
+		return new Pair<JilExpr,List<Stmt>>(new JilExpr.Null(), new ArrayList<Stmt>());
 	}
 	
-	protected Pair<Expr,List<Stmt>> doTypedArrayVal(jkit.java.tree.Value.TypedArray e) {
+	protected Pair<JilExpr,List<Stmt>> doTypedArrayVal(jkit.java.tree.Value.TypedArray e) {
 		ArrayList<Stmt> r = new ArrayList<Stmt>();
-		ArrayList<Expr> params = new ArrayList();
+		ArrayList<JilExpr> params = new ArrayList();
 		Type.Array type = (Type.Array) e.attribute(Type.class);
 		
 		for(int i=0;i!=e.values().size();++i) {
 			jkit.java.tree.Expr v = e.values().get(i);
-			Pair<Expr,List<Stmt>> p = doExpression(v);
+			Pair<JilExpr,List<Stmt>> p = doExpression(v);
 			params.add(p.first());
 			r.addAll(p.second());
 		}
-		return new Pair<Expr,List<Stmt>>(new Expr.Array(params,type,e.attributes()),r);
+		return new Pair<JilExpr,List<Stmt>>(new JilExpr.Array(params,type,e.attributes()),r);
 	}
 	
-	protected Pair<Expr,List<Stmt>> doArrayVal(jkit.java.tree.Value.Array e) {
+	protected Pair<JilExpr,List<Stmt>> doArrayVal(jkit.java.tree.Value.Array e) {
 		ArrayList<Stmt> r = new ArrayList<Stmt>();
-		ArrayList<Expr> params = new ArrayList();
+		ArrayList<JilExpr> params = new ArrayList();
 		Type.Array type = (Type.Array) e.attribute(Type.class);
 
 		for(int i=0;i!=e.values().size();++i) {
 			jkit.java.tree.Expr v = e.values().get(i);			
-			Pair<Expr,List<Stmt>> p = doExpression(v);
+			Pair<JilExpr,List<Stmt>> p = doExpression(v);
 			params.add(p.first());
 			r.addAll(p.second());
 		}
 		
-		return new Pair<Expr,List<Stmt>>(new Expr.Array(params,type,e.attributes()),r);
+		return new Pair<JilExpr,List<Stmt>>(new JilExpr.Array(params,type,e.attributes()),r);
 	}
 	
-	protected Pair<Expr,List<Stmt>> doClassVal(jkit.java.tree.Value.Class e) {
+	protected Pair<JilExpr,List<Stmt>> doClassVal(jkit.java.tree.Value.Class e) {
 		Type.Clazz type = (Type.Clazz) e.attribute(Type.class);		
-		return new Pair<Expr, List<Stmt>>(new Expr.Class(type, e.attributes()),
+		return new Pair<JilExpr, List<Stmt>>(new JilExpr.Class(type, e.attributes()),
 				new ArrayList<Stmt>());
 	}
 		
-	protected Pair<Expr, List<Stmt>> doLocalVariable(
+	protected Pair<JilExpr, List<Stmt>> doLocalVariable(
 			jkit.java.tree.Expr.LocalVariable e) {
 		Type type = (Type) e.attribute(Type.class);
-		return new Pair<Expr, List<Stmt>>(new Expr.Variable(e.value(), type, e
+		return new Pair<JilExpr, List<Stmt>>(new JilExpr.Variable(e.value(), type, e
 				.attributes()), new ArrayList<Stmt>());
 	}
 
-	protected Pair<Expr, List<Stmt>> doNonLocalVariable(
+	protected Pair<JilExpr, List<Stmt>> doNonLocalVariable(
 			jkit.java.tree.Expr.NonLocalVariable e) {
 		syntax_error(
 				"internal failure (support for non-local variables not implemented!)",
@@ -866,14 +866,14 @@ public class CodeGeneration {
 		return null;
 	}
 	
-	protected Pair<Expr,List<Stmt>> doClassVariable(jkit.java.tree.Expr.ClassVariable e) {
+	protected Pair<JilExpr,List<Stmt>> doClassVariable(jkit.java.tree.Expr.ClassVariable e) {
 		Type.Clazz type = (Type.Clazz) e.attribute(Type.class);
-		return new Pair<Expr, List<Stmt>>(new Expr.ClassVariable(type, e.attributes()),
+		return new Pair<JilExpr, List<Stmt>>(new JilExpr.ClassVariable(type, e.attributes()),
 				new ArrayList<Stmt>());
 	}
 	
-	protected Pair<Expr,List<Stmt>> doUnOp(jkit.java.tree.Expr.UnOp e) {		
-		Pair<Expr, List<Stmt>> r = doExpression(e.expr());		
+	protected Pair<JilExpr,List<Stmt>> doUnOp(jkit.java.tree.Expr.UnOp e) {		
+		Pair<JilExpr, List<Stmt>> r = doExpression(e.expr());		
 		Type.Primitive type = (Type.Primitive) e.attribute(Type.class);
 		List<Stmt> stmts = r.second();
 		jkit.java.tree.Expr.LocalVariable lval;
@@ -882,62 +882,62 @@ public class CodeGeneration {
 		case jkit.java.tree.Expr.UnOp.PREDEC:
 		{
 			lval = (jkit.java.tree.Expr.LocalVariable) e.expr();			
-			Expr.Variable lhs = new Expr.Variable(lval.value(),type,lval.attributes());
-			Expr rhs = new Expr.BinOp(lhs, new Expr.Int(1), Expr.BinOp.SUB,
+			JilExpr.Variable lhs = new JilExpr.Variable(lval.value(),type,lval.attributes());
+			JilExpr rhs = new JilExpr.BinOp(lhs, new JilExpr.Int(1), JilExpr.BinOp.SUB,
 					type, e.attributes());
 			stmts.add(new Stmt.Assign(lhs,rhs,e.attributes()));
-			return new Pair<Expr, List<Stmt>>(r.first(),stmts);		
+			return new Pair<JilExpr, List<Stmt>>(r.first(),stmts);		
 		}
 		case jkit.java.tree.Expr.UnOp.PREINC:
 		{
 			lval = (jkit.java.tree.Expr.LocalVariable) e.expr();
-			Expr.Variable lhs = new Expr.Variable(lval.value(),type,lval.attributes());
-			Expr rhs = new Expr.BinOp(lhs, new Expr.Int(1), Expr.BinOp.ADD,
+			JilExpr.Variable lhs = new JilExpr.Variable(lval.value(),type,lval.attributes());
+			JilExpr rhs = new JilExpr.BinOp(lhs, new JilExpr.Int(1), JilExpr.BinOp.ADD,
 					type, e.attributes());
 			stmts.add(new Stmt.Assign(lhs,rhs,e.attributes()));
-			return new Pair<Expr, List<Stmt>>(r.first(),stmts);
+			return new Pair<JilExpr, List<Stmt>>(r.first(),stmts);
 		}
 		case jkit.java.tree.Expr.UnOp.POSTINC:
 		{
 			lval = (jkit.java.tree.Expr.LocalVariable) e.expr();
-			Expr.Variable tmp = new Expr.Variable("$tmp",type,lval.attributes());
-			Expr.Variable lhs = new Expr.Variable(lval.value(),type,lval.attributes());
+			JilExpr.Variable tmp = new JilExpr.Variable("$tmp",type,lval.attributes());
+			JilExpr.Variable lhs = new JilExpr.Variable(lval.value(),type,lval.attributes());
 			stmts.add(new Stmt.Assign(tmp,lhs,e.attributes()));			
-			Expr rhs = new Expr.BinOp(lhs, new Expr.Int(1), Expr.BinOp.ADD,
+			JilExpr rhs = new JilExpr.BinOp(lhs, new JilExpr.Int(1), JilExpr.BinOp.ADD,
 					type, e.attributes());
 			stmts.add(new Stmt.Assign(lhs,rhs,e.attributes()));
-			return new Pair<Expr, List<Stmt>>(tmp,stmts);		
+			return new Pair<JilExpr, List<Stmt>>(tmp,stmts);		
 		}
 		case jkit.java.tree.Expr.UnOp.POSTDEC:
 		{
 			 lval = (jkit.java.tree.Expr.LocalVariable) e.expr();
-			 Expr.Variable tmp = new Expr.Variable("$tmp",type,lval.attributes());
-				Expr.Variable lhs = new Expr.Variable(lval.value(),type,lval.attributes());
+			 JilExpr.Variable tmp = new JilExpr.Variable("$tmp",type,lval.attributes());
+				JilExpr.Variable lhs = new JilExpr.Variable(lval.value(),type,lval.attributes());
 				stmts.add(new Stmt.Assign(tmp,lhs,e.attributes()));			
-				Expr rhs = new Expr.BinOp(lhs, new Expr.Int(1), Expr.BinOp.SUB,
+				JilExpr rhs = new JilExpr.BinOp(lhs, new JilExpr.Int(1), JilExpr.BinOp.SUB,
 						type, e.attributes());
 				stmts.add(new Stmt.Assign(lhs,rhs,e.attributes()));
-				return new Pair<Expr, List<Stmt>>(tmp,stmts);
+				return new Pair<JilExpr, List<Stmt>>(tmp,stmts);
 		}
 		default:
-			return new Pair<Expr, List<Stmt>>(new Expr.UnOp(r.first(), e.op(),
+			return new Pair<JilExpr, List<Stmt>>(new JilExpr.UnOp(r.first(), e.op(),
 					type, e.attributes()), r.second());
 		}		
 	}
 		
-	protected Pair<Expr,List<Stmt>> doBinOp(jkit.java.tree.Expr.BinOp e) {				
+	protected Pair<JilExpr,List<Stmt>> doBinOp(jkit.java.tree.Expr.BinOp e) {				
 		Type _type = (Type) e.attribute(Type.class);
 		
 		if(_type instanceof Type.Primitive) {
-			Pair<Expr,List<Stmt>> lhs = doExpression(e.lhs());
-			Pair<Expr,List<Stmt>> rhs = doExpression(e.rhs());
+			Pair<JilExpr,List<Stmt>> lhs = doExpression(e.lhs());
+			Pair<JilExpr,List<Stmt>> rhs = doExpression(e.rhs());
 			
 			Type.Primitive type = (Type.Primitive) _type;
 
 			List<Stmt> r = lhs.second();
 			r.addAll(rhs.second());
 
-			return new Pair<Expr, List<Stmt>>(new Expr.BinOp(lhs.first(), rhs
+			return new Pair<JilExpr, List<Stmt>>(new JilExpr.BinOp(lhs.first(), rhs
 					.first(), e.op(), type, e.attributes()), r);
 		} else if(e.op() == jkit.java.tree.Expr.BinOp.CONCAT) {
 			return doStringConcat(e);
@@ -949,7 +949,7 @@ public class CodeGeneration {
 	
 	protected static int stringbuilder_label = 0;
 	
-	protected Pair<Expr,List<Stmt>> doStringConcat(jkit.java.tree.Expr.BinOp bop){
+	protected Pair<JilExpr,List<Stmt>> doStringConcat(jkit.java.tree.Expr.BinOp bop){
 		
 		// This method is evidence as to why Java sucks as a programming
 		// language. It should be easy to construct datatypes, as I'm doing
@@ -957,8 +957,8 @@ public class CodeGeneration {
 		// are some hacks to can do to improve the situation but basically it's
 		// screwed.
 		String builderLab = "$builder" + stringbuilder_label++;
-		Pair<Expr,List<Stmt>> lhs = doExpression(bop.lhs());
-		Pair<Expr,List<Stmt>> rhs = doExpression(bop.rhs());
+		Pair<JilExpr,List<Stmt>> lhs = doExpression(bop.lhs());
+		Pair<JilExpr,List<Stmt>> rhs = doExpression(bop.rhs());
 		
 		List<Stmt> stmts = lhs.second();
 		stmts.addAll(lhs.second());
@@ -967,22 +967,22 @@ public class CodeGeneration {
 		Type.Clazz builder = new Type.Clazz("java.lang",
 				"StringBuilder");
 						
-		stmts.add(new Stmt.Assign(new Expr.Variable(builderLab, builder),
-				new Expr.New(builder, new ArrayList<Expr>(),
+		stmts.add(new Stmt.Assign(new JilExpr.Variable(builderLab, builder),
+				new JilExpr.New(builder, new ArrayList<JilExpr>(),
 						new Type.Function(new Type.Void()), bop.attributes())));					
 		
 		Type lhs_t = lhs.first().type(); 
 		if(lhs_t instanceof Type.Primitive || isString(lhs_t)) {
-			ArrayList<Expr> params = new ArrayList<Expr>();
+			ArrayList<JilExpr> params = new ArrayList<JilExpr>();
 			params.add(lhs.first());
-			stmts.add(new Expr.Invoke(new Expr.Variable(builderLab, builder), "append",
+			stmts.add(new JilExpr.Invoke(new JilExpr.Variable(builderLab, builder), "append",
 					params, new Type.Function(new Type.Clazz("java.lang",
 					"StringBuilder"), lhs.first().type()), new Type.Clazz(
 							"java.lang", "StringBuilder")));
 		} else {
-			ArrayList<Expr> params = new ArrayList<Expr>();
+			ArrayList<JilExpr> params = new ArrayList<JilExpr>();
 			params.add(lhs.first());
-			stmts.add(new Expr.Invoke(new Expr.Variable(builderLab, builder),
+			stmts.add(new JilExpr.Invoke(new JilExpr.Variable(builderLab, builder),
 					"append", params, new Type.Function(new Type.Clazz(
 							"java.lang", "StringBuilder"), new Type.Clazz(
 							"java.lang", "Object")), new Type.Clazz(
@@ -990,34 +990,34 @@ public class CodeGeneration {
 		}
 
 		// Now, do the right hand side
-		Expr r;
+		JilExpr r;
 		Type rhs_t = rhs.first().type(); 
 		if(rhs_t instanceof Type.Primitive || isString(rhs_t)) {
-			ArrayList<Expr> params = new ArrayList<Expr>();
+			ArrayList<JilExpr> params = new ArrayList<JilExpr>();
 			params.add(rhs.first());
-			r = new Expr.Invoke(new Expr.Variable(builderLab, builder), "append",
+			r = new JilExpr.Invoke(new JilExpr.Variable(builderLab, builder), "append",
 					params, new Type.Function(new Type.Clazz("java.lang",
 					"StringBuilder"), rhs_t), new Type.Clazz(
 							"java.lang", "StringBuilder"));
 		} else {
-			ArrayList<Expr> params = new ArrayList<Expr>();
+			ArrayList<JilExpr> params = new ArrayList<JilExpr>();
 			params.add(rhs.first());
-			r = new Expr.Invoke(new Expr.Variable(builderLab, builder),
+			r = new JilExpr.Invoke(new JilExpr.Variable(builderLab, builder),
 					"append", params, new Type.Function(new Type.Clazz(
 							"java.lang", "StringBuilder"), new Type.Clazz(
 							"java.lang", "Object")), new Type.Clazz(
 							"java.lang", "StringBuilder"));
 		}
 
-		r = new Expr.Invoke(r, "toString", new ArrayList<Expr>(),
+		r = new JilExpr.Invoke(r, "toString", new ArrayList<JilExpr>(),
 				new Type.Function(new Type.Clazz("java.lang", "String")),
 				new Type.Clazz("java.lang", "String"));
 		
-		return new Pair<Expr,List<Stmt>>(r,stmts);
+		return new Pair<JilExpr,List<Stmt>>(r,stmts);
 	}
 
 	
-	protected Pair<Expr,List<Stmt>> doTernOp(jkit.java.tree.Expr.TernOp e) {	
+	protected Pair<JilExpr,List<Stmt>> doTernOp(jkit.java.tree.Expr.TernOp e) {	
 		syntax_error("internal failure --- problem processing ternary operator.",e);
 		return null;
 	}
@@ -1033,10 +1033,10 @@ public class CodeGeneration {
 	}	
 	
 	protected boolean superCallFirst(List<Stmt> stmts) {
-		if (stmts.size() == 0 || !(stmts.get(0) instanceof Expr.Invoke)) {
+		if (stmts.size() == 0 || !(stmts.get(0) instanceof JilExpr.Invoke)) {
 			return false;
 		} else {
-			Expr.Invoke sc = (Expr.Invoke) stmts.get(0);
+			JilExpr.Invoke sc = (JilExpr.Invoke) stmts.get(0);
 			if (!sc.name().equals("super")) {
 				return false;
 			}

@@ -16,7 +16,7 @@ import jkit.jil.tree.Type.Primitive;
 import jkit.jil.tree.Type.Reference;
 import jkit.jil.tree.Type.Short;
 
-public interface Expr extends SyntacticElement {
+public interface JilExpr extends SyntacticElement {
 	
 	public Type type();
 	
@@ -29,7 +29,7 @@ public interface Expr extends SyntacticElement {
 	 * @author djp
 	 * 
 	 */
-	public static final class Variable extends SyntacticElementImpl implements Expr {
+	public static final class Variable extends SyntacticElementImpl implements JilExpr {
 		private String value;
 		private Type type;
 
@@ -69,7 +69,7 @@ public interface Expr extends SyntacticElement {
 	 * 
 	 */
 	public static final class ClassVariable extends SyntacticElementImpl
-			implements Expr {
+			implements JilExpr {
 		private Type.Clazz type;
 
 		public ClassVariable(Type.Clazz type, Attribute... attributes) {
@@ -94,27 +94,27 @@ public interface Expr extends SyntacticElement {
 	 * @author djp
 	 *
 	 */
-	public static final class Cast extends SyntacticElementImpl implements Expr {
-		protected Expr expr;
+	public static final class Cast extends SyntacticElementImpl implements JilExpr {
+		protected JilExpr expr;
 		protected Type type;
 
-		public Cast(Expr expr, Type type, Attribute... attributes) {
+		public Cast(JilExpr expr, Type type, Attribute... attributes) {
 			super(attributes);
 			this.expr = expr;
 			this.type = type;
 		}
 
-		public Cast(Expr expr, Type type, List<Attribute> attributes) {
+		public Cast(JilExpr expr, Type type, List<Attribute> attributes) {
 			super(attributes);
 			this.expr = expr;
 			this.type = type;
 		}
 		
-		public Expr expr() {
+		public JilExpr expr() {
 			return expr;
 		}
 
-		public void setExpr(Expr e) {
+		public void setExpr(JilExpr e) {
 			expr = e;
 		}
 		
@@ -133,23 +133,23 @@ public interface Expr extends SyntacticElement {
 	 * @author djp
 	 *
 	 */
-	public static final class Convert extends SyntacticElementImpl implements Expr {
-		protected Expr expr;
+	public static final class Convert extends SyntacticElementImpl implements JilExpr {
+		protected JilExpr expr;
 		protected Type.Primitive type;
 
-		public Convert(Type.Primitive type, Expr expr, Attribute... attributes) {
+		public Convert(Type.Primitive type, JilExpr expr, Attribute... attributes) {
 			super(attributes);
 			this.expr = expr;
 			this.type = type;
 		}
 
-		public Convert(Type.Primitive type, Expr expr, List<Attribute> attributes) {
+		public Convert(Type.Primitive type, JilExpr expr, List<Attribute> attributes) {
 			super(attributes);
 			this.expr = expr;
 			this.type = type;
 		}
 		
-		public Expr expr() {
+		public JilExpr expr() {
 			return expr;
 		}
 
@@ -168,30 +168,30 @@ public interface Expr extends SyntacticElement {
 	 * @author djp
 	 * 
 	 */
-	public static final class InstanceOf extends SyntacticElementImpl implements Expr {
-		protected Expr lhs;
+	public static final class InstanceOf extends SyntacticElementImpl implements JilExpr {
+		protected JilExpr lhs;
 		protected Type rhs;
 		protected Type type;
 
-		public InstanceOf(Expr lhs, Type rhs, Type type, Attribute... attributes) {
+		public InstanceOf(JilExpr lhs, Type rhs, Type type, Attribute... attributes) {
 			super(attributes);
 			this.lhs = lhs;
 			this.rhs = rhs;
 			this.type = type;
 		}
 
-		public InstanceOf(Expr lhs, Type rhs, Type type, List<Attribute> attributes) {
+		public InstanceOf(JilExpr lhs, Type rhs, Type type, List<Attribute> attributes) {
 			super(attributes);
 			this.lhs = lhs;
 			this.rhs = rhs;
 			this.type = type;
 		}
 		
-		public Expr lhs() {
+		public JilExpr lhs() {
 			return lhs;
 		}
 
-		public void setLhs(Expr e) {
+		public void setLhs(JilExpr e) {
 			lhs = e;
 		}
 		
@@ -218,23 +218,23 @@ public interface Expr extends SyntacticElement {
 	 * @author djp
 	 * 
 	 */
-	public static final class UnOp extends SyntacticElementImpl implements Expr {
+	public static final class UnOp extends SyntacticElementImpl implements JilExpr {
 		public static final int NOT = 0;
 		public static final int INV = 1;
 		public static final int NEG = 2;
 
-		protected Expr expr;
+		protected JilExpr expr;
 		protected int op;
 		protected Type.Primitive type;
 		
-		public UnOp(Expr expr, int op, Type.Primitive type, Attribute... attributes) {
+		public UnOp(JilExpr expr, int op, Type.Primitive type, Attribute... attributes) {
 			super(attributes);
 			this.expr = expr;
 			this.op = op;
 			this.type = type;
 		}
 
-		public UnOp(Expr expr, int op, Type.Primitive type, List<Attribute> attributes) {
+		public UnOp(JilExpr expr, int op, Type.Primitive type, List<Attribute> attributes) {
 			super(attributes);
 			this.expr = expr;
 			this.op = op;
@@ -249,11 +249,11 @@ public interface Expr extends SyntacticElement {
 			this.op = op;
 		}
 		
-		public Expr expr() {
+		public JilExpr expr() {
 			return expr;
 		}
 		
-		public void setExpr(Expr expr) {
+		public void setExpr(JilExpr expr) {
 			this.expr = expr;
 		}
 		
@@ -272,7 +272,7 @@ public interface Expr extends SyntacticElement {
 	 * @author djp
 	 * 
 	 */
-	public static final class BinOp extends SyntacticElementImpl implements Expr {
+	public static final class BinOp extends SyntacticElementImpl implements JilExpr {
 		// BinOp Constants
 		public static final int ADD = 0;
 		public static final int SUB = 1;
@@ -295,12 +295,12 @@ public interface Expr extends SyntacticElement {
 		public static final int LAND = 17;
 		public static final int LOR = 18;
 
-		protected Expr lhs;
-		protected Expr rhs;
+		protected JilExpr lhs;
+		protected JilExpr rhs;
 		protected int op;
 		protected Type.Primitive type;
 
-		public BinOp(Expr lhs, Expr rhs, int op, Type.Primitive type, Attribute... attributes) {
+		public BinOp(JilExpr lhs, JilExpr rhs, int op, Type.Primitive type, Attribute... attributes) {
 			super(attributes);
 			this.lhs = lhs;
 			this.rhs = rhs;
@@ -308,7 +308,7 @@ public interface Expr extends SyntacticElement {
 			this.type = type;
 		}
 
-		public BinOp(Expr lhs, Expr rhs, int op, Type.Primitive type, List<Attribute> attributes) {
+		public BinOp(JilExpr lhs, JilExpr rhs, int op, Type.Primitive type, List<Attribute> attributes) {
 			super(attributes);
 			this.lhs = lhs;
 			this.rhs = rhs;
@@ -324,19 +324,19 @@ public interface Expr extends SyntacticElement {
 			this.op = op;
 		}
 		
-		public Expr lhs() {
+		public JilExpr lhs() {
 			return lhs;
 		}
 
-		public void setLhs(Expr lhs) {
+		public void setLhs(JilExpr lhs) {
 			this.lhs = lhs;
 		}
 		
-		public Expr rhs() {
+		public JilExpr rhs() {
 			return rhs;
 		}
 		
-		public void setRhs(Expr rhs) {
+		public void setRhs(JilExpr rhs) {
 			this.rhs = rhs;
 		}
 		
@@ -358,10 +358,10 @@ public interface Expr extends SyntacticElement {
 	 * @author djp
 	 * 
 	 */
-	public static class Invoke extends SyntacticElementImpl implements Expr, Stmt {
-		protected Expr target;
+	public static class Invoke extends SyntacticElementImpl implements JilExpr, Stmt {
+		protected JilExpr target;
 		protected String name;
-		protected List<Expr> parameters;
+		protected List<JilExpr> parameters;
 		protected Type type; 		
 		protected Type.Function funType;		
 				
@@ -381,7 +381,7 @@ public interface Expr extends SyntacticElement {
 		 *            differ from the return type of funType, especially in the
 		 *            case of generics.
 		 */
-		public Invoke(Expr target, String name, List<Expr> parameters,
+		public Invoke(JilExpr target, String name, List<JilExpr> parameters,
 				Type.Function funType, Type type, Attribute... attributes) {
 			super(attributes);
 			this.target = target;
@@ -407,7 +407,7 @@ public interface Expr extends SyntacticElement {
 		 *            differ from the return type of funType, especially in the
 		 *            case of generics.
 		 */
-		public Invoke(Expr target, String name, List<Expr> parameters,
+		public Invoke(JilExpr target, String name, List<JilExpr> parameters,
 				Type.Function funType, Type type, List<Attribute> attributes) {
 			super(attributes);
 			this.target = target;
@@ -417,11 +417,11 @@ public interface Expr extends SyntacticElement {
 			this.funType = funType;
 		}
 		
-		public Expr target() {
+		public JilExpr target() {
 			return target;
 		}
 
-		public void setTarget(Expr target) {
+		public void setTarget(JilExpr target) {
 			this.target = target;
 		}
 		
@@ -449,11 +449,11 @@ public interface Expr extends SyntacticElement {
 			this.funType = funtype;
 		}		
 		
-		public List<Expr> parameters() {
+		public List<JilExpr> parameters() {
 			return parameters;
 		}
 		
-		public void setParameters(List<Expr> parameters) {
+		public void setParameters(List<JilExpr> parameters) {
 			this.parameters = parameters;
 		}
 	}
@@ -490,7 +490,7 @@ public interface Expr extends SyntacticElement {
 		 *            differ from the return type of funType, especially in the
 		 *            case of generics.
 		 */
-		public SpecialInvoke(Expr target, String name, List<Expr> parameters,
+		public SpecialInvoke(JilExpr target, String name, List<JilExpr> parameters,
 				Type.Function funType, Type type, Attribute... attributes) {
 			super(target,name,parameters,funType,type,attributes);
 		}
@@ -511,7 +511,7 @@ public interface Expr extends SyntacticElement {
 		 *            differ from the return type of funType, especially in the
 		 *            case of generics.
 		 */
-		public SpecialInvoke(Expr target, String name, List<Expr> parameters,
+		public SpecialInvoke(JilExpr target, String name, List<JilExpr> parameters,
 				Type.Function funType, Type type, List<Attribute> attributes) {
 			super(target,name,parameters,funType,type,attributes);			
 		}
@@ -527,10 +527,10 @@ public interface Expr extends SyntacticElement {
 	 * @author djp
 	 * 
 	 */
-	public static final class New extends SyntacticElementImpl implements Expr, Stmt {
+	public static final class New extends SyntacticElementImpl implements JilExpr, Stmt {
 		private Type.Reference type;
-		private Expr context;
-		private List<Expr> parameters;
+		private JilExpr context;
+		private List<JilExpr> parameters;
 		private Type.Function funType;
 		
 		/**
@@ -547,7 +547,7 @@ public interface Expr extends SyntacticElement {
 		 *            this new call is for an array, then you can pass null
 		 *            here.
 		 */
-		public New(Type.Reference type, List<Expr> parameters,
+		public New(Type.Reference type, List<JilExpr> parameters,
 				Type.Function funType, Attribute... attributes) {
 			super(attributes);
 			this.type = type;
@@ -566,7 +566,7 @@ public interface Expr extends SyntacticElement {
 		 *            The parameters (if any) supplied to the constructor.
 		 *            Should be an empty (i.e. non-null) list .
 		 */
-		public New(Type.Reference type, List<Expr> parameters,
+		public New(Type.Reference type, List<JilExpr> parameters,
 				Type.Function funType, List<Attribute> attributes) {
 			super(attributes);
 			this.type = type;
@@ -591,19 +591,19 @@ public interface Expr extends SyntacticElement {
 			this.funType = funType;
 		}
 		
-		public List<Expr> parameters() {
+		public List<JilExpr> parameters() {
 			return parameters;
 		}
 
-		public void setParameters(List<Expr> parameters) {
+		public void setParameters(List<JilExpr> parameters) {
 			this.parameters = parameters;
 		}
 
-		public Expr context() {
+		public JilExpr context() {
 			return context;
 		}
 
-		public void setContext(Expr context) {
+		public void setContext(JilExpr context) {
 			this.context = context;
 		}
 	}
@@ -614,13 +614,13 @@ public interface Expr extends SyntacticElement {
 	 * @author djp
 	 * 
 	 */
-	public static final class Deref extends SyntacticElementImpl implements Expr {
-		protected Expr target;
+	public static final class Deref extends SyntacticElementImpl implements JilExpr {
+		protected JilExpr target;
 		protected String name;
 		protected Type type;
 		protected boolean isStatic;
 		
-		public Deref(Expr lhs, String rhs, boolean isStatic, Type type,
+		public Deref(JilExpr lhs, String rhs, boolean isStatic, Type type,
 				Attribute... attributes) {
 			super(attributes);
 			this.target = lhs;
@@ -629,7 +629,7 @@ public interface Expr extends SyntacticElement {
 			this.isStatic = isStatic;
 		}
 
-		public Deref(Expr lhs, String rhs, boolean isStatic, Type type, 
+		public Deref(JilExpr lhs, String rhs, boolean isStatic, Type type, 
 				List<Attribute> attributes) {
 			super(attributes);
 			this.target = lhs;
@@ -638,11 +638,11 @@ public interface Expr extends SyntacticElement {
 			this.isStatic = isStatic;
 		}
 		
-		public Expr target() {
+		public JilExpr target() {
 			return target;
 		}
 
-		public void setTarget(Expr target) {
+		public void setTarget(JilExpr target) {
 			this.target = target;
 		}
 		
@@ -677,38 +677,38 @@ public interface Expr extends SyntacticElement {
 	 * @author djp
 	 * 
 	 */
-	public static final class ArrayIndex extends SyntacticElementImpl implements Expr {
-		protected Expr array;
-		protected Expr idx;
+	public static final class ArrayIndex extends SyntacticElementImpl implements JilExpr {
+		protected JilExpr array;
+		protected JilExpr idx;
 		protected Type type;
 
-		public ArrayIndex(Expr array, Expr idx, Type type, Attribute... attributes) {
+		public ArrayIndex(JilExpr array, JilExpr idx, Type type, Attribute... attributes) {
 			super(attributes);
 			this.array = array;
 			this.idx = idx;
 			this.type = type;
 		}
 
-		public ArrayIndex(Expr array, Expr idx, Type type, List<Attribute> attributes) {
+		public ArrayIndex(JilExpr array, JilExpr idx, Type type, List<Attribute> attributes) {
 			super(attributes);
 			this.array = array;
 			this.idx = idx;
 			this.type = type;
 		}
 		
-		public Expr target() {
+		public JilExpr target() {
 			return array;
 		}
 
-		public Expr index() {
+		public JilExpr index() {
 			return idx;
 		}
 		
-		public void setIndex(Expr e) {
+		public void setIndex(JilExpr e) {
 			idx = e;
 		}
 		
-		public void setTarget(Expr e) {
+		public void setTarget(JilExpr e) {
 			array = e;
 		}
 		
@@ -727,7 +727,7 @@ public interface Expr extends SyntacticElement {
 	 * @author djp
 	 *
 	 */
-	public static class Number extends SyntacticElementImpl implements Expr {
+	public static class Number extends SyntacticElementImpl implements JilExpr {
 		protected int value;
 		protected Type.Primitive type;
 		
@@ -857,7 +857,7 @@ public interface Expr extends SyntacticElement {
      * @author djp
      * 
      */
-	public static final class Long extends SyntacticElementImpl implements Expr {
+	public static final class Long extends SyntacticElementImpl implements JilExpr {
 		private long value;
 		
 		public Long(long value, Attribute... attributes) {
@@ -885,7 +885,7 @@ public interface Expr extends SyntacticElement {
      * @author djp
      * 
      */
-	public static final class Float extends SyntacticElementImpl implements Expr {
+	public static final class Float extends SyntacticElementImpl implements JilExpr {
 		private float value;
 		
 		public Float(float value, Attribute... attributes) {
@@ -913,7 +913,7 @@ public interface Expr extends SyntacticElement {
      * @author djp
      * 
      */
-	public static final class Double extends SyntacticElementImpl implements Expr {
+	public static final class Double extends SyntacticElementImpl implements JilExpr {
 		private double value;
 		
 		public Double(double value, Attribute... attributes) {
@@ -941,7 +941,7 @@ public interface Expr extends SyntacticElement {
      * @author djp
      * 
      */
-	public static final class StringVal extends SyntacticElementImpl implements Expr {
+	public static final class StringVal extends SyntacticElementImpl implements JilExpr {
 		private java.lang.String value;
 		
 		public StringVal(java.lang.String value, Attribute... attributes) {
@@ -969,7 +969,7 @@ public interface Expr extends SyntacticElement {
      * @author djp
      * 
      */
-	public static final class Null extends SyntacticElementImpl implements Expr {
+	public static final class Null extends SyntacticElementImpl implements JilExpr {
 		public Null(Attribute... attributes) {
 			super(attributes);
 		}
@@ -985,23 +985,23 @@ public interface Expr extends SyntacticElement {
      * @author djp
      * 
      */
-	public static final class Array extends SyntacticElementImpl implements Expr {
-		private List<Expr> values;
+	public static final class Array extends SyntacticElementImpl implements JilExpr {
+		private List<JilExpr> values;
 		private Type.Array type;
 		
-		public Array(List<Expr> values, Type.Array type, Attribute... attributes) {
+		public Array(List<JilExpr> values, Type.Array type, Attribute... attributes) {
 			super(attributes);
 			this.values = values;
 			this.type = type;
 		}
 		
-		public Array(List<Expr> values, Type.Array type, List<Attribute> attributes) {
+		public Array(List<JilExpr> values, Type.Array type, List<Attribute> attributes) {
 			super(attributes);
 			this.values = values;
 			this.type = type;
 		}
 		
-		public List<Expr> values() {
+		public List<JilExpr> values() {
 			return values;
 		}
 		
@@ -1018,7 +1018,7 @@ public interface Expr extends SyntacticElement {
 	 * Represents a Class Constant
 	 * 
 	 */
-	public static final class Class extends SyntacticElementImpl implements Expr {
+	public static final class Class extends SyntacticElementImpl implements JilExpr {
 		private Type.Clazz type;
 
 		public Class(Type.Clazz type, Attribute... attributes) {

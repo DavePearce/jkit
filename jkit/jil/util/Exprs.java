@@ -1,8 +1,8 @@
 package jkit.jil.util;
 
 import java.util.*;
-import jkit.jil.tree.Expr;
-import jkit.jil.tree.Expr.*;
+import jkit.jil.tree.JilExpr;
+import jkit.jil.tree.JilExpr.*;
 import jkit.jil.tree.Type;
 
 public class Exprs {
@@ -13,7 +13,7 @@ public class Exprs {
 	 * @param e
 	 * @return
 	 */
-	public static Map<String,Type> localVariables(Expr e) {
+	public static Map<String,Type> localVariables(JilExpr e) {
 		HashMap<String,Type> vars = new HashMap<String,Type>(); 
 		
 		if(e instanceof Variable) {
@@ -45,17 +45,17 @@ public class Exprs {
 		} else if(e instanceof Invoke) {
 			Invoke c = (Invoke) e;
 			vars.putAll(localVariables(c.target()));
-			for(Expr p : c.parameters()) {
+			for(JilExpr p : c.parameters()) {
 				vars.putAll(localVariables(p));
 			}			
 		} else if(e instanceof New) {
 			New c = (New) e;			
-			for(Expr p : c.parameters()) {
+			for(JilExpr p : c.parameters()) {
 				vars.putAll(localVariables(p));
 			}			
 		} else if(e instanceof Array) {
 			Array c = (Array) e;			
-			for(Expr p : c.values()) {
+			for(JilExpr p : c.values()) {
 				vars.putAll(localVariables(p));
 			}			
 		}
@@ -66,7 +66,7 @@ public class Exprs {
 	/**
 	 * This method simply inverts a boolean comparison.
 	 */
-	public static Expr invertBoolean(Expr e) {
+	public static JilExpr invertBoolean(JilExpr e) {
 		if(e instanceof BinOp) {
 			BinOp be = (BinOp) e;
 			switch(be.op()) {
@@ -117,7 +117,7 @@ public class Exprs {
      * Note that, in the case of !(X instanceof Y), or !f(...), no rewrite 
      * is possible, so the original expression is simply returned.
      */
-	public static Expr eliminateNot(UnOp e) {
+	public static JilExpr eliminateNot(UnOp e) {
 		assert e.op() == UnOp.NOT;
 		
 		if(e.expr() instanceof UnOp) {
@@ -155,17 +155,17 @@ public class Exprs {
 				return new BinOp(e2.lhs(), e2.rhs(), BinOp.LT, new Type.Bool(),
 						e.attributes());
 			case BinOp.LAND: {
-				Expr lhs = eliminateNot(new UnOp(e2.lhs(), UnOp.NOT,
+				JilExpr lhs = eliminateNot(new UnOp(e2.lhs(), UnOp.NOT,
 						new Type.Bool(), e.attributes()));
-				Expr rhs = eliminateNot(new UnOp(e2.rhs(), UnOp.NOT,
+				JilExpr rhs = eliminateNot(new UnOp(e2.rhs(), UnOp.NOT,
 						new Type.Bool(), e.attributes()));
 				return new BinOp(lhs, rhs, BinOp.LOR, new Type.Bool(), e
 						.attributes());
 			}
 			case BinOp.LOR: {
-				Expr lhs = eliminateNot(new UnOp(e2.lhs(), UnOp.NOT,
+				JilExpr lhs = eliminateNot(new UnOp(e2.lhs(), UnOp.NOT,
 						new Type.Bool(), e.attributes()));
-				Expr rhs = eliminateNot(new UnOp(e2.rhs(), UnOp.NOT,
+				JilExpr rhs = eliminateNot(new UnOp(e2.rhs(), UnOp.NOT,
 						new Type.Bool(), e.attributes()));
 				return new BinOp(lhs, rhs, BinOp.LAND, new Type.Bool(), e
 						.attributes());

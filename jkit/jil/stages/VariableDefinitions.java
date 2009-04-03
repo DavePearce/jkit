@@ -98,7 +98,7 @@ public class VariableDefinitions extends ForwardAnalysis<UnionFlowSet<String>>
 	
 	public void transfer(Point p, Invoke stmt, UnionFlowSet<String> undefs) {
 		Set<String> uses = uses(stmt.target,p,null,null);
-		for(Expr e : stmt.parameters) {
+		for(JilExpr e : stmt.parameters) {
 			uses.addAll(uses(e,p,null,null));
 		}
 		checkUses(uses,undefs,p,null,null);		
@@ -106,7 +106,7 @@ public class VariableDefinitions extends ForwardAnalysis<UnionFlowSet<String>>
 
 	public void transfer(Point p, New stmt, UnionFlowSet<String> undefs) {
 		Set<String> uses = new HashSet<String>();
-		for(Expr e : stmt.parameters) {
+		for(JilExpr e : stmt.parameters) {
 			uses.addAll(uses(e,p,null,null));
 		}
 		checkUses(uses,undefs,p,null,null);
@@ -134,11 +134,11 @@ public class VariableDefinitions extends ForwardAnalysis<UnionFlowSet<String>>
 		checkUses(uses,undefs,p,null,null);
 	}
 	
-	public void transfer(Point p, Expr e, UnionFlowSet<String> undefs) {				
+	public void transfer(Point p, JilExpr e, UnionFlowSet<String> undefs) {				
 		checkUses(uses(e, p, null, null), undefs, p,null,null);
 	}
 	
-	public Set<String> uses(Expr expr, Point point, JilMethod method, JilClass owner) {
+	public Set<String> uses(JilExpr expr, Point point, JilMethod method, JilClass owner) {
 		if(expr instanceof ArrayIndex) {
 			return uses((ArrayIndex) expr,  point, method,owner);
 		} else if(expr instanceof TernOp) {
@@ -211,14 +211,14 @@ public class VariableDefinitions extends ForwardAnalysis<UnionFlowSet<String>>
 	}
 	public Set<String> uses(Invoke expr, Point point, JilMethod method, JilClass owner) { 
 		Set<String> r = uses(expr.target,point,method,owner);
-		for(Expr e : expr.parameters) {
+		for(JilExpr e : expr.parameters) {
 			r.addAll(uses(e,point,method,owner));
 		}
 		return r; 		
 	}
 	public Set<String> uses(New expr, Point point, JilMethod method, JilClass owner) { 
 		Set<String> r = new HashSet<String>();
-		for(Expr e : expr.parameters) {
+		for(JilExpr e : expr.parameters) {
 			r.addAll(uses(e,point,method,owner));
 		}
 		return r; 			

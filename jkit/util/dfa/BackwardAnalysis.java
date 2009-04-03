@@ -43,7 +43,7 @@ public abstract class BackwardAnalysis<T extends FlowSet> {
 
 	private final HashMap<Point, T> stores = new HashMap<Point, T>();
 
-	protected Graph<Point, Triple<Point, Point, Expr>> cfg;
+	protected Graph<Point, Triple<Point, Point, JilExpr>> cfg;
 
 	public BackwardAnalysis() {
 		worklist = new TreeSet<Point>(new Comparator<Point>() {
@@ -107,11 +107,11 @@ public abstract class BackwardAnalysis<T extends FlowSet> {
 			store = (T) store.clone();
 
 			// Get all the predecessors to the current Point
-			Set<Triple<Point, Point, Expr>> predecessors = cfg.to(curPoint);
+			Set<Triple<Point, Point, JilExpr>> predecessors = cfg.to(curPoint);
 
-			Expr conditional = null;
+			JilExpr conditional = null;
 			if (cfg.to(curPoint).iterator().hasNext()) {
-				Triple<Point, Point, Expr> t = cfg.to(curPoint).iterator()
+				Triple<Point, Point, JilExpr> t = cfg.to(curPoint).iterator()
 						.next();
 				conditional = t.third;
 			}
@@ -121,7 +121,7 @@ public abstract class BackwardAnalysis<T extends FlowSet> {
 
 			} else {
 				// Ordinary statement
-				for (Triple<Point, Point, Expr> trip : predecessors) {
+				for (Triple<Point, Point, JilExpr> trip : predecessors) {
 					transfer(curPoint, store);
 					if (conditional != null) {
 						transfer(conditional, store);
@@ -201,13 +201,13 @@ public abstract class BackwardAnalysis<T extends FlowSet> {
 	 * @param m
 	 *            FlowSet to use in evaluation
 	 */
-	public abstract void transfer(Expr e, T m);
+	public abstract void transfer(JilExpr e, T m);
 
 	private Collection<Point> getExitPoints(
-			Graph<Point, Triple<Point, Point, Expr>> cfg) {
+			Graph<Point, Triple<Point, Point, JilExpr>> cfg) {
 		Set<Point> out = new HashSet<Point>();
 
-		for (Triple<Point, Point, Expr> curTriple : cfg) {
+		for (Triple<Point, Point, JilExpr> curTriple : cfg) {
 			if (cfg.from(curTriple.second()).isEmpty()) {
 				Point p = curTriple.second();
 				if(p.statement() != null){

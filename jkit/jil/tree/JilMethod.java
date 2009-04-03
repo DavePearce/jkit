@@ -288,8 +288,8 @@ public class JilMethod extends SyntacticElementImpl implements jkit.compiler.Cla
 						biguns.add(e.getKey());
 					}
 				}
-			} else if(s instanceof Expr.Invoke) {
-				Expr.Invoke a = (Expr.Invoke) s;
+			} else if(s instanceof JilExpr.Invoke) {
+				JilExpr.Invoke a = (JilExpr.Invoke) s;
 				Map<String,Type> env = Exprs.localVariables(a);
 				vars.addAll(env.keySet());
 				for(Map.Entry<String,Type> e : env.entrySet()) {

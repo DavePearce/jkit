@@ -109,9 +109,9 @@ public class JilFileWriter {
 			write((Stmt.Goto)s);
 		} else if(s instanceof Stmt.Label) {
 			write((Stmt.Label)s);
-		} else if(s instanceof Expr.Invoke) {
+		} else if(s instanceof JilExpr.Invoke) {
 			output.print("\t\t");
-			write((Expr.Invoke)s);
+			write((JilExpr.Invoke)s);
 			output.println();
 		} else {
 			throw new RuntimeException("Invalid statement encountered: "
@@ -122,7 +122,7 @@ public class JilFileWriter {
 	protected void write(Stmt.Assign s) {
 		output.print("\t\t");
 		
-		if(s.lhs() instanceof Expr.Variable) {
+		if(s.lhs() instanceof JilExpr.Variable) {
 			output.print(s.rhs().type() + " ");
 		}
 		
@@ -164,60 +164,60 @@ public class JilFileWriter {
 		output.println("\t" + s.label() + ":");
 	}
 	
-	protected void write(Expr e) {
-		if(e instanceof Expr.Bool) {
-			write((Expr.Bool)e);
-		} else if(e instanceof Expr.Char) {
-			write((Expr.Char)e);
-		} else if(e instanceof Expr.Byte) {
-			write((Expr.Byte)e);
-		} else if(e instanceof Expr.Short) {
-			write((Expr.Short)e);
-		} else if(e instanceof Expr.Int) {
-			write((Expr.Int)e);
-		} else if(e instanceof Expr.Long) {
-			write((Expr.Long)e);
-		} else if(e instanceof Expr.Float) {
-			write((Expr.Float)e);
-		} else if(e instanceof Expr.Double) {
-			write((Expr.Double)e);
-		} else if(e instanceof Expr.Null) {
-			write((Expr.Null)e);
-		} else if(e instanceof Expr.StringVal) {
-			write((Expr.StringVal)e);
-		} else if(e instanceof Expr.Array) {
-			write((Expr.Array)e);
-		} else if(e instanceof Expr.Variable) {		
-			write((Expr.Variable)e);
-		} else if(e instanceof Expr.UnOp) {
-			write((Expr.UnOp)e);
-		} else if(e instanceof Expr.BinOp) {
-			write((Expr.BinOp)e);
-		} else if(e instanceof Expr.InstanceOf) {
-			write((Expr.InstanceOf)e);
-		} else if(e instanceof Expr.Cast) {
-			write((Expr.Cast)e);
-		} else if(e instanceof Expr.Convert) {
-			write((Expr.Convert)e);
-		} else if(e instanceof Expr.ArrayIndex) {
-			write((Expr.ArrayIndex)e);
-		} else if(e instanceof Expr.Deref) {
-			write((Expr.Deref)e);
-		} else if(e instanceof Expr.Invoke) {
-			write((Expr.Invoke)e);
-		} else if(e instanceof Expr.New) {
-			write((Expr.New)e);
-		} else if(e instanceof Expr.Class) {
-			write((Expr.Class)e);
-		} else if(e instanceof Expr.ClassVariable) {
-			write((Expr.ClassVariable)e);
+	protected void write(JilExpr e) {
+		if(e instanceof JilExpr.Bool) {
+			write((JilExpr.Bool)e);
+		} else if(e instanceof JilExpr.Char) {
+			write((JilExpr.Char)e);
+		} else if(e instanceof JilExpr.Byte) {
+			write((JilExpr.Byte)e);
+		} else if(e instanceof JilExpr.Short) {
+			write((JilExpr.Short)e);
+		} else if(e instanceof JilExpr.Int) {
+			write((JilExpr.Int)e);
+		} else if(e instanceof JilExpr.Long) {
+			write((JilExpr.Long)e);
+		} else if(e instanceof JilExpr.Float) {
+			write((JilExpr.Float)e);
+		} else if(e instanceof JilExpr.Double) {
+			write((JilExpr.Double)e);
+		} else if(e instanceof JilExpr.Null) {
+			write((JilExpr.Null)e);
+		} else if(e instanceof JilExpr.StringVal) {
+			write((JilExpr.StringVal)e);
+		} else if(e instanceof JilExpr.Array) {
+			write((JilExpr.Array)e);
+		} else if(e instanceof JilExpr.Variable) {		
+			write((JilExpr.Variable)e);
+		} else if(e instanceof JilExpr.UnOp) {
+			write((JilExpr.UnOp)e);
+		} else if(e instanceof JilExpr.BinOp) {
+			write((JilExpr.BinOp)e);
+		} else if(e instanceof JilExpr.InstanceOf) {
+			write((JilExpr.InstanceOf)e);
+		} else if(e instanceof JilExpr.Cast) {
+			write((JilExpr.Cast)e);
+		} else if(e instanceof JilExpr.Convert) {
+			write((JilExpr.Convert)e);
+		} else if(e instanceof JilExpr.ArrayIndex) {
+			write((JilExpr.ArrayIndex)e);
+		} else if(e instanceof JilExpr.Deref) {
+			write((JilExpr.Deref)e);
+		} else if(e instanceof JilExpr.Invoke) {
+			write((JilExpr.Invoke)e);
+		} else if(e instanceof JilExpr.New) {
+			write((JilExpr.New)e);
+		} else if(e instanceof JilExpr.Class) {
+			write((JilExpr.Class)e);
+		} else if(e instanceof JilExpr.ClassVariable) {
+			write((JilExpr.ClassVariable)e);
 		} else {
 			throw new RuntimeException("Invalid expression encountered: "
 					+ e.getClass());
 		}
 	}
 	
-	protected void write(Expr.Bool e) {
+	protected void write(JilExpr.Bool e) {
 		if(e.value()) {
 			output.print("true");
 		} else {
@@ -225,50 +225,50 @@ public class JilFileWriter {
 		}
 	}
 	
-	protected void write(Expr.Char e) {
+	protected void write(JilExpr.Char e) {
 		output.write("'");
 		writeWithEscapes(Character.toString(e.value()));
 		output.write("'");		
 	}
 	
-	protected void write(Expr.Byte b) {
+	protected void write(JilExpr.Byte b) {
 		output.print(b.value());
 	}
 	
-	protected void write(Expr.Short s) {
+	protected void write(JilExpr.Short s) {
 		output.print(s.value() + "S");
 	}
 	
-	protected void write(Expr.Int s) {
+	protected void write(JilExpr.Int s) {
 		output.print(s.value());
 	}
 	
-	protected void write(Expr.Long s) {
+	protected void write(JilExpr.Long s) {
 		output.print(s.value() + "L");
 	}
 	
-	protected void write(Expr.Float s) {
+	protected void write(JilExpr.Float s) {
 		output.print(s.value() + "F");
 	}
 	
-	protected void write(Expr.Double s) {
+	protected void write(JilExpr.Double s) {
 		output.print(s.value() + "D");
 	}
 	
-	protected void write(Expr.Null e) {
+	protected void write(JilExpr.Null e) {
 		output.print("null");
 	}
 	
-	protected void write(Expr.StringVal e) {
+	protected void write(JilExpr.StringVal e) {
 		output.print("\"");
 		writeWithEscapes(e.value());
 		output.print("\"");
 	}
 	
-	protected void write(Expr.Array ae) {
+	protected void write(JilExpr.Array ae) {
 		output.print("new " + ae.type() + "{");
 		boolean firstTime=true;
-		for(Expr e : ae.values()) {
+		for(JilExpr e : ae.values()) {
 			if(!firstTime) {
 				output.print(", ");
 			}
@@ -278,21 +278,21 @@ public class JilFileWriter {
 		output.print("}");
 	}
 	
-	protected void write(Expr.Variable v) {
+	protected void write(JilExpr.Variable v) {
 		output.write(v.value());
 	}
 	
-	protected void write(Expr.Class c) {
+	protected void write(JilExpr.Class c) {
 		output.write(c.type() + ".class");
 	}
 	
-	protected void write(Expr.ClassVariable c) {
+	protected void write(JilExpr.ClassVariable c) {
 		output.write(c.type().toString());
 	}
 	
 	public static final String[] unopstr={"!","~","-","++","--","++","--"};	
 	
-	protected void write(Expr.UnOp e) {
+	protected void write(JilExpr.UnOp e) {
 		output.write(unopstr[e.op()]);
 		writeExpressionWithBracketsIfNecessary(e.expr());					
 	}
@@ -302,7 +302,7 @@ public class JilFileWriter {
 		"||", "+"};
 
 	
-	protected void write(Expr.BinOp e) {
+	protected void write(JilExpr.BinOp e) {
 		writeExpressionWithBracketsIfNecessary(e.lhs());					
 		output.write(" ");
 		output.write(binopstr[e.op()]);
@@ -310,45 +310,45 @@ public class JilFileWriter {
 		writeExpressionWithBracketsIfNecessary(e.rhs());	
 	}
 	
-	protected void write(Expr.InstanceOf e) {
+	protected void write(JilExpr.InstanceOf e) {
 		writeExpressionWithBracketsIfNecessary(e.lhs());
 		output.write(" instanceof ");
 		output.print(e.rhs());
 	}
 	
-	protected void write(Expr.Cast e) {
+	protected void write(JilExpr.Cast e) {
 		output.print("(" + e.type() + ") ");
 		writeExpressionWithBracketsIfNecessary(e.expr());				
 	}
 	
-	protected void write(Expr.Convert e) {
+	protected void write(JilExpr.Convert e) {
 		output.print("[" + e.type() + "]");
 		writeExpressionWithBracketsIfNecessary(e.expr());				
 	}
 	
-	protected void write(Expr.ArrayIndex e) {
+	protected void write(JilExpr.ArrayIndex e) {
 		write(e.target());
 		output.print("[");
 		write(e.index());
 		output.print("]");					
 	}
 	
-	protected void write(Expr.Deref e) {
+	protected void write(JilExpr.Deref e) {
 		write(e.target());
 		output.print(".");
 		output.print(e.name());						
 	}
 	
-	protected void write(Expr.Invoke e) {
+	protected void write(JilExpr.Invoke e) {
 		write(e.target());
 		output.print(".");
 		output.print(e.name());
-		if (e instanceof Expr.SpecialInvoke) {
+		if (e instanceof JilExpr.SpecialInvoke) {
 			output.print("!");
 		}
 		output.print("(");
 		boolean firstTime=true;
-		for(Expr p : e.parameters()) {
+		for(JilExpr p : e.parameters()) {
 			if(!firstTime) {
 				output.print(", ");
 			}
@@ -358,12 +358,12 @@ public class JilFileWriter {
 		output.print(")");
 	}
 	
-	protected void write(Expr.New e) {
+	protected void write(JilExpr.New e) {
 		output.print("new ");
 		output.print(e.type());
 		output.print("(");
 		boolean firstTime=true;
-		for(Expr p : e.parameters()) {
+		for(JilExpr p : e.parameters()) {
 			if(!firstTime) {
 				output.print(", ");
 			}
@@ -420,9 +420,9 @@ public class JilFileWriter {
 		}
 	}
 	
-	protected void writeExpressionWithBracketsIfNecessary(Expr e) {
-		if (e instanceof Expr.BinOp || e instanceof Expr.InstanceOf
-				|| e instanceof Expr.Cast || e instanceof Expr.Convert) {
+	protected void writeExpressionWithBracketsIfNecessary(JilExpr e) {
+		if (e instanceof JilExpr.BinOp || e instanceof JilExpr.InstanceOf
+				|| e instanceof JilExpr.Cast || e instanceof JilExpr.Convert) {
 			output.write("(");
 			write(e);
 			output.write(")");

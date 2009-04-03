@@ -12,35 +12,35 @@ public interface Stmt extends SyntacticElement {
 	 */
 	public static final class Assign extends SyntacticElementImpl implements
 			Stmt {
-		private Expr lhs, rhs;
+		private JilExpr lhs, rhs;
 
-		public Assign(Expr lhs, Expr rhs,
+		public Assign(JilExpr lhs, JilExpr rhs,
 				Attribute... attributes) {
 			super(attributes);
 			this.lhs = lhs;
 			this.rhs = rhs;
 		}
 
-		public Assign(Expr lhs, Expr rhs,
+		public Assign(JilExpr lhs, JilExpr rhs,
 				List<Attribute> attributes) {
 			super(attributes);
 			this.lhs = lhs;
 			this.rhs = rhs;
 		}
 		
-		public Expr lhs() {
+		public JilExpr lhs() {
 			return lhs;
 		}
 
-		public Expr rhs() {
+		public JilExpr rhs() {
 			return rhs;
 		}
 		
-		public void setLhs(Expr lhs) {
+		public void setLhs(JilExpr lhs) {
 			this.lhs = lhs;
 		}
 
-		public void setRhs(Expr rhs) {
+		public void setRhs(JilExpr rhs) {
 			this.rhs = rhs;
 		}
 	}
@@ -49,23 +49,23 @@ public interface Stmt extends SyntacticElement {
 	 * A return statement.
 	 */
 	public static final class Return extends SyntacticElementImpl implements Stmt {
-		private Expr expr;
+		private JilExpr expr;
 
-		public Return(Expr expr, Attribute... attributes) {
+		public Return(JilExpr expr, Attribute... attributes) {
 			super(attributes);
 			this.expr = expr;
 		}
 		
-		public Return(Expr expr, List<Attribute> attributes) {
+		public Return(JilExpr expr, List<Attribute> attributes) {
 			super(attributes);
 			this.expr = expr;
 		}
 
-		public Expr expr() {
+		public JilExpr expr() {
 			return expr;
 		}
 		
-		public void setExpr(Expr expr) {
+		public void setExpr(JilExpr expr) {
 			this.expr = expr;
 		}
 	}
@@ -77,23 +77,23 @@ public interface Stmt extends SyntacticElement {
 	 *
 	 */
 	public static final class Throw extends SyntacticElementImpl implements Stmt {
-		private Expr expr;
+		private JilExpr expr;
 
-		public Throw(Expr expr, Attribute... attributes) {
+		public Throw(JilExpr expr, Attribute... attributes) {
 			super(attributes);
 			this.expr = expr;
 		}
 
-		public Throw(Expr expr, List<Attribute> attributes) {
+		public Throw(JilExpr expr, List<Attribute> attributes) {
 			super(attributes);
 			this.expr = expr;
 		}
 		
-		public Expr expr() {
+		public JilExpr expr() {
 			return expr;
 		}
 		
-		public void setExpr(Expr expr) {
+		public void setExpr(JilExpr expr) {
 			this.expr = expr;
 		}
 	}
@@ -133,26 +133,26 @@ public interface Stmt extends SyntacticElement {
 	 *
 	 */
 	public static final class IfGoto extends SyntacticElementImpl implements Stmt {
-		private Expr condition;
+		private JilExpr condition;
 		private String label;
 
-		public IfGoto(Expr condition, String label, Attribute... attributes) {
+		public IfGoto(JilExpr condition, String label, Attribute... attributes) {
 			super(attributes);
 			this.condition = condition;
 			this.label = label;
 		}
 
-		public IfGoto(Expr condition, String label, List<Attribute> attributes) {
+		public IfGoto(JilExpr condition, String label, List<Attribute> attributes) {
 			super(attributes);
 			this.condition = condition;
 			this.label = label;
 		}
 		
-		public Expr condition() {
+		public JilExpr condition() {
 			return condition;
 		}
 		
-		public void setCondition(Expr expr) {
+		public void setCondition(JilExpr expr) {
 			this.condition = expr;
 		}
 		
@@ -191,45 +191,45 @@ public interface Stmt extends SyntacticElement {
 	}
 	
 	public static final class Lock extends SyntacticElementImpl implements Stmt {
-		private Expr expr;
+		private JilExpr expr;
 
-		public Lock(Expr expr, Attribute... attributes) {
+		public Lock(JilExpr expr, Attribute... attributes) {
 			super(attributes);
 			this.expr = expr;
 		}
 
-		public Lock(Expr expr, List<Attribute> attributes) {
+		public Lock(JilExpr expr, List<Attribute> attributes) {
 			super(attributes);
 			this.expr = expr;
 		}
 		
-		public Expr expr() {
+		public JilExpr expr() {
 			return expr;
 		}
 		
-		public void setExpr(Expr expr) {
+		public void setExpr(JilExpr expr) {
 			this.expr = expr;
 		}
 	}
 	
 	public static final class Unlock extends SyntacticElementImpl implements Stmt {
-		private Expr expr;
+		private JilExpr expr;
 
-		public Unlock(Expr expr, Attribute... attributes) {
+		public Unlock(JilExpr expr, Attribute... attributes) {
 			super(attributes);
 			this.expr = expr;
 		}
 
-		public Unlock(Expr expr, List<Attribute> attributes) {
+		public Unlock(JilExpr expr, List<Attribute> attributes) {
 			super(attributes);
 			this.expr = expr;
 		}
 		
-		public Expr expr() {
+		public JilExpr expr() {
 			return expr;
 		}
 		
-		public void setExpr(Expr expr) {
+		public void setExpr(JilExpr expr) {
 			this.expr = expr;
 		}
 	}

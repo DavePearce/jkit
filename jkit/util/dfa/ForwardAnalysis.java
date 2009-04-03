@@ -47,7 +47,7 @@ public abstract class ForwardAnalysis<T extends FlowSet> {
 	 * @param store Initial FlowSet
 	 */
 	@SuppressWarnings("unchecked")
-	public void start(Graph<Point, Triple<Point, Point, Expr>> cfg, Point entry, T initStore) {
+	public void start(Graph<Point, Triple<Point, Point, JilExpr>> cfg, Point entry, T initStore) {
 		reset();
 		
 		ArrayList<Point> order = ClassFileWriter.cfgOrder(entry, cfg);
@@ -84,11 +84,11 @@ public abstract class ForwardAnalysis<T extends FlowSet> {
 			// effect. Thus, the above has a problem because x may not be
 			// assigned before reaching the last statement.
 			
-			Set<Triple<Point, Point, Expr>> flows = cfg.from(current);
-			Set<Triple<Point, Point, Expr>> normalEdges = new HashSet<Triple<Point, Point, Expr>>();
-			Set<Triple<Point, Point, Expr>> exceptionalEdges = new HashSet<Triple<Point, Point, Expr>>();
+			Set<Triple<Point, Point, JilExpr>> flows = cfg.from(current);
+			Set<Triple<Point, Point, JilExpr>> normalEdges = new HashSet<Triple<Point, Point, JilExpr>>();
+			Set<Triple<Point, Point, JilExpr>> exceptionalEdges = new HashSet<Triple<Point, Point, JilExpr>>();
 			
-			for(Triple<Point, Point, Expr> t : flows) {
+			for(Triple<Point, Point, JilExpr> t : flows) {
 				if(!(t.third() instanceof FlowGraph.Exception)) {
 					normalEdges.add(t);
 				} else {
@@ -98,7 +98,7 @@ public abstract class ForwardAnalysis<T extends FlowSet> {
 			
 			// At this point, we propagate our along all outgoing exceptional
 			// edges.
-			for(Triple<Point, Point, Expr>  e : exceptionalEdges) {							
+			for(Triple<Point, Point, JilExpr>  e : exceptionalEdges) {							
 				merge(e.second(), preStore);
 			}
 			
@@ -106,8 +106,8 @@ public abstract class ForwardAnalysis<T extends FlowSet> {
 			transfer(current, postStore);
 			
 			// Finally, we propagate along all outgoing edges
-			for(Triple<Point, Point, Expr>  e : normalEdges) {							
-				Expr condition = e.third();
+			for(Triple<Point, Point, JilExpr>  e : normalEdges) {							
+				JilExpr condition = e.third();
 				if(condition == null) {
 					// this is an optimised case to avoid the clone as we know
 					// it's not necessary (since the condition is null and,
@@ -177,6 +177,6 @@ public abstract class ForwardAnalysis<T extends FlowSet> {
 	 * @param e Expr to evaluate
 	 * @param m FlowSet to use in evaluation
 	 */
-	public abstract void transfer(Point p, Expr e, T m);
+	public abstract void transfer(Point p, JilExpr e, T m);
 
 }

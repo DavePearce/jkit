@@ -131,7 +131,7 @@ public class BypassMethods implements Stage {
 		
 		// Second, create the local variable list for the new method
 		ArrayList<LocalVarDef> localVarDefs = new ArrayList<LocalVarDef>();
-		ArrayList<Expr> funParams = new ArrayList<Expr>();
+		ArrayList<JilExpr> funParams = new ArrayList<JilExpr>();
 		Type[] ftypeParamTypes = ftype.parameterTypes();		
 		
 		for(int i=0;i!=ftypeParamTypes.length;++i) {
@@ -157,7 +157,7 @@ public class BypassMethods implements Stage {
 		if(ftype.returnType() instanceof Type.Void) {
 			// no return type
 			entry = new Point(new Invoke(new LocalVar("this",owner.type()), name, funParams,to));
-			cfg.add(new Triple<Point, Point, Expr>(entry, new Point(new Return(
+			cfg.add(new Triple<Point, Point, JilExpr>(entry, new Point(new Return(
 					null)), null));
 		} else {
 			entry = new Point(new Return(new Invoke(new LocalVar("this",owner.type()), name,

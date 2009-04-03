@@ -310,11 +310,11 @@ public class ClassFileBuilder {
 		} else if (stmt instanceof Stmt.Assign) {
 			translateAssign((Stmt.Assign) stmt, varmap,
 					bytecodes);
-		} else if (stmt instanceof Expr.Invoke) {
-			translateInvoke((Expr.Invoke) stmt, varmap,
+		} else if (stmt instanceof JilExpr.Invoke) {
+			translateInvoke((JilExpr.Invoke) stmt, varmap,
 					bytecodes, false);
-		} else if (stmt instanceof Expr.New) {
-			translateNew((Expr.New) stmt, varmap, bytecodes,
+		} else if (stmt instanceof JilExpr.New) {
+			translateNew((JilExpr.New) stmt, varmap, bytecodes,
 					false);
 		} else if (stmt instanceof Stmt.Nop) {
 			bytecodes.add(new Bytecode.Nop());
@@ -357,14 +357,14 @@ public class ClassFileBuilder {
 	 *            bytecodes representing this statement are appended onto this
 	 */
 	protected static int condLabelCount = 0;
-	protected void translateConditionalBranch(Expr condition, String trueLabel,
+	protected void translateConditionalBranch(JilExpr condition, String trueLabel,
 			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes) {
 		
-		if (condition instanceof Expr.BinOp) {
-			Expr.BinOp bop = (Expr.BinOp) condition;
+		if (condition instanceof JilExpr.BinOp) {
+			JilExpr.BinOp bop = (JilExpr.BinOp) condition;
 
 			switch (bop.op()) {
-			case Expr.BinOp.LAND: {
+			case JilExpr.BinOp.LAND: {
 				String exitLabel = "CL" + condLabelCount++;
 				translateConditionalBranch(Exprs.invertBoolean(bop
 						.lhs()), exitLabel, varmap, bytecodes);
@@ -374,7 +374,7 @@ public class ClassFileBuilder {
 				bytecodes.add(new Bytecode.Label(exitLabel));
 				return;
 			}
-			case Expr.BinOp.LOR: {
+			case JilExpr.BinOp.LOR: {
 				translateConditionalBranch(bop.lhs(), trueLabel,
 						varmap, bytecodes);
 				translateConditionalBranch(bop.rhs(), trueLabel,
@@ -396,22 +396,22 @@ public class ClassFileBuilder {
 			Type cmpT = bop.lhs().type();
 			int code = -1;
 			switch (bop.op()) {
-			case Expr.BinOp.EQ:
+			case JilExpr.BinOp.EQ:
 				code = Bytecode.IfCmp.EQ;
 				break;
-			case Expr.BinOp.NEQ:
+			case JilExpr.BinOp.NEQ:
 				code = Bytecode.IfCmp.NE;
 				break;
-			case Expr.BinOp.LT:
+			case JilExpr.BinOp.LT:
 				code = Bytecode.IfCmp.LT;
 				break;
-			case Expr.BinOp.GT:
+			case JilExpr.BinOp.GT:
 				code = Bytecode.IfCmp.GT;
 				break;
-			case Expr.BinOp.LTEQ:
+			case JilExpr.BinOp.LTEQ:
 				code = Bytecode.IfCmp.LE;
 				break;
-			case Expr.BinOp.GTEQ:
+			case JilExpr.BinOp.GTEQ:
 				code = Bytecode.IfCmp.GE;
 				break;
 			}
@@ -422,15 +422,15 @@ public class ClassFileBuilder {
 			} else {
 				bytecodes.add(new Bytecode.IfCmp(code, cmpT, trueLabel));
 			}
-		} else if (condition instanceof Expr.UnOp) {
-			Expr.UnOp uop = (Expr.UnOp) condition;
-			if (uop.op() == Expr.UnOp.NOT) {
+		} else if (condition instanceof JilExpr.UnOp) {
+			JilExpr.UnOp uop = (JilExpr.UnOp) condition;
+			if (uop.op() == JilExpr.UnOp.NOT) {
 				// First attempt to eliminate the NOT altogether!
-				Expr e1 = Exprs.eliminateNot(uop);
+				JilExpr e1 = Exprs.eliminateNot(uop);
 
-				if (e1 instanceof Expr.UnOp) {
-					Expr.UnOp e2 = (Expr.UnOp) e1;
-					if (e2.op() == Expr.UnOp.NOT) {
+				if (e1 instanceof JilExpr.UnOp) {
+					JilExpr.UnOp e2 = (JilExpr.UnOp) e1;
+					if (e2.op() == JilExpr.UnOp.NOT) {
 						// not elimination was unsuccessful
 						translateExpression(uop.expr(), varmap,
 								bytecodes);
@@ -447,18 +447,18 @@ public class ClassFileBuilder {
 						"Invalid use of unary operator in conditional ("
 						+ condition + ")");
 			}
-		} else if (condition instanceof Expr.Invoke) {
-			translateInvoke((Expr.Invoke) condition, varmap, 
+		} else if (condition instanceof JilExpr.Invoke) {
+			translateInvoke((JilExpr.Invoke) condition, varmap, 
 					bytecodes, true);
 			bytecodes.add(new Bytecode.If(Bytecode.If.NE, trueLabel));			
-		} else if (condition instanceof Expr.InstanceOf) {
+		} else if (condition instanceof JilExpr.InstanceOf) {
 			translateExpression(condition, varmap, 
 					bytecodes);
 			bytecodes.add(new Bytecode.If(Bytecode.If.NE, trueLabel));			
-		} else if (condition instanceof Expr.Bool 
-					|| condition instanceof Expr.ArrayIndex
-					|| condition instanceof Expr.Variable
-					|| condition instanceof Expr.Deref) {
+		} else if (condition instanceof JilExpr.Bool 
+					|| condition instanceof JilExpr.ArrayIndex
+					|| condition instanceof JilExpr.Variable
+					|| condition instanceof JilExpr.Deref) {
 			translateExpression(condition, varmap,
 					bytecodes);
 			bytecodes.add(new Bytecode.If(Bytecode.If.NE, trueLabel));			
@@ -481,14 +481,14 @@ public class ClassFileBuilder {
 	 * @param bytecodes
 	 *            bytecodes representing this statement are appended onto this
 	 */
-	protected void translateSwitch(Expr[] conditions, String[] labels,
+	protected void translateSwitch(JilExpr[] conditions, String[] labels,
 			HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes) {
 
-		Expr expr = null;
-		for (Expr c : conditions) {
-			Expr.BinOp cond = (Expr.BinOp) c;
-			if (cond.op() == Expr.BinOp.EQ) {
+		JilExpr expr = null;
+		for (JilExpr c : conditions) {
+			JilExpr.BinOp cond = (JilExpr.BinOp) c;
+			if (cond.op() == JilExpr.BinOp.EQ) {
 				expr = cond.lhs();
 				break;
 			}
@@ -499,9 +499,9 @@ public class ClassFileBuilder {
 		String def = null;
 		List<Pair<Integer, String>> cases = new ArrayList<Pair<Integer, String>>();
 		for (int i = 0; i < conditions.length; i++) {
-			Expr e = ((Expr.BinOp) conditions[i]).rhs();
-			if (e instanceof Expr.Int) {
-				int c = ((Expr.Int) e).value();
+			JilExpr e = ((JilExpr.BinOp) conditions[i]).rhs();
+			if (e instanceof JilExpr.Int) {
+				int c = ((JilExpr.Int) e).value();
 				String label = labels[i];
 				cases.add(new Pair<Integer, String>(c, label));
 			} else {
@@ -519,7 +519,7 @@ public class ClassFileBuilder {
 		bytecodes.add(new Bytecode.Switch(def, cases));
 	}
 
-	protected void translateInvoke(Expr.Invoke stmt,
+	protected void translateInvoke(JilExpr.Invoke stmt,
 			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes,
 			boolean needReturnValue) {
 		
@@ -542,11 +542,11 @@ public class ClassFileBuilder {
 				translateExpression(stmt.target(), varmap, bytecodes);
 			}
 			// translate parameters
-			for (Expr p : stmt.parameters()) {
+			for (JilExpr p : stmt.parameters()) {
 				translateExpression(p, varmap, bytecodes);
 			}
 			
-			if(stmt instanceof Expr.SpecialInvoke) {
+			if(stmt instanceof JilExpr.SpecialInvoke) {
 				bytecodes.add(new Bytecode.Invoke(targetT, stmt.name(),
 						stmt.funType(), Bytecode.SPECIAL));
 			} else if (dispatchMode == DISPATCH_STATIC) {
@@ -617,14 +617,14 @@ public class ClassFileBuilder {
 	protected void translateAssign(Stmt.Assign stmt,
 			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes) {
 
-		if (stmt.lhs() instanceof Expr.Variable) {
-			Expr.Variable var = (Expr.Variable) stmt.lhs();
+		if (stmt.lhs() instanceof JilExpr.Variable) {
+			JilExpr.Variable var = (JilExpr.Variable) stmt.lhs();
 			assert varmap.keySet().contains(var.value());
 			int slot = varmap.get(var.value());
 			translateExpression(stmt.rhs(), varmap, bytecodes);
 			bytecodes.add(new Bytecode.Store(slot, stmt.lhs().type()));
-		} else if (stmt.lhs() instanceof Expr.Deref) {
-			Expr.Deref der = (Expr.Deref) stmt.lhs();
+		} else if (stmt.lhs() instanceof JilExpr.Deref) {
+			JilExpr.Deref der = (JilExpr.Deref) stmt.lhs();
 			translateExpression(der.target(), varmap, bytecodes);
 			translateExpression(stmt.rhs(), varmap, bytecodes);
 			// figure out the type of the field involved
@@ -637,8 +637,8 @@ public class ClassFileBuilder {
 				bytecodes.add(new Bytecode.PutField(lhs_t, der.name(), der
 						.type(), Bytecode.NONSTATIC));
 			}
-		} else if (stmt.lhs() instanceof Expr.ArrayIndex) {
-			Expr.ArrayIndex ai = (Expr.ArrayIndex) stmt.lhs();
+		} else if (stmt.lhs() instanceof JilExpr.ArrayIndex) {
+			JilExpr.ArrayIndex ai = (JilExpr.ArrayIndex) stmt.lhs();
 			translateExpression(ai.target(), varmap, bytecodes);
 			translateExpression(ai.index(), varmap, bytecodes);
 			translateExpression(stmt.rhs(), varmap, bytecodes);
@@ -688,35 +688,35 @@ public class ClassFileBuilder {
 	 *            translated bytecodes are appended to this
 	 * @return the maximum stack size required for this expression
 	 */
-	protected void translateExpression(Expr expr,
+	protected void translateExpression(JilExpr expr,
 			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes) {
 
-		if (expr instanceof Expr.Bool) {			
-			bytecodes.add(new Bytecode.LoadConst(((Expr.Bool) expr).value()));
-		} else if (expr instanceof Expr.Byte) {
-			bytecodes.add(new Bytecode.LoadConst(((Expr.Byte) expr).value()));
-		} else if (expr instanceof Expr.Char) {
-			bytecodes.add(new Bytecode.LoadConst(((Expr.Char) expr).value()));
-		} else if (expr instanceof Expr.Short) {
-			bytecodes.add(new Bytecode.LoadConst(((Expr.Short) expr).value()));
-		} else if (expr instanceof Expr.Int) {
-			bytecodes.add(new Bytecode.LoadConst(((Expr.Int) expr).value()));
-		} else if (expr instanceof Expr.Long) {
-			bytecodes.add(new Bytecode.LoadConst(((Expr.Long) expr).value()));
-		} else if (expr instanceof Expr.Float) {
-			bytecodes.add(new Bytecode.LoadConst(((Expr.Float) expr).value()));
-		} else if (expr instanceof Expr.Double) {
-			bytecodes.add(new Bytecode.LoadConst(((Expr.Double) expr).value()));
-		} else if (expr instanceof Expr.Null) {
+		if (expr instanceof JilExpr.Bool) {			
+			bytecodes.add(new Bytecode.LoadConst(((JilExpr.Bool) expr).value()));
+		} else if (expr instanceof JilExpr.Byte) {
+			bytecodes.add(new Bytecode.LoadConst(((JilExpr.Byte) expr).value()));
+		} else if (expr instanceof JilExpr.Char) {
+			bytecodes.add(new Bytecode.LoadConst(((JilExpr.Char) expr).value()));
+		} else if (expr instanceof JilExpr.Short) {
+			bytecodes.add(new Bytecode.LoadConst(((JilExpr.Short) expr).value()));
+		} else if (expr instanceof JilExpr.Int) {
+			bytecodes.add(new Bytecode.LoadConst(((JilExpr.Int) expr).value()));
+		} else if (expr instanceof JilExpr.Long) {
+			bytecodes.add(new Bytecode.LoadConst(((JilExpr.Long) expr).value()));
+		} else if (expr instanceof JilExpr.Float) {
+			bytecodes.add(new Bytecode.LoadConst(((JilExpr.Float) expr).value()));
+		} else if (expr instanceof JilExpr.Double) {
+			bytecodes.add(new Bytecode.LoadConst(((JilExpr.Double) expr).value()));
+		} else if (expr instanceof JilExpr.Null) {
 			bytecodes.add(new Bytecode.LoadConst(null));
-		} else if (expr instanceof Expr.StringVal) {
-			bytecodes.add(new Bytecode.LoadConst(((Expr.StringVal) expr).value()));
-		} else if (expr instanceof Expr.Array) {
-			translateArrayVal((Expr.Array) expr, varmap, bytecodes);
-		} else if (expr instanceof Expr.Class) {
-			translateClassVal((Expr.Class) expr, varmap, bytecodes);
-		} else if (expr instanceof Expr.Variable) {
-			Expr.Variable lv = (Expr.Variable) expr;
+		} else if (expr instanceof JilExpr.StringVal) {
+			bytecodes.add(new Bytecode.LoadConst(((JilExpr.StringVal) expr).value()));
+		} else if (expr instanceof JilExpr.Array) {
+			translateArrayVal((JilExpr.Array) expr, varmap, bytecodes);
+		} else if (expr instanceof JilExpr.Class) {
+			translateClassVal((JilExpr.Class) expr, varmap, bytecodes);
+		} else if (expr instanceof JilExpr.Variable) {
+			JilExpr.Variable lv = (JilExpr.Variable) expr;
 			if (varmap.containsKey(lv.value())) {				
 				bytecodes.add(new Bytecode.Load(varmap.get(lv.value()), lv.type()));				
 			} else {
@@ -724,37 +724,37 @@ public class ClassFileBuilder {
 						"internal failure (looking for variable " + lv.value()
 								+ ") " + expr);
 			}
-		} else if (expr instanceof Expr.New) {
-			translateNew((Expr.New) expr, varmap, bytecodes,true);
-		} else if (expr instanceof Expr.Deref) {
-			translateDeref((Expr.Deref) expr, varmap, bytecodes);
-		} else if (expr instanceof Expr.ArrayIndex) {
-			Expr.ArrayIndex ai = (Expr.ArrayIndex) expr;
+		} else if (expr instanceof JilExpr.New) {
+			translateNew((JilExpr.New) expr, varmap, bytecodes,true);
+		} else if (expr instanceof JilExpr.Deref) {
+			translateDeref((JilExpr.Deref) expr, varmap, bytecodes);
+		} else if (expr instanceof JilExpr.ArrayIndex) {
+			JilExpr.ArrayIndex ai = (JilExpr.ArrayIndex) expr;
 			translateExpression(ai.target(), varmap, bytecodes);
 			translateExpression(ai.index(), varmap, bytecodes);
 			Type arr_t = ai.target().type();
 			bytecodes.add(new Bytecode.ArrayLoad((Type.Array) arr_t));			
-		} else if (expr instanceof Expr.Invoke) {
-			translateInvoke((Expr.Invoke) expr, varmap, bytecodes, true);
-		} else if (expr instanceof Expr.UnOp) {
-			translateUnaryOp((Expr.UnOp) expr, varmap,bytecodes);
-		} else if (expr instanceof Expr.BinOp) {
-			translateBinaryOp((Expr.BinOp) expr, varmap,bytecodes);
-		} else if (expr instanceof Expr.InstanceOf) {
-			Expr.InstanceOf iof = (Expr.InstanceOf) expr;
+		} else if (expr instanceof JilExpr.Invoke) {
+			translateInvoke((JilExpr.Invoke) expr, varmap, bytecodes, true);
+		} else if (expr instanceof JilExpr.UnOp) {
+			translateUnaryOp((JilExpr.UnOp) expr, varmap,bytecodes);
+		} else if (expr instanceof JilExpr.BinOp) {
+			translateBinaryOp((JilExpr.BinOp) expr, varmap,bytecodes);
+		} else if (expr instanceof JilExpr.InstanceOf) {
+			JilExpr.InstanceOf iof = (JilExpr.InstanceOf) expr;
 			translateExpression(iof.lhs(), varmap, bytecodes);
 			bytecodes.add(new Bytecode.InstanceOf(iof.rhs()));
-		} else if (expr instanceof Expr.Cast) {
-			translateCast((Expr.Cast) expr, varmap,bytecodes);
-		} else if (expr instanceof Expr.Convert) {
-			translateConvert((Expr.Convert) expr, varmap,bytecodes);
+		} else if (expr instanceof JilExpr.Cast) {
+			translateCast((JilExpr.Cast) expr, varmap,bytecodes);
+		} else if (expr instanceof JilExpr.Convert) {
+			translateConvert((JilExpr.Convert) expr, varmap,bytecodes);
 		} else {
 			throw new RuntimeException("Unknown expression encountered ("
 					+ expr + ")");
 		}
 	}
 
-	public void translateClassVal(Expr.Class cval,  HashMap<String, Integer> varmap,
+	public void translateClassVal(JilExpr.Class cval,  HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes) {
 		if(cval.type() instanceof Type.Primitive) {
 			// FIXME: fix class access to primitive types
@@ -766,7 +766,7 @@ public class ClassFileBuilder {
 		}
 	}
 	
-	public void translateDeref(Expr.Deref def, HashMap<String, Integer> varmap,
+	public void translateDeref(JilExpr.Deref def, HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes) {
 		Type tmp_t = def.target().type();
 
@@ -804,16 +804,16 @@ public class ClassFileBuilder {
 		}
 	}
 
-	public void translateArrayVal(Expr.Array av, HashMap<String, Integer> varmap,
+	public void translateArrayVal(JilExpr.Array av, HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes) {
 		
-		List<Expr> params = new ArrayList<Expr>();
-		params.add(new Expr.Int(av.values().size()));
-		translateNew(new Expr.New(av.type(), params, null), varmap, bytecodes,
+		List<JilExpr> params = new ArrayList<JilExpr>();
+		params.add(new JilExpr.Int(av.values().size()));
+		translateNew(new JilExpr.New(av.type(), params, null), varmap, bytecodes,
 				true);
 
 		int index = 0;
-		for (Expr e : av.values()) {
+		for (JilExpr e : av.values()) {
 			bytecodes.add(new Bytecode.Dup(av.type()));
 			bytecodes.add(new Bytecode.LoadConst(index++));
 			translateExpression(e, varmap, bytecodes);
@@ -821,7 +821,7 @@ public class ClassFileBuilder {
 		}
 	}
 
-	public void translateNew(Expr.New news, HashMap<String, Integer> varmap,
+	public void translateNew(JilExpr.New news, HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes, boolean needReturnValue) {
 
 		if (news.type() instanceof Type.Clazz) {
@@ -831,7 +831,7 @@ public class ClassFileBuilder {
 			bytecodes.add(new Bytecode.Dup(news.type()));
 
 			ArrayList<Type> paramTypes = new ArrayList<Type>();
-			for (Expr p : news.parameters()) {
+			for (JilExpr p : news.parameters()) {
 				translateExpression(p, varmap, bytecodes);
 				paramTypes.add(p.type());
 			}
@@ -842,7 +842,7 @@ public class ClassFileBuilder {
 		} else if (news.type() instanceof Type.Array) {
 			int usedStack = 0;
 
-			for (Expr p : news.parameters()) {
+			for (JilExpr p : news.parameters()) {
 				translateExpression(p, varmap, bytecodes);				
 			}
 
@@ -857,19 +857,19 @@ public class ClassFileBuilder {
 		}
 	}
 
-	protected void translateBinaryOp(Expr.BinOp bop, HashMap<String, Integer> varmap,
+	protected void translateBinaryOp(JilExpr.BinOp bop, HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes) {
 
 		// second, translate the binary operator.
 		switch (bop.op()) {
-		case Expr.BinOp.LT:
-		case Expr.BinOp.LTEQ:
-		case Expr.BinOp.GT:
-		case Expr.BinOp.GTEQ:
-		case Expr.BinOp.EQ:
-		case Expr.BinOp.NEQ:
-		case Expr.BinOp.LAND:
-		case Expr.BinOp.LOR: {
+		case JilExpr.BinOp.LT:
+		case JilExpr.BinOp.LTEQ:
+		case JilExpr.BinOp.GT:
+		case JilExpr.BinOp.GTEQ:
+		case JilExpr.BinOp.EQ:
+		case JilExpr.BinOp.NEQ:
+		case JilExpr.BinOp.LAND:
+		case JilExpr.BinOp.LOR: {
 			String trueLabel = "CL" + condLabelCount++;
 			String exitLabel = "CL" + condLabelCount++;
 			translateConditionalBranch(bop, trueLabel, varmap, bytecodes);
@@ -887,11 +887,11 @@ public class ClassFileBuilder {
 		bytecodes.add(new Bytecode.BinOp(bop.op(), bop.type()));		
 	}
 
-	protected void translateUnaryOp(Expr.UnOp uop, HashMap<String, Integer> varmap,
+	protected void translateUnaryOp(JilExpr.UnOp uop, HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes) {
 
 		switch (uop.op()) {
-		case Expr.UnOp.NOT:
+		case JilExpr.UnOp.NOT:
 			String trueLabel = "CL" + condLabelCount++;
 			String exitLabel = "CL" + condLabelCount++;
 			translateConditionalBranch(uop, trueLabel, varmap, bytecodes);
@@ -907,12 +907,12 @@ public class ClassFileBuilder {
 		translateExpression(uop.expr(), varmap, bytecodes);
 
 		switch (uop.op()) {
-		case Expr.UnOp.INV:
+		case JilExpr.UnOp.INV:
 			bytecodes.add(new Bytecode.LoadConst(new Integer(-1)));
 			bytecodes
 					.add(new Bytecode.BinOp(Bytecode.BinOp.XOR, new Type.Int()));			
 			break;
-		case Expr.UnOp.NEG:
+		case JilExpr.UnOp.NEG:
 			bytecodes.add(new Bytecode.Neg(uop.type()));
 			break;
 		default:
@@ -921,7 +921,7 @@ public class ClassFileBuilder {
 		}
 	}
 
-	protected void translateCast(Expr.Cast cast, HashMap<String, Integer> varmap,
+	protected void translateCast(JilExpr.Cast cast, HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes) {
 		
 		translateExpression(cast.expr(), varmap, bytecodes);
@@ -937,7 +937,7 @@ public class ClassFileBuilder {
 		} 		
 	}
 
-	protected void translateConvert(Expr.Convert cast, HashMap<String, Integer> varmap,
+	protected void translateConvert(JilExpr.Convert cast, HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes) {
 		translateExpression(cast.expr(), varmap, bytecodes);
 

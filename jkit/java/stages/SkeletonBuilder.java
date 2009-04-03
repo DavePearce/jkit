@@ -140,11 +140,11 @@ public class SkeletonBuilder {
 				// At this stage, I now create a full body for this method. It's
 				// not clear to me whether or not this is really the best place
 				// to do this, but it seems as good as any.
-				jkit.jil.tree.Expr.Variable superVar = new jkit.jil.tree.Expr.Variable(
+				jkit.jil.tree.JilExpr.Variable superVar = new jkit.jil.tree.JilExpr.Variable(
 						"super", superClass);
 				Type.Function ftype = new Type.Function(new Type.Void());
 				dc.body().add(
-						new jkit.jil.tree.Expr.Invoke(superVar, "super",
+						new jkit.jil.tree.JilExpr.Invoke(superVar, "super",
 								new ArrayList(), ftype, new Type.Void()));
 				// Finally, add the method.
 				skeleton.methods().add(dc);
