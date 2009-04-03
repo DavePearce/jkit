@@ -2,7 +2,7 @@ package jkit.jil.tree;
 
 import java.util.*;
 
-public interface Stmt extends SyntacticElement {
+public interface JilStmt extends SyntacticElement {
 	
 	/**
 	 * An assignment statement.
@@ -11,7 +11,7 @@ public interface Stmt extends SyntacticElement {
 	 *
 	 */
 	public static final class Assign extends SyntacticElementImpl implements
-			Stmt {
+			JilStmt {
 		private JilExpr lhs, rhs;
 
 		public Assign(JilExpr lhs, JilExpr rhs,
@@ -48,7 +48,7 @@ public interface Stmt extends SyntacticElement {
 	/**
 	 * A return statement.
 	 */
-	public static final class Return extends SyntacticElementImpl implements Stmt {
+	public static final class Return extends SyntacticElementImpl implements JilStmt {
 		private JilExpr expr;
 
 		public Return(JilExpr expr, Attribute... attributes) {
@@ -76,7 +76,7 @@ public interface Stmt extends SyntacticElement {
 	 * @author djp
 	 *
 	 */
-	public static final class Throw extends SyntacticElementImpl implements Stmt {
+	public static final class Throw extends SyntacticElementImpl implements JilStmt {
 		private JilExpr expr;
 
 		public Throw(JilExpr expr, Attribute... attributes) {
@@ -104,7 +104,7 @@ public interface Stmt extends SyntacticElement {
 	 * @author djp
 	 *
 	 */
-	public static final class Goto extends SyntacticElementImpl implements Stmt {
+	public static final class Goto extends SyntacticElementImpl implements JilStmt {
 		private String label;
 
 		public Goto(String label, Attribute... attributes) {
@@ -132,7 +132,7 @@ public interface Stmt extends SyntacticElement {
 	 * @author djp
 	 *
 	 */
-	public static final class IfGoto extends SyntacticElementImpl implements Stmt {
+	public static final class IfGoto extends SyntacticElementImpl implements JilStmt {
 		private JilExpr condition;
 		private String label;
 
@@ -165,7 +165,7 @@ public interface Stmt extends SyntacticElement {
 		}
 	}
 	
-	public static final class Label extends SyntacticElementImpl implements Stmt {
+	public static final class Label extends SyntacticElementImpl implements JilStmt {
 		private String label;
 
 		public Label(String label, Attribute... attributes) {
@@ -187,10 +187,10 @@ public interface Stmt extends SyntacticElement {
 		}
 	}
 	
-	public static final class Nop extends SyntacticElementImpl implements Stmt {
+	public static final class Nop extends SyntacticElementImpl implements JilStmt {
 	}
 	
-	public static final class Lock extends SyntacticElementImpl implements Stmt {
+	public static final class Lock extends SyntacticElementImpl implements JilStmt {
 		private JilExpr expr;
 
 		public Lock(JilExpr expr, Attribute... attributes) {
@@ -212,7 +212,7 @@ public interface Stmt extends SyntacticElement {
 		}
 	}
 	
-	public static final class Unlock extends SyntacticElementImpl implements Stmt {
+	public static final class Unlock extends SyntacticElementImpl implements JilStmt {
 		private JilExpr expr;
 
 		public Unlock(JilExpr expr, Attribute... attributes) {

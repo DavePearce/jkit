@@ -159,7 +159,7 @@ public class ClassFileBuilder {
 		}
 
 		// === TRANSLATE BYTECODES ===
-		for(Stmt s : method.body()) {
+		for(JilStmt s : method.body()) {
 			translateStatement(s,localVarMap,bytecodes);
 		}
 		
@@ -302,13 +302,13 @@ public class ClassFileBuilder {
 	 * @param varmap
 	 *            maps local variable names to their slot numbers.
 	 */
-	protected void translateStatement(Stmt stmt,
+	protected void translateStatement(JilStmt stmt,
 			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes) {
-		if (stmt instanceof Stmt.Return) {
-			translateReturn((Stmt.Return) stmt, varmap,
+		if (stmt instanceof JilStmt.Return) {
+			translateReturn((JilStmt.Return) stmt, varmap,
 					bytecodes);
-		} else if (stmt instanceof Stmt.Assign) {
-			translateAssign((Stmt.Assign) stmt, varmap,
+		} else if (stmt instanceof JilStmt.Assign) {
+			translateAssign((JilStmt.Assign) stmt, varmap,
 					bytecodes);
 		} else if (stmt instanceof JilExpr.Invoke) {
 			translateInvoke((JilExpr.Invoke) stmt, varmap,
@@ -316,28 +316,28 @@ public class ClassFileBuilder {
 		} else if (stmt instanceof JilExpr.New) {
 			translateNew((JilExpr.New) stmt, varmap, bytecodes,
 					false);
-		} else if (stmt instanceof Stmt.Nop) {
+		} else if (stmt instanceof JilStmt.Nop) {
 			bytecodes.add(new Bytecode.Nop());
-		} else if (stmt instanceof Stmt.Throw) {
-			translateThrow((Stmt.Throw) stmt, varmap, bytecodes);
-		} else if (stmt instanceof Stmt.Lock) {
-			translateLock((Stmt.Lock) stmt, varmap, bytecodes);
-		} else if (stmt instanceof Stmt.Unlock) {
-			translateUnlock((Stmt.Unlock) stmt, varmap,
+		} else if (stmt instanceof JilStmt.Throw) {
+			translateThrow((JilStmt.Throw) stmt, varmap, bytecodes);
+		} else if (stmt instanceof JilStmt.Lock) {
+			translateLock((JilStmt.Lock) stmt, varmap, bytecodes);
+		} else if (stmt instanceof JilStmt.Unlock) {
+			translateUnlock((JilStmt.Unlock) stmt, varmap,
 					bytecodes);
-		} else if(stmt instanceof Stmt.Label) {
-			translateLabel((Stmt.Label)stmt,varmap,bytecodes);
-		} else if(stmt instanceof Stmt.IfGoto) {
-			translateIfGoto((Stmt.IfGoto)stmt,varmap,bytecodes);
-		} else if(stmt instanceof Stmt.Goto) {
-			translateGoto((Stmt.Goto)stmt,varmap,bytecodes);
+		} else if(stmt instanceof JilStmt.Label) {
+			translateLabel((JilStmt.Label)stmt,varmap,bytecodes);
+		} else if(stmt instanceof JilStmt.IfGoto) {
+			translateIfGoto((JilStmt.IfGoto)stmt,varmap,bytecodes);
+		} else if(stmt instanceof JilStmt.Goto) {
+			translateGoto((JilStmt.Goto)stmt,varmap,bytecodes);
 		} else {
 			throw new RuntimeException("Unknown statement encountered: " + stmt);
 		}
 	}
 
 
-	protected void translateIfGoto(Stmt.IfGoto stmt,
+	protected void translateIfGoto(JilStmt.IfGoto stmt,
 			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes) {
 		translateConditionalBranch(stmt.condition(), stmt.label(), varmap,
 				bytecodes);
@@ -603,7 +603,7 @@ public class ClassFileBuilder {
 	 * @param bytecodes
 	 * @return
 	 */
-	protected void translateReturn(Stmt.Return ret,
+	protected void translateReturn(JilStmt.Return ret,
 			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes) {
 
 		if (ret.expr() != null) {
@@ -614,7 +614,7 @@ public class ClassFileBuilder {
 		}
 	}
 
-	protected void translateAssign(Stmt.Assign stmt,
+	protected void translateAssign(JilStmt.Assign stmt,
 			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes) {
 
 		if (stmt.lhs() instanceof JilExpr.Variable) {
@@ -649,30 +649,30 @@ public class ClassFileBuilder {
 		}
 	}
 
-	protected void translateThrow(Stmt.Throw stmt,
+	protected void translateThrow(JilStmt.Throw stmt,
 			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes) {
 		translateExpression(stmt.expr(), varmap, bytecodes);
 		bytecodes.add(new Bytecode.Throw());
 	}
 
-	protected void translateLock(Stmt.Lock stmt, HashMap<String, Integer> varmap,
+	protected void translateLock(JilStmt.Lock stmt, HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes) {
 		translateExpression(stmt.expr(), varmap, bytecodes);
 		bytecodes.add(new Bytecode.MonitorEnter());
 	}
 
-	protected void translateUnlock(Stmt.Unlock stmt, HashMap<String, Integer> varmap,
+	protected void translateUnlock(JilStmt.Unlock stmt, HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes) {
 		translateExpression(stmt.expr(), varmap, bytecodes);
 		bytecodes.add(new Bytecode.MonitorExit());
 	}
 
-	protected void translateLabel(Stmt.Label label, HashMap<String, Integer> varmap,
+	protected void translateLabel(JilStmt.Label label, HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes) {
 		bytecodes.add(new Bytecode.Label(label.label()));
 	}
 	
-	protected void translateGoto(Stmt.Goto stmt, HashMap<String, Integer> varmap,
+	protected void translateGoto(JilStmt.Goto stmt, HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes) {
 		bytecodes.add(new Bytecode.Goto(stmt.label()));
 	}

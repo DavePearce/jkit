@@ -358,7 +358,7 @@ public interface JilExpr extends SyntacticElement {
 	 * @author djp
 	 * 
 	 */
-	public static class Invoke extends SyntacticElementImpl implements JilExpr, Stmt {
+	public static class Invoke extends SyntacticElementImpl implements JilExpr, JilStmt {
 		protected JilExpr target;
 		protected String name;
 		protected List<JilExpr> parameters;
@@ -527,7 +527,7 @@ public interface JilExpr extends SyntacticElement {
 	 * @author djp
 	 * 
 	 */
-	public static final class New extends SyntacticElementImpl implements JilExpr, Stmt {
+	public static final class New extends SyntacticElementImpl implements JilExpr, JilStmt {
 		private Type.Reference type;
 		private JilExpr context;
 		private List<JilExpr> parameters;

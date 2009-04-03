@@ -63,7 +63,7 @@ public class VariableDefinitions extends ForwardAnalysis<UnionFlowSet<String>>
 	}
 	
 	public void transfer(Point p, UnionFlowSet<String> in) {		
-		Stmt stmt = p.statement();
+		JilStmt stmt = p.statement();
 		if(stmt instanceof Assign) {
 			transfer(p,(Assign)stmt,in);					
 		} else if(stmt instanceof Invoke) {

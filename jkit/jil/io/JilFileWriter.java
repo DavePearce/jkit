@@ -89,26 +89,26 @@ public class JilFileWriter {
 		
 		output.println(") {");
 		
-		for(Stmt s : m.body()) {
+		for(JilStmt s : m.body()) {
 			write(s);
 		}
 		
 		output.println("\t}");	
 	}
 	
-	protected void write(Stmt s) {
-		if(s instanceof Stmt.Assign) {
-			write((Stmt.Assign)s);
-		} else if(s instanceof Stmt.Return) {
-			write((Stmt.Return)s);
-		} else if(s instanceof Stmt.Throw) {
-			write((Stmt.Return)s);
-		} else if(s instanceof Stmt.IfGoto) {
-			write((Stmt.IfGoto)s);
-		} else if(s instanceof Stmt.Goto) {
-			write((Stmt.Goto)s);
-		} else if(s instanceof Stmt.Label) {
-			write((Stmt.Label)s);
+	protected void write(JilStmt s) {
+		if(s instanceof JilStmt.Assign) {
+			write((JilStmt.Assign)s);
+		} else if(s instanceof JilStmt.Return) {
+			write((JilStmt.Return)s);
+		} else if(s instanceof JilStmt.Throw) {
+			write((JilStmt.Return)s);
+		} else if(s instanceof JilStmt.IfGoto) {
+			write((JilStmt.IfGoto)s);
+		} else if(s instanceof JilStmt.Goto) {
+			write((JilStmt.Goto)s);
+		} else if(s instanceof JilStmt.Label) {
+			write((JilStmt.Label)s);
 		} else if(s instanceof JilExpr.Invoke) {
 			output.print("\t\t");
 			write((JilExpr.Invoke)s);
@@ -119,7 +119,7 @@ public class JilFileWriter {
 		}
 	}
 	
-	protected void write(Stmt.Assign s) {
+	protected void write(JilStmt.Assign s) {
 		output.print("\t\t");
 		
 		if(s.lhs() instanceof JilExpr.Variable) {
@@ -132,7 +132,7 @@ public class JilFileWriter {
 		output.println(";");
 	}
 	
-	protected void write(Stmt.Return s) {
+	protected void write(JilStmt.Return s) {
 		output.print("\t\treturn");
 		if(s.expr() != null) {
 			output.print(" ");
@@ -141,7 +141,7 @@ public class JilFileWriter {
 		output.println(";");
 	}
 	
-	protected void write(Stmt.Throw s) {
+	protected void write(JilStmt.Throw s) {
 		output.println("\t\tthrow");
 		if(s.expr() != null) {
 			output.print(" ");
@@ -150,17 +150,17 @@ public class JilFileWriter {
 		output.println(";");
 	}
 	
-	protected void write(Stmt.Goto s) {
+	protected void write(JilStmt.Goto s) {
 		output.println("\t\tgoto " + s.label() + ";");
 	}
 	
-	protected void write(Stmt.IfGoto s) {
+	protected void write(JilStmt.IfGoto s) {
 		output.print("\t\tif(");
 		write(s.condition());
 		output.println(") goto " + s.label() + ";");
 	}
 	
-	protected void write(Stmt.Label s) {
+	protected void write(JilStmt.Label s) {
 		output.println("\t" + s.label() + ":");
 	}
 	
