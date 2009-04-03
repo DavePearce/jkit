@@ -3,7 +3,7 @@ package jkit.jil.tree;
 import java.util.*;
 
 
-public class Field extends SyntacticElementImpl {
+public class Field extends SyntacticElementImpl implements jkit.compiler.Clazz.Field {
 	private String name;
 	private Type type;
 	private List<Modifier> modifiers;

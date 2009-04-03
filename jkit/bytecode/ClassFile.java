@@ -2,10 +2,11 @@ package jkit.bytecode;
 
 import java.util.*;
 
+import jkit.compiler.Clazz;
 import jkit.jil.tree.*;
 import jkit.util.Pair;
 
-public class ClassFile {
+public class ClassFile implements Clazz {
 	protected int version;
 	protected Type.Clazz type;
 	protected Type.Clazz superClazz;
@@ -31,7 +32,11 @@ public class ClassFile {
 		return type;
 	}
 	
-	public Type.Clazz superClazz() {
+	public String name() {
+		return type.lastComponent().first();
+	}
+	
+	public Type.Clazz superClass() {
 		return superClazz;
 	}
 	
@@ -149,7 +154,7 @@ public class ClassFile {
 		return type.components().size() > 1;
 	}
 	
-	public static class Field {
+	public static class Field implements Clazz.Field {
 		protected String name;
 		protected Type type;
 		protected List<Modifier> modifiers;
@@ -240,7 +245,7 @@ public class ClassFile {
 		}
 	}
 	
-	public static class Method {
+	public static class Method implements Clazz.Method {
 		protected String name;
 		protected Type.Function type;
 		protected List<Modifier> modifiers;

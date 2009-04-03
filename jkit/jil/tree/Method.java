@@ -4,7 +4,7 @@ import java.util.*;
 import jkit.util.Pair;
 import jkit.jil.util.*;
 
-public class Method extends SyntacticElementImpl {
+public class Method extends SyntacticElementImpl implements jkit.compiler.Clazz.Field {
 	private String name;
 	private Type.Function type;
 	private List<Modifier> modifiers;

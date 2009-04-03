@@ -2,12 +2,12 @@ package jkit.jil.tree;
 
 import java.util.*;
 
-public class Clazz extends SyntacticElementImpl {
+public class Clazz extends SyntacticElementImpl implements jkit.compiler.Clazz {
 	private List<Modifier> modifiers;
 	private Type.Clazz type;
 	private Type.Clazz superClass; // maybe null if no supertype (i.e. this is java.lang.Object)
 	private List<Type.Clazz> interfaces;
-	private List<Field> fields;
+	private List<jkit.jil.tree.Field> fields;
 	private List<Method> methods;
 	
 	/**

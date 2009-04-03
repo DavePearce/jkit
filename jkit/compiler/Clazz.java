@@ -51,7 +51,7 @@ public interface Clazz {
      * 
      * @return
      */
-	public List<Field> fields();
+	public List<? extends Field> fields();
 	
 	/**
      * Access the methods contained in this object. The returned list may be
@@ -60,7 +60,7 @@ public interface Clazz {
      * 
      * @return
      */
-	public List<Method> methods();
+	public List<? extends Method> methods();
 	
 	/**
      * Access the modifiers contained in this class object. The returned list
