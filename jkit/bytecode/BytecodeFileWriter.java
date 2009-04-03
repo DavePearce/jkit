@@ -110,8 +110,11 @@ public class BytecodeFileWriter {
 			a.print(output,poolMap);
 		}					
 	}	
-
-	protected void writeModifiers(List<Modifier> modifiers) {
+	protected void writeModifiers(List<Modifier> modifiers) {	
+		writeModifiers(modifiers,output);
+	}
+	
+	public static void writeModifiers(List<Modifier> modifiers, PrintWriter output) {
 		for (Modifier x : modifiers) {
 			if (x instanceof Modifier.Base) {
 				int mod = ((Modifier.Base) x).modifier();

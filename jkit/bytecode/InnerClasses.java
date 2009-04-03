@@ -1,9 +1,11 @@
 package jkit.bytecode;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import jkit.jil.tree.Clazz;
 import jkit.jil.tree.Modifier;
@@ -11,10 +13,70 @@ import jkit.jil.tree.Type;
 import jkit.util.Pair;
 
 public class InnerClasses implements Attribute {
-	protected Clazz clazz;
+	protected List<Pair<Type.Clazz,List<Modifier>>> inners;
+	protected List<Pair<Type.Clazz,List<Modifier>>> outers;
+	protected Type.Clazz type;
 	
-	public InnerClasses(Clazz clazz) {
-		this.clazz = clazz;
+	public String name() {
+		return "InnerClasses";
+	}
+	
+	/**
+	 * Create an InnerClasses attribute (see JLS Section 4.7.5).
+	 * 
+	 * @param type - the type of the class containing this attribute.
+	 * @param inners - the types and modifiers for all classes contained in this class.
+	 * @param outers-  the types and modifiers for all classes containing this class.
+	 */
+	public InnerClasses(Type.Clazz type,
+			List<Pair<Type.Clazz, List<Modifier>>> inners,
+			List<Pair<Type.Clazz, List<Modifier>>> outers) {
+		this.type = type;
+		this.inners = inners;
+		this.outers = outers;
+	}
+	
+	/**
+	 * When this method is called, the attribute must add all items that it
+	 * needs to the constant pool.
+	 * 
+	 * @param constantPool
+	 */
+	public void addPoolItems(Set<Constant.Info> constantPool) {
+		Constant.addPoolItem(new Constant.Utf8("InnerClasses"), constantPool);
+		for(Pair<Type.Clazz,List<Modifier>> i : outers) {
+			Constant.addPoolItem(Constant.buildClass(type),constantPool);
+			Constant.addPoolItem(Constant.buildClass(i.first()),constantPool);
+			String name = type.lastComponent().first();
+			Constant.addPoolItem(new Constant.Utf8(name),constantPool);		
+		}
+		
+		for(Pair<Type.Clazz,List<Modifier>> i : inners) {
+			Constant.addPoolItem(Constant.buildClass(type),constantPool);
+			Constant.addPoolItem(Constant.buildClass(i.first()),constantPool);
+			String name = i.first().lastComponent().first();
+			Constant.addPoolItem(new Constant.Utf8(name),constantPool);										
+		}		
+	}
+	
+	public void print(PrintWriter output, Map<Constant.Info, Integer> constantPool) {
+		output.println("  InnerClasses:");
+		for(Pair<Type.Clazz,List<Modifier>> i : outers) {
+			String name = type.lastComponent().first();
+			int nameIndex = constantPool.get(new Constant.Utf8(name));			
+			int innerIndex = constantPool.get(Constant.buildClass(i.first()));
+			int outerIndex = constantPool.get(Constant.buildClass(type));
+			output.print("   ");
+			BytecodeFileWriter.writeModifiers(i.second(),output);
+			output.println(nameIndex + "= " + innerIndex + " of " + outerIndex);																
+		}	
+		for(Pair<Type.Clazz,List<Modifier>> i : inners) {
+			String name = i.first().lastComponent().first();
+			int nameIndex = constantPool.get(new Constant.Utf8(name));
+			int innerIndex = constantPool.get(Constant.buildClass(type));
+			int outerIndex = constantPool.get(Constant.buildClass(i.first()));	
+			output.println("   " + nameIndex + "= " + innerIndex + " of " + outerIndex);																
+		}			
 	}
 	
 	/**
@@ -22,49 +84,30 @@ public class InnerClasses implements Attribute {
      * class, or what inner class this class is in.
      * 
      * @param clazz
-     * @param pmap
+     * @param constantPool
      */
 	public void write(BinaryOutputStream output,
-			Map<Constant.Info, Integer> pmap) throws IOException {
-		output.write_u2(pmap.get(new Constant.Utf8("InnerClasses")));
+			Map<Constant.Info, Integer> constantPool) throws IOException {
+		output.write_u2(constantPool.get(new Constant.Utf8("InnerClasses")));
 		
-		int ninners = clazz.inners().size() + clazz.type().components().size()
-				- 1;
+		int ninners = inners.size() + outers.size();
 		
 		output.write_u4(2 + (8 * ninners));
 		output.write_u2(ninners);
 		
-		if(clazz.isInnerClass()) {
-			Type.Clazz inner = clazz.type();
-			List<Pair<String,List<Type.Reference>>> classes = clazz.type().components();
-			for(int i=classes.size()-1;i>0;--i) {		
-				// First, we need to construct the outer reference type.
-				List<Pair<String,List<Type.Reference>>> nclasses = new ArrayList();
-				for(Pair<String,List<Type.Reference>> p : classes) {
-					nclasses.add(p);
-				}							
-				Type.Clazz outer = new Type.Clazz(inner.pkg(),nclasses);
-				// Now, we can actually write the information.
-				output.write_u2(pmap.get(Constant.buildClass(inner)));
-				output.write_u2(pmap.get(Constant.buildClass(outer)));
-				output.write_u2(pmap.get(new Constant.Utf8(inner.components().get(
-						inner.components().size() - 1).first())));
-				try {
-					// This dependence on ClassTable here is annoying really.
-					Clazz innerC = loader.loadClass(inner);
-					ClassFileWriter.writeModifiers(innerC.modifiers(),output);
-				} catch(ClassNotFoundException e) {
-					output.write_u2(0); // this is a problem!!!!
-				 }
-				inner = outer;				
-			}
+		for(Pair<Type.Clazz,List<Modifier>> i : outers) {
+			output.write_u2(constantPool.get(Constant.buildClass(type)));
+			output.write_u2(constantPool.get(Constant.buildClass(i.first())));
+			String name = type.lastComponent().first();
+			output.write_u2(constantPool.get(new Constant.Utf8(name)));
+			ClassFileWriter.writeModifiers(i.second(),output);								
 		}		
 		
-		for(Pair<Type.Clazz,List<Modifier>> i : clazz.inners()) {
-			output.write_u2(pmap.get(Constant.buildClass(i.first())));
-			output.write_u2(pmap.get(Constant.buildClass(clazz.type())));
+		for(Pair<Type.Clazz,List<Modifier>> i : inners) {
+			output.write_u2(constantPool.get(Constant.buildClass(i.first())));
+			output.write_u2(constantPool.get(Constant.buildClass(type)));
 			String name = i.first().lastComponent().first();
-			output.write_u2(pmap.get(new Constant.Utf8(name)));
+			output.write_u2(constantPool.get(new Constant.Utf8(name)));
 			ClassFileWriter.writeModifiers(i.second(),output);			
 		}		
 	}

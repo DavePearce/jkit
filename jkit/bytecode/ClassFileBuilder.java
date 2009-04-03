@@ -21,16 +21,42 @@ public class ClassFileBuilder {
 		ClassFile cfile = new ClassFile(version, clazz.type(), clazz
 				.superClass(), clazz.interfaces(), clazz.modifiers());
 		
-		if(needClassSignature(clazz)) {
+		if (needClassSignature(clazz)) {
 			cfile.attributes().add(
 					new ClassSignature(clazz.type(), clazz.superClass(), clazz
 							.interfaces()));
 		}
 		
+		buildInnerClasses(clazz,cfile);
 		buildFields(clazz,cfile);
 		buildMethods(clazz,cfile);					
 		
 		return cfile;
+	}
+	
+	protected void buildInnerClasses(Clazz clazz, ClassFile cfile) {
+		if(clazz.isInnerClass()) {
+			System.out.println("ADDING INNER CLASS ATTRIBUTE");
+			// this is basically about building the inner classes attribute
+			ArrayList<Pair<Type.Clazz,List<Modifier>>> inners = new ArrayList();
+			ArrayList<Pair<Type.Clazz,List<Modifier>>> outers = new ArrayList();
+
+			Type.Clazz inner = clazz.type();
+			List<Pair<String,List<Type.Reference>>> components = inner.components();
+			
+			for(int i=components.size()-1;i>=0;--i) {
+				List<Pair<String,List<Type.Reference>>> ncomponents = components.subList(0,i);
+				Type.Clazz ref = new Type.Clazz(inner.pkg(),ncomponents);
+				try {
+					Clazz ic = loader.loadClass(ref);
+					outers.add(new Pair(ic.type(),ic.modifiers()));
+				} catch(ClassNotFoundException e) {
+					// this is a problem, but for now we'll just ignore it
+				}
+			}
+			
+			cfile.attributes().add(new InnerClasses(clazz.type(),inners,outers));
+		}
 	}
 	
 	protected void buildFields(Clazz clazz, ClassFile cfile) {
