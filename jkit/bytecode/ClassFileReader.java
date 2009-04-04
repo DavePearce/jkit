@@ -399,9 +399,9 @@ public class ClassFileReader {
 		return new Exceptions(exceptions);
 	}
 	
-	protected FieldSignature parseSignature(int offset, String name) {
+	protected FieldSignature parseFieldSignature(int offset, String name) {
 		String sig = getString(read_u2(offset+6));
-		return new FieldSignature(parseType(sig));
+		return new FieldSignature(parseDescriptor(sig));
 	}
 	
 	protected ConstantValue parseConstantValue(int offset, String name) {
