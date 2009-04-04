@@ -164,38 +164,24 @@ public class ClassFileReader {
 			}	    		    		    		    	
 		}
 	
-		ArrayList<Attribute> attributes = parseAttributes(index);		
-		
-		// now, try and figure out the full type of this class
-		
-		ClassSignature s = null;
-		
-		for(Attribute a : attributes) {
-			if(a instanceof ClassSignature) { 
-				s = (ClassSignature) a; 
-			} 
-		} 	
-		
 		Type.Clazz type = parseClassDescriptor("L" + name + ";");
 		Type.Clazz superType = superClass == null ? null
 				: parseClassDescriptor("L" + superClass + ";");
 		
-		if(s != null) { 
-			interfaces = s.interfaces();
-			superType = s.superClass();
-			// Append generic parameters onto reference type.
-			// There is a bug here, when we have an inner class, whose outer 
-			// class has generic parameters.
-			/* to be moved somewhere
-			List<Type.Reference> genericParams = s.type();
-			List<Pair<String,List<Type.Reference>>> classes = type.components();
-			Pair<String,List<Type.Reference>> nc = new Pair<String, List<Type.Reference>>(
-					classes.get(classes.size() - 1).first(), genericParams);
-			 
-			classes.set(classes.size()-1,nc);
-			*/
-			type = s.type();
-		}							
+		ArrayList<Attribute> attributes = parseAttributes(index, CLASS_CONTEXT, type);		
+		
+		// now, try and figure out the full type of this class
+		
+		ClassSignature s = null;				
+		
+		for(Attribute a : attributes) {
+			if(a instanceof ClassSignature) { 
+				s = (ClassSignature) a;
+				type = s.type();
+				superType = s.superClass();
+				interfaces = s.interfaces();
+			} 
+		} 					
 		
 		ClassFile cfile = new ClassFile(version, type, superType, interfaces, listModifiers(modifiers,false));
 		
@@ -260,7 +246,7 @@ public class ClassFileReader {
 		int index = offset + 8;
 		for(int j=0;j!=acount;++j) {
 			int len = read_i4(index+2);
-			attributes.add(parseAttribute(index));
+			attributes.add(parseAttribute(index, FIELD_CONTEXT, null));
 			index += len + 6;
 		}
 		
@@ -320,7 +306,7 @@ public class ClassFileReader {
 		int index = offset + 8;
 		for(int j=0;j!=acount;++j) {
 			int len = read_i4(index+2);
-			attributes.add(parseAttribute(index));
+			attributes.add(parseAttribute(index, METHOD_CONTEXT, null));
 			index += len + 6;
 		}
 				
@@ -341,23 +327,27 @@ public class ClassFileReader {
 		return cm;
 	}
 	
+	public static final int CLASS_CONTEXT = 0;
+	public static final int METHOD_CONTEXT = 1;
+	public static final int FIELD_CONTEXT = 2;
+	
 	/**
 	 * parse any attributes associated with this field.
 	 * @return
 	 */
-	protected ArrayList<Attribute> parseAttributes(int attributes) {
+	protected ArrayList<Attribute> parseAttributes(int attributes, int context, Type.Clazz type) {
 		int acount = read_u2(attributes);
 		ArrayList<Attribute> r = new ArrayList<Attribute>();
 		int index = attributes + 2;
 		for(int j=0;j!=acount;++j) {
 			int len = read_i4(index+2);
-			r.add(parseAttribute(index));
+			r.add(parseAttribute(index, context, type));
 			index += len + 6;
 		}
 		return r;
 	}
 	
-	protected Attribute parseAttribute(int offset) {
+	protected Attribute parseAttribute(int offset, int context, Type.Clazz type) {
 		String name = getString(read_u2(offset));
 		
 		if(name.equals("Code")) {
@@ -370,7 +360,13 @@ public class ClassFileReader {
 			// ignore these for now			
 			// return parseParameterAnnotations(offset,name);
 		} else if(name.equals("Signature")) {
-			return parseSignature(offset,name);
+			if(context == CLASS_CONTEXT) {
+				return parseClassSignature(offset,name,type);
+			} else if(context == FIELD_CONTEXT) {
+				return parseFieldSignature(offset,name);
+			} else {
+				return parseMethodSignature(offset,name);
+			}
 		} else if(name.equals("Exceptions")) {			
 			return parseExceptions(offset,name);
 		} else if(name.equals("InnerClasses")) {
@@ -399,9 +395,30 @@ public class ClassFileReader {
 		return new Exceptions(exceptions);
 	}
 	
+	protected MethodSignature parseMethodSignature(int offset, String name) {
+		String sig = getString(read_u2(offset+6));
+		return new MethodSignature(parseMethodDescriptor(sig));
+	}
+	
 	protected FieldSignature parseFieldSignature(int offset, String name) {
 		String sig = getString(read_u2(offset+6));
 		return new FieldSignature(parseDescriptor(sig));
+	}
+	
+	protected ClassSignature parseClassSignature(int offset, String name, Type.Clazz type) {
+		String sig = getString(read_u2(offset+6));
+		Triple<List<Type.Reference>,Type.Clazz,List<Type.Clazz>> r = parseClassSigDesc(sig);
+		// Append generic parameters onto reference type.
+		// There is a bug here, when we have an inner class, whose outer 
+		// class has generic parameters.
+		List<Type.Reference> genericParams = r.first();
+		List<Pair<String,List<Type.Reference>>> classes = type.components();
+		Pair<String,List<Type.Reference>> nc = new Pair<String, List<Type.Reference>>(
+				classes.get(classes.size() - 1).first(), genericParams);
+		 
+		classes.set(classes.size()-1,nc);
+		type = new Type.Clazz(type.pkg(),classes);
+		return new ClassSignature(type,r.second(),r.third());
 	}
 	
 	protected ConstantValue parseConstantValue(int offset, String name) {
@@ -422,7 +439,7 @@ public class ClassFileReader {
 			inners.add(new Triple(parseClassDescriptor("L" + inner_class_name
 					+ ";"), inner_class_access_flags, inner_name_idx == 0));
 		}
-		return new Attribute.InnerClasses(name,inners);
+		return new InnerClasses(inners);
 	}
 	
 	/**
@@ -450,7 +467,7 @@ public class ClassFileReader {
 	 * 
 	 * @return
 	 */
-	protected Triple<List<Type.Reference>, Type.Clazz, List<Type.Clazz>> parseClassSignature(
+	protected Triple<List<Type.Reference>, Type.Clazz, List<Type.Clazz>> parseClassSigDesc(
 			String descriptor) {
 		int pos = 0;
 		ArrayList<Type.Reference> targs = new ArrayList<Type.Reference>();
