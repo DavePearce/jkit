@@ -370,7 +370,7 @@ public class ClassFileReader {
 		} else if(name.equals("Exceptions")) {			
 			return parseExceptions(offset,name);
 		} else if(name.equals("InnerClasses")) {
-			return parseInnerClasses(offset,name);
+			return parseInnerClasses(offset,name,type);
 		} else if(name.equals("ConstantValue")) {
 			return parseConstantValue(offset, name);
 		}
@@ -426,20 +426,28 @@ public class ClassFileReader {
 		return new ConstantValue(name, obj);
 	}	
 	
-	protected InnerClasses parseInnerClasses(int offset, String name) {
-		ArrayList<Triple<Type.Reference, Integer, Boolean>> inners = new ArrayList<Triple<Type.Reference, Integer, Boolean>>();		
+	protected InnerClasses parseInnerClasses(int offset, String name, Type.Clazz type) {			
 		offset += 6;
 		int numClasses = read_u2(offset);
 		offset += 2;
+		ArrayList<Pair<Type.Clazz,List<Modifier>>> inners = new ArrayList();
+		ArrayList<Pair<Type.Clazz,List<Modifier>>> outers = new ArrayList();
+		
 		for(int i=0;i!=numClasses;++i,offset=offset+8) {
 			String inner_class_name = getClassName(read_u2(offset));
 			int outer_class_info = read_u2(offset+2); 
 			int inner_name_idx = read_u2(offset+4);
 			int inner_class_access_flags = read_u2(offset+6);
-			inners.add(new Triple(parseClassDescriptor("L" + inner_class_name
-					+ ";"), inner_class_access_flags, inner_name_idx == 0));
+			Type.Clazz tc = parseClassDescriptor("L" + inner_class_name + ";");
+			List<Modifier> mods = listModifiers(inner_class_access_flags,false);
+			if(tc.components().size() < type.components().size()) {
+				inners.add(new Pair(tc,mods));
+			} else {
+				inners.add(new Pair(tc,mods));
+			}
 		}
-		return new InnerClasses(inners);
+		
+		return new InnerClasses(type,inners, outers);
 	}
 	
 	/**

@@ -444,14 +444,17 @@ public class SkeletonBuilder {
 					interfaces.add(superType);
 					skeleton = new JilClass(myType, new ArrayList<Modifier>(),
 							new Type.Clazz("java.lang", "Object"), interfaces,
-							new ArrayList<JilField>(), new ArrayList<JilMethod>(), e
-									.attributes());
+							new ArrayList<Type.Clazz>(),
+							new ArrayList<JilField>(),
+							new ArrayList<JilMethod>(), e.attributes());
 				} else {
-					// In this case, we're extending directly from a super class.
+					// In this case, we're extending directly from a super
+					// class.
 					skeleton = new JilClass(myType, new ArrayList<Modifier>(),
 							superType, new ArrayList<Type.Clazz>(),
-							new ArrayList<JilField>(), new ArrayList<JilMethod>(), e
-									.attributes());
+							new ArrayList<Type.Clazz>(),
+							new ArrayList<JilField>(),
+							new ArrayList<JilMethod>(), e.attributes());
 				}
 				
 				loader.register(skeleton);

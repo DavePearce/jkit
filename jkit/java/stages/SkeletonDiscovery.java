@@ -40,7 +40,7 @@ public class SkeletonDiscovery {
 		return skeletons;
 	}
 	
-	protected List<JilClass> doDeclaration(Decl d, String pkg, Type.Clazz parent) {		
+	protected List<JilClass> doDeclaration(Decl d, String pkg, Type.Clazz parent) {				
 		if(d instanceof Decl.JavaInterface) {
 			return doInterface((Decl.JavaInterface)d,pkg,parent);
 		} else if(d instanceof Decl.JavaEnum) {
@@ -92,13 +92,21 @@ public class SkeletonDiscovery {
 		
 		for(Decl d : c.declarations()) {			
 			skeletons.addAll(doDeclaration(d,pkg,type));
-		}				
-				
+		}								
+		
 		/**
-		 * Now, construct the skeleton for this class! 
+		 * Construct inner classes list.
+		 */
+		ArrayList<Type.Clazz> inners = new ArrayList<Type.Clazz>();
+		for(JilClass jc : skeletons) {
+			inners.add(jc.type());
+		}
+		
+		/**
+		 * Now, construct the skeleton for this class!
 		 */
 		skeletons.add(new JilClass(type, c.modifiers(), null, new ArrayList(),
-				new ArrayList(), new ArrayList()));
+				inners, new ArrayList(), new ArrayList()));
 						
 		return skeletons;
 	}

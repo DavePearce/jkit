@@ -36,6 +36,16 @@ public class InnerClasses implements Attribute {
 		this.outers = outers;
 	}
 	
+	protected List<Pair<Type.Clazz,List<Modifier>>> inners() {
+		return inners;
+	}
+	protected List<Pair<Type.Clazz,List<Modifier>>> outers() {
+		return outers;
+	}
+	protected Type.Clazz type() {
+		return type;
+	}
+	
 	/**
 	 * When this method is called, the attribute must add all items that it
 	 * needs to the constant pool.

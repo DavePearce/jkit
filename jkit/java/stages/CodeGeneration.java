@@ -110,6 +110,7 @@ public class CodeGeneration {
 	protected void doMethod(Decl.JavaMethod d, JilClass parent) {			
 		Type.Function type = (Type.Function) d.attribute(Type.class);
 		List<JilStmt> stmts = doStatement(d.body());
+		
 		// First, off. If this is a constructor, then check whether there is an
 		// explicit super constructor call or not.  If not, then add one.
 		if (d.name().equals(parent.name())) {
@@ -123,8 +124,8 @@ public class CodeGeneration {
 		// Now, add this statement list to the jil method representing this java
 		// method.
 		
-		for(JilMethod m : parent.methods()) {
-			if(m.type().equals(type)) {
+		for (JilMethod m : parent.methods()) {
+			if (m.name().equals(d.name()) && m.type().equals(type)) {
 				m.body().addAll(stmts);
 			}
 		}			
