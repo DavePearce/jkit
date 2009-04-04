@@ -113,7 +113,7 @@ public class CodeGeneration {
 		
 		// First, off. If this is a constructor, then check whether there is an
 		// explicit super constructor call or not.  If not, then add one.
-		if (d.name().equals(parent.name())) {
+		if (!parent.isInterface() && d.name().equals(parent.name())) {
 			if(!superCallFirst(stmts)) {			
 				stmts.add(0, new JilExpr.Invoke(new JilExpr.Variable("super", parent
 						.superClass()), "super", new ArrayList<JilExpr>(),

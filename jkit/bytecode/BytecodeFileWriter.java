@@ -29,8 +29,9 @@ public class BytecodeFileWriter {
 				output.println(c);
 			}
 		}
-		
-		output.print("\nclass " + cfile.type() + " ");
+		output.println();
+		writeModifiers(cfile.modifiers());
+		output.print("class " + cfile.type() + " ");
 		if(cfile.superClass() != null) {
 			output.print(" extends " + cfile.superClass());
 		}

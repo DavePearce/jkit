@@ -126,8 +126,9 @@ public class ClassFileWriter {
 		}
 	}
 
-	protected void writeModifiers(List<Modifier> modifiers) throws IOException {
-		writeModifiers(modifiers,output);
+	protected void writeModifiers(List<Modifier> modifiers)
+			throws IOException {
+		writeModifiers(modifiers, output);
 	}
 	
 	// static so that it can be reused.
@@ -137,7 +138,8 @@ public class ClassFileWriter {
 
 		for (Modifier x : modifiers) {
 			if (x instanceof Modifier.Base) {
-				mods |= ((Modifier.Base) x).modifier();
+				Modifier.Base b = (Modifier.Base) x;				
+				mods |= b.modifier();
 			}
 		}
 

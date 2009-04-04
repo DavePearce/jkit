@@ -129,7 +129,8 @@ public class SkeletonBuilder {
 			}
 			
 			// Now, also need to add a default constructor, if there is none.
-			if(skeleton.methods(skeleton.name()).isEmpty()) {
+			if (!skeleton.isInterface()
+					&& skeleton.methods(skeleton.name()).isEmpty()) {
 				// if we get here, then no constructor has been provided.
 				// Therefore, must add the default constructor.
 				List<Modifier> mods = new ArrayList<Modifier>();
