@@ -223,9 +223,24 @@ public class JavaCompiler implements Compiler {
 			// Eigth, eliminate side effects from expressions
 			generateJilCode(filename, jfile, loader);
 			
-			// Eigth, write out the compiled class file(s).			
+			// Ok, at this point, we need to determine the root component of the
+			// original filename.
+			String path = filename.getPath();
+			int i = 0;
+			int rootEnd = path.lastIndexOf(File.separatorChar,path.length()-1);
+			while(i != -1) {
+				i = jfile.pkg().indexOf('.',i);
+				rootEnd = path.lastIndexOf(File.separatorChar,rootEnd);
+			}	
+			File outdir = outputDirectory;
+			if(rootEnd != -1) {
+				String root = path.substring(0, rootEnd);				
+				outdir = new File(outputDirectory,root);
+			}
+			
+			// Ninth, write out the compiled class file(s).			
 			for(JilClass clazz : skeletons) {				
-				writeOutputFile(createBasename(clazz.type()), clazz, outputDirectory);				
+				writeOutputFile(createBasename(clazz.type()), clazz, outdir);				
 			}
 						
 			compiling.remove(filename);
