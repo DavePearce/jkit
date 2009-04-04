@@ -10,10 +10,10 @@ import jkit.jil.tree.*;
  * This is for method and/or field signatures
  * @author djp 
  */
-public class Signature implements Attribute {
+public class FieldSignature implements Attribute {
 	protected Type type;
 	
-	public Signature(Type type) {
+	public FieldSignature(Type type) {
 		this.type = type;
 	}
 	

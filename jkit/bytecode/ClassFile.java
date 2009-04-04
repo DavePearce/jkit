@@ -301,7 +301,12 @@ public class ClassFile implements Clazz {
 		}
 		
 		public List<Type.Clazz> exceptions() {
-			return exceptions;
+			for(Attribute a : attributes) {
+				if(a instanceof Exceptions) {
+					return ((Exceptions)a).exceptions();
+				}
+			}
+			return new ArrayList();
 		}
 		
 		public Attribute attribute(Class c) {

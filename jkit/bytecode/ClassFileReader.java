@@ -267,8 +267,8 @@ public class ClassFileReader {
 		Type type = parseDescriptor(desc);
 		
 		for(Attribute at : attributes) {
-			if(at instanceof Signature) {
-				type = ((Signature) at).type();
+			if(at instanceof FieldSignature) {
+				type = ((FieldSignature) at).type();
 			} 
 		}					
 		
@@ -330,8 +330,8 @@ public class ClassFileReader {
 		// signature attribute, since this provides
 		// additional generic information
 		for(Attribute at : attributes) {
-			if(at instanceof Signature) {				
-					type = (Type.Function) ((Signature) at).type();					
+			if(at instanceof FieldSignature) {				
+					type = (Type.Function) ((FieldSignature) at).type();					
 			} 
 		}								
 		
@@ -399,14 +399,14 @@ public class ClassFileReader {
 		return new Exceptions(exceptions);
 	}
 	
-	protected Signature parseSignature(int offset, String name) {
+	protected FieldSignature parseSignature(int offset, String name) {
 		String sig = getString(read_u2(offset+6));
-		return new Signature(name,sig);
+		return new FieldSignature(parseType(sig));
 	}
 	
-	protected Attribute.ConstantValue parseConstantValue(int offset, String name) {
+	protected ConstantValue parseConstantValue(int offset, String name) {
 		Object obj = getConstant(read_u2(offset+6));
-		return new Attribute.ConstantValue(name, obj);
+		return new ConstantValue(name, obj);
 	}	
 	
 	protected InnerClasses parseInnerClasses(int offset, String name) {

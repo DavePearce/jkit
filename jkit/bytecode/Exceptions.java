@@ -17,6 +17,10 @@ public class Exceptions implements Attribute {
 		return "Exceptions";
 	}
 	
+	public List<Type.Clazz> exceptions() {
+		return exceptions;
+	}
+	
 	/**
 	 * This method requires the attribute to write itself to the binary stream.
 	 * 

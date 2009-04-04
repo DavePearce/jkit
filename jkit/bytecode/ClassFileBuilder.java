@@ -65,7 +65,7 @@ public class ClassFileBuilder {
 			ClassFile.Field cf = new ClassFile.Field(f.name(), f.type(), f.modifiers()); 
 			cfile.fields().add(cf);
 			if(isGeneric(f.type())) {
-				cf.attributes().add(new Signature(f.type()));
+				cf.attributes().add(new FieldSignature(f.type()));
 			}
 		}
 	}
@@ -79,7 +79,11 @@ public class ClassFileBuilder {
 				m_name = "<init>";
 			}
 			ClassFile.Method cfm = new ClassFile.Method(m_name, m.type(), m
-					.modifiers(), m.exceptions());
+					.modifiers());
+			
+			if(!m.exceptions().isEmpty()) {
+				cfm.attributes().add(new Exceptions(m.exceptions()));
+			}
 			
 			if(m.body() != null) {
 				ArrayList<Bytecode> bytecodes = new ArrayList<Bytecode>();
@@ -92,7 +96,7 @@ public class ClassFileBuilder {
 			}
 			
 			if (isGeneric(m.type())) {
-				cfm.attributes().add(new Signature(m.type()));
+				cfm.attributes().add(new FieldSignature(m.type()));
 			}
 			
 			if (!m.exceptions().isEmpty()) {
