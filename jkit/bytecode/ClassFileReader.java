@@ -618,34 +618,20 @@ public class ClassFileReader {
 		while(descriptor.charAt(pos) != ':') { pos++; }		
 		String id = descriptor.substring(start,pos);
 		pos = pos + 1; // skip ':'		
-		Type.Reference lowerBound = null;
-		if(descriptor.charAt(pos) == ':' || descriptor.charAt(pos) == '>') {
-			lowerBound = new Type.Clazz("java.lang", "Object");
-		} else {
-			Pair<Type.Clazz,Integer> rt = parseInternalClassDescriptor(descriptor,pos);			
-			lowerBound = rt.first();
+		ArrayList<Type.Reference> lowerBounds = new ArrayList<Type.Reference>();
+
+		while(pos < descriptor.length() && descriptor.charAt(pos) == 'L') {
+			Pair<Type.Clazz,Integer> rt = parseInternalClassDescriptor(descriptor,pos);
+			lowerBounds.add(rt.first());
 			pos = rt.second();
-		}		
-		if(descriptor.charAt(pos) == ':') {
-			// parse the interface bounds		
-			pos = pos + 1;
-			ArrayList<Type.Reference> ints = new ArrayList<Type.Reference>();		
-			while(pos < descriptor.length() && descriptor.charAt(pos) == 'L') {
-				Pair<Type.Clazz,Integer> rt = parseInternalClassDescriptor(descriptor,pos);
-				ints.add(rt.first());
-				pos = rt.second();
-			}
-			ArrayList<Type.Reference> is = new ArrayList<Type.Reference>();
-			is.add(lowerBound);
-			for(int i=0;i!=ints.size();++i) { is.add(ints.get(i)); }
-			Type.Intersection it = new Type.Intersection(is);
-			return new Pair<Type.Variable, Integer>(new Type.Variable(id,it),pos);
-		} else {
-			ArrayList<Type.Reference> is = new ArrayList<Type.Reference>();
-			is.add(lowerBound);
-			Type.Intersection it = new Type.Intersection(is);
-			return new Pair<Type.Variable, Integer>(new Type.Variable(id,it),pos);	
-		}		
+		}
+		Type.Reference lb = null;
+		if(lowerBounds.size() > 0) {
+			lb = new Type.Intersection(lowerBounds);
+		} else if(lowerBounds.size() == 0) {
+			lb = lowerBounds.get(0);
+		}
+		return new Pair<Type.Variable, Integer>(new Type.Variable(id,lb),pos);				
 	}
 	
 	protected Type.Function parseMethodDescriptor(String descriptor) {		
