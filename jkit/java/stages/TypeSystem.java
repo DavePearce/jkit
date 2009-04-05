@@ -43,7 +43,7 @@ public class TypeSystem {
 	 * @throws ClassNotFoundException
 	 */
 	public boolean subtype(Type t1, Type t2, ClassLoader loader)
-			throws ClassNotFoundException {
+			throws ClassNotFoundException {		
 		if(loader == null) {
 			throw new IllegalArgumentException("loader cannot be null");
 		}
@@ -53,11 +53,18 @@ public class TypeSystem {
 		if(t2 == null) {
 			throw new IllegalArgumentException("t2 cannot be null");
 		}			
-			
+		System.out.println("SUBTYPE: " + t1 + " :> " + t2);
+		System.out.println("T1 CLASS: " + t1.getClass().getName());
+		System.out.println("T2 CLASS: " + t2.getClass().getName());
 		// First, do the easy cases ...		
 		if(t1 instanceof Type.Reference && t2 instanceof Type.Null) {
 			return true; // null is a subtype of all references.
+		} else if(t1 instanceof Type.Intersection && t2 instanceof Type.Reference) {			
+			return subtype((Type.Intersection) t1, (Type.Reference) t2, loader);
+		} else if(t2 instanceof Type.Intersection && t1 instanceof Type.Reference) {			
+			return subtype((Type.Reference) t1, (Type.Intersection) t2, loader);
 		} else if(t1 instanceof Type.Clazz && t2 instanceof Type.Clazz) {
+			System.out.println("HELLO?: " + t1 + " :> " + t2);
 			return subtype((Type.Clazz) t1, (Type.Clazz) t2, loader);
 		} else if(t1 instanceof Type.Primitive && t2 instanceof Type.Primitive) {
 			return subtype((Type.Primitive) t1, (Type.Primitive) t2);
@@ -169,13 +176,57 @@ public class TypeSystem {
 			throw new IllegalArgumentException("t2 cannot be null");
 		}	
 		
-		Type.Clazz rt = reduce(t1,t2,loader); 
+		System.out.println("*** REDUCING: " + t1 + ", " + t2);
+		
+		Type.Clazz rt = reduce(t1,t2,loader); 				
 		
 		if(rt != null) {
 			return true; // actually, not sufficient;
 		}
 		
 		return false;
+	}
+	
+	public boolean subtype(Type.Intersection t1, Type.Clazz t2,
+			ClassLoader loader) throws ClassNotFoundException {
+		if (loader == null) {
+			throw new IllegalArgumentException("loader cannot be null");
+		}
+		if (t1 == null) {
+			throw new IllegalArgumentException("t1 cannot be null");
+		}
+		if (t2 == null) {
+			throw new IllegalArgumentException("t2 cannot be null");
+		}
+
+		for (Type.Reference bound : t1.bounds()) {
+			if (!subtype(bound, t2, loader)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+	
+	public boolean subtype(Type.Clazz t1, Type.Intersection t2,
+			ClassLoader loader) throws ClassNotFoundException {
+		if (loader == null) {
+			throw new IllegalArgumentException("loader cannot be null");
+		}
+		if (t1 == null) {
+			throw new IllegalArgumentException("t1 cannot be null");
+		}
+		if (t2 == null) {
+			throw new IllegalArgumentException("t2 cannot be null");
+		}
+
+		for (Type.Reference bound : t2.bounds()) {
+			if (!subtype(t1, bound, loader)) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 	
 	/**
@@ -316,10 +367,12 @@ public class TypeSystem {
 	public Map<String, Type.Reference> bind(Type concrete, Type template,
 			ClassLoader loader) throws ClassNotFoundException {
 				
+		System.out.println("BIND: " + concrete + ", " + template);
 		// At this point, we must compute the innerBinding and, from this,
 		// determine the final binding
 		ArrayList<BindConstraint> constraints = innerBind(concrete,template,loader);		
 		HashMap<String,Type.Reference> r = solveBindingConstraints(constraints, loader);			
+		System.out.println("FINISHED BIND");
 		return r;
 	}
 	
@@ -427,7 +480,7 @@ public class TypeSystem {
 			// form "T = T".			
 			constraints.add(new EqualityConstraint(template.variable(),concrete));
 			if (template.lowerBound() != null
-					&& !subtype(template.lowerBound(),concrete, loader)) {
+					&& !subtype(template.lowerBound(),concrete, loader)) {				
 				throw new BindError("cannot instantiate \"" + template
 						+ "\" with \"" + concrete + "\"");
 			}
@@ -1005,7 +1058,10 @@ public class TypeSystem {
         // proceed up the class heirarchy visiting all supertypes (i.e. classes
         // + interfaces) of t2 until either we reach t1, or java.lang.Object.		
 		while(!worklist.isEmpty()) {
-			Type.Clazz type = worklist.remove(worklist.size() - 1);			
+			Type.Clazz type = worklist.remove(worklist.size() - 1);
+			
+			System.out.println("VISITING: " + type);
+			
 			if(baseEquivalent(type, t1)) {				
 				return type;
 			}									
@@ -1035,7 +1091,9 @@ public class TypeSystem {
             // determine the proper supertype for ArrayList<String>. This is
             // what the binding / substitution stuff is for.			
 			Map<String,Type.Reference> binding = bind(type, c.type(),loader);			
-			if (c.superClass() != null) {				
+			if (c.superClass() != null) {
+				System.out.println("SUPERCLASS: " + c.superClass());
+				System.out.println("ADDING: " + (Type.Clazz) substitute(c.superClass(), binding));
 				worklist.add((Type.Clazz) substitute(c.superClass(), binding));
 			}
 			for (Type.Clazz t : c.interfaces()) {
