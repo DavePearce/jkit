@@ -614,18 +614,18 @@ public class ClassFileReader {
 	
 	protected
 	Pair<Type.Variable, Integer> parseFormalType(String descriptor, int pos) {
-		int start = pos;
-		while(descriptor.charAt(pos) != ':') { pos++; }
+		int start = pos;	
+		while(descriptor.charAt(pos) != ':') { pos++; }		
 		String id = descriptor.substring(start,pos);
 		pos = pos + 1; // skip ':'		
 		Type.Reference lowerBound = null;
-		if(descriptor.charAt(pos) == ':') {
+		if(descriptor.charAt(pos) == ':' || descriptor.charAt(pos) == '>') {
 			lowerBound = new Type.Clazz("java.lang", "Object");
 		} else {
 			Pair<Type.Clazz,Integer> rt = parseInternalClassDescriptor(descriptor,pos);			
 			lowerBound = rt.first();
 			pos = rt.second();
-		}
+		}		
 		if(descriptor.charAt(pos) == ':') {
 			// parse the interface bounds		
 			pos = pos + 1;

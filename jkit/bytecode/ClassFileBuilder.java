@@ -535,20 +535,48 @@ public class ClassFileBuilder {
 			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes,
 			boolean needReturnValue) {
 		
-		Type.Clazz targetT = (Type.Clazz) stmt.target().type();
+		Type.Reference _targetT = (Type.Reference) stmt.target().type();
 		
-		if(stmt.name().equals("super")) {
+		if(_targetT instanceof Type.Array) {			
+			translateInvokeHelper(new Type.Clazz("java.lang", "Object"), stmt,
+					varmap, bytecodes, needReturnValue);
+		} else if(_targetT instanceof Type.Variable) {			
+			Type.Variable targetT = (Type.Variable) _targetT;
+			
+			if (targetT.lowerBound() instanceof Type.Clazz) {
+				translateInvokeHelper((Type.Clazz) targetT.lowerBound(), stmt,
+						varmap, bytecodes, needReturnValue);
+			} else if(targetT.lowerBound() instanceof Type.Intersection) {
+				// there is a somewhat awkward problem here. not sure how to
+				// deal with it exactly.
+				translateInvokeHelper(new Type.Clazz("java.lang", "Object"),
+						stmt, varmap, bytecodes, needReturnValue);
+			} else {
+				translateInvokeHelper(new Type.Clazz("java.lang", "Object"),
+						stmt, varmap, bytecodes, needReturnValue);
+			}
+		} else if(_targetT instanceof Type.Clazz) {
+			translateInvokeHelper((Type.Clazz) _targetT, stmt, varmap,
+					bytecodes, needReturnValue);
+		}
+	}
+	
+	protected void translateInvokeHelper(Type.Clazz targetT,
+			JilExpr.Invoke stmt, HashMap<String, Integer> varmap,
+			ArrayList<Bytecode> bytecodes, boolean needReturnValue) {
+
+		if (stmt.name().equals("super")) {
 			// catch explicit super constructor call.
 			translateExpression(stmt.target(), varmap, bytecodes);
 			bytecodes.add(new Bytecode.Invoke(targetT, "<init>",
 					stmt.funType(), Bytecode.SPECIAL));
 			return;
-		} 
-		
-		try {			
+		}
+
+		try {
 			int dispatchMode = determineDispatchMode(targetT, stmt.name(), stmt
-					.funType());						
-				
+					.funType());
+
 			if (dispatchMode != DISPATCH_STATIC) {
 				// must be non-static invocation
 				translateExpression(stmt.target(), varmap, bytecodes);
@@ -557,20 +585,20 @@ public class ClassFileBuilder {
 			for (JilExpr p : stmt.parameters()) {
 				translateExpression(p, varmap, bytecodes);
 			}
-			
-			if(stmt instanceof JilExpr.SpecialInvoke) {
-				bytecodes.add(new Bytecode.Invoke(targetT, stmt.name(),
-						stmt.funType(), Bytecode.SPECIAL));
+
+			if (stmt instanceof JilExpr.SpecialInvoke) {
+				bytecodes.add(new Bytecode.Invoke(targetT, stmt.name(), stmt
+						.funType(), Bytecode.SPECIAL));
 			} else if (dispatchMode == DISPATCH_STATIC) {
 				// STATIC
-				bytecodes.add(new Bytecode.Invoke(targetT, stmt.name(),
-						stmt.funType(), Bytecode.STATIC));
+				bytecodes.add(new Bytecode.Invoke(targetT, stmt.name(), stmt
+						.funType(), Bytecode.STATIC));
 			} else if (dispatchMode == DISPATCH_INTERFACE) {
-				bytecodes.add(new Bytecode.Invoke(targetT, stmt.name(),
-						stmt.funType(), Bytecode.INTERFACE));
+				bytecodes.add(new Bytecode.Invoke(targetT, stmt.name(), stmt
+						.funType(), Bytecode.INTERFACE));
 			} else {
-				bytecodes.add(new Bytecode.Invoke(targetT, stmt.name(),
-						stmt.funType(), Bytecode.VIRTUAL));
+				bytecodes.add(new Bytecode.Invoke(targetT, stmt.name(), stmt
+						.funType(), Bytecode.VIRTUAL));
 			}
 
 			Type retT = stmt.funType().returnType();
@@ -602,10 +630,10 @@ public class ClassFileBuilder {
 				}
 			}
 		} catch (ClassNotFoundException cnfe) {
-			throw new RuntimeException("internal error:"
-					+ cnfe.getMessage());
-		}		
+			throw new RuntimeException("internal error:" + cnfe.getMessage());
+		}
 	}
+
 
 	/**
 	 * Translate a Return statement.

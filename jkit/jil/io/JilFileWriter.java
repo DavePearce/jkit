@@ -109,6 +109,10 @@ public class JilFileWriter {
 			write((JilStmt.Goto)s);
 		} else if(s instanceof JilStmt.Label) {
 			write((JilStmt.Label)s);
+		} else if(s instanceof JilExpr.New) {
+			output.print("\t\t");
+			write((JilExpr.New)s);
+			output.println();
 		} else if(s instanceof JilExpr.Invoke) {
 			output.print("\t\t");
 			write((JilExpr.Invoke)s);

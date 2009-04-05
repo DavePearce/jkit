@@ -643,10 +643,9 @@ public class TypeChecking {
 					|| lhs_t instanceof Type.Char || lhs_t instanceof Type.Byte)
 					&& rhs_t instanceof Type.Int
 					&& (e.op() == BinOp.SHL || e.op() == BinOp.SHR || e.op() == BinOp.USHR)) {
-				// Ok!
-			} else if(!(isStringType(lhs_t) || isStringType(rhs_t)) && e.op() == BinOp.CONCAT) {
-				throw new SyntaxError("Operand types do not go together: "
-					+ rhs_t + " and " + lhs_t,loc.line(),loc.column());		
+				return; // Ok!
+			} else if((isStringType(lhs_t) || isStringType(rhs_t)) && e.op() == BinOp.CONCAT) {
+				return; // OK					
 			}
 		} else if((lhs_t instanceof Type.Char || lhs_t instanceof Type.Byte 
 				|| lhs_t instanceof Type.Int || lhs_t instanceof Type.Long 
@@ -671,7 +670,7 @@ public class TypeChecking {
 						throw new SyntaxError("required type boolean, found "
 								+ rhs_t,loc.line(),loc.column());								
 					}
-					break;
+					return;
 				case BinOp.ADD:
 				case BinOp.SUB:
 				case BinOp.MUL:
@@ -679,7 +678,7 @@ public class TypeChecking {
 				case BinOp.MOD:
 				{
 					// hmmmm ?
-					break;
+					return;
 				}
 				case BinOp.SHL:
 				case BinOp.SHR:
@@ -695,7 +694,7 @@ public class TypeChecking {
 						throw new SyntaxError("Invalid operation on type "
 								+ rhs_t , loc.line(), loc.column());
 					} 
-					break;
+					return;
 				}
 				case BinOp.AND:
 				case BinOp.OR:
@@ -705,23 +704,25 @@ public class TypeChecking {
 							|| rhs_t instanceof Type.Double) {
 						throw new SyntaxError("Invalid operation on type "
 								+ rhs_t , loc.line(), loc.column());
-					} 
+					}
+					return;
 				}					
 			}
 		} else if(lhs_t instanceof Type.Bool && rhs_t instanceof Type.Bool) {
 			switch(e.op()) {
 			case BinOp.LOR:
 			case BinOp.LAND:
-				// OK
-				break;
-			default:
-				syntax_error("operand types do not go together: " + lhs_t + ", " + rhs_t,e);
+				return; // OK							
 			}
 		} else if((isStringType(lhs_t) || isStringType(rhs_t)) && e.op() == Expr.BinOp.CONCAT) {
-			// OK
-		} else {
-			syntax_error("operand types do not go together: " + lhs_t + ", " + rhs_t,e);
-		}
+			return; // OK
+		} else if (lhs_t instanceof Type.Reference
+				&& rhs_t instanceof Type.Reference
+				&& (e.op() == Expr.BinOp.EQ || e.op() == Expr.BinOp.NEQ)) {
+			return;
+		} 
+		
+		syntax_error("operand types do not go together: " + lhs_t + ", " + rhs_t,e);		
 	}
 	
 	protected void checkTernOp(Expr.TernOp e) {		

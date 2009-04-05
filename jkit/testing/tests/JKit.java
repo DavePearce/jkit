@@ -15,20 +15,19 @@ public class JKit extends TestHarness {
 	@Test public void FieldSignature_1() { runTest("FieldSignature_1"); }
 	@Test public void FieldSignature_2() { runTest("FieldSignature_2"); }
 	
-	@Test public void FreeVariables() { runTest("FreeVariables"); }
+	@Test public void FreeVariables() { compileFailTest("FreeVariables"); }
 	
 	@Test public void HeapException_1() { runTest("HeapException_1"); }
 	@Test public void ImplicitConversions_1() { runTest("ImplicitConversions_1"); }
 	
 	@Test public void InfiniteForLoop() { runTest("InfiniteForLoop"); }
 
-	// Fails because: type bounds are still broken
-	@Ignore("Known Bug") @Test public void TypeBounds_1() { runTest("TypeBounds_1"); }
-	@Ignore("Known Bug") @Test public void TypeBounds_2() { compileFailTest("TypeBounds_2"); }
-	@Ignore("Known Bug") @Test public void TypeBounds_3() { runTest("TypeBounds_3"); }
-	@Ignore("Known Bug") @Test public void TypeBounds_4() { runTest("TypeBounds_4"); }
-	@Ignore("Known Bug") @Test public void TypeBounds_5() { runTest("TypeBounds_5"); }
-	@Ignore("Known Bug") @Test public void TypeBounds_6() { compileFailTest("TypeBounds_6"); }	
+	@Test public void TypeBounds_1() { runTest("TypeBounds_1"); }
+	@Test public void TypeBounds_2() { compileFailTest("TypeBounds_2"); }
+	@Test public void TypeBounds_3() { runTest("TypeBounds_3"); }
+	@Test public void TypeBounds_4() { runTest("TypeBounds_4"); }
+	@Test public void TypeBounds_5() { runTest("TypeBounds_5"); }
+	@Test public void TypeBounds_6() { compileFailTest("TypeBounds_6"); }	
 	
 	@Test public void WhileLoop_1() { runTest("WhileLoop_1"); }
 

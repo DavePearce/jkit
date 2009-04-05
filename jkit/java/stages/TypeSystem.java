@@ -319,8 +319,7 @@ public class TypeSystem {
 		// At this point, we must compute the innerBinding and, from this,
 		// determine the final binding
 		ArrayList<BindConstraint> constraints = innerBind(concrete,template,loader);		
-		HashMap<String,Type.Reference> r = solveBindingConstraints(constraints, loader);
-		// System.out.println("BINDING: " + r);		
+		HashMap<String,Type.Reference> r = solveBindingConstraints(constraints, loader);			
 		return r;
 	}
 	
@@ -386,10 +385,10 @@ public class TypeSystem {
 		if(loader == null) {
 			throw new IllegalArgumentException("loader cannot be null");
 		}		
-		// =====================================================================
+		// =====================================================================		
 		if (template instanceof Type.Variable
 				&& concrete instanceof Type.Reference) {
-			// Observe, we can only bind a generic variable to a reference type.
+			// Observe, we can only bind a generic variable to a reference type.			
 			return innerBind((Type.Reference) concrete, (Type.Variable) template,
 					loader);
 		} else if (template instanceof Type.Wildcard) {
@@ -407,7 +406,7 @@ public class TypeSystem {
 	}
 	
 	protected ArrayList<BindConstraint> innerBind(Type.Reference concrete, Type.Variable template,
-			ClassLoader loader) {
+			ClassLoader loader) throws ClassNotFoundException {
 		if(concrete == null) {
 			throw new IllegalArgumentException("concrete cannot be null");
 		}
@@ -420,13 +419,18 @@ public class TypeSystem {
 		// =====================================================================
 		// Ok, we've reached a type variable, so we can now bind this with
 		// what we already have.
-		ArrayList<BindConstraint> constraints = new ArrayList<BindConstraint>();
+		ArrayList<BindConstraint> constraints = new ArrayList<BindConstraint>();		
 		if (!(concrete instanceof Type.Variable)
 				|| !((Type.Variable) concrete).variable().equals(template
 						.variable())) {
 			// The above condition simple prevents redundant constraints of the
-			// form "T = T".
+			// form "T = T".			
 			constraints.add(new EqualityConstraint(template.variable(),concrete));
+			if (template.lowerBound() != null
+					&& !subtype(template.lowerBound(),concrete, loader)) {
+				throw new BindError("cannot instantiate \"" + template
+						+ "\" with \"" + concrete + "\"");
+			}
 		}				
 		
 		return constraints;
@@ -1110,7 +1114,7 @@ public class TypeSystem {
 		if(concreteParameterTypes == null) {
 			throw new IllegalArgumentException("concreteParameterTypes cannot be null");
 		}		
-		
+						
 		// Phase 1: traverse heirarchy whilst ignoring autoboxing and varargs
 		Triple<Clazz, Clazz.Method, Type.Function> methodInfo = resolveMethod(
 				receiver, name, concreteParameterTypes, false, false, loader);
