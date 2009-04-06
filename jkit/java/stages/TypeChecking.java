@@ -2,7 +2,8 @@ package jkit.java.stages;
 
 import java.util.*;
 
-import jkit.compiler.SyntaxError;
+import static jkit.compiler.SyntaxError.*;
+import static jkit.jil.util.Types.*;
 import jkit.compiler.ClassLoader;
 import jkit.compiler.Clazz;
 import jkit.java.io.JavaFile;
@@ -521,9 +522,9 @@ public class TypeChecking {
 		try {
 			if(!types.subtype(c_t,rhs_t, loader)) {
 				if(rhs_t instanceof Type.Primitive) {
-					throw new SyntaxError("possible loss of precision (" + rhs_t + "=>" + c_t+")",loc.line(),loc.column());
+					syntax_error("possible loss of precision (" + rhs_t + "=>" + c_t+")",e);
 				} else {
-					throw new SyntaxError("incompatible types",loc.line(),loc.column());
+					syntax_error("incompatible types",e);
 				}
 			}
 		} catch(ClassNotFoundException ex) {
@@ -651,7 +652,7 @@ public class TypeChecking {
 					&& rhs_t instanceof Type.Int
 					&& (e.op() == BinOp.SHL || e.op() == BinOp.SHR || e.op() == BinOp.USHR)) {
 				return; // Ok!
-			} else if((isStringType(lhs_t) || isStringType(rhs_t)) && e.op() == BinOp.CONCAT) {
+			} else if((isJavaLangString(lhs_t) || isJavaLangString(rhs_t)) && e.op() == BinOp.CONCAT) {
 				return; // OK					
 			}
 		} else if((lhs_t instanceof Type.Char || lhs_t instanceof Type.Byte 
@@ -674,8 +675,8 @@ public class TypeChecking {
 				case BinOp.GTEQ:
 					// need more checks here
 					if(!(e_t instanceof Type.Bool)) {
-						throw new SyntaxError("required type boolean, found "
-								+ rhs_t,loc.line(),loc.column());								
+						syntax_error("required type boolean, found "
+								+ rhs_t,e);								
 					}
 					return;
 				case BinOp.ADD:
@@ -695,22 +696,20 @@ public class TypeChecking {
                     // make sure we have an int type
 					if (lhs_t instanceof Type.Float
 							|| lhs_t instanceof Type.Double) {
-						throw new SyntaxError("Invalid operation on type "
-								+ lhs_t , loc.line(), loc.column());
+						syntax_error("Invalid operation on type "
+								+ lhs_t, e);
 					} else if (!(rhs_t instanceof Type.Int)) {
-						throw new SyntaxError("Invalid operation on type "
-								+ rhs_t , loc.line(), loc.column());
+						syntax_error("Invalid operation on type "
+								+ rhs_t, e);
 					} 
 					return;
 				}
 				case BinOp.AND:
 				case BinOp.OR:
 				case BinOp.XOR:
-				{														
-					if (rhs_t instanceof Type.Float
-							|| rhs_t instanceof Type.Double) {
-						throw new SyntaxError("Invalid operation on type "
-								+ rhs_t , loc.line(), loc.column());
+				{
+					if (rhs_t instanceof Type.Float || rhs_t instanceof Type.Double) {
+						syntax_error("Invalid operation on type " + rhs_t, e);
 					}
 					return;
 				}					
@@ -721,7 +720,7 @@ public class TypeChecking {
 			case BinOp.LAND:
 				return; // OK							
 			}
-		} else if((isStringType(lhs_t) || isStringType(rhs_t)) && e.op() == Expr.BinOp.CONCAT) {
+		} else if((isJavaLangString(lhs_t) || isJavaLangString(rhs_t)) && e.op() == Expr.BinOp.CONCAT) {
 			return; // OK
 		} else if (lhs_t instanceof Type.Reference
 				&& rhs_t instanceof Type.Reference
@@ -752,34 +751,5 @@ public class TypeChecking {
 			}
 		}
 		return null;
-	}
-	
-	/**
-	 * Helper method to determine whether or not t is the type java.lang.String.
-	 * 
-	 * @param t --- Type to be tested.
-	 * @return
-	 */
-	protected boolean isStringType(Type _t) {
-		if(_t instanceof Type.Clazz) {
-			Type.Clazz t = (Type.Clazz) _t;
-			if(t.pkg().equals("java.lang")) {
-				return t.components().size() == 1
-				&& t.components().get(0).first().equals("String"); 
-			}
-		}
-		return false;
-	}
-	
-	/**
-     * This method is just to factor out the code for looking up the source
-     * location and throwing an exception based on that.
-     * 
-     * @param msg --- the error message
-     * @param e --- the syntactic element causing the error
-     */
-	protected void syntax_error(String msg, SyntacticElement e) {		
-		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
-		throw new SyntaxError(msg,loc.line(),loc.column());
-	}
+	}	
 }

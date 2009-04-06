@@ -3,7 +3,7 @@ package jkit.java.stages;
 import java.util.*;
 
 import jkit.compiler.ClassLoader;
-import jkit.compiler.SyntaxError;
+import static jkit.compiler.SyntaxError.*;
 import jkit.java.io.JavaFile;
 import jkit.java.tree.Decl;
 import jkit.java.tree.Expr;
@@ -682,7 +682,7 @@ public class TypeResolution {
 		
 		// now, some sanity checking.
 		if(className.equals("")) {
-			throw new SyntaxError("unable to find class " + pkg,0,0);
+			syntax_error("unable to find class " + pkg,ct);
 		} else if(pkg.length() > 0) {
 			// could add "containsClass" check here. Need to modify
 			// classLoader though.
@@ -802,52 +802,7 @@ public class TypeResolution {
 			}
 		}
 		return null;
-	}
-	
-	/**
-     * Check wither a given type is a reference to java.lang.String or not.
-     * 
-     * @param t
-     * @return
-     */
-	protected static boolean isString(Type t) {
-		if(t instanceof Type.Clazz) {
-			Type.Clazz c = (Type.Clazz) t;
-			 return c.pkg().equals("java.lang") && c.components().size() == 1
-					&& c.components().get(0).first().equals("String");			
-		}
-		return false;
-	}
-	
-	/**
-     * This method is just to factor out the code for looking up the source
-     * location and throwing an exception based on that.
-     * 
-     * @param msg --- the error message
-     * @param e --- the syntactic element causing the error
-     */
-	protected void syntax_error(String msg, SyntacticElement e) {
-		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
-		throw new SyntaxError(msg,loc.line(),loc.column());
-	}
-
-	/**
-	 * This method is just to factor out the code for looking up the source
-	 * location and throwing an exception based on that. In this case, we also
-	 * have an internal exception which has given rise to this particular
-	 * problem.
-	 * 
-	 * @param msg
-	 *            --- the error message
-	 * @param e
-	 *            --- the syntactic element causing the error
-	 * @parem ex --- an internal exception, the details of which we want to
-	 *        keep.
-	 */
-	protected void syntax_error(String msg, SyntacticElement e, Throwable ex) {
-		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
-		throw new SyntaxError(msg,loc.line(),loc.column(),ex);
-	}
+	}	
 	
 	/**
 	 * The purpose of this method is to compute an import declaration from a

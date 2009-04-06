@@ -145,4 +145,21 @@ public class Types {
 		}
 		return false;
 	}
+	
+
+	/**
+	 * Return the depth of array nesting. E.g. "int" has 0 depth, "int[]" has
+	 * depth 1, "int[][]" has depth 2, etc.
+	 * 
+	 * @param t
+	 * @return
+	 */
+	public static int arrayDepth(Type t) {
+		if(t instanceof Type.Array) {
+			Type.Array _t = (Type.Array) t;
+			return 1 + arrayDepth(_t.element());
+		} else {
+			return 0;
+		}
+	}	
 }

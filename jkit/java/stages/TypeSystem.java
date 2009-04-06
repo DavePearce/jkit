@@ -2,6 +2,7 @@ package jkit.java.stages;
 
 import java.util.*;
 
+import static jkit.jil.util.Types.*;
 import jkit.compiler.ClassLoader;
 import jkit.compiler.FieldNotFoundException;
 import jkit.compiler.MethodNotFoundException;
@@ -1473,26 +1474,5 @@ public class TypeSystem {
 		}
 
 		throw new FieldNotFoundException(name, owner.toString());
-	}
-
-	/**
-	 * Return the depth of array nesting. E.g. "int" has 0 depth, "int[]" has
-	 * depth 1, "int[][]" has depth 2, etc.
-	 * 
-	 * @param t
-	 * @return
-	 */
-	public static int arrayDepth(Type t) {
-		if(t instanceof Type.Array) {
-			Type.Array _t = (Type.Array) t;
-			return 1 + arrayDepth(_t.element());
-		} else {
-			return 0;
-		}
-	}
-	
-	public boolean isJavaLangObject(Type.Clazz tc) {
-		return tc.pkg().equals("java.lang") && tc.components().size() == 1
-				&& tc.components().get(0).first().equals("Object");
 	}
 }

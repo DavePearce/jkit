@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jkit.compiler.ClassLoader;
-import jkit.compiler.SyntaxError;
+import static jkit.compiler.SyntaxError.*;
 import jkit.java.io.JavaFile;
 import jkit.java.tree.Decl;
 import jkit.java.tree.Decl.JavaField;
@@ -127,18 +127,5 @@ public class SkeletonDiscovery {
 	protected List<JilClass> doStaticInitialiserBlock(
 			Decl.StaticInitialiserBlock d, String pkg, Type.Clazz parent) {		
 		return new ArrayList<JilClass>();
-	}
-	
-	
-	/**
-     * This method is just to factor out the code for looking up the source
-     * location and throwing an exception based on that.
-     * 
-     * @param msg --- the error message
-     * @param e --- the syntactic element causing the error
-     */
-	protected void syntax_error(String msg, SyntacticElement e) {
-		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
-		throw new SyntaxError(msg,loc.line(),loc.column());
-	}
+	}	
 }

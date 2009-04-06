@@ -4,7 +4,7 @@ import java.util.*;
 
 import jkit.compiler.ClassLoader;
 import jkit.compiler.FieldNotFoundException;
-import jkit.compiler.SyntaxError;
+import static jkit.compiler.SyntaxError.*;
 import jkit.compiler.Clazz;
 import jkit.java.io.JavaFile;
 import jkit.java.tree.Decl;
@@ -1078,37 +1078,7 @@ public class ScopeResolution {
 	protected Type.Clazz getSuperClass(Type.Clazz c) throws ClassNotFoundException {
 		Clazz cc = loader.loadClass(c);
 		return cc.superClass();
-	}
-	
-	/**
-     * This method is just to factor out the code for looking up the source
-     * location and throwing an exception based on that.
-     * 
-     * @param msg --- the error message
-     * @param e --- the syntactic element causing the error
-     */
-	protected void syntax_error(String msg, SyntacticElement e) {
-		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
-		throw new SyntaxError(msg,loc.line(),loc.column());
-	}
-	
-	/**
-	 * This method is just to factor out the code for looking up the source
-	 * location and throwing an exception based on that. In this case, we also
-	 * have an internal exception which has given rise to this particular
-	 * problem.
-	 * 
-	 * @param msg
-	 *            --- the error message
-	 * @param e
-	 *            --- the syntactic element causing the error
-	 * @parem ex --- an internal exception, the details of which we want to
-	 *        keep.
-	 */
-	protected void syntax_error(String msg, SyntacticElement e, Throwable ex) {
-		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
-		throw new SyntaxError(msg,loc.line(),loc.column(),ex);
-	}
+	}		
 	
 	/**
 	 * The purpose of this method is to compute an import declaration from a
