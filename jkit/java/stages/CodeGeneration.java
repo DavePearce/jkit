@@ -182,6 +182,8 @@ public class CodeGeneration {
 			return doBlock((Stmt.Block)e);
 		} else if(e instanceof Stmt.VarDef) {
 			return doVarDef((Stmt.VarDef) e);
+		} else if(e instanceof Stmt.AssignmentOp) {
+			return doAssignmentOp((Stmt.AssignmentOp) e).second();
 		} else if(e instanceof Stmt.Assignment) {
 			return doAssignment((Stmt.Assignment) e).second();
 		} else if(e instanceof Stmt.Return) {
@@ -290,6 +292,33 @@ public class CodeGeneration {
 		}
 		
 		return r;
+	}
+	
+	protected static int aop_label = 0;
+	
+	protected Pair<JilExpr,List<JilStmt>> doAssignmentOp(Stmt.AssignmentOp def) {
+		String label = "$aop" + aop_label++;
+		ArrayList<JilStmt> r = new ArrayList<JilStmt>();
+		Pair<JilExpr,List<JilStmt>> lhs = doExpression(def.lhs());
+		
+		if(!lhs.second().isEmpty()) {
+			syntax_error("required variable or field on left-hand side",def);
+		}
+		
+		Type.Primitive lhs_t = (Type.Primitive) lhs.first().type(); // could be a
+															// problem here, see
+															// doBinOp.
+		
+		JilExpr tmpVar = new JilExpr.Variable(label,lhs_t,def.attributes());
+		r.add(new JilStmt.Assign(tmpVar,lhs.first(),def.attributes()));
+		
+		Pair<JilExpr,List<JilStmt>> rhs = doExpression(def.rhs());		
+		r.addAll(rhs.second());
+		r
+				.add(new JilStmt.Assign(lhs.first(), new JilExpr.BinOp(tmpVar,
+						rhs.first(), def.op(), lhs_t, def.attributes()), def
+						.attributes()));
+		return new Pair(lhs.first(),r);
 	}
 	
 	protected Pair<JilExpr,List<JilStmt>> doAssignment(Stmt.Assignment def) {
@@ -699,6 +728,9 @@ public class CodeGeneration {
 			return doArrayIndex((Expr.ArrayIndex) e);
 		} else if(e instanceof Expr.Deref) {
 			return doDeref((Expr.Deref) e);
+		} else if(e instanceof Stmt.AssignmentOp) {
+			// force brackets			
+			return doAssignmentOp((Stmt.AssignmentOp) e);			
 		} else if(e instanceof Stmt.Assignment) {
 			// force brackets			
 			return doAssignment((Stmt.Assignment) e);			

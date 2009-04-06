@@ -517,6 +517,8 @@ public class JavaFileReader {
 				return parseVarDef(stmt, genericVariables);
 			case ASSIGN :
 				return parseAssign(stmt, genericVariables);
+			case ASSIGNOP :
+				return parseAssignOp(stmt, genericVariables);
 			case RETURN :
 				return parseReturn(stmt, genericVariables);
 			case THROW :
@@ -707,6 +709,42 @@ public class JavaFileReader {
 				.getLine(), tree.getCharPositionInLine()));
 	}
 
+	/**
+     * This method parses an assignment op statement.
+     * 
+     * @param tree
+     * @return
+     */
+	protected Stmt.AssignmentOp parseAssignOp(Tree tree, HashSet<String> genericVariables) {
+		int op;
+		String _op = tree.getChild(0).getText();
+		if(_op.equals("ADD")) {
+			op = Expr.BinOp.ADD;
+		} else if(_op.equals("SUB")) {
+			op = Expr.BinOp.SUB;
+		} else if(_op.equals("MUL")) {
+			op = Expr.BinOp.MUL;
+		} else if(_op.equals("DIV")) {
+			op = Expr.BinOp.DIV;
+		} else if(_op.equals("AND")) {
+			op = Expr.BinOp.AND;
+		} else if(_op.equals("OR")) {
+			op = Expr.BinOp.OR;
+		} else if(_op.equals("XOR")) {
+			op = Expr.BinOp.XOR;
+		} else if(_op.equals("SHL")) {
+			op = Expr.BinOp.SHL;
+		} else if(_op.equals("SHR")) {
+			op = Expr.BinOp.SHR;
+		} else {
+			op = Expr.BinOp.USHR;
+		}
+		Expr lhs = parseExpression(tree.getChild(1), genericVariables);
+		Expr rhs = parseExpression(tree.getChild(2), genericVariables);
+		return new Stmt.AssignmentOp(op, lhs, rhs, new SourceLocation(tree
+				.getLine(), tree.getCharPositionInLine()));
+	}
+	
 	protected Stmt parseReturn(Tree tree, HashSet<String> genericVariables) {
 		if (tree.getChildCount() > 0) {
 			return new Stmt.Return(parseExpression(tree.getChild(0), genericVariables),
@@ -1041,6 +1079,8 @@ public class JavaFileReader {
 				return parseTernOp(expr, genericVariables);
 			case ASSIGN :
 				return parseAssign(expr, genericVariables);
+			case ASSIGNOP:
+				return parseAssignOp(expr, genericVariables);
 			default :
 				throw new SyntaxError("Unknown expression encountered ("
 						+ expr.getText() + ")", expr.getLine(), expr
@@ -1813,6 +1853,8 @@ public class JavaFileReader {
 	protected static final int NULLVAL = JavaParser.NULLVAL;
 
 	protected static final int ASSIGN = JavaParser.ASSIGN;
+	
+	protected static final int ASSIGNOP = JavaParser.ASSIGNOP;
 
 	protected static final int INSTANCEOF = JavaParser.INSTANCEOF;
 

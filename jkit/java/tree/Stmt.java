@@ -185,6 +185,24 @@ public interface Stmt extends SyntacticElement {
 		}
 	}
 
+	public static class AssignmentOp extends Assignment {
+		private int op;		
+
+		public AssignmentOp(int op, Expr lhs, Expr rhs,
+				Attribute... attributes) {
+			super(lhs,rhs,attributes);
+			this.op = op;			
+		}
+
+		public int op() {
+			return op;
+		}
+		
+		public void setOp(int op) {
+			this.op = op;
+		}
+	}
+	
 	public static class Return extends SyntacticElementImpl implements Simple {
 		private Expr expr;
 

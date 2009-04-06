@@ -180,6 +180,7 @@ tokens {
  NONE; // to indicate the absence of a type (for constructors)
  STATIC;
  ENUM_CONSTANT;
+ ASSIGNOP;
 }
 
 @lexer::members {
@@ -711,17 +712,17 @@ expression
 	:	conditionalExpression 
 		(
 			'=' expression -> ^(ASSIGN conditionalExpression expression)
-			| i+='+' '=' expression -> ^(ASSIGN conditionalExpression ^(LABINOP conditionalExpression $i expression))
-			| i+='-' '=' expression -> ^(ASSIGN conditionalExpression ^(LABINOP conditionalExpression $i expression))
-			| i+='*' '=' expression -> ^(ASSIGN conditionalExpression ^(LABINOP conditionalExpression $i expression))
-			| i+='/' '=' expression -> ^(ASSIGN conditionalExpression ^(LABINOP conditionalExpression $i expression))			
-			| '&=' expression -> ^(ASSIGN conditionalExpression ^(AND conditionalExpression expression))
-			| '|=' expression -> ^(ASSIGN conditionalExpression ^(OR conditionalExpression expression))
-			| '^=' expression -> ^(ASSIGN conditionalExpression ^(XOR conditionalExpression expression))			
-			| i+='%' '=' expression -> ^(ASSIGN conditionalExpression ^(LABINOP conditionalExpression $i expression))
-			| i+='<' '<' '=' expression -> ^(ASSIGN conditionalExpression ^(LABINOP conditionalExpression $i expression))
-			| i+='>' '>' '=' expression -> ^(ASSIGN conditionalExpression ^(LABINOP conditionalExpression $i expression))
-			| '>' '>' '>' '=' expression -> ^(ASSIGN conditionalExpression ^(USHR conditionalExpression expression))
+			| i+='+' '=' expression -> ^(ASSIGNOP ADD conditionalExpression expression)
+			| i+='-' '=' expression -> ^(ASSIGNOP SUB conditionalExpression expression)
+			| i+='*' '=' expression -> ^(ASSIGNOP MUL conditionalExpression expression)
+			| i+='/' '=' expression -> ^(ASSIGNOP DIV conditionalExpression expression)			
+			| '&=' expression -> ^(ASSIGNOP AND conditionalExpression expression)
+			| '|=' expression -> ^(ASSIGNOP OR conditionalExpression expression)
+			| '^=' expression -> ^(ASSIGNOP XOR conditionalExpression expression)			
+			| i+='%' '=' expression -> ^(ASSIGNOP MOD conditionalExpression expression)
+			| i+='<' '<' '=' expression -> ^(ASSIGNOP SHL conditionalExpression expression)
+			| i+='>' '>' '=' expression -> ^(ASSIGNOP SHR conditionalExpression expression)
+			| '>' '>' '>' '=' expression -> ^(ASSIGNOP USHR conditionalExpression expression)
 			| -> conditionalExpression
 		) 
 	;
