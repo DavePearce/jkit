@@ -1,6 +1,9 @@
 package jkit.jil.util;
 
 import java.util.*;
+import static jkit.compiler.SyntaxError.*;
+import static jkit.jil.util.Types.*;
+import jkit.jil.tree.*;
 import jkit.jil.tree.JilExpr;
 import jkit.jil.tree.JilExpr.*;
 import jkit.jil.tree.Type;
@@ -177,4 +180,85 @@ public class Exprs {
 		return e;
 	}
 
+	/**
+	 * This method looks at the actual type of an expression (1st param), and
+	 * compares it with the required type (2nd param). If they are different it
+	 * inserts an implicit type conversion. This is useful, since it means we
+	 * only have to work out these type conversions the once, rather than every
+	 * time we encounter an expression.
+	 * 
+	 * @param e - the expression whose actual type is to be compared.
+	 * @param t - the required type of the expression.
+	 * @return
+	 */
+	public static JilExpr implicitCast(JilExpr e, Type t) {
+		if(e == null) { return null; }
+		Type e_t = e.type();
+		// insert implicit casts for primitive types.
+		if (!e_t.equals(t)
+				&& (t instanceof Type.Primitive && e_t instanceof Type.Primitive)) {			
+			e = new JilExpr.Convert((Type.Primitive) t, e, e.attribute(SourceLocation.class));
+		} else if(t instanceof Type.Primitive && e_t instanceof Type.Clazz) {
+			Type.Clazz r = (Type.Clazz) e_t;
+			if (r.pkg().equals("java.lang") && r.components().size() == 1) {
+				String c = r.components().get(0).first();
+				if (c.equals("Byte")) {
+					Type.Function funType = new Type.Function(new Type.Byte());
+					return implicitCast(
+							new JilExpr.Invoke(e, "byteValue",
+									new ArrayList<JilExpr>(), funType,
+									new Type.Byte()), t);
+				} else if (c.equals("Character")) {
+					Type.Function funType = new Type.Function(new Type.Char());
+					return implicitCast(new JilExpr.Invoke(e, "charValue",
+							new ArrayList<JilExpr>(), funType,
+							new Type.Char()), t);
+				} else if (c.equals("Short")) {
+					Type.Function funType = new Type.Function(new Type.Short());
+					return implicitCast(
+							new JilExpr.Invoke(e, "shortValue",
+									new ArrayList<JilExpr>(), funType,
+									new Type.Short()), t);
+				} else if (c.equals("Integer")) {
+					Type.Function funType = new Type.Function(new Type.Int());
+					return implicitCast(new JilExpr.Invoke(e, "intValue",
+							new ArrayList<JilExpr>(), funType,
+							new Type.Int()), t);
+				} else if (c.equals("Long")) {
+					Type.Function funType = new Type.Function(new Type.Long());
+					return implicitCast(
+							new JilExpr.Invoke(e, "longValue",
+									new ArrayList<JilExpr>(), funType,
+									new Type.Long()), t);
+				} else if (c.equals("Float")) {
+					Type.Function funType = new Type.Function(new Type.Float());
+					return implicitCast(
+							new JilExpr.Invoke(e, "floatValue",
+									new ArrayList<JilExpr>(), funType,
+									new Type.Float()), t);
+				} else if (c.equals("Double")) {
+					Type.Function funType = new Type.Function(new Type.Double());
+					return implicitCast(new JilExpr.Invoke(e, "doubleValue",
+							new ArrayList<JilExpr>(), funType,
+							new Type.Double()), t);
+				} else if (c.equals("Boolean")) {
+					Type.Function funType = new Type.Function(new Type.Bool());
+					return implicitCast(
+							new JilExpr.Invoke(e, "booleanValue",
+									new ArrayList<JilExpr>(), funType,
+									new Type.Bool()), t);
+				} else {
+					syntax_error("found type " + e_t + ", required " + t,e);
+				}
+			}
+		} else if(e_t instanceof Type.Primitive && t instanceof Type.Clazz) {
+			ArrayList<JilExpr> params = new ArrayList<JilExpr>();
+			params.add(e);
+			Type.Function funType = new Type.Function(new Type.Void(), e_t);
+			return new JilExpr.New(boxedType((Type.Primitive) e_t), params,
+					funType, e.attribute(SourceLocation.class));			
+		} 
+		
+		return e;
+	}
 }

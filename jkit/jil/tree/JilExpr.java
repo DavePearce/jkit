@@ -1,7 +1,10 @@
 package jkit.jil.tree;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import jkit.java.tree.Decl;
+import jkit.java.tree.Expr;
 import jkit.jil.tree.Type.Array;
 import jkit.jil.tree.Type.Bool;
 import jkit.jil.tree.Type.Byte;

@@ -6,7 +6,8 @@ import jkit.compiler.ClassLoader;
 import jkit.compiler.Clazz;
 import jkit.compiler.FieldNotFoundException;
 import jkit.compiler.MethodNotFoundException;
-import jkit.compiler.SyntaxError;
+import static jkit.compiler.SyntaxError.*;
+import static jkit.jil.util.Types.*;
 import jkit.java.io.JavaFile;
 import jkit.java.tree.Decl;
 import jkit.java.tree.Expr;
@@ -795,8 +796,8 @@ public class TypePropagation {
 			case Expr.BinOp.GT:
 			case Expr.BinOp.GTEQ:
 			{
-				if ((lhs_t instanceof Type.Primitive || isWrapper(lhs_t))
-						&& (rhs_t instanceof Type.Primitive || isWrapper(rhs_t))) {
+				if ((lhs_t instanceof Type.Primitive || isBoxedType(lhs_t))
+						&& (rhs_t instanceof Type.Primitive || isBoxedType(rhs_t))) {
 					Type rt = binaryNumericPromotion(lhs_t, rhs_t, e);
 					e.setLhs(implicitCast(e.lhs(), rt));
 					e.setRhs(implicitCast(e.rhs(), rt));
@@ -815,14 +816,14 @@ public class TypePropagation {
 			case Expr.BinOp.DIV:
 			case Expr.BinOp.MOD:
 			{						
-				if ((lhs_t instanceof Type.Primitive || isWrapper(lhs_t))
-						&& (rhs_t instanceof Type.Primitive || isWrapper(rhs_t))) {
+				if ((lhs_t instanceof Type.Primitive || isBoxedType(lhs_t))
+						&& (rhs_t instanceof Type.Primitive || isBoxedType(rhs_t))) {
 					Type rt = binaryNumericPromotion(lhs_t, rhs_t, e);
 					e.setLhs(implicitCast(e.lhs(), rt));
 					e.setRhs(implicitCast(e.rhs(), rt));
 					e.attributes().add(rt);
 				} else if (e.op() == Expr.BinOp.ADD
-						&& (isString(lhs_t) || isString(rhs_t))) {
+						&& (isJavaLangString(lhs_t) || isJavaLangString(rhs_t))) {
 					e.attributes().add(new Type.Clazz("java.lang", "String"));
 					e.setOp(Expr.BinOp.CONCAT);
 				} else {
@@ -835,8 +836,8 @@ public class TypePropagation {
 			case Expr.BinOp.SHR:
 			case Expr.BinOp.USHR:
 			{					
-				if ((lhs_t instanceof Type.Primitive || isWrapper(lhs_t))
-						&& (rhs_t instanceof Type.Primitive || isWrapper(rhs_t))) {
+				if ((lhs_t instanceof Type.Primitive || isBoxedType(lhs_t))
+						&& (rhs_t instanceof Type.Primitive || isBoxedType(rhs_t))) {
 					Type rt_left = unaryNumericPromotion(lhs_t, e);
 					e.setLhs(implicitCast(e.lhs(), rt_left));
 					e.setRhs(implicitCast(e.rhs(), new Type.Int()));
@@ -858,8 +859,8 @@ public class TypePropagation {
 			case Expr.BinOp.OR:
 			case Expr.BinOp.XOR:
 			{								
-				if ((lhs_t instanceof Type.Primitive || isWrapper(lhs_t))
-						&& (rhs_t instanceof Type.Primitive || isWrapper(rhs_t))) {
+				if ((lhs_t instanceof Type.Primitive || isBoxedType(lhs_t))
+						&& (rhs_t instanceof Type.Primitive || isBoxedType(rhs_t))) {
 					Type rt = binaryNumericPromotion(lhs_t, rhs_t, e);
 					e.setLhs(implicitCast(e.lhs(),rt));
 					e.setRhs(implicitCast(e.rhs(),rt));
@@ -887,7 +888,7 @@ public class TypePropagation {
 		if(lhs_t.equals(rhs_t)) {
 			e.attributes().add(lhs_t);
 		} else if((lhs_t instanceof Type.Bool || rhs_t instanceof Type.Bool)
-				&& (isWrapper(lhs_t,"Boolean") || isWrapper(rhs_t,"Boolean"))) {
+				&& (isBoxedTypeOf(lhs_t,"Boolean") || isBoxedTypeOf(rhs_t,"Boolean"))) {
 			e.attributes().add(new Type.Bool());			
 		} else if(lhs_t instanceof Type.Null) {			
 			e.attributes().add(rhs_t);
@@ -896,7 +897,7 @@ public class TypePropagation {
 		} else if((lhs_t instanceof Type.Byte || rhs_t instanceof Type.Byte) && 
 				(lhs_t instanceof Type.Short || rhs_t instanceof Type.Short)) {
 			e.attributes().add(new Type.Short());
-		} else if ((lhs_t instanceof Type.Byte || isWrapper(lhs_t, "Byte"))
+		} else if ((lhs_t instanceof Type.Byte || isBoxedTypeOf(lhs_t, "Byte"))
 				&& rhs_t instanceof Type.Int
 				&& isUnknownConstant(e.falseBranch())) {
 			int v = evaluateUnknownConstant(e.falseBranch());
@@ -905,7 +906,7 @@ public class TypePropagation {
 				e.attributes().add(lhs_t);
 				return;
 			}
-		} else if ((rhs_t instanceof Type.Byte || isWrapper(rhs_t, "Byte"))
+		} else if ((rhs_t instanceof Type.Byte || isBoxedTypeOf(rhs_t, "Byte"))
 				&& lhs_t instanceof Type.Int
 				&& isUnknownConstant(e.trueBranch())) {
 			int v = evaluateUnknownConstant(e.trueBranch());
@@ -914,7 +915,7 @@ public class TypePropagation {
 				e.attributes().add(rhs_t);
 				return;
 			}
-		} else if ((lhs_t instanceof Type.Char || isWrapper(lhs_t, "Character"))
+		} else if ((lhs_t instanceof Type.Char || isBoxedTypeOf(lhs_t, "Character"))
 				&& rhs_t instanceof Type.Int
 				&& isUnknownConstant(e.falseBranch())) {
 			int v = evaluateUnknownConstant(e.falseBranch());
@@ -923,7 +924,7 @@ public class TypePropagation {
 				e.attributes().add(lhs_t);
 				return;
 			}
-		} else if ((rhs_t instanceof Type.Char || isWrapper(rhs_t, "Character"))
+		} else if ((rhs_t instanceof Type.Char || isBoxedTypeOf(rhs_t, "Character"))
 				&& lhs_t instanceof Type.Int
 				&& isUnknownConstant(e.trueBranch())) {
 			int v = evaluateUnknownConstant(e.trueBranch());
@@ -932,7 +933,7 @@ public class TypePropagation {
 				e.attributes().add(rhs_t);
 				return;
 			}
-		} else if ((lhs_t instanceof Type.Short || isWrapper(lhs_t, "Short"))
+		} else if ((lhs_t instanceof Type.Short || isBoxedTypeOf(lhs_t, "Short"))
 				&& rhs_t instanceof Type.Int
 				&& isUnknownConstant(e.falseBranch())) {
 			int v = evaluateUnknownConstant(e.falseBranch());
@@ -941,7 +942,7 @@ public class TypePropagation {
 				e.attributes().add(lhs_t);
 				return;
 			}
-		} else if ((rhs_t instanceof Type.Short || isWrapper(rhs_t, "Short"))
+		} else if ((rhs_t instanceof Type.Short || isBoxedTypeOf(rhs_t, "Short"))
 				&& lhs_t instanceof Type.Int
 				&& isUnknownConstant(e.trueBranch())) {
 			int v = evaluateUnknownConstant(e.trueBranch());
@@ -950,7 +951,7 @@ public class TypePropagation {
 				e.attributes().add(rhs_t);
 				return;
 			}
-		} else if ((isWrapper(lhs_t) || isWrapper(rhs_t))
+		} else if ((isBoxedType(lhs_t) || isBoxedType(rhs_t))
 				&& (lhs_t instanceof Type.Primitive || rhs_t instanceof Type.Primitive)) {
 			Type rt = binaryNumericPromotion(lhs_t,rhs_t,e);
 			e.attributes().add(rt);
@@ -982,54 +983,6 @@ public class TypePropagation {
 			// i'm not sure how you can get here.
 			syntax_error("cannot determine result type for ternary operator",e);
 		}
-	}
-	
-	/**
-	 * Determine whether or not the given type is a wrapper for a primitive
-	 * type.  E.g. java.lang.Integer is a wrapper for int.
-	 * 
-	 * @param t
-	 * @return
-	 */
-	protected static boolean isWrapper(Type t) {
-		if(!(t instanceof Type.Clazz)) {
-			return false;
-		}
-		Type.Clazz ref = (Type.Clazz) t;
-		if(ref.pkg().equals("java.lang") && ref.components().size() == 1) {
-			String s = ref.components().get(0).first();
-			if(s.equals("Byte") || s.equals("Character") || s.equals("Short") ||
-				s.equals("Integer") || s.equals("Long")
-					|| s.equals("Float") || s.equals("Double")
-					|| s.equals("Boolean")) {
-				return true;
-			}
-		}
-		return false;
-	}
-	/**
-	 * Determine whether or not the given type is a wrapper for a primitive
-	 * type. E.g. java.lang.Integer is a wrapper for int.
-	 * 
-	 * @param t
-	 *            --- type to test
-	 * @param wrapper
-	 *            --- specific wrapper class to look for (i.e. Integer, Boolean,
-	 *            Character).
-	 * @return
-	 */
-	protected static boolean isWrapper(Type t, String wrapper) {
-		if(!(t instanceof Type.Clazz)) {
-			return false;
-		}
-		Type.Clazz ref = (Type.Clazz) t;
-		if(ref.pkg().equals("java.lang") && ref.components().size() == 1) {
-			String s = ref.components().get(0).first();
-			if(s.equals(wrapper)) {
-				return true;
-			}
-		}
-		return false;
 	}
 		
 	/**
@@ -1095,70 +1048,6 @@ public class TypePropagation {
 	}
 	
 	/**
-     * Given a primitive type, determine the equivalent boxed type. For example,
-     * the primitive type int yields the type java.lang.Integer. For simplicity
-     * in the code using this, it returns in the form a java.Type, rather than a
-     * jil.Type.
-     * 
-     * @param p
-     * @return
-     */
-	public static Type.Reference boxedType(Type.Primitive p) {
-		if(p instanceof Type.Bool) {
-			return new Type.Clazz("java.lang","Boolean");
-		} else if(p instanceof Type.Byte) {
-			return new Type.Clazz("java.lang","Byte");
-		} else if(p instanceof Type.Char) {
-			return new Type.Clazz("java.lang","Character");
-		} else if(p instanceof Type.Short) {
-			return new Type.Clazz("java.lang","Short");
-		} else if(p instanceof Type.Int) {
-			return new Type.Clazz("java.lang","Integer");
-		} else if(p instanceof Type.Long) {
-			return new Type.Clazz("java.lang","Long");
-		} else if(p instanceof Type.Float) {
-			return new Type.Clazz("java.lang","Float");
-		} else {
-			return new Type.Clazz("java.lang","Double");
-		}
-	}
-	
-	/**
-	 * Given a primitive wrapper class (i.e. a boxed type), return the unboxed
-	 * equivalent. For example, java.lang.Integer yields int, whilst
-	 * java.lang.Boolean yields bool.
-	 * 
-	 * @param p
-	 * @return
-	 */
-	protected Type.Primitive unboxedType(Type.Clazz p, SyntacticElement e) {
-		assert isWrapper(p);		
-		String type = p.components().get(p.components().size()-1).first();
-		
-		if(type.equals("Boolean")) {
-			return new Type.Bool();
-		} else if(type.equals("Byte")) {
-			return new Type.Byte();
-		} else if(type.equals("Character")) {
-			return new Type.Char();
-		} else if(type.equals("Short")) {
-			return new Type.Short();
-		} else if(type.equals("Integer")) {
-			return new Type.Int();
-		} else if(type.equals("Long")) {
-			return new Type.Long();
-		} else if(type.equals("Float")) {
-			return new Type.Float();
-		} else if(type.equals("Double")) {
-			return new Type.Double();
-		} else {
-			syntax_error("unknown boxed type \"" + p.toString()
-					+ "\" encountered.",e);
-			return null; // very dead!
-		}
-	}
-	
-	/**
 	 * This method looks at the actual type of an expression (1st param), and
 	 * compares it with the required type (2nd param). If they are different it
 	 * inserts an implicit type conversion. This is useful, since it means we
@@ -1169,7 +1058,7 @@ public class TypePropagation {
 	 * @param t - the required type of the expression.
 	 * @return
 	 */
-	protected Expr implicitCast(Expr e, Type t) {
+	public static Expr implicitCast(Expr e, Type t) {
 		if(e == null) { return null; }
 		Type e_t = (Type) e.attribute(Type.class);
 		// insert implicit casts for primitive types.
@@ -1357,7 +1246,7 @@ public class TypePropagation {
 			return new Value.Char((char)val, new Type.Char(), loc);				
 		} else if(lhs_t instanceof Type.Short && val >= -32768 && val <= 32768) {
 			return new Value.Short((short)val, new Type.Short(), loc);				
-		} else if(isWrapper(lhs_t)) {
+		} else if(isBoxedType(lhs_t)) {
 			Type.Clazz ref = (Type.Clazz) lhs_t;			
 			String s = ref.components().get(0).first();				
 			if(s.equals("Byte") && val >= -128 && val <= 127) {
@@ -1394,7 +1283,7 @@ public class TypePropagation {
      * @param jt
      * @return
      */
-	protected jkit.java.tree.Type fromJilType(jkit.jil.tree.Type t) {		
+	public static jkit.java.tree.Type fromJilType(jkit.jil.tree.Type t) {		
 		if(t instanceof jkit.jil.tree.Type.Primitive) {
 			return fromJilType((jkit.jil.tree.Type.Primitive)t);
 		} else if(t instanceof jkit.jil.tree.Type.Array) {
@@ -1405,7 +1294,7 @@ public class TypePropagation {
 		throw new RuntimeException("Need to finish fromJilType off!");
 	}
 	
-	protected jkit.java.tree.Type.Primitive fromJilType(jkit.jil.tree.Type.Primitive pt) {
+	public static jkit.java.tree.Type.Primitive fromJilType(jkit.jil.tree.Type.Primitive pt) {
 		if(pt instanceof jkit.jil.tree.Type.Void) {
 			return new jkit.java.tree.Type.Void(pt);
 		} else if(pt instanceof jkit.jil.tree.Type.Bool) {
@@ -1427,11 +1316,11 @@ public class TypePropagation {
 		}
 	}
 	
-	protected jkit.java.tree.Type.Array fromJilType(jkit.jil.tree.Type.Array at) {
+	protected static jkit.java.tree.Type.Array fromJilType(jkit.jil.tree.Type.Array at) {
 		return new jkit.java.tree.Type.Array(fromJilType(at.element()),at);
 	}
 	
-	protected jkit.java.tree.Type.Clazz fromJilType(jkit.jil.tree.Type.Clazz jt) {			
+	protected static jkit.java.tree.Type.Clazz fromJilType(jkit.jil.tree.Type.Clazz jt) {			
 		// I will make it fully qualified for simplicity.
 		ArrayList<Pair<String,List<jkit.java.tree.Type.Reference>>> ncomponents = new ArrayList();
 		// So, we need to split out the package into the component parts
@@ -1456,21 +1345,6 @@ public class TypePropagation {
 	}
 	
 	/**
-     * Check wither a given type is a reference to java.lang.String or not.
-     * 
-     * @param t
-     * @return
-     */
-	protected static boolean isString(Type t) {
-		if(t instanceof Type.Clazz) {
-			Type.Clazz c = (Type.Clazz) t;
-			 return c.pkg().equals("java.lang") && c.components().size() == 1
-					&& c.components().get(0).first().equals("String");			
-		}
-		return false;
-	}
-	
-	/**
 	 * This method simply determines the super class of the given class.
 	 * 
 	 * @param c
@@ -1479,36 +1353,6 @@ public class TypePropagation {
 	protected Type.Clazz getSuperClass(Type.Clazz c) throws ClassNotFoundException {
 		Clazz cc = loader.loadClass(c);
 		return cc.superClass();
-	}
-	
-	/**
-     * This method is just to factor out the code for looking up the source
-     * location and throwing an exception based on that.
-     * 
-     * @param msg --- the error message
-     * @param e --- the syntactic element causing the error
-     */
-	protected void syntax_error(String msg, SyntacticElement e) {
-		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
-		throw new SyntaxError(msg,loc.line(),loc.column());
-	}
-	
-	/**
-	 * This method is just to factor out the code for looking up the source
-	 * location and throwing an exception based on that. In this case, we also
-	 * have an internal exception which has given rise to this particular
-	 * problem.
-	 * 
-	 * @param msg
-	 *            --- the error message
-	 * @param e
-	 *            --- the syntactic element causing the error
-	 * @parem ex --- an internal exception, the details of which we want to
-	 *        keep.
-	 */
-	protected void syntax_error(String msg, SyntacticElement e, Throwable ex) {
-		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
-		throw new SyntaxError(msg,loc.line(),loc.column(),ex);
 	}
 }
 

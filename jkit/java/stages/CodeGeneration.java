@@ -3,11 +3,11 @@ package jkit.java.stages;
 import java.util.*;
 
 import jkit.compiler.FieldNotFoundException;
-import jkit.compiler.SyntaxError;
+import static jkit.compiler.SyntaxError.*;
+import static jkit.jil.util.Exprs.*;
 import jkit.compiler.ClassLoader;
 import jkit.compiler.Clazz;
 import jkit.java.io.JavaFile;
-import jkit.java.tree.Decl;
 import jkit.java.tree.*;
 import jkit.jil.tree.*;
 import jkit.jil.tree.Type;
@@ -510,6 +510,7 @@ public class CodeGeneration {
 		JilExpr.Variable loopVar = new JilExpr.Variable(stmt.var(), (Type) stmt
 				.type().attribute(Type.class), stmt.attributes());
 		
+		Type dstType = (Type) stmt.type().attribute(Type.class);
 		Type srcType = src.first().type();				
 		
 		stmts.addAll(src.second());
@@ -549,8 +550,8 @@ public class CodeGeneration {
 			stmts.add(new JilStmt.IfGoto(gecmp,exitLab, stmt
 					.attributes()));
 			
-			stmts.add(new JilStmt.Assign(loopVar, new JilExpr.ArrayIndex(src.first(),
-					iter, loopVar.type())));
+			stmts.add(new JilStmt.Assign(loopVar, implicitCast(new JilExpr.ArrayIndex(src.first(),
+					iter, loopVar.type()),dstType)));
 		} else {
 			JilExpr hasnext = new JilExpr.Invoke(iter, "hasNext",
 					new ArrayList<JilExpr>(), new Type.Function(new Type.Bool()),
@@ -1105,35 +1106,5 @@ public class CodeGeneration {
 					&& c.components().get(0).first().equals("String");			
 		}
 		return false;
-	}
-	
-	/**
-     * This method is just to factor out the code for looking up the source
-     * location and throwing an exception based on that.
-     * 
-     * @param msg --- the error message
-     * @param e --- the syntactic element causing the error
-     */
-	protected void syntax_error(String msg, SyntacticElement e) {
-		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
-		throw new SyntaxError(msg,loc.line(),loc.column());
-	}
-	
-	/**
-	 * This method is just to factor out the code for looking up the source
-	 * location and throwing an exception based on that. In this case, we also
-	 * have an internal exception which has given rise to this particular
-	 * problem.
-	 * 
-	 * @param msg
-	 *            --- the error message
-	 * @param e
-	 *            --- the syntactic element causing the error
-	 * @parem ex --- an internal exception, the details of which we want to
-	 *        keep.
-	 */
-	protected void syntax_error(String msg, SyntacticElement e, Throwable ex) {
-		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
-		throw new SyntaxError(msg,loc.line(),loc.column(),ex);
-	}
+	}	
 }
