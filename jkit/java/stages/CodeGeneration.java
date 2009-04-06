@@ -307,18 +307,52 @@ public class CodeGeneration {
 															// problem here, see
 															// doBinOp.
 		
-		
-		// I think there is a bug here in the case of a field or array access on
-		// the left-hand side.  See doAssignment()
-		
-		JilExpr tmpVar = new JilExpr.Variable(getTempVar(), lhs_t, def
-				.attributes());
-		r.add(new JilStmt.Assign(tmpVar, lhs.first(), def.attributes()));
-		r.addAll(rhs.second());
-		r.add(new JilStmt.Assign(lhs.first(), new JilExpr.BinOp(tmpVar, rhs
-				.first(), def.op(), lhs_t, def.attributes()), def
-				.attributes()));
-		return new Pair(lhs.first(), r);
+		if (rhs.second().isEmpty() || lhs.first() instanceof JilExpr.Variable) {		
+			JilExpr tmpVar = new JilExpr.Variable(getTempVar(), lhs_t, def
+					.attributes());
+			r.add(new JilStmt.Assign(tmpVar, lhs.first(), def.attributes()));
+			r.addAll(rhs.second());
+			r.add(new JilStmt.Assign(lhs.first(), new JilExpr.BinOp(tmpVar, rhs
+					.first(), def.op(), lhs_t, def.attributes()), def
+					.attributes()));
+			return new Pair(lhs.first(), r);
+		} else if(lhs.first() instanceof JilExpr.Deref) {
+			JilExpr.Deref deref1 = (JilExpr.Deref) lhs.first(); 
+
+			JilExpr tmpVar = new JilExpr.Variable(getTempVar(), deref1.target()
+					.type(), def.attributes());
+			r.add(new JilStmt.Assign(tmpVar, deref1.target(), def.attributes()));
+			r.addAll(rhs.second());
+			JilExpr.Deref deref2 = new JilExpr.Deref(tmpVar, deref1.name(),
+					deref1.isStatic(), deref1.type(), deref1.attributes()); 
+			r.add(new JilStmt.Assign(deref2, new JilExpr.BinOp(deref2, rhs
+					.first(), def.op(), lhs_t, def.attributes()), def
+					.attributes()));
+			return new Pair(deref2, r);
+		} else if(lhs.first() instanceof JilExpr.ArrayIndex) {
+			JilExpr.ArrayIndex aindex1 = (JilExpr.ArrayIndex) lhs.first();
+
+			JilExpr targetVar = new JilExpr.Variable(getTempVar(), aindex1
+					.target().type(), def.attributes());
+			JilExpr indexVar = new JilExpr.Variable(getTempVar(), aindex1
+					.index().type(), def.attributes());
+			r.add(new JilStmt.Assign(targetVar, aindex1.target(), def
+					.attributes()));
+			r.add(new JilStmt.Assign(indexVar, aindex1.index(), def
+					.attributes()));
+			r.addAll(rhs.second());
+			JilExpr.ArrayIndex aindex2 = new JilExpr.ArrayIndex(targetVar,
+					indexVar, aindex1.type(), aindex1.attributes());
+			r.add(new JilStmt.Assign(aindex2, new JilExpr.BinOp(aindex2, rhs
+					.first(), def.op(), lhs_t, def.attributes()), def
+					.attributes()));
+			return new Pair(aindex2, r);
+		} else {
+			syntax_error(
+					"unknown l-value encountered on assignment with side-effects",
+					def);
+			return null; // unreachable.
+		}
 	}
 	
 	protected Pair<JilExpr,List<JilStmt>> doAssignment(Stmt.Assignment def) {

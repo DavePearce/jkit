@@ -61,5 +61,42 @@ public class JLS_15_7_EvaluationOrder_3 {
 
 	x += args.length == 0 ? (x = 2*y) : y-1; 
 	System.out.println(x + ", " + y);
+
+	// other assignment operators
+	i = 0;
+	a1[i] ^= a1[(i = 2)];
+	System.out.println(a1[0]);
+
+	i = 0;
+	a1[i] &= a1[(i = 2)];
+	System.out.println(a1[0]);
+
+	i = 0;
+	a1[i] += a1[(i = 2)];
+	System.out.println(a1[0]);
+
+	i = 0;
+	a1[i] -= a1[(i = 2)];
+	System.out.println(a1[0]);
+
+	s1 = new JLS_15_7_EvaluationOrder_3(10);
+	s2 = new JLS_15_7_EvaluationOrder_3(100);
+	s3 = s1;
+	
+	s1.f1 ^= (s1=s2).f1;
+	System.out.println(s3.f1);
+	s1 = s3;
+
+	s1.f1 |= (s1=s2).f1;
+	System.out.println(s3.f1);
+	s1 = s3;
+
+	s1.f1 *= (s1=s2).f1;
+	System.out.println(s3.f1);
+	s1 = s3;
+
+	s1.f1 /= (s1=s2).f1;
+	System.out.println(s3.f1);
+	s1 = s3;	
     }
 }
