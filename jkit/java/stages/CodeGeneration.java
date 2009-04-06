@@ -5,6 +5,7 @@ import java.util.*;
 import jkit.compiler.FieldNotFoundException;
 import static jkit.compiler.SyntaxError.*;
 import static jkit.jil.util.Exprs.*;
+import static jkit.jil.util.Types.*;
 import jkit.compiler.ClassLoader;
 import jkit.compiler.Clazz;
 import jkit.java.io.JavaFile;
@@ -558,11 +559,22 @@ public class CodeGeneration {
 					new Type.Bool(), stmt.attributes());
 			stmts.add(new JilStmt.IfGoto(new JilExpr.UnOp(hasnext, JilExpr.UnOp.NOT,
 					new Type.Bool()), exitLab));
-
-			JilExpr next = new JilExpr.Invoke(iter, "next", new ArrayList<JilExpr>(),
-					new Type.Function(new Type.Clazz("java.lang", "Object")),
-					loopVar.type(), stmt.attributes());
-			JilExpr cast = new JilExpr.Cast(next, loopVar.type());
+			
+			JilExpr cast;
+			if(loopVar.type() instanceof Type.Primitive) {
+				// In this case, we have to deal with casting and implicit
+				// conversion.
+				JilExpr next = new JilExpr.Invoke(iter, "next", new ArrayList<JilExpr>(),
+						new Type.Function(new Type.Clazz("java.lang", "Object")),
+						boxedType((Type.Primitive) loopVar.type()), stmt.attributes());
+				
+				cast = implicitCast(next, loopVar.type());
+			} else {
+				JilExpr next = new JilExpr.Invoke(iter, "next", new ArrayList<JilExpr>(),
+						new Type.Function(new Type.Clazz("java.lang", "Object")),
+						loopVar.type(), stmt.attributes());
+				cast = new JilExpr.Cast(next, loopVar.type());
+			}
 			stmts.add(new JilStmt.Assign(loopVar, cast, stmt.attributes()));			
 		}
 		
