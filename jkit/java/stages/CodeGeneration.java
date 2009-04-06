@@ -510,7 +510,6 @@ public class CodeGeneration {
 		JilExpr.Variable loopVar = new JilExpr.Variable(stmt.var(), (Type) stmt
 				.type().attribute(Type.class), stmt.attributes());
 		
-		Type dstType = (Type) stmt.type().attribute(Type.class);
 		Type srcType = src.first().type();				
 		
 		stmts.addAll(src.second());
@@ -543,15 +542,16 @@ public class CodeGeneration {
 		// Second, do condition
 		
 		if (srcType instanceof Type.Array) {
+			Type.Array arrType = (Type.Array) srcType;
 			JilExpr arrlength = new JilExpr.Deref(src.first(),"length",false,new Type.Int(), stmt
 					.attributes());
 			JilExpr gecmp = new JilExpr.BinOp(iter,arrlength,JilExpr.BinOp.GTEQ,new Type.Bool(), stmt
 					.attributes());
 			stmts.add(new JilStmt.IfGoto(gecmp,exitLab, stmt
-					.attributes()));
+					.attributes()));					
 			
 			stmts.add(new JilStmt.Assign(loopVar, implicitCast(new JilExpr.ArrayIndex(src.first(),
-					iter, loopVar.type()),dstType)));
+					iter, arrType.element()),loopVar.type())));
 		} else {
 			JilExpr hasnext = new JilExpr.Invoke(iter, "hasNext",
 					new ArrayList<JilExpr>(), new Type.Function(new Type.Bool()),
