@@ -285,6 +285,8 @@ public class TypeResolution {
 			doNew((Expr.New) e);
 		} else if(e instanceof Decl.JavaClass) {
 			doClass((Decl.JavaClass)e);
+		} else if(e instanceof Stmt.PrePostIncDec) {
+			doExpression((Stmt.PrePostIncDec)e);
 		} else if(e != null) {
 			syntax_error("Invalid statement encountered: "
 					+ e.getClass(),e);

@@ -403,6 +403,8 @@ public class ScopeResolution {
 			doNew((Expr.New) e, file);
 		} else if(e instanceof Decl.JavaClass) {
 			doClass((Decl.JavaClass)e, file);
+		} else if(e instanceof Stmt.PrePostIncDec) {
+			doExpression((Stmt.PrePostIncDec)e, file);
 		} else if(e != null) {
 			syntax_error("Invalid statement encountered: "
 					+ e.getClass(),e);

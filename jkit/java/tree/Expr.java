@@ -279,7 +279,7 @@ public interface Expr extends SyntacticElement {
 			this.expr = expr;
 		}
 	}
-
+	
 	/**
 	 * A Binary Operator.  E.g. +.-,*,/,<,<=,>,?=,==,!=, etc.
 	 * 

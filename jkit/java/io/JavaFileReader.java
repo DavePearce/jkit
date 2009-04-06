@@ -546,10 +546,13 @@ public class JavaFileReader {
 			case LABEL :
 				return parseLabel(stmt, genericVariables);
 			case POSTINC :
+				return parseIncDec(Expr.UnOp.POSTINC, stmt, genericVariables);
 			case PREINC :
+				return parseIncDec(Expr.UnOp.PREINC, stmt, genericVariables);
 			case POSTDEC :
+				return parseIncDec(Expr.UnOp.POSTDEC, stmt, genericVariables);
 			case PREDEC :
-				return parseIncDec(stmt, genericVariables);
+				return parseIncDec(Expr.UnOp.PREDEC, stmt, genericVariables);				
 			case ASSERT :
 				return parseAssert(stmt, genericVariables);
 			case TRY :
@@ -966,32 +969,14 @@ public class JavaFileReader {
 	}
 
 	/**
-     * Parse a standalone pre/post inc/dec statement (e.g. ++i, --i, etc)
+     * Parse a standalone pre/post inc/dec statement (e.g. ++i, --i, etc).
      * 
      * @param stmt
      * @return
      */
-	public Stmt parseIncDec(Tree stmt, HashSet<String> genericVariables) {
+	public Stmt parseIncDec(int op, Tree stmt, HashSet<String> genericVariables) {
 		Expr.UnOp lhs = (Expr.UnOp) parseExpression(stmt, genericVariables);
-		Expr lval = lhs.expr();
-		// the following is need to prevent aliasing of subexpressions in the
-		// assignment statement constructed.
-		Expr lvalClone = ((Expr.UnOp) parseExpression(stmt, genericVariables))
-				.expr();
-		SourceLocation loc = new SourceLocation(stmt.getLine(), stmt
-				.getCharPositionInLine());
-		
-		if (lhs.op() == Expr.UnOp.POSTDEC
-				|| lhs.op() == Expr.UnOp.PREDEC) {
-			return new Stmt.Assignment(lvalClone,
-					new Expr.BinOp(Expr.BinOp.SUB, lval,
-							new Value.Int(1, loc), loc), loc);
-		} else {
-			// must be preinc or postinc
-			return new Stmt.Assignment(lvalClone,
-					new Expr.BinOp(Expr.BinOp.ADD, lval,
-							new Value.Int(1, loc), loc), loc);
-		}
+		return new Stmt.PrePostIncDec(op,lhs.expr(),lhs.attributes());
 	}
 
 	public Stmt parseSelectorStmt(Tree stmt, HashSet<String> genericVariables) {

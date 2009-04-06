@@ -220,6 +220,9 @@ public class CodeGeneration {
 			return r.second();
 		} else if(e instanceof Decl.JavaClass) {
 			doClass((Decl.JavaClass)e);			
+		} else if(e instanceof Stmt.PrePostIncDec) {
+			Pair<JilExpr, List<JilStmt>> r = doExpression((Stmt.PrePostIncDec) e);
+			return r.second();
 		} else if(e != null) {
 			syntax_error("Invalid statement encountered: "
 					+ e.getClass(),e);
@@ -1045,9 +1048,8 @@ public class CodeGeneration {
 
 		switch (e.op()) {
 		case Expr.UnOp.PREDEC:
-		{
-			lval = (Expr.LocalVariable) e.expr();			
-			JilExpr.Variable lhs = new JilExpr.Variable(lval.value(),type,lval.attributes());
+		{				
+			JilExpr lhs = r.first();
 			JilExpr rhs = new JilExpr.BinOp(lhs, new JilExpr.Int(1), JilExpr.BinOp.SUB,
 					type, e.attributes());
 			stmts.add(new JilStmt.Assign(lhs,rhs,e.attributes()));
@@ -1055,8 +1057,7 @@ public class CodeGeneration {
 		}
 		case Expr.UnOp.PREINC:
 		{
-			lval = (Expr.LocalVariable) e.expr();
-			JilExpr.Variable lhs = new JilExpr.Variable(lval.value(),type,lval.attributes());
+			JilExpr lhs = r.first();
 			JilExpr rhs = new JilExpr.BinOp(lhs, new JilExpr.Int(1), JilExpr.BinOp.ADD,
 					type, e.attributes());
 			stmts.add(new JilStmt.Assign(lhs,rhs,e.attributes()));
@@ -1064,9 +1065,8 @@ public class CodeGeneration {
 		}
 		case Expr.UnOp.POSTINC:
 		{
-			lval = (Expr.LocalVariable) e.expr();
-			JilExpr.Variable tmp = new JilExpr.Variable(getTempVar(),type,lval.attributes());
-			JilExpr.Variable lhs = new JilExpr.Variable(lval.value(),type,lval.attributes());
+			JilExpr lhs = r.first();	
+			JilExpr.Variable tmp = new JilExpr.Variable(getTempVar(),type,lhs.attributes());			
 			stmts.add(new JilStmt.Assign(tmp,lhs,e.attributes()));			
 			JilExpr rhs = new JilExpr.BinOp(lhs, new JilExpr.Int(1), JilExpr.BinOp.ADD,
 					type, e.attributes());
@@ -1075,14 +1075,13 @@ public class CodeGeneration {
 		}
 		case Expr.UnOp.POSTDEC:
 		{
-			 lval = (Expr.LocalVariable) e.expr();
-			 JilExpr.Variable tmp = new JilExpr.Variable(getTempVar(),type,lval.attributes());
-				JilExpr.Variable lhs = new JilExpr.Variable(lval.value(),type,lval.attributes());
-				stmts.add(new JilStmt.Assign(tmp,lhs,e.attributes()));			
-				JilExpr rhs = new JilExpr.BinOp(lhs, new JilExpr.Int(1), JilExpr.BinOp.SUB,
-						type, e.attributes());
-				stmts.add(new JilStmt.Assign(lhs,rhs,e.attributes()));
-				return new Pair<JilExpr, List<JilStmt>>(tmp,stmts);
+			JilExpr lhs = r.first();
+			JilExpr.Variable tmp = new JilExpr.Variable(getTempVar(),type,lhs.attributes());			
+			stmts.add(new JilStmt.Assign(tmp,lhs,e.attributes()));			
+			JilExpr rhs = new JilExpr.BinOp(lhs, new JilExpr.Int(1), JilExpr.BinOp.SUB,
+					type, e.attributes());
+			stmts.add(new JilStmt.Assign(lhs,rhs,e.attributes()));
+			return new Pair<JilExpr, List<JilStmt>>(tmp,stmts);
 		}
 		default:
 			return new Pair<JilExpr, List<JilStmt>>(new JilExpr.UnOp(r.first(), e.op(),

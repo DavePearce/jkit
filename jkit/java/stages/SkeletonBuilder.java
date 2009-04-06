@@ -246,6 +246,8 @@ public class SkeletonBuilder {
 			doNew((Expr.New) e, skeleton);
 		} else if(e instanceof Decl.JavaClass) {
 			doClass((Decl.JavaClass)e, skeleton);
+		} else if(e instanceof Stmt.PrePostIncDec) {
+			doExpression((Stmt.PrePostIncDec)e, skeleton);
 		} else if(e != null) {
 			syntax_error("Internal failure (invalid statement \""
 					+ e.getClass() + "\" encountered)", e);			

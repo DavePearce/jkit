@@ -146,6 +146,8 @@ public class TypeChecking {
 			checkNew((Expr.New) e);
 		} else if(e instanceof Decl.JavaClass) {
 			checkClass((Decl.JavaClass)e);
+		} else if(e instanceof Stmt.PrePostIncDec) {
+			checkExpression((Stmt.PrePostIncDec)e);
 		} else if(e != null) {
 			throw new RuntimeException("Invalid statement encountered: "
 					+ e.getClass());

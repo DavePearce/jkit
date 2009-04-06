@@ -2,6 +2,7 @@ package jkit.java.tree;
 
 import java.util.List;
 
+import jkit.java.tree.Expr.UnOp;
 import jkit.java.tree.Type.Clazz;
 import jkit.jil.*;
 import jkit.jil.tree.Attribute;
@@ -622,6 +623,23 @@ public interface Stmt extends SyntacticElement {
 						
 		public List<Case> cases() {
 			return cases;
+		}
+	}
+	
+
+	/**
+	 * Represents pre/post increment/decrement. The whole point of this class is
+	 * to enable these expressions to be statements.
+	 * 
+	 * @author djp
+	 * 
+	 */
+	public static class PrePostIncDec extends UnOp implements Expr,Stmt {
+		public PrePostIncDec(int op, Expr expr, Attribute... attributes) {
+			super(op,expr,attributes);
+		}
+		public PrePostIncDec(int op, Expr expr, List<Attribute> attributes) {
+			super(op,expr,attributes);
 		}
 	}
 }
