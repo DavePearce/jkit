@@ -742,7 +742,11 @@ public interface JilExpr extends SyntacticElement {
 			this.value = value;
 			this.type = type;
 		}
-				
+		
+		public int intValue() {
+			return value;
+		}
+		
 		public Type.Primitive type() {
 			return type;
 		}

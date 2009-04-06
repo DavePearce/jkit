@@ -1,6 +1,7 @@
 package jkit.jil.tree;
 
 import java.util.*;
+import jkit.util.*;
 
 public interface JilStmt extends SyntacticElement {
 	
@@ -231,6 +232,50 @@ public interface JilStmt extends SyntacticElement {
 		
 		public void setExpr(JilExpr expr) {
 			this.expr = expr;
+		}
+	}
+	
+	public static final class Switch extends SyntacticElementImpl implements JilStmt {
+		private JilExpr condition;
+		private final List<Pair<JilExpr.Number,String>> cases;
+		private String defaultLab;
+		
+		public Switch(JilExpr condition, List<Pair<JilExpr.Number, String>> cases,
+				String defaultLab, Attribute... attributes) {
+			super(attributes);
+			this.condition = condition;
+			this.cases = cases;
+			this.defaultLab = defaultLab;
+		}
+
+		public Switch(JilExpr condition, List<Pair<JilExpr.Number, String>> cases,
+				String defaultLab, List<Attribute> attributes) {
+			super(attributes);
+			this.condition = condition;
+			this.cases = cases;
+			this.defaultLab = defaultLab;
+		}
+		
+		public JilExpr condition() {
+			return condition;
+		}
+		
+		public void setCondition(JilExpr condition) {
+			this.condition = condition;
+		}
+		
+		public List<Pair<JilExpr.Number,String>> cases() {
+			return cases;
+		}		
+		
+		/**
+		 * Return the destination for all values which don't match any of the
+		 * given case(s).
+		 * 
+		 * @return
+		 */
+		public String defaultLabel() {
+			return defaultLab;
 		}
 	}
 }

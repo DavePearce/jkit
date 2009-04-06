@@ -298,7 +298,7 @@ public class CodeGeneration {
 		r.addAll(lhs.second());
 		r.addAll(rhs.second());
 		r.add(new JilStmt.Assign(lhs.first(),rhs.first(),def.attributes()));
-		return new Pair(rhs.first(),r);
+		return new Pair(lhs.first(),r);
 	}
 	
 	protected List<JilStmt> doReturn(Stmt.Return ret) {
@@ -444,15 +444,17 @@ public class CodeGeneration {
 	}
 	
 	static protected int forheader_label = 0;
+	static protected int forinc_label = 0;
 	static protected int forexit_label = 0;
 	
 	protected List<JilStmt> doFor(Stmt.For stmt) {
 		String headerLab = "forheader" + forheader_label++;
 		String exitLab = "forexit" + forexit_label++;
+		String incLab = "forinc" + forinc_label;
 		
 		ArrayList<JilStmt> r = new ArrayList<JilStmt>();
 		
-		if(stmt.initialiser() != null) {
+		if(stmt.initialiser() != null) {			
 			r.addAll(doStatement(stmt.initialiser()));
 		}
 		
@@ -467,11 +469,19 @@ public class CodeGeneration {
 					stmt.attributes()));
 		}
 		
-		scopes.push(new LoopScope(headerLab,exitLab));
+		if(stmt.increment() != null) {
+			scopes.push(new LoopScope(incLab,exitLab));
+		} else {
+			// this is a minor optimisation in the case that no increment is
+			// provided.
+			scopes.push(new LoopScope(headerLab,exitLab));
+		}
 		r.addAll(doStatement(stmt.body()));
 		scopes.pop();
-		
+				
 		if(stmt.increment() != null) {
+			r.add(new JilStmt.Label(incLab));
+			forinc_label++;
 			r.addAll(doStatement(stmt.increment()));
 		}
 		
@@ -486,11 +496,13 @@ public class CodeGeneration {
 	static protected int forallheader_label = 0;
 	static protected int forallexit_label = 0;
 	static protected int foralliter_label = 0;
+	static protected int forallinc_label = 0;
 	
 	protected List<JilStmt> doForEach(Stmt.ForEach stmt) {
 		String headerLab = "forallheader" + forallheader_label++;
 		String exitLab = "forallexit" + forallexit_label++;
 		String iterLab = "foralliter" + foralliter_label++;
+		String incLab = "forallinc" + forallinc_label;
 		
 		ArrayList<JilStmt> stmts = new ArrayList<JilStmt>();
 		
@@ -555,12 +567,18 @@ public class CodeGeneration {
 		
 		// Third, do body
 		
-		scopes.push(new LoopScope(headerLab,exitLab));
+		if(srcType instanceof Type.Array) {
+			scopes.push(new LoopScope(incLab,exitLab));
+		} else {
+			scopes.push(new LoopScope(headerLab,exitLab));
+		}
 		stmts.addAll(doStatement(stmt.body()));	
 		scopes.pop();
 		
 		// Fourth, do increment
 		if (srcType instanceof Type.Array) {
+			stmts.add(new JilStmt.Label(incLab));
+			forallinc_label++;
 			JilExpr.BinOp rhs = new JilExpr.BinOp(iter, new JilExpr.Int(1),
 					JilExpr.BinOp.ADD, new Type.Int(), stmt.attributes());
 			stmts.add(new JilStmt.Assign(iter,rhs,stmt.attributes()));
@@ -574,17 +592,44 @@ public class CodeGeneration {
 		return stmts;
 	}
 	
+	protected int switchcase_label = 0;
+	protected int switchexit_label = 0;
 	protected List<JilStmt> doSwitch(Stmt.Switch sw) {
+		String switchExitLab = "switchexit" + switchexit_label++;
 		ArrayList<JilStmt> r = new ArrayList<JilStmt>();
 		
 		Pair<JilExpr,List<JilStmt>> cond = doExpression(sw.condition());
-		for(Stmt.Case c : sw.cases()) {
-			doExpression(c.condition());
+		ArrayList<Pair<JilExpr.Number,String>> cases = new ArrayList();
+		ArrayList<JilStmt> caseStmts = new ArrayList();
+		String defaultLab = null;
+		for(Stmt.Case c : sw.cases()) {			
+			Pair<JilExpr,List<JilStmt>> ce = doExpression(c.condition());
+			String caseLab = "switchcase" + switchcase_label++;
+			caseStmts.add(new JilStmt.Label(caseLab));
 			for(Stmt s : c.statements()) {
-				doStatement(s);
-			}
+				if(s instanceof Stmt.Break) {
+					caseStmts.add(new JilStmt.Goto(switchExitLab));
+				} else {
+					caseStmts.addAll(doStatement(s));
+				}
+			}			
+			if(c.condition() != null) {
+				if(ce.first() instanceof JilExpr.Number) {
+					cases.add(new Pair(ce.first(),caseLab));
+				} else {
+					// Need to be more aggressive here, in exploring constant
+					// values.
+					syntax_error("constant expression required",c.condition());
+				}
+			} else {
+				defaultLab = caseLab;
+			}			
 		}
-		
+		if(defaultLab == null) { defaultLab = switchExitLab; }
+		r.addAll(cond.second());
+		r.add(new JilStmt.Switch(cond.first(),cases,defaultLab));
+		r.addAll(caseStmts);
+		r.add(new JilStmt.Label(switchExitLab));
 		return r;
 	}
 	

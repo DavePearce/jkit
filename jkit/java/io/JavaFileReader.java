@@ -826,13 +826,34 @@ public class JavaFileReader {
 		}
 
 		if (stmt.getChild(0).getChildCount() > 0) {
-			initialiser = parseStatement(stmt.getChild(0).getChild(0), genericVariables);
+			int childCount = stmt.getChild(0).getChildCount(); 
+			if(childCount == 1) {
+				initialiser = parseStatement(stmt.getChild(0).getChild(0), genericVariables);
+			} else {
+				// need a block
+				ArrayList<Stmt> inits = new ArrayList();
+				for(int i=0;i!=childCount;++i) {
+					Stmt s = parseStatement(stmt.getChild(0).getChild(i), genericVariables);
+					inits.add(s);
+				}
+				initialiser = new Stmt.Block(inits);
+			}
 		}
 		if (stmt.getChild(1).getChildCount() > 0) {
 			condition = parseExpression(stmt.getChild(1).getChild(0), genericVariables);
 		}
 		if (stmt.getChild(2).getChildCount() > 0) {
-			increment = parseStatement(stmt.getChild(2).getChild(0), genericVariables);
+			int childCount = stmt.getChild(2).getChildCount(); 
+			if(childCount == 1) {
+				increment = parseStatement(stmt.getChild(2).getChild(0), genericVariables);
+			} else {
+				ArrayList<Stmt> incs = new ArrayList();
+				for(int i=0;i!=childCount;++i) {
+					Stmt s = parseStatement(stmt.getChild(2).getChild(i), genericVariables);
+					incs.add(s);
+				}
+				increment = new Stmt.Block(incs);	
+			}
 		}
 		if (stmt.getChild(3).getChildCount() > 0) {
 			body = parseStatement(stmt.getChild(3), genericVariables);

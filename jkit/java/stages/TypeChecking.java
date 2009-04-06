@@ -355,6 +355,13 @@ public class TypeChecking {
 	
 	protected void checkSwitch(Stmt.Switch sw) {
 		checkExpression(sw.condition());
+		
+		Type condT = (Type) sw.condition().attribute(Type.class);
+		
+		if(!(condT instanceof Type.Int)) {
+			syntax_error("found type " + condT + ", required int",sw);
+		}
+		
 		for(Case c : sw.cases()) {
 			checkExpression(c.condition());
 			for(Stmt s : c.statements()) {

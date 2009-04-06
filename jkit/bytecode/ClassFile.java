@@ -612,9 +612,20 @@ public class ClassFile implements Clazz {
 					return "Ljava/lang/Object;";
 				}
 			}
+		}  else if(t instanceof Type.Wildcard) {
+			if(generic) {
+				 Type.Wildcard tw = (Type.Wildcard) t;
+				 if(tw.lowerBound() == null) {
+					 return "*";
+				 } else {
+					 return "+" + descriptor(tw.lowerBound(),generic);
+				 }
+			} else {
+				return "Ljava/lang/Object;";
+			}
 		}
 		 
-		throw new RuntimeException("Invalid type passed to Types.descriptor(): " + t);
+		throw new RuntimeException("Invalid type passed to descriptor(): " + t);
 	}
 	
 	/**

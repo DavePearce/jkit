@@ -52,7 +52,8 @@ public class TypeSystem {
 		}
 		if(t2 == null) {
 			throw new IllegalArgumentException("t2 cannot be null");
-		}			
+		}				
+		
 		// First, do the easy cases ...		
 		if(t1 instanceof Type.Reference && t2 instanceof Type.Null) {
 			return true; // null is a subtype of all references.
@@ -60,6 +61,8 @@ public class TypeSystem {
 			return subtype((Type.Intersection) t1, (Type.Reference) t2, loader);
 		} else if(t2 instanceof Type.Intersection && t1 instanceof Type.Reference) {			
 			return subtype((Type.Reference) t1, (Type.Intersection) t2, loader);
+		} else if(t1 instanceof Type.Reference && t2 instanceof Type.Wildcard) {			
+			return subtype((Type.Reference) t1, (Type.Wildcard) t2, loader);
 		} else if(t1 instanceof Type.Clazz && t2 instanceof Type.Clazz) {			
 			return subtype((Type.Clazz) t1, (Type.Clazz) t2, loader);
 		} else if(t1 instanceof Type.Primitive && t2 instanceof Type.Primitive) {
@@ -229,6 +232,27 @@ public class TypeSystem {
 		return true;
 	}
 	
+	public boolean subtype(Type.Reference t1, Type.Wildcard t2,
+			ClassLoader loader) throws ClassNotFoundException {
+		if (loader == null) {
+			throw new IllegalArgumentException("loader cannot be null");
+		}
+		if (t1 == null) {
+			throw new IllegalArgumentException("t1 cannot be null");
+		}
+		if (t2 == null) {
+			throw new IllegalArgumentException("t2 cannot be null");
+		}
+
+		if(t1 instanceof Type.Clazz && isJavaLangObject((Type.Clazz)t1)) {
+			return true;
+		} else if(t2.lowerBound() != null){
+			return subtype(t1,t2.lowerBound(),loader);
+		}
+
+		return false;
+	}
+	
 	/**
 	 * <p>This method determines whether or not type t1 :> t2 under autoboxing.
 	 * Thus, it is very similar to the subtype() method above, except that it
@@ -365,8 +389,7 @@ public class TypeSystem {
      *             a BindError if the binding is not constructable.
      */
 	public Map<String, Type.Reference> bind(Type concrete, Type template,
-			ClassLoader loader) throws ClassNotFoundException {
-						
+			ClassLoader loader) throws ClassNotFoundException {		
 		// At this point, we must compute the innerBinding and, from this,
 		// determine the final binding
 		ArrayList<BindConstraint> constraints = innerBind(concrete,template,loader);		

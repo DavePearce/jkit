@@ -11,7 +11,7 @@ public class FreeVariables {
 	
 	public static void h() {
 		i(new Integer(1)); // SHOULD COMPILE
-		i("Test"); // SHOULDN'T COMPILE, BUT DOES CORRECTLY IN JKIT
+		i("Test"); // SHOULDN'T COMPILE
 	}
 	
 	public static <T extends Number> void i(T x) {

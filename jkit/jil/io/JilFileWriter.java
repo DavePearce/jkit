@@ -117,6 +117,8 @@ public class JilFileWriter {
 			output.print("\t\t");
 			write((JilExpr.Invoke)s);
 			output.println();
+		} else if(s instanceof JilStmt.Switch) {
+			write((JilStmt.Switch)s);
 		} else {
 			throw new RuntimeException("Invalid statement encountered: "
 					+ s.getClass());
@@ -166,6 +168,17 @@ public class JilFileWriter {
 	
 	protected void write(JilStmt.Label s) {
 		output.println("\t" + s.label() + ":");
+	}
+	
+	protected void write(JilStmt.Switch s) {
+		output.print("\t\tswitch("); 
+		write(s.condition());
+		output.println(") {");
+		for(Pair<JilExpr.Number,String> c : s.cases()) {
+			output.println("\t\tcase " + c.first() + ": goto " + c.second() + ";");			
+		}
+		output.println("\t\tdefault: goto " + s.defaultLabel() + ";");
+		output.println("\t\t}");
 	}
 	
 	protected void write(JilExpr e) {

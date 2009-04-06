@@ -316,8 +316,8 @@ public class ClassFileReader {
 		// signature attribute, since this provides
 		// additional generic information
 		for(Attribute at : attributes) {
-			if(at instanceof FieldSignature) {				
-					type = (Type.Function) ((FieldSignature) at).type();					
+			if(at instanceof MethodSignature) {				
+					type = (Type.Function) ((MethodSignature) at).type();					
 			} 
 		}								
 		

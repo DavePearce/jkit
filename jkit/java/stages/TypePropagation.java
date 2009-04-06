@@ -317,6 +317,7 @@ public class TypePropagation {
 	
 	protected void doSwitch(Stmt.Switch sw, JavaMethod m) {
 		doExpression(sw.condition());
+		sw.setCondition(implicitCast(sw.condition(),new Type.Int()));
 		for(Case c : sw.cases()) {
 			doExpression(c.condition());
 			for(Stmt s : c.statements()) {
@@ -551,6 +552,7 @@ public class TypePropagation {
 			
 			Triple<Clazz, Clazz.Method, Type.Function> r = types
 					.resolveMethod(receiver, e_name, parameterTypes, loader);
+									
 			Type.Function f = r.third();
 			
 			// At this stage, we have (finally) figured out what method is to be
@@ -567,7 +569,7 @@ public class TypePropagation {
 			
 			// Secondly, we must add type information to the expression.
 			
-			if (!(f.returnType() instanceof Type.Void)) {
+			if (!(f.returnType() instanceof Type.Void)) {				
 				e.attributes().add(f.returnType());
 			}
 			
@@ -1219,7 +1221,7 @@ public class TypePropagation {
 							new ArrayList<Expr>(), new ArrayList(),
 							new Type.Bool(), funType), t);
 				} else {
-					throw new RuntimeException("Unreachable code reached!");
+					syntax_error("found type " + e_t + ", required " + t,e);
 				}
 			}
 		} else if(e_t instanceof Type.Primitive && t instanceof Type.Clazz) {

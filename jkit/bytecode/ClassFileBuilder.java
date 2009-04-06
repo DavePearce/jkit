@@ -4,6 +4,9 @@ import java.util.*;
 
 import jkit.compiler.Clazz;
 import jkit.compiler.ClassLoader;
+import jkit.compiler.SyntaxError;
+import jkit.compiler.FieldNotFoundException;
+import jkit.compiler.MethodNotFoundException;
 import jkit.jil.tree.*;
 import jkit.jil.util.Exprs;
 import jkit.util.Pair;
@@ -343,6 +346,8 @@ public class ClassFileBuilder {
 			translateIfGoto((JilStmt.IfGoto)stmt,varmap,bytecodes);
 		} else if(stmt instanceof JilStmt.Goto) {
 			translateGoto((JilStmt.Goto)stmt,varmap,bytecodes);
+		} else if(stmt instanceof JilStmt.Switch) {
+			translateSwitch((JilStmt.Switch)stmt,varmap,bytecodes);
 		} else {
 			throw new RuntimeException("Unknown statement encountered: " + stmt);
 		}
@@ -574,10 +579,12 @@ public class ClassFileBuilder {
 		}
 
 		try {
-			int dispatchMode = determineDispatchMode(targetT, stmt.name(), stmt
+			Pair<Clazz,Clazz.Method> cm = determineMethod(targetT, stmt.name(), stmt
 					.funType());
-
-			if (dispatchMode != DISPATCH_STATIC) {
+			Clazz c = cm.first();
+			Clazz.Method m = cm.second();
+			
+			if (!m.isStatic()) {
 				// must be non-static invocation
 				translateExpression(stmt.target(), varmap, bytecodes);
 			}
@@ -589,11 +596,11 @@ public class ClassFileBuilder {
 			if (stmt instanceof JilExpr.SpecialInvoke) {
 				bytecodes.add(new Bytecode.Invoke(targetT, stmt.name(), stmt
 						.funType(), Bytecode.SPECIAL));
-			} else if (dispatchMode == DISPATCH_STATIC) {
+			} else if (m.isStatic()) {
 				// STATIC
 				bytecodes.add(new Bytecode.Invoke(targetT, stmt.name(), stmt
 						.funType(), Bytecode.STATIC));
-			} else if (dispatchMode == DISPATCH_INTERFACE) {
+			} else if (c.isInterface()) {
 				bytecodes.add(new Bytecode.Invoke(targetT, stmt.name(), stmt
 						.funType(), Bytecode.INTERFACE));
 			} else {
@@ -601,7 +608,7 @@ public class ClassFileBuilder {
 						.funType(), Bytecode.VIRTUAL));
 			}
 
-			Type retT = stmt.funType().returnType();
+			Type retT = m.type().returnType();
 
 			if (!(retT instanceof Type.Void)) {
 				// Need to account for space occupied by return type!
@@ -615,22 +622,20 @@ public class ClassFileBuilder {
 						&& !stmt.type().equals(
 								new Type.Clazz("java.lang", "Object"))) {
 					// Here, the actual return type is a (generic) type
-					// variable
-					// (e.g. T or T[]), and we're expecting it to return a
-					// real
-					// value (e.g. String, substituted for T). This issue is
+					// variable (e.g. T or T[]), and we're expecting it to
+					// return a real value (e.g. String, substituted for T).
+					// This issue is
 					// that, because of erasure, the returned type will be
-					// Object
-					// and we need to cast it to whatever it needs to be
-					// (e.g.
-					// String). Note, if the value substituted for T is
-					// actually
-					// Object, then we just do nothing!
+					// Object and we need to cast it to whatever it needs to be
+					// (e.g. String). Note, if the value substituted for T is
+					// actually Object, then we just do nothing!
 					bytecodes.add(new Bytecode.CheckCast(stmt.type()));
 				}
 			}
 		} catch (ClassNotFoundException cnfe) {
-			throw new RuntimeException("internal error:" + cnfe.getMessage());
+			syntax_error(cnfe.getMessage(),stmt,cnfe);
+		} catch (MethodNotFoundException mnfe) {
+			syntax_error(mnfe.getMessage(),stmt,mnfe);			
 		}
 	}
 
@@ -715,6 +720,18 @@ public class ClassFileBuilder {
 	protected void translateGoto(JilStmt.Goto stmt, HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes) {
 		bytecodes.add(new Bytecode.Goto(stmt.label()));
+	}
+	
+	protected void translateSwitch(JilStmt.Switch stmt,
+			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes) {
+		translateExpression(stmt.condition(), varmap, bytecodes);
+		List<Pair<Integer,String>> cases = new ArrayList();
+		
+		for(Pair<JilExpr.Number,String> c : stmt.cases()) {
+			cases.add(new Pair<Integer,String>(c.first().intValue(), c.second()));
+		}
+		
+		bytecodes.add(new Bytecode.Switch(stmt.defaultLabel(),cases));
 	}
 	
 	/**
@@ -813,27 +830,39 @@ public class ClassFileBuilder {
 		if (tmp_t instanceof Type.Clazz) {
 			Type.Clazz lhs_t = (Type.Clazz) tmp_t;
 
-			if (def.isStatic()) {
-				// This is a static field load					
-				bytecodes.add(new Bytecode.GetField(lhs_t, def.name(),
-						def.type(), Bytecode.STATIC));				
-			} else {
-				// Non-static field load
-				translateExpression(def.target(), varmap, bytecodes);
-
-				bytecodes.add(new Bytecode.GetField(lhs_t, def.name(),
-						def.type(), Bytecode.NONSTATIC));
+			try {
+				Type actualFieldType = determineFieldType(lhs_t,def.name());
+				Type bytecodeType = actualFieldType;
 				
-				// FIXME: generic type conversions
-//				if (actualFieldType instanceof Type.Variable
-//						&& !(def.type() instanceof Type.Variable)
-//						&& !def.type().equals(new Type.Clazz("java.lang",
-//								"Object"))) {
-//					// Ok, actual type is a (generic) type variable. Need to
-//					// cast to the desired type!
-//					bytecodes.add(new Bytecode.CheckCast(def.type()));					
-//				}				
-			}
+				if(actualFieldType instanceof Type.Variable) {
+					bytecodeType = new Type.Clazz("java.lang","Object");
+				}
+								
+				if (def.isStatic()) {
+					// This is a static field load					
+					bytecodes.add(new Bytecode.GetField(lhs_t, def.name(),
+							bytecodeType, Bytecode.STATIC));				
+				} else {
+					// Non-static field load
+					translateExpression(def.target(), varmap, bytecodes);
+
+					bytecodes.add(new Bytecode.GetField(lhs_t, def.name(),
+							bytecodeType, Bytecode.NONSTATIC));		
+
+					if (actualFieldType instanceof Type.Variable
+							&& !(def.type() instanceof Type.Variable)
+							&& !def.type().equals(new Type.Clazz("java.lang",
+							"Object"))) {
+						// Ok, actual type is a (generic) type variable. Need to
+						// cast to the desired type!
+						bytecodes.add(new Bytecode.CheckCast(def.type()));					
+					}		
+				}
+			} catch(ClassNotFoundException e) {
+				syntax_error(e.getMessage(),def,e);
+			} catch(FieldNotFoundException e) {
+				syntax_error(e.getMessage(),def,e);
+			}			
 		} else if (tmp_t instanceof Type.Array && def.name().equals("length")) {
 			translateExpression(def.target(), varmap, bytecodes);
 			bytecodes.add(new Bytecode.ArrayLength());
@@ -1031,26 +1060,45 @@ public class ClassFileBuilder {
 	protected final int DISPATCH_INTERFACE = 1;
 	protected final int DISPATCH_STATIC = 2;
 	
-	protected int determineDispatchMode(Type.Clazz receiver, String name,
-			Type.Function funType) throws ClassNotFoundException {
+	protected Pair<Clazz,Clazz.Method> determineMethod(Type.Clazz receiver, String name,
+			Type.Function funType) throws ClassNotFoundException,MethodNotFoundException {
 
 		String fdesc = ClassFile.descriptor(funType, false);
 		
 		while (receiver != null) {
-			Clazz c = loader.loadClass(receiver);
-			if(c.isInterface()) {
-				return DISPATCH_INTERFACE;
-			}			
+			Clazz c = loader.loadClass(receiver);						
 			for (Clazz.Method m : c.methods(name)) {
 				String mdesc = ClassFile.descriptor(m.type(), false);						
 				if (fdesc.equals(mdesc)) {
-					return m.isStatic() ? DISPATCH_STATIC : DISPATCH_VIRTUAL;
+					return new Pair(c,m);
 				}
 			}
 			receiver = c.superClass();
 		}
 
-		return DISPATCH_INTERFACE;
+		throw new MethodNotFoundException(name,receiver.toString());
+	}
+	
+	/**
+	 * This method determines the actual type of a field. This is important,
+	 * since the actual type and the bytecode type can differ in the case of
+	 * generics. Thus, if we're loading a field of generic type, then we need a
+	 * cast in the bytecode accordinly.
+	 * 
+	 * @param t
+	 * @return
+	 */
+	protected Type determineFieldType(Type.Clazz receiver, String name)
+			throws ClassNotFoundException, FieldNotFoundException {
+		while (receiver != null) {
+			Clazz c = loader.loadClass(receiver);
+			Clazz.Field f = c.field(name);
+			if (f != null) {
+				return f.type();
+			}
+			receiver = c.superClass();
+		}
+		throw new FieldNotFoundException(name,receiver.toString());
 	}
 	
 	protected static boolean isGeneric(Type t) {
@@ -1093,5 +1141,35 @@ public class ClassFileBuilder {
 			}
 		}
 		return false;
+	}
+	
+	/**
+     * This method is just to factor out the code for looking up the source
+     * location and throwing an exception based on that.
+     * 
+     * @param msg --- the error message
+     * @param e --- the syntactic element causing the error
+     */
+	protected void syntax_error(String msg, SyntacticElement e) {
+		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
+		throw new SyntaxError(msg,loc.line(),loc.column());
+	}
+	
+	/**
+	 * This method is just to factor out the code for looking up the source
+	 * location and throwing an exception based on that. In this case, we also
+	 * have an internal exception which has given rise to this particular
+	 * problem.
+	 * 
+	 * @param msg
+	 *            --- the error message
+	 * @param e
+	 *            --- the syntactic element causing the error
+	 * @parem ex --- an internal exception, the details of which we want to
+	 *        keep.
+	 */
+	protected void syntax_error(String msg, SyntacticElement e, Throwable ex) {
+		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
+		throw new SyntaxError(msg,loc.line(),loc.column(),ex);
 	}
 }

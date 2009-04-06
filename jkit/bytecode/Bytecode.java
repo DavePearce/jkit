@@ -1497,13 +1497,23 @@ public abstract class Bytecode {
 		}
 		
 		public void addPoolItems(Set<Constant.Info> constantPool) {
-			if(type instanceof Type.Reference) {
-				Constant.addPoolItem(Constant
-						.buildClass((Type.Reference) type), constantPool);
+			if (type instanceof Type.Wildcard) {
+				Type.Wildcard tw = (Type.Wildcard) type;
+				if (tw.lowerBound() == null) {
+					Constant.addPoolItem(Constant.buildClass(new Type.Clazz(
+							"java.lang", "Object")), constantPool);
+				} else {
+					Constant.addPoolItem(Constant.buildClass(tw.lowerBound()),
+							constantPool);
+				}
+			} else if (type instanceof Type.Reference) {
+				Constant.addPoolItem(
+						Constant.buildClass((Type.Reference) type),
+						constantPool);
 			} else if (type instanceof Type.Array) {
-				Constant.addPoolItem(Constant
-						.buildClass((Type.Array) type), constantPool);
-			} 	
+				Constant.addPoolItem(Constant.buildClass((Type.Array) type),
+						constantPool);
+			}
 		}
 		
 		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  
@@ -1512,7 +1522,16 @@ public abstract class Bytecode {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();			
 			int idx;
 			
-			if(type instanceof Type.Reference) {
+			if(type instanceof Type.Wildcard) {
+				Type.Wildcard tw = (Type.Wildcard) type;
+				if(tw.lowerBound() == null) {
+					idx = constantPool.get(Constant
+							.buildClass(new Type.Clazz("java.lang","Object")));
+				} else {
+					idx = constantPool.get(Constant
+							.buildClass(tw.lowerBound()));
+				}
+			} else if(type instanceof Type.Reference) {
 				idx = constantPool.get(Constant
 						.buildClass((Type.Reference) type));
 			} else if (type instanceof Type.Array) {
