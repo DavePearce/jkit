@@ -805,12 +805,19 @@ public class ClassFileBuilder {
 			translateCast((JilExpr.Cast) expr, varmap,bytecodes);
 		} else if (expr instanceof JilExpr.Convert) {
 			translateConvert((JilExpr.Convert) expr, varmap,bytecodes);
+		} else if (expr instanceof JilExpr.ClassVariable) {
+			translateClassVariable((JilExpr.ClassVariable)expr,varmap,bytecodes);
 		} else {
 			throw new RuntimeException("Unknown expression encountered ("
 					+ expr + ")");
 		}
 	}
 
+	public void translateClassVariable(JilExpr.ClassVariable cvar,  HashMap<String, Integer> varmap,
+			ArrayList<Bytecode> bytecodes) {
+		// do nothing here.
+	}
+	
 	public void translateClassVal(JilExpr.Class cval,  HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes) {
 		if(cval.type() instanceof Type.Primitive) {

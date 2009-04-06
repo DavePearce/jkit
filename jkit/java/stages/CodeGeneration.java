@@ -292,14 +292,12 @@ public class CodeGeneration {
 		}
 		
 		return r;
-	}
-	
-	protected static int aop_label = 0;
+	}		
 	
 	protected Pair<JilExpr,List<JilStmt>> doAssignmentOp(Stmt.AssignmentOp def) {
-		String label = "$aop" + aop_label++;
 		ArrayList<JilStmt> r = new ArrayList<JilStmt>();
 		Pair<JilExpr,List<JilStmt>> lhs = doExpression(def.lhs());
+		Pair<JilExpr,List<JilStmt>> rhs = doExpression(def.rhs());
 		
 		if(!lhs.second().isEmpty()) {
 			syntax_error("required variable or field on left-hand side",def);
@@ -309,16 +307,18 @@ public class CodeGeneration {
 															// problem here, see
 															// doBinOp.
 		
-		JilExpr tmpVar = new JilExpr.Variable(label,lhs_t,def.attributes());
-		r.add(new JilStmt.Assign(tmpVar,lhs.first(),def.attributes()));
 		
-		Pair<JilExpr,List<JilStmt>> rhs = doExpression(def.rhs());		
+		// I think there is a bug here in the case of a field or array access on
+		// the left-hand side.  See doAssignment()
+		
+		JilExpr tmpVar = new JilExpr.Variable(getTempVar(), lhs_t, def
+				.attributes());
+		r.add(new JilStmt.Assign(tmpVar, lhs.first(), def.attributes()));
 		r.addAll(rhs.second());
-		r
-				.add(new JilStmt.Assign(lhs.first(), new JilExpr.BinOp(tmpVar,
-						rhs.first(), def.op(), lhs_t, def.attributes()), def
-						.attributes()));
-		return new Pair(lhs.first(),r);
+		r.add(new JilStmt.Assign(lhs.first(), new JilExpr.BinOp(tmpVar, rhs
+				.first(), def.op(), lhs_t, def.attributes()), def
+				.attributes()));
+		return new Pair(lhs.first(), r);
 	}
 	
 	protected Pair<JilExpr,List<JilStmt>> doAssignment(Stmt.Assignment def) {
@@ -326,9 +326,47 @@ public class CodeGeneration {
 		Pair<JilExpr,List<JilStmt>> lhs = doExpression(def.lhs());	
 		Pair<JilExpr,List<JilStmt>> rhs = doExpression(def.rhs());
 		r.addAll(lhs.second());
-		r.addAll(rhs.second());
-		r.add(new JilStmt.Assign(lhs.first(),rhs.first(),def.attributes()));
-		return new Pair(lhs.first(),r);
+		
+		if (rhs.second().isEmpty() || lhs.first() instanceof JilExpr.Variable) {
+			// easy case, no side-effects in rhs or trivial assignment.
+			r.addAll(rhs.second());
+			r.add(new JilStmt.Assign(lhs.first(), rhs.first(), def
+							.attributes()));
+			return new Pair(lhs.first(), r);
+		} else if(lhs.first() instanceof JilExpr.Deref) {
+			JilExpr.Deref deref1 = (JilExpr.Deref) lhs.first(); 
+
+			JilExpr tmpVar = new JilExpr.Variable(getTempVar(), deref1.target()
+					.type(), def.attributes());
+			r.add(new JilStmt.Assign(tmpVar, deref1.target(), def.attributes()));
+			r.addAll(rhs.second());
+			JilExpr.Deref deref2 = new JilExpr.Deref(tmpVar, deref1.name(),
+					deref1.isStatic(), deref1.type(), deref1.attributes()); 
+			r.add(new JilStmt.Assign(deref2, rhs.first(), def
+							.attributes()));
+			return new Pair(deref2, r);
+		} else if(lhs.first() instanceof JilExpr.ArrayIndex) {
+			JilExpr.ArrayIndex aindex1 = (JilExpr.ArrayIndex) lhs.first();
+
+			JilExpr targetVar = new JilExpr.Variable(getTempVar(), aindex1
+					.target().type(), def.attributes());
+			JilExpr indexVar = new JilExpr.Variable(getTempVar(), aindex1
+					.index().type(), def.attributes());
+			r.add(new JilStmt.Assign(targetVar, aindex1.target(), def
+					.attributes()));
+			r.add(new JilStmt.Assign(indexVar, aindex1.index(), def
+					.attributes()));
+			r.addAll(rhs.second());
+			JilExpr.ArrayIndex aindex2 = new JilExpr.ArrayIndex(targetVar,
+					indexVar, aindex1.type(), aindex1.attributes());
+			r.add(new JilStmt.Assign(aindex2, rhs.first(), def.attributes()));
+			return new Pair(aindex2, r);
+		} else {
+			syntax_error(
+					"unknown l-value encountered on assignment with side-effects",
+					def);
+			return null; // unreachable.
+		}
 	}
 	
 	protected List<JilStmt> doReturn(Stmt.Return ret) {
@@ -778,25 +816,31 @@ public class CodeGeneration {
 		Type type = (Type) e.attribute(Type.class);
 		
 		List<JilStmt> r = target.second();
-		r.addAll(index.second());
 		
-		return new Pair<JilExpr, List<JilStmt>>(new JilExpr.ArrayIndex(target.first(),
-				index.first(), type, e.attributes()), r);
+		if(index.second().isEmpty()) {
+			// easy case when no side-effects in index expression.
+			
+			return new Pair<JilExpr, List<JilStmt>>(new JilExpr.ArrayIndex(target.first(),
+					index.first(), type, e.attributes()), r);
+		} else {
+			// harder case, there are side-effects in the index expression.
+			JilExpr.Variable tmpVar = new JilExpr.Variable(getTempVar(),
+					target.first().type(), e.attributes());
+			r.add(new JilStmt.Assign(tmpVar,target.first(),e.attributes()));
+			r.addAll(index.second());
+			return new Pair<JilExpr, List<JilStmt>>(new JilExpr.ArrayIndex(tmpVar,
+					index.first(), type, e.attributes()), r);
+		}
 	}
 	
 	protected Pair<JilExpr,List<JilStmt>> doNew(Expr.New e) {
 		// Second, recurse through any parameters supplied ...
-		ArrayList<JilStmt> r = new ArrayList();
-		ArrayList<JilExpr> nparameters = new ArrayList();			
+		ArrayList<JilStmt> r = new ArrayList();	
 		Type.Reference type = (Type.Reference) e.attribute(Type.class);
-		List<Expr> parameters = e.parameters();
 		
-		for(int i=0;i!=parameters.size();++i) {
-			Expr p = parameters.get(i);
-			Pair<JilExpr,List<JilStmt>> tmp = doExpression(p);
-			nparameters.add(tmp.first());
-			r.addAll(tmp.second());
-		}
+		Pair<List<JilExpr>,List<JilStmt>> params = doExpressionList(e.parameters());
+		
+		r.addAll(params.second());
 		
 		if(e.declarations().size() > 0) {
 			for(Decl d : e.declarations()) {
@@ -807,41 +851,35 @@ public class CodeGeneration {
 		Type.Function funType = (Type.Function) e
 				.attribute(Type.Function.class);
 		
-		return new Pair<JilExpr, List<JilStmt>>(new JilExpr.New(type, nparameters,
+		return new Pair<JilExpr, List<JilStmt>>(new JilExpr.New(type, params.first(),
 				funType, e.attributes()), r);
 	}
 	
 	protected Pair<JilExpr,List<JilStmt>> doInvoke(Expr.Invoke e) {
 		ArrayList<JilStmt> r = new ArrayList();
-		ArrayList<JilExpr> nparameters = new ArrayList();
 		Type type = (Type) e.attribute(Type.class);				
 		Type.Function funType = (Type.Function) e.attribute(Type.Function.class);
 		
 		Pair<JilExpr,List<JilStmt>> target = doExpression(e.target());
 		r.addAll(target.second());
 		
-		List<Expr> parameters = e.parameters();
-		for(int i=0;i!=parameters.size();++i) {
-			Expr p = parameters.get(i);
-			Pair<JilExpr,List<JilStmt>> tmp = doExpression(p);
-			nparameters.add(tmp.first());
-			r.addAll(tmp.second());
-		}				
+		Pair<List<JilExpr>,List<JilStmt>> params = doExpressionList(e.parameters());
+		r.addAll(params.second());
 		
 		JilExpr rec = target.first();
 		
 		if (rec instanceof JilExpr.ClassVariable) {
 			return new Pair<JilExpr, List<JilStmt>>(new JilExpr.Invoke(target.first(), e
-					.name(), nparameters, funType, type, e
+					.name(), params.first(), funType, type, e
 					.attributes()), r);
 		} else if (rec instanceof JilExpr.Variable
 				&& ((JilExpr.Variable) rec).value().equals("super")) {
 			return new Pair<JilExpr, List<JilStmt>>(new JilExpr.SpecialInvoke(target
-					.first(), e.name(), nparameters, funType, type, e
+					.first(), e.name(), params.first(), funType, type, e
 					.attributes()), r);
 		} else {
 			return new Pair<JilExpr, List<JilStmt>>(new JilExpr.Invoke(target.first(), e
-					.name(), nparameters, funType, type, e
+					.name(), params.first(), funType, type, e
 					.attributes()), r);
 		}
 	}
@@ -993,7 +1031,7 @@ public class CodeGeneration {
 		case Expr.UnOp.POSTINC:
 		{
 			lval = (Expr.LocalVariable) e.expr();
-			JilExpr.Variable tmp = new JilExpr.Variable("$tmp",type,lval.attributes());
+			JilExpr.Variable tmp = new JilExpr.Variable(getTempVar(),type,lval.attributes());
 			JilExpr.Variable lhs = new JilExpr.Variable(lval.value(),type,lval.attributes());
 			stmts.add(new JilStmt.Assign(tmp,lhs,e.attributes()));			
 			JilExpr rhs = new JilExpr.BinOp(lhs, new JilExpr.Int(1), JilExpr.BinOp.ADD,
@@ -1004,7 +1042,7 @@ public class CodeGeneration {
 		case Expr.UnOp.POSTDEC:
 		{
 			 lval = (Expr.LocalVariable) e.expr();
-			 JilExpr.Variable tmp = new JilExpr.Variable("$tmp",type,lval.attributes());
+			 JilExpr.Variable tmp = new JilExpr.Variable(getTempVar(),type,lval.attributes());
 				JilExpr.Variable lhs = new JilExpr.Variable(lval.value(),type,lval.attributes());
 				stmts.add(new JilStmt.Assign(tmp,lhs,e.attributes()));			
 				JilExpr rhs = new JilExpr.BinOp(lhs, new JilExpr.Int(1), JilExpr.BinOp.SUB,
@@ -1028,10 +1066,23 @@ public class CodeGeneration {
 			Type.Primitive type = (Type.Primitive) _type;
 
 			List<JilStmt> r = lhs.second();
-			r.addAll(rhs.second());
 
-			return new Pair<JilExpr, List<JilStmt>>(new JilExpr.BinOp(lhs.first(), rhs
-					.first(), e.op(), type, e.attributes()), r);
+			if(rhs.second().isEmpty()) {
+				// This is the easy case: there are no side-effects in the rhs.
+				r.addAll(rhs.second());
+
+				return new Pair<JilExpr, List<JilStmt>>(new JilExpr.BinOp(lhs.first(), rhs
+						.first(), e.op(), type, e.attributes()), r);
+			} else {
+				// This is the harder case: we have side-effects in the rhs.
+				// Now, to deal with this i'm going to be a little conservative.
+				JilExpr.Variable tmpVar = new JilExpr.Variable(getTempVar(),
+						lhs.first().type(), e.attributes());
+				r.add(new JilStmt.Assign(tmpVar,lhs.first(),e.attributes()));
+				r.addAll(rhs.second());
+				return new Pair<JilExpr, List<JilStmt>>(new JilExpr.BinOp(tmpVar, rhs
+						.first(), e.op(), type, e.attributes()), r);
+			}
 		} else if(e.op() == Expr.BinOp.CONCAT) {
 			return doStringConcat(e);
 		} else {
@@ -1109,10 +1160,54 @@ public class CodeGeneration {
 		return new Pair<JilExpr,List<JilStmt>>(r,stmts);
 	}
 
+	protected int ternop_label = 0;
+	protected Pair<JilExpr,List<JilStmt>> doTernOp(Expr.TernOp e) {
+		String trueLab = "$ternoptrue" + ternop_label;
+		String exitLab = "$ternopexit" + ternop_label++;
+		Type r_t = (Type) e.attribute(Type.class);
+		Pair<JilExpr,List<JilStmt>> cond = doExpression(e.condition());
+		Pair<JilExpr,List<JilStmt>> tbranch = doExpression(e.trueBranch());
+		Pair<JilExpr,List<JilStmt>> fbranch = doExpression(e.falseBranch());
+		ArrayList<JilStmt> r = new ArrayList<JilStmt>();
+		JilExpr.Variable tmp = new JilExpr.Variable(getTempVar(),r_t,e.attributes());
+		r.addAll(cond.second());
+		r.add(new JilStmt.IfGoto(cond.first(),trueLab,e.attributes()));
+		r.addAll(fbranch.second());
+		r.add(new JilStmt.Assign(tmp,fbranch.first(),e.attributes()));
+		r.add(new JilStmt.Goto(exitLab,e.attributes()));
+		r.add(new JilStmt.Label(trueLab,e.attributes()));
+		r.addAll(tbranch.second());
+		r.add(new JilStmt.Assign(tmp,tbranch.first(),e.attributes()));		
+		r.add(new JilStmt.Label(exitLab,e.attributes()));		
+		return new Pair(tmp,r);
+	}
 	
-	protected Pair<JilExpr,List<JilStmt>> doTernOp(Expr.TernOp e) {	
-		syntax_error("internal failure --- problem processing ternary operator.",e);
-		return null;
+	/**
+	 * The purpose of this method is to simplify the processing of an expression
+	 * list. This is particular complex in the case of side-effecting
+	 * statements.
+	 */
+	protected Pair<List<JilExpr>,List<JilStmt>> doExpressionList(List<Expr> exprs) {
+		ArrayList<JilExpr> nexprs = new ArrayList();
+		ArrayList<JilStmt> nstmts = new ArrayList();
+		boolean hasSideEffects = false;
+		for(int i=exprs.size()-1;i>=0;--i) {
+			Expr p = exprs.get(i);
+			Pair<JilExpr,List<JilStmt>> tmp = doExpression(p);
+			if(hasSideEffects) {
+				JilExpr.Variable var = new JilExpr.Variable(getTempVar(), tmp
+						.first().type(), p.attributes());
+				nstmts.add(0,new JilStmt.Assign(var,tmp.first(),p.attributes()));
+				nexprs.add(0,var);
+			} else {
+				nexprs.add(0,tmp.first());	
+			}			
+			nstmts.addAll(0,tmp.second());
+			if(!tmp.second().isEmpty()) {
+				hasSideEffects=true;
+			}
+		}				
+		return new Pair<List<JilExpr>,List<JilStmt>>(nexprs,nstmts);
 	}
 	
 	protected Scope findEnclosingScope(Class c) {
@@ -1135,6 +1230,11 @@ public class CodeGeneration {
 			}
 		}
 		return true;
+	}
+	
+	protected int tmp_label = 0;
+	protected String getTempVar() {
+		return "$tmp" + tmp_label++;
 	}
 	
 	/**
