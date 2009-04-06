@@ -65,7 +65,24 @@ public class Constant {
 	 * @param c
 	 * @return
 	 */
-	public static Constant.Class buildClass(Type.Reference r) {		
+	public static Constant.Class buildClass(Type.Reference r) {
+		if (r instanceof Type.Array) {
+			return buildClass((Type.Array) r);
+		} else if (r instanceof Type.Clazz) {
+			return buildClass((Type.Clazz) r);
+		} else {
+			throw new IllegalArgumentException(
+					"buildClass() cannot accept reference type " + r);
+		}
+	}
+	
+	/**
+	 * This method creates a CONSTANT_Class object from a Type Clazz
+	 * 
+	 * @param c
+	 * @return
+	 */
+	public static Constant.Class buildClass(Type.Clazz r) {		
 		java.lang.String d = ClassFile.descriptor(r,false);		
 		d = d.substring(1,d.length()-1); // remove "L" and ";"
 		return new Constant.Class(new Constant.Utf8(d));
@@ -90,7 +107,7 @@ public class Constant {
 	 * @param type
 	 * @return
 	 */
-	public static Constant.FieldRef buildFieldRef(Type.Reference owner, 
+	public static Constant.FieldRef buildFieldRef(Type.Clazz owner, 
 			java.lang.String name, Type type) {
 		return new Constant.FieldRef(buildClass(owner), 
 				new Constant.NameType(new Constant.Utf8(name),
@@ -105,7 +122,7 @@ public class Constant {
 	 * @param type
 	 * @return
 	 */
-	public static Constant.MethodRef buildMethodRef(Type.Reference owner, java.lang.String name, Type type) {
+	public static Constant.MethodRef buildMethodRef(Type.Clazz owner, java.lang.String name, Type type) {
 		return new Constant.MethodRef(buildClass(owner), 
 				new Constant.NameType(new Constant.Utf8(name),
 				 new Constant.Utf8(ClassFile.descriptor(type,false))));
@@ -119,7 +136,7 @@ public class Constant {
 	 * @param type
 	 * @return
 	 */
-	public static Constant.InterfaceMethodRef buildInterfaceMethodRef(Type.Reference owner, java.lang.String name, Type type) {
+	public static Constant.InterfaceMethodRef buildInterfaceMethodRef(Type.Clazz owner, java.lang.String name, Type type) {
 		return new Constant.InterfaceMethodRef(buildClass(owner), 
 				new Constant.NameType(new Constant.Utf8(name),
 				 new Constant.Utf8(ClassFile.descriptor(type,false))));

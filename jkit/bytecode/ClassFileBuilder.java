@@ -673,8 +673,8 @@ public class ClassFileBuilder {
 			translateExpression(der.target(), varmap, bytecodes);
 			translateExpression(stmt.rhs(), varmap, bytecodes);
 			// figure out the type of the field involved
-			Type.Reference lhs_t = (Type.Reference) der.target().type();
-
+			Type.Clazz lhs_t = (Type.Clazz) der.target().type();
+			
 			if (der.isStatic()) {
 				bytecodes.add(new Bytecode.PutField(lhs_t, der.name(), der
 						.type(), Bytecode.STATIC));

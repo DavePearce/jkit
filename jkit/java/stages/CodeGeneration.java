@@ -817,7 +817,7 @@ public class CodeGeneration {
 	protected Pair<JilExpr,List<JilStmt>> doInstanceOf(Expr.InstanceOf e) {
 		Pair<JilExpr,List<JilStmt>> lhs = doExpression(e.lhs());
 		Type type = (Type) e.attribute(Type.class);
-		Type rhs = (Type) e.rhs().attribute(Type.class);
+		Type.Reference rhs = (Type.Reference) e.rhs().attribute(Type.class);
 		return new Pair<JilExpr, List<JilStmt>>(new JilExpr.InstanceOf(lhs.first(), rhs,
 				type, e.attributes()), lhs.second());
 	}

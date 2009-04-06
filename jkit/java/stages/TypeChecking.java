@@ -15,7 +15,6 @@ import jkit.java.tree.Decl.*;
 import jkit.java.tree.Expr.*;
 import jkit.java.tree.Stmt.*;
 import jkit.jil.tree.SourceLocation;
-import jkit.jil.tree.SyntacticElement;
 import jkit.jil.tree.Type;
 import jkit.util.Triple;
 
@@ -470,9 +469,12 @@ public class TypeChecking {
 		checkExpression(e.lhs());
 		
 		Type lhs_t = (Type) e.lhs().attribute(Type.class);
+		Type rhs_t = (Type) e.rhs().attribute(Type.class);
 		
 		if(lhs_t instanceof Type.Primitive) {
 			syntax_error("required reference type, found " + lhs_t , e);			
+		} else if(!(rhs_t instanceof Type.Reference)) {
+			syntax_error("required class or array type, found " + rhs_t , e);
 		}
 	}
 	

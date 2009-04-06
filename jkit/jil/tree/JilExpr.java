@@ -173,17 +173,17 @@ public interface JilExpr extends SyntacticElement {
 	 */
 	public static final class InstanceOf extends SyntacticElementImpl implements JilExpr {
 		protected JilExpr lhs;
-		protected Type rhs;
+		protected Type.Reference rhs;
 		protected Type type;
 
-		public InstanceOf(JilExpr lhs, Type rhs, Type type, Attribute... attributes) {
+		public InstanceOf(JilExpr lhs, Type.Reference rhs, Type type, Attribute... attributes) {
 			super(attributes);
 			this.lhs = lhs;
 			this.rhs = rhs;
 			this.type = type;
 		}
 
-		public InstanceOf(JilExpr lhs, Type rhs, Type type, List<Attribute> attributes) {
+		public InstanceOf(JilExpr lhs, Type.Reference rhs, Type type, List<Attribute> attributes) {
 			super(attributes);
 			this.lhs = lhs;
 			this.rhs = rhs;
@@ -198,11 +198,11 @@ public interface JilExpr extends SyntacticElement {
 			lhs = e;
 		}
 		
-		public Type rhs() {
+		public Type.Reference rhs() {
 			return rhs;
 		}
 		
-		public void setRhs(Type e) {
+		public void setRhs(Type.Reference e) {
 			rhs = e;
 		}
 		
