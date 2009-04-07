@@ -628,7 +628,7 @@ public class ClassFileReader {
 		Type.Reference lb = null;
 		if(lowerBounds.size() > 0) {
 			lb = new Type.Intersection(lowerBounds);
-		} else if(lowerBounds.size() == 0) {
+		} else if(lowerBounds.size() == 1) {
 			lb = lowerBounds.get(0);
 		}
 		return new Pair<Type.Variable, Integer>(new Type.Variable(id,lb),pos);				

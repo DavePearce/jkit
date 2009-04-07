@@ -548,6 +548,8 @@ public class TypePropagation {
 					} else {						
 						receiver = new Type.Clazz("java.lang","Object");
 					}
+				} else if(rt instanceof Type.Array) {
+					receiver = new Type.Clazz("java.lang","Object");
 				} else {
 					receiver = (Type.Clazz) e.target().attribute(Type.class);
 				}
