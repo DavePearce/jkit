@@ -1403,7 +1403,7 @@ public class CodeGeneration {
 							"ArrayIndexOutOfBoundsException"), loader)
 					|| types.subtype(exception, new Type.Clazz("java.lang",
 							"ArrayStoreException"), loader)) {
-				// Actually, this is a little overconservative since array store
+				// Actually, this is a little over-conservative since array store
 				// can only be thrown when the array expression is actually the
 				// immediate lhs of an assignment.
 				return true;

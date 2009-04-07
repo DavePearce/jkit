@@ -108,11 +108,7 @@ public class ClassFileBuilder {
 			
 			if (isGeneric(m.type())) {
 				cfm.attributes().add(new FieldSignature(m.type()));
-			}
-			
-			if (!m.exceptions().isEmpty()) {
-				cfm.attributes().add(new Exceptions(m.exceptions()));
-			}
+			}			
 			
 			cfile.methods().add(cfm);
 		}
