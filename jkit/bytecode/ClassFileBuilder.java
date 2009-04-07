@@ -268,8 +268,6 @@ public class ClassFileBuilder {
 	protected void sortAndCompactExceptionHandlers(
 			ArrayList<Code.Handler> handlers) {
 
-		// FIXME: support for sorting exception handlers
-		
 		// firstly, sort them into the correct order
 		Collections.sort(handlers, new Comparator<Code.Handler>() {
 			public int compare(Code.Handler e1, Code.Handler e2) {

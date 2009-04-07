@@ -561,6 +561,36 @@ public interface Type extends Attribute, Comparable<Type> {
 			}
 			return hc;
 		}
+		
+		public int compareTo(Type t) {
+			if (t instanceof Type.Wildcard) {
+				Type.Wildcard tw = (Type.Wildcard) t;
+				if(lowerBound == null && tw.lowerBound != null) {
+					return -1;
+				} else if(lowerBound != null && tw.lowerBound == null) {
+					return 1;
+				}
+				if(upperBound == null && tw.upperBound != null) {
+					return -1;
+				} else if(upperBound != null && tw.upperBound == null) {
+					return 1;
+				} 
+				if(lowerBound != null) {
+					int lbct = lowerBound.compareTo(tw.lowerBound);
+					if(lbct != 0) { return lbct; }
+				}
+				if(upperBound != null) {
+					int lbct = upperBound.compareTo(tw.upperBound);
+					if(lbct != 0) { return lbct; }
+				}
+				return 0;
+			} else if (t instanceof Type.Primitive || t instanceof Type.Array
+					|| t instanceof Type.Clazz) {
+				return 1;
+			} else {
+				return -1;
+			}
+		}
 	}
 	
 	/**
@@ -610,6 +640,28 @@ public interface Type extends Attribute, Comparable<Type> {
 		
 		public int hashCode() {
 			return variable.hashCode();
+		}
+		
+		public int compareTo(Type t) {
+			if (t instanceof Type.Variable) {
+				Type.Variable tv = (Type.Variable) t;
+				int vct = variable.compareTo(tv.variable);
+				if(vct != 0) { return vct; }
+				if(lowerBound == null && tv.lowerBound != null) {
+					return -1;
+				} else if(lowerBound != null && tv.lowerBound == null) {
+					return 1;
+				} else if (lowerBound != null) {
+					return lowerBound.compareTo(tv.lowerBound);
+				}
+				
+				return 0;
+			} else if (t instanceof Type.Primitive || t instanceof Type.Array
+					|| t instanceof Type.Clazz || t instanceof Type.Wildcard) {
+				return 1;
+			} else {
+				return -1;
+			}
 		}
 	}
 	
@@ -669,6 +721,28 @@ public interface Type extends Attribute, Comparable<Type> {
 				hc ^= r.hashCode();
 			}
 			return hc;
+		}
+		
+		public int compareTo(Type t) {
+			if (t instanceof Type.Intersection) {
+				Type.Intersection tv = (Type.Intersection) t;
+				if(bounds.size() < tv.bounds.size()) { 
+					return -1;
+				} else if(bounds.size() > tv.bounds.size()) {
+					return 1;
+				} 
+				for(int i=0;i!=bounds.size();++i) {
+					Type.Reference r1 = bounds.get(i);
+					Type.Reference r2 = tv.bounds.get(i);
+					int rct = r1.compareTo(r2);
+					if(rct != 0) { return rct; }
+				}
+				return 0;
+			} else if (t instanceof Type.Reference) {
+				return 1;
+			} else {
+				return -1;
+			}
 		}
 	}
 	
@@ -763,6 +837,28 @@ public interface Type extends Attribute, Comparable<Type> {
 				hc ^= t.hashCode();
 			}
 			return hc;
+		}
+		
+		public int compareTo(Type t) {
+			if (t instanceof Type.Function) {
+				Type.Function tf = (Type.Function) t;
+				if(parameters.size() < tf.parameters.size()) {
+					return -1; 
+				} else if(parameters.size() > tf.parameters.size()) {
+					return 1; 
+				} 
+				for(int i=0;i!=parameters.size();++i) {
+					Type p1 = parameters.get(i);
+					Type p2 = tf.parameters.get(i);
+					int pct = p1.compareTo(p2);
+					if(pct != 0) { return pct; }
+				}
+				return returnType.compareTo(tf.returnType);
+			} else if (t instanceof Type.Reference) {
+				return 1;
+			} else {
+				return -1;
+			}
 		}
 	}	
 }

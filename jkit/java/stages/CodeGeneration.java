@@ -271,9 +271,17 @@ public class CodeGeneration {
 		int i = tryhandler_label;
 		for(Stmt.CatchBlock cb : block.handlers()) {
 			String handlerLab = "tryhandler" + i++;
-			for(JilStmt s : r) {
-				Type.Clazz ct = (Type.Clazz) cb.type().attribute(Type.Clazz.class);
-				s.exceptions().add(new Pair<Type.Clazz,String>(ct,handlerLab));
+			for (JilStmt s : r) {
+				Type.Clazz ct = (Type.Clazz) cb.type().attribute(
+						Type.Clazz.class);
+				try {
+					if (canThrowException(s, ct)) {
+						s.exceptions().add(
+								new Pair<Type.Clazz, String>(ct, handlerLab));
+					}
+				} catch (ClassNotFoundException cnfe) {
+					syntax_error(cnfe.getMessage(), cb, cnfe);
+				}
 			}
 		}
 		
@@ -1253,6 +1261,168 @@ public class CodeGeneration {
 			}
 		}				
 		return new Pair<List<JilExpr>,List<JilStmt>>(nexprs,nstmts);
+	}
+	
+	/**
+	 * This method determines whether or not it is possible for a statement to
+	 * throw a particular exception. Observe that this determination is from a
+	 * static point of view; thus, it may be possible with more complex
+	 * reasoning to determine that a statement cannot throw an exception.
+	 * However, we need to be somewhat conservative here to ensure that the
+	 * bytecode produced will in fact pass the JVM bytecode verifier.
+	 * 
+	 * @param stmt
+	 * @param exception
+	 * @return
+	 */
+	protected boolean canThrowException(JilStmt stmt, Type.Clazz exception)
+			throws ClassNotFoundException {
+		if (types.subtype(new Type.Clazz("java.lang", "VirtualMachineError"),
+				exception, loader)) {
+			// treat these exceptions very conservatively.
+			return true;
+		}
+		// now, try to eliminate all statements which definitely cannot
+		// throw an exception.		
+		if (stmt instanceof JilStmt.Goto || stmt instanceof JilStmt.Label
+				|| stmt instanceof JilStmt.Nop) {
+			return false;
+		}
+		// Now, tackle the easier ones.
+		if (stmt instanceof JilStmt.Lock || stmt instanceof JilStmt.Unlock) {
+			// these statements can only throw null pointer exceptions.
+			return types.subtype(exception, new Type.Clazz("java.lang",
+					"NullPointerException"), loader);
+		}
+		
+		if (stmt instanceof JilStmt.Throw) {
+			// this can throw null pointer exception if the argument is null.
+			JilStmt.Throw tr = (JilStmt.Throw) stmt;
+			return types.subtype(exception, tr.expr().type(), loader)
+					|| types.subtype(exception, new Type.Clazz("java.lang",
+							"NullPointerException"), loader);
+		}
+		
+		ArrayList<JilExpr> exprs = new ArrayList();
+		if (stmt instanceof JilExpr.Invoke) {
+			if (types.subtype(exception, new Type.Clazz("java.lang",
+					"RuntimeException"), loader)
+					|| types.subtype(new Type.Clazz("java.lang",
+							"RuntimeException"), exception, loader)) {
+				return true;
+			}
+			JilExpr.Invoke ivk = (JilExpr.Invoke) stmt;			
+			// Need to do something about checked exceptions. Also, if static
+			// method then cannot throw NullPointException
+			exprs.addAll(ivk.parameters());			
+		} else if (stmt instanceof JilExpr.New) {
+			if (types.subtype(exception, new Type.Clazz("java.lang",
+					"RuntimeException"), loader)
+					|| types.subtype(new Type.Clazz("java.lang",
+							"RuntimeException"), exception, loader)) {
+				return true;
+			}
+			JilExpr.New ivk = (JilExpr.New) stmt;
+			// Need to do something about checked exceptions. Also, if static
+			// method then cannot throw NullPointException
+			exprs.addAll(ivk.parameters());
+		} else if(stmt instanceof JilStmt.Return) {
+			JilStmt.Return r = (JilStmt.Return) stmt;
+			if(r.expr() == null) {
+				return false;
+			} else {
+				exprs.add(r.expr());
+			}
+		} else if(stmt instanceof JilStmt.Assign) {
+			JilStmt.Assign r = (JilStmt.Assign) stmt;
+			exprs.add(r.lhs());
+			exprs.add(r.rhs());
+		} else if(stmt instanceof JilStmt.IfGoto) {
+			JilStmt.IfGoto r = (JilStmt.IfGoto) stmt;
+			exprs.add(r.condition());
+		} else if(stmt instanceof JilStmt.Switch) {
+			JilStmt.Switch r = (JilStmt.Switch) stmt;
+			exprs.add(r.condition());
+		}
+		// Right, at this point, we have a bunch of expressions and we need to
+		// check whether or not any of these could throw the exception in
+		// question.
+		for(JilExpr e : exprs) {
+			if(canThrowException(e,exception)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	protected boolean canThrowException(JilExpr expr, Type.Clazz exception)
+			throws ClassNotFoundException {
+		// reuse code above if possible
+		if(expr instanceof JilExpr.Invoke || expr instanceof JilExpr.New) {
+			return canThrowException((JilStmt)expr,exception);
+		}
+		
+		// Again, build up an expression list to check
+		ArrayList<JilExpr> exprs = new ArrayList();
+		
+		if(expr instanceof JilExpr.Cast) {
+			JilExpr.Cast ec = (JilExpr.Cast) expr;
+			if (!(ec.type() instanceof Type.Primitive)
+					&& types.subtype(exception, new Type.Clazz("java.lang",
+							"ClassCastException"), loader)) {
+				return true;
+			}
+			exprs.add(ec.expr());
+		} else if(expr instanceof JilExpr.BinOp) {
+			JilExpr.BinOp bop = (JilExpr.BinOp) expr;
+			if (bop.op() == JilExpr.BinOp.DIV
+					&& types.subtype(exception, new Type.Clazz("java.lang",
+							"ArithmeticException"), loader)) {
+				return true;
+			}
+			exprs.add(bop.lhs());
+			exprs.add(bop.rhs());
+		} else if(expr instanceof JilExpr.UnOp) {
+			JilExpr.UnOp bop = (JilExpr.UnOp) expr;			
+			exprs.add(bop.expr());				
+		} else if(expr instanceof JilExpr.Deref) {
+			JilExpr.Deref def = (JilExpr.Deref) expr;			
+			if (types.subtype(exception, new Type.Clazz("java.lang",
+					"NullPointerException"), loader)) {
+				return true;
+			}
+			exprs.add(def.target());				
+		} else if(expr instanceof JilExpr.Array) {
+			JilExpr.Array arr = (JilExpr.Array) expr;
+			exprs.addAll(arr.values());
+		} else if(expr instanceof JilExpr.ArrayIndex) {
+			JilExpr.ArrayIndex ai = (JilExpr.ArrayIndex) expr;
+			if (types.subtype(exception, new Type.Clazz("java.lang",
+					"NullPointerException"), loader)
+					|| types.subtype(exception, new Type.Clazz("java.lang",
+							"ArrayStoreException"), loader)) {
+				// Actually, this is a little overconservative since array store
+				// can only be thrown when the array expression is actually the
+				// immediate lhs of an assignment.
+				return true;
+			}
+			exprs.add(ai.target());
+			exprs.add(ai.index());
+		} else if(expr instanceof JilExpr.InstanceOf) {
+			JilExpr.InstanceOf iof = (JilExpr.InstanceOf) expr;
+			exprs.add(iof.lhs());
+		} 
+
+		// Right, at this point, we have a bunch of expressions and we need to
+		// check whether or not any of these could throw the exception in
+		// question.
+		for (JilExpr e : exprs) {
+			if (canThrowException(e, exception)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 	
 	protected Scope findEnclosingScope(Class c) {
