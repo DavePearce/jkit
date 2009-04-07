@@ -1,12 +1,16 @@
 package jkit.jil.tree;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 public class SyntacticElementImpl  implements SyntacticElement {
 	private List<Attribute> attributes;
 	
 	public SyntacticElementImpl() {
-		attributes = new ArrayList<Attribute>();
+		// I use copy on write here, since for the most part I don't expect
+		// attributes to change, and hence can be safely aliased. But, when they
+		// do change I need fresh copies.
+		attributes = new CopyOnWriteArrayList<Attribute>();
 	}
 	
 	public SyntacticElementImpl(Attribute x) {
@@ -15,7 +19,9 @@ public class SyntacticElementImpl  implements SyntacticElement {
 	}
 	
 	public SyntacticElementImpl(List<Attribute> attributes) {
-		this.attributes = attributes;			
+		// the following is really necessary to get rid of annoying aliasing
+		// problems.
+		this.attributes = new ArrayList<Attribute>(attributes);			
 	}
 	
 	public SyntacticElementImpl(Attribute[] attributes) {

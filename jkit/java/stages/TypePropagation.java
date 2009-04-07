@@ -842,8 +842,20 @@ public class TypePropagation {
 						&& (rhs_t instanceof Type.Primitive || isBoxedType(rhs_t))) {
 					Type rt_left = unaryNumericPromotion(lhs_t, e);
 					e.setLhs(implicitCast(e.lhs(), rt_left));
-					System.out.println("GOT HERE");
-					e.setRhs(implicitCast(e.rhs(), new Type.Int()));
+					if(rhs_t instanceof Type.Long) {
+						// This case is rather strange. Here, javac
+						// automatically converts a long to an int without
+						// complaining. The reason for this is that, presumably,
+						// any loss of precision will not affect the outcome of
+						// the shift (since we're shifting at most 64 bits).						
+						Type ti = new Type.Int();
+						Expr.Cast cast = new Expr.Cast(fromJilType(ti),
+								e.rhs(), e.attributes());						
+						cast.attributes().add(ti);
+						e.setRhs(cast);
+					} else {
+						e.setRhs(implicitCast(e.rhs(), new Type.Int()));
+					}
 					e.attributes().add(rt_left);
 				} else {
 					syntax_error("operands have invalid types " + lhs_t + " and " + rhs_t,e);
@@ -874,7 +886,7 @@ public class TypePropagation {
 				}
 				break;
 			}					
-		}
+		}		
 	}
 	
 	protected void doTernOp(Expr.TernOp e) {		
