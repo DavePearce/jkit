@@ -1548,7 +1548,7 @@ public abstract class Bytecode {
 		public InstanceOf(Type.Reference type) { this.type = type; }
 		
 		public int stackDiff() {
-			return -1;
+			return 0;
 		}
 		
 		public void addPoolItems(Set<Constant.Info> constantPool) {			

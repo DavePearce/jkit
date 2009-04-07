@@ -11,8 +11,8 @@ class TestInstanceOf
    {
    public static void main(String args[])
       {
-      Object o1     = new Test();         // source: a reference
-      Object o2[]   = new Test[2];        // source: an array of references
+      Object o1     = new TestInstanceOf();         // source: a reference
+      Object o2[]   = new TestInstanceOf[2];        // source: an array of references
   //  Object o3[][] = new Object[2][];    // source: an array of arrays       // !!TODO "multianewarray" not ready yet
   //         o3[0]  = new Test[4];
   //         o3[1]  = new Test[4];
@@ -23,15 +23,15 @@ class TestInstanceOf
   //  System.out.print("\nwant: false false false false\n got: "); test(o3);  // !!TODO "multianewarray" not ready yet
       System.out.print("\nwant: false false false true\n got: ");  test(o4);
 
-      o1 = (Test)o1;   //  ok
+      o1 = (TestInstanceOf)o1;   //  ok
    // o1 = (String)o1; //  throw exception
       }
 
    static void test(Object o)
       {
-      boolean b1 = o instanceof Test    ;  // target: a reference
-      boolean b2 = o instanceof Test[]  ;  // target: an array of references
-      boolean b3 = o instanceof Test[][];  // target: an array of arrays
+      boolean b1 = o instanceof TestInstanceOf    ;  // target: a reference
+      boolean b2 = o instanceof TestInstanceOf[]  ;  // target: an array of references
+      boolean b3 = o instanceof TestInstanceOf[][];  // target: an array of arrays
       boolean b4 = o instanceof int []  ;  // target: an array of primitives
 
       System.out.println(b1 + " " + b2 + " " + b3 + " " + b4);
