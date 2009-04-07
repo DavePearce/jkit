@@ -191,7 +191,7 @@ public class ClassFileBuilder {
 		
 		// Now make sure the exception handlers are compacted and
 		// also arranged in the correct order.
-		sortAndCompactExceptionHandlers(handlers);
+		// sortAndCompactExceptionHandlers(handlers);
 	}
 	
 	/**
@@ -264,6 +264,9 @@ public class ClassFileBuilder {
 	protected void sortAndCompactExceptionHandlers(
 			ArrayList<Code.Handler> handlers) {
 
+		// NOTE: this code does not work correctly because the sorting function
+		// disturbs the correct order of exceptions.
+		
 		// firstly, sort them into the correct order
 		Collections.sort(handlers, new Comparator<Code.Handler>() {
 			public int compare(Code.Handler e1, Code.Handler e2) {
