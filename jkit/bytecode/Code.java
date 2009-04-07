@@ -76,9 +76,21 @@ public class Code implements Attribute {
 		// theory, we can do better, but there's little need to.
 		int max = 0;
 		int current = 0;
+		int idx = 0;
+		HashSet<Integer> handlerStarts = new HashSet<Integer>();
+		for(Handler h : handlers) {
+			handlerStarts.add(h.start);
+		}
 		for(Bytecode b : bytecodes) {
+			if(handlerStarts.contains(idx)) {
+				// This bytecode is the first of an exception handler. Such
+				// handlers begin with the thrown exception object on the stack,
+				// hence we must account for this.
+				current = current + 1;
+			}
 			current = current + b.stackDiff();
 			max = Math.max(current,max);
+			idx = idx + 1;
 		}
 		return max;
 	}
