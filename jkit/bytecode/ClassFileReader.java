@@ -535,7 +535,7 @@ public class ClassFileReader {
 			// is primitive type ...
 			switch(c) {
 			case 'B':
-				return new Pair<Type,Integer>(Types.T_BOOL,pos+1);						        	
+				return new Pair<Type,Integer>(Types.T_BYTE,pos+1);						        	
 			case 'C':
 				return new Pair<Type,Integer>(Types.T_CHAR,pos+1);			        	
 			case 'D':

@@ -1077,13 +1077,12 @@ public class ClassFileBuilder {
 	protected final int DISPATCH_STATIC = 2;
 	
 	protected Pair<Clazz,Clazz.Method> determineMethod(Type.Clazz receiver, String name,
-			Type.Function funType) throws ClassNotFoundException,MethodNotFoundException {
-
+			Type.Function funType) throws ClassNotFoundException,MethodNotFoundException {		
 		String fdesc = ClassFile.descriptor(funType, false);
 		
 		while (receiver != null) {
 			Clazz c = loader.loadClass(receiver);						
-			for (Clazz.Method m : c.methods(name)) {
+			for (Clazz.Method m : c.methods(name)) {				
 				String mdesc = ClassFile.descriptor(m.type(), false);						
 				if (fdesc.equals(mdesc)) {
 					return new Pair(c,m);
