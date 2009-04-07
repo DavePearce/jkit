@@ -176,8 +176,9 @@ public class JilFileWriter {
 	}
 	
 	protected void write(JilStmt.Label s) {
-		output.println("\t" + s.label() + ":");
-		write(s.exceptions()); // should be nothing		
+		output.print("\t" + s.label() + ":");
+		write(s.exceptions()); // should be nothing	
+		output.println();
 	}
 	
 	protected void write(JilStmt.Switch s) {

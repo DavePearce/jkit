@@ -275,7 +275,8 @@ public class CodeGeneration {
 				Type.Clazz ct = (Type.Clazz) cb.type().attribute(
 						Type.Clazz.class);
 				try {
-					if (canThrowException(s, ct)) {
+					if (!(s instanceof JilStmt.Label || s instanceof JilStmt.Goto)
+							&& canThrowException(s, ct)) {
 						s.exceptions().add(
 								new Pair<Type.Clazz, String>(ct, handlerLab));
 					}
