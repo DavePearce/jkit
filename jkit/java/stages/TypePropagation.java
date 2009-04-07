@@ -238,17 +238,17 @@ public class TypePropagation {
 		doExpression(def.lhs());	
 		doExpression(def.rhs());			
 
-		Type lhs_t = (Type) def.lhs().attribute(Type.class);
-		
-		def.setRhs(implicitCast(def.rhs(),lhs_t));				
+		Type lhs_t = (Type) def.lhs().attribute(Type.class);												
 		
 		// perform type inference (if necesssary)
-		if(isUnknownConstant(def.rhs())) {
+		if(isUnknownConstant(def.rhs())) {			
 			Expr c = unknownConstantInference(def.rhs(), lhs_t,
 					(SourceLocation) def.rhs()
 							.attribute(SourceLocation.class));
 			
 			def.setRhs(c);			
+		} else {
+			def.setRhs(implicitCast(def.rhs(),lhs_t));
 		}
 		
 		def.attributes().add(lhs_t);
@@ -1143,8 +1143,8 @@ public class TypePropagation {
      * @param e
      * @return
      */
-	protected boolean isUnknownConstant(Expr e) {
-		if(e instanceof Value.Int) {
+	protected boolean isUnknownConstant(Expr e) {		
+		if(e instanceof Value.Int) {			
 			return true;
 		} else if(e instanceof Expr.BinOp) {
 			Expr.BinOp bop = (Expr.BinOp) e;
