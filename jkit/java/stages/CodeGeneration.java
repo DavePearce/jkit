@@ -986,31 +986,20 @@ public class CodeGeneration {
 	
 	protected Pair<JilExpr,List<JilStmt>> doTypedArrayVal(Value.TypedArray e) {
 		ArrayList<JilStmt> r = new ArrayList<JilStmt>();
-		ArrayList<JilExpr> params = new ArrayList();
-		Type.Array type = (Type.Array) e.attribute(Type.class);
-		
-		for(int i=0;i!=e.values().size();++i) {
-			Expr v = e.values().get(i);
-			Pair<JilExpr,List<JilStmt>> p = doExpression(v);
-			params.add(p.first());
-			r.addAll(p.second());
-		}
-		return new Pair<JilExpr,List<JilStmt>>(new JilExpr.Array(params,type,e.attributes()),r);
+		Type.Array type = (Type.Array) e.attribute(Type.class);		
+		Pair<List<JilExpr>,List<JilStmt>> exprs = doExpressionList(e.values());
+		r.addAll(exprs.second());		
+		return new Pair<JilExpr, List<JilStmt>>(new JilExpr.Array(
+				exprs.first(), type, e.attributes()), r);
 	}
 	
 	protected Pair<JilExpr,List<JilStmt>> doArrayVal(Value.Array e) {
-		ArrayList<JilStmt> r = new ArrayList<JilStmt>();
-		ArrayList<JilExpr> params = new ArrayList();
+		ArrayList<JilStmt> r = new ArrayList<JilStmt>();		
 		Type.Array type = (Type.Array) e.attribute(Type.class);
-
-		for(int i=0;i!=e.values().size();++i) {
-			Expr v = e.values().get(i);			
-			Pair<JilExpr,List<JilStmt>> p = doExpression(v);
-			params.add(p.first());
-			r.addAll(p.second());
-		}
-		
-		return new Pair<JilExpr,List<JilStmt>>(new JilExpr.Array(params,type,e.attributes()),r);
+		Pair<List<JilExpr>,List<JilStmt>> exprs = doExpressionList(e.values());
+		r.addAll(exprs.second());
+		return new Pair<JilExpr, List<JilStmt>>(new JilExpr.Array(
+				exprs.first(), type, e.attributes()), r);
 	}
 	
 	protected Pair<JilExpr,List<JilStmt>> doClassVal(Value.Class e) {
