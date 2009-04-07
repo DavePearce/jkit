@@ -4,6 +4,7 @@ import java.util.*;
 
 import jkit.compiler.ClassLoader;
 import static jkit.compiler.SyntaxError.*;
+import static jkit.jil.util.Types.*;
 import jkit.java.io.JavaFile;
 import jkit.java.tree.Decl;
 import jkit.java.tree.Expr;
@@ -184,7 +185,7 @@ public class TypeResolution {
 			e.attributes().add(substituteTypeVars(resolve(e)));
 		}		
 				
-		Type returnType = new Type.Void();
+		Type returnType = T_VOID;
 		List<Type> parameterTypes = new ArrayList<Type>();
 		
 		if(d.returnType() != null) {

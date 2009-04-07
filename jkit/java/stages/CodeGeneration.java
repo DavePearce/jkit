@@ -117,7 +117,7 @@ public class CodeGeneration {
 			if(!superCallFirst(stmts)) {			
 				stmts.add(0, new JilExpr.Invoke(new JilExpr.Variable("super", parent
 						.superClass()), "super", new ArrayList<JilExpr>(),
-						new Type.Function(new Type.Void()), new Type.Void()));
+						new Type.Function(T_VOID), T_VOID));
 			} 
 		}				
 		
@@ -513,7 +513,7 @@ public class CodeGeneration {
 		
 		if(stmt.falseStatement() == null) {
 			r.add(new JilStmt.IfGoto(
-					new JilExpr.UnOp(cond.first(), JilExpr.UnOp.NOT, new Type.Bool(),
+					new JilExpr.UnOp(cond.first(), JilExpr.UnOp.NOT, T_BOOL,
 					stmt.condition().attributes()), "ifexit" + ifexit_label, stmt.attributes()));
 			r.addAll(tbranch);
 		} else if(stmt.trueStatement() == null) {
@@ -545,7 +545,7 @@ public class CodeGeneration {
 		Pair<JilExpr, List<JilStmt>> cond = doExpression(stmt.condition());
 		r.addAll(cond.second());
 		r.add(new JilStmt.IfGoto(new JilExpr.UnOp(cond.first(), JilExpr.UnOp.NOT,
-				new Type.Bool(), stmt.condition().attributes()), exitLab, stmt
+				T_BOOL, stmt.condition().attributes()), exitLab, stmt
 				.attributes()));
 		scopes.push(new LoopScope(headerLab,exitLab));
 		r.addAll(doStatement(stmt.body()));
@@ -601,7 +601,7 @@ public class CodeGeneration {
 			Pair<JilExpr, List<JilStmt>> cond = doExpression(stmt.condition());
 			r.addAll(cond.second());
 			r.add(new JilStmt.IfGoto(new JilExpr.UnOp(cond.first(), JilExpr.UnOp.NOT,
-					new Type.Bool(), stmt.condition().attributes()), exitLab,
+					T_BOOL, stmt.condition().attributes()), exitLab,
 					stmt.attributes()));
 		}
 		
@@ -652,7 +652,7 @@ public class CodeGeneration {
 		JilExpr.Variable iter;
 		
 		if (srcType instanceof Type.Array) {
-			iter = new JilExpr.Variable(iterLab, new Type.Int());
+			iter = new JilExpr.Variable(iterLab, T_INT);
 			stmts
 					.add(new JilStmt.Assign(iter, new JilExpr.Int(0), stmt
 							.attributes()));
@@ -661,15 +661,12 @@ public class CodeGeneration {
 			// information on the iterator. The easiest way to do this is to
 			// look up the iterator() method in the src class, and use it's
 			// return type.
-			iter = new JilExpr.Variable(iterLab, new Type.Clazz("java.util",
-					"Iterator"));			 
+			iter = new JilExpr.Variable(iterLab, JAVA_UTIL_ITERATOR);			 
 
-			stmts
-					.add(new JilStmt.Assign(iter, new JilExpr.Invoke(src.first(),
-							"iterator", new ArrayList<JilExpr>(),
-							new Type.Function(new Type.Clazz("java.util",
-									"Iterator")), new Type.Clazz("java.util",
-									"Iterator")), stmt.attributes()));
+			stmts.add(new JilStmt.Assign(iter, new JilExpr.Invoke(src.first(),
+					"iterator", new ArrayList<JilExpr>(), new Type.Function(
+							JAVA_UTIL_ITERATOR), JAVA_UTIL_ITERATOR), stmt
+					.attributes()));
 		}				
 		
 		stmts.add(new JilStmt.Label(headerLab, stmt
@@ -679,9 +676,9 @@ public class CodeGeneration {
 		
 		if (srcType instanceof Type.Array) {
 			Type.Array arrType = (Type.Array) srcType;
-			JilExpr arrlength = new JilExpr.Deref(src.first(),"length",false,new Type.Int(), stmt
+			JilExpr arrlength = new JilExpr.Deref(src.first(),"length",false,T_INT, stmt
 					.attributes());
-			JilExpr gecmp = new JilExpr.BinOp(iter,arrlength,JilExpr.BinOp.GTEQ,new Type.Bool(), stmt
+			JilExpr gecmp = new JilExpr.BinOp(iter,arrlength,JilExpr.BinOp.GTEQ,T_BOOL, stmt
 					.attributes());
 			stmts.add(new JilStmt.IfGoto(gecmp,exitLab, stmt
 					.attributes()));					
@@ -690,23 +687,23 @@ public class CodeGeneration {
 					iter, arrType.element()),loopVar.type())));
 		} else {
 			JilExpr hasnext = new JilExpr.Invoke(iter, "hasNext",
-					new ArrayList<JilExpr>(), new Type.Function(new Type.Bool()),
-					new Type.Bool(), stmt.attributes());
+					new ArrayList<JilExpr>(), new Type.Function(T_BOOL),
+					T_BOOL, stmt.attributes());
 			stmts.add(new JilStmt.IfGoto(new JilExpr.UnOp(hasnext, JilExpr.UnOp.NOT,
-					new Type.Bool()), exitLab));
+					T_BOOL), exitLab));
 			
 			JilExpr cast;
 			if(loopVar.type() instanceof Type.Primitive) {
 				// In this case, we have to deal with casting and implicit
 				// conversion.
 				JilExpr next = new JilExpr.Invoke(iter, "next", new ArrayList<JilExpr>(),
-						new Type.Function(new Type.Clazz("java.lang", "Object")),
+						new Type.Function(JAVA_LANG_OBJECT),
 						boxedType((Type.Primitive) loopVar.type()), stmt.attributes());
 				
 				cast = implicitCast(next, loopVar.type());
 			} else {
 				JilExpr next = new JilExpr.Invoke(iter, "next", new ArrayList<JilExpr>(),
-						new Type.Function(new Type.Clazz("java.lang", "Object")),
+						new Type.Function(JAVA_LANG_OBJECT),
 						loopVar.type(), stmt.attributes());
 				cast = new JilExpr.Cast(next, loopVar.type());
 			}
@@ -728,7 +725,7 @@ public class CodeGeneration {
 			stmts.add(new JilStmt.Label(incLab));
 			forallinc_label++;
 			JilExpr.BinOp rhs = new JilExpr.BinOp(iter, new JilExpr.Int(1),
-					JilExpr.BinOp.ADD, new Type.Int(), stmt.attributes());
+					JilExpr.BinOp.ADD, T_INT, stmt.attributes());
 			stmts.add(new JilStmt.Assign(iter,rhs,stmt.attributes()));
 		} 
 		
@@ -1166,7 +1163,7 @@ public class CodeGeneration {
 						
 		stmts.add(new JilStmt.Assign(new JilExpr.Variable(builderLab, builder),
 				new JilExpr.New(builder, new ArrayList<JilExpr>(),
-						new Type.Function(new Type.Void()), bop.attributes())));					
+						new Type.Function(T_VOID), bop.attributes())));					
 		
 		Type lhs_t = lhs.first().type(); 
 		if(lhs_t instanceof Type.Primitive || isString(lhs_t)) {
@@ -1181,9 +1178,9 @@ public class CodeGeneration {
 			params.add(lhs.first());
 			stmts.add(new JilExpr.Invoke(new JilExpr.Variable(builderLab, builder),
 					"append", params, new Type.Function(new Type.Clazz(
-							"java.lang", "StringBuilder"), new Type.Clazz(
-							"java.lang", "Object")), new Type.Clazz(
-							"java.lang", "StringBuilder")));	
+							"java.lang", "StringBuilder"),
+					JAVA_LANG_OBJECT), new Type.Clazz("java.lang",
+					"StringBuilder")));	
 		}
 
 		// Now, do the right hand side
@@ -1201,14 +1198,12 @@ public class CodeGeneration {
 			params.add(rhs.first());
 			r = new JilExpr.Invoke(new JilExpr.Variable(builderLab, builder),
 					"append", params, new Type.Function(new Type.Clazz(
-							"java.lang", "StringBuilder"), new Type.Clazz(
-							"java.lang", "Object")), new Type.Clazz(
-							"java.lang", "StringBuilder"));
+							"java.lang", "StringBuilder"), JAVA_LANG_OBJECT),
+					new Type.Clazz("java.lang", "StringBuilder"));
 		}
 
 		r = new JilExpr.Invoke(r, "toString", new ArrayList<JilExpr>(),
-				new Type.Function(new Type.Clazz("java.lang", "String")),
-				new Type.Clazz("java.lang", "String"));
+				new Type.Function(JAVA_LANG_STRING), JAVA_LANG_STRING);
 		
 		return new Pair<JilExpr,List<JilStmt>>(r,stmts);
 	}
@@ -1277,9 +1272,11 @@ public class CodeGeneration {
 	 */
 	protected boolean canThrowException(JilStmt stmt, Type.Clazz exception)
 			throws ClassNotFoundException {
-		if (types.subtype(new Type.Clazz("java.lang", "VirtualMachineError"),
+		
+		if (types.subtype(JAVA_LANG_VIRTUALMACHINEERROR,
 				exception, loader)) {
-			// treat these exceptions very conservatively.
+			// must treat these exceptions very conservatively, spec JVM spec
+			// dictates they can occur at any point during exceptions.
 			return true;
 		}
 		// now, try to eliminate all statements which definitely cannot
@@ -1291,24 +1288,30 @@ public class CodeGeneration {
 		// Now, tackle the easier ones.
 		if (stmt instanceof JilStmt.Lock || stmt instanceof JilStmt.Unlock) {
 			// these statements can only throw null pointer exceptions.
-			return types.subtype(exception, new Type.Clazz("java.lang",
-					"NullPointerException"), loader);
+			// Actually, can also throw IllegaMonitorStateException
+			return types.subtype(exception, JAVA_LANG_NULLPOINTEREXCEPTION,
+					loader);			
 		}
 		
 		if (stmt instanceof JilStmt.Throw) {
 			// this can throw null pointer exception if the argument is null.
+			// can also throw IllegalMonitorStateException (see JVM spec athrow)
 			JilStmt.Throw tr = (JilStmt.Throw) stmt;
 			return types.subtype(exception, tr.expr().type(), loader)
-					|| types.subtype(exception, new Type.Clazz("java.lang",
-							"NullPointerException"), loader);
+					|| types.subtype(exception, JAVA_LANG_NULLPOINTEREXCEPTION,
+							loader);
 		}
 		
 		ArrayList<JilExpr> exprs = new ArrayList();
 		if (stmt instanceof JilExpr.Invoke) {
-			if (types.subtype(exception, new Type.Clazz("java.lang",
-					"RuntimeException"), loader)
-					|| types.subtype(new Type.Clazz("java.lang",
-							"RuntimeException"), exception, loader)) {
+			// Some possible issue with respect to throwing Errors if
+			// this causes class loading. See JVM Section 2.17.5.
+			//
+			// Also, can throw IncompatibleClassChangeError, IllegalAccessError,
+			// AbstractMethodError, UnsatisfiedLinkError.
+			if (types.subtype(exception, JAVA_LANG_RUNTIMEEXCEPTION, loader)
+					|| types.subtype(JAVA_LANG_RUNTIMEEXCEPTION, exception,
+							loader)) {
 				return true;
 			}
 			JilExpr.Invoke ivk = (JilExpr.Invoke) stmt;			
@@ -1316,18 +1319,24 @@ public class CodeGeneration {
 			// method then cannot throw NullPointException
 			exprs.addAll(ivk.parameters());			
 		} else if (stmt instanceof JilExpr.New) {
-			if (types.subtype(exception, new Type.Clazz("java.lang",
-					"RuntimeException"), loader)
-					|| types.subtype(new Type.Clazz("java.lang",
-							"RuntimeException"), exception, loader)) {
+			if (types.subtype(exception, JAVA_LANG_RUNTIMEEXCEPTION, loader)
+					|| types.subtype(JAVA_LANG_RUNTIMEEXCEPTION, exception, loader)) {
 				return true;
 			}
 			JilExpr.New ivk = (JilExpr.New) stmt;
+			if (ivk.type() instanceof Type.Array
+					&& types.subtype(exception, new Type.Clazz("java.lang",
+							"NegativeArraySizeException"), loader)) {
+				// In some cases, we can certain figure out that this cannot
+				// happen.
+				return true;
+			}
 			// Need to do something about checked exceptions. Also, if static
 			// method then cannot throw NullPointException
 			exprs.addAll(ivk.parameters());
 		} else if(stmt instanceof JilStmt.Return) {
 			JilStmt.Return r = (JilStmt.Return) stmt;
+			// can also throw IllegalMonitorStateException (see JVM spec areturn)
 			if(r.expr() == null) {
 				return false;
 			} else {
@@ -1367,7 +1376,7 @@ public class CodeGeneration {
 		
 		if(expr instanceof JilExpr.Cast) {
 			JilExpr.Cast ec = (JilExpr.Cast) expr;
-			if (!(ec.type() instanceof Type.Primitive)
+			if ((ec.type() instanceof Type.Reference || ec.type() instanceof Type.Null)
 					&& types.subtype(exception, new Type.Clazz("java.lang",
 							"ClassCastException"), loader)) {
 				return true;
@@ -1375,9 +1384,10 @@ public class CodeGeneration {
 			exprs.add(ec.expr());
 		} else if(expr instanceof JilExpr.BinOp) {
 			JilExpr.BinOp bop = (JilExpr.BinOp) expr;
-			if (bop.op() == JilExpr.BinOp.DIV
-					&& types.subtype(exception, new Type.Clazz("java.lang",
-							"ArithmeticException"), loader)) {
+			if ((bop.op() == JilExpr.BinOp.DIV || bop.op() == JilExpr.BinOp.MOD)
+					&& types.subtype(exception, JAVA_LANG_ARITHMETICEXCEPTION, loader)) {
+				// actually, this can only happen (I think) for integer
+				// division.
 				return true;
 			}
 			exprs.add(bop.lhs());
@@ -1386,9 +1396,10 @@ public class CodeGeneration {
 			JilExpr.UnOp bop = (JilExpr.UnOp) expr;			
 			exprs.add(bop.expr());				
 		} else if(expr instanceof JilExpr.Deref) {
+			// Some possible issue with respect to throwing Errors if this
+			// instruction causes class loading. See JVM Section 2.17.5.
 			JilExpr.Deref def = (JilExpr.Deref) expr;			
-			if (types.subtype(exception, new Type.Clazz("java.lang",
-					"NullPointerException"), loader)) {
+			if (types.subtype(exception, JAVA_LANG_NULLPOINTEREXCEPTION, loader)) {
 				return true;
 			}
 			exprs.add(def.target());				
@@ -1397,8 +1408,7 @@ public class CodeGeneration {
 			exprs.addAll(arr.values());
 		} else if(expr instanceof JilExpr.ArrayIndex) {
 			JilExpr.ArrayIndex ai = (JilExpr.ArrayIndex) expr;
-			if (types.subtype(exception, new Type.Clazz("java.lang",
-					"NullPointerException"), loader)
+			if (types.subtype(exception, JAVA_LANG_NULLPOINTEREXCEPTION, loader)
 					|| types.subtype(exception, new Type.Clazz("java.lang",
 							"ArrayIndexOutOfBoundsException"), loader)
 					|| types.subtype(exception, new Type.Clazz("java.lang",

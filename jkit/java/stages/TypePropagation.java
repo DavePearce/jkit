@@ -288,27 +288,27 @@ public class TypePropagation {
 	
 	protected void doIf(Stmt.If stmt, JavaMethod m) {
 		doExpression(stmt.condition());
-		stmt.setCondition(implicitCast(stmt.condition(), new Type.Bool()));
+		stmt.setCondition(implicitCast(stmt.condition(), T_BOOL));
 		doStatement(stmt.trueStatement(),m);
 		doStatement(stmt.falseStatement(),m);
 	}
 	
 	protected void doWhile(Stmt.While stmt, JavaMethod m) {
 		doExpression(stmt.condition());
-		stmt.setCondition(implicitCast(stmt.condition(), new Type.Bool()));
+		stmt.setCondition(implicitCast(stmt.condition(), T_BOOL));
 		doStatement(stmt.body(),m);		
 	}
 	
 	protected void doDoWhile(Stmt.DoWhile stmt, JavaMethod m) {
 		doExpression(stmt.condition());
-		stmt.setCondition(implicitCast(stmt.condition(), new Type.Bool()));
+		stmt.setCondition(implicitCast(stmt.condition(), T_BOOL));
 		doStatement(stmt.body(),m);
 	}
 	
 	protected void doFor(Stmt.For stmt, JavaMethod m) {		
 		doStatement(stmt.initialiser(),m);
 		doExpression(stmt.condition());		
-		stmt.setCondition(implicitCast(stmt.condition(), new Type.Bool()));
+		stmt.setCondition(implicitCast(stmt.condition(), T_BOOL));
 		doStatement(stmt.increment(),m);
 		doStatement(stmt.body(),m);	
 	}
@@ -320,7 +320,7 @@ public class TypePropagation {
 	
 	protected void doSwitch(Stmt.Switch sw, JavaMethod m) {
 		doExpression(sw.condition());
-		sw.setCondition(implicitCast(sw.condition(),new Type.Int()));
+		sw.setCondition(implicitCast(sw.condition(),T_INT));
 		for(Case c : sw.cases()) {
 			doExpression(c.condition());
 			for(Stmt s : c.statements()) {
@@ -395,7 +395,7 @@ public class TypePropagation {
 			// This dereference must represent an internal method access.
 			if(e.name().equals("length")) {
 				// most common case.
-				e.attributes().add(new Type.Int());
+				e.attributes().add(T_INT);
 			} else {
 				syntax_error("field not found: " + tmp + "." + e.name(),e);
 			}
@@ -430,7 +430,7 @@ public class TypePropagation {
 		doExpression(e.target());
 		doExpression(e.index());
 		
-		e.setIndex(implicitCast(e.index(),new Type.Int()));
+		e.setIndex(implicitCast(e.index(),T_INT));
 				
 		Type target_t = (Type) e.target().attribute(Type.class);
 		
@@ -546,10 +546,10 @@ public class TypePropagation {
 					if(vt.lowerBound() != null) {
 						receiver = vt.lowerBound(); 
 					} else {						
-						receiver = new Type.Clazz("java.lang","Object");
+						receiver = JAVA_LANG_OBJECT;
 					}
 				} else if(rt instanceof Type.Array) {
-					receiver = new Type.Clazz("java.lang","Object");
+					receiver = JAVA_LANG_OBJECT;
 				} else {
 					receiver = (Type.Clazz) e.target().attribute(Type.class);
 				}
@@ -605,7 +605,7 @@ public class TypePropagation {
 	
 	protected void doInstanceOf(Expr.InstanceOf e) {
 		doExpression(e.lhs());
-		e.attributes().add(new Type.Bool());
+		e.attributes().add(T_BOOL);
 	}
 	
 	protected void doCast(Expr.Cast e) {
@@ -618,31 +618,31 @@ public class TypePropagation {
 	}
 	
 	protected void doBoolVal(Value.Bool e) {
-		e.attributes().add(new Type.Bool());
+		e.attributes().add(T_BOOL);
 	}
 	
 	protected void doCharVal(Value.Char e) {
-		e.attributes().add(new Type.Char());
+		e.attributes().add(T_CHAR);
 	}
 	
 	protected void doIntVal(Value.Int e) {
-		e.attributes().add(new Type.Int());
+		e.attributes().add(T_INT);
 	}
 	
 	protected void doLongVal(Value.Long e) {		
-		e.attributes().add(new Type.Long());
+		e.attributes().add(T_LONG);
 	}
 	
 	protected void doFloatVal(Value.Float e) {		
-		e.attributes().add(new Type.Float());
+		e.attributes().add(T_FLOAT);
 	}
 	
 	protected void doDoubleVal(Value.Double e) {		
-		e.attributes().add(new Type.Double());
+		e.attributes().add(T_DOUBLE);
 	}
 	
 	protected void doStringVal(Value.String e) {		
-		e.attributes().add(new Type.Clazz("java.lang","String"));
+		e.attributes().add(JAVA_LANG_STRING);
 	}
 	
 	protected void doNullVal(Value.Null e) {		
@@ -763,8 +763,8 @@ public class TypePropagation {
 					|| expr_t instanceof Type.Short) {
 				// This is a strange feature of javac. I don't really understand
 				// why it's necessary.
-				e.setExpr(implicitCast(e.expr(),new Type.Int()));
-				e.attributes().add(new Type.Int());				
+				e.setExpr(implicitCast(e.expr(),T_INT));
+				e.attributes().add(T_INT);				
 			} else {
 				e.attributes().add(expr_t);				
 			}
@@ -774,8 +774,8 @@ public class TypePropagation {
 					|| expr_t instanceof Type.Short) {
 				// This is a strange feature of javac. I don't really understand
 				// why it's necessary.
-				e.setExpr(implicitCast(e.expr(),new Type.Int()));
-				e.attributes().add(new Type.Int());				
+				e.setExpr(implicitCast(e.expr(),T_INT));
+				e.attributes().add(T_INT);				
 			} else {
 				e.attributes().add(expr_t);
 			} 
@@ -805,9 +805,9 @@ public class TypePropagation {
 					Type rt = binaryNumericPromotion(lhs_t, rhs_t, e);
 					e.setLhs(implicitCast(e.lhs(), rt));
 					e.setRhs(implicitCast(e.rhs(), rt));
-					e.attributes().add(new Type.Bool());
+					e.attributes().add(T_BOOL);
 				} else if (e.op() == Expr.BinOp.EQ || e.op() == Expr.BinOp.NEQ) {
-					e.attributes().add(new Type.Bool());
+					e.attributes().add(T_BOOL);
 				} else {
 					syntax_error("operands have invalid types " + lhs_t + " and "
 						+ rhs_t, e);
@@ -828,7 +828,7 @@ public class TypePropagation {
 					e.attributes().add(rt);
 				} else if (e.op() == Expr.BinOp.ADD
 						&& (isJavaLangString(lhs_t) || isJavaLangString(rhs_t))) {
-					e.attributes().add(new Type.Clazz("java.lang", "String"));
+					e.attributes().add(JAVA_LANG_STRING);
 					e.setOp(Expr.BinOp.CONCAT);
 				} else {
 					syntax_error("operands have invalid types " + lhs_t + " and "
@@ -850,13 +850,13 @@ public class TypePropagation {
 						// complaining. The reason for this is that, presumably,
 						// any loss of precision will not affect the outcome of
 						// the shift (since we're shifting at most 64 bits).						
-						Type ti = new Type.Int();
+						Type ti = T_INT;
 						Expr.Cast cast = new Expr.Cast(fromJilType(ti),
 								e.rhs(), e.attributes());						
 						cast.attributes().add(ti);
 						e.setRhs(cast);
 					} else {
-						e.setRhs(implicitCast(e.rhs(), new Type.Int()));
+						e.setRhs(implicitCast(e.rhs(), T_INT));
 					}
 					e.attributes().add(rt_left);
 				} else {
@@ -867,9 +867,9 @@ public class TypePropagation {
 			case Expr.BinOp.LAND:
 			case Expr.BinOp.LOR:
 			{				
-				e.setLhs(implicitCast(e.lhs(),new Type.Bool()));
-				e.setRhs(implicitCast(e.rhs(),new Type.Bool()));
-				e.attributes().add(new Type.Bool());
+				e.setLhs(implicitCast(e.lhs(),T_BOOL));
+				e.setRhs(implicitCast(e.rhs(),T_BOOL));
+				e.attributes().add(T_BOOL);
 				break;
 			}
 			case Expr.BinOp.AND:
@@ -906,14 +906,14 @@ public class TypePropagation {
 			e.attributes().add(lhs_t);
 		} else if((lhs_t instanceof Type.Bool || rhs_t instanceof Type.Bool)
 				&& (isBoxedTypeOf(lhs_t,"Boolean") || isBoxedTypeOf(rhs_t,"Boolean"))) {
-			e.attributes().add(new Type.Bool());			
+			e.attributes().add(T_BOOL);			
 		} else if(lhs_t instanceof Type.Null) {			
 			e.attributes().add(rhs_t);
 		} else if(rhs_t instanceof Type.Null) {
 			e.attributes().add(lhs_t);			
 		} else if((lhs_t instanceof Type.Byte || rhs_t instanceof Type.Byte) && 
 				(lhs_t instanceof Type.Short || rhs_t instanceof Type.Short)) {
-			e.attributes().add(new Type.Short());
+			e.attributes().add(T_SHORT);
 		} else if ((lhs_t instanceof Type.Byte || isBoxedTypeOf(lhs_t, "Byte"))
 				&& rhs_t instanceof Type.Int
 				&& isUnknownConstant(e.falseBranch())) {
@@ -987,7 +987,7 @@ public class TypePropagation {
 					return; // dead code
 				}				
 			} else if(lhs_t instanceof Type.Clazz || rhs_t instanceof Type.Clazz) {
-				rt = new Type.Clazz("java.lang","Object");
+				rt = JAVA_LANG_OBJECT;
 			} else if(lhs_t.equals(rhs_t)) {
 				rt = lhs_t;
 			} else {
@@ -1019,7 +1019,7 @@ public class TypePropagation {
 		
 		if (lhs instanceof Type.Char || lhs instanceof Type.Short
 				|| lhs instanceof Type.Byte) {
-			return new Type.Int();
+			return T_INT;
 		}
 		
 		return (Type.Primitive) lhs;
@@ -1046,22 +1046,22 @@ public class TypePropagation {
 		
 		// Second, convert to the appropriate type
 		if(lhs instanceof Type.Double || rhs instanceof Type.Double) {
-			return new Type.Double();
+			return T_DOUBLE;
 		}
 		if(lhs instanceof Type.Float || rhs instanceof Type.Float) {
-			return new Type.Float();
+			return T_FLOAT;
 		}
 		if(lhs instanceof Type.Long || rhs instanceof Type.Long) {
-			return new Type.Long();
+			return T_LONG;
 		}
 		
 		// The following is not part of JLS 5.6.2, but is handy for dealing with
         // boolean operators &, |, ^ etc.
 		if(lhs instanceof Type.Bool && rhs instanceof Type.Bool) {
-			return new Type.Bool();
+			return T_BOOL;
 		}
 		
-		return new Type.Int();		
+		return T_INT;		
 	}
 	
 	/**
@@ -1087,45 +1087,45 @@ public class TypePropagation {
 			if (r.pkg().equals("java.lang") && r.components().size() == 1) {
 				String c = r.components().get(0).first();
 				if (c.equals("Byte")) {
-					Type.Function funType = new Type.Function(new Type.Byte());
+					Type.Function funType = new Type.Function(T_BYTE);
 					return implicitCast(new Expr.Invoke(e, "byteValue",
 							new ArrayList<Expr>(), new ArrayList(),
-							new Type.Byte(), funType), t);
+							T_BYTE, funType), t);
 				} else if (c.equals("Character")) {
-					Type.Function funType = new Type.Function(new Type.Char());
+					Type.Function funType = new Type.Function(T_CHAR);
 					return implicitCast(new Expr.Invoke(e, "charValue",
 							new ArrayList<Expr>(), new ArrayList(),
-							new Type.Char(), funType), t);
+							T_CHAR, funType), t);
 				} else if (c.equals("Short")) {
-					Type.Function funType = new Type.Function(new Type.Short());
+					Type.Function funType = new Type.Function(T_SHORT);
 					return implicitCast(new Expr.Invoke(e, "shortValue",
 							new ArrayList<Expr>(), new ArrayList(),
-							new Type.Short(), funType), t);
+							T_SHORT, funType), t);
 				} else if (c.equals("Integer")) {
-					Type.Function funType = new Type.Function(new Type.Int());
+					Type.Function funType = new Type.Function(T_INT);
 					return implicitCast(new Expr.Invoke(e, "intValue",
 							new ArrayList<Expr>(), new ArrayList(),
-							new Type.Int(), funType), t);
+							T_INT, funType), t);
 				} else if (c.equals("Long")) {
-					Type.Function funType = new Type.Function(new Type.Long());
+					Type.Function funType = new Type.Function(T_LONG);
 					return implicitCast(new Expr.Invoke(e, "longValue",
 							new ArrayList<Expr>(), new ArrayList(),
-							new Type.Long(), funType), t);
+							T_LONG, funType), t);
 				} else if (c.equals("Float")) {
-					Type.Function funType = new Type.Function(new Type.Float());
+					Type.Function funType = new Type.Function(T_FLOAT);
 					return implicitCast(new Expr.Invoke(e, "floatValue",
 							new ArrayList<Expr>(), new ArrayList(),
-							new Type.Float(), funType), t);
+							T_FLOAT, funType), t);
 				} else if (c.equals("Double")) {
-					Type.Function funType = new Type.Function(new Type.Double());
+					Type.Function funType = new Type.Function(T_DOUBLE);
 					return implicitCast(new Expr.Invoke(e, "doubleValue",
 							new ArrayList<Expr>(), new ArrayList(),
-							new Type.Double(), funType), t);
+							T_DOUBLE, funType), t);
 				} else if (c.equals("Boolean")) {
-					Type.Function funType = new Type.Function(new Type.Bool());
+					Type.Function funType = new Type.Function(T_BOOL);
 					return implicitCast(new Expr.Invoke(e, "booleanValue",
 							new ArrayList<Expr>(), new ArrayList(),
-							new Type.Bool(), funType), t);
+							T_BOOL, funType), t);
 				} else {
 					syntax_error("found type " + e_t + ", required " + t,e);
 				}
@@ -1258,37 +1258,37 @@ public class TypePropagation {
 		int val = evaluateUnknownConstant(e);
 		// first do primitive types
 		if(lhs_t instanceof Type.Byte && val >= -128 && val <= 127) {
-			return new Value.Byte((byte)val, new Type.Byte(), loc);				
+			return new Value.Byte((byte)val, T_BYTE, loc);				
 		} else if(lhs_t instanceof Type.Char && val >= 0 && val <= 65535) {
-			return new Value.Char((char)val, new Type.Char(), loc);				
+			return new Value.Char((char)val, T_CHAR, loc);				
 		} else if(lhs_t instanceof Type.Short && val >= -32768 && val <= 32768) {
-			return new Value.Short((short)val, new Type.Short(), loc);				
+			return new Value.Short((short)val, T_SHORT, loc);				
 		} else if(isBoxedType(lhs_t)) {
 			Type.Clazz ref = (Type.Clazz) lhs_t;			
 			String s = ref.components().get(0).first();				
 			if(s.equals("Byte") && val >= -128 && val <= 127) {
 				ArrayList<Expr> params = new ArrayList<Expr>();
 				params.add(new Value.Byte((byte)val));
-				Type.Function funType = new Type.Function(new Type.Void(),new Type.Byte());
+				Type.Function funType = new Type.Function(new Type.Void(),T_BYTE);
 				return new Expr.New(fromJilType(lhs_t),null,params,new ArrayList<Decl>(), lhs_t, funType, loc);				
 			} else if(s.equals("Character") && val >= 0 && val <= 65535) {
 				ArrayList<Expr> params = new ArrayList<Expr>();
 				params.add(new Value.Char((char)val));
-				Type.Function funType = new Type.Function(new Type.Void(),new Type.Char());
+				Type.Function funType = new Type.Function(new Type.Void(),T_CHAR);
 				return new Expr.New(fromJilType(lhs_t),null,params,new ArrayList<Decl>(), lhs_t, funType, loc);				
 			} else if(s.equals("Short") && val >= Short.MIN_VALUE && val <= Short.MAX_VALUE) {
 				ArrayList<Expr> params = new ArrayList<Expr>();
 				params.add(new Value.Short((short)val));
-				Type.Function funType = new Type.Function(new Type.Void(),new Type.Short());
+				Type.Function funType = new Type.Function(new Type.Void(),T_SHORT);
 				return new Expr.New(fromJilType(lhs_t),null,params,new ArrayList<Decl>(), lhs_t, funType, loc);				
 			} else if(s.equals("Integer") && val >= Integer.MIN_VALUE && val <= Integer.MAX_VALUE) {
 				ArrayList<Expr> params = new ArrayList<Expr>();
 				params.add(new Value.Int(val));
-				Type.Function funType = new Type.Function(new Type.Void(),new Type.Int());
+				Type.Function funType = new Type.Function(new Type.Void(),T_INT);
 				return new Expr.New(fromJilType(lhs_t),null,params,new ArrayList<Decl>(), lhs_t, funType, loc);				
 			} 
 		} 
-		return new Value.Int(val,new Type.Int(),loc);
+		return new Value.Int(val,T_INT,loc);
 	}
 	
 	/**

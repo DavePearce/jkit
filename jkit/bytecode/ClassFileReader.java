@@ -28,12 +28,9 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
-import jkit.jil.*;
-import jkit.jil.tree.JilClass;
-import jkit.jil.tree.JilField;
-import jkit.jil.tree.JilMethod;
 import jkit.jil.tree.Modifier;
 import jkit.jil.tree.Type;
+import jkit.jil.util.*;
 import jkit.util.*;
 
 public class ClassFileReader {	
@@ -538,23 +535,23 @@ public class ClassFileReader {
 			// is primitive type ...
 			switch(c) {
 			case 'B':
-				return new Pair<Type,Integer>(new Type.Byte(),pos+1);						        	
+				return new Pair<Type,Integer>(Types.T_BOOL,pos+1);						        	
 			case 'C':
-				return new Pair<Type,Integer>(new Type.Char(),pos+1);			        	
+				return new Pair<Type,Integer>(Types.T_CHAR,pos+1);			        	
 			case 'D':
-				return new Pair<Type,Integer>(new Type.Double(),pos+1);			        	
+				return new Pair<Type,Integer>(Types.T_DOUBLE,pos+1);			        	
 			case 'F':				
-				return new Pair<Type,Integer>(new Type.Float(),pos+1);			        	
+				return new Pair<Type,Integer>(Types.T_FLOAT,pos+1);			        	
 			case 'I':
-				return new Pair<Type,Integer>(new Type.Int(),pos+1);		        	
+				return new Pair<Type,Integer>(Types.T_INT,pos+1);		        	
 			case 'J':
-				return new Pair<Type,Integer>(new Type.Long(),pos+1);			        	
+				return new Pair<Type,Integer>(Types.T_LONG,pos+1);			        	
 			case 'S':
-				return new Pair<Type,Integer>(new Type.Short(),pos+1);	
+				return new Pair<Type,Integer>(Types.T_SHORT,pos+1);	
 			case 'Z':
-				return new Pair<Type,Integer>(new Type.Bool(),pos+1);
+				return new Pair<Type,Integer>(Types.T_BOOL,pos+1);
 			case 'V':
-				return new Pair<Type,Integer>(new Type.Void(),pos+1);
+				return new Pair<Type,Integer>(Types.T_VOID,pos+1);
 			case '*':
 	            // FIXME: wildcard bounds.				
 				return new Pair<Type,Integer>(new Type.Wildcard(null,null),pos+1); 
@@ -1539,18 +1536,18 @@ public class ClassFileReader {
 		switch (type) {
 		case CONSTANT_String:
 			if(getConstant(index) != null) {
-				return new Type.Clazz("java.lang","String");
+				return Types.JAVA_LANG_STRING;
 			} else {
 				return new Type.Null();
 			}
 		case CONSTANT_Double:
-			return new Type.Double();						
+			return Types.T_DOUBLE;						
 		case CONSTANT_Float:
-			return new Type.Float();						
+			return Types.T_FLOAT;						
 		case CONSTANT_Integer:
-			return new Type.Int();			
+			return Types.T_INT;			
 		case CONSTANT_Long:
-			return new Type.Long();			
+			return Types.T_LONG;			
 		  // in Java 1.5, LDC_W can read 
 		  // "class constants"
 		case CONSTANT_Class:

@@ -5,6 +5,7 @@ import java.util.*;
 import jkit.compiler.ClassLoader;
 import jkit.compiler.FieldNotFoundException;
 import static jkit.compiler.SyntaxError.*;
+import static jkit.jil.util.Types.*;
 import jkit.compiler.Clazz;
 import jkit.java.io.JavaFile;
 import jkit.java.tree.Decl;
@@ -244,7 +245,7 @@ public class ScopeResolution {
 			if (!(myType.pkg().equals("java.lang")
 					&& myType.components().size() == 1 && myType.components()
 					.get(0).first().equals("Object"))) {
-				superType = new Type.Clazz("java.lang", "Object");
+				superType = JAVA_LANG_OBJECT;
 			} 
 		} else {
 			superType = (Type.Clazz) c.superclass().attribute(Type.class);

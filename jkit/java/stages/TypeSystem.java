@@ -71,15 +71,15 @@ public class TypeSystem {
 		} else if(t1 instanceof Type.Array && t2 instanceof Type.Array) {
 			return subtype((Type.Array) t1, (Type.Array) t2, loader);
 		} else if(t2 instanceof Type.Array && t1 instanceof Type.Clazz) {
-			return new Type.Clazz("java.lang", "Object").equals(t1)
-					|| new Type.Clazz("java.lang", "Cloneable").equals(t1)
-					|| new Type.Clazz("java.io", "Serializable").equals(t1);
+			return JAVA_LANG_OBJECT.equals(t1)
+					|| JAVA_LANG_CLONEABLE.equals(t1)
+					|| JAVA_IO_SERIALIZABLE.equals(t1);
 		}  else if(t2 instanceof Type.Variable && t1 instanceof Type.Clazz) {
 			Type.Variable tv = (Type.Variable) t2;
 			if(tv.lowerBound() != null) {
 				return subtype(t1,tv.lowerBound(),loader);
 			} else {
-				return new Type.Clazz("java.lang","Object").equals(t1);
+				return JAVA_LANG_OBJECT.equals(t1);
 			}
 		} else if(t1 instanceof Type.Variable && t2 instanceof Type.Variable) {
 			return t1.equals(t2);
@@ -115,13 +115,13 @@ public class TypeSystem {
 		}	
 		if(t1.getClass() == t2.getClass()) {
 			return true;
-		} else if(t1 instanceof Type.Double && subtype(new Type.Float(),t2)) { 
+		} else if(t1 instanceof Type.Double && subtype(T_FLOAT,t2)) { 
 			return true;
-		} else if(t1 instanceof Type.Float && subtype(new Type.Long(),t2)) {
+		} else if(t1 instanceof Type.Float && subtype(T_LONG,t2)) {
 			return true;
-		} else if(t1 instanceof Type.Long && subtype(new Type.Int(),t2)) {
+		} else if(t1 instanceof Type.Long && subtype(T_INT,t2)) {
 			return true;
-		} else if(t1 instanceof Type.Int && subtype(new Type.Short(),t2)) {
+		} else if(t1 instanceof Type.Int && subtype(T_SHORT,t2)) {
 			return true;
 		} else if(t1 instanceof Type.Int && t2 instanceof Type.Char) {
 			return true;
@@ -308,21 +308,21 @@ public class TypeSystem {
 			String type = p.components().get(p.components().size() - 1).first();
 
 			if (type.equals("Boolean")) {
-				return new Type.Bool();
+				return T_BOOL;
 			} else if (type.equals("Byte")) {
-				return new Type.Byte();
+				return T_BYTE;
 			} else if (type.equals("Character")) {
-				return new Type.Char();
+				return T_CHAR;
 			} else if (type.equals("Short")) {
-				return new Type.Short();
+				return T_SHORT;
 			} else if (type.equals("Integer")) {
-				return new Type.Int();
+				return T_INT;
 			} else if (type.equals("Long")) {
-				return new Type.Long();
+				return T_LONG;
 			} else if (type.equals("Float")) {
-				return new Type.Float();
+				return T_FLOAT;
 			} else if (type.equals("Double")) {
-				return new Type.Double();
+				return T_DOUBLE;
 			}
 		}
 		return null;
@@ -339,21 +339,21 @@ public class TypeSystem {
      */
 	public static Type.Reference boxedType(Type.Primitive p) {
 		if(p instanceof Type.Bool) {
-			return new Type.Clazz("java.lang","Boolean");
+			return JAVA_LANG_BOOLEAN;
 		} else if(p instanceof Type.Byte) {
-			return new Type.Clazz("java.lang","Byte");
+			return JAVA_LANG_BYTE;
 		} else if(p instanceof Type.Char) {
-			return new Type.Clazz("java.lang","Character");
+			return JAVA_LANG_CHARACTER;
 		} else if(p instanceof Type.Short) {
-			return new Type.Clazz("java.lang","Short");
+			return JAVA_LANG_SHORT;
 		} else if(p instanceof Type.Int) {
-			return new Type.Clazz("java.lang","Integer");
+			return JAVA_LANG_INTEGER;
 		} else if(p instanceof Type.Long) {
-			return new Type.Clazz("java.lang","Long");
+			return JAVA_LANG_LONG;
 		} else if(p instanceof Type.Float) {
-			return new Type.Clazz("java.lang","Float");
+			return JAVA_LANG_FLOAT;
 		} else {
-			return new Type.Clazz("java.lang","Double");
+			return JAVA_LANG_DOUBLE;
 		}
 	}
 	
@@ -596,10 +596,8 @@ public class TypeSystem {
 					// example, when binding java.util.ArrayList with
 					// java.util.ArrayList<T> we must assume that the first type
 					// is, in fact, java.util.ArrayList<Object>.
-					Type.Reference cr = cs.size() <= j ? new Type.Clazz(
-							"java.lang", "Object") : cs.get(j);
-					Type.Reference tr = ts.size() <= j ? new Type.Clazz(
-							"java.lang", "Object") : ts.get(j);
+					Type.Reference cr = cs.size() <= j ? JAVA_LANG_OBJECT : cs.get(j);
+					Type.Reference tr = ts.size() <= j ? JAVA_LANG_OBJECT : ts.get(j);
 							
 					constraints.addAll(innerBind(cr, tr,
 							loader));
@@ -860,7 +858,7 @@ public class TypeSystem {
 		
 		if(t1 instanceof Type.Array) {
 			types.add(t1);
-			types.add(new Type.Clazz("java.lang","Object"));
+			types.add(JAVA_LANG_OBJECT);
 			return types;
 		} else {
 

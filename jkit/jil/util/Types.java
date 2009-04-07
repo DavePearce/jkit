@@ -170,4 +170,46 @@ public class Types {
 			return 0;
 		}
 	}	
+	
+	/**
+	 * The following are provided for performance reasons, particularly to help
+	 * reduce the memory footprint during compilation.
+	 */
+	public static final Type.Void T_VOID = new Type.Void();
+	public static final Type.Null T_NULL = new Type.Null();
+	public static  final Type.Bool T_BOOL = new Type.Bool();
+	public static  final Type.Byte T_BYTE = new Type.Byte();
+	public static  final Type.Char T_CHAR = new Type.Char();
+	public static  final Type.Short T_SHORT = new Type.Short();
+	public static  final Type.Int T_INT = new Type.Int();
+	public static  final Type.Long T_LONG = new Type.Long();
+	public static  final Type.Float T_FLOAT = new Type.Float();
+	public static  final Type.Double T_DOUBLE = new Type.Double();
+	
+	public static final Type.Clazz JAVA_LANG_OBJECT = new Type.Clazz("java.lang","Object");
+	public static final Type.Clazz JAVA_LANG_CLONEABLE = new Type.Clazz("java.lang","Cloneable");
+	public static final Type.Clazz JAVA_LANG_STRING = new Type.Clazz("java.lang","String");
+	
+	public static final Type.Clazz JAVA_LANG_BOOLEAN = new Type.Clazz("java.lang","Boolean");
+	public static final Type.Clazz JAVA_LANG_CHARACTER = new Type.Clazz("java.lang","Character");
+	public static final Type.Clazz JAVA_LANG_BYTE = new Type.Clazz("java.lang","Byte");
+	public static final Type.Clazz JAVA_LANG_SHORT = new Type.Clazz("java.lang","Short");
+	public static final Type.Clazz JAVA_LANG_INTEGER = new Type.Clazz("java.lang","Integer");
+	public static final Type.Clazz JAVA_LANG_LONG = new Type.Clazz("java.lang","Long");
+	public static final Type.Clazz JAVA_LANG_FLOAT = new Type.Clazz("java.lang","Float");
+	public static final Type.Clazz JAVA_LANG_DOUBLE = new Type.Clazz("java.lang","Double");
+	
+	// io
+	public static final Type.Clazz JAVA_IO_SERIALIZABLE = new Type.Clazz("java.io","Serializable");
+	
+	// util
+	public static final Type.Clazz JAVA_UTIL_ITERATOR = new Type.Clazz("java.util","Iterator");
+	
+	// exceptions related types
+	public static  final Type.Clazz JAVA_LANG_THROWABLE = new Type.Clazz("java.lang","Throwable");
+	public static  final Type.Clazz JAVA_LANG_RUNTIMEEXCEPTION = new Type.Clazz("java.lang","RuntimeException");
+	public static  final Type.Clazz JAVA_LANG_VIRTUALMACHINEERROR = new Type.Clazz("java.lang","VirtualMachineError");
+	public static  final Type.Clazz JAVA_LANG_NULLPOINTEREXCEPTION = new Type.Clazz("java.lang","NullPointerException");
+	public static  final Type.Clazz JAVA_LANG_ARITHMETICEXCEPTION = new Type.Clazz("java.lang","ArithmeticException");
+	
 }
