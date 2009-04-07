@@ -954,6 +954,7 @@ public class ClassFileBuilder {
 			bytecodes.add(new Bytecode.Label(trueLabel));
 			bytecodes.add(new Bytecode.LoadConst(1));
 			bytecodes.add(new Bytecode.Label(exitLabel));
+			return;
 		}
 		}
 
