@@ -103,7 +103,7 @@ public class TypePropagation {
 				Expr c = unknownConstantInference(init, type,
 						(SourceLocation) init
 						.attribute(SourceLocation.class));
-				d.setInitialiser(c);
+				d.setInitialiser(implicitCast(c,type));
 			} else if(init instanceof Value.Array) {
 				doArrayVal(type,(Value.Array) init);
 			} else {
@@ -221,7 +221,7 @@ public class TypePropagation {
 					Expr c = unknownConstantInference(d.third(), nt,
 							(SourceLocation) d.third
 							.attribute(SourceLocation.class));
-					defs.set(i, new Triple(d.first(), d.second(), c));
+					defs.set(i, new Triple(d.first(), d.second(), implicitCast(c,nt)));
 				} else if(d.third() instanceof Value.Array) {
 					doArrayVal(nt,(Value.Array) d.third());
 				} else {
@@ -247,9 +247,9 @@ public class TypePropagation {
 							.attribute(SourceLocation.class));
 			
 			def.setRhs(c);			
-		} else {
-			def.setRhs(implicitCast(def.rhs(),lhs_t));
-		}
+		} 
+		
+		def.setRhs(implicitCast(def.rhs(),lhs_t));		
 		
 		def.attributes().add(lhs_t);
 	}
@@ -842,6 +842,7 @@ public class TypePropagation {
 						&& (rhs_t instanceof Type.Primitive || isBoxedType(rhs_t))) {
 					Type rt_left = unaryNumericPromotion(lhs_t, e);
 					e.setLhs(implicitCast(e.lhs(), rt_left));
+					System.out.println("GOT HERE");
 					e.setRhs(implicitCast(e.rhs(), new Type.Int()));
 					e.attributes().add(rt_left);
 				} else {
