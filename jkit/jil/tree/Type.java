@@ -14,7 +14,7 @@ import jkit.util.Pair;
  * <code>Type.Reference</code> represents general reference types, such as
  * <code>java.lang.String</code>.
  */
-public interface Type extends Attribute {
+public interface Type extends Attribute, Comparable<Type> {
 	
 	/**
      * The Primitive type abstracts all the primitive types.
@@ -43,6 +43,14 @@ public interface Type extends Attribute {
 		public int hashCode() {
 			return 0;
 		}
+		
+		public int compareTo(Type t) {
+			if(t instanceof Type.Null) {
+				return 0;
+			} else {
+				return -1;
+			}
+		}
 	}	 
 	
 	/**
@@ -64,6 +72,16 @@ public interface Type extends Attribute {
 		public int hashCode() {
 			return 1;
 		}
+		
+		public int compareTo(Type t) {
+			if (t instanceof Type.Null) {
+				return 1;
+			} else if (t instanceof Type.Void) {
+				return 0;
+			} else {
+				return -1;
+			}
+		}
 	}
 	/**
 	 * Represents the Java type "boolean"
@@ -81,6 +99,16 @@ public interface Type extends Attribute {
 		
 		public int hashCode() {
 			return 2;
+		}
+		
+		public int compareTo(Type t) {
+			if (t instanceof Type.Null || t instanceof Type.Void) {
+				return 1;
+			} else if (t instanceof Type.Bool) {
+				return 0;
+			} else {
+				return -1;
+			}
 		}
 	}
 	
@@ -102,6 +130,17 @@ public interface Type extends Attribute {
 		public int hashCode() {
 			return 3;
 		}
+		
+		public int compareTo(Type t) {
+			if (t instanceof Type.Null || t instanceof Type.Void
+					|| t instanceof Type.Bool) {
+				return 1;
+			} else if (t instanceof Type.Byte) {
+				return 0;
+			} else {
+				return -1;
+			}
+		}
 	}
 	
 	/**
@@ -120,6 +159,17 @@ public interface Type extends Attribute {
 		
 		public int hashCode() {
 			return 4;
+		}
+		
+		public int compareTo(Type t) {
+			if (t instanceof Type.Char) {
+				return 0;
+			} else if (t instanceof Type.Null || t instanceof Type.Void
+					|| t instanceof Type.Bool || t instanceof Type.Byte) {
+				return 1;
+			} else {
+				return -1;
+			}
 		}
 	}
 	
@@ -140,6 +190,18 @@ public interface Type extends Attribute {
 		public int hashCode() {
 			return 5;
 		}
+		
+		public int compareTo(Type t) {
+			if (t instanceof Type.Short) {
+				return 0;
+			} else if (t instanceof Type.Null || t instanceof Type.Void
+					|| t instanceof Type.Bool || t instanceof Type.Byte
+					|| t instanceof Type.Char) {
+				return 1;
+			} else {
+				return -1;
+			}
+		}
 	}
 
 	/**
@@ -158,6 +220,18 @@ public interface Type extends Attribute {
 		
 		public int hashCode() {
 			return 6;
+		}
+		
+		public int compareTo(Type t) {
+			if (t instanceof Type.Int) {
+				return 0;
+			} else if (t instanceof Type.Null || t instanceof Type.Void
+					|| t instanceof Type.Bool || t instanceof Type.Byte
+					|| t instanceof Type.Char || t instanceof Type.Short) {
+				return 1;
+			} else {
+				return -1;
+			}
 		}
 	}
 	
@@ -178,6 +252,18 @@ public interface Type extends Attribute {
 		public int hashCode() {
 			return 7;
 		}
+		
+		public int compareTo(Type t) {
+			if (t instanceof Type.Long) {
+				return 0;
+			} else if (t instanceof Type.Null || t instanceof Type.Void
+					|| t instanceof Type.Bool || t instanceof Type.Byte
+					|| t instanceof Type.Char || t instanceof Type.Int) {
+				return 1;
+			} else {
+				return -1;
+			}
+		}
 	}
 	
 	/**
@@ -197,6 +283,19 @@ public interface Type extends Attribute {
 		public int hashCode() {
 			return 8;
 		}
+		
+		public int compareTo(Type t) {
+			if (t instanceof Type.Float) {
+				return 0;
+			} else if (t instanceof Type.Null || t instanceof Type.Void
+					|| t instanceof Type.Bool || t instanceof Type.Byte
+					|| t instanceof Type.Char || t instanceof Type.Int
+					|| t instanceof Type.Long) {
+				return 1;
+			} else {
+				return -1;
+			}
+		}
 	}
 	
 	/**
@@ -215,6 +314,19 @@ public interface Type extends Attribute {
 		
 		public int hashCode() {
 			return 9;
+		}
+		
+		public int compareTo(Type t) {
+			if (t instanceof Type.Double) {
+				return 0;
+			} else if (t instanceof Type.Null || t instanceof Type.Void
+					|| t instanceof Type.Bool || t instanceof Type.Byte
+					|| t instanceof Type.Char || t instanceof Type.Int
+					|| t instanceof Type.Long || t instanceof Type.Float) {
+				return 1;
+			} else {
+				return -1;
+			}
 		}
 	}
 	
@@ -249,6 +361,16 @@ public interface Type extends Attribute {
 		
 		public int hashCode() {
 			return 1 + element.hashCode();
+		}
+		
+		public int compareTo(Type t) {
+			if (t instanceof Type.Array) {
+				return element.compareTo(((Type.Array) t).element());
+			} else if (t instanceof Type.Primitive) {
+				return 1;
+			} else {
+				return -1;
+			}
 		}
 	}
 	
@@ -333,6 +455,41 @@ public interface Type extends Attribute {
 				hc ^= n.first().hashCode();
 			}
 			return hc;
+		}
+		
+		public int compareTo(Type t) {
+			if (t instanceof Type.Clazz) {
+				Type.Clazz tc = (Type.Clazz) t;
+				int pct = pkg.compareTo(tc.pkg);
+				if(pct != 0) { return pct; }
+				if(components.size() < tc.components.size()) {
+					return -1;
+				} else if(components.size() == tc.components.size()) {
+					return 1;
+				}
+				for(int i=0;i!=components.size();++i) {
+					Pair<String,List<Type.Reference>> t1 = components.get(i);
+					Pair<String,List<Type.Reference>> t2 = tc.components.get(i);
+					int fct = t1.first().compareTo(t2.first());
+					if(fct != 0) { return fct; }
+					if(t1.second().size() < t2.second().size()) {
+						return -1;
+					} else if(t1.second().size() > t2.second().size()) {
+						return 1;
+					}
+					for(int j=0;j!=t1.second().size();++j) {
+						Type.Reference r1 = t1.second().get(j);
+						Type.Reference r2 = t2.second().get(j);
+						int rct = r1.compareTo(r2);
+						if(rct != 0) { return rct; }
+					}
+				}
+				return 0;
+			} else if (t instanceof Type.Primitive || t instanceof Type.Array) {
+				return 1;
+			} else {
+				return -1;
+			}
 		}
 	}
 	

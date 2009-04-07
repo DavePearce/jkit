@@ -260,16 +260,39 @@ public class CodeGeneration {
 		return r;
 	}
 	
+	protected int tryexit_label = 0;
+	protected int tryhandler_label = 0;
+	
 	protected List<JilStmt> doTryCatchBlock(Stmt.TryCatchBlock block) {
+		String exitLab = "tryexit" + tryexit_label++;
 		ArrayList<JilStmt> r = new ArrayList<JilStmt>();
-		r.addAll(doBlock(block));		
+		r.addAll(doBlock(block));
+		
+		int i = tryhandler_label;
+		for(Stmt.CatchBlock cb : block.handlers()) {
+			String handlerLab = "tryhandler" + i++;
+			for(JilStmt s : r) {
+				Type.Clazz ct = (Type.Clazz) cb.type().attribute(Type.Clazz.class);
+				s.exceptions().add(new Pair<Type.Clazz,String>(ct,handlerLab));
+			}
+		}
+		
+		r.add(new JilStmt.Goto(exitLab,block.attributes()));
+
+		for(Stmt.CatchBlock cb : block.handlers()) {
+			String handlerLab = "tryhandler" + tryhandler_label++;
+			Type.Clazz ct = (Type.Clazz) cb.type().attribute(Type.Clazz.class);
+			r.add(new JilStmt.Label(handlerLab,cb.attributes()));
+			r.add(new JilStmt.Assign(new JilExpr.Variable(cb.variable(), ct, cb
+					.attributes()), new JilExpr.Variable("$", ct,
+					cb.attributes())));
+			r.addAll(doCatchBlock(cb));
+			r.add(new JilStmt.Goto(exitLab,cb.attributes()));
+		}
+		
+		r.add(new JilStmt.Label(exitLab,block.attributes()));
 		r.addAll(doBlock(block.finaly()));		
 		
-		// OK, MAJOR BUGS HERE ...
-		
-		for(Stmt.CatchBlock cb : block.handlers()) {
-			r.addAll(doCatchBlock(cb));
-		}
 		return r;
 	}
 	

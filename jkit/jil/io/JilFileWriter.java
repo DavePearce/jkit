@@ -112,11 +112,13 @@ public class JilFileWriter {
 		} else if(s instanceof JilExpr.New) {
 			output.print("\t\t");
 			write((JilExpr.New)s);
-			output.println();
+			write(s.exceptions());
+			output.println(";");
 		} else if(s instanceof JilExpr.Invoke) {
 			output.print("\t\t");
 			write((JilExpr.Invoke)s);
-			output.println();
+			write(s.exceptions());
+			output.println(";");
 		} else if(s instanceof JilStmt.Switch) {
 			write((JilStmt.Switch)s);
 		} else {
@@ -135,6 +137,7 @@ public class JilFileWriter {
 		write(s.lhs());
 		output.print(" = ");
 		write(s.rhs());
+		write(s.exceptions());
 		output.println(";");
 	}
 	
@@ -144,6 +147,7 @@ public class JilFileWriter {
 			output.print(" ");
 			write(s.expr());
 		}
+		write(s.exceptions());
 		output.println(";");
 	}
 	
@@ -153,32 +157,47 @@ public class JilFileWriter {
 			output.print(" ");
 			write(s.expr());
 		}
+		write(s.exceptions());
 		output.println(";");
 	}
 	
 	protected void write(JilStmt.Goto s) {
-		output.println("\t\tgoto " + s.label() + ";");
+		output.print("\t\tgoto " + s.label());
+		write(s.exceptions());
+		output.println(";");
 	}
 	
 	protected void write(JilStmt.IfGoto s) {
 		output.print("\t\tif(");
 		write(s.condition());
-		output.println(") goto " + s.label() + ";");
+		output.print(") goto " + s.label());
+		write(s.exceptions());
+		output.println(";");
 	}
 	
 	protected void write(JilStmt.Label s) {
 		output.println("\t" + s.label() + ":");
+		write(s.exceptions()); // should be nothing		
 	}
 	
 	protected void write(JilStmt.Switch s) {
 		output.print("\t\tswitch("); 
 		write(s.condition());
-		output.println(") {");
+		output.print(") ");
+		write(s.exceptions());
+		output.println(" {");
 		for(Pair<JilExpr.Number,String> c : s.cases()) {
 			output.println("\t\tcase " + c.first() + ": goto " + c.second() + ";");			
 		}
-		output.println("\t\tdefault: goto " + s.defaultLabel() + ";");
+		output.println("\t\tdefault: goto " + s.defaultLabel() + ";");		
 		output.println("\t\t}");
+	}
+	
+	protected void write(List<Pair<Type.Clazz,String>> exceptions) {		
+		for(Pair<Type.Clazz,String> p : exceptions) {			
+			output.print(", ");						
+			output.print(p.first() + " goto " + p.second());
+		}
 	}
 	
 	protected void write(JilExpr e) {

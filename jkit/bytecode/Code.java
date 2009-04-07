@@ -7,6 +7,7 @@ import java.util.*;
 
 import jkit.bytecode.ClassFile.Method;
 import jkit.jil.tree.Type;
+import jkit.jil.util.*;
 
 /**
  * This represents the Code attribute from the JVM Spec.
@@ -97,12 +98,11 @@ public class Code implements Attribute {
 			b.addPoolItems(constantPool);
 		}
 
-		// FIXME: support for exception handlers
-//		for(ExceptionHandler h : handlers) {
-//		if(!h.exception.unqualifiedName().equals("java.lang.Throwable")) {
-//		Constant.addPoolItem(Constant.buildClass(h.exception), constantPool);
-//		}
-//		}
+		for(Handler h : handlers) {
+			if(!Types.isClass("java.lang","Throwable",h.exception)) {
+				Constant.addPoolItem(Constant.buildClass(h.exception), constantPool);
+			}
+		}
 	}
 	
 	/**
@@ -121,10 +121,10 @@ public class Code implements Attribute {
 		 * One past the last index covered by the handler.
 		 */
 		public int end;
-		public int label; // label for exception handler
+		public String label; 
 		public Type.Clazz exception;
 
-		public Handler(int start, int end, int label,
+		public Handler(int start, int end, String label,
 				Type.Clazz exception) {
 			this.start = start;
 			this.end = end;
@@ -216,14 +216,14 @@ public class Code implements Attribute {
 		for (Handler h : handlers()) {
 			writer.write_u2(insnOffsets[h.start]);
 			writer.write_u2(insnOffsets[h.end]);
-			writer.write_u2(labelOffsets.get("L" + h.label));
+			writer.write_u2(labelOffsets.get(h.label));
 
-			// FIXME: support for exception handles
-//			if (h.exception.unqualifiedName().equals("java.lang.Throwable")) {
-//			write_u2(0);
-//			} else {
-//			write_u2(constantPool.get(Constant.buildClass(h.exception)));
-//			}
+			if (Types.isClass("java.lang", "Throwable", h.exception)) {
+				writer.write_u2(0);
+			} else {
+				writer.write_u2(constantPool.get(Constant
+						.buildClass(h.exception)));
+			}
 		}
 		writer.write_u2(0); // no attributes for now
 	}

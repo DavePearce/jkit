@@ -173,9 +173,16 @@ public class ClassFileBuilder {
 			}
 		}
 
-		// === TRANSLATE BYTECODES ===
+		// === TRANSLATE BYTECODES ===		
 		for(JilStmt s : method.body()) {
+			int start = bytecodes.size();
 			translateStatement(s,localVarMap,bytecodes);
+			// add exception handlers (if present)
+			for(Pair<Type.Clazz,String> c : s.exceptions()) {
+				Code.Handler handler = new Code.Handler(start, bytecodes.size(), c
+						.second(), c.first());
+				handlers.add(handler);
+			}
 		}
 		
 		// At this point, add a return statement (if there is none, and we're
@@ -263,47 +270,45 @@ public class ClassFileBuilder {
 
 		// FIXME: support for sorting exception handlers
 		
-//		// firstly, sort them into the correct order
-//		Collections.sort(handlers, new Comparator<ExceptionHandler>() {
-//			public int compare(ExceptionHandler e1, ExceptionHandler e2) {
-//				if (e1.exception.supsetEqOf(e2.exception)
-//						&& e2.exception.supsetEqOf(e1.exception)) {
-//					if (e1.start < e2.start) {
-//						return -1;
-//					} else if (e1.start > e2.start) {
-//						return 1;
-//					} else {
-//						return 0;
-//					}
-//				} else if (e1.exception.supsetEqOf(e2.exception)) {
-//					return 1;
-//				} else {
-//					return -1;
-//				}
-//			}
-//		});
-//
-//		// now, we compact them together.
-//		ArrayList<ExceptionHandler> oldhandlers = new ArrayList<ExceptionHandler>(
-//				handlers);
-//		handlers.clear();
-//
-//		for (int i = 0; i != oldhandlers.size();) {
-//			ExceptionHandler handler = oldhandlers.get(i);
-//			int end = handler.end;
-//			ExceptionHandler tmp;
-//			i = i + 1;
-//			while (i < oldhandlers.size()
-//					&& (tmp = oldhandlers.get(i)).start == (end + 1)
-//					&& tmp.label == handler.label
-//					&& tmp.exception.equals(handler.exception)) {
-//				end = tmp.end;
-//				i = i + 1;
-//			}
-//			tmp = new ExceptionHandler(handler.start, end, handler.label,
-//					handler.exception);
-//			handlers.add(tmp);
-//		}
+		// firstly, sort them into the correct order
+		Collections.sort(handlers, new Comparator<Code.Handler>() {
+			public int compare(Code.Handler e1, Code.Handler e2) {
+				int ct = e1.exception.compareTo(e2.exception); 
+				if (ct == 0) {
+					if (e1.start < e2.start) {
+						return -1;
+					} else if (e1.start > e2.start) {
+						return 1;
+					} else {
+						return 0;
+					}
+				} else {
+					return ct;
+				}
+			}
+		});
+
+		// now, we compact them together.
+		ArrayList<Code.Handler> oldhandlers = new ArrayList<Code.Handler>(
+				handlers);
+		handlers.clear();
+
+		for (int i = 0; i != oldhandlers.size();) {
+			Code.Handler handler = oldhandlers.get(i);
+			int end = handler.end;
+			Code.Handler tmp;
+			i = i + 1;
+			while (i < oldhandlers.size()
+					&& (tmp = oldhandlers.get(i)).start == (end + 1)
+					&& tmp.label == handler.label
+					&& tmp.exception.equals(handler.exception)) {
+				end = tmp.end;
+				i = i + 1;
+			}
+			tmp = new Code.Handler(handler.start, end, handler.label,
+					handler.exception);
+			handlers.add(tmp);
+		}
 	}
 	
 	/**
@@ -776,6 +781,12 @@ public class ClassFileBuilder {
 			JilExpr.Variable lv = (JilExpr.Variable) expr;
 			if (varmap.containsKey(lv.value())) {				
 				bytecodes.add(new Bytecode.Load(varmap.get(lv.value()), lv.type()));				
+			} else if(lv.value().equals("$")) {
+				// this is the special variable used to get an Exception object
+				// off the stack in an exception handler.
+				//
+				// In this case, we don't actually have to do anything since
+				// it's already on the stack!
 			} else {
 				throw new RuntimeException(
 						"internal failure (looking for variable " + lv.value()

@@ -146,7 +146,15 @@ public class Types {
 		return false;
 	}
 	
-
+	public static boolean isClass(String pkg, String clazz, Type t) {
+		if(t instanceof Type.Clazz) {
+			Type.Clazz c = (Type.Clazz) t;
+			 return c.pkg().equals(pkg) && c.components().size() == 1
+					&& c.components().get(0).first().equals(clazz);
+		}
+		return false;
+	}
+	
 	/**
 	 * Return the depth of array nesting. E.g. "int" has 0 depth, "int[]" has
 	 * depth 1, "int[][]" has depth 2, etc.

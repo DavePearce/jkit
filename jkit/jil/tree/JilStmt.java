@@ -6,13 +6,38 @@ import jkit.util.*;
 public interface JilStmt extends SyntacticElement {
 	
 	/**
+	 * This method returns the exceptional branches associated with this
+	 * statement. The exceptions should be traversed for matches in the order
+	 * returned.
+	 * 
+	 * @return
+	 */
+	public List<Pair<Type.Clazz,String>> exceptions();
+	
+	public static class AbstractStmt extends SyntacticElementImpl implements
+			JilStmt,SyntacticElement {
+		protected final ArrayList<Pair<Type.Clazz, String>> exceptions = new ArrayList();
+
+		public AbstractStmt(Attribute... attributes) {
+			super(attributes);
+		}
+		
+		public AbstractStmt(List<Attribute> attributes) {
+			super(attributes);
+		}
+		
+		public List<Pair<Type.Clazz, String>> exceptions() {
+			return exceptions;
+		}
+	}
+	
+	/**
 	 * An assignment statement.
 	 * 
 	 * @author djp
 	 *
 	 */
-	public static final class Assign extends SyntacticElementImpl implements
-			JilStmt {
+	public static final class Assign extends AbstractStmt {
 		private JilExpr lhs, rhs;
 
 		public Assign(JilExpr lhs, JilExpr rhs,
@@ -49,7 +74,7 @@ public interface JilStmt extends SyntacticElement {
 	/**
 	 * A return statement.
 	 */
-	public static final class Return extends SyntacticElementImpl implements JilStmt {
+	public static final class Return extends AbstractStmt {
 		private JilExpr expr;
 
 		public Return(JilExpr expr, Attribute... attributes) {
@@ -77,7 +102,7 @@ public interface JilStmt extends SyntacticElement {
 	 * @author djp
 	 *
 	 */
-	public static final class Throw extends SyntacticElementImpl implements JilStmt {
+	public static final class Throw extends AbstractStmt {
 		private JilExpr expr;
 
 		public Throw(JilExpr expr, Attribute... attributes) {
@@ -105,7 +130,7 @@ public interface JilStmt extends SyntacticElement {
 	 * @author djp
 	 *
 	 */
-	public static final class Goto extends SyntacticElementImpl implements JilStmt {
+	public static final class Goto extends AbstractStmt {
 		private String label;
 
 		public Goto(String label, Attribute... attributes) {
@@ -133,7 +158,7 @@ public interface JilStmt extends SyntacticElement {
 	 * @author djp
 	 *
 	 */
-	public static final class IfGoto extends SyntacticElementImpl implements JilStmt {
+	public static final class IfGoto extends AbstractStmt {
 		private JilExpr condition;
 		private String label;
 
@@ -166,7 +191,7 @@ public interface JilStmt extends SyntacticElement {
 		}
 	}
 	
-	public static final class Label extends SyntacticElementImpl implements JilStmt {
+	public static final class Label extends AbstractStmt {
 		private String label;
 
 		public Label(String label, Attribute... attributes) {
@@ -188,10 +213,10 @@ public interface JilStmt extends SyntacticElement {
 		}
 	}
 	
-	public static final class Nop extends SyntacticElementImpl implements JilStmt {
+	public static final class Nop extends AbstractStmt {
 	}
 	
-	public static final class Lock extends SyntacticElementImpl implements JilStmt {
+	public static final class Lock extends AbstractStmt {
 		private JilExpr expr;
 
 		public Lock(JilExpr expr, Attribute... attributes) {
@@ -213,7 +238,7 @@ public interface JilStmt extends SyntacticElement {
 		}
 	}
 	
-	public static final class Unlock extends SyntacticElementImpl implements JilStmt {
+	public static final class Unlock extends AbstractStmt {
 		private JilExpr expr;
 
 		public Unlock(JilExpr expr, Attribute... attributes) {
@@ -235,7 +260,7 @@ public interface JilStmt extends SyntacticElement {
 		}
 	}
 	
-	public static final class Switch extends SyntacticElementImpl implements JilStmt {
+	public static final class Switch extends AbstractStmt {
 		private JilExpr condition;
 		private final List<Pair<JilExpr.Number,String>> cases;
 		private String defaultLab;

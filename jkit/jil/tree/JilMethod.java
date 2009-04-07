@@ -307,6 +307,7 @@ public class JilMethod extends SyntacticElementImpl implements jkit.compiler.Cla
 		
 		vars.remove("this"); // these are implicit
 		vars.remove("super"); // these are implicit 
+		vars.remove("$"); // these are implicit
 		
 		ArrayList<Pair<String,Boolean>> r = new ArrayList();
 		

@@ -1,23 +1,6 @@
 package jkit.jil.tree;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import jkit.java.tree.Decl;
-import jkit.java.tree.Expr;
-import jkit.jil.tree.Type.Array;
-import jkit.jil.tree.Type.Bool;
-import jkit.jil.tree.Type.Byte;
-import jkit.jil.tree.Type.Char;
-import jkit.jil.tree.Type.Clazz;
-import jkit.jil.tree.Type.Double;
-import jkit.jil.tree.Type.Float;
-import jkit.jil.tree.Type.Int;
-import jkit.jil.tree.Type.Long;
-import jkit.jil.tree.Type.Null;
-import jkit.jil.tree.Type.Primitive;
-import jkit.jil.tree.Type.Reference;
-import jkit.jil.tree.Type.Short;
 
 public interface JilExpr extends SyntacticElement {
 	
@@ -361,7 +344,7 @@ public interface JilExpr extends SyntacticElement {
 	 * @author djp
 	 * 
 	 */
-	public static class Invoke extends SyntacticElementImpl implements JilExpr, JilStmt {
+	public static class Invoke extends JilStmt.AbstractStmt implements JilExpr {
 		protected JilExpr target;
 		protected String name;
 		protected List<JilExpr> parameters;
@@ -530,7 +513,7 @@ public interface JilExpr extends SyntacticElement {
 	 * @author djp
 	 * 
 	 */
-	public static final class New extends SyntacticElementImpl implements JilExpr, JilStmt {
+	public static final class New extends JilStmt.AbstractStmt implements JilExpr {
 		private Type.Reference type;
 		private JilExpr context;
 		private List<JilExpr> parameters;
