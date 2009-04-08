@@ -17,6 +17,24 @@ import jkit.util.Pair;
 public interface Type extends Attribute, Comparable<Type> {
 	
 	/**
+	 * <p>
+	 * This method returns the list of generic variables used in this type. So,
+	 * for example, suppose we have:
+	 * </p>
+	 * 
+	 * <pre>
+	 * T = java.lang.ArrayList&lt;? extends S&gt;
+	 * </pre>
+	 * 
+	 * <p>
+	 * Then, <code>T.usedVariables()=[S]</code>.
+	 * </p>
+	 * 
+	 * @return
+	 */
+	public List<Type.Variable> usedVariables();
+	
+	/**
      * The Primitive type abstracts all the primitive types.
      */
 	public interface Primitive extends Type {}
@@ -51,6 +69,10 @@ public interface Type extends Attribute, Comparable<Type> {
 				return -1;
 			}
 		}
+		
+		public List<Type.Variable> usedVariables() {
+			return new ArrayList<Type.Variable>();
+		}
 	}	 
 	
 	/**
@@ -82,6 +104,10 @@ public interface Type extends Attribute, Comparable<Type> {
 				return -1;
 			}
 		}
+		
+		public List<Type.Variable> usedVariables() {
+			return new ArrayList<Type.Variable>();
+		}
 	}
 	/**
 	 * Represents the Java type "boolean"
@@ -109,6 +135,10 @@ public interface Type extends Attribute, Comparable<Type> {
 			} else {
 				return -1;
 			}
+		}
+		
+		public List<Type.Variable> usedVariables() {
+			return new ArrayList<Type.Variable>();
 		}
 	}
 	
@@ -141,6 +171,10 @@ public interface Type extends Attribute, Comparable<Type> {
 				return -1;
 			}
 		}
+		
+		public List<Type.Variable> usedVariables() {
+			return new ArrayList<Type.Variable>();
+		}
 	}
 	
 	/**
@@ -170,6 +204,10 @@ public interface Type extends Attribute, Comparable<Type> {
 			} else {
 				return -1;
 			}
+		}
+		
+		public List<Type.Variable> usedVariables() {
+			return new ArrayList<Type.Variable>();
 		}
 	}
 	
@@ -202,6 +240,10 @@ public interface Type extends Attribute, Comparable<Type> {
 				return -1;
 			}
 		}
+		
+		public List<Type.Variable> usedVariables() {
+			return new ArrayList<Type.Variable>();
+		}
 	}
 
 	/**
@@ -233,6 +275,10 @@ public interface Type extends Attribute, Comparable<Type> {
 				return -1;
 			}
 		}
+		
+		public List<Type.Variable> usedVariables() {
+			return new ArrayList<Type.Variable>();
+		}
 	}
 	
 	/**
@@ -263,6 +309,10 @@ public interface Type extends Attribute, Comparable<Type> {
 			} else {
 				return -1;
 			}
+		}
+		
+		public List<Type.Variable> usedVariables() {
+			return new ArrayList<Type.Variable>();
 		}
 	}
 	
@@ -296,6 +346,10 @@ public interface Type extends Attribute, Comparable<Type> {
 				return -1;
 			}
 		}
+		
+		public List<Type.Variable> usedVariables() {
+			return new ArrayList<Type.Variable>();
+		}
 	}
 	
 	/**
@@ -327,6 +381,10 @@ public interface Type extends Attribute, Comparable<Type> {
 			} else {
 				return -1;
 			}
+		}
+		
+		public List<Type.Variable> usedVariables() {
+			return new ArrayList<Type.Variable>();
 		}
 	}
 	
@@ -371,6 +429,10 @@ public interface Type extends Attribute, Comparable<Type> {
 			} else {
 				return -1;
 			}
+		}
+		
+		public List<Type.Variable> usedVariables() {
+			return element.usedVariables();
 		}
 	}
 	
@@ -491,6 +553,16 @@ public interface Type extends Attribute, Comparable<Type> {
 				return -1;
 			}
 		}
+		
+		public List<Type.Variable> usedVariables() {
+			ArrayList<Type.Variable> ls = new ArrayList();
+			for(Pair<String,List<Type.Reference>> p : components) {
+				for(Type.Reference r : p.second()) {
+					ls.addAll(r.usedVariables());
+				}
+			}
+			return ls;
+		}
 	}
 	
 	/**
@@ -591,6 +663,17 @@ public interface Type extends Attribute, Comparable<Type> {
 				return -1;
 			}
 		}
+		
+		public List<Type.Variable> usedVariables() {
+			ArrayList<Type.Variable> ls = new ArrayList();
+			if(lowerBound != null) {
+				ls.addAll(lowerBound.usedVariables());
+			}
+			if(upperBound != null) {
+				ls.addAll(lowerBound.usedVariables());
+			}
+			return ls;
+		}
 	}
 	
 	/**
@@ -662,6 +745,15 @@ public interface Type extends Attribute, Comparable<Type> {
 			} else {
 				return -1;
 			}
+		}
+		
+		public List<Type.Variable> usedVariables() {
+			ArrayList<Type.Variable> ls = new ArrayList();
+			ls.add(this);
+			if(lowerBound != null) {
+				ls.addAll(lowerBound.usedVariables());
+			}			
+			return ls;
 		}
 	}
 	
@@ -743,6 +835,14 @@ public interface Type extends Attribute, Comparable<Type> {
 			} else {
 				return -1;
 			}
+		}
+		
+		public List<Type.Variable> usedVariables() {
+			ArrayList<Type.Variable> ls = new ArrayList();
+			for(Type.Reference r : bounds) {
+				ls.addAll(r.usedVariables());
+			}
+			return ls;
 		}
 	}
 	
@@ -859,6 +959,16 @@ public interface Type extends Attribute, Comparable<Type> {
 			} else {
 				return -1;
 			}
+		}
+		
+		public List<Type.Variable> usedVariables() {
+			ArrayList<Type.Variable> ls = new ArrayList();
+			ls.addAll(returnType.usedVariables());
+			for(Type r : parameters) {
+				ls.addAll(r.usedVariables());
+			}
+			ls.addAll(typeArgs);
+			return ls;
 		}
 	}	
 }

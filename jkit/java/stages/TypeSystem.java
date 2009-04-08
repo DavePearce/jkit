@@ -591,16 +591,31 @@ public class TypeSystem {
 				List<Type.Reference> cs = c.second();
 				List<Type.Reference> ts = t.second();
 
-				for (int j = 0; j != Math.max(cs.size(), ts.size()); ++j) {
-					// We need to deal with the case of erased types. For
-					// example, when binding java.util.ArrayList with
-					// java.util.ArrayList<T> we must assume that the first type
-					// is, in fact, java.util.ArrayList<Object>.
-					Type.Reference cr = cs.size() <= j ? JAVA_LANG_OBJECT : cs.get(j);
-					Type.Reference tr = ts.size() <= j ? JAVA_LANG_OBJECT : ts.get(j);
-							
-					constraints.addAll(innerBind(cr, tr,
-							loader));
+				for (int j = 0; j != Math.max(cs.size(), ts.size()); ++j) {					
+					if(cs.size() <= j) {
+						// We need to deal with the case of erased types. For
+						// example, when binding java.util.ArrayList with
+						// java.util.ArrayList<T> we must assume that the first type
+						// is, in fact, java.util.ArrayList<Object>.						
+						Type.Reference tr = ts.get(j);
+						List<Type.Variable> vars = tr.usedVariables();
+						for(Type.Variable v : vars) {
+							constraints.add(new EqualityConstraint(
+									v.variable(), JAVA_LANG_OBJECT));
+						}
+					} else if(ts.size() <= j) {
+						// This is a strange case, and i'm not sure whether it
+						// could arise in practice (other than as a syntax
+						// error, that is).
+						throw new BindError("cannot bind type " + concrete
+								+ " against (erased?) template " + template);
+					} else {
+						Type.Reference cr = cs.get(j);
+						Type.Reference tr = ts.get(j);
+
+						constraints.addAll(innerBind(cr, tr,
+								loader));
+					}
 				}							
 			}
 		}
@@ -1295,7 +1310,7 @@ public class TypeSystem {
 			Type.Clazz type = worklist.remove(0);
 			Clazz c = loader.loadClass(type);			
 			List<? extends Clazz.Method> methods = c.methods(name);
-			Map<String,Type.Reference> binding = bind(type, c.type(),loader);
+			Map<String,Type.Reference> binding = bind(type, c.type(), loader);
 			
 			for (Clazz.Method m : methods) {
 				// try to rule out as many impossible candidates as possible
