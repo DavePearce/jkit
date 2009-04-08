@@ -6,6 +6,7 @@ import jkit.compiler.ClassLoader;
 import jkit.compiler.Clazz;
 import jkit.compiler.FieldNotFoundException;
 import jkit.compiler.MethodNotFoundException;
+import jkit.compiler.Clazz.Method;
 import static jkit.compiler.SyntaxError.*;
 import static jkit.jil.util.Types.*;
 import jkit.java.io.JavaFile;
@@ -478,8 +479,8 @@ public class TypePropagation {
 					e_parameters.set(i, implicitCast(e_parameters.get(i), pt));
 				}
 				
-				e.attributes().add(r.second().type()); // this is a little hacky, but it works.
-				
+				Method m = r.second();
+				e.attributes().add(new CodeGeneration.MethodInfo(m.exceptions(),m.type()));								
 			} catch(ClassNotFoundException cnfe) {
 				syntax_error(cnfe.getMessage(), e, cnfe);
 			} catch(MethodNotFoundException mfne) {
@@ -576,9 +577,10 @@ public class TypePropagation {
 			
 			if (!(f.returnType() instanceof Type.Void)) {				
 				e.attributes().add(f.returnType());
-			}
+			}						
 			
-			e.attributes().add(r.second().type()); // this is a little hacky, but it works.
+			Method m = r.second();
+			e.attributes().add(new CodeGeneration.MethodInfo(m.exceptions(),m.type()));								
 		} catch(ClassNotFoundException cnfe) {
 			syntax_error(cnfe.getMessage(), e, cnfe);
 		} catch(MethodNotFoundException mfne) {
@@ -1087,45 +1089,53 @@ public class TypePropagation {
 			if (r.pkg().equals("java.lang") && r.components().size() == 1) {
 				String c = r.components().get(0).first();
 				if (c.equals("Byte")) {
-					Type.Function funType = new Type.Function(T_BYTE);
+					CodeGeneration.MethodInfo mi = new CodeGeneration.MethodInfo(
+							new ArrayList(), new Type.Function(T_BYTE));
 					return implicitCast(new Expr.Invoke(e, "byteValue",
 							new ArrayList<Expr>(), new ArrayList(),
-							T_BYTE, funType), t);
+							T_BYTE, mi), t);
 				} else if (c.equals("Character")) {
-					Type.Function funType = new Type.Function(T_CHAR);
+					CodeGeneration.MethodInfo mi = new CodeGeneration.MethodInfo(
+							new ArrayList(), new Type.Function(T_CHAR));					
 					return implicitCast(new Expr.Invoke(e, "charValue",
 							new ArrayList<Expr>(), new ArrayList(),
-							T_CHAR, funType), t);
+							T_CHAR, mi), t);
 				} else if (c.equals("Short")) {
-					Type.Function funType = new Type.Function(T_SHORT);
+					CodeGeneration.MethodInfo mi = new CodeGeneration.MethodInfo(
+							new ArrayList(), new Type.Function(T_SHORT));					
 					return implicitCast(new Expr.Invoke(e, "shortValue",
 							new ArrayList<Expr>(), new ArrayList(),
-							T_SHORT, funType), t);
+							T_SHORT, mi), t);
 				} else if (c.equals("Integer")) {
-					Type.Function funType = new Type.Function(T_INT);
+					CodeGeneration.MethodInfo mi = new CodeGeneration.MethodInfo(
+							new ArrayList(), new Type.Function(T_INT));					
 					return implicitCast(new Expr.Invoke(e, "intValue",
 							new ArrayList<Expr>(), new ArrayList(),
-							T_INT, funType), t);
+							T_INT, mi), t);
 				} else if (c.equals("Long")) {
-					Type.Function funType = new Type.Function(T_LONG);
+					CodeGeneration.MethodInfo mi = new CodeGeneration.MethodInfo(
+							new ArrayList(), new Type.Function(T_LONG));					
 					return implicitCast(new Expr.Invoke(e, "longValue",
 							new ArrayList<Expr>(), new ArrayList(),
-							T_LONG, funType), t);
+							T_LONG, mi), t);
 				} else if (c.equals("Float")) {
-					Type.Function funType = new Type.Function(T_FLOAT);
+					CodeGeneration.MethodInfo mi = new CodeGeneration.MethodInfo(
+							new ArrayList(), new Type.Function(T_FLOAT));					
 					return implicitCast(new Expr.Invoke(e, "floatValue",
 							new ArrayList<Expr>(), new ArrayList(),
-							T_FLOAT, funType), t);
+							T_FLOAT, mi), t);
 				} else if (c.equals("Double")) {
-					Type.Function funType = new Type.Function(T_DOUBLE);
+					CodeGeneration.MethodInfo mi = new CodeGeneration.MethodInfo(
+							new ArrayList(), new Type.Function(T_DOUBLE));					
 					return implicitCast(new Expr.Invoke(e, "doubleValue",
 							new ArrayList<Expr>(), new ArrayList(),
-							T_DOUBLE, funType), t);
+							T_DOUBLE, mi), t);
 				} else if (c.equals("Boolean")) {
-					Type.Function funType = new Type.Function(T_BOOL);
+					CodeGeneration.MethodInfo mi = new CodeGeneration.MethodInfo(
+							new ArrayList(), new Type.Function(T_BOOL));					
 					return implicitCast(new Expr.Invoke(e, "booleanValue",
 							new ArrayList<Expr>(), new ArrayList(),
-							T_BOOL, funType), t);
+							T_BOOL, mi), t);
 				} else {
 					syntax_error("found type " + e_t + ", required " + t,e);
 				}
@@ -1133,10 +1143,11 @@ public class TypePropagation {
 		} else if(e_t instanceof Type.Primitive && t instanceof Type.Clazz) {
 			ArrayList<Expr> params = new ArrayList<Expr>();
 			params.add(e);
-			Type.Function funType = new Type.Function(new Type.Void(),e_t);
+			CodeGeneration.MethodInfo mi = new CodeGeneration.MethodInfo(
+					new ArrayList(), new Type.Function(new Type.Void(), e_t));
 			return new Expr.New(fromJilType(boxedType((Type.Primitive) e_t)),
 					null, params, new ArrayList<Decl>(),
-					boxedType((Type.Primitive) e_t), funType, e
+					boxedType((Type.Primitive) e_t), mi, e
 							.attribute(SourceLocation.class));			
 		} 
 		
@@ -1269,23 +1280,31 @@ public class TypePropagation {
 			if(s.equals("Byte") && val >= -128 && val <= 127) {
 				ArrayList<Expr> params = new ArrayList<Expr>();
 				params.add(new Value.Byte((byte)val));
-				Type.Function funType = new Type.Function(new Type.Void(),T_BYTE);
-				return new Expr.New(fromJilType(lhs_t),null,params,new ArrayList<Decl>(), lhs_t, funType, loc);				
+				CodeGeneration.MethodInfo mi = new CodeGeneration.MethodInfo(
+						new ArrayList(), new Type.Function(new Type.Void(),
+								T_BYTE));
+				return new Expr.New(fromJilType(lhs_t),null,params,new ArrayList<Decl>(), lhs_t, mi, loc);				
 			} else if(s.equals("Character") && val >= 0 && val <= 65535) {
 				ArrayList<Expr> params = new ArrayList<Expr>();
 				params.add(new Value.Char((char)val));
-				Type.Function funType = new Type.Function(new Type.Void(),T_CHAR);
-				return new Expr.New(fromJilType(lhs_t),null,params,new ArrayList<Decl>(), lhs_t, funType, loc);				
+				CodeGeneration.MethodInfo mi = new CodeGeneration.MethodInfo(
+						new ArrayList(), new Type.Function(new Type.Void(),
+								T_CHAR));
+				return new Expr.New(fromJilType(lhs_t),null,params,new ArrayList<Decl>(), lhs_t, mi, loc);				
 			} else if(s.equals("Short") && val >= Short.MIN_VALUE && val <= Short.MAX_VALUE) {
 				ArrayList<Expr> params = new ArrayList<Expr>();
 				params.add(new Value.Short((short)val));
-				Type.Function funType = new Type.Function(new Type.Void(),T_SHORT);
-				return new Expr.New(fromJilType(lhs_t),null,params,new ArrayList<Decl>(), lhs_t, funType, loc);				
+				CodeGeneration.MethodInfo mi = new CodeGeneration.MethodInfo(
+						new ArrayList(), new Type.Function(new Type.Void(),
+								T_SHORT));
+				return new Expr.New(fromJilType(lhs_t),null,params,new ArrayList<Decl>(), lhs_t, mi, loc);				
 			} else if(s.equals("Integer") && val >= Integer.MIN_VALUE && val <= Integer.MAX_VALUE) {
 				ArrayList<Expr> params = new ArrayList<Expr>();
 				params.add(new Value.Int(val));
-				Type.Function funType = new Type.Function(new Type.Void(),T_INT);
-				return new Expr.New(fromJilType(lhs_t),null,params,new ArrayList<Decl>(), lhs_t, funType, loc);				
+				CodeGeneration.MethodInfo mi = new CodeGeneration.MethodInfo(
+						new ArrayList(), new Type.Function(new Type.Void(),
+								T_INT));
+				return new Expr.New(fromJilType(lhs_t),null,params,new ArrayList<Decl>(), lhs_t, mi, loc);				
 			} 
 		} 
 		return new Value.Int(val,T_INT,loc);

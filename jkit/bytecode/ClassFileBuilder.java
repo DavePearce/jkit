@@ -1078,6 +1078,7 @@ public class ClassFileBuilder {
 		String fdesc = ClassFile.descriptor(funType, false);
 		
 		Stack<Type.Clazz> worklist = new Stack<Type.Clazz>();
+		Stack<Type.Clazz> interfaceWorklist = new Stack<Type.Clazz>();
 		worklist.push(receiver);
 		
 		while (!worklist.isEmpty()) {
@@ -1092,10 +1093,20 @@ public class ClassFileBuilder {
 				worklist.push(c.superClass());
 			}
 			for(Type.Clazz i : c.interfaces()) {
-				worklist.push(i);
+				interfaceWorklist.push(i);
 			}
 		}
 
+		while (!interfaceWorklist.isEmpty()) {
+			Clazz c = loader.loadClass(interfaceWorklist.pop());						
+			for (Clazz.Method m : c.methods(name)) {				
+				String mdesc = ClassFile.descriptor(m.type(), false);						
+				if (fdesc.equals(mdesc)) {
+					return new Pair(c,m);
+				}
+			}			
+		}
+		
 		throw new MethodNotFoundException(name,receiver.toString());
 	}
 	

@@ -27,6 +27,26 @@ public class CodeGeneration {
 	private ClassLoader loader = null;
 	private TypeSystem types = null;
 	
+	/**
+	 * This class is used to annotate an invoke expression with the list of
+	 * checked (and possibly unchecked) exceptions it has declared to throw, as
+	 * well as the type of the method to be invoked. It's sole purpose is to
+	 * prevent us from having to re-traverse the class heirarchy during code
+	 * generation.
+	 * 
+	 * @author djp
+	 * 
+	 */
+	public static class MethodInfo implements Attribute {
+		public final ArrayList<Type.Clazz> exceptions;
+		public final Type.Function type;
+
+		public MethodInfo(List<Type.Clazz> e, Type.Function type) {
+			exceptions = new ArrayList<Type.Clazz>(e);
+			this.type = type;
+		}
+	}
+	
 	private static class Scope {}
 	private static class LoopScope extends Scope {
 		public String continueLab;
@@ -914,17 +934,17 @@ public class CodeGeneration {
 			}			
 		}
 		
-		Type.Function funType = (Type.Function) e
-				.attribute(Type.Function.class);
+		MethodInfo mi = (MethodInfo) e
+				.attribute(MethodInfo.class);		
 		
-		return new Pair<JilExpr, List<JilStmt>>(new JilExpr.New(type, params.first(),
-				funType, e.attributes()), r);
+		return new Pair<JilExpr, List<JilStmt>>(new JilExpr.New(type, params
+				.first(), mi.type, e.attributes()), r);
 	}
 	
 	protected Pair<JilExpr,List<JilStmt>> doInvoke(Expr.Invoke e) {
 		ArrayList<JilStmt> r = new ArrayList();
 		Type type = (Type) e.attribute(Type.class);				
-		Type.Function funType = (Type.Function) e.attribute(Type.Function.class);
+		MethodInfo mi = (MethodInfo) e.attribute(MethodInfo.class);		
 		
 		Pair<JilExpr,List<JilStmt>> target = doExpression(e.target());
 		r.addAll(target.second());
@@ -936,16 +956,16 @@ public class CodeGeneration {
 		
 		if (rec instanceof JilExpr.ClassVariable) {
 			return new Pair<JilExpr, List<JilStmt>>(new JilExpr.Invoke(target.first(), e
-					.name(), params.first(), funType, type, e
+					.name(), params.first(), mi.type, type, e
 					.attributes()), r);
 		} else if (rec instanceof JilExpr.Variable
 				&& ((JilExpr.Variable) rec).value().equals("super")) {
 			return new Pair<JilExpr, List<JilStmt>>(new JilExpr.SpecialInvoke(target
-					.first(), e.name(), params.first(), funType, type, e
+					.first(), e.name(), params.first(), mi.type, type, e
 					.attributes()), r);
 		} else {
 			return new Pair<JilExpr, List<JilStmt>>(new JilExpr.Invoke(target.first(), e
-					.name(), params.first(), funType, type, e
+					.name(), params.first(), mi.type, type, e
 					.attributes()), r);
 		}
 	}
@@ -1385,10 +1405,11 @@ public class CodeGeneration {
 			exprs.add(ec.expr());
 		} else if(expr instanceof JilExpr.BinOp) {
 			JilExpr.BinOp bop = (JilExpr.BinOp) expr;
-			if ((bop.op() == JilExpr.BinOp.DIV || bop.op() == JilExpr.BinOp.MOD)
-					&& types.subtype(exception, JAVA_LANG_ARITHMETICEXCEPTION, loader)) {
-				// actually, this can only happen (I think) for integer
-				// division.
+			if (!(bop.type() instanceof Type.Float || bop.type() instanceof Type.Double)
+					&& (bop.op() == JilExpr.BinOp.DIV || bop.op() == JilExpr.BinOp.MOD)
+					&& types.subtype(exception, JAVA_LANG_ARITHMETICEXCEPTION,
+							loader)) {
+				// Curiously, divide-by-zero is only a problem for integer types.
 				return true;
 			}
 			exprs.add(bop.lhs());
