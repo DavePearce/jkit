@@ -1389,6 +1389,11 @@ public class JilBuilder {
 			}
 		} else if(stmt instanceof JilStmt.Assign) {
 			JilStmt.Assign r = (JilStmt.Assign) stmt;
+			if (r.lhs() instanceof JilExpr.ArrayIndex
+					&& types.subtype(exception, new Type.Clazz("java.lang",
+							"ArrayStoreException"), loader)) {
+				return true;
+			}
 			exprs.add(r.lhs());
 			exprs.add(r.rhs());
 		} else if(stmt instanceof JilStmt.IfGoto) {
@@ -1456,12 +1461,7 @@ public class JilBuilder {
 			JilExpr.ArrayIndex ai = (JilExpr.ArrayIndex) expr;
 			if (types.subtype(exception, JAVA_LANG_NULLPOINTEREXCEPTION, loader)
 					|| types.subtype(exception, new Type.Clazz("java.lang",
-							"ArrayIndexOutOfBoundsException"), loader)
-					|| types.subtype(exception, new Type.Clazz("java.lang",
-							"ArrayStoreException"), loader)) {
-				// Actually, this is a little over-conservative since array store
-				// can only be thrown when the array expression is actually the
-				// immediate lhs of an assignment.
+							"ArrayIndexOutOfBoundsException"), loader)) {
 				return true;
 			}
 			exprs.add(ai.target());
