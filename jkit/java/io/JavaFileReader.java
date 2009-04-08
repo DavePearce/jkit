@@ -1222,7 +1222,7 @@ public class JavaFileReader {
 	}
 
 	public Expr parseGetClass(Tree expr, HashSet<String> genericVariables) {
-		return new Value.Class(parseClassType(expr.getChild(0), genericVariables));
+		return new Value.Class(parseType(expr.getChild(0), genericVariables));
 	}
 
 	protected Expr parseTernOp(Tree expr, HashSet<String> genericVariables) {

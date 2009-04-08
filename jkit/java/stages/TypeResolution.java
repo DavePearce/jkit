@@ -223,7 +223,7 @@ public class TypeResolution {
 		
 		scopes.pop();
 	}
-
+	
 	protected void doField(JavaField d) {
 		doExpression(d.initialiser());		
 		d.type().attributes().add(substituteTypeVars(resolve(d.type())));
@@ -524,8 +524,8 @@ public class TypeResolution {
 			doExpression(v);
 		}
 	}
-	
-	protected void doClassVal(Value.Class e) {
+		
+	protected void doClassVal(Value.Class e) {		
 		e.value().attributes().add(substituteTypeVars(resolve(e.value())));
 	}
 	

@@ -732,12 +732,23 @@ public class TypePropagation {
 		// corresponds to an instance of java.lang.Class<String>. Therefore, we
 		// need to construct a type representing java.lang.Class<X> here.
 		
-		Type.Clazz c = (Type.Clazz) e.value().attribute(Type.class);
-		List<Type.Reference> tvars = new ArrayList();
-		tvars.add(c);
-		List<Pair<String, List<Type.Reference>>> components = new ArrayList();
-		components.add(new Pair("Class",tvars));
-		e.attributes().add(new Type.Clazz("java.lang",components));
+		Type t = (Type) e.value().attribute(Type.class);
+		if(t instanceof Type.Clazz) {
+			Type.Clazz c = (Type.Clazz) t;
+			List<Type.Reference> tvars = new ArrayList();
+			tvars.add(c);
+			List<Pair<String, List<Type.Reference>>> components = new ArrayList();
+			components.add(new Pair("Class",tvars));
+			e.attributes().add(new Type.Clazz("java.lang",components));
+		} else {
+			// Could possibly do a bit better here, in the case of type
+			// variables.  No matter !
+			List<Type.Reference> tvars = new ArrayList();
+			tvars.add(new Type.Wildcard(null,null));
+			List<Pair<String, List<Type.Reference>>> components = new ArrayList();
+			components.add(new Pair("Class",tvars));
+			e.attributes().add(new Type.Clazz("java.lang",components));			
+		}
 	}
 	
 	protected void doLocalVariable(Expr.LocalVariable e) {

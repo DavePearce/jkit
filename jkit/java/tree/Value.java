@@ -239,14 +239,14 @@ public interface Value extends Expr {
 	 * 
 	 */
 	public static class Class extends SyntacticElementImpl implements Value {
-		private Type.Clazz type;
+		private Type type;
 
-		public Class(Type.Clazz type, Attribute... attributes) {
+		public Class(Type type, Attribute... attributes) {
 			super(attributes);
 			this.type = type;
 		}
 
-		public Type.Clazz value() {
+		public Type value() {
 			return type;
 		}
 	}
