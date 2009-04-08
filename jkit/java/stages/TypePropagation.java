@@ -480,7 +480,7 @@ public class TypePropagation {
 				}
 				
 				Method m = r.second();
-				e.attributes().add(new CodeGeneration.MethodInfo(m.exceptions(),m.type()));								
+				e.attributes().add(new JilBuilder.MethodInfo(m.exceptions(),m.type()));								
 			} catch(ClassNotFoundException cnfe) {
 				syntax_error(cnfe.getMessage(), e, cnfe);
 			} catch(MethodNotFoundException mfne) {
@@ -580,7 +580,7 @@ public class TypePropagation {
 			}						
 			
 			Method m = r.second();
-			e.attributes().add(new CodeGeneration.MethodInfo(m.exceptions(),m.type()));								
+			e.attributes().add(new JilBuilder.MethodInfo(m.exceptions(),m.type()));								
 		} catch(ClassNotFoundException cnfe) {
 			syntax_error(cnfe.getMessage(), e, cnfe);
 		} catch(MethodNotFoundException mfne) {
@@ -1089,49 +1089,49 @@ public class TypePropagation {
 			if (r.pkg().equals("java.lang") && r.components().size() == 1) {
 				String c = r.components().get(0).first();
 				if (c.equals("Byte")) {
-					CodeGeneration.MethodInfo mi = new CodeGeneration.MethodInfo(
+					JilBuilder.MethodInfo mi = new JilBuilder.MethodInfo(
 							new ArrayList(), new Type.Function(T_BYTE));
 					return implicitCast(new Expr.Invoke(e, "byteValue",
 							new ArrayList<Expr>(), new ArrayList(),
 							T_BYTE, mi), t);
 				} else if (c.equals("Character")) {
-					CodeGeneration.MethodInfo mi = new CodeGeneration.MethodInfo(
+					JilBuilder.MethodInfo mi = new JilBuilder.MethodInfo(
 							new ArrayList(), new Type.Function(T_CHAR));					
 					return implicitCast(new Expr.Invoke(e, "charValue",
 							new ArrayList<Expr>(), new ArrayList(),
 							T_CHAR, mi), t);
 				} else if (c.equals("Short")) {
-					CodeGeneration.MethodInfo mi = new CodeGeneration.MethodInfo(
+					JilBuilder.MethodInfo mi = new JilBuilder.MethodInfo(
 							new ArrayList(), new Type.Function(T_SHORT));					
 					return implicitCast(new Expr.Invoke(e, "shortValue",
 							new ArrayList<Expr>(), new ArrayList(),
 							T_SHORT, mi), t);
 				} else if (c.equals("Integer")) {
-					CodeGeneration.MethodInfo mi = new CodeGeneration.MethodInfo(
+					JilBuilder.MethodInfo mi = new JilBuilder.MethodInfo(
 							new ArrayList(), new Type.Function(T_INT));					
 					return implicitCast(new Expr.Invoke(e, "intValue",
 							new ArrayList<Expr>(), new ArrayList(),
 							T_INT, mi), t);
 				} else if (c.equals("Long")) {
-					CodeGeneration.MethodInfo mi = new CodeGeneration.MethodInfo(
+					JilBuilder.MethodInfo mi = new JilBuilder.MethodInfo(
 							new ArrayList(), new Type.Function(T_LONG));					
 					return implicitCast(new Expr.Invoke(e, "longValue",
 							new ArrayList<Expr>(), new ArrayList(),
 							T_LONG, mi), t);
 				} else if (c.equals("Float")) {
-					CodeGeneration.MethodInfo mi = new CodeGeneration.MethodInfo(
+					JilBuilder.MethodInfo mi = new JilBuilder.MethodInfo(
 							new ArrayList(), new Type.Function(T_FLOAT));					
 					return implicitCast(new Expr.Invoke(e, "floatValue",
 							new ArrayList<Expr>(), new ArrayList(),
 							T_FLOAT, mi), t);
 				} else if (c.equals("Double")) {
-					CodeGeneration.MethodInfo mi = new CodeGeneration.MethodInfo(
+					JilBuilder.MethodInfo mi = new JilBuilder.MethodInfo(
 							new ArrayList(), new Type.Function(T_DOUBLE));					
 					return implicitCast(new Expr.Invoke(e, "doubleValue",
 							new ArrayList<Expr>(), new ArrayList(),
 							T_DOUBLE, mi), t);
 				} else if (c.equals("Boolean")) {
-					CodeGeneration.MethodInfo mi = new CodeGeneration.MethodInfo(
+					JilBuilder.MethodInfo mi = new JilBuilder.MethodInfo(
 							new ArrayList(), new Type.Function(T_BOOL));					
 					return implicitCast(new Expr.Invoke(e, "booleanValue",
 							new ArrayList<Expr>(), new ArrayList(),
@@ -1143,7 +1143,7 @@ public class TypePropagation {
 		} else if(e_t instanceof Type.Primitive && t instanceof Type.Clazz) {
 			ArrayList<Expr> params = new ArrayList<Expr>();
 			params.add(e);
-			CodeGeneration.MethodInfo mi = new CodeGeneration.MethodInfo(
+			JilBuilder.MethodInfo mi = new JilBuilder.MethodInfo(
 					new ArrayList(), new Type.Function(new Type.Void(), e_t));
 			return new Expr.New(fromJilType(boxedType((Type.Primitive) e_t)),
 					null, params, new ArrayList<Decl>(),
@@ -1280,28 +1280,28 @@ public class TypePropagation {
 			if(s.equals("Byte") && val >= -128 && val <= 127) {
 				ArrayList<Expr> params = new ArrayList<Expr>();
 				params.add(new Value.Byte((byte)val));
-				CodeGeneration.MethodInfo mi = new CodeGeneration.MethodInfo(
+				JilBuilder.MethodInfo mi = new JilBuilder.MethodInfo(
 						new ArrayList(), new Type.Function(new Type.Void(),
 								T_BYTE));
 				return new Expr.New(fromJilType(lhs_t),null,params,new ArrayList<Decl>(), lhs_t, mi, loc);				
 			} else if(s.equals("Character") && val >= 0 && val <= 65535) {
 				ArrayList<Expr> params = new ArrayList<Expr>();
 				params.add(new Value.Char((char)val));
-				CodeGeneration.MethodInfo mi = new CodeGeneration.MethodInfo(
+				JilBuilder.MethodInfo mi = new JilBuilder.MethodInfo(
 						new ArrayList(), new Type.Function(new Type.Void(),
 								T_CHAR));
 				return new Expr.New(fromJilType(lhs_t),null,params,new ArrayList<Decl>(), lhs_t, mi, loc);				
 			} else if(s.equals("Short") && val >= Short.MIN_VALUE && val <= Short.MAX_VALUE) {
 				ArrayList<Expr> params = new ArrayList<Expr>();
 				params.add(new Value.Short((short)val));
-				CodeGeneration.MethodInfo mi = new CodeGeneration.MethodInfo(
+				JilBuilder.MethodInfo mi = new JilBuilder.MethodInfo(
 						new ArrayList(), new Type.Function(new Type.Void(),
 								T_SHORT));
 				return new Expr.New(fromJilType(lhs_t),null,params,new ArrayList<Decl>(), lhs_t, mi, loc);				
 			} else if(s.equals("Integer") && val >= Integer.MIN_VALUE && val <= Integer.MAX_VALUE) {
 				ArrayList<Expr> params = new ArrayList<Expr>();
 				params.add(new Value.Int(val));
-				CodeGeneration.MethodInfo mi = new CodeGeneration.MethodInfo(
+				JilBuilder.MethodInfo mi = new JilBuilder.MethodInfo(
 						new ArrayList(), new Type.Function(new Type.Void(),
 								T_INT));
 				return new Expr.New(fromJilType(lhs_t),null,params,new ArrayList<Decl>(), lhs_t, mi, loc);				

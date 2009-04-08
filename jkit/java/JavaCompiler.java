@@ -17,7 +17,7 @@ import jkit.java.stages.TypeResolution;
 import jkit.java.stages.ScopeResolution;
 import jkit.java.stages.TypePropagation;
 import jkit.java.stages.TypeSystem;
-import jkit.java.stages.CodeGeneration;
+import jkit.java.stages.JilBuilder;
 import jkit.util.*;
 import jkit.jil.*;
 import jkit.jil.io.*;
@@ -380,7 +380,7 @@ public class JavaCompiler implements Compiler {
 	 */
 	protected void generateJilCode(File srcfile, JavaFile jfile, ClassLoader loader) {
 		long start = System.currentTimeMillis();
-		new CodeGeneration(loader, new TypeSystem()).apply(jfile);
+		new JilBuilder(loader, new TypeSystem()).apply(jfile);
 		logTimedMessage("[" + srcfile.getPath() + "] Jil generation completed ",
 				(System.currentTimeMillis() - start));
 	}

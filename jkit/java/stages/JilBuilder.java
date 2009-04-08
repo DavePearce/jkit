@@ -23,7 +23,7 @@ import jkit.util.Triple;
  * @author djp
  * 
  */
-public class CodeGeneration {
+public class JilBuilder {
 	private ClassLoader loader = null;
 	private TypeSystem types = null;
 	
@@ -59,7 +59,7 @@ public class CodeGeneration {
 	
 	private final Stack<Scope> scopes = new Stack<Scope>();
 	
-	public CodeGeneration(ClassLoader loader, TypeSystem types) {
+	public JilBuilder(ClassLoader loader, TypeSystem types) {
 		this.loader = loader;
 		this.types = types;
 	}
