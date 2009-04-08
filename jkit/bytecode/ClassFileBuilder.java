@@ -1072,23 +1072,28 @@ public class ClassFileBuilder {
 	 * @param funType
 	 * @return 0 for virtual, 1 for interface, 2 for static
 	 */
-	protected final int DISPATCH_VIRTUAL = 0;
-	protected final int DISPATCH_INTERFACE = 1;
-	protected final int DISPATCH_STATIC = 2;
 	
 	protected Pair<Clazz,Clazz.Method> determineMethod(Type.Clazz receiver, String name,
 			Type.Function funType) throws ClassNotFoundException,MethodNotFoundException {		
 		String fdesc = ClassFile.descriptor(funType, false);
 		
-		while (receiver != null) {
-			Clazz c = loader.loadClass(receiver);						
+		Stack<Type.Clazz> worklist = new Stack<Type.Clazz>();
+		worklist.push(receiver);
+		
+		while (!worklist.isEmpty()) {
+			Clazz c = loader.loadClass(worklist.pop());						
 			for (Clazz.Method m : c.methods(name)) {				
 				String mdesc = ClassFile.descriptor(m.type(), false);						
 				if (fdesc.equals(mdesc)) {
 					return new Pair(c,m);
 				}
 			}
-			receiver = c.superClass();
+			if(c.superClass() != null) {
+				worklist.push(c.superClass());
+			}
+			for(Type.Clazz i : c.interfaces()) {
+				worklist.push(i);
+			}
 		}
 
 		throw new MethodNotFoundException(name,receiver.toString());
