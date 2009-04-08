@@ -8,7 +8,7 @@ import java.util.List;
 
 import jkit.bytecode.BytecodeFileWriter;
 import jkit.bytecode.ClassFile;
-import jkit.bytecode.ClassFileBuilder;
+import jkit.jil.stages.ClassFileBuilder;
 import jkit.jil.tree.JilClass;
 
 public class BytecodeCompiler extends JavaCompiler {

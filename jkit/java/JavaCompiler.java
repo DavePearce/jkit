@@ -21,6 +21,7 @@ import jkit.java.stages.CodeGeneration;
 import jkit.util.*;
 import jkit.jil.*;
 import jkit.jil.io.*;
+import jkit.jil.stages.ClassFileBuilder;
 import jkit.jil.tree.JilClass;
 import jkit.jil.tree.Type;
 import jkit.jil.tree.SourceLocation;
