@@ -13,7 +13,7 @@ public class Types {
      * @param p
      * @return
      */
-	public static Type.Reference boxedType(Type.Primitive p) {
+	public static Type.Clazz boxedType(Type.Primitive p) {
 		if(p instanceof Type.Bool) {
 			return new Type.Clazz("java.lang","Boolean");
 		} else if(p instanceof Type.Byte) {

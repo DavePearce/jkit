@@ -9,34 +9,7 @@ import jkit.bytecode.Code;
 import jkit.bytecode.Exceptions;
 import jkit.bytecode.FieldSignature;
 import jkit.bytecode.InnerClasses;
-import jkit.bytecode.Bytecode.ArrayLength;
-import jkit.bytecode.Bytecode.ArrayLoad;
-import jkit.bytecode.Bytecode.ArrayStore;
-import jkit.bytecode.Bytecode.BinOp;
-import jkit.bytecode.Bytecode.CheckCast;
-import jkit.bytecode.Bytecode.Cmp;
-import jkit.bytecode.Bytecode.Conversion;
-import jkit.bytecode.Bytecode.Dup;
-import jkit.bytecode.Bytecode.GetField;
-import jkit.bytecode.Bytecode.Goto;
-import jkit.bytecode.Bytecode.If;
-import jkit.bytecode.Bytecode.IfCmp;
-import jkit.bytecode.Bytecode.InstanceOf;
-import jkit.bytecode.Bytecode.Invoke;
-import jkit.bytecode.Bytecode.Label;
-import jkit.bytecode.Bytecode.Load;
-import jkit.bytecode.Bytecode.LoadConst;
-import jkit.bytecode.Bytecode.MonitorEnter;
-import jkit.bytecode.Bytecode.MonitorExit;
-import jkit.bytecode.Bytecode.Neg;
-import jkit.bytecode.Bytecode.New;
-import jkit.bytecode.Bytecode.Nop;
-import jkit.bytecode.Bytecode.Pop;
-import jkit.bytecode.Bytecode.PutField;
-import jkit.bytecode.Bytecode.Return;
-import jkit.bytecode.Bytecode.Store;
-import jkit.bytecode.Bytecode.Switch;
-import jkit.bytecode.Bytecode.Throw;
+import jkit.bytecode.Bytecode.*;
 import jkit.bytecode.ClassFile.Field;
 import jkit.bytecode.ClassFile.Method;
 import jkit.bytecode.Code.Handler;
@@ -45,6 +18,7 @@ import jkit.compiler.ClassLoader;
 import jkit.compiler.SyntaxError;
 import jkit.compiler.FieldNotFoundException;
 import jkit.compiler.MethodNotFoundException;
+import jkit.jil.util.Types;
 import jkit.jil.tree.*;
 import jkit.jil.util.Exprs;
 import jkit.util.Pair;
@@ -866,13 +840,12 @@ public class ClassFileBuilder {
 	
 	public void translateClassVal(JilExpr.Class cval,  HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes) {
-		if(cval.type() instanceof Type.Primitive) {
-			// FIXME: fix class access to primitive types
-//			bytecodes.add(new Bytecode.GetField(Typing
-//					.boxedType((Type.Primitive) cval.classType), "TYPE", Type
-//					.referenceType("java.lang", "Class"), Bytecode.STATIC));
+		if (cval.classType() instanceof Type.Primitive) {
+			bytecodes.add(new Bytecode.GetField(Types
+					.boxedType((Type.Primitive) cval.classType()), "TYPE",
+					new Type.Clazz("java.lang", "Class"), Bytecode.STATIC));
 		} else {
-			bytecodes.add(new Bytecode.LoadConst(cval.type()));
+			bytecodes.add(new Bytecode.LoadConst(cval.classType()));
 		}
 	}
 	

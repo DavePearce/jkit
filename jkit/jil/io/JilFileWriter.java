@@ -320,7 +320,7 @@ public class JilFileWriter {
 	}
 	
 	protected void write(JilExpr.Class c) {
-		output.write(c.type() + ".class");
+		output.write(c.classType() + ".class");
 	}
 	
 	protected void write(JilExpr.ClassVariable c) {

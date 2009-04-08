@@ -1060,9 +1060,17 @@ public class JilBuilder {
 	}
 	
 	protected Pair<JilExpr,List<JilStmt>> doClassVal(Value.Class e) {
-		Type.Clazz type = (Type.Clazz) e.attribute(Type.class);		
-		return new Pair<JilExpr, List<JilStmt>>(new JilExpr.Class(type, e.attributes()),
-				new ArrayList<JilStmt>());
+		Type classType = (Type) e.value().attribute(Type.class);	
+		Type.Clazz type = (Type.Clazz) e.attribute(Type.class);
+		if(type instanceof Type.Clazz) {
+			return new Pair<JilExpr, List<JilStmt>>(new JilExpr.Class(
+					classType, type, e.attributes()),
+					new ArrayList<JilStmt>());
+		} else {
+			return new Pair<JilExpr, List<JilStmt>>(new JilExpr.Class(
+					classType, JAVA_LANG_OBJECT, e.attributes()),
+					new ArrayList<JilStmt>());
+		}
 	}
 		
 	protected Pair<JilExpr, List<JilStmt>> doLocalVariable(

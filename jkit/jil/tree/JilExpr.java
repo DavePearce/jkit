@@ -55,11 +55,11 @@ public interface JilExpr extends SyntacticElement {
 	 * 
 	 */
 	public static final class ClassVariable extends SyntacticElementImpl
-			implements JilExpr {
+			implements JilExpr {		
 		private Type.Clazz type;
 
 		public ClassVariable(Type.Clazz type, Attribute... attributes) {
-			super(attributes);
+			super(attributes);			
 			this.type = type;
 		}
 
@@ -1009,16 +1009,19 @@ public interface JilExpr extends SyntacticElement {
 	 * 
 	 */
 	public static final class Class extends SyntacticElementImpl implements JilExpr {
+		private Type classType;
 		private Type.Clazz type;
 
-		public Class(Type.Clazz type, Attribute... attributes) {
+		public Class(Type classType, Type.Clazz type, Attribute... attributes) {
 			super(attributes);
 			this.type = type;
+			this.classType = classType;
 		}
 
-		public Class(Type.Clazz type, List<Attribute> attributes) {
+		public Class(Type classType, Type.Clazz type, List<Attribute> attributes) {
 			super(attributes);
 			this.type = type;
+			this.classType = classType;
 		}
 
 		public Type.Clazz type() {
@@ -1027,6 +1030,14 @@ public interface JilExpr extends SyntacticElement {
 		
 		public void setType(Type.Clazz type) {
 			this.type = type;
+		}
+		
+		public Type classType() {
+			return classType;
+		}
+		
+		public void setClassType(Type type) {
+			this.classType = type;
 		}
 	}
 }
