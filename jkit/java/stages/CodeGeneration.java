@@ -1343,9 +1343,16 @@ public class CodeGeneration {
 							loader)) {
 				return true;
 			}
-			JilExpr.Invoke ivk = (JilExpr.Invoke) stmt;			
-			// Need to do something about checked exceptions. Also, if static
-			// method then cannot throw NullPointException
+
+			// check declared exceptions
+			MethodInfo mi = (MethodInfo) stmt.attribute(MethodInfo.class);
+			for(Type.Clazz ex : mi.exceptions) {
+				if (types.subtype(exception, ex, loader)) {
+					return true;
+				}
+			}
+			
+			JilExpr.Invoke ivk = (JilExpr.Invoke) stmt;	
 			exprs.addAll(ivk.parameters());			
 		} else if (stmt instanceof JilExpr.New) {
 			if (types.subtype(exception, JAVA_LANG_RUNTIMEEXCEPTION, loader)
@@ -1358,8 +1365,17 @@ public class CodeGeneration {
 							"NegativeArraySizeException"), loader)) {
 				// In some cases, we can certain figure out that this cannot
 				// happen.
-				return true;
+				return true;			
+			} else if(!(ivk.type() instanceof Type.Array)) {
+				// check declared exceptions
+				MethodInfo mi = (MethodInfo) ivk.attribute(MethodInfo.class);
+				for(Type.Clazz ex : mi.exceptions) {
+					if (types.subtype(exception, ex, loader)) {
+						return true;
+					}
+				}
 			}
+			
 			// Need to do something about checked exceptions. Also, if static
 			// method then cannot throw NullPointException
 			exprs.addAll(ivk.parameters());

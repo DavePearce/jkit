@@ -102,7 +102,7 @@ public class JilFileWriter {
 		} else if(s instanceof JilStmt.Return) {
 			write((JilStmt.Return)s);
 		} else if(s instanceof JilStmt.Throw) {
-			write((JilStmt.Return)s);
+			write((JilStmt.Throw)s);
 		} else if(s instanceof JilStmt.IfGoto) {
 			write((JilStmt.IfGoto)s);
 		} else if(s instanceof JilStmt.Goto) {
