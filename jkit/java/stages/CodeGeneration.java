@@ -937,8 +937,16 @@ public class CodeGeneration {
 		MethodInfo mi = (MethodInfo) e
 				.attribute(MethodInfo.class);		
 		
-		return new Pair<JilExpr, List<JilStmt>>(new JilExpr.New(type, params
-				.first(), mi.type, e.attributes()), r);
+		if(mi != null) {			
+			return new Pair<JilExpr, List<JilStmt>>(new JilExpr.New(type, params
+					.first(), mi.type, e.attributes()), r);
+		} else if(type instanceof Type.Array){
+			return new Pair<JilExpr, List<JilStmt>>(new JilExpr.New(type, params
+					.first(), null, e.attributes()), r);
+		} else {
+			syntax_error("internal failure --- unable to find method information",e);
+			return null;
+		}
 	}
 	
 	protected Pair<JilExpr,List<JilStmt>> doInvoke(Expr.Invoke e) {
