@@ -18,9 +18,16 @@ class JLS_4_3_2_GetClass_1 {
 
       n = int.class.getName();
       if(n.equals("int")) {
-	  System.out.println("Array OK");
+	  System.out.println("Int OK");
       } else {
 	  System.out.println("ERROR 3: " + n);
+      }
+
+      n = JLS_4_3_2_GetClass_1.class.getName();
+      if(n.equals("JLS_4_3_2_GetClass_1")) {
+	  System.out.println("JLS_4_3_2_GetClass_1 OK");
+      } else {
+	  System.out.println("ERROR 4: " + n);
       }
   }
 }
