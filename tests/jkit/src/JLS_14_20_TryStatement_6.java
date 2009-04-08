@@ -1,4 +1,4 @@
-public class JLS_14_20_TryStatement_1 {
+public class JLS_14_20_TryStatement_6 {
 	
 	public static void main(String[] args) {
 		try {
