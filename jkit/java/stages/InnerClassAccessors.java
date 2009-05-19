@@ -717,17 +717,20 @@ public class InnerClassAccessors {
 			ArrayList<Modifier> mods = new ArrayList<Modifier>();
 			mods.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL));
 			ArrayList<Pair<String,List<Modifier>>> params = new ArrayList(); 
+			Type.Function ft;
 			
 			if(field.isStatic()) {
 				thisVar = new JilExpr.ClassVariable(clazz.type());
 				modifiers.add(new Modifier.Base(java.lang.reflect.Modifier.STATIC));
+				ft = new Type.Function(field.type());
 			} else {
 				thisVar = new JilExpr.Variable("thisp",clazz.type());
 				params.add(new Pair("thisp",mods));
+				ft = new Type.Function(field.type(),clazz.type());
 			}
 			
 			accessor = new JilMethod("access$" + accessors.size() + "00",
-					new Type.Function(field.type()), params,
+					ft, params,
 					modifiers, new ArrayList<Type.Clazz>()); 
 			
 			JilExpr expr = new JilExpr.Deref(thisVar, field.name(), field
@@ -770,19 +773,22 @@ public class InnerClassAccessors {
 			mods.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL));
 			ArrayList<Pair<String,List<Modifier>>> params = new ArrayList(); 
 			
+			Type.Function ft;
+			
 			if(field.isStatic()) {
 				modifiers.add(new Modifier.Base(java.lang.reflect.Modifier.STATIC));
 				thisVar = new JilExpr.ClassVariable(clazz.type());
+				ft = new Type.Function(field.type(),field.type());
 			} else {
 				thisVar = new JilExpr.Variable("thisp",clazz.type());
 				params.add(new Pair("thisp",mods));
+				ft = new Type.Function(field.type(),clazz.type(),field.type());
 			}
 			
 			params.add(new Pair("tmp",mods));			
 			
-			accessor = new JilMethod("access$" + accessors.size() + "02",
-					new Type.Function(field.type(),field.type()), params,
-					modifiers, new ArrayList<Type.Clazz>()); 						
+			accessor = new JilMethod("access$" + accessors.size() + "02", ft,
+					params, modifiers, new ArrayList<Type.Clazz>()); 						
 						
 			JilExpr tmpVar = new JilExpr.Variable("old", field.type());
 			

@@ -72,7 +72,7 @@ public class JilFileWriter {
 		Type.Function type = m.type(); 
 		output.print(type.returnType() + " " + m.name());
 		output.print("(");
-		boolean firstTime=true;
+		boolean firstTime=true;	
 		
 		List<Type> paramTypes = type.parameterTypes();
 		List<Pair<String,List<Modifier>>> params = m.parameters();
