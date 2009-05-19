@@ -10,14 +10,7 @@ import jkit.java.io.JavaFile;
 import jkit.java.io.JavaFileReader;
 import jkit.java.io.JavaFileWriter;
 import jkit.bytecode.*;
-import jkit.java.stages.SkeletonDiscovery;
-import jkit.java.stages.SkeletonBuilder;
-import jkit.java.stages.TypeChecking;
-import jkit.java.stages.TypeResolution;
-import jkit.java.stages.ScopeResolution;
-import jkit.java.stages.TypePropagation;
-import jkit.java.stages.TypeSystem;
-import jkit.java.stages.JilBuilder;
+import jkit.java.stages.*;
 import jkit.util.*;
 import jkit.jil.*;
 import jkit.jil.io.*;
@@ -217,11 +210,13 @@ public class JavaCompiler implements Compiler {
 			propagateTypes(filename, jfile, loader);			
 
 			// Seventh, check whether the types are being used correctly. If
-			// not,
-			// report a syntax error.
+			// not, report a syntax error.
 			checkTypes(filename, jfile, loader);
 		
-			// Eigth, eliminate side effects from expressions
+			// Eight, add inner class accessors as appropriate
+			addInnerAccessors(filename,jfile,loader);
+			
+			// Ninth, eliminate side effects from expressions
 			generateJilCode(filename, jfile, loader);
 			
 			// Ok, at this point, we need to determine the root component of the
@@ -371,7 +366,24 @@ public class JavaCompiler implements Compiler {
 	}
 
 	/**
-	 * This is the eigth stage in the compilation pipeline --- we are now
+	 * This is the eight stage in the compilation pipeline --- we must add
+	 * access methods in situations where an inner class attempts to access a
+	 * private field of an enclosing class.
+	 * 
+	 * @param srcfile
+	 * @param jfile
+	 * @param loader
+	 */
+	protected void addInnerAccessors(File srcfile, JavaFile jfile, ClassLoader loader) {
+		long start = System.currentTimeMillis();
+		new InnerClassAccessors(loader, new TypeSystem()).apply(jfile);
+		logTimedMessage("[" + srcfile.getPath()
+				+ "] Added inner class accessors", (System
+				.currentTimeMillis() - start));
+	}
+	
+	/**
+	 * This is the ninth stage in the compilation pipeline --- we are now
 	 * beginning the process of code-generation. In this stage, we generate jil
 	 * code from the java source file.
 	 * 

@@ -15,7 +15,7 @@
   <target name="doc">
     <javadoc
        packagenames="jkit.*"
-       excludepackagenames="jkit.testing.*,jkit.types.*,jkit.parser.*"
+       excludepackagenames="jkit.testing.*,jkit.java.parser.*"
        sourcepath="."
        destdir="docs/api"
        author="true"

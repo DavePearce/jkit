@@ -209,7 +209,11 @@ public class SyntaxError extends RuntimeException {
      */
 	public static void syntax_error(String msg, SyntacticElement e) {
 		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
-		throw new SyntaxError(msg,loc.line(),loc.column());
+		if(loc != null) {
+			throw new SyntaxError(msg,loc.line(),loc.column());
+		} else {
+			throw new SyntaxError(msg,-1,-1);
+		}
 	}
 	
 	/**
