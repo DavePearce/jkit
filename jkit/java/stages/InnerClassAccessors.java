@@ -415,8 +415,12 @@ public class InnerClassAccessors {
 	protected Expr doExpression(Expr e) {	
 		if(e instanceof Value.Bool) {
 			return doBoolVal((Value.Bool)e);
+		} if(e instanceof Value.Byte) {
+			return doByteVal((Value.Byte)e);
 		} else if(e instanceof Value.Char) {
 			return doCharVal((Value.Char)e);
+		} else if(e instanceof Value.Short) {
+			return doShortVal((Value.Short)e);
 		} else if(e instanceof Value.Int) {
 			return doIntVal((Value.Int)e);
 		} else if(e instanceof Value.Long) {
@@ -449,6 +453,8 @@ public class InnerClassAccessors {
 			return doTernOp((Expr.TernOp)e);
 		} else if(e instanceof Expr.Cast) {
 			return doCast((Expr.Cast)e);
+		} else if(e instanceof Expr.Convert) {
+			return doConvert((Expr.Convert)e);
 		} else if(e instanceof Expr.InstanceOf) {
 			return doInstanceOf((Expr.InstanceOf)e);
 		} else if(e instanceof Expr.Invoke) {
@@ -591,6 +597,11 @@ public class InnerClassAccessors {
 		return e;
 	}
 	
+	protected Expr doConvert(Expr.Convert e) {
+		e.setExpr(doExpression(e.expr()));
+		return e;
+	}
+	
 	protected Expr doLocalVariable(Expr.LocalVariable e) {
 		return e;
 	}
@@ -607,7 +618,15 @@ public class InnerClassAccessors {
 		return e;
 	}
 	
+	protected Expr doByteVal(Value.Byte e) {
+		return e;
+	}
+	
 	protected Expr doCharVal(Value.Char e) {
+		return e;
+	}
+	
+	protected Expr doShortVal(Value.Short e) {
 		return e;
 	}
 	

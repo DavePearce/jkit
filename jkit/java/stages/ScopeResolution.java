@@ -562,8 +562,12 @@ public class ScopeResolution {
 	protected Expr doExpression(Expr e, JavaFile file) {	
 		if(e instanceof Value.Bool) {
 			return doBoolVal((Value.Bool)e, file);
+		} else if(e instanceof Value.Byte) {
+			return doByteVal((Value.Byte)e, file);
 		} else if(e instanceof Value.Char) {
 			return doCharVal((Value.Char)e, file);
+		} else if(e instanceof Value.Short) {
+			return doShortVal((Value.Short)e, file);
 		} else if(e instanceof Value.Int) {
 			return doIntVal((Value.Int)e, file);
 		} else if(e instanceof Value.Long) {
@@ -838,7 +842,15 @@ public class ScopeResolution {
 		return e;
 	}
 	
+	protected Expr doByteVal(Value.Byte e, JavaFile file) {
+		return e;
+	}
+	
 	protected Expr doCharVal(Value.Char e, JavaFile file) {
+		return e;
+	}
+	
+	protected Expr doShortVal(Value.Short e, JavaFile file) {
 		return e;
 	}
 	

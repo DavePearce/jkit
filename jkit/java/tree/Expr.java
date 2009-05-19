@@ -189,8 +189,16 @@ public interface Expr extends SyntacticElement {
 			return expr;
 		}
 
+		public void setExpr(Expr expr) {
+			this.expr = expr;
+		}
+		
 		public Type type() {
 			return type;
+		}
+		
+		public void setType(Type.Primitive type) {
+			this.type = type;
 		}
 	}
 	
