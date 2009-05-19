@@ -39,7 +39,7 @@ public class JilBuilder {
 	 */
 	public static class MethodInfo implements Attribute {
 		public final ArrayList<Type.Clazz> exceptions;
-		public final Type.Function type;
+		public Type.Function type;
 
 		public MethodInfo(List<Type.Clazz> e, Type.Function type) {
 			exceptions = new ArrayList<Type.Clazz>(e);
@@ -54,6 +54,14 @@ public class JilBuilder {
 		public LoopScope(String cl, String el) {
 			continueLab = cl;
 			exitLab = el;
+		}
+	}
+	
+	private static class ClassScope extends Scope {
+		public Type.Clazz type;
+		
+		public ClassScope(Type.Clazz type) {
+			this.type = type;
 		}
 	}
 	
@@ -96,6 +104,7 @@ public class JilBuilder {
 	
 	protected void doClass(Decl.JavaClass c) {
 		Type.Clazz type = (Type.Clazz) c.attribute(Type.class);
+		scopes.push(new ClassScope(type));
 		try {
 			// We, need to update the skeleton so that any methods and fields
 			// discovered below this are attributed to this class!			
@@ -121,10 +130,42 @@ public class JilBuilder {
 			for(int i=fields.size();i>0;--i) {
 				Decl.JavaField d = fields.get(i-1);
 				doDeclaration(d, skeleton);				
-			}			
+			}
+			
+			// Finally, if this is a non-static inner class, then we need to add
+			// a field for holding the parent pointer (this$0), and also update
+			// all constructors to accept that field as the final parameter.
+			if(skeleton.type().components().size() > 1 && !skeleton.isStatic()) {
+				Type.Clazz parentType = parentType(skeleton.type());
+				ArrayList<Modifier> mods = new ArrayList<Modifier>();				
+				mods.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL));
+				skeleton.fields().add(
+						new JilField("this$0", parentType,
+								mods));
+				
+				for(JilMethod m : skeleton.methods(skeleton.name())) {
+					// This is a constructor, so add new paramemter.
+					m.parameters().add(0,new Pair("this$0",mods));
+					Type.Function mt = m.type();
+					ArrayList<Type> nparamtypes = new ArrayList<Type>(mt.parameterTypes());	
+					nparamtypes.add(0,parentType);
+					m.setType(new Type.Function(mt.returnType(), nparamtypes,
+							mt.typeArguments()));
+					
+					// now, add assignment statement from parameter to field.
+					JilExpr rhs = new JilExpr.Variable("this$0",parentType);
+					JilExpr lhs = new JilExpr.Deref(new JilExpr.Variable(
+							"this", skeleton.type()), "this$0", false,
+							parentType);
+					JilStmt assign = new JilStmt.Assign(lhs,rhs);
+					m.body().add(0,assign);
+				}
+			}
 		} catch(ClassNotFoundException cne) {
 			syntax_error("internal failure (skeleton not found for " + type,c,cne);
 		}			
+		
+		scopes.pop();
 	}
 
 	protected void doMethod(Decl.JavaMethod d, JilClass parent) {			
@@ -873,18 +914,35 @@ public class JilBuilder {
 		
 		if(_targetT instanceof Type.Clazz) {
 			Type.Clazz targetT = (Type.Clazz) _targetT;
-			try {
-				Triple<Clazz, Clazz.Field, Type> r = types
-				.resolveField(targetT, e.name(), loader);
-
-				return new Pair<JilExpr, List<JilStmt>>(new JilExpr.Deref(target.first(), e
-						.name(),r.second().isStatic(), type,  e.attributes()),
-						target.second());
-			} catch(ClassNotFoundException cne) {
-				syntax_error(cne.getMessage(),e,cne);				
-			} catch(FieldNotFoundException fne) {	
-				// this must be an error...
-				syntax_error("field does not exist: " + type + "." + e.name(),e,fne);		
+			if(e.name().equals("this")) {
+				// This is a special case, where we're trying to look up a field
+				// called "this". No such field can exist! What this means is that
+				// we're inside an inner class, and we're trying to access the this
+				// pointer of an enclosing class. 
+				ClassScope cs = (ClassScope) findEnclosingScope(ClassScope.class);
+				int level =  cs.type.components().size() - targetT.components().size();
+				JilExpr r = new JilExpr.Variable("this",cs.type);
+				Type.Clazz t = cs.type;
+				while(level > 0) {
+					t = parentType(t);
+					r = new JilExpr.Deref(r,"this$0",false,t);
+					level = level - 1;
+				}
+				return new Pair(r,  new ArrayList<JilStmt>());
+			} else {				
+				try {
+					Triple<Clazz, Clazz.Field, Type> r = types
+					.resolveField(targetT, e.name(), loader);
+					
+					return new Pair<JilExpr, List<JilStmt>>(new JilExpr.Deref(target.first(), e
+							.name(),r.second().isStatic(), type,  e.attributes()),
+							target.second());
+				} catch(ClassNotFoundException cne) {
+					syntax_error(cne.getMessage(),e,cne);				
+				} catch(FieldNotFoundException fne) {	
+					// this must be an error...
+					syntax_error("field does not exist: " + type + "." + e.name(),e,fne);		
+				}
 			}
 		} else if(_targetT instanceof Type.Array && e.name().equals("length")) {
 			return new Pair<JilExpr, List<JilStmt>>(new JilExpr.Deref(target.first(), e
@@ -924,18 +982,60 @@ public class JilBuilder {
 		ArrayList<JilStmt> r = new ArrayList();	
 		Type.Reference type = (Type.Reference) e.attribute(Type.class);
 		
+
+		MethodInfo mi = (MethodInfo) e
+				.attribute(MethodInfo.class);			
+		
+		Pair<JilExpr,List<JilStmt>> context = doExpression(e.context());
 		Pair<List<JilExpr>,List<JilStmt>> params = doExpressionList(e.parameters());
 		
+		
+		// Now, we need to check whether we're constructing a non-static inner
+		// class instance.
+		if(type instanceof Type.Clazz) {
+			Type.Clazz tc = (Type.Clazz) type;
+			if(tc.components().size() > 1) {
+				// Ok, this is an inner class construction. So, we need to check
+				// whether it's static or not.
+				try {
+					Clazz clazz = loader.loadClass(tc);
+					if(!clazz.isStatic()) {
+						// YES, there is a problem and we need to update the
+						// parameters supplied to the constructor.
+						
+						Type.Clazz parentType = parentType(tc);
+						
+						if(context != null) {
+							params.first().add(0,context.first());
+						} else {
+							// could be a problem if this is called from within
+							// a static method, or this class is not correct.
+							params.first().add(0,
+									new JilExpr.Variable("this", parentType));
+						}
+						
+						Type.Function mt = mi.type;
+						ArrayList<Type> nparamtypes = new ArrayList<Type>(mt.parameterTypes());	
+						nparamtypes.add(0,parentType);
+						mi.type = new Type.Function(mt.returnType(), nparamtypes,
+								mt.typeArguments());
+					}
+				} catch(ClassNotFoundException cne) {
+					syntax_error(cne.getMessage(),e,cne);
+				}
+			}
+		}
+		
+		if(context != null) {
+			r.addAll(context.second());
+		}
 		r.addAll(params.second());
 		
 		if(e.declarations().size() > 0) {
 			for(Decl d : e.declarations()) {
 				doDeclaration(d, null); // bug here
 			}			
-		}
-		
-		MethodInfo mi = (MethodInfo) e
-				.attribute(MethodInfo.class);		
+		}			
 		
 		if(mi != null) {			
 			return new Pair<JilExpr, List<JilStmt>>(new JilExpr.New(type, params

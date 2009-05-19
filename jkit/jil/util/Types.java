@@ -1,8 +1,11 @@
 package jkit.jil.util;
 
+import java.util.*;
+
 import static jkit.compiler.SyntaxError.*;
 import jkit.jil.tree.SyntacticElement;
 import jkit.jil.tree.Type;
+import jkit.util.Pair;
 
 public class Types {
 	
@@ -169,6 +172,26 @@ public class Types {
 		} else {
 			return 0;
 		}
+	}	
+	
+	/**
+	 * Return type representing the enclosing class for the given type, or null
+	 * if the given type is already outermost. For example, given
+	 * <code>pkg.Test$inner</code> return <code>pkg.Test</code>.
+	 * 
+	 * @param t
+	 * @return
+	 */
+	public static Type.Clazz parentType(Type.Clazz t) {
+		List<Pair<String,List<Type.Reference>>> components = t.components(); 
+		if(components.size() == 0) {
+			return null;
+		}
+		ArrayList<Pair<String,List<Type.Reference>>> ncomponents = new ArrayList();
+		for(int i=0;i!=components.size()-1;++i) {
+			ncomponents.add(components.get(i));
+		}
+		return new Type.Clazz(t.pkg(),ncomponents);
 	}	
 	
 	/**

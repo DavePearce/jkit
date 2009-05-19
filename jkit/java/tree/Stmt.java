@@ -157,6 +157,10 @@ public interface Stmt extends SyntacticElement {
 		public Stmt statement() {
 			return statement;
 		}
+
+		public void setStatement(Stmt stmt) {
+			this.statement = stmt;
+		}
 	}
 
 	public static class Assignment extends SyntacticElementImpl implements Simple, Expr {
@@ -513,6 +517,10 @@ public interface Stmt extends SyntacticElement {
 		 */
 		public Stmt body() {
 			return body;
+		}
+		
+		public void setBody(Stmt b) {
+			body = b;
 		}
 	}
 

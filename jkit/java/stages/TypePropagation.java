@@ -449,6 +449,8 @@ public class TypePropagation {
 		Type t = (Type) e.type().attribute(Type.class);
 		e.attributes().add(t);
 		
+		doExpression(e.context());
+		
 		// Second, recurse through any parameters supplied ...
 		ArrayList<Type> parameterTypes = new ArrayList<Type>();
 		

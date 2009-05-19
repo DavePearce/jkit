@@ -160,18 +160,20 @@ public class InnerClassAccessors {
 	}
 	
 	protected void doInitialiserBlock(Decl.InitialiserBlock d) {		
-		for (Stmt s : d.statements()) {
-			doStatement(s);
-		}		
+		List<Stmt> statements = d.statements();
+		for(int i=0;i!=statements.size();++i) {		
+			statements.set(i, doStatement(statements.get(i)));
+		}
 	}
 	
 	protected void doStaticInitialiserBlock(Decl.StaticInitialiserBlock d) {		
-		for (Stmt s : d.statements()) {
-			doStatement(s);
+		List<Stmt> statements = d.statements();
+		for(int i=0;i!=statements.size();++i) {		
+			statements.set(i, doStatement(statements.get(i)));
 		}		
 	}
 	
-	protected void doStatement(Stmt e) {
+	protected Stmt doStatement(Stmt e) {
 		if(e instanceof Stmt.SynchronisedBlock) {
 			doSynchronisedBlock((Stmt.SynchronisedBlock)e);
 		} else if(e instanceof Stmt.TryCatchBlock) {
@@ -181,7 +183,7 @@ public class InnerClassAccessors {
 		} else if(e instanceof Stmt.VarDef) {
 			doVarDef((Stmt.VarDef) e);
 		} else if(e instanceof Stmt.Assignment) {
-			doAssignment((Stmt.Assignment) e);
+			return (Stmt) doAssignment((Stmt.Assignment) e);
 		} else if(e instanceof Stmt.Return) {
 			doReturn((Stmt.Return) e);
 		} else if(e instanceof Stmt.Throw) {
@@ -217,24 +219,26 @@ public class InnerClassAccessors {
 		} else if(e != null) {
 			syntax_error("Invalid statement encountered: "
 					+ e.getClass(),e);
-		}		
+		}
+		
+		return e;
 	}
 	
 	protected void doBlock(Stmt.Block block) {
-		if(block != null) {			
-			// now process every statement in this block.
-			for(Stmt s : block.statements()) {
-				doStatement(s);
-			}		
+		if(block != null) {
+			List<Stmt> statements = block.statements();
+			for(int i=0;i!=statements.size();++i) {		
+				statements.set(i, doStatement(statements.get(i)));
+			}
 		}
 	}
 	
 	protected void doCatchBlock(Stmt.CatchBlock block) {
 		if(block != null) {			
-			// now process every statement in this block.
-			for(Stmt s : block.statements()) {
-				doStatement(s);
-			}		
+			List<Stmt> statements = block.statements();
+			for(int i=0;i!=statements.size();++i) {		
+				statements.set(i, doStatement(statements.get(i)));
+			}
 		}
 	}
 	
@@ -361,44 +365,45 @@ public class InnerClassAccessors {
 	}
 	
 	protected void doLabel(Stmt.Label lab) {						
-		doStatement(lab.statement());
+		lab.setStatement(doStatement(lab.statement()));
 	}
 	
 	protected void doIf(Stmt.If stmt) {
 		stmt.setCondition(doExpression(stmt.condition()));
-		doStatement(stmt.trueStatement());
-		doStatement(stmt.falseStatement());
+		stmt.setTrueStatement(doStatement(stmt.trueStatement()));
+		stmt.setFalseStatement(doStatement(stmt.falseStatement()));
 	}
 	
 	protected void doWhile(Stmt.While stmt) {
 		stmt.setCondition(doExpression(stmt.condition()));
-		doStatement(stmt.body());		
+		stmt.setBody(doStatement(stmt.body()));		
 	}
 	
 	protected void doDoWhile(Stmt.DoWhile stmt) {
 		stmt.setCondition(doExpression(stmt.condition()));
-		doStatement(stmt.body());
+		stmt.setBody(doStatement(stmt.body()));
 	}
 	
 	protected void doFor(Stmt.For stmt) {
-		doStatement(stmt.initialiser());
+		stmt.setInitialiser(doStatement(stmt.initialiser()));
 		stmt.setCondition(doExpression(stmt.condition()));
-		doStatement(stmt.increment());
-		doStatement(stmt.body());		
+		stmt.setIncrement(doStatement(stmt.increment()));
+		stmt.setBody(doStatement(stmt.body()));		
 	}
 	
 	protected void doForEach(Stmt.ForEach stmt) {
 		stmt.setSource(doExpression(stmt.source()));
-		doStatement(stmt.body());		
+		stmt.setBody(doStatement(stmt.body()));		
 	}
 	
 	protected void doSwitch(Stmt.Switch sw) {
 		sw.setCondition(doExpression(sw.condition()));
 		for(Case c : sw.cases()) {
 			c.setCondition(doExpression(c.condition()));
-			for(Stmt s : c.statements()) {
-				doStatement(s);
-			}
+			List<Stmt> statements = c.statements();
+			for(int i=0;i!=statements.size();++i) {		
+				statements.set(i, doStatement(statements.get(i)));
+			}			
 		}
 		
 		// should check that case conditions are final constants here.
@@ -708,16 +713,26 @@ public class InnerClassAccessors {
 			// no, we haven't so construct one.
 			List<Modifier> modifiers = new ArrayList<Modifier>();
 			
+			JilExpr thisVar = null;
+			ArrayList<Modifier> mods = new ArrayList<Modifier>();
+			mods.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL));
+			ArrayList<Pair<String,List<Modifier>>> params = new ArrayList(); 
+			
 			if(field.isStatic()) {
+				thisVar = new JilExpr.ClassVariable(clazz.type());
 				modifiers.add(new Modifier.Base(java.lang.reflect.Modifier.STATIC));
+			} else {
+				thisVar = new JilExpr.Variable("thisp",clazz.type());
+				params.add(new Pair("thisp",mods));
 			}
 			
 			accessor = new JilMethod("access$" + accessors.size() + "00",
-					new Type.Function(field.type()), new ArrayList(),
+					new Type.Function(field.type()), params,
 					modifiers, new ArrayList<Type.Clazz>()); 
 			
-			JilExpr expr = new JilExpr.Deref(new JilExpr.Variable("this", clazz
-					.type()), field.name(), field.isStatic(), field.type());
+			JilExpr expr = new JilExpr.Deref(thisVar, field.name(), field
+					.isStatic(), field.type());
+			
 			JilStmt stmt = new JilStmt.Return(expr,field.type());
 			
 			accessor.body().add(stmt);
@@ -749,25 +764,42 @@ public class InnerClassAccessors {
 			// no, we haven't so construct one.
 			List<Modifier> modifiers = new ArrayList<Modifier>();
 			
-			if(field.isStatic()) {
-				modifiers.add(new Modifier.Base(java.lang.reflect.Modifier.STATIC));
-			}
+			JilExpr thisVar = null;
 			
 			ArrayList<Modifier> mods = new ArrayList<Modifier>();
 			mods.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL));
 			ArrayList<Pair<String,List<Modifier>>> params = new ArrayList(); 
+			
+			if(field.isStatic()) {
+				modifiers.add(new Modifier.Base(java.lang.reflect.Modifier.STATIC));
+				thisVar = new JilExpr.ClassVariable(clazz.type());
+			} else {
+				thisVar = new JilExpr.Variable("thisp",clazz.type());
+				params.add(new Pair("thisp",mods));
+			}
+			
 			params.add(new Pair("tmp",mods));			
 			
 			accessor = new JilMethod("access$" + accessors.size() + "02",
 					new Type.Function(field.type(),field.type()), params,
-					modifiers, new ArrayList<Type.Clazz>()); 
+					modifiers, new ArrayList<Type.Clazz>()); 						
+						
+			JilExpr tmpVar = new JilExpr.Variable("old", field.type());
 			
-			JilExpr expr = new JilExpr.Deref(new JilExpr.Variable("this", clazz
-					.type()), field.name(), field.isStatic(), field.type());
+			JilStmt copy = new JilStmt.Assign(tmpVar, new JilExpr.Deref(
+					thisVar, field.name(), field.isStatic(), field.type()));
+
+			JilExpr lhs = new JilExpr.Deref(thisVar, field.name(), field
+					.isStatic(), field.type());						
 			
-			JilStmt stmt = new JilStmt.Return(expr,field.type());
+			JilStmt assign = new JilStmt.Assign(lhs, new JilExpr.Variable(
+					"tmp", field.type()));
 			
-			accessor.body().add(stmt);
+			JilStmt ret = new JilStmt.Return(tmpVar,field.type());
+			
+			accessor.body().add(copy);
+			accessor.body().add(assign);			
+			accessor.body().add(ret);
 			
 			accessors.put(field.name(),accessor);
 		}

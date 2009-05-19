@@ -456,6 +456,8 @@ public class TypeChecking {
 	}
 	
 	protected void checkNew(Expr.New e) {
+		checkExpression(e.context());
+		
 		for(Decl d : e.declarations()) {
 			checkDeclaration(d);
 		}

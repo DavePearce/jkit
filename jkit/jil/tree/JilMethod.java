@@ -86,6 +86,10 @@ public class JilMethod extends SyntacticElementImpl implements jkit.compiler.Cla
 		return type;
 	}
 	
+	public void setType(Type.Function type) {
+		this.type = type;
+	}
+	
 	/**
      * Access the modifiers contained in this method object. The returned list
      * may be modified by adding, or removing modifiers. The returned list is

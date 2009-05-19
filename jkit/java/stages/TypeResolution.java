@@ -467,6 +467,8 @@ public class TypeResolution {
 		Type t = substituteTypeVars(resolve(e.type()));			
 		e.type().attributes().add(t);
 		
+		doExpression(e.context());
+		
 		// Second, recurse through any parameters supplied ...
 		for(Expr p : e.parameters()) {
 			doExpression(p);

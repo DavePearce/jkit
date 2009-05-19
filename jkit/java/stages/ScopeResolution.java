@@ -684,12 +684,14 @@ public class ScopeResolution {
 	}
 	
 	protected Expr doNew(Expr.New e, JavaFile file) {
+		e.setContext(doExpression(e.context(),file));
+		
 		// Second, recurse through any parameters supplied ...
 		List<Expr> parameters = e.parameters();
 		for(int i=0;i!=parameters.size();++i) {
 			Expr p = parameters.get(i);
 			parameters.set(i,doExpression(p, file));
-		}
+		}				
 		
 		if(e.declarations().size() > 0) {
 			// At this point, we are constructing an anonymous inner
