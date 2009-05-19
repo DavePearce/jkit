@@ -18,6 +18,8 @@ import jkit.java.tree.Decl.JavaInterface;
 import jkit.java.tree.Decl.JavaMethod;
 import jkit.java.tree.Stmt.Case;
 import jkit.jil.tree.JilMethod;
+import jkit.jil.tree.JilStmt;
+import jkit.jil.tree.JilExpr;
 import jkit.jil.tree.Modifier;
 import jkit.jil.tree.Type;
 import jkit.util.Triple;
@@ -646,6 +648,12 @@ public class InnerClassAccessors {
 			accessor = new JilMethod("access$" + accessors.size() + "00",
 					new Type.Function(field.type()), new ArrayList(),
 					modifiers, new ArrayList<Type.Clazz>()); 
+			
+			JilExpr expr = new JilExpr.Deref(new JilExpr.Variable("this", clazz
+					.type()), field.name(), field.isStatic(), field.type());
+			JilStmt stmt = new JilStmt.Return(expr,field.type());
+			
+			accessor.body().add(stmt);
 			
 			accessors.put(field.name(),accessor);
 		}
