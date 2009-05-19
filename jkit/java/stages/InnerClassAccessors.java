@@ -22,6 +22,7 @@ import jkit.jil.tree.JilStmt;
 import jkit.jil.tree.JilExpr;
 import jkit.jil.tree.Modifier;
 import jkit.jil.tree.Type;
+import jkit.util.Pair;
 import jkit.util.Triple;
 
 /**
@@ -100,6 +101,7 @@ public class InnerClassAccessors {
 	private TypeSystem types;
 	private final Stack<Type.Clazz> enclosingClasses = new Stack<Type.Clazz>();
 	private final HashMap<Type.Clazz, HashMap<String, JilMethod>> readAccessors = new HashMap();
+	private final HashMap<Type.Clazz, HashMap<String, JilMethod>> writeAccessors = new HashMap();
 	
 	public InnerClassAccessors(ClassLoader loader, TypeSystem types) {
 		this.loader = loader; 
@@ -108,6 +110,7 @@ public class InnerClassAccessors {
 	
 	public void apply(JavaFile file) {				
 		readAccessors.clear();
+		writeAccessors.clear();
 		
 		// Traverse the declarations
 		for(Decl d : file.declarations()) {
@@ -266,9 +269,74 @@ public class InnerClassAccessors {
 		}		
 	}
 	
-	protected Expr doAssignment(Stmt.Assignment def) {
-		def.setLhs(doExpression(def.lhs()));	
+	protected Expr doAssignment(Stmt.Assignment def) {			
+		// first, do the right-hand side
 		def.setRhs(doExpression(def.rhs()));
+		
+		// second, so the left-hand side.		
+		if(def.lhs() instanceof Expr.Deref) {
+			Expr.Deref e = (Expr.Deref) def.lhs();			
+			Type tmp = (Type) e.target().attribute(Type.class);
+			
+			if(!(tmp instanceof Type.Reference) || tmp instanceof Type.Array) {
+				// don't need to do anything in this case			
+			} else {
+
+				Type.Clazz target = (Type.Clazz) tmp;
+
+				if(e.name().equals("this")) {
+					// This is a special case, where we're trying to look up a field
+					// called "this". No such field can exist! What this means is that
+					// we're inside an inner class, and we're trying to access the this
+					// pointer of an enclosing class. This is easy to deal with here,
+					// since the type returned by this expression will be the target
+					// type of the dereference.
+					
+					// don't need to do anything here.
+				} else {
+					// now, perform field lookup!
+					try {
+						Triple<Clazz, Clazz.Field, Type> r = types
+								.resolveField(target, e.name(), loader);
+						
+						Clazz.Field f = r.second();															
+						Clazz c = r.first();
+											
+						if (f.isPrivate()
+								&& isStrictInnerClass(enclosingClasses.peek(), c.type())) {
+							// Ok, we have found a dereference of a field. This
+							// means we need to add an accessor method, unless there
+							// already is one.
+						
+							if(!(c instanceof jkit.jil.tree.JilClass)) {
+								// it should be impossible to get here.
+								syntax_error(
+										"internal failure --- jil class required, found "
+												+ c.getClass().getName(), e);
+							}
+
+							ArrayList<jkit.jil.tree.Attribute> attributes = new ArrayList(e.attributes());
+							Clazz.Method accessor = createWriteAccessor(f, (jkit.jil.tree.JilClass) c);
+							attributes.add(new JilBuilder.MethodInfo(accessor.exceptions(),accessor.type()));						
+							ArrayList<Expr> params = new ArrayList<Expr>();
+							params.add(def.rhs());
+							
+							return new Expr.Invoke(e.target(), accessor.name(),
+									params, new ArrayList(), attributes);
+						}
+						
+					} catch(ClassNotFoundException cne) {
+						syntax_error("class not found: " + target,e,cne);
+					} catch(FieldNotFoundException fne) {
+						syntax_error("field not found: " + target + "." + e.name(),e,fne);
+					}
+				}
+			}
+		} else {
+			Expr lhs = doExpression(def.lhs());
+			def.setLhs(lhs);
+		}					
+		
 		return def;
 	}
 	
@@ -621,8 +689,7 @@ public class InnerClassAccessors {
 		return true;
 	}
 	
-	protected Clazz.Method createReadAccessor(Clazz.Field field, jkit.jil.tree.JilClass clazz) {				
-		
+	protected Clazz.Method createReadAccessor(Clazz.Field field, jkit.jil.tree.JilClass clazz) {		
 		// The first thing we need to do is check whether or not we've actually
 		// created an accessor already.
 		
@@ -651,6 +718,53 @@ public class InnerClassAccessors {
 			
 			JilExpr expr = new JilExpr.Deref(new JilExpr.Variable("this", clazz
 					.type()), field.name(), field.isStatic(), field.type());
+			JilStmt stmt = new JilStmt.Return(expr,field.type());
+			
+			accessor.body().add(stmt);
+			
+			accessors.put(field.name(),accessor);
+		}
+		
+		clazz.methods().add(accessor);
+		
+		return accessor;
+	}
+	
+	protected Clazz.Method createWriteAccessor(Clazz.Field field, jkit.jil.tree.JilClass clazz) {		
+		// The first thing we need to do is check whether or not we've actually
+		// created an accessor already.
+		
+		HashMap<String,JilMethod> accessors = writeAccessors.get(clazz.type());
+		
+		JilMethod accessor = null;
+		
+		if(accessors == null) {
+			accessors = new HashMap<String,JilMethod>();
+			writeAccessors.put(clazz.type(),accessors);
+		} else {
+			accessor = accessors.get(field.name());
+		}
+		
+		if(accessor == null) {
+			// no, we haven't so construct one.
+			List<Modifier> modifiers = new ArrayList<Modifier>();
+			
+			if(field.isStatic()) {
+				modifiers.add(new Modifier.Base(java.lang.reflect.Modifier.STATIC));
+			}
+			
+			ArrayList<Modifier> mods = new ArrayList<Modifier>();
+			mods.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL));
+			ArrayList<Pair<String,List<Modifier>>> params = new ArrayList(); 
+			params.add(new Pair("tmp",mods));			
+			
+			accessor = new JilMethod("access$" + accessors.size() + "02",
+					new Type.Function(field.type(),field.type()), params,
+					modifiers, new ArrayList<Type.Clazz>()); 
+			
+			JilExpr expr = new JilExpr.Deref(new JilExpr.Variable("this", clazz
+					.type()), field.name(), field.isStatic(), field.type());
+			
 			JilStmt stmt = new JilStmt.Return(expr,field.type());
 			
 			accessor.body().add(stmt);
