@@ -323,10 +323,13 @@ public class InnerClassAccessors {
 							Clazz.Method accessor = createWriteAccessor(f, (jkit.jil.tree.JilClass) c);
 							attributes.add(new JilBuilder.MethodInfo(accessor.exceptions(),accessor.type()));						
 							ArrayList<Expr> params = new ArrayList<Expr>();
+							params.add(e.target());
 							params.add(def.rhs());
 							
-							return new Expr.Invoke(e.target(), accessor.name(),
-									params, new ArrayList(), attributes);
+							return new Expr.Invoke(new Expr.ClassVariable(c
+									.type().toString(), c.type()), accessor
+									.name(), params, new ArrayList(),
+									attributes);
 						}
 						
 					} catch(ClassNotFoundException cne) {
@@ -515,9 +518,11 @@ public class InnerClassAccessors {
 						ArrayList<jkit.jil.tree.Attribute> attributes = new ArrayList(e.attributes());
 						Clazz.Method accessor = createReadAccessor(f, (jkit.jil.tree.JilClass) c);
 						attributes.add(new JilBuilder.MethodInfo(accessor.exceptions(),accessor.type()));						
-						return new Expr.Invoke(e.target(), accessor.name(),
-								new ArrayList<Expr>(), new ArrayList(),
-								attributes);
+						ArrayList<Expr> params = new ArrayList<Expr>();
+						params.add(e.target());
+						return new Expr.Invoke(new Expr.ClassVariable(c.type()
+								.toString(), c.type()), accessor.name(),
+								params, new ArrayList(), attributes);
 					}
 					
 				} catch(ClassNotFoundException cne) {
@@ -719,9 +724,10 @@ public class InnerClassAccessors {
 			ArrayList<Pair<String,List<Modifier>>> params = new ArrayList(); 
 			Type.Function ft;
 			
+			modifiers.add(new Modifier.Base(java.lang.reflect.Modifier.STATIC));
+			
 			if(field.isStatic()) {
-				thisVar = new JilExpr.ClassVariable(clazz.type());
-				modifiers.add(new Modifier.Base(java.lang.reflect.Modifier.STATIC));
+				thisVar = new JilExpr.ClassVariable(clazz.type());				
 				ft = new Type.Function(field.type());
 			} else {
 				thisVar = new JilExpr.Variable("thisp",clazz.type());
@@ -775,8 +781,9 @@ public class InnerClassAccessors {
 			
 			Type.Function ft;
 			
-			if(field.isStatic()) {
-				modifiers.add(new Modifier.Base(java.lang.reflect.Modifier.STATIC));
+			modifiers.add(new Modifier.Base(java.lang.reflect.Modifier.STATIC));
+			
+			if(field.isStatic()) {				
 				thisVar = new JilExpr.ClassVariable(clazz.type());
 				ft = new Type.Function(field.type(),field.type());
 			} else {
