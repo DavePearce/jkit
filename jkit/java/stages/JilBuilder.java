@@ -999,7 +999,7 @@ public class JilBuilder {
 				// whether it's static or not.
 				try {
 					Clazz clazz = loader.loadClass(tc);
-					if(!clazz.isStatic()) {
+					if(!clazz.isStatic()) {						
 						// YES, there is a problem and we need to update the
 						// parameters supplied to the constructor.
 						

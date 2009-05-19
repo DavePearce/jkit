@@ -171,16 +171,26 @@ public class ClassFileReader {
 		
 		ClassSignature s = null;				
 		
+		List<Modifier> lmodifiers = listModifiers(modifiers,false);
+		
 		for(Attribute a : attributes) {
 			if(a instanceof ClassSignature) { 
 				s = (ClassSignature) a;
 				type = s.type();
 				superType = s.superClass();
 				interfaces = s.interfaces();
-			} 
+			} else if(a instanceof InnerClasses) {
+				InnerClasses ic = (InnerClasses) a;
+				
+				for(Pair<Type.Clazz,List<Modifier>> p : ic.inners()) {
+					if(p.first().equals(type))  {
+						lmodifiers.addAll(p.second());						
+					}					
+				}
+			}
 		} 					
 		
-		ClassFile cfile = new ClassFile(version, type, superType, interfaces, listModifiers(modifiers,false));
+		ClassFile cfile = new ClassFile(version, type, superType, interfaces, lmodifiers);
 		
 		cfile.attributes().addAll(attributes);
 		cfile.methods().addAll(methods);

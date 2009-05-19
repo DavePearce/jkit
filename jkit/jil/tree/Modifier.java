@@ -30,6 +30,43 @@ public interface Modifier extends SyntacticElement {
 		public int modifier() {
 			return modifier;
 		}
+		
+		public String toString() {
+			if ((modifier & java.lang.reflect.Modifier.PRIVATE) != 0) {
+				return "private ";
+			}
+			if ((modifier & java.lang.reflect.Modifier.PROTECTED) != 0) {
+				return "protected ";
+			}
+			if ((modifier & java.lang.reflect.Modifier.PUBLIC) != 0) {
+				return "public ";
+			}
+			if ((modifier & java.lang.reflect.Modifier.STATIC) != 0) {
+				return "static ";
+			}
+			if ((modifier & java.lang.reflect.Modifier.ABSTRACT) != 0) {
+				return "abstract ";
+			}
+			if ((modifier & java.lang.reflect.Modifier.FINAL) != 0) {
+				return "final ";
+			}
+			if ((modifier & java.lang.reflect.Modifier.NATIVE) != 0) {
+				return "native ";
+			}
+			if ((modifier & java.lang.reflect.Modifier.STRICT) != 0) {
+				return "strictfp ";
+			}
+			if ((modifier & java.lang.reflect.Modifier.SYNCHRONIZED) != 0) {
+				return "synchronized ";
+			}
+			if ((modifier & java.lang.reflect.Modifier.TRANSIENT) != 0) {
+				return "transient ";
+			}
+			if ((modifier & java.lang.reflect.Modifier.VOLATILE) != 0) {
+				return "volatile ";
+			} 
+			return "unknown";
+		}
 	}	
 	
 	/**
