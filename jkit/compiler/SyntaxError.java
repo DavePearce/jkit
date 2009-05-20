@@ -231,6 +231,10 @@ public class SyntaxError extends RuntimeException {
 	 */
 	public static void syntax_error(String msg, SyntacticElement e, Throwable ex) {
 		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
-		throw new SyntaxError(msg,loc.line(),loc.column(),ex);
+		if(loc != null) {
+			throw new SyntaxError(msg,loc.line(),loc.column(),ex);
+		} else {
+			throw new SyntaxError(msg,-1,-1,ex);
+		}		
 	}
 }

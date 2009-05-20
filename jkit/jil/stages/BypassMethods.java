@@ -1,9 +1,12 @@
 package jkit.jil.stages;
 
-import java.lang.reflect.Modifier;
 import java.util.*;
 
+import jkit.java.stages.TypeSystem;
 import jkit.jil.tree.*;
+import jkit.jil.util.*;
+import jkit.compiler.Clazz;
+import jkit.compiler.ClassLoader;
 import jkit.compiler.MethodNotFoundException;
 import jkit.util.*;
 
@@ -31,10 +34,15 @@ import jkit.util.*;
  * 
  */
 public class BypassMethods {
-	public String description() {
-		return "Add bypasses for generic methods where they are needed";
-	}
+	private ClassLoader loader = null;
+	private TypeSystem types = null;
+	
 
+	public BypassMethods(ClassLoader loader, TypeSystem types) {
+		this.loader = loader;
+		this.types = types;
+	}
+	
 	/**
 	 * Apply this pass to a class.
 	 * 
@@ -42,7 +50,7 @@ public class BypassMethods {
 	 *            class to manipulate
 	 */
 	public void apply(JilClass owner) {
-		HashSet<Triple<JilClass, JilMethod, Type.Function>> matches = new HashSet();
+		HashSet<Triple<Clazz, Clazz.Method, Type.Function>> matches = new HashSet();
 
 		// First, we identify all the problem cases.
 		for (JilMethod m : owner.methods()) {
@@ -57,8 +65,8 @@ public class BypassMethods {
 		}
 
 		// Second, we add appropriate bypass methods.
-		for (Triple<JilClass, JilMethod, Type.Function> p : matches) {
-			JilMethod m = generateBypass(p.first(), p.second(), p.third());
+		for (Triple<Clazz,Clazz.Method, Type.Function> p : matches) {
+			JilMethod m = generateBypass(owner, p.second(), p.third());
 			owner.methods().add(m);
 		}
 	}
@@ -78,22 +86,23 @@ public class BypassMethods {
 	 *            The set of problem cases being built up
 	 */
 	protected void checkForProblem(JilMethod method, Type.Reference owner,
-			Set<Triple<JilClass, JilMethod, Type.Function>> problems) {
+			Set<Triple<Clazz, Clazz.Method, Type.Function>> problems) {
 		try {
-			// See if method m is defined in an interface implemented by
-			// this class.
-			Triple<JilClass, JilMethod, Type.Function> minfo = ClassTable
-					.resolveMethod(owner, method.name(), Arrays.asList(method
-							.type().parameterTypes()));
+			// traverse the heirarchy looking for a class or interface which
+			// implements this method.
+			Triple<Clazz, Clazz.Method, Type.Function> minfo = types
+					.resolveMethod(owner, method.name(), method.type()
+							.parameterTypes(), loader);
+			
 			Type.Function ft = minfo.second().type();
 			Type.Function mt = method.type();
-			Type[] ftParamTypes = ft.parameterTypes();
-			Type[] mtParamTypes = mt.parameterTypes();
+			List<Type> ftParamTypes = ft.parameterTypes();
+			List<Type> mtParamTypes = mt.parameterTypes();
 
 			boolean isMatch = ft.returnType() instanceof Type.Variable;
-			for (int i = 0; i != ftParamTypes.length; ++i) {
-				Type fp = ftParamTypes[i];
-				Type mp = mtParamTypes[i];
+			for (int i = 0; i != ftParamTypes.size(); ++i) {
+				Type fp = ftParamTypes.get(i);
+				Type mp = mtParamTypes.get(i);
 				// Basically, if the parameter type we found is generic, but the
 				// actual type is not, then we found a problem case.
 				isMatch = isMatch
@@ -101,8 +110,8 @@ public class BypassMethods {
 			}
 
 			if (isMatch) {
-				problems.add(new Triple(minfo.first(), minfo.second(), method
-						.type()));
+				problems.add(new Triple<Clazz, Clazz.Method, Type.Function>(minfo
+						.first(), minfo.second(), method.type()));
 			}
 		} catch (ClassNotFoundException ce) {
 		} catch (MethodNotFoundException me) {
@@ -116,14 +125,14 @@ public class BypassMethods {
 	 * their lower bounds (if they have them).
 	 * 
 	 * @param owner
-	 *            the owner of the original, generic method
+	 *            the class into which the bypass is being placed.
 	 * @param method
 	 *            the original generic method
 	 * @param to
 	 *            the (concrete) instantiation of the generic method
 	 * @return
 	 */
-	protected JilMethod generateBypass(JilClass owner, JilMethod method,
+	protected JilMethod generateBypass(JilClass owner, Clazz.Method method,
 			Type.Function to) {
 		// First, we substitute each type variable with java.lang.object
 		Type.Function from = method.type();
@@ -138,9 +147,11 @@ public class BypassMethods {
 		for (int i = 0; i != ftypeParamTypes.size(); ++i) {
 			Type t = ftypeParamTypes.get(i);
 			String n = "param$" + i;
+			
 			ArrayList<Modifier> mods = new ArrayList<Modifier>();
 			mods.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL));
 			params.add(new Pair(n, mods));
+			
 			if (from.parameterTypes().get(i) instanceof Type.Variable) {
 				// the following cast is required because generic types are
 				// enforced at compile time, but not strongly enforced in the
@@ -168,8 +179,14 @@ public class BypassMethods {
 			body.add(ret);
 		}
 
-		return new JilMethod(Modifier.PUBLIC, ftype, name,
-				new ArrayList<Type.Reference>(), null, body);
+		ArrayList<Modifier> modifiers = new ArrayList<Modifier>();
+		modifiers.add(new Modifier.Base(java.lang.reflect.Modifier.PUBLIC));
+		
+		JilMethod r = new JilMethod(name, ftype, params, modifiers,
+				new ArrayList<Type.Clazz>());
+		
+		r.body().addAll(body);
+		return r;
 	}
 
 	/**
@@ -203,41 +220,47 @@ public class BypassMethods {
 	 */
 	public static Type stripGenerics(Type type) {
 		if (type instanceof Type.Primitive || type instanceof Type.Null
-				|| type instanceof Type.Any || type instanceof Type.Void) {
+				|| type instanceof Type.Void) {
 			return type;
 		} else if (type instanceof Type.Variable) {
 			Type.Variable tv = (Type.Variable) type;
-			Type lb[] = tv.lowerBounds();
-			if (lb.length > 0) {
-				return stripGenerics(lb[0]);
+			Type.Reference lb = tv.lowerBound();
+			if (lb != null) {
+				return stripGenerics(lb);
 			} else {
-				return Type.referenceType("java.lang", "Object");
+				return Types.JAVA_LANG_OBJECT;
+			}
+		} else if (type instanceof Type.Wildcard) {
+			Type.Wildcard tv = (Type.Wildcard) type;
+			Type.Reference lb = tv.lowerBound();
+			if (lb != null) {
+				return stripGenerics(lb);
+			} else {
+				return Types.JAVA_LANG_OBJECT;
 			}
 		} else if (type instanceof Type.Array) {
 			Type.Array at = (Type.Array) type;
-			return Type.arrayType(stripGenerics(at.elementType()), at
-					.elements());
-		} else if (type instanceof Type.Reference) {
-			Type.Reference tr = (Type.Reference) type;
-			Pair<String, Type[]>[] trClasses = tr.classes();
-			Pair<String, Type[]>[] classes = new Pair[trClasses.length];
-			for (int i = 0; i != trClasses.length; ++i) {
-				classes[i] = new Pair(trClasses[i].first(), new Type[0]);
+			return new Type.Array(stripGenerics(at.element()));
+		} else if (type instanceof Type.Clazz) {
+			Type.Clazz tr = (Type.Clazz) type;
+			List<Pair<String, List<Type.Reference>>> trClasses = tr
+					.components();
+			ArrayList<Pair<String, List<Type.Reference>>> classes = new ArrayList();
+			for (int i = 0; i != trClasses.size(); ++i) {
+				classes.add(new Pair(trClasses.get(i).first(), new ArrayList()));
 			}
-			return Type.referenceType(tr.pkg(), classes, type.elements());
+			return new Type.Clazz(tr.pkg(), classes);
 		} else if (type instanceof Type.Function) {
 			Type.Function tf = (Type.Function) type;
 			Type retType = stripGenerics(tf.returnType());
-			Type[] tfParamTypes = tf.parameterTypes();
-			Type[] paramTypes = new Type[tfParamTypes.length];
-			for (int i = 0; i != tfParamTypes.length; ++i) {
-				paramTypes[i] = stripGenerics(tfParamTypes[i]);
+			List<Type> tfParamTypes = tf.parameterTypes();
+			List<Type> paramTypes = new ArrayList<Type>();
+			for (int i = 0; i != tfParamTypes.size(); ++i) {
+				paramTypes.add(stripGenerics(tfParamTypes.get(i)));
 			}
-			return Type.functionType(retType, paramTypes, new Type.Variable[0],
-					type.elements());
+			return new Type.Function(retType, paramTypes);
 		} else {
-			throw new InternalException(
-					"Type \"" + type + "\" not recognised.", null, null, null);
+			return null;
 		}
 	}
 }

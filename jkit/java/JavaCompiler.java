@@ -19,6 +19,7 @@ import jkit.jil.tree.JilClass;
 import jkit.jil.tree.Type;
 import jkit.jil.tree.SourceLocation;
 import jkit.jil.tree.SyntacticElement;
+import jkit.jil.stages.BypassMethods;
 
 /**
  * A Java compiler is responsible for compiling Java source files into class
@@ -219,6 +220,11 @@ public class JavaCompiler implements Compiler {
 			// Ninth, eliminate side effects from expressions
 			generateJilCode(filename, jfile, loader);
 			
+			// tenth, add bypass methods
+			for(JilClass clazz : skeletons) {
+				addBypassMethods(filename,clazz,loader);
+			}
+			
 			// Ok, at this point, we need to determine the root component of the
 			// original filename.
 			String path = filename.getPath();
@@ -397,6 +403,21 @@ public class JavaCompiler implements Compiler {
 				(System.currentTimeMillis() - start));
 	}
 
+	/**
+	 * This is the ninth stage in the compilation pipeline --- we are now
+	 * beginning the process of code-generation. In this stage, we generate jil
+	 * code from the java source file.
+	 * 
+	 * @param jfile
+	 * @param loader
+	 */
+	protected void addBypassMethods(File srcfile, JilClass jfile, ClassLoader loader) {
+		long start = System.currentTimeMillis();
+		new BypassMethods(loader, new TypeSystem()).apply(jfile);
+		logTimedMessage("[" + srcfile.getPath() + "] Added bypass methods ",
+				(System.currentTimeMillis() - start));
+	}
+	
 	/**
 	 * This is the final stage in the compilation pipeline --- we must write the
 	 * output file somewhere.

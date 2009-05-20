@@ -23,6 +23,7 @@ import jkit.jil.tree.*;
 import jkit.jil.util.Exprs;
 import jkit.util.Pair;
 import jkit.util.Triple;
+import static jkit.compiler.SyntaxError.*;
 
 public class ClassFileBuilder {
 	protected final ClassLoader loader;
@@ -592,7 +593,7 @@ public class ClassFileBuilder {
 			return;
 		}
 
-		try {
+		try {			
 			Pair<Clazz,Clazz.Method> cm = determineMethod(targetT, stmt.name(), stmt
 					.funType());
 			Clazz c = cm.first();
@@ -1082,10 +1083,10 @@ public class ClassFileBuilder {
 	 * @param receiver
 	 * @param funType
 	 * @return 0 for virtual, 1 for interface, 2 for static
-	 */
-	
+	 */	
 	protected Pair<Clazz,Clazz.Method> determineMethod(Type.Clazz receiver, String name,
-			Type.Function funType) throws ClassNotFoundException,MethodNotFoundException {		
+			Type.Function funType) throws ClassNotFoundException,MethodNotFoundException {						
+		
 		String fdesc = ClassFile.descriptor(funType, false);
 		
 		Stack<Type.Clazz> worklist = new Stack<Type.Clazz>();
@@ -1095,8 +1096,8 @@ public class ClassFileBuilder {
 		while (!worklist.isEmpty()) {
 			Clazz c = loader.loadClass(worklist.pop());						
 			for (Clazz.Method m : c.methods(name)) {				
-				String mdesc = ClassFile.descriptor(m.type(), false);						
-				if (fdesc.equals(mdesc)) {
+				String mdesc = ClassFile.descriptor(m.type(), false);										
+				if (fdesc.equals(mdesc)) {					
 					return new Pair(c,m);
 				}
 			}
@@ -1183,35 +1184,5 @@ public class ClassFileBuilder {
 			}
 		}
 		return false;
-	}
-	
-	/**
-     * This method is just to factor out the code for looking up the source
-     * location and throwing an exception based on that.
-     * 
-     * @param msg --- the error message
-     * @param e --- the syntactic element causing the error
-     */
-	protected void syntax_error(String msg, SyntacticElement e) {
-		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
-		throw new SyntaxError(msg,loc.line(),loc.column());
-	}
-	
-	/**
-	 * This method is just to factor out the code for looking up the source
-	 * location and throwing an exception based on that. In this case, we also
-	 * have an internal exception which has given rise to this particular
-	 * problem.
-	 * 
-	 * @param msg
-	 *            --- the error message
-	 * @param e
-	 *            --- the syntactic element causing the error
-	 * @parem ex --- an internal exception, the details of which we want to
-	 *        keep.
-	 */
-	protected void syntax_error(String msg, SyntacticElement e, Throwable ex) {
-		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
-		throw new SyntaxError(msg,loc.line(),loc.column(),ex);
-	}
+	}		
 }
