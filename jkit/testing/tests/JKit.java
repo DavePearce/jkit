@@ -84,6 +84,7 @@ public class JKit extends TestHarness {
 	@Test public void JLS_8_4_4_GenericMethods_2() { runTest("JLS_8_4_4_GenericMethods_2"); }
 	@Ignore("Known Bug") @Test public void JLS_8_4_4_GenericMethods_3() { runTest("JLS_8_4_4_GenericMethods_3"); }
 	@Test public void JLS_8_7_StaticInitializers_1() { runTest("JLS_8_7_StaticInitializers_1"); }
+	@Test public void JLS_8_7_StaticInitializers_2() { runTest("JLS_8_7_StaticInitializers_2"); }
 	@Test public void JLS_8_8_7_2_Super_1() { runTest("JLS_8_8_7_2_Super_1"); }
 	@Test public void JLS_8_8_7_2_Super_2() { runTest("JLS_8_8_7_2_Super_2"); }
 	@Test public void JLS_8_8_7_2_Super_3() { runTest("JLS_8_8_7_2_Super_3"); }

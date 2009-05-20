@@ -12,6 +12,7 @@ import jkit.java.io.JavaFile;
 import jkit.java.tree.*;
 import jkit.jil.tree.*;
 import jkit.jil.tree.Type;
+import jkit.jil.util.Types;
 import jkit.util.Pair;
 import jkit.util.Triple;
 
@@ -198,24 +199,39 @@ public class JilBuilder {
 		boolean isStatic = d.isStatic();
 		
 		if(tmp != null) {
-			// This field has an initialiser. Therefore, we need to add it to
-			// the beginning of all constructors. One issue is that, if the
-			// first statement of a constructor is a super call (which is should
-			// normally be), then we need to put the statements after that.
-			for(JilMethod m : parent.methods()) {
-				if(m.name().equals(parent.name())) {
-					List<JilStmt> body = m.body();
-					JilExpr.Deref df = new JilExpr.Deref(new JilExpr.Variable("this",
-							parent.type()), d.name(), isStatic, fieldT, d
-							.attributes());
-					JilStmt.Assign ae = new JilStmt.Assign(df, tmp.first(), d
-							.attributes());
-					if(superCallFirst(body)) {
-						body.add(1,ae);
-						body.addAll(1,tmp.second());
-					} else {
-						body.add(1,ae);
-						body.addAll(0,tmp.second());
+			if(d.isStatic()) {
+				// This is a static field with an initialiser. Therefore, we
+				// need to add it to the static initialiser.
+				JilMethod staticInit = createStaticInitialiser(parent);
+				JilExpr.Deref df = new JilExpr.Deref(new JilExpr.ClassVariable(
+						parent.type()), d.name(), isStatic, fieldT, d
+						.attributes());
+				JilStmt.Assign ae = new JilStmt.Assign(df, tmp.first(), d
+						.attributes());
+				// add to the front so the ordering is correct.
+				staticInit.body().add(0,ae);
+				staticInit.body().addAll(0,tmp.second());
+			} else {
+				// This is a non-static field with an initialiser. Therefore, we
+				// need to add it to the beginning of all constructors. One issue is
+				// that, if the first statement of a constructor is a super call
+				// (which is should normally be), then we need to put the statements
+				// after that.
+				for(JilMethod m : parent.methods()) {
+					if(m.name().equals(parent.name())) {
+						List<JilStmt> body = m.body();
+						JilExpr.Deref df = new JilExpr.Deref(new JilExpr.Variable("this",
+								parent.type()), d.name(), isStatic, fieldT, d
+								.attributes());
+						JilStmt.Assign ae = new JilStmt.Assign(df, tmp.first(), d
+								.attributes());
+						if(superCallFirst(body)) {
+							body.add(1,ae);
+							body.addAll(1,tmp.second());
+						} else {
+							body.add(1,ae);
+							body.addAll(0,tmp.second());
+						}
 					}
 				}
 			}
@@ -1611,6 +1627,22 @@ public class JilBuilder {
 			}
 		}
 		return true;
+	}
+	
+	public JilMethod createStaticInitialiser(JilClass parent) {
+		List<JilMethod> si = parent.methods("<clinit>");
+		if(si.size() == 0) {		
+			ArrayList<Modifier> mods = new ArrayList<Modifier>();
+			mods.add(new Modifier.Base(java.lang.reflect.Modifier.STATIC));
+			JilMethod r = new JilMethod("<clinit>", new Type.Function(
+					Types.T_VOID), new ArrayList(), mods,
+					new ArrayList<Type.Clazz>());
+			parent.methods().add(r);
+			return r;
+		} else {
+			// It should be impossible to have more than one.
+			return si.get(0);
+		}
 	}
 	
 	protected int tmp_label = 0;
