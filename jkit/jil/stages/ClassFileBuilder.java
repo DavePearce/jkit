@@ -109,7 +109,7 @@ public class ClassFileBuilder {
 				cfm.attributes().add(new Exceptions(m.exceptions()));
 			}
 			
-			if(m.body() != null) {
+			if(!m.isAbstract() && !clazz.isInterface()) {
 				ArrayList<Bytecode> bytecodes = new ArrayList<Bytecode>();
 				ArrayList<Code.Handler> handlers = new ArrayList<Code.Handler>();
 
@@ -1084,8 +1084,9 @@ public class ClassFileBuilder {
 	 * @param funType
 	 * @return 0 for virtual, 1 for interface, 2 for static
 	 */	
-	protected Pair<Clazz,Clazz.Method> determineMethod(Type.Clazz receiver, String name,
-			Type.Function funType) throws ClassNotFoundException,MethodNotFoundException {						
+	protected Pair<Clazz, Clazz.Method> determineMethod(Type.Clazz receiver,
+			String name, Type.Function funType) throws ClassNotFoundException,
+			MethodNotFoundException {						
 		
 		String fdesc = ClassFile.descriptor(funType, false);
 		
@@ -1093,12 +1094,17 @@ public class ClassFileBuilder {
 		Stack<Type.Clazz> interfaceWorklist = new Stack<Type.Clazz>();
 		worklist.push(receiver);
 		
+		// Need to save the class of the static receiver type, since this
+		// determines whether to use an invokevirtual or invokeinterface. Could
+		// probably optimise this to avoid two identical calls to load class.
+		Clazz outer = loader.loadClass(worklist.peek());
+		
 		while (!worklist.isEmpty()) {
 			Clazz c = loader.loadClass(worklist.pop());						
 			for (Clazz.Method m : c.methods(name)) {				
 				String mdesc = ClassFile.descriptor(m.type(), false);										
 				if (fdesc.equals(mdesc)) {					
-					return new Pair(c,m);
+					return new Pair(outer,m);
 				}
 			}
 			if(c.superClass() != null) {
@@ -1114,7 +1120,7 @@ public class ClassFileBuilder {
 			for (Clazz.Method m : c.methods(name)) {				
 				String mdesc = ClassFile.descriptor(m.type(), false);						
 				if (fdesc.equals(mdesc)) {
-					return new Pair(c,m);
+					return new Pair(outer,m);
 				}
 			}			
 		}
