@@ -449,7 +449,7 @@ public class InnerClassAccessors {
 			return doUnOp((Expr.UnOp)e);
 		} else if(e instanceof Expr.BinOp) {
 			return doBinOp((Expr.BinOp)e);
-		} else if(e instanceof Expr.TernOp) {
+		} else if(e instanceof Expr.TernOp) {	
 			return doTernOp((Expr.TernOp)e);
 		} else if(e instanceof Expr.Cast) {
 			return doCast((Expr.Cast)e);

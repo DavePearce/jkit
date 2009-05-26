@@ -332,7 +332,9 @@ public class AnonClasses {
 			String name = Integer.toString(++anonymousClassCount);
 			Type.Clazz parent = (Type.Clazz) e.type().attribute(Type.Clazz.class);			
 			Type.Clazz aType = anonClassType(name,context.peek());
+				
 			try {
+				JilClass parentClass = (JilClass) loader.loadClass(parent);
 				JilClass anonClass = (JilClass) loader.loadClass(aType);
 
 				// First, update the type of the new expression
@@ -341,10 +343,9 @@ public class AnonClasses {
 
 				// Second, add an appropriate constructor.
 				JilBuilder.MethodInfo mi = (JilBuilder.MethodInfo) e
-				.attribute(JilBuilder.MethodInfo.class);			
-				
+				.attribute(JilBuilder.MethodInfo.class);
 				JilMethod cm = buildConstructor(name, mi.type, mi.exceptions,
-						parent);
+						parentClass,anonClass);
 					
 				anonClass.methods().add(cm);
 			} catch(ClassNotFoundException cne) {
@@ -438,26 +439,49 @@ public class AnonClasses {
 	}
 	
 	protected JilMethod buildConstructor(String name, Type.Function type,
-			ArrayList<Type.Clazz> exceptions, Type.Clazz parent) {
+			ArrayList<Type.Clazz> exceptions, JilClass parent, JilClass owner) {
+		
 		ArrayList<Pair<String, List<Modifier>>> params = new ArrayList();
 		ArrayList<JilExpr> args = new ArrayList();
-
+		Type.Function superCallType = type; 		
+		
+		// superParentPtr is true if the super class requiers a parent ptr
+		boolean superParentPtr = (parent.isInnerClass() && !parent.isStatic());
+		// likewise, the parent ptr is true if the anon class requires a parent ptr.
+		boolean myParentPtr = !owner.isStatic();
+		
+		
+		if (superParentPtr || myParentPtr) {
+			// non-static anon class constructor requires parent
+			// pointer.
+			ArrayList<Type> ptypes = new ArrayList<Type>(type.parameterTypes());
+			ptypes.add(0,context.peek());
+		    type = new Type.Function(type.returnType(),ptypes);
+		    
+		    if(superParentPtr) {
+		    	superCallType = type;
+		    }
+		}
+						
 		ArrayList<Modifier> mods = new ArrayList();
 		mods.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL));
 		int p = 0;
+						
 		for (Type t : type.parameterTypes()) {
+			// don't include the first parameter *if* it's the parent pointer,
+			// and the super class is static.			
 			params.add(new Pair("x" + p, mods));
-			args.add(new JilExpr.Variable("x" + p, t));
+			if(p != 0 || superParentPtr) {
+				args.add(new JilExpr.Variable("x" + p, t));
+			}
 			p = p + 1;
 		}
-
+		
 		JilMethod m = new JilMethod(name, type, params,
-				new ArrayList<Modifier>(), exceptions);
-
+				new ArrayList<Modifier>(), exceptions);		
 		
-		
-		JilExpr.Variable ths = new JilExpr.Variable("this", parent);
-		JilExpr.Invoke ivk = new JilExpr.Invoke(ths, "super", args, type,
+		JilExpr.Variable ths = new JilExpr.Variable("this", parent.type());
+		JilExpr.Invoke ivk = new JilExpr.Invoke(ths, "super", args, superCallType,
 				Types.T_VOID);
 
 		m.body().add(ivk);
