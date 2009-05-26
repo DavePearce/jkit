@@ -46,6 +46,7 @@ public class SkeletonBuilder {
 	}
 	
 	public List<JilClass> apply(JavaFile file) {		
+		anonymousClassCount = 0;
 		this.file = file;
 		this.skeletons = new ArrayList<JilClass>();
 					
@@ -452,6 +453,7 @@ public class SkeletonBuilder {
 						ncomponents);											
 				
 				ArrayList<Modifier> modifiers = new ArrayList<Modifier>();
+				
 				if(inStaticContext()) {
 					modifiers.add(new Modifier.Base(java.lang.reflect.Modifier.STATIC));
 				}
@@ -466,22 +468,7 @@ public class SkeletonBuilder {
 							new Type.Clazz("java.lang", "Object"), interfaces,
 							new ArrayList<Type.Clazz>(),
 							new ArrayList<JilField>(),
-							new ArrayList<JilMethod>(), e.attributes());
-					
-					// Now, create default constructor
-					JilMethod m = new JilMethod(name, new Type.Function(
-							new Type.Void()), new ArrayList(),
-							new ArrayList<Modifier>(), new ArrayList<Type.Clazz>(),
-							new ArrayList<Attribute>(e.attributes()));	
-					
-					jkit.jil.tree.JilExpr.Variable superVar = new jkit.jil.tree.JilExpr.Variable(
-							"super", superType);
-					Type.Function ftype = new Type.Function(new Type.Void());
-					m.body().add(
-							new jkit.jil.tree.JilExpr.Invoke(superVar, "super",
-									new ArrayList(), ftype, new Type.Void()));
-					
-					skeleton.methods().add(m);
+							new ArrayList<JilMethod>(), e.attributes());									
 				} else {
 					// In this case, we're extending directly from a super
 					// class.
@@ -490,36 +477,14 @@ public class SkeletonBuilder {
 							new ArrayList<Type.Clazz>(),
 							new ArrayList<JilField>(),
 							new ArrayList<JilMethod>(), e.attributes());
-
-					// Now, create appropriate constructor, depending upon
-					// parameters supplied.
-					JilMethod m = new JilMethod(name, new Type.Function(
-							new Type.Void()), new ArrayList(),
-							new ArrayList<Modifier>(), new ArrayList<Type.Clazz>(),
-							new ArrayList<Attribute>(e.attributes()));	
-					
-					jkit.jil.tree.JilExpr.Variable superVar = new jkit.jil.tree.JilExpr.Variable(
-							"super", superType);
-					Type.Function ftype = new Type.Function(new Type.Void());
-					m.body().add(
-							new jkit.jil.tree.JilExpr.Invoke(superVar, "super",
-									new ArrayList(), ftype, new Type.Void()));
-					
-					skeleton.methods().add(m);
-				}								
-				
+				}												
 				
 				skeletons.add(skeleton);
 				loader.register(skeleton);
 
 				for(Decl d : e.declarations()) {
 					doDeclaration(d, skeleton);
-				}
-				
-				// Fix up the type given for the new declaration.
-				e.type().attributes().remove(superType);
-				e.type().attributes().add(myType);
-				
+				}								
 			} catch (ClassNotFoundException cne) {
 				syntax_error("Unable to load class " + superType, e, cne);
 			}

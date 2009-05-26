@@ -217,10 +217,13 @@ public class JavaCompiler implements Compiler {
 			// Eight, add inner class accessors as appropriate
 			addInnerAccessors(filename,jfile,loader);
 			
-			// Ninth, eliminate side effects from expressions
+			// Ninth, break down anonymous inner classes
+			breakAnonClasses(filename,jfile,loader);
+						
+			// Tenth, eliminate side effects from expressions
 			generateJilCode(filename, jfile, loader);
 			
-			// tenth, add bypass methods
+			// Eleventh, add bypass methods
 			for(JilClass clazz : skeletons) {
 				addBypassMethods(filename,clazz,loader);
 			}
@@ -390,7 +393,23 @@ public class JavaCompiler implements Compiler {
 	}
 	
 	/**
-	 * This is the ninth stage in the compilation pipeline --- we are now
+	 * This is the ninth stage in the compilation pipeline --- we must break
+	 * down anonymous class declarations.
+	 * 
+	 * @param srcfile
+	 * @param jfile
+	 * @param loader
+	 */
+	protected void breakAnonClasses(File srcfile, JavaFile jfile, ClassLoader loader) {
+		long start = System.currentTimeMillis();
+		new AnonClasses(loader, new TypeSystem()).apply(jfile);
+		logTimedMessage("[" + srcfile.getPath()
+				+ "] Added inner class accessors", (System
+				.currentTimeMillis() - start));
+	}
+	
+	/**
+	 * This is the tenth stage in the compilation pipeline --- we are now
 	 * beginning the process of code-generation. In this stage, we generate jil
 	 * code from the java source file.
 	 * 
@@ -405,7 +424,7 @@ public class JavaCompiler implements Compiler {
 	}
 
 	/**
-	 * This is the ninth stage in the compilation pipeline --- we are now
+	 * This is the eleven	th stage in the compilation pipeline --- we are now
 	 * beginning the process of code-generation. In this stage, we generate jil
 	 * code from the java source file.
 	 * 
