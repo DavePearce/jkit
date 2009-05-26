@@ -1,7 +1,6 @@
 package jkit.java.stages;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static jkit.compiler.SyntaxError.*;
 import jkit.compiler.ClassLoader;
@@ -11,6 +10,7 @@ import jkit.java.tree.Expr;
 import jkit.java.tree.Stmt;
 import jkit.java.tree.Value;
 import jkit.java.tree.Stmt.Case;
+import jkit.jil.tree.Attribute;
 import jkit.jil.tree.JilClass;
 import jkit.jil.tree.JilField;
 import jkit.jil.tree.JilMethod;
@@ -38,6 +38,7 @@ public class SkeletonBuilder {
 	private int anonymousClassCount = 0;
 	private JavaFile file;
 	private ClassLoader loader = null;
+	private final Stack<Decl> context = new Stack();
 	
 	public SkeletonBuilder(ClassLoader loader) {
 		this.loader = loader;
@@ -52,6 +53,8 @@ public class SkeletonBuilder {
 	}
 	
 	protected void doDeclaration(Decl d, JilClass skeleton) {
+		context.push(d);
+		
 		if(d instanceof Decl.JavaInterface) {
 			doInterface((Decl.JavaInterface)d, skeleton);
 		} else if(d instanceof Decl.JavaClass) {
@@ -68,6 +71,8 @@ public class SkeletonBuilder {
 			syntax_error("internal failure (unknown declaration \"" + d
 					+ "\" encountered)",d);
 		}
+		
+		context.pop();
 	}
 			
 	protected void doInterface(Decl.JavaInterface d, JilClass skeleton) {
@@ -153,7 +158,7 @@ public class SkeletonBuilder {
 		} catch(ClassNotFoundException cne) {
 			syntax_error("internal failure (skeleton for \"" + type
 					+ "\" not found)", c, cne);
-		}
+		}		
 	}
 
 	protected void doMethod(Decl.JavaMethod d, JilClass skeleton) {		
@@ -177,18 +182,18 @@ public class SkeletonBuilder {
 		doStatement(d.body(), skeleton);
 	}
 
-	protected void doField(Decl.JavaField d, JilClass skeleton) {
+	protected void doField(Decl.JavaField d, JilClass skeleton) {		
 		Decl.JavaField f = (Decl.JavaField) d;
 		Type t = (Type) f.type().attribute(Type.class);
 		skeleton.fields().add(
 				new JilField(f.name(), t, f.modifiers(), new ArrayList(f
 						.attributes())));
 
-		doExpression(d.initialiser(), skeleton);
+		doExpression(d.initialiser(), skeleton);		
 	}
 	
 	protected void doInitialiserBlock(Decl.InitialiserBlock d,
-			JilClass skeleton) {
+			JilClass skeleton) {		
 		// will need to add code here for dealing with classes nested in
 		// methods.
 		for (Stmt s : d.statements()) {
@@ -432,39 +437,68 @@ public class SkeletonBuilder {
 			try {				
 				
 				JilClass c = (JilClass) loader.loadClass(superType);
-							
+				String name = Integer.toString(++anonymousClassCount);
+				
 				ArrayList<Pair<String, List<Type.Reference>>> ncomponents = new ArrayList(
 						skeleton.type().components());
-				ncomponents.add(new Pair(Integer.toString(++anonymousClassCount),
+				ncomponents.add(new Pair(name,
 						new ArrayList()));
 				Type.Clazz myType = new Type.Clazz(skeleton.type().pkg(),
-						ncomponents);
+						ncomponents);											
+				
+				ArrayList<Modifier> modifiers = new ArrayList<Modifier>();
+				if(inStaticContext()) {
+					modifiers.add(new Modifier.Base(java.lang.reflect.Modifier.STATIC));
+				}
 				
 				if (c.isInterface()) {
 					// In this case, we're extending from an interface rather
 					// than a super class.
 					ArrayList<Type.Clazz> interfaces = new ArrayList<Type.Clazz>();
-					interfaces.add(superType);
-					skeleton = new JilClass(myType, new ArrayList<Modifier>(),
+					interfaces.add(superType);										
+					
+					skeleton = new JilClass(myType, modifiers,
 							new Type.Clazz("java.lang", "Object"), interfaces,
 							new ArrayList<Type.Clazz>(),
 							new ArrayList<JilField>(),
 							new ArrayList<JilMethod>(), e.attributes());
+					
+					// Now, create default constructor
+					JilMethod m = new JilMethod(name, new Type.Function(
+							new Type.Void()), new ArrayList(),
+							new ArrayList<Modifier>(), new ArrayList<Type.Clazz>(),
+							new ArrayList<Attribute>(e.attributes()));	
+																		
+					skeleton.methods().add(m);
 				} else {
 					// In this case, we're extending directly from a super
 					// class.
-					skeleton = new JilClass(myType, new ArrayList<Modifier>(),
+					skeleton = new JilClass(myType, modifiers,
 							superType, new ArrayList<Type.Clazz>(),
 							new ArrayList<Type.Clazz>(),
 							new ArrayList<JilField>(),
 							new ArrayList<JilMethod>(), e.attributes());
-				}
+
+					// Now, create appropriate constructor, depending upon
+					// parameters supplied.
+					JilMethod m = new JilMethod(name, new Type.Function(
+							new Type.Void()), new ArrayList(),
+							new ArrayList<Modifier>(), new ArrayList<Type.Clazz>(),
+							new ArrayList<Attribute>(e.attributes()));	
+																		
+					skeleton.methods().add(m);
+				}								
+				
 				
 				loader.register(skeleton);
 
 				for(Decl d : e.declarations()) {
 					doDeclaration(d, skeleton);
 				}
+				
+				// Fix up the type given for the new declaration.
+				e.type().attributes().remove(superType);
+				e.type().attributes().add(myType);
 				
 			} catch (ClassNotFoundException cne) {
 				syntax_error("Unable to load class " + superType, e, cne);
@@ -541,4 +575,20 @@ public class SkeletonBuilder {
 		doExpression(e.falseBranch(), skeleton);
 		doExpression(e.trueBranch(), skeleton);		
 	}	
+	
+	protected boolean inStaticContext() {
+		Decl d = context.peek();
+		
+		if(d instanceof Decl.StaticInitialiserBlock) {
+			return true;
+		} else if(d instanceof Decl.JavaMethod) {
+			return ((Decl.JavaMethod)d).isStatic();
+		} else if(d instanceof Decl.JavaField) {
+			return ((Decl.JavaField)d).isStatic();
+		} else if(d instanceof Decl.JavaClass) {
+			return ((Decl.JavaClass)d).isStatic();
+		}
+		
+		return false;
+	}
 }

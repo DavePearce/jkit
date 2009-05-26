@@ -999,14 +999,12 @@ public class JilBuilder {
 		ArrayList<JilStmt> r = new ArrayList();	
 		Type.Reference type = (Type.Reference) e.attribute(Type.class);
 		
-
 		MethodInfo mi = (MethodInfo) e
 				.attribute(MethodInfo.class);			
 		
 		Pair<JilExpr,List<JilStmt>> context = doExpression(e.context());
 		Pair<List<JilExpr>,List<JilStmt>> params = doExpressionList(e.parameters());
-		
-		
+				
 		// Now, we need to check whether we're constructing a non-static inner
 		// class instance.
 		if(type instanceof Type.Clazz) {
@@ -1037,22 +1035,23 @@ public class JilBuilder {
 						mi.type = new Type.Function(mt.returnType(), nparamtypes,
 								mt.typeArguments());
 					}
+
+					// process declarations for anonymous inner classes.
+					if (e.declarations().size() > 0) {
+						for (Decl d : e.declarations()) {
+							doDeclaration(d, (JilClass) clazz);
+						}
+					}
 				} catch(ClassNotFoundException cne) {
 					syntax_error(cne.getMessage(),e,cne);
 				}
-			}
+			}			
 		}
 		
 		if(context != null) {
 			r.addAll(context.second());
 		}
-		r.addAll(params.second());
-		
-		if(e.declarations().size() > 0) {
-			for(Decl d : e.declarations()) {
-				doDeclaration(d, null); // bug here
-			}			
-		}			
+		r.addAll(params.second());					
 		
 		if(mi != null) {			
 			return new Pair<JilExpr, List<JilStmt>>(new JilExpr.New(type, params
