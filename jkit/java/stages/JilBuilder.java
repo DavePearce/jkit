@@ -136,7 +136,8 @@ public class JilBuilder {
 			// Finally, if this is a non-static inner class, then we need to add
 			// a field for holding the parent pointer (this$0), and also update
 			// all constructors to accept that field as the final parameter.
-			if(skeleton.type().components().size() > 1 && !skeleton.isStatic()) {
+			if (skeleton.type().components().size() > 1 && !skeleton.isStatic()
+					&& !skeleton.isInterface()) {
 				Type.Clazz parentType = parentType(skeleton.type());
 				ArrayList<Modifier> mods = new ArrayList<Modifier>();				
 				mods.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL));
@@ -161,7 +162,7 @@ public class JilBuilder {
 					JilStmt assign = new JilStmt.Assign(lhs,rhs);
 					m.body().add(0,assign);
 				}
-			}
+			}			
 		} catch(ClassNotFoundException cne) {
 			syntax_error("internal failure (skeleton not found for " + type,c,cne);
 		}			
@@ -190,7 +191,7 @@ public class JilBuilder {
 			if (m.name().equals(d.name()) && m.type().equals(type)) {
 				m.body().addAll(stmts);
 			}
-		}			
+		}		
 	}
 
 	protected void doField(Decl.JavaField d, JilClass parent) {		

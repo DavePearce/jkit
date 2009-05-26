@@ -46,7 +46,7 @@ public class ClassFileBuilder {
 		
 		buildInnerClasses(clazz,cfile);
 		buildFields(clazz,cfile);
-		buildMethods(clazz,cfile);					
+		buildMethods(clazz,cfile);				
 		
 		return cfile;
 	}
@@ -104,6 +104,18 @@ public class ClassFileBuilder {
 			}
 			ClassFile.Method cfm = new ClassFile.Method(m_name, m.type(), m
 					.modifiers());
+			
+			if (clazz.isInterface() && !cfm.isPublic()) {
+				// interfaces cannot have non-public methods in the bytecode.
+				cfm.modifiers().add(
+						new Modifier.Base(java.lang.reflect.Modifier.PUBLIC));				
+			}
+			
+			if (clazz.isInterface() && !cfm.isAbstract()) {
+				// interfaces cannot have non-abstract methods in the bytecode.
+				cfm.modifiers().add(
+						new Modifier.Base(java.lang.reflect.Modifier.ABSTRACT));				
+			}
 			
 			if(!m.exceptions().isEmpty()) {
 				cfm.attributes().add(new Exceptions(m.exceptions()));
