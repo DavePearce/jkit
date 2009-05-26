@@ -476,10 +476,7 @@ public class InnerClassAccessors {
 		return null;
 	}
 	
-	protected Expr doDeref(Expr.Deref e) {
-		if(e.target() == null) {
-			System.out.println("NULL TARGET");
-		}
+	protected Expr doDeref(Expr.Deref e) {		
 		e.setTarget(doExpression(e.target()));
 		
 		Type tmp = (Type) e.target().attribute(Type.class);
@@ -506,10 +503,10 @@ public class InnerClassAccessors {
 							.resolveField(target, e.name(), loader);
 					
 					Clazz.Field f = r.second();															
-					Clazz c = r.first();
-										
+					Clazz c = r.first();										
+					
 					if (f.isPrivate()
-							&& isStrictInnerClass(enclosingClasses.peek(), c.type())) {
+							&& isStrictInnerClass(enclosingClasses.peek(), c.type())) {						
 						// Ok, we have found a dereference of a field. This
 						// means we need to add an accessor method, unless there
 						// already is one.
@@ -556,19 +553,15 @@ public class InnerClassAccessors {
 			parameters.set(i,doExpression(p));
 		}
 		
-		if(e.declarations().size() > 0) {
-		/*
-			Type.Clazz superType = (Type.Clazz) e.type().attribute(Type.class);
-			ArrayList<Pair<String, List<Type.Reference>>> ncomponents = new ArrayList(
-					cs.type.components());
-			ncomponents.add(new Pair(Integer.toString(++anonymousClassCount),
-					new ArrayList()));
-			Type.Clazz myType = new Type.Clazz(cs.type.pkg(), ncomponents);			
+		if(e.declarations().size() > 0) {	
+			Type.Clazz clazz = (Type.Clazz) e.type().attribute(Type.Clazz.class);
+			enclosingClasses.add(clazz);
 			
 			for(Decl d : e.declarations()) {
 				doDeclaration(d);
 			}
-			*/
+			
+			enclosingClasses.pop();
 		}
 		
 		return e;

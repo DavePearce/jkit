@@ -214,11 +214,11 @@ public class JavaCompiler implements Compiler {
 			// not, report a syntax error.
 			checkTypes(filename, jfile, loader);
 		
-			// Eight, add inner class accessors as appropriate
-			addInnerAccessors(filename,jfile,loader);
-			
-			// Ninth, break down anonymous inner classes
+			// Eight, break down anonymous inner classes
 			breakAnonClasses(filename,jfile,loader);
+			
+			// Ninth, add inner class accessors as appropriate
+			addInnerAccessors(filename,jfile,loader);
 						
 			// Tenth, eliminate side effects from expressions
 			generateJilCode(filename, jfile, loader);
@@ -376,7 +376,23 @@ public class JavaCompiler implements Compiler {
 	}
 
 	/**
-	 * This is the eight stage in the compilation pipeline --- we must add
+	 * This is the eigth stage in the compilation pipeline --- we must break
+	 * down anonymous class declarations.
+	 * 
+	 * @param srcfile
+	 * @param jfile
+	 * @param loader
+	 */
+	protected void breakAnonClasses(File srcfile, JavaFile jfile, ClassLoader loader) {
+		long start = System.currentTimeMillis();
+		new AnonClasses(loader, new TypeSystem()).apply(jfile);
+		logTimedMessage("[" + srcfile.getPath()
+				+ "] Added inner class accessors", (System
+				.currentTimeMillis() - start));
+	}
+	
+	/**
+	 * This is the ninth stage in the compilation pipeline --- we must add
 	 * access methods in situations where an inner class attempts to access a
 	 * private field of an enclosing class.
 	 * 
@@ -392,21 +408,6 @@ public class JavaCompiler implements Compiler {
 				.currentTimeMillis() - start));
 	}
 	
-	/**
-	 * This is the ninth stage in the compilation pipeline --- we must break
-	 * down anonymous class declarations.
-	 * 
-	 * @param srcfile
-	 * @param jfile
-	 * @param loader
-	 */
-	protected void breakAnonClasses(File srcfile, JavaFile jfile, ClassLoader loader) {
-		long start = System.currentTimeMillis();
-		new AnonClasses(loader, new TypeSystem()).apply(jfile);
-		logTimedMessage("[" + srcfile.getPath()
-				+ "] Added inner class accessors", (System
-				.currentTimeMillis() - start));
-	}
 	
 	/**
 	 * This is the tenth stage in the compilation pipeline --- we are now
