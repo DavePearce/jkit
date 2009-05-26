@@ -282,6 +282,8 @@ public class AnonClasses {
 			doTernOp((Expr.TernOp)e);
 		} else if(e instanceof Expr.Cast) {
 			doCast((Expr.Cast)e);
+		} else if(e instanceof Expr.Convert) {
+			doConvert((Expr.Convert)e);
 		} else if(e instanceof Expr.InstanceOf) {
 			doInstanceOf((Expr.InstanceOf)e);
 		} else if(e instanceof Expr.Invoke) {
@@ -365,6 +367,10 @@ public class AnonClasses {
 	}
 	
 	protected void doCast(Expr.Cast e) {		
+		doExpression(e.expr());
+	}
+	
+	protected void doConvert(Expr.Convert e) {		
 		doExpression(e.expr());
 	}
 	
