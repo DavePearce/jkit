@@ -196,7 +196,7 @@ public class JavaCompiler implements Compiler {
 			// Specifically, during scope resolution, we need to be able to:
 			// 1) traverse the class heirarchy
 			// 2) determine what fields are declared.			
-			buildSkeletons(filename, jfile, loader);			
+			skeletons.addAll(buildSkeletons(filename, jfile, loader));			
 
 			// Fifth, perform the scope resolution itself. The aim here is, for
 			// each variable access, to determine whether it is a local
@@ -318,12 +318,13 @@ public class JavaCompiler implements Compiler {
 	 * @param jfile
 	 * @param loader
 	 */
-	protected void buildSkeletons(File srcfile, JavaFile jfile, ClassLoader loader) {
+	protected List<JilClass> buildSkeletons(File srcfile, JavaFile jfile, ClassLoader loader) {
 		long start = System.currentTimeMillis();
-		new SkeletonBuilder(loader).apply(jfile);
+		List<JilClass> r = new SkeletonBuilder(loader).apply(jfile);
 		logTimedMessage("[" + srcfile.getPath()
 				+ "] Skeleton construction completed", (System
 				.currentTimeMillis() - start));
+		return r;
 	}
 
 	/**

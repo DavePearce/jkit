@@ -37,6 +37,7 @@ import jkit.util.*;
 public class SkeletonBuilder {
 	private int anonymousClassCount = 0;
 	private JavaFile file;
+	private ArrayList<JilClass> skeletons;
 	private ClassLoader loader = null;
 	private final Stack<Decl> context = new Stack();
 	
@@ -44,15 +45,19 @@ public class SkeletonBuilder {
 		this.loader = loader;
 	}
 	
-	public void apply(JavaFile file) {		
+	public List<JilClass> apply(JavaFile file) {		
 		this.file = file;
+		this.skeletons = new ArrayList<JilClass>();
+					
 		// Now, traverse the declarations
 		for(Decl d : file.declarations()) {
 			doDeclaration(d,null);
 		}
+		
+		return skeletons;
 	}
 	
-	protected void doDeclaration(Decl d, JilClass skeleton) {
+	protected void doDeclaration(Decl d, JilClass skeleton) {		
 		context.push(d);
 		
 		if(d instanceof Decl.JavaInterface) {
@@ -72,7 +77,7 @@ public class SkeletonBuilder {
 					+ "\" encountered)",d);
 		}
 		
-		context.pop();
+		context.pop();		
 	}
 			
 	protected void doInterface(Decl.JavaInterface d, JilClass skeleton) {
@@ -468,7 +473,14 @@ public class SkeletonBuilder {
 							new Type.Void()), new ArrayList(),
 							new ArrayList<Modifier>(), new ArrayList<Type.Clazz>(),
 							new ArrayList<Attribute>(e.attributes()));	
-																		
+					
+					jkit.jil.tree.JilExpr.Variable superVar = new jkit.jil.tree.JilExpr.Variable(
+							"super", superType);
+					Type.Function ftype = new Type.Function(new Type.Void());
+					m.body().add(
+							new jkit.jil.tree.JilExpr.Invoke(superVar, "super",
+									new ArrayList(), ftype, new Type.Void()));
+					
 					skeleton.methods().add(m);
 				} else {
 					// In this case, we're extending directly from a super
@@ -485,11 +497,19 @@ public class SkeletonBuilder {
 							new Type.Void()), new ArrayList(),
 							new ArrayList<Modifier>(), new ArrayList<Type.Clazz>(),
 							new ArrayList<Attribute>(e.attributes()));	
-																		
+					
+					jkit.jil.tree.JilExpr.Variable superVar = new jkit.jil.tree.JilExpr.Variable(
+							"super", superType);
+					Type.Function ftype = new Type.Function(new Type.Void());
+					m.body().add(
+							new jkit.jil.tree.JilExpr.Invoke(superVar, "super",
+									new ArrayList(), ftype, new Type.Void()));
+					
 					skeleton.methods().add(m);
 				}								
 				
 				
+				skeletons.add(skeleton);
 				loader.register(skeleton);
 
 				for(Decl d : e.declarations()) {
