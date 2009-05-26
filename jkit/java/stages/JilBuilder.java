@@ -997,7 +997,7 @@ public class JilBuilder {
 	protected Pair<JilExpr,List<JilStmt>> doNew(Expr.New e) {
 		// Second, recurse through any parameters supplied ...
 		ArrayList<JilStmt> r = new ArrayList();	
-		Type.Reference type = (Type.Reference) e.attribute(Type.class);
+		Type.Reference type = (Type.Reference) e.type().attribute(Type.class);
 		
 		MethodInfo mi = (MethodInfo) e
 				.attribute(MethodInfo.class);			
