@@ -248,8 +248,12 @@ public class AnonClasses {
 	protected void doExpression(Expr e) {	
 		if(e instanceof Value.Bool) {
 			doBoolVal((Value.Bool)e);
+		} else if(e instanceof Value.Byte) {
+			doByteVal((Value.Byte)e);
 		} else if(e instanceof Value.Char) {
 			doCharVal((Value.Char)e);
+		} else if(e instanceof Value.Short) {
+			doShortVal((Value.Short)e);
 		} else if(e instanceof Value.Int) {
 			doIntVal((Value.Int)e);
 		} else if(e instanceof Value.Long) {
@@ -376,7 +380,11 @@ public class AnonClasses {
 	
 	protected void doBoolVal(Value.Bool e) {}
 	
+	protected void doByteVal(Value.Byte e) {}
+	
 	protected void doCharVal(Value.Char e) {}
+	
+	protected void doShortVal(Value.Short e) {}
 	
 	protected void doIntVal(Value.Int e) {}
 	
