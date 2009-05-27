@@ -1037,7 +1037,7 @@ public class JilBuilder {
 	protected Pair<JilExpr,List<JilStmt>> doInvoke(Expr.Invoke e) {
 		ArrayList<JilStmt> r = new ArrayList();
 		Type type = (Type) e.attribute(Type.class);				
-		MethodInfo mi = (MethodInfo) e.attribute(MethodInfo.class);		
+		MethodInfo mi = (MethodInfo) e.attribute(MethodInfo.class);				
 		
 		Pair<JilExpr,List<JilStmt>> target = doExpression(e.target());
 		r.addAll(target.second());

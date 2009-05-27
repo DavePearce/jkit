@@ -139,27 +139,17 @@ public class SkeletonBuilder {
 				}
 			}
 			
-			// Now, also need to add a default constructor, if there is none.
 			if (!skeleton.isInterface()
 					&& skeleton.methods(skeleton.name()).isEmpty()) {
+				System.out.println("ADDING DEFAULT CONSTRUCTOR");
 				// if we get here, then no constructor has been provided.
 				// Therefore, must add the default constructor.
-				List<Modifier> mods = new ArrayList<Modifier>();
-				mods.add(new Modifier.Base(java.lang.reflect.Modifier.PUBLIC));
-				JilMethod dc = new JilMethod(skeleton.name(), new Type.Function(
-						new Type.Void()), new ArrayList(), mods,
-						new ArrayList<Type.Clazz>(), c.attributes());
-				// At this stage, I now create a full body for this method. It's
-				// not clear to me whether or not this is really the best place
-				// to do this, but it seems as good as any.
-				jkit.jil.tree.JilExpr.Variable superVar = new jkit.jil.tree.JilExpr.Variable(
-						"super", superClass);
-				Type.Function ftype = new Type.Function(new Type.Void());
-				dc.body().add(
-						new jkit.jil.tree.JilExpr.Invoke(superVar, "super",
-								new ArrayList(), ftype, new Type.Void()));
-				// Finally, add the method.
-				skeleton.methods().add(dc);
+				SourceLocation loc = (SourceLocation) c.attribute(SourceLocation.class);
+				Decl.JavaMethod m = createDefaultConstructor(skeleton.name(),loc);
+				c.declarations().add(m);	
+								
+				// Finally, add the constructor to the skeleton.
+				doDeclaration(m,skeleton);				
 			}
 		} catch(ClassNotFoundException cne) {
 			syntax_error("internal failure (skeleton for \"" + type
@@ -168,8 +158,7 @@ public class SkeletonBuilder {
 	}
 
 	protected void doMethod(Decl.JavaMethod d, JilClass skeleton) {		
-		Decl.JavaMethod m = (Decl.JavaMethod) d;
-		Type.Function type = (Type.Function) m.attribute(Type.class);
+		Type.Function type = (Type.Function) d.attribute(Type.class);
 		List<Type.Clazz> exceptions = new ArrayList<Type.Clazz>();
 		List<Pair<String,List<Modifier>>> parameters = new ArrayList();
 		
@@ -177,13 +166,13 @@ public class SkeletonBuilder {
 			parameters.add(new Pair(t.first(),t.second()));
 		}
 		
-		for(jkit.java.tree.Type.Clazz tc : m.exceptions()) {
+		for(jkit.java.tree.Type.Clazz tc : d.exceptions()) {
 			exceptions.add((Type.Clazz)tc.attribute(Type.class));
-		}
+		}				
 		
 		skeleton.methods().add(
-				new JilMethod(m.name(), type, parameters, m.modifiers(),
-						exceptions, new ArrayList(m.attributes())));
+				new JilMethod(d.name(), type, parameters, d.modifiers(),
+						exceptions, new ArrayList(d.attributes())));
 		
 		doStatement(d.body(), skeleton);
 	}
@@ -560,6 +549,26 @@ public class SkeletonBuilder {
 		doExpression(e.falseBranch(), skeleton);
 		doExpression(e.trueBranch(), skeleton);		
 	}	
+	
+	protected Decl.JavaMethod createDefaultConstructor(String name,
+			SourceLocation loc) {
+
+		ArrayList<Modifier> mods = new ArrayList<Modifier>();
+		mods.add(new Modifier.Base(java.lang.reflect.Modifier.PUBLIC));		
+		Expr.Invoke ivk = new Expr.Invoke(null, "super", new ArrayList(),
+				new ArrayList(), loc);
+		ArrayList<Stmt> stmts = new ArrayList();
+		stmts.add(ivk);
+		Stmt.Block block = new Stmt.Block(stmts, loc);
+
+		Decl.JavaMethod m = new Decl.JavaMethod(mods, name,
+				new jkit.java.tree.Type.Void(), new ArrayList(), false,
+				new ArrayList(), new ArrayList(), block, loc);
+
+		m.attributes().add(new Type.Function(new Type.Void()));
+		
+		return m;
+	}
 	
 	protected boolean inStaticContext() {
 		Decl d = context.peek();
