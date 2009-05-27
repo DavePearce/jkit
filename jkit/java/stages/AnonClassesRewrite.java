@@ -1,6 +1,7 @@
 package jkit.java.stages;
 
 import static jkit.compiler.SyntaxError.syntax_error;
+import static jkit.java.tree.Type.fromJilType;
 
 import java.util.*;
 
@@ -24,7 +25,7 @@ public class AnonClassesRewrite {
 	private ClassLoader loader;
 	private TypeSystem types;
 	private int anonymousClassCount = 0;
-	private final Stack<Type.Clazz> context = new Stack<Type.Clazz>(); 
+	private final Stack<JavaClass> context = new Stack<JavaClass>(); 
 	
 	public AnonClassesRewrite(ClassLoader loader, TypeSystem types) {
 		this.loader = loader; 
@@ -62,11 +63,15 @@ public class AnonClassesRewrite {
 		doClass(d);
 	}
 	
-	protected void doClass(JavaClass c) {			
-		Type.Clazz type = (Type.Clazz) c.attribute(Type.Clazz.class);
-		context.push(type);
-		for(Decl d : c.declarations()) {
-			doDeclaration(d);
+	protected void doClass(JavaClass c) {					
+		context.push(c);
+
+		// NOTE: in the following loop we cannot use an iterator, otherwise a
+		// concurrent modification exception can arise when we rewrite a
+		// anonymous class.
+		List<Decl> declarations = c.declarations();
+		for(int i=0;i!=declarations.size();++i) {		
+			doDeclaration(declarations.get(i));
 		}
 		context.pop();
 	}
@@ -331,23 +336,32 @@ public class AnonClassesRewrite {
 			// appropriate constructors to the anonymous inner class.
 			String name = Integer.toString(++anonymousClassCount);
 			Type.Clazz parent = (Type.Clazz) e.type().attribute(Type.Clazz.class);			
-			Type.Clazz aType = anonClassType(name,context.peek());
+			Type.Clazz aType = anonClassType(name);
 				
 			try {
 				JilClass parentClass = (JilClass) loader.loadClass(parent);
 				JilClass anonClass = (JilClass) loader.loadClass(aType);
-
+				SourceLocation loc = (SourceLocation) e
+						.attribute(SourceLocation.class);
+				
 				// First, update the type of the new expression
 				e.type().attributes().remove(parent);
 				e.type().attributes().add(aType);
 
-				// Second, add an appropriate constructor.
+				// Second, create an appropriate constructor.
 				JilBuilder.MethodInfo mi = (JilBuilder.MethodInfo) e
 				.attribute(JilBuilder.MethodInfo.class);
-				JilMethod cm = buildConstructor(name, mi.type, mi.exceptions,
-						parentClass,anonClass);
-					
-				anonClass.methods().add(cm);
+				
+				Decl.JavaMethod constructor = buildAnonConstructor(name,
+						mi.type, mi.exceptions, parentClass, anonClass, loc);
+				
+				Decl.JavaClass ac = buildAnonClass(anonClass, loc);
+				
+				ac.declarations().add(constructor);
+				ac.declarations().addAll(e.declarations());
+				
+				context.peek().declarations().add(ac);
+				
 			} catch(ClassNotFoundException cne) {
 				syntax_error(cne.getMessage(),e,cne);
 			}
@@ -438,30 +452,28 @@ public class AnonClassesRewrite {
 		doExpression(e.trueBranch());
 	}
 	
-	protected JilMethod buildConstructor(String name, Type.Function type,
-			ArrayList<Type.Clazz> exceptions, JilClass parent, JilClass owner) {
+	protected Decl.JavaClass buildAnonClass(JilClass anonClass, SourceLocation loc) {
 		
-		ArrayList<Pair<String, List<Modifier>>> params = new ArrayList();
-		ArrayList<JilExpr> args = new ArrayList();
-		Type.Function superCallType = type; 		
-		
-		// superParentPtr is true if the super class requiers a parent ptr
-		boolean superParentPtr = (parent.isInnerClass() && !parent.isStatic());
-		// likewise, the parent ptr is true if the anon class requires a parent ptr.
-		boolean myParentPtr = !owner.isStatic();
-		
-		
-		if (superParentPtr || myParentPtr) {
-			// non-static anon class constructor requires parent
-			// pointer.
-			ArrayList<Type> ptypes = new ArrayList<Type>(type.parameterTypes());
-			ptypes.add(0,context.peek());
-		    type = new Type.Function(type.returnType(),ptypes);
-		    
-		    if(superParentPtr) {
-		    	superCallType = type;
-		    }
+		jkit.java.tree.Type.Clazz superClass = fromJilType(anonClass.superClass());
+		ArrayList<jkit.java.tree.Type.Clazz> interfaces = new ArrayList();
+		for(Type.Clazz i : anonClass.interfaces()) {
+			interfaces.add(fromJilType(i));
 		}
+		
+		Decl.JavaClass jc = new Decl.JavaClass(new ArrayList(anonClass
+				.modifiers()), anonClass.name(), new ArrayList(), superClass,
+				interfaces, new ArrayList<Decl>(), loc, anonClass.type());				
+		
+		return jc;
+	}
+	
+	protected Decl.JavaMethod buildAnonConstructor(String name,
+			Type.Function type, ArrayList<Type.Clazz> exceptions,
+			JilClass parentClass, JilClass anonClass, SourceLocation loc) {
+		
+		ArrayList<Pair<String, List<Modifier>>> jilparams = new ArrayList();
+		ArrayList<Triple<String, List<Modifier>, jkit.java.tree.Type>> javaparams = new ArrayList();
+		ArrayList<Expr> args = new ArrayList();
 						
 		ArrayList<Modifier> mods = new ArrayList();
 		mods.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL));
@@ -469,28 +481,37 @@ public class AnonClassesRewrite {
 						
 		for (Type t : type.parameterTypes()) {
 			// don't include the first parameter *if* it's the parent pointer,
-			// and the super class is static.			
-			params.add(new Pair("x" + p, mods));
-			if(p != 0 || superParentPtr) {
-				args.add(new JilExpr.Variable("x" + p, t));
-			}
+			// and the super class is static.
+			jilparams.add(new Pair("x" + p, mods));
+			javaparams.add(new Triple("x" + p, mods, fromJilType(t)));
+			args.add(new Expr.LocalVariable("x" + p, t));
 			p = p + 1;
 		}
 		
-		JilMethod m = new JilMethod(name, type, params,
-				new ArrayList<Modifier>(), exceptions);		
+		ArrayList<Stmt> stmts = new ArrayList<Stmt>();
+		Expr.LocalVariable target = new Expr.LocalVariable("super",parentClass.type());		
+		Expr.Invoke ivk = new Expr.Invoke(target, "super", args,
+				new ArrayList(), loc, new JilBuilder.MethodInfo(exceptions,
+						type));
+		stmts.add(ivk);
 		
-		JilExpr.Variable ths = new JilExpr.Variable("this", parent.type());
-		JilExpr.Invoke ivk = new JilExpr.Invoke(ths, "super", args, superCallType,
-				Types.T_VOID);
-
-		m.body().add(ivk);
-		m.body().add(new JilStmt.Return(null));
-
-		return m;
+		Stmt.Block block = new Stmt.Block(stmts,loc);
+		
+		Decl.JavaMethod mc = new Decl.JavaMethod(mods, name,
+				fromJilType(Types.T_VOID), javaparams, false, new ArrayList(),
+				new ArrayList(), block, loc, type);
+		
+		// finally, update skeleton accordingly.
+		anonClass.methods().add(new JilMethod(name, type, jilparams,
+				new ArrayList<Modifier>(), exceptions));
+						
+		return mc;
 	}
 	
-	protected Type.Clazz anonClassType(String name, Type.Clazz parent) {
+	protected Type.Clazz anonClassType(String name) {
+		Type.Clazz parent = (Type.Clazz) context.peek().attribute(
+				Type.Clazz.class);
+
 		ArrayList<Pair<String, List<Type.Reference>>> ncomponents = new ArrayList(
 				parent.components());
 		ncomponents.add(new Pair(name, new ArrayList()));
