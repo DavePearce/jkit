@@ -402,7 +402,7 @@ public class JavaCompiler implements Compiler {
 	 */
 	protected void addInnerAccessors(File srcfile, JavaFile jfile, ClassLoader loader) {
 		long start = System.currentTimeMillis();
-		new InnerClassAccessors(loader, new TypeSystem()).apply(jfile);
+		new InnerClassRewrite(loader, new TypeSystem()).apply(jfile);
 		logTimedMessage("[" + srcfile.getPath()
 				+ "] Added inner class accessors", (System
 				.currentTimeMillis() - start));

@@ -131,38 +131,7 @@ public class JilBuilder {
 			for(int i=fields.size();i>0;--i) {
 				Decl.JavaField d = fields.get(i-1);
 				doDeclaration(d, skeleton);				
-			}
-			
-			// Finally, if this is a non-static inner class, then we need to add
-			// a field for holding the parent pointer (this$0), and also update
-			// all constructors to accept that field as the final parameter.
-			if (skeleton.type().components().size() > 1 && !skeleton.isStatic()
-					&& !skeleton.isInterface()) {
-				Type.Clazz parentType = parentType(skeleton.type());
-				ArrayList<Modifier> mods = new ArrayList<Modifier>();				
-				mods.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL));
-				skeleton.fields().add(
-						new JilField("this$0", parentType,
-								mods));
-				
-				for(JilMethod m : skeleton.methods(skeleton.name())) {
-					// This is a constructor, so add new paramemter.
-					m.parameters().add(0,new Pair("this$0",mods));
-					Type.Function mt = m.type();
-					ArrayList<Type> nparamtypes = new ArrayList<Type>(mt.parameterTypes());	
-					nparamtypes.add(0,parentType);
-					m.setType(new Type.Function(mt.returnType(), nparamtypes,
-							mt.typeArguments()));
-					
-					// now, add assignment statement from parameter to field.
-					JilExpr rhs = new JilExpr.Variable("this$0",parentType);
-					JilExpr lhs = new JilExpr.Deref(new JilExpr.Variable(
-							"this", skeleton.type()), "this$0", false,
-							parentType);
-					JilStmt assign = new JilStmt.Assign(lhs,rhs);
-					m.body().add(0,assign);
-				}
-			}			
+			}					
 		} catch(ClassNotFoundException cne) {
 			syntax_error("internal failure (skeleton not found for " + type,c,cne);
 		}			

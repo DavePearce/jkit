@@ -8,20 +8,13 @@ import jkit.compiler.ClassLoader;
 import jkit.compiler.Clazz;
 import jkit.compiler.FieldNotFoundException;
 import jkit.java.io.JavaFile;
-import jkit.java.tree.Decl;
-import jkit.java.tree.Expr;
-import jkit.java.tree.Stmt;
-import jkit.java.tree.Value;
-import jkit.java.tree.Decl.JavaClass;
-import jkit.java.tree.Decl.JavaField;
-import jkit.java.tree.Decl.JavaInterface;
-import jkit.java.tree.Decl.JavaMethod;
+import jkit.java.tree.*;
+import jkit.java.tree.Decl.*;
 import jkit.java.tree.Stmt.Case;
-import jkit.jil.tree.JilMethod;
-import jkit.jil.tree.JilStmt;
-import jkit.jil.tree.JilExpr;
-import jkit.jil.tree.Modifier;
+import static jkit.java.tree.Type.fromJilType;
+import jkit.jil.tree.*;
 import jkit.jil.tree.Type;
+import jkit.jil.util.*;
 import jkit.util.Pair;
 import jkit.util.Triple;
 
@@ -96,14 +89,14 @@ import jkit.util.Triple;
  * @author djp
  * 
  */
-public class InnerClassAccessors {
+public class InnerClassRewrite {
 	private ClassLoader loader;	
 	private TypeSystem types;
 	private final Stack<Type.Clazz> enclosingClasses = new Stack<Type.Clazz>();
 	private final HashMap<Type.Clazz, HashMap<String, JilMethod>> readAccessors = new HashMap();
 	private final HashMap<Type.Clazz, HashMap<String, JilMethod>> writeAccessors = new HashMap();
 	
-	public InnerClassAccessors(ClassLoader loader, TypeSystem types) {
+	public InnerClassRewrite(ClassLoader loader, TypeSystem types) {
 		this.loader = loader; 
 		this.types = types;
 	}
@@ -142,10 +135,22 @@ public class InnerClassAccessors {
 	}
 	
 	protected void doClass(JavaClass c) {
-		enclosingClasses.add((Type.Clazz) c.attribute(Type.class));		
+		Type.Clazz type = (Type.Clazz) c.attribute(Type.class);
+		enclosingClasses.add(type);		
 		
 		for(Decl d : c.declarations()) {
 			doDeclaration(d);
+		}
+		
+		if (type.components().size() > 1 && !c.isStatic()
+				&& !(c instanceof JavaInterface)) {
+			// Ok, we've found a non-static inner class here. Therefore, we need
+			// to rewrite all constructors to accept a parent pointer.
+			try {
+				addParentPtr(c,type,Types.parentType(type));
+			} catch(ClassNotFoundException cne) {
+				syntax_error(cne.getMessage(),c,cne);
+			}
 		}
 		
 		enclosingClasses.pop();
@@ -709,6 +714,68 @@ public class InnerClassAccessors {
 		}
 		
 		return true;
+	}
+	
+	/**
+	 * The purpose of this method is to add a parent pointer to the class in
+	 * question. This involves several things: firstly, we add the field with
+	 * the special name "this$0"; second, we modify every constructor to accept
+	 * it as the first parameter and then assign directly to the field; finally,
+	 * we update all skeletons accordingly.
+	 *
+	 * @param type
+	 * @param owner
+	 */
+	protected void addParentPtr(JavaClass owner, Type.Clazz ownerType,
+			Type.Clazz parentType)
+			throws ClassNotFoundException {
+		SourceLocation loc = (SourceLocation) owner.attribute(SourceLocation.class);				
+		
+		// First, update the source code for constructors
+		String constructorName = owner.name();		
+		for(Decl o : owner.declarations()) {
+			if(o instanceof JavaMethod) {
+				JavaMethod m = (JavaMethod) o;
+				if(m.name().equals(constructorName)) {
+					rewriteConstructor(m, ownerType, parentType, loc);
+				}
+			}
+		}
+		
+		// Second, update the skeleton types. I know it's a JilClass here, since
+		// it must be the skeleton for the enclosing class which I'm compiling!
+		JilClass oc = (JilClass) loader.loadClass(ownerType);
+		for(JilMethod m : oc.methods(owner.name())) {
+			ArrayList<Type> nparams = new ArrayList<Type>(m.type().parameterTypes());
+			nparams.add(0,parentType);
+			Type.Function ntype = new Type.Function(m.type().returnType(),nparams);
+			m.setType(ntype);
+			ArrayList<Modifier> mods = new ArrayList<Modifier>();
+			mods.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL));
+			m.parameters().add(0, new Pair("this$0",mods));
+		}
+		
+		// Finally, add a field with the appropriate name.
+		ArrayList<Modifier> modifiers = new ArrayList<Modifier>();
+		modifiers.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL));
+		modifiers.add(new Modifier.Base(java.lang.reflect.Modifier.PRIVATE));
+		
+		JilField field = new JilField("this$0",
+				parentType, modifiers, loc);
+		
+		oc.fields().add(field);
+	}
+	
+	protected void rewriteConstructor(JavaMethod constructor, Type.Clazz ownerType,
+			Type.Clazz parentType, SourceLocation loc) {
+		ArrayList<Modifier> mods = new ArrayList<Modifier>();
+		mods.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL));
+		constructor.parameters().add(0, new Triple("this$0", mods, parentType));
+		Expr.LocalVariable param = new Expr.LocalVariable("this$0", parentType, loc);
+		Expr.LocalVariable thiz = new Expr.LocalVariable("this", ownerType, loc);
+		Expr.Deref lhs = new Expr.Deref(thiz, "this$0", parentType, loc);
+		Stmt.Assignment assign = new Stmt.Assignment(lhs, param);
+		constructor.body().statements().add(0, assign);		
 	}
 	
 	protected Clazz.Method createReadAccessor(Clazz.Field field, jkit.jil.tree.JilClass clazz) {		

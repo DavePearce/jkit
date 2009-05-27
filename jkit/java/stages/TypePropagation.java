@@ -9,6 +9,7 @@ import jkit.compiler.MethodNotFoundException;
 import jkit.compiler.Clazz.Method;
 import static jkit.compiler.SyntaxError.*;
 import static jkit.jil.util.Types.*;
+import static jkit.java.tree.Type.fromJilType;
 import jkit.java.io.JavaFile;
 import jkit.java.tree.Decl;
 import jkit.java.tree.Expr;
@@ -1324,77 +1325,7 @@ public class TypePropagation {
 			} 
 		} 
 		return new Value.Int(val,T_INT,loc);
-	}
-	
-	/**
-     * Convert a type in jil to a type in java. This method is annoying, since
-     * it seems to be converting to the same thing. However, there is a subtle
-     * difference, in that a Java type represents a type as written in the
-     * source code, rather than the abstract notion of a type.
-     * 
-     * @param jt
-     * @return
-     */
-	public static jkit.java.tree.Type fromJilType(jkit.jil.tree.Type t) {		
-		if(t instanceof jkit.jil.tree.Type.Primitive) {
-			return fromJilType((jkit.jil.tree.Type.Primitive)t);
-		} else if(t instanceof jkit.jil.tree.Type.Array) {
-			return fromJilType((jkit.jil.tree.Type.Array)t);
-		} else if(t instanceof jkit.jil.tree.Type.Clazz) {
-			return fromJilType((jkit.jil.tree.Type.Clazz)t);
-		}
-		throw new RuntimeException("Need to finish fromJilType off!");
-	}
-	
-	public static jkit.java.tree.Type.Primitive fromJilType(jkit.jil.tree.Type.Primitive pt) {
-		if(pt instanceof jkit.jil.tree.Type.Void) {
-			return new jkit.java.tree.Type.Void(pt);
-		} else if(pt instanceof jkit.jil.tree.Type.Bool) {
-			return new jkit.java.tree.Type.Bool(pt);
-		} else if(pt instanceof jkit.jil.tree.Type.Byte) {
-			return new jkit.java.tree.Type.Byte(pt);
-		} else if(pt instanceof jkit.jil.tree.Type.Char) {
-			return new jkit.java.tree.Type.Char(pt);
-		} else if(pt instanceof jkit.jil.tree.Type.Short) {
-			return new jkit.java.tree.Type.Short(pt);
-		} else if(pt instanceof jkit.jil.tree.Type.Int) {
-			return new jkit.java.tree.Type.Int(pt);
-		} else if(pt instanceof jkit.jil.tree.Type.Long) {
-			return new jkit.java.tree.Type.Long(pt);
-		} else if(pt instanceof jkit.jil.tree.Type.Float) {
-			return new jkit.java.tree.Type.Float(pt);
-		} else {
-			return new jkit.java.tree.Type.Double(pt);
-		}
-	}
-	
-	protected static jkit.java.tree.Type.Array fromJilType(jkit.jil.tree.Type.Array at) {
-		return new jkit.java.tree.Type.Array(fromJilType(at.element()),at);
-	}
-	
-	protected static jkit.java.tree.Type.Clazz fromJilType(jkit.jil.tree.Type.Clazz jt) {			
-		// I will make it fully qualified for simplicity.
-		ArrayList<Pair<String,List<jkit.java.tree.Type.Reference>>> ncomponents = new ArrayList();
-		// So, we need to split out the package into the component parts
-		String pkg = jt.pkg();
-		int idx = 0;
-		int start = 0;		
-		while((idx = pkg.indexOf('.',start)) != -1) {
-			ncomponents.add(new Pair(pkg.substring(start,idx),new ArrayList()));			
-			start = idx+1;
-		}		
-		
-		// Now, complete the components list
-		for(Pair<String,List<jkit.jil.tree.Type.Reference>> c : jt.components()) {
-			ArrayList<jkit.java.tree.Type.Reference> l = new ArrayList();
-			for(jkit.jil.tree.Type.Reference r : c.second()) {
-				l.add((jkit.java.tree.Type.Reference)fromJilType(r));
-			}
-			ncomponents.add(new Pair(c.first(),l));
-		}
-		
-		return new jkit.java.tree.Type.Clazz(ncomponents,jt);
-	}
+	}		
 	
 	/**
 	 * This method simply determines the super class of the given class.
