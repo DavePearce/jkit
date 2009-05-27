@@ -20,13 +20,13 @@ import jkit.jil.util.*;
 import jkit.util.Pair;
 import jkit.util.Triple;
 
-public class AnonClasses {
+public class AnonClassesRewrite {
 	private ClassLoader loader;
 	private TypeSystem types;
 	private int anonymousClassCount = 0;
 	private final Stack<Type.Clazz> context = new Stack<Type.Clazz>(); 
 	
-	public AnonClasses(ClassLoader loader, TypeSystem types) {
+	public AnonClassesRewrite(ClassLoader loader, TypeSystem types) {
 		this.loader = loader; 
 		this.types = types;
 	}

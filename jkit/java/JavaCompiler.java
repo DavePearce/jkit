@@ -385,7 +385,7 @@ public class JavaCompiler implements Compiler {
 	 */
 	protected void breakAnonClasses(File srcfile, JavaFile jfile, ClassLoader loader) {
 		long start = System.currentTimeMillis();
-		new AnonClasses(loader, new TypeSystem()).apply(jfile);
+		new AnonClassesRewrite(loader, new TypeSystem()).apply(jfile);
 		logTimedMessage("[" + srcfile.getPath()
 				+ "] Anonymous classes rewritten", (System
 				.currentTimeMillis() - start));
