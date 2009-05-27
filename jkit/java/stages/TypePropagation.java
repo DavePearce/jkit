@@ -537,30 +537,31 @@ public class TypePropagation {
 		String e_name = e.name();
 		
 		try {		
+
+			Type rt = (Type) e.target().attribute(Type.class);
+
+			if(rt instanceof Type.Variable) {
+				// in this situation, we're trying to dereference a generic
+				// variable. Therefore, we choose the largest type which
+				// this could possibly, and assume the receiver is this type.
+				Type.Variable vt = (Type.Variable) rt;										
+
+				if(vt.lowerBound() != null) {
+					receiver = vt.lowerBound(); 
+				} else {						
+					receiver = JAVA_LANG_OBJECT;
+				}
+			} else if(rt instanceof Type.Array) {
+				receiver = JAVA_LANG_OBJECT;
+			} else {
+				receiver = (Type.Clazz) e.target().attribute(Type.class);
+			}
+			
 			if(e.name().equals("super") || e.name().equals("this")) {				
-				Type.Clazz r = (Type.Clazz) e.attribute(Type.class);				
+				Type.Clazz r = (Type.Clazz) rt;				
 				e_name = r.components().get(r.components().size() - 1).first();
 				receiver = r;
-			} else {
-				Type rt = (Type) e.target().attribute(Type.class);
-				
-				if(rt instanceof Type.Variable) {
-					// in this situation, we're trying to dereference a generic
-					// variable. Therefore, we choose the largest type which
-					// this could possibly, and assume the receiver is this type.
-					Type.Variable vt = (Type.Variable) rt;										
-					
-					if(vt.lowerBound() != null) {
-						receiver = vt.lowerBound(); 
-					} else {						
-						receiver = JAVA_LANG_OBJECT;
-					}
-				} else if(rt instanceof Type.Array) {
-					receiver = JAVA_LANG_OBJECT;
-				} else {
-					receiver = (Type.Clazz) e.target().attribute(Type.class);
-				}
-			}							
+			} 				
 			
 			Triple<Clazz, Clazz.Method, Type.Function> r = types
 					.resolveMethod(receiver, e_name, parameterTypes, loader);

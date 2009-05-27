@@ -141,7 +141,6 @@ public class SkeletonBuilder {
 			
 			if (!skeleton.isInterface()
 					&& skeleton.methods(skeleton.name()).isEmpty()) {
-				System.out.println("ADDING DEFAULT CONSTRUCTOR");
 				// if we get here, then no constructor has been provided.
 				// Therefore, must add the default constructor.
 				SourceLocation loc = (SourceLocation) c.attribute(SourceLocation.class);

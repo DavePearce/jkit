@@ -734,15 +734,16 @@ public class ScopeResolution {
 			// much we can do here.
 			Type.Clazz thisType = ((ClassScope) findEnclosingScope(ClassScope.class)).type;
 			try {
-				e.attributes().add(getSuperClass(thisType));
+				Type superType = getSuperClass(thisType);
+				target = new Expr.LocalVariable("super",superType);
 			} catch(ClassNotFoundException cne) {
 				syntax_error(cne.getMessage(), e, cne);
-			}
+			}			
 		} else if(target == null && e.name().equals("this")) {
 			// Special case. We're invoking the super constructor. There's not
 			// much we can do here.
 			Type thisType = ((ClassScope) findEnclosingScope(ClassScope.class)).type;
-			e.attributes().add(thisType);
+			target = new Expr.LocalVariable("this",thisType);			
 		} else if(target == null) {					
 			boolean isThis = true;
 			
