@@ -146,7 +146,7 @@ public class JilBuilder {
 		// First, off. If this is a constructor, then check whether there is an
 		// explicit super constructor call or not.  If not, then add one.
 		if (!parent.isInterface() && d.name().equals(parent.name())) {			
-			if(!superCallFirst(stmts)) {			
+			if(!hasSuperCall(stmts)) {			
 				stmts.add(0, new JilExpr.Invoke(new JilExpr.Variable("super", parent
 						.superClass()), "super", new ArrayList<JilExpr>(),
 						new Type.Function(T_VOID), T_VOID));
@@ -195,7 +195,7 @@ public class JilBuilder {
 								.attributes());
 						JilStmt.Assign ae = new JilStmt.Assign(df, tmp.first(), d
 								.attributes());
-						if(superCallFirst(body)) {
+						if(hasSuperCall(body)) {
 							body.add(1,ae);
 							body.addAll(1,tmp.second());
 						} else {
@@ -1544,16 +1544,16 @@ public class JilBuilder {
 		return null;
 	}	
 	
-	protected boolean superCallFirst(List<JilStmt> stmts) {
-		if (stmts.size() == 0 || !(stmts.get(0) instanceof JilExpr.Invoke)) {
-			return false;
-		} else {
-			JilExpr.Invoke sc = (JilExpr.Invoke) stmts.get(0);
-			if (!sc.name().equals("super")) {
-				return false;
+	protected boolean hasSuperCall(List<JilStmt> stmts) {
+		for(JilStmt stmt : stmts) {
+			if(stmt instanceof JilExpr.Invoke) {
+				JilExpr.Invoke sc = (JilExpr.Invoke) stmt;
+				if (sc.name().equals("super")) {
+					return true;
+				}	
 			}
 		}
-		return true;
+		return false;
 	}
 	
 	public JilMethod createStaticInitialiser(JilClass parent) {
