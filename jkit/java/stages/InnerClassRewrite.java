@@ -333,8 +333,7 @@ public class InnerClassRewrite {
 							ArrayList<jkit.jil.tree.Attribute> attributes = new ArrayList(e.attributes());
 							Clazz.Method accessor = createWriteAccessor(f, (jkit.jil.tree.JilClass) c);
 							attributes.add(new JilBuilder.MethodInfo(accessor.exceptions(),accessor.type()));						
-							ArrayList<Expr> params = new ArrayList<Expr>();
-							params.add(e.target());
+							ArrayList<Expr> params = new ArrayList<Expr>();							
 							params.add(def.rhs());
 							
 							return new Expr.Invoke(new Expr.ClassVariable(c
@@ -879,9 +878,8 @@ public class InnerClassRewrite {
 			accessor.body().add(stmt);
 			
 			accessors.put(field.name(),accessor);
-		}
-		
-		clazz.methods().add(accessor);
+			clazz.methods().add(accessor);
+		}				
 		
 		return accessor;
 	}
@@ -894,14 +892,14 @@ public class InnerClassRewrite {
 		
 		JilMethod accessor = null;
 		
-		if(accessors == null) {
+		if(accessors == null) {			
 			accessors = new HashMap<String,JilMethod>();
 			writeAccessors.put(clazz.type(),accessors);
 		} else {
 			accessor = accessors.get(field.name());
 		}
 		
-		if(accessor == null) {
+		if(accessor == null) {			
 			// no, we haven't so construct one.
 			List<Modifier> modifiers = new ArrayList<Modifier>();
 			
@@ -947,9 +945,8 @@ public class InnerClassRewrite {
 			accessor.body().add(ret);
 			
 			accessors.put(field.name(),accessor);
-		}
-		
-		clazz.methods().add(accessor);
+			clazz.methods().add(accessor);
+		}			
 		
 		return accessor;
 	}
