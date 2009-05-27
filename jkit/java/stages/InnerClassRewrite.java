@@ -12,6 +12,7 @@ import jkit.java.tree.*;
 import jkit.java.tree.Decl.*;
 import jkit.java.tree.Stmt.Case;
 import static jkit.java.tree.Type.fromJilType;
+import static jkit.jil.util.Types.parentType;
 import jkit.jil.tree.*;
 import jkit.jil.tree.Type;
 import jkit.jil.util.*;
@@ -20,10 +21,15 @@ import jkit.util.Triple;
 
 /**
  * <p>
- * The purpose of this stage is to add <code>access</code> methods to classes
- * containing inner classes where necessary. Such accessors are required when an
- * inner class attempts to access a private field of an enclosing class. For
- * example, consider the following:
+ * The purpose of this stage is to perform several rewrites related to inner
+ * classes:
+ * <ol>
+ * <li>Non-static inner classes require parent pointer fields</li>
+ * <li>Parent pointer fields must be initialised in all constructors</li>
+ * <li>Access methods must be added when an inner class attempts to access a
+ * private field of an enclosing class.</li>
+ * </ol>
+ * For example, consider the following:
  * </p>
  * 
  * <pre>
@@ -552,6 +558,7 @@ public class InnerClassRewrite {
 	
 	protected Expr doNew(Expr.New e) {
 		// Second, recurse through any parameters supplied ...
+		Type type = (Type) e.type().attribute(Type.class);
 		List<Expr> parameters = e.parameters();
 		for(int i=0;i!=parameters.size();++i) {
 			Expr p = parameters.get(i);
@@ -567,6 +574,41 @@ public class InnerClassRewrite {
 			}
 			
 			enclosingClasses.pop();
+		}
+		
+		// Now, check whether we're constructing a non-static inner class. If
+		// so, then we need supply the parent pointer.
+		if(type instanceof Type.Clazz) {
+			Type.Clazz tc = (Type.Clazz) type;
+			if(tc.components().size() > 1) {
+				// Ok, this is an inner class construction. So, we need to check
+				// whether it's static or not.
+				try {
+					Clazz clazz = loader.loadClass(tc);
+					
+					if(!clazz.isStatic()) {						
+						// First, update the arguments to the new call
+						Type.Clazz parentType = parentType(tc);
+						
+						if(e.context() == null) {
+							Expr.LocalVariable thiz = new Expr.LocalVariable(
+									"this", parentType);
+							e.parameters().add(0,thiz);							
+						}
+						
+						// Second, update the function type.
+						JilBuilder.MethodInfo mi = (JilBuilder.MethodInfo) e
+								.attribute(JilBuilder.MethodInfo.class); 
+						Type.Function mt = mi.type;
+						ArrayList<Type> nparamtypes = new ArrayList<Type>(mt.parameterTypes());	
+						nparamtypes.add(0,parentType);
+						mi.type = new Type.Function(mt.returnType(), nparamtypes,
+								mt.typeArguments());
+					}
+				} catch(ClassNotFoundException cne) {
+					syntax_error(cne.getMessage(),e,cne);
+				}
+			}			
 		}
 		
 		return e;
@@ -744,8 +786,8 @@ public class InnerClassRewrite {
 		
 		// Second, update the skeleton types. I know it's a JilClass here, since
 		// it must be the skeleton for the enclosing class which I'm compiling!
-		JilClass oc = (JilClass) loader.loadClass(ownerType);
-		for(JilMethod m : oc.methods(owner.name())) {
+		JilClass oc = (JilClass) loader.loadClass(ownerType);		
+		for(JilMethod m : oc.methods(owner.name())) {			
 			ArrayList<Type> nparams = new ArrayList<Type>(m.type().parameterTypes());
 			nparams.add(0,parentType);
 			Type.Function ntype = new Type.Function(m.type().returnType(),nparams);
@@ -768,6 +810,7 @@ public class InnerClassRewrite {
 	
 	protected void rewriteConstructor(JavaMethod constructor, Type.Clazz ownerType,
 			Type.Clazz parentType, SourceLocation loc) {
+				
 		ArrayList<Modifier> mods = new ArrayList<Modifier>();
 		mods.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL));
 		constructor.parameters().add(0, new Triple("this$0", mods, parentType));
@@ -776,6 +819,16 @@ public class InnerClassRewrite {
 		Expr.Deref lhs = new Expr.Deref(thiz, "this$0", parentType, loc);
 		Stmt.Assignment assign = new Stmt.Assignment(lhs, param);
 		constructor.body().statements().add(0, assign);		
+		
+		// Now, update the inferred jil type for this method.
+		Type.Function type = (Type.Function) constructor
+				.attribute(Type.Function.class);
+		
+		ArrayList<Type> nparams = new ArrayList<Type>(type.parameterTypes());
+		nparams.add(0,parentType);
+		
+		constructor.attributes().remove(type);
+		constructor.attributes().add(new Type.Function(type.returnType(),nparams));
 	}
 	
 	protected Clazz.Method createReadAccessor(Clazz.Field field, jkit.jil.tree.JilClass clazz) {		

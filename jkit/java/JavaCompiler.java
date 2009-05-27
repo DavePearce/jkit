@@ -217,8 +217,8 @@ public class JavaCompiler implements Compiler {
 			// Eight, break down anonymous inner classes
 			breakAnonClasses(filename,jfile,loader);
 			
-			// Ninth, add inner class accessors as appropriate
-			addInnerAccessors(filename,jfile,loader);
+			// Ninth, rewrite inner classes
+			rewriteInnerClasses(filename,jfile,loader);
 						
 			// Tenth, eliminate side effects from expressions
 			generateJilCode(filename, jfile, loader);
@@ -387,24 +387,24 @@ public class JavaCompiler implements Compiler {
 		long start = System.currentTimeMillis();
 		new AnonClasses(loader, new TypeSystem()).apply(jfile);
 		logTimedMessage("[" + srcfile.getPath()
-				+ "] Added inner class accessors", (System
+				+ "] Anonymous classes rewritten", (System
 				.currentTimeMillis() - start));
 	}
 	
 	/**
-	 * This is the ninth stage in the compilation pipeline --- we must add
-	 * access methods in situations where an inner class attempts to access a
-	 * private field of an enclosing class.
+	 * This is the ninth stage in the compilation pipeline --- we must rewrite
+	 * inner classes to be individual classes, and include accessors and parent
+	 * pointers where appropriate.
 	 * 
 	 * @param srcfile
 	 * @param jfile
 	 * @param loader
 	 */
-	protected void addInnerAccessors(File srcfile, JavaFile jfile, ClassLoader loader) {
+	protected void rewriteInnerClasses(File srcfile, JavaFile jfile, ClassLoader loader) {
 		long start = System.currentTimeMillis();
 		new InnerClassRewrite(loader, new TypeSystem()).apply(jfile);
 		logTimedMessage("[" + srcfile.getPath()
-				+ "] Added inner class accessors", (System
+				+ "] Inner classes rewritten", (System
 				.currentTimeMillis() - start));
 	}
 	

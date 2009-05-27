@@ -145,7 +145,7 @@ public class JilBuilder {
 		
 		// First, off. If this is a constructor, then check whether there is an
 		// explicit super constructor call or not.  If not, then add one.
-		if (!parent.isInterface() && d.name().equals(parent.name())) {
+		if (!parent.isInterface() && d.name().equals(parent.name())) {			
 			if(!superCallFirst(stmts)) {			
 				stmts.add(0, new JilExpr.Invoke(new JilExpr.Variable("super", parent
 						.superClass()), "super", new ArrayList<JilExpr>(),
@@ -973,53 +973,11 @@ public class JilBuilder {
 		
 		Pair<JilExpr,List<JilStmt>> context = doExpression(e.context());
 		Pair<List<JilExpr>,List<JilStmt>> params = doExpressionList(e.parameters());
-				
-		// Now, we need to check whether we're constructing a non-static inner
-		// class instance.
-		if(type instanceof Type.Clazz) {
-			Type.Clazz tc = (Type.Clazz) type;
-			if(tc.components().size() > 1) {
-				// Ok, this is an inner class construction. So, we need to check
-				// whether it's static or not.
-				try {
-					Clazz clazz = loader.loadClass(tc);
-					if(!clazz.isStatic()) {						
-						// YES, there is a problem and we need to update the
-						// parameters supplied to the constructor.
-						
-						Type.Clazz parentType = parentType(tc);
-						
-						if(context != null) {
-							params.first().add(0,context.first());
-						} else {
-							// could be a problem if this is called from within
-							// a static method, or this class is not correct.
-							params.first().add(0,
-									new JilExpr.Variable("this", parentType));
-						}
-						
-						Type.Function mt = mi.type;
-						ArrayList<Type> nparamtypes = new ArrayList<Type>(mt.parameterTypes());	
-						nparamtypes.add(0,parentType);
-						mi.type = new Type.Function(mt.returnType(), nparamtypes,
-								mt.typeArguments());
-					}
-
-					// process declarations for anonymous inner classes.
-					if (e.declarations().size() > 0) {
-						for (Decl d : e.declarations()) {
-							doDeclaration(d, (JilClass) clazz);
-						}
-					}
-				} catch(ClassNotFoundException cne) {
-					syntax_error(cne.getMessage(),e,cne);
-				}
-			}			
-		}
-		
+								
 		if(context != null) {
 			r.addAll(context.second());
 		}
+		
 		r.addAll(params.second());					
 		
 		if(mi != null) {			
