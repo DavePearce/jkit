@@ -26,6 +26,8 @@ public class AnonClassesRewrite {
 	private TypeSystem types;
 	private int anonymousClassCount = 0;
 	private final Stack<JavaClass> context = new Stack<JavaClass>(); 
+	private final Stack<HashMap<String,Type>> nonLocals = new Stack();
+	private final Stack<Type.Clazz> anonClasses = new Stack();
 	
 	public AnonClassesRewrite(ClassLoader loader, TypeSystem types) {
 		this.loader = loader; 
@@ -55,7 +57,7 @@ public class AnonClassesRewrite {
 			doStaticInitialiserBlock((Decl.StaticInitialiserBlock) d);
 		} else {
 			syntax_error("internal failure (unknown declaration \"" + d
-					+ "\" encountered)",d);
+					+ "\" encountered)",d);			
 		}
 	}
 	
@@ -73,7 +75,7 @@ public class AnonClassesRewrite {
 		for(int i=0;i!=declarations.size();++i) {		
 			doDeclaration(declarations.get(i));
 		}
-		context.pop();
+		context.pop();		
 	}
 
 	protected void doMethod(JavaMethod d) {	
@@ -82,12 +84,12 @@ public class AnonClassesRewrite {
 	}
 	
 	protected void doField(JavaField d) {
-		doExpression(d.initialiser());				
+		d.setInitialiser(doExpression(d.initialiser()));				
 	}
 	
 	protected void doInitialiserBlock(Decl.InitialiserBlock d) {
 		// will need to add code here for dealing with classes nested in
-		// methods.
+		// methods.		
 		for(Stmt s : d.statements()) {
 			doStatement(s);
 		}		
@@ -95,10 +97,10 @@ public class AnonClassesRewrite {
 	
 	protected void doStaticInitialiserBlock(Decl.StaticInitialiserBlock d) {
 		// will need to add code here for dealing with classes nested in
-		// methods.
+		// methods.		
 		for(Stmt s : d.statements()) {
 			doStatement(s);
-		}		
+		}
 	}
 	
 	protected void doStatement(Stmt e) {
@@ -146,25 +148,25 @@ public class AnonClassesRewrite {
 			doExpression((Stmt.PrePostIncDec)e);
 		} else if(e != null) {
 			syntax_error("Invalid statement encountered: "
-					+ e.getClass(),e);
-		}		
+					+ e.getClass(),e);			
+		}				
 	}
 	
-	protected void doBlock(Stmt.Block block) {
-		if(block != null) {
+	protected void doBlock(Stmt.Block block) {		
+		if(block != null) {			
 			// now process every statement in this block.
 			for(Stmt s : block.statements()) {
 				doStatement(s);
 			}
-		}
+		}		
 	}
 	
-	protected void doSynchronisedBlock(Stmt.SynchronisedBlock block) {
+	protected void doSynchronisedBlock(Stmt.SynchronisedBlock block) {		
 		doBlock(block);
-		doExpression(block.expr());
+		doExpression(block.expr());		
 	}
 	
-	protected void doTryCatchBlock(Stmt.TryCatchBlock block) {
+	protected void doTryCatchBlock(Stmt.TryCatchBlock block) {		
 		doBlock(block);		
 		doBlock(block.finaly());		
 		
@@ -173,37 +175,37 @@ public class AnonClassesRewrite {
 		}
 	}
 	
-	protected void doVarDef(Stmt.VarDef def) {		
+	protected void doVarDef(Stmt.VarDef def) {				
 		List<Triple<String, Integer, Expr>> defs = def.definitions();
 		for(int i=0;i!=defs.size();++i) {
 			Triple<String, Integer, Expr> d = defs.get(i);			
-			doExpression(d.third());														
+			Expr e = doExpression(d.third());
+			defs.set(i, new Triple(d.first(),d.second(),e));														
 		}
 	}
 	
-	protected void doAssignment(Stmt.Assignment def) {
-		doExpression(def.lhs());	
-		doExpression(def.rhs());			
+	protected Expr doAssignment(Stmt.Assignment def) {
+		def.setLhs(doExpression(def.lhs()));	
+		def.setRhs(doExpression(def.rhs()));
+		return def;
 	}
 	
 	protected void doReturn(Stmt.Return ret) {
-		doExpression(ret.expr());
+		ret.setExpr(doExpression(ret.expr()));
 	}
 	
 	protected void doThrow(Stmt.Throw ret) {
-		doExpression(ret.expr());
+		ret.setExpr(doExpression(ret.expr()));
 	}
 	
 	protected void doAssert(Stmt.Assert ret) {
-		doExpression(ret.expr());
+		ret.setExpr(doExpression(ret.expr()));
 	}
 	
-	protected void doBreak(Stmt.Break brk) {
-		// nothing	
+	protected void doBreak(Stmt.Break brk) {		
 	}
 	
-	protected void doContinue(Stmt.Continue brk) {
-		// nothing
+	protected void doContinue(Stmt.Continue brk) {		
 	}
 	
 	protected void doLabel(Stmt.Label lab) {						
@@ -211,125 +213,126 @@ public class AnonClassesRewrite {
 	}
 	
 	protected void doIf(Stmt.If stmt) {
-		doExpression(stmt.condition());
+		stmt.setCondition(doExpression(stmt.condition()));
 		doStatement(stmt.trueStatement());
-		doStatement(stmt.falseStatement());
+		doStatement(stmt.falseStatement());		
 	}
 	
 	protected void doWhile(Stmt.While stmt) {
-		doExpression(stmt.condition());
-		doStatement(stmt.body());		
+		stmt.setCondition(doExpression(stmt.condition()));
+		doStatement(stmt.body());
 	}
 	
 	protected void doDoWhile(Stmt.DoWhile stmt) {
-		doExpression(stmt.condition());
+		stmt.setCondition(doExpression(stmt.condition()));
 		doStatement(stmt.body());
 	}
 	
 	protected void doFor(Stmt.For stmt) {
 		doStatement(stmt.initialiser());
-		doExpression(stmt.condition());
+		stmt.setCondition(doExpression(stmt.condition()));
 		doStatement(stmt.increment());
-		doStatement(stmt.body());	
+		doStatement(stmt.body());
 	}
 	
 	protected void doForEach(Stmt.ForEach stmt) {
-		doExpression(stmt.source());
+		stmt.setSource(doExpression(stmt.source()));
 		doStatement(stmt.body());
 	}
 	
 	protected void doSwitch(Stmt.Switch sw) {
-		doExpression(sw.condition());
+		sw.setCondition(doExpression(sw.condition()));
 		for(Case c : sw.cases()) {
-			doExpression(c.condition());
+			c.setCondition(doExpression(c.condition()));
 			for(Stmt s : c.statements()) {
 				doStatement(s);
 			}
-		}
-		
-		// should check that case conditions are final constants here.
+		}		
 	}
 	
-	protected void doExpression(Expr e) {	
+	protected Expr doExpression(Expr e) {	
 		if(e instanceof Value.Bool) {
-			doBoolVal((Value.Bool)e);
+			return doBoolVal((Value.Bool)e);
 		} else if(e instanceof Value.Byte) {
-			doByteVal((Value.Byte)e);
+			return doByteVal((Value.Byte)e);
 		} else if(e instanceof Value.Char) {
-			doCharVal((Value.Char)e);
+			return doCharVal((Value.Char)e);
 		} else if(e instanceof Value.Short) {
-			doShortVal((Value.Short)e);
+			return doShortVal((Value.Short)e);
 		} else if(e instanceof Value.Int) {
-			doIntVal((Value.Int)e);
+			return doIntVal((Value.Int)e);
 		} else if(e instanceof Value.Long) {
-			doLongVal((Value.Long)e);
+			return doLongVal((Value.Long)e);
 		} else if(e instanceof Value.Float) {
-			doFloatVal((Value.Float)e);
+			return doFloatVal((Value.Float)e);
 		} else if(e instanceof Value.Double) {
-			doDoubleVal((Value.Double)e);
+			return doDoubleVal((Value.Double)e);
 		} else if(e instanceof Value.String) {
-			doStringVal((Value.String)e);
+			return doStringVal((Value.String)e);
 		} else if(e instanceof Value.Null) {
-			doNullVal((Value.Null)e);
+			return doNullVal((Value.Null)e);
 		} else if(e instanceof Value.TypedArray) {
-			doTypedArrayVal((Value.TypedArray)e);
+			return doTypedArrayVal((Value.TypedArray)e);
 		} else if(e instanceof Value.Array) {
-			doArrayVal((Value.Array)e);
+			return doArrayVal((Value.Array)e);
 		} else if(e instanceof Value.Class) {
-			doClassVal((Value.Class) e);
+			return doClassVal((Value.Class) e);
 		} else if(e instanceof Expr.LocalVariable) {
-			doLocalVariable((Expr.LocalVariable)e);
+			return doLocalVariable((Expr.LocalVariable)e);
 		} else if(e instanceof Expr.NonLocalVariable) {
-			doNonLocalVariable((Expr.NonLocalVariable)e);
+			return doNonLocalVariable((Expr.NonLocalVariable)e);
 		} else if(e instanceof Expr.ClassVariable) {
-			doClassVariable((Expr.ClassVariable)e);
+			return doClassVariable((Expr.ClassVariable)e);
 		} else if(e instanceof Expr.UnOp) {
-			doUnOp((Expr.UnOp)e);
+			return doUnOp((Expr.UnOp)e);
 		} else if(e instanceof Expr.BinOp) {
-			doBinOp((Expr.BinOp)e);
+			return doBinOp((Expr.BinOp)e);
 		} else if(e instanceof Expr.TernOp) {
-			doTernOp((Expr.TernOp)e);
+			return doTernOp((Expr.TernOp)e);
 		} else if(e instanceof Expr.Cast) {
-			doCast((Expr.Cast)e);
+			return doCast((Expr.Cast)e);
 		} else if(e instanceof Expr.Convert) {
-			doConvert((Expr.Convert)e);
+			return doConvert((Expr.Convert)e);
 		} else if(e instanceof Expr.InstanceOf) {
-			doInstanceOf((Expr.InstanceOf)e);
+			return doInstanceOf((Expr.InstanceOf)e);
 		} else if(e instanceof Expr.Invoke) {
-			doInvoke((Expr.Invoke) e);
+			return doInvoke((Expr.Invoke) e);
 		} else if(e instanceof Expr.New) {
-			doNew((Expr.New) e);
+			return doNew((Expr.New) e);
 		} else if(e instanceof Expr.ArrayIndex) {
-			doArrayIndex((Expr.ArrayIndex) e);
+			return doArrayIndex((Expr.ArrayIndex) e);
 		} else if(e instanceof Expr.Deref) {
-			doDeref((Expr.Deref) e);
+			return doDeref((Expr.Deref) e);
 		} else if(e instanceof Stmt.Assignment) {
 			// force brackets			
-			doAssignment((Stmt.Assignment) e);			
+			return doAssignment((Stmt.Assignment) e);			
 		} else if(e != null) {
 			syntax_error("Invalid expression encountered: "
 					+ e.getClass(),e);
 		}
+		return null;
 	}
 	
-	protected void doDeref(Expr.Deref e) {
-		doExpression(e.target());		
-		// need to perform field lookup here!
+	protected Expr doDeref(Expr.Deref e) {
+		e.setTarget(doExpression(e.target()));
+		return e;
 	}
 	
-	protected void doArrayIndex(Expr.ArrayIndex e) {
-		doExpression(e.target());
-		doExpression(e.index());
+	protected Expr doArrayIndex(Expr.ArrayIndex e) {
+		e.setTarget(doExpression(e.target()));
+		e.setIndex(doExpression(e.index()));
+		return e;
 	}
 	
-	protected void doNew(Expr.New e) {				
-		doExpression(e.context());
+	protected Expr doNew(Expr.New e) {				
+		e.setContext(doExpression(e.context()));
 			
-		for(Expr p : e.parameters()) {
-			doExpression(p);			
+		for(int i = 0;i!=e.parameters().size();++i) {
+			e.parameters().set(i,doExpression(e.parameters().get(i)));			
 		}
-		
-		if(e.declarations().size() > 0) {
+				
+		// Second, if this is an anonymous class declaration, then break it down!
+		if(e.declarations().size() > 0) {			
 			// This is an anonymous class declaration.  We need to do several
 			// things here. Firstly, update the type of the new expression to be
 			// that of the anonymous inner class. Second, we need to add
@@ -337,7 +340,18 @@ public class AnonClassesRewrite {
 			String name = Integer.toString(++anonymousClassCount);
 			Type.Clazz parent = (Type.Clazz) e.type().attribute(Type.Clazz.class);			
 			Type.Clazz aType = anonClassType(name);
-				
+		
+			HashMap<String,Type> params = new HashMap();
+			nonLocals.push(params);
+			anonClasses.push(aType);
+			// First, break down any anonymous classes held internally to this
+			// anonymous class.
+			for(Decl d : e.declarations()) {
+				doDeclaration(d);
+			}
+			anonClasses.pop();
+			nonLocals.pop();
+									
 			try {
 				JilClass parentClass = (JilClass) loader.loadClass(parent);
 				JilClass anonClass = (JilClass) loader.loadClass(aType);
@@ -348,17 +362,33 @@ public class AnonClassesRewrite {
 				e.type().attributes().remove(parent);
 				e.type().attributes().add(aType);
 
-				// Second, create an appropriate constructor.
 				JilBuilder.MethodInfo mi = (JilBuilder.MethodInfo) e
 				.attribute(JilBuilder.MethodInfo.class);
+								
+				// Second, determine non-local variables
+				if(params.size() > 0) {
+					ArrayList<Type> nparams = new ArrayList<Type>(mi.type.parameterTypes());
+					for(Map.Entry<String,Type> en : params.entrySet()) {
+						nparams.add(en.getValue());
+						// FIXME: Actually need to determine whether or not this is a
+						// local variable, or a non-local from a method further up.
+						Expr arg = new Expr.LocalVariable(en.getKey(),en.getValue(),loc);
+						e.parameters().add(arg);
+					}
+					mi.type = new Type.Function(mi.type.returnType(),nparams);
+				}
 				
+				// Third, create an appropriate constructor.
 				Decl.JavaMethod constructor = buildAnonConstructor(name,
-						mi.type, mi.exceptions, parentClass, anonClass, loc);
+						mi.type, mi.exceptions, params, parentClass,
+						anonClass, loc);
 				
-				Decl.JavaClass ac = buildAnonClass(anonClass, loc);
+				// Finally, create an appropriate java class.
+				
+				Decl.JavaClass ac = buildAnonClass(anonClass, params, loc);
 				
 				ac.declarations().add(constructor);
-				ac.declarations().addAll(e.declarations());
+				ac.declarations().addAll(e.declarations());								
 				
 				context.peek().declarations().add(ac);
 				
@@ -370,89 +400,114 @@ public class AnonClassesRewrite {
 			for(Decl d : e.declarations()) {
 				doDeclaration(d);			
 			}
-		}
-	}
-	
-	protected void doInvoke(Expr.Invoke e) {
-		doExpression(e.target());
+		}		
 		
-		for(Expr p : e.parameters()) {
-			doExpression(p);
+		return e;
+	}
+	
+	protected Expr doInvoke(Expr.Invoke e) {
+		e.setTarget(doExpression(e.target()));
+		
+		for(int i=0;i!=e.parameters().size();++i) {
+			Expr p = e.parameters().get(i);
+			e.parameters().set(i,doExpression(p));
 		}
+		return e;
 	}
 	
-	protected void doInstanceOf(Expr.InstanceOf e) {		
-		doExpression(e.lhs());
+	protected Expr doInstanceOf(Expr.InstanceOf e) {		
+		e.setLhs(doExpression(e.lhs()));
+		return e;
 	}
 	
-	protected void doCast(Expr.Cast e) {		
-		doExpression(e.expr());
+	protected Expr doCast(Expr.Cast e) {		
+		e.setExpr(doExpression(e.expr()));
+		return e;
 	}
 	
-	protected void doConvert(Expr.Convert e) {		
-		doExpression(e.expr());
+	protected Expr doConvert(Expr.Convert e) {		
+		e.setExpr(doExpression(e.expr()));
+		return e;
 	}
 	
-	protected void doBoolVal(Value.Bool e) {}
+	protected Expr doBoolVal(Value.Bool e) { return e; }
 	
-	protected void doByteVal(Value.Byte e) {}
+	protected Expr doByteVal(Value.Byte e) { return e; }
 	
-	protected void doCharVal(Value.Char e) {}
+	protected Expr doCharVal(Value.Char e) { return e; }
 	
-	protected void doShortVal(Value.Short e) {}
+	protected Expr doShortVal(Value.Short e) { return e; }
 	
-	protected void doIntVal(Value.Int e) {}
+	protected Expr doIntVal(Value.Int e) { return e; }
 	
-	protected void doLongVal(Value.Long e) {}
+	protected Expr doLongVal(Value.Long e) { return e; }
 	
-	protected void doFloatVal(Value.Float e) {}
+	protected Expr doFloatVal(Value.Float e) { return e; }
 	
-	protected void doDoubleVal(Value.Double e) {}
+	protected Expr doDoubleVal(Value.Double e) { return e; }
 	
-	protected void doStringVal(Value.String e) {}
+	protected Expr doStringVal(Value.String e) { return e; }
 	
-	protected void doNullVal(Value.Null e) {}
+	protected Expr doNullVal(Value.Null e) { return e; }
 	
-	protected void doTypedArrayVal(Value.TypedArray e) {
-		for(Expr v : e.values()) {
-			doExpression(v);
+	protected Expr doTypedArrayVal(Value.TypedArray e) {		
+		for(int i=0;i!=e.values().size();++i) {
+			Expr v = e.values().get(i);
+			e.values().set(i,doExpression(v));
 		}
+		return e;
 	}
 	
-	protected void doArrayVal(Value.Array e) {
-		for(Expr v : e.values()) {
-			doExpression(v);
-		}
+	protected Expr doArrayVal(Value.Array e) {		
+		for(int i=0;i!=e.values().size();++i) {
+			Expr v = e.values().get(i);
+			e.values().set(i,doExpression(v));
+		}		
+		return e;
 	}
 		
-	protected void doClassVal(Value.Class e) {		
+	protected Expr doClassVal(Value.Class e) {
+		return e; 
 	}
 	
-	protected void doLocalVariable(Expr.LocalVariable e) {					
+	protected Expr doLocalVariable(Expr.LocalVariable e) {
+		return e; 
 	}
 
-	protected void doNonLocalVariable(Expr.NonLocalVariable e) {					
+	protected Expr doNonLocalVariable(Expr.NonLocalVariable e) {
+		Type t = (Type) e.attribute(Type.class);
+		nonLocals.peek().put(e.value(),t);
+		
+		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
+		
+		Expr.LocalVariable thiz = new Expr.LocalVariable("this",anonClasses.peek(),loc);
+		return new Expr.Deref(thiz,"val$" + e.value(),t,loc);
 	}
 	
-	protected void doClassVariable(Expr.ClassVariable e) {					
+	protected Expr doClassVariable(Expr.ClassVariable e) {
+		return e;
 	}
 	
-	protected void doUnOp(Expr.UnOp e) {		
-		doExpression(e.expr());
+	protected Expr doUnOp(Expr.UnOp e) {		
+		e.setExpr(doExpression(e.expr()));
+		return e;
 	}
 		
-	protected void doBinOp(Expr.BinOp e) {				
-		doExpression(e.lhs());
-		doExpression(e.rhs());		
+	protected Expr doBinOp(Expr.BinOp e) {				
+		e.setLhs(doExpression(e.lhs()));
+		e.setRhs(doExpression(e.rhs()));
+		return e;
 	}
 	
-	protected void doTernOp(Expr.TernOp e) {		
-		doExpression(e.condition());
-		doExpression(e.falseBranch());
-		doExpression(e.trueBranch());
+	protected Expr doTernOp(Expr.TernOp e) {		
+		e.setCondition(doExpression(e.condition()));
+		e.setFalseBranch(doExpression(e.falseBranch()));
+		e.setTrueBranch(doExpression(e.trueBranch()));
+		return e;
 	}
 	
-	protected Decl.JavaClass buildAnonClass(JilClass anonClass, SourceLocation loc) {
+	protected Decl.JavaClass buildAnonClass(JilClass anonClass,
+			HashMap<String, Type> nonlocalParams, SourceLocation loc) {
 		
 		jkit.java.tree.Type.Clazz superClass = fromJilType(anonClass.superClass());
 		ArrayList<jkit.java.tree.Type.Clazz> interfaces = new ArrayList();
@@ -464,35 +519,62 @@ public class AnonClassesRewrite {
 				.modifiers()), anonClass.name(), new ArrayList(), superClass,
 				interfaces, new ArrayList<Decl>(), loc, anonClass.type());				
 		
+		// now add fields for non-local variables.
+		for(Map.Entry<String,Type> en : nonlocalParams.entrySet()) {
+			ArrayList<Modifier> mods = new ArrayList();
+			mods.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL));
+			mods.add(new Modifier.Base(java.lang.reflect.Modifier.PRIVATE));			
+			Decl.JavaField f = new Decl.JavaField(mods, "val$" + en.getKey(),
+					fromJilType(en.getValue()), null, loc);
+			jc.declarations().add(f);
+			anonClass.fields().add(new JilField("val$" + en.getKey(),en.getValue(),mods));
+		}
+		
 		return jc;
 	}
 	
 	protected Decl.JavaMethod buildAnonConstructor(String name,
 			Type.Function type, ArrayList<Type.Clazz> exceptions,
-			JilClass parentClass, JilClass anonClass, SourceLocation loc) {
+			HashMap<String, Type> nonlocalParams, JilClass parentClass,
+			JilClass anonClass, SourceLocation loc) {
+		
+		// ... yes, this method is ugly.
 		
 		ArrayList<Pair<String, List<Modifier>>> jilparams = new ArrayList();
 		ArrayList<Triple<String, List<Modifier>, jkit.java.tree.Type>> javaparams = new ArrayList();
-		ArrayList<Expr> args = new ArrayList();
-						
-		ArrayList<Modifier> mods = new ArrayList();
+		ArrayList<Expr> args = new ArrayList<Expr>();
+		ArrayList<Type> superParams = new ArrayList<Type>();
+		ArrayList<Modifier> mods = new ArrayList<Modifier>();
 		mods.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL));
 		int p = 0;
-						
+		int trigger = (type.parameterTypes().size() - nonlocalParams.size());
 		for (Type t : type.parameterTypes()) {
 			// don't include the first parameter *if* it's the parent pointer,
 			// and the super class is static.
 			jilparams.add(new Pair("x" + p, mods));
 			javaparams.add(new Triple("x" + p, mods, fromJilType(t)));
-			args.add(new Expr.LocalVariable("x" + p, t));
+			if(p < trigger) {
+				superParams.add(t);
+				args.add(new Expr.LocalVariable("x" + p, t));
+			}
 			p = p + 1;
-		}
+		}			
 		
 		ArrayList<Stmt> stmts = new ArrayList<Stmt>();
+		
+		for(Map.Entry<String,Type> en : nonlocalParams.entrySet()) {
+			Type t = en.getValue();
+			Expr thiz = new Expr.LocalVariable("this",anonClass.type(),loc);
+			Expr lhs = new Expr.Deref(thiz,"val$" + en.getKey(),t,loc);
+			Expr rhs = new Expr.LocalVariable("x" + trigger++,t);
+			
+			stmts.add(new Stmt.Assignment(lhs,rhs,loc));
+		}
+		
 		Expr.LocalVariable target = new Expr.LocalVariable("super",parentClass.type());		
 		Expr.Invoke ivk = new Expr.Invoke(target, "super", args,
 				new ArrayList(), loc, new JilBuilder.MethodInfo(exceptions,
-						type));
+						new Type.Function(type.returnType(),superParams)));
 		stmts.add(ivk);
 		
 		Stmt.Block block = new Stmt.Block(stmts,loc);
