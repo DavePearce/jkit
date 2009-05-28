@@ -577,7 +577,13 @@ public class AnonClassesRewrite {
 			stmts.add(new Stmt.Assignment(lhs,rhs,loc));
 		}
 		
-		Expr.LocalVariable target = new Expr.LocalVariable("super",parentClass.type());		
+		Expr.LocalVariable target;
+		
+		if(parentClass.isInterface()) {
+			target = new Expr.LocalVariable("super",Types.JAVA_LANG_OBJECT);
+		} else {
+			target = new Expr.LocalVariable("super",parentClass.type());
+		}
 		Expr.Invoke ivk = new Expr.Invoke(target, "super", args,
 				new ArrayList(), loc, new JilBuilder.MethodInfo(exceptions,
 						new Type.Function(type.returnType(),superParams)));
