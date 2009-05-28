@@ -475,10 +475,17 @@ public class TypeChecking {
 		Type lhs_t = (Type) e.lhs().attribute(Type.class);
 		Type rhs_t = (Type) e.rhs().attribute(Type.class);
 		
-		if(lhs_t instanceof Type.Primitive) {
-			syntax_error("required reference type, found " + lhs_t , e);			
-		} else if(!(rhs_t instanceof Type.Reference)) {
-			syntax_error("required class or array type, found " + rhs_t , e);
+		try {
+			if(lhs_t instanceof Type.Primitive) {
+				syntax_error("required reference type, found " + lhs_t , e);			
+			} else if(!(rhs_t instanceof Type.Reference)) {
+				syntax_error("required class or array type, found " + rhs_t , e);
+			} else if((lhs_t instanceof Type.Array || rhs_t instanceof Type.Array)
+					&& !(types.subtype(lhs_t,rhs_t,loader))) {
+				syntax_error("inconvertible types: " + lhs_t + ", " + rhs_t, e);
+			}
+		} catch(ClassNotFoundException cne) {
+			syntax_error("type error",e,cne);
 		}
 	}
 	
