@@ -3,6 +3,7 @@ package jkit.java.stages;
 import java.util.*;
 
 import static jkit.compiler.SyntaxError.*;
+import jkit.compiler.*;
 import jkit.compiler.ClassLoader;
 import jkit.java.io.JavaFile;
 import jkit.java.tree.Decl;
@@ -10,13 +11,11 @@ import jkit.java.tree.Expr;
 import jkit.java.tree.Stmt;
 import jkit.java.tree.Value;
 import jkit.java.tree.Stmt.Case;
-import jkit.jil.tree.Attribute;
 import jkit.jil.tree.JilClass;
 import jkit.jil.tree.JilField;
 import jkit.jil.tree.JilMethod;
 import jkit.jil.tree.Modifier;
 import jkit.jil.tree.SourceLocation;
-import jkit.jil.tree.SyntacticElement;
 import jkit.jil.tree.Type;
 import jkit.util.*;
 
@@ -428,9 +427,8 @@ public class SkeletonBuilder {
 			
 			Type.Clazz superType = (Type.Clazz) e.type().attribute(Type.class);
 			
-			try {				
-				
-				JilClass c = (JilClass) loader.loadClass(superType);
+			try {								
+				Clazz superClazz = (Clazz) loader.loadClass(superType);
 				String name = Integer.toString(++anonymousClassCount);
 				
 				ArrayList<Pair<String, List<Type.Reference>>> ncomponents = new ArrayList(
@@ -446,7 +444,7 @@ public class SkeletonBuilder {
 					modifiers.add(new Modifier.Base(java.lang.reflect.Modifier.STATIC));
 				}
 				
-				if (c.isInterface()) {
+				if (superClazz.isInterface()) {
 					// In this case, we're extending from an interface rather
 					// than a super class.
 					ArrayList<Type.Clazz> interfaces = new ArrayList<Type.Clazz>();
@@ -466,7 +464,7 @@ public class SkeletonBuilder {
 							new ArrayList<JilField>(),
 							new ArrayList<JilMethod>(), e.attributes());
 				}												
-				
+						
 				skeletons.add(skeleton);
 				loader.register(skeleton);
 

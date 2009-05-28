@@ -24,6 +24,7 @@ import jkit.jil.tree.Modifier;
 import jkit.jil.tree.SourceLocation;
 import jkit.jil.tree.SyntacticElement;
 import jkit.jil.tree.Type;
+import jkit.jil.util.Types;
 
 /**
  * The purpose of this operation, is to propagate type information throughout
@@ -466,30 +467,50 @@ public class TypePropagation {
 		if(t instanceof Type.Clazz) {
 			Type.Clazz tc = (Type.Clazz) t;
 			try {
-				String constructorName = tc.components().get(
-						tc.components().size() - 1).first();
-				Triple<Clazz, Clazz.Method, Type.Function> r = types
-						.resolveMethod(tc, constructorName, parameterTypes,
-								loader);
-				Type.Function f = r.third();
+				// Now, we want to determine the actual type of the constructor
+				// being called. Sadly, there is one situation in which
+				// complicates the issue. That is, if we are constructing an
+				// anonymous inner class based on an interface, then clearly the
+				// interface will have no constructor method. In such a
+				// situation, we cannot provide any parameters and, therefore,
+				// it's easy enough to determine the type of the constructor
+				// call.
 				
-				// At this stage, we have (finally) figured out what method is to be
-				// called. There are a few things that remain to be done, however.
-				// Firstly, we must add any implicitCasts that are required for
-				// boxing conversions.  
+				Clazz c = loader.loadClass(tc);
+				
+				if (c.isInterface() && e.declarations().size() > 0) {
+					// Yes, this is an anonymous inner class creation on an
+					// interface.
+					Type.Function type = new Type.Function(Types.T_VOID);
+					e.attributes().add(new JilBuilder.MethodInfo(new ArrayList(),type));
+				} else {
+					// normal case.
 					
-				List<Expr> e_parameters = e.parameters();
-				List<Type> ft_parameters = f.parameterTypes();
-				for (int i = 0; i != e_parameters.size(); ++i) {
-					Type pt = ft_parameters.get(i);
-					e_parameters.set(i, implicitCast(e_parameters.get(i), pt));
+					String constructorName = tc.components().get(
+							tc.components().size() - 1).first();
+					Triple<Clazz, Clazz.Method, Type.Function> r = types
+					.resolveMethod(tc, constructorName, parameterTypes,
+							loader);
+					Type.Function f = r.third();
+
+					// At this stage, we have (finally) figured out what method is to be
+					// called. There are a few things that remain to be done, however.
+					// Firstly, we must add any implicitCasts that are required for
+					// boxing conversions.  
+
+					List<Expr> e_parameters = e.parameters();
+					List<Type> ft_parameters = f.parameterTypes();
+					for (int i = 0; i != e_parameters.size(); ++i) {
+						Type pt = ft_parameters.get(i);
+						e_parameters.set(i, implicitCast(e_parameters.get(i), pt));
+					}
+
+					Method m = r.second();
+					e.attributes().add(new JilBuilder.MethodInfo(m.exceptions(),m.type()));								
 				}
-				
-				Method m = r.second();
-				e.attributes().add(new JilBuilder.MethodInfo(m.exceptions(),m.type()));								
 			} catch(ClassNotFoundException cnfe) {
 				syntax_error(cnfe.getMessage(), e, cnfe);
-			} catch(MethodNotFoundException mfne) {
+			} catch(MethodNotFoundException mfne) {				
 				String msg = "constructor not found: " + tc + "(";
 				boolean firstTime = true;
 				for (Type pt : parameterTypes) {

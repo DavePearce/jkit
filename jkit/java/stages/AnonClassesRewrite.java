@@ -5,6 +5,7 @@ import static jkit.java.tree.Type.fromJilType;
 
 import java.util.*;
 
+import jkit.compiler.*;
 import jkit.compiler.ClassLoader;
 import jkit.java.io.JavaFile;
 import jkit.java.tree.Decl;
@@ -339,24 +340,27 @@ public class AnonClassesRewrite {
 			// appropriate constructors to the anonymous inner class.
 			String name = Integer.toString(++anonymousClassCount);
 			Type.Clazz parent = (Type.Clazz) e.type().attribute(Type.Clazz.class);			
-			Type.Clazz aType = anonClassType(name);
-		
-			HashMap<String,Type> params = new HashMap();
-			nonLocals.push(params);
-			anonClasses.push(aType);
-			// First, break down any anonymous classes held internally to this
-			// anonymous class.
-			for(Decl d : e.declarations()) {
-				doDeclaration(d);
-			}
-			anonClasses.pop();
-			nonLocals.pop();
-									
+			Type.Clazz aType = anonClassType(name);											
+			
 			try {
-				JilClass parentClass = (JilClass) loader.loadClass(parent);
+				Clazz parentClass = (Clazz) loader.loadClass(parent);
 				JilClass anonClass = (JilClass) loader.loadClass(aType);
 				SourceLocation loc = (SourceLocation) e
 						.attribute(SourceLocation.class);
+				Decl.JavaClass ac = buildAnonClass(anonClass, loc);
+				
+				HashMap<String,Type> params = new HashMap();
+				nonLocals.push(params);
+				anonClasses.push(aType);			
+				context.push(ac);
+				// break down any anonymous classes held internally to this
+				// anonymous class.
+				for(Decl d : e.declarations()) {
+					doDeclaration(d);
+				}
+				context.pop();
+				anonClasses.pop();
+				nonLocals.pop();
 				
 				// First, update the type of the new expression
 				e.type().attributes().remove(parent);
@@ -385,21 +389,17 @@ public class AnonClassesRewrite {
 				
 				// Finally, create an appropriate java class.
 				
-				Decl.JavaClass ac = buildAnonClass(anonClass, params, loc);
+				addNonLocalFields(anonClass,ac,params,loc);			
 				
 				ac.declarations().add(constructor);
 				ac.declarations().addAll(e.declarations());								
 				
 				context.peek().declarations().add(ac);
+				e.declarations().clear(); // need to do this.
 				
 			} catch(ClassNotFoundException cne) {
 				syntax_error(cne.getMessage(),e,cne);
-			}
-						
-			// Finally, iterate the declarations in this anon class.
-			for(Decl d : e.declarations()) {
-				doDeclaration(d);			
-			}
+			}			
 		}		
 		
 		return e;
@@ -506,8 +506,7 @@ public class AnonClassesRewrite {
 		return e;
 	}
 	
-	protected Decl.JavaClass buildAnonClass(JilClass anonClass,
-			HashMap<String, Type> nonlocalParams, SourceLocation loc) {
+	protected Decl.JavaClass buildAnonClass(JilClass anonClass, SourceLocation loc) {
 		
 		jkit.java.tree.Type.Clazz superClass = fromJilType(anonClass.superClass());
 		ArrayList<jkit.java.tree.Type.Clazz> interfaces = new ArrayList();
@@ -517,7 +516,14 @@ public class AnonClassesRewrite {
 		
 		Decl.JavaClass jc = new Decl.JavaClass(new ArrayList(anonClass
 				.modifiers()), anonClass.name(), new ArrayList(), superClass,
-				interfaces, new ArrayList<Decl>(), loc, anonClass.type());				
+				interfaces, new ArrayList<Decl>(), loc, anonClass.type());
+		
+		return jc;
+	}
+	
+	protected Decl.JavaClass addNonLocalFields(JilClass anonClass,
+			Decl.JavaClass jc, HashMap<String, Type> nonlocalParams,
+			SourceLocation loc) {
 		
 		// now add fields for non-local variables.
 		for(Map.Entry<String,Type> en : nonlocalParams.entrySet()) {
@@ -535,7 +541,7 @@ public class AnonClassesRewrite {
 	
 	protected Decl.JavaMethod buildAnonConstructor(String name,
 			Type.Function type, ArrayList<Type.Clazz> exceptions,
-			HashMap<String, Type> nonlocalParams, JilClass parentClass,
+			HashMap<String, Type> nonlocalParams, Clazz parentClass,
 			JilClass anonClass, SourceLocation loc) {
 		
 		// ... yes, this method is ugly.
