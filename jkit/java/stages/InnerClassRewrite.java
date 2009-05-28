@@ -800,7 +800,7 @@ public class InnerClassRewrite {
 		// Finally, add a field with the appropriate name.
 		ArrayList<Modifier> modifiers = new ArrayList<Modifier>();
 		modifiers.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL));
-		modifiers.add(new Modifier.Base(java.lang.reflect.Modifier.PRIVATE));
+		// note: parent pointers must have package access.
 		
 		JilField field = new JilField("this$0",
 				parentType, modifiers, loc);
