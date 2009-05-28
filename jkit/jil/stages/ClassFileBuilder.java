@@ -618,9 +618,32 @@ public class ClassFileBuilder {
 				// must be non-static invocation
 				translateExpression(stmt.target(), varmap, bytecodes);
 			}
-			// translate parameters
-			for (JilExpr p : stmt.parameters()) {
-				translateExpression(p, varmap, bytecodes);
+														
+			if(!m.isVariableArity()) {
+				for(JilExpr e : stmt.parameters()) {
+					translateExpression(e, varmap, bytecodes);
+				}
+			} else {
+				// now, this is a variable-arity method --- so we need to
+				// package up some arguments into an array.
+				List<JilExpr> arguments = stmt.parameters();
+				List<Type> paramTypes = m.type().parameterTypes();
+				int vargcount = stmt.parameters().size() - paramTypes.size() + 1;
+				int arg = 0;
+				for(;arg!=arguments.size()-vargcount;++arg) {
+					translateExpression(arguments.get(arg), varmap, bytecodes);
+				}
+				
+				Type.Array arrType = (Type.Array) paramTypes.get(paramTypes
+						.size() - 1);
+				bytecodes.add(new LoadConst(vargcount));
+				bytecodes.add(new Bytecode.New(arrType,1));
+				for(int i=0;arg!=arguments.size();++arg,++i) {
+					bytecodes.add(new Bytecode.Dup(arrType));
+					bytecodes.add(new LoadConst(i));
+					translateExpression(arguments.get(arg), varmap, bytecodes);
+					bytecodes.add(new Bytecode.ArrayStore(arrType));
+				}	
 			}
 
 			if (stmt instanceof JilExpr.SpecialInvoke) {

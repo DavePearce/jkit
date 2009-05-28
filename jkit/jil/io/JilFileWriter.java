@@ -97,6 +97,7 @@ public class JilFileWriter {
 	}
 	
 	protected void write(JilStmt s) {
+		output.println();
 		if(s instanceof JilStmt.Assign) {
 			write((JilStmt.Assign)s);
 		} else if(s instanceof JilStmt.Return) {

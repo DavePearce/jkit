@@ -577,7 +577,6 @@ public class TypePropagation {
 		String e_name = e.name();
 		
 		try {		
-
 			Type rt = (Type) e.target().attribute(Type.class);
 
 			if(rt instanceof Type.Variable) {
@@ -616,12 +615,12 @@ public class TypePropagation {
 			List<Expr> e_parameters = e.parameters();
 			List<Type> ft_parameters = f.parameterTypes();
 			for (int i = 0; i != e_parameters.size(); ++i) {
-				Type pt = ft_parameters.get(i);
+				// use min() below to support variable-arity argument lists.
+				Type pt = ft_parameters.get(Math.min(i,ft_parameters.size()-1));
 				e_parameters.set(i, implicitCast(e_parameters.get(i), pt));
-			}
+			}	
 			
-			// Secondly, we must add type information to the expression.
-			
+			// Secondly, we must add type information to the expression.			
 			if (!(f.returnType() instanceof Type.Void)) {				
 				e.attributes().add(f.returnType());
 			}						

@@ -172,6 +172,7 @@ public class JKit extends TestHarness {
 	@Test public void JLS_15_13_ArrayAccess_3() { runTest("JLS_15_13_ArrayAccess_3"); }
 	@Test public void JLS_15_13_ArrayAccess_4() { runTest("JLS_15_13_ArrayAccess_4"); }
 	@Test public void JLS_15_13_ArrayAccess_5() { runTest("JLS_15_13_ArrayAccess_5"); }
+	@Test public void JLS_15_13_ArrayAccess_6() { runTest("JLS_15_13_ArrayAccess_6"); }
 	
 	@Test public void JLS_15_14_PostfixOperators_1() { runTest("JLS_15_14_PostfixOperators_1"); }
 	@Test public void JLS_15_14_PostfixOperators_2() { runTest("JLS_15_14_PostfixOperators_2"); }
