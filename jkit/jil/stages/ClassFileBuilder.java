@@ -636,14 +636,23 @@ public class ClassFileBuilder {
 				
 				Type.Array arrType = (Type.Array) paramTypes.get(paramTypes
 						.size() - 1);
-				bytecodes.add(new LoadConst(vargcount));
-				bytecodes.add(new Bytecode.New(arrType,1));
-				for(int i=0;arg!=arguments.size();++arg,++i) {
-					bytecodes.add(new Bytecode.Dup(arrType));
-					bytecodes.add(new LoadConst(i));
+				
+				if ((arg + 1) == arguments.size()
+						&& arguments.get(arg).type().equals(arrType)) {				
+					// this is the special case when an appropriate array is
+					// supplied directly to the variable argument list.
 					translateExpression(arguments.get(arg), varmap, bytecodes);
-					bytecodes.add(new Bytecode.ArrayStore(arrType));
-				}	
+				} else {
+
+					bytecodes.add(new LoadConst(vargcount));
+					bytecodes.add(new Bytecode.New(arrType,1));
+					for(int i=0;arg!=arguments.size();++arg,++i) {
+						bytecodes.add(new Bytecode.Dup(arrType));
+						bytecodes.add(new LoadConst(i));
+						translateExpression(arguments.get(arg), varmap, bytecodes);
+						bytecodes.add(new Bytecode.ArrayStore(arrType));
+					}	
+				}
 			}
 
 			if (stmt instanceof JilExpr.SpecialInvoke) {
