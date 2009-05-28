@@ -768,7 +768,7 @@ public class TypePropagation {
 			Expr v = e.values().get(i);
 			if(v instanceof Value.Array) {
 				Type.Array ta = (Type.Array) lhs;
-				doArrayVal(ta,(Value.Array)v);
+				doArrayVal(ta.element(),(Value.Array)v);
 			} else if(isUnknownConstant(v)) {			
 				v = unknownConstantInference(v, lhs.element(),
 						(SourceLocation) v.attribute(SourceLocation.class));										

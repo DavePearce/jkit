@@ -948,14 +948,14 @@ public class ClassFileBuilder {
 	}
 
 	public void translateArrayVal(JilExpr.Array av, HashMap<String, Integer> varmap,
-			ArrayList<Bytecode> bytecodes) {
-		
+			ArrayList<Bytecode> bytecodes) {						
 		List<JilExpr> params = new ArrayList<JilExpr>();
 		params.add(new JilExpr.Int(av.values().size()));
 		translateNew(new JilExpr.New(av.type(), params, null), varmap, bytecodes,
 				true);
 
 		int index = 0;
+		
 		for (JilExpr e : av.values()) {
 			bytecodes.add(new Bytecode.Dup(av.type()));
 			bytecodes.add(new Bytecode.LoadConst(index++));
