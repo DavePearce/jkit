@@ -906,10 +906,15 @@ public class ClassFileBuilder {
 
 			try {
 				Type actualFieldType = determineFieldType(lhs_t,def.name());
-				Type bytecodeType = actualFieldType;
+				Type bytecodeType = actualFieldType;				
 				
 				if(actualFieldType instanceof Type.Variable) {
-					bytecodeType = new Type.Clazz("java.lang","Object");
+					Type.Variable tv = (Type.Variable) actualFieldType;
+					if(tv.lowerBound() == null) {
+						bytecodeType = new Type.Clazz("java.lang","Object");
+					} else {
+						bytecodeType = tv.lowerBound();
+					}
 				}
 								
 				if (def.isStatic()) {

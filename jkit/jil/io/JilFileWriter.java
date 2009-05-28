@@ -372,16 +372,16 @@ public class JilFileWriter {
 	}
 	
 	protected void write(JilExpr.Deref e) {
-		write(e.target());
-		output.print("[" + e.type() + "]");
+		write(e.target());		
 		output.print(".");
+		output.print("[" + e.type() + "]");
 		output.print(e.name());						
 	}
 	
 	protected void write(JilExpr.Invoke e) {
-		write(e.target());		
-		output.print("[" + e.funType() + "]");
+		write(e.target());				
 		output.print(".");
+		output.print("[" + e.funType() + "]");
 		output.print(e.name());
 		if (e instanceof JilExpr.SpecialInvoke) {
 			output.print("!");

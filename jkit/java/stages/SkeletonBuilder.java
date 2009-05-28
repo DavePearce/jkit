@@ -170,14 +170,14 @@ public class SkeletonBuilder {
 		
 		skeleton.methods().add(
 				new JilMethod(d.name(), type, parameters, d.modifiers(),
-						exceptions, new ArrayList(d.attributes())));
+						exceptions, new ArrayList(d.attributes())));				
 		
 		doStatement(d.body(), skeleton);
 	}
 
 	protected void doField(Decl.JavaField d, JilClass skeleton) {		
 		Decl.JavaField f = (Decl.JavaField) d;
-		Type t = (Type) f.type().attribute(Type.class);
+		Type t = (Type) f.type().attribute(Type.class);		
 		skeleton.fields().add(
 				new JilField(f.name(), t, f.modifiers(), new ArrayList(f
 						.attributes())));
