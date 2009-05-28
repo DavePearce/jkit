@@ -1320,7 +1320,7 @@ public class TypeSystem {
 						.size()
 						|| (varargs && m.isVariableArity() && m_type
 								.parameterTypes().size() <= (concreteParameterTypes
-								.size() + 1))) {										
+								.size() + 1))) {														
 					
 					// First, substitute class type parameters							
 					Type.Function mt = (Type.Function) substitute(m_type, binding);														
@@ -1394,7 +1394,7 @@ public class TypeSystem {
 				
 				// At this point, if the method is a variable arity method we
 				// need to also check that the varargs portion make sense.
-				if(m.isVariableArity()) {
+				if(m.isVariableArity()) {					
 					Type.Array arrayType = (Type.Array) mps[numToCheck];
 					Type elementType = arrayType.element();					
 					if(numToCheck == (params.length-1)) {
@@ -1403,7 +1403,10 @@ public class TypeSystem {
 						// check whether or not it is an array of the
 						// appropriate type.
 						Type p2 = params[numToCheck];
-						if (!subtype(elementType, p2, loader)
+						if (!(autoboxing && boxSubtype(elementType, p2, loader))
+								&& !subtype(elementType, p2, loader)
+								&& !(autoboxing && boxSubtype(arrayType, p2,
+										loader))
 								&& !subtype(arrayType, p2, loader)) {
 							continue outer;
 						}
@@ -1414,7 +1417,9 @@ public class TypeSystem {
 						// list element type.
 						for(int j=numToCheck;j<params.length;++j) {
 							Type p2 = params[j];						
-							if(!subtype(elementType,p2,loader)) {
+							if (!(autoboxing && boxSubtype(elementType, p2,
+									loader))
+									&& !subtype(elementType, p2, loader)) {
 								continue outer;
 							}
 						}
