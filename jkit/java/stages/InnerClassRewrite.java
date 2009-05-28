@@ -334,6 +334,7 @@ public class InnerClassRewrite {
 							Clazz.Method accessor = createWriteAccessor(f, (jkit.jil.tree.JilClass) c);
 							attributes.add(new JilBuilder.MethodInfo(accessor.exceptions(),accessor.type()));						
 							ArrayList<Expr> params = new ArrayList<Expr>();							
+							params.add(e.target());
 							params.add(def.rhs());
 							
 							return new Expr.Invoke(new Expr.ClassVariable(c
