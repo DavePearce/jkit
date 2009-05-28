@@ -168,7 +168,8 @@ public class ClassLoader {
 		if(className.contains(".")) {
 			throw new IllegalArgumentException("className cannot contain \".\"");
 		}		
-		for (String imp : imports) {
+		
+		for (String imp : imports) {						
 			Type.Clazz ref = null;
 			if (imp.endsWith(".*")) {
 				// try and resolve the class
@@ -215,14 +216,19 @@ public class ClassLoader {
 	 */
 	protected Type.Clazz resolveClassName(String pkg, String className) {
 		ArrayList<Pair<String, List<Type.Reference>>> classes = new ArrayList<Pair<String, List<Type.Reference>>>();
-						
-		for(String c : className.split("\\$")) {			
-			classes.add(new Pair<String, List<Type.Reference>>(c,
-				new ArrayList<Type.Reference>()));
-		}
 		
 		String fullClassName = className;
-		String outerClassName = fullClassName;
+		String outerClassName = fullClassName;				
+		
+		boolean firstTime = true;
+		for (String c : className.split("\\$")) {
+			if(firstTime) {
+				outerClassName = c;
+			}
+			firstTime=false;
+			classes.add(new Pair<String, List<Type.Reference>>(c,
+					new ArrayList<Type.Reference>()));
+		}
 		
 		while(pkg != null) {
 			PackageInfo pkgInfo = packages.get(pkg);			
@@ -237,7 +243,7 @@ public class ClassLoader {
 					// we need to check for this and, if so, compile it to check
 					// whether or not the inner class we're after is actually
 					// contain therein.					
-					String ocn = pkg == "" ? outerClassName : pkg + "." + outerClassName;
+					String ocn = pkg.equals("") ? outerClassName : pkg + "." + outerClassName;
 					loadClass(ocn,pkgInfo); // this will force a compile					
 					continue; // try again for the same class/pkg combination
 				} else {					
@@ -247,8 +253,9 @@ public class ClassLoader {
 				// This import does not correspond to a valid package.
 				// Therefore, it may be specifying an inner class and we need to check.
 				outerClassName = pathChild(pkg);
-				fullClassName = outerClassName + "$" + fullClassName;				
-				classes.add(0,new Pair<String, List<Type.Reference>>(pathChild(pkg),new ArrayList<Type.Reference>()));				
+				fullClassName = outerClassName + "$" + fullClassName;
+				classes.add(0, new Pair<String, List<Type.Reference>>(
+						pathChild(pkg), new ArrayList<Type.Reference>()));
 				pkg = pathParent(pkg);
 			}		
 		}

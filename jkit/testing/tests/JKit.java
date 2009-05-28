@@ -26,11 +26,12 @@ public class JKit extends TestHarness {
 	@Test public void TypeBounds_2() { compileFailTest("TypeBounds_2"); }
 	@Test public void TypeBounds_3() { runTest("TypeBounds_3"); }
 	@Test public void TypeBounds_4() { runTest("TypeBounds_4"); }
-	@Test public void TypeBounds_5() { runTest("TypeBounds_5"); }
-	
+	@Test public void TypeBounds_5() { runTest("TypeBounds_5"); }	
 	// Fails because need to check that a declared intersection type is only
 	// between at most one class.
 	@Ignore("Known Bug") @Test public void TypeBounds_6() { compileFailTest("TypeBounds_6"); }	
+	
+	@Test public void TypeBounds_7() { runTest("TypeBounds_7"); }
 	
 	@Test public void WhileLoop_1() { runTest("WhileLoop_1"); }
 
@@ -64,10 +65,8 @@ public class JKit extends TestHarness {
 	@Test public void JLS_8_1_3_InnerClasses_1() { runTest("JLS_8_1_3_InnerClasses_1"); }
 	@Test public void JLS_8_1_3_InnerClasses_2() { runTest("JLS_8_1_3_InnerClasses_2"); }
 	@Test public void JLS_8_1_3_InnerClasses_3() { runTest("JLS_8_1_3_InnerClasses_3"); }
-	// Fails because it can't find/compile the InnerClassHelper properly.
-	@Ignore("Known Bug") @Test public void JLS_8_1_3_InnerClasses_4() { runTest("JLS_8_1_3_InnerClasses_4"); }
-	// This fails because of a problem resolving inner class names.
-	@Ignore("Known Bug") @Test public void JLS_8_1_3_InnerClasses_5() { runTest("JLS_8_1_3_InnerClasses_5"); }
+	@Test public void JLS_8_1_3_InnerClasses_4() { runTest("JLS_8_1_3_InnerClasses_4"); }	
+	@Test public void JLS_8_1_3_InnerClasses_5() { runTest("JLS_8_1_3_InnerClasses_5"); }
 	
 	@Ignore("Known Bug") @Test public void JLS_8_1_1_3_StrictClasses_1() { runTest("JLS_8_1_1_3_StrictClasses_1"); }
 	
