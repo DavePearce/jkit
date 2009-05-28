@@ -442,15 +442,19 @@ public class ClassFileReader {
 		
 		for(int i=0;i!=numClasses;++i,offset=offset+8) {
 			String inner_class_name = getClassName(read_u2(offset));
-			int outer_class_info = read_u2(offset+2); 
+			String outer_class_name = getClassName(read_u2(offset+2)); 
+			
 			int inner_name_idx = read_u2(offset+4);
 			int inner_class_access_flags = read_u2(offset+6);
-			Type.Clazz tc = parseClassDescriptor("L" + inner_class_name + ";");
+			
+			Type.Clazz innerT = parseClassDescriptor("L" + inner_class_name + ";");
+			Type.Clazz outerT = parseClassDescriptor("L" + outer_class_name + ";");
 			List<Modifier> mods = listModifiers(inner_class_access_flags,false);
-			if(tc.components().size() < type.components().size()) {
-				inners.add(new Pair(tc,mods));
+			
+			if(innerT.components().size() != type.components().size()) {
+				inners.add(new Pair(innerT,mods));
 			} else {
-				inners.add(new Pair(tc,mods));
+				outers.add(new Pair(outerT,mods));
 			}
 		}
 		

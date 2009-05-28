@@ -24,6 +24,7 @@ package jkit;
 import java.io.*;
 import java.util.*;
 
+import jkit.bytecode.*;
 import jkit.compiler.SyntaxError;
 import jkit.java.*;
 
@@ -61,7 +62,8 @@ public class Main {
 		boolean verbose = false;
 		boolean bytecodeOutput = false;
 		boolean jilOutput = false;	
-
+		boolean dump = false;
+		
 		if (args.length == 0) {
 			// no command-line arguments provided
 			usage();
@@ -100,6 +102,8 @@ public class Main {
 					bytecodeOutput = true;
 				} else if (arg.equals("-jil")) {
 					jilOutput = true;
+				} else if (arg.equals("-dump")) {
+					dump = true;
 				} else {
 					throw new RuntimeException("Unknown option: " + args[i]);
 				}
@@ -126,30 +130,41 @@ public class Main {
 		}
 
 		classPath.addAll(bootClassPath);
-		JavaCompiler compiler;
-		
-		if(bytecodeOutput) {
-			compiler = new BytecodeCompiler(classPath, verbOutput);	
-		} else if(jilOutput) {
-			compiler = new JilCompiler(classPath, verbOutput);
-		} else {
-			compiler = new JavaCompiler(classPath, verbOutput);
-		}
-		
-		if (outputDirectory != null) {
-			compiler.setOutputDirectory(new File(outputDirectory));
-		}
-		
-		// ======================================================
-		// ============== Third, load skeletons ================
-		// ======================================================		
 		
 		try {
-			List<File> srcfiles = new ArrayList<File>();
-			for(int i=fileArgsBegin;i!=args.length;++i) {
-				srcfiles.add(new File(args[i]));
+
+			if(dump) {
+				BytecodeFileWriter bfw = new BytecodeFileWriter(System.out);
+				for(int i=fileArgsBegin;i!=args.length;++i) {
+					ClassFileReader cfr = new ClassFileReader(args[i]);
+					bfw.write(cfr.readClass());
+				}
+			} else {
+				JavaCompiler compiler;
+
+				if(bytecodeOutput) {
+					compiler = new BytecodeCompiler(classPath, verbOutput);	
+				} else if(jilOutput) {
+					compiler = new JilCompiler(classPath, verbOutput);
+				} else {
+					compiler = new JavaCompiler(classPath, verbOutput);
+				}
+
+				if (outputDirectory != null) {
+					compiler.setOutputDirectory(new File(outputDirectory));
+				}
+
+				// ======================================================
+				// ============== Third, load skeletons ================
+				// ======================================================		
+
+
+				List<File> srcfiles = new ArrayList<File>();
+				for(int i=fileArgsBegin;i!=args.length;++i) {
+					srcfiles.add(new File(args[i]));
+				}
+				compiler.compile(srcfiles);			
 			}
-			compiler.compile(srcfiles);
 		} catch (SyntaxError e) {
 			outputSourceError(e.fileName(), e.line(), e.column(), e.width(), e
 					.getMessage());

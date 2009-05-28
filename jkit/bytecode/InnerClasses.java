@@ -74,18 +74,23 @@ public class InnerClasses implements Attribute {
 		for(Pair<Type.Clazz,List<Modifier>> i : outers) {
 			String name = type.lastComponent().first();
 			int nameIndex = constantPool.get(new Constant.Utf8(name));			
-			int innerIndex = constantPool.get(Constant.buildClass(i.first()));
-			int outerIndex = constantPool.get(Constant.buildClass(type));
-			output.print("   ");
-			BytecodeFileWriter.writeModifiers(i.second(),output);
-			output.println(nameIndex + "= " + innerIndex + " of " + outerIndex);																
+			int outerIndex = constantPool.get(Constant.buildClass(i.first()));
+			int innerIndex = constantPool.get(Constant.buildClass(type));
+			output.print("   ");			
+			output.print(nameIndex + " (");
+			BytecodeFileWriter.writeModifiers(i.second(),output);					
+			output.println(") = " + innerIndex + " of " + outerIndex);
 		}	
+		
 		for(Pair<Type.Clazz,List<Modifier>> i : inners) {
 			String name = i.first().lastComponent().first();
 			int nameIndex = constantPool.get(new Constant.Utf8(name));
-			int innerIndex = constantPool.get(Constant.buildClass(type));
-			int outerIndex = constantPool.get(Constant.buildClass(i.first()));	
-			output.println("   " + nameIndex + "= " + innerIndex + " of " + outerIndex);																
+			int outerIndex = constantPool.get(Constant.buildClass(type));
+			int innerIndex = constantPool.get(Constant.buildClass(i.first()));	
+			output.print("   ");			
+			output.print(nameIndex + " (");
+			BytecodeFileWriter.writeModifiers(i.second(),output);					
+			output.println(") = " + innerIndex + " of " + outerIndex);
 		}			
 	}
 	

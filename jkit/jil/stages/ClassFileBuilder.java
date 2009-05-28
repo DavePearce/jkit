@@ -836,6 +836,7 @@ public class ClassFileBuilder {
 			translateClassVal((JilExpr.Class) expr, varmap, bytecodes);
 		} else if (expr instanceof JilExpr.Variable) {
 			JilExpr.Variable lv = (JilExpr.Variable) expr;
+			
 			if (varmap.containsKey(lv.value())) {				
 				bytecodes.add(new Bytecode.Load(varmap.get(lv.value()), lv.type()));				
 			} else if(lv.value().equals("$")) {
@@ -845,9 +846,7 @@ public class ClassFileBuilder {
 				// In this case, we don't actually have to do anything since
 				// it's already on the stack!
 			} else {
-				throw new RuntimeException(
-						"internal failure (looking for variable " + lv.value()
-								+ ") " + expr);
+				syntax_error("unknown variable \"" + lv.value() + "\"", expr);
 			}
 		} else if (expr instanceof JilExpr.New) {
 			translateNew((JilExpr.New) expr, varmap, bytecodes,true);

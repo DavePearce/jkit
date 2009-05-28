@@ -558,6 +558,7 @@ public class InnerClassRewrite {
 	
 	protected Expr doNew(Expr.New e) {
 		// Second, recurse through any parameters supplied ...
+		SourceLocation loc = (SourceLocation) e.type().attribute(SourceLocation.class);
 		Type type = (Type) e.type().attribute(Type.class);
 		List<Expr> parameters = e.parameters();
 		for(int i=0;i!=parameters.size();++i) {
@@ -586,13 +587,16 @@ public class InnerClassRewrite {
 				try {
 					Clazz clazz = loader.loadClass(tc);
 					
+					System.out.println("LOOKING AT CLASS: " + clazz.type());
+					
 					if(!clazz.isStatic()) {						
 						// First, update the arguments to the new call
 						Type.Clazz parentType = parentType(tc);
 						
 						if(e.context() == null) {
+							System.out.println("ADDING this pointer: " + parentType);
 							Expr.LocalVariable thiz = new Expr.LocalVariable(
-									"this", parentType);
+									"this", parentType,loc);
 							e.parameters().add(0,thiz);							
 						}
 						
