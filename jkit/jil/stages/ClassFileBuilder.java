@@ -600,6 +600,9 @@ public class ClassFileBuilder {
 		if (stmt.name().equals("super")) {
 			// catch explicit super constructor call.
 			translateExpression(stmt.target(), varmap, bytecodes);
+			for (JilExpr p : stmt.parameters()) {
+				translateExpression(p, varmap, bytecodes);
+			}
 			bytecodes.add(new Bytecode.Invoke(targetT, "<init>",
 					stmt.funType(), Bytecode.SPECIAL));
 			return;
