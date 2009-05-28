@@ -129,8 +129,7 @@ public class JKit extends TestHarness {
 	// fails because labelled blocks aren't supported.
 	@Ignore("Known Bug") @Test public void JLS_14_14_ForStatement_7() { runTest("JLS_14_14_ForStatement_7"); }
 	@Test public void JLS_14_14_ForStatement_8() { runTest("JLS_14_14_ForStatement_8"); }
-	// unsure why fails
-	@Ignore("Known Bug") @Test public void JLS_14_14_ForStatement_9() { runTest("JLS_14_14_ForStatement_9"); }
+	@Test public void JLS_14_14_ForStatement_9() { runTest("JLS_14_14_ForStatement_9"); }
 	
 	@Test public void JLS_14_20_TryStatement_1() { runTest("JLS_14_20_TryStatement_1"); }
 	// fails because of break/continue usage inside try-catch block
@@ -153,10 +152,8 @@ public class JKit extends TestHarness {
 	@Test public void JLS_15_9_5_AnonymousClasses_6() { runTest("JLS_15_9_5_AnonymousClasses_6"); }
 	@Test public void JLS_15_9_5_AnonymousClasses_7() { runTest("JLS_15_9_5_AnonymousClasses_7"); }
 	@Test public void JLS_15_9_5_AnonymousClasses_8() { runTest("JLS_15_9_5_AnonymousClasses_8"); }
-	@Test public void JLS_15_9_5_AnonymousClasses_9() { runTest("JLS_15_9_5_AnonymousClasses_9"); }
-	// Unsure why this fails.
-	@Ignore("Known Bug") @Test public void JLS_15_9_5_AnonymousClasses_10() { runTest("JLS_15_9_5_AnonymousClasses_10"); }
-	// Unsure why this fails.
+	@Test public void JLS_15_9_5_AnonymousClasses_9() { runTest("JLS_15_9_5_AnonymousClasses_9"); }	
+	@Test public void JLS_15_9_5_AnonymousClasses_10() { runTest("JLS_15_9_5_AnonymousClasses_10"); }
 	@Test public void JLS_15_9_5_AnonymousClasses_11() { runTest("JLS_15_9_5_AnonymousClasses_11"); }
 	@Test public void JLS_15_9_5_AnonymousClasses_12() { runTest("JLS_15_9_5_AnonymousClasses_12"); }
 	@Test public void JLS_15_12_VarArgs_1() { runTest("JLS_15_12_VarArgs_1"); }
@@ -192,8 +189,7 @@ public class JKit extends TestHarness {
 	@Test public void JLS_15_20_2_InstanceofOperator_1() { runTest("JLS_15_20_2_InstanceofOperator_1"); }	
 	@Test public void JLS_15_20_2_InstanceofOperator_2() { compileFailTest("JLS_15_20_2_InstanceofOperator_2"); }
 	@Test public void JLS_15_24_ConditionalOr_1() { runTest("JLS_15_24_ConditionalOr_1"); }
-	// Fails because side-effects in conditional expressions are not supported.
-	@Ignore("Known Bug") @Test public void JLS_15_25_ConditionalOperator_1() { runTest("JLS_15_25_ConditionalOperator_1"); }
+	@Test public void JLS_15_25_ConditionalOperator_1() { runTest("JLS_15_25_ConditionalOperator_1"); }
 	@Test public void JLS_15_25_ConditionalOperator_2() { runTest("JLS_15_25_ConditionalOperator_2"); }
 	@Test public void JLS_15_25_ConditionalOperator_3() { runTest("JLS_15_25_ConditionalOperator_3"); }
 	@Test public void JLS_15_25_ConditionalOperator_4() { runTest("JLS_15_25_ConditionalOperator_4"); }
