@@ -90,9 +90,9 @@ public class JilBuilder {
 		} else if(d instanceof Decl.JavaField) {
 			doField((Decl.JavaField)d, parent);
 		} else if (d instanceof Decl.InitialiserBlock) {
-			doInitialiserBlock((Decl.InitialiserBlock) d);
+			doInitialiserBlock((Decl.InitialiserBlock)d , parent);
 		} else if (d instanceof Decl.StaticInitialiserBlock) {
-			doStaticInitialiserBlock((Decl.StaticInitialiserBlock) d);
+			doStaticInitialiserBlock((Decl.StaticInitialiserBlock) d, parent);
 		} else {
 			syntax_error("internal failure (unknown declaration \"" + d
 					+ "\" encountered)",d);
@@ -208,16 +208,20 @@ public class JilBuilder {
 		}				
 	}
 	
-	protected void doInitialiserBlock(Decl.InitialiserBlock d) {
+	protected void doInitialiserBlock(Decl.InitialiserBlock d, JilClass parent) {
 		for (Stmt s : d.statements()) {
 			doStatement(s);
 		}	
 	}
 	
-	protected void doStaticInitialiserBlock(Decl.StaticInitialiserBlock d) {		
+	protected void doStaticInitialiserBlock(Decl.StaticInitialiserBlock d, JilClass parent) {		
+		ArrayList<JilStmt> stmts = new ArrayList<JilStmt>();
 		for (Stmt s : d.statements()) {
-			doStatement(s);
+			stmts.addAll(doStatement(s));
 		}		
+		
+		JilMethod m = createStaticInitialiser(parent);
+		m.body().addAll(stmts);
 	}
 	
 	protected List<JilStmt> doStatement(Stmt e) {
