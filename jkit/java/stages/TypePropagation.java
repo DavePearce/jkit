@@ -48,7 +48,7 @@ import jkit.jil.util.Types;
 public class TypePropagation {
 	private ClassLoader loader;
 	private TypeSystem types;
-	private Stack<JavaClass> scopes = new Stack<JavaClass>();
+	private Stack<Type.Clazz> scopes = new Stack<Type.Clazz>();
 	private int anonymousClassCount = 0;
 	
 	public TypePropagation(ClassLoader loader, TypeSystem types) {
@@ -87,7 +87,8 @@ public class TypePropagation {
 	}
 	
 	protected void doClass(JavaClass c) {
-		scopes.push(c);
+		Type.Clazz type = (Type.Clazz) c.attribute(Type.Clazz.class);
+		scopes.push(type);
 		
 		for(Decl d : c.declarations()) {
 			doDeclaration(d);
@@ -537,19 +538,23 @@ public class TypePropagation {
 		
 		// Third, check whether this is constructing an anonymous class ...
 		if(e.declarations().size() > 0) {
-			Type.Clazz tc = (Type.Clazz) scopes.peek().attribute(Type.class);
+			Type.Clazz tc = (Type.Clazz) scopes.peek();
 			ArrayList<Pair<String, List<Type.Reference>>> ncomponents = new ArrayList(
 					tc.components());
 			ncomponents.add(new Pair(Integer.toString(++anonymousClassCount),
 					new ArrayList()));
-			type = new Type.Clazz(tc.pkg(), ncomponents);
+			tc = new Type.Clazz(tc.pkg(), ncomponents);						
+			
+			type = tc;
+			
+			scopes.push(tc);
 			
 			for(Decl d : e.declarations()) {
 				doDeclaration(d);
 			}
-		}
-		
-		System.out.println("TYPE IS: " + type);
+			
+			scopes.pop();
+		}		
 		
 		e.attributes().add(type);
 	}

@@ -463,9 +463,7 @@ public class SkeletonBuilder {
 							new ArrayList<Type.Clazz>(),
 							new ArrayList<JilField>(),
 							new ArrayList<JilMethod>(), e.attributes());
-				}												
-				
-				System.out.println("ADDING: " + skeleton.type());
+				}																				
 				
 				skeletons.add(skeleton);
 				loader.register(skeleton);
