@@ -737,7 +737,7 @@ public class TypePropagation {
 	
 	
 	/**
-	 * Dealing with Array Value's requireas a special method, where the result
+	 * Dealing with Array Value's requires a special method, where the result
 	 * type of the ArrayVal is known. This is important since the type of an
 	 * array initialiser is actually computed from the type of the
 	 * variable/field/... that it's being assigned to. For example, in the
@@ -760,13 +760,13 @@ public class TypePropagation {
 	 * @return
 	 */
 	protected void doArrayVal(Type _lhs, Value.Array e) {		
-		if(!(_lhs instanceof Type.Array)) {
+		if (!(_lhs instanceof Type.Array)) {
 			syntax_error("cannot assign array value to type " + _lhs,e);
 		}		
 		Type.Array lhs = (Type.Array)_lhs;
 		for(int i=0;i!=e.values().size();++i) {
 			Expr v = e.values().get(i);
-			if(v instanceof Value.Array) {
+			if(lhs.element() instanceof Type.Array) {
 				Type.Array ta = (Type.Array) lhs;
 				doArrayVal(ta.element(),(Value.Array)v);
 			} else if(isUnknownConstant(v)) {			
