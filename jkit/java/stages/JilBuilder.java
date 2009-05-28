@@ -116,12 +116,12 @@ public class JilBuilder {
 			// means I can be sure that the constructor has been otherwise
 			// completely generated, so all I need is to add initialisers at
 			// beginning, after super call (if there is one).
-			ArrayList<Decl.JavaField> fields = new ArrayList<Decl.JavaField>();
+			ArrayList<Decl> fields = new ArrayList<Decl>();
 			for(Decl d : c.declarations()) {
-				if(!(d instanceof Decl.JavaField)) {
+				if(!(d instanceof Decl.JavaField) && !(d instanceof Decl.InitialiserBlock)) {
 					doDeclaration(d, skeleton);
 				} else {
-					fields.add((Decl.JavaField)d);
+					fields.add(d);
 				}
 			}
 			
@@ -129,7 +129,7 @@ public class JilBuilder {
 			// that field initialisers are added to constructors in the right
 			// order.
 			for(int i=fields.size();i>0;--i) {
-				Decl.JavaField d = fields.get(i-1);
+				Decl d = fields.get(i-1);
 				doDeclaration(d, skeleton);				
 			}					
 		} catch(ClassNotFoundException cne) {
@@ -146,8 +146,8 @@ public class JilBuilder {
 		// First, off. If this is a constructor, then check whether there is an
 		// explicit super constructor call or not.  If not, then add one.
 		if (!parent.isInterface() && d.name().equals(parent.name())) {			
-			if(!hasSuperCall(stmts)) {			
-				stmts.add(0, new JilExpr.Invoke(new JilExpr.Variable("super", parent
+			if(findSuperCall(stmts) == -1) {			
+				stmts.add(0, new JilExpr.SpecialInvoke(new JilExpr.Variable("super", parent
 						.superClass()), "super", new ArrayList<JilExpr>(),
 						new Type.Function(T_VOID), T_VOID));
 			} 
@@ -195,13 +195,9 @@ public class JilBuilder {
 								.attributes());
 						JilStmt.Assign ae = new JilStmt.Assign(df, tmp.first(), d
 								.attributes());
-						if(hasSuperCall(body)) {
-							body.add(1,ae);
-							body.addAll(1,tmp.second());
-						} else {
-							body.add(1,ae);
-							body.addAll(0,tmp.second());
-						}
+						int sc = findSuperCall(body)+1;						
+						body.add(sc,ae);
+						body.addAll(sc,tmp.second());						
 					}
 				}
 			}
@@ -209,9 +205,23 @@ public class JilBuilder {
 	}
 	
 	protected void doInitialiserBlock(Decl.InitialiserBlock d, JilClass parent) {
+		ArrayList<JilStmt> stmts = new ArrayList<JilStmt>();
+		
 		for (Stmt s : d.statements()) {
-			doStatement(s);
+			stmts.addAll(doStatement(s));
 		}	
+		
+		// This is a non-static initialiser block. Therefore, we
+		// need to add it to the beginning of all constructors. One issue is
+		// that, if the first statement of a constructor is a super call
+		// (which is should normally be), then we need to put the statements
+		// after that.		
+		for(JilMethod m : parent.methods()) {
+			if(m.name().equals(parent.name())) {
+				List<JilStmt> body = m.body();				
+				body.addAll(findSuperCall(body)+1,stmts);				
+			}
+		}		
 	}
 	
 	protected void doStaticInitialiserBlock(Decl.StaticInitialiserBlock d, JilClass parent) {		
@@ -1548,16 +1558,18 @@ public class JilBuilder {
 		return null;
 	}	
 	
-	protected boolean hasSuperCall(List<JilStmt> stmts) {
+	protected int findSuperCall(List<JilStmt> stmts) {
+		int r = 0;
 		for(JilStmt stmt : stmts) {
 			if(stmt instanceof JilExpr.Invoke) {
 				JilExpr.Invoke sc = (JilExpr.Invoke) stmt;
 				if (sc.name().equals("super")) {
-					return true;
+					return r;
 				}	
 			}
+			r=r+1;
 		}
-		return false;
+		return -1;
 	}
 	
 	public JilMethod createStaticInitialiser(JilClass parent) {
