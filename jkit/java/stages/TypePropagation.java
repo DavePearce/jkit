@@ -49,6 +49,7 @@ public class TypePropagation {
 	private ClassLoader loader;
 	private TypeSystem types;
 	private Stack<JavaClass> scopes = new Stack<JavaClass>();
+	private int anonymousClassCount = 0;
 	
 	public TypePropagation(ClassLoader loader, TypeSystem types) {
 		this.loader = loader; 
@@ -56,6 +57,7 @@ public class TypePropagation {
 	}
 	
 	public void apply(JavaFile file) {
+		anonymousClassCount = 0;
 		for(Decl d : file.declarations()) {
 			doDeclaration(d);
 		}
@@ -451,8 +453,7 @@ public class TypePropagation {
 	
 	protected void doNew(Expr.New e) {
 		// First, figure out the type being created.		
-		Type t = (Type) e.type().attribute(Type.class);
-		e.attributes().add(t);
+		Type type = (Type) e.type().attribute(Type.class);		
 		
 		doExpression(e.context());
 		
@@ -464,8 +465,8 @@ public class TypePropagation {
 			parameterTypes.add((Type) p.attribute(Type.class));
 		}
 		
-		if(t instanceof Type.Clazz) {
-			Type.Clazz tc = (Type.Clazz) t;
+		if(type instanceof Type.Clazz) {
+			Type.Clazz tc = (Type.Clazz) type;
 			try {
 				// Now, we want to determine the actual type of the constructor
 				// being called. Sadly, there is one situation in which
@@ -481,8 +482,8 @@ public class TypePropagation {
 				if (c.isInterface() && e.declarations().size() > 0) {
 					// Yes, this is an anonymous inner class creation on an
 					// interface.
-					Type.Function type = new Type.Function(Types.T_VOID);
-					e.attributes().add(new JilBuilder.MethodInfo(new ArrayList(),type));
+					Type.Function ftype = new Type.Function(Types.T_VOID);
+					e.attributes().add(new JilBuilder.MethodInfo(new ArrayList(),ftype));
 				} else {
 					// normal case.
 					
@@ -530,14 +531,25 @@ public class TypePropagation {
 				// attribute the cause of the internal failure with a line number.
 				syntax_error("internal failure (" + be.getMessage() + ")",e,be);
 			} 
-		} else if(t instanceof Type.Array) {
+		} else if(type instanceof Type.Array) {
 			// need to do something here also ...
 		}
 		
 		// Third, check whether this is constructing an anonymous class ...
-		for(Decl d : e.declarations()) {
-			doDeclaration(d);
+		if(e.declarations().size() > 0) {
+			Type.Clazz tc = (Type.Clazz) type;
+			ArrayList<Pair<String, List<Type.Reference>>> ncomponents = new ArrayList(
+					tc.components());
+			ncomponents.add(new Pair(Integer.toString(++anonymousClassCount),
+					new ArrayList()));
+			type = new Type.Clazz(tc.pkg(), ncomponents);
+			
+			for(Decl d : e.declarations()) {
+				doDeclaration(d);
+			}
 		}
+		
+		e.attributes().add(type);
 	}
 	
 	protected void doInvoke(Expr.Invoke e) {

@@ -80,7 +80,7 @@ public class TypeResolution {
 	}
 	
 	public void apply(JavaFile file) {
-		// the following may cause problems with static imports.
+		// the following may cause problems with static imports.		
 		imports.add(file.pkg() + ".*");	
 		for(Pair<Boolean,String> i : file.imports()) {
 			imports.add(i.second());
@@ -465,7 +465,7 @@ public class TypeResolution {
 	protected void doNew(Expr.New e) {
 		// First, figure out the type being created.		
 		Type t = substituteTypeVars(resolve(e.type()));			
-		e.type().attributes().add(t);
+		e.type().attributes().add(t);	
 		
 		doExpression(e.context());
 		
@@ -474,10 +474,12 @@ public class TypeResolution {
 			doExpression(p);
 		}
 		
-		// Third, check whether this is constructing an anonymous class ...
-		for(Decl d : e.declarations()) {
-			doDeclaration(d);
-		}
+		if(e.declarations().size() > 0) {			
+			// Third, check whether this is constructing an anonymous class ...
+			for(Decl d : e.declarations()) {
+				doDeclaration(d);
+			}
+		}				
 	}
 	
 	protected void doInvoke(Expr.Invoke e) {
