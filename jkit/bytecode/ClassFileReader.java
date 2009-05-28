@@ -441,7 +441,7 @@ public class ClassFileReader {
 		
 		for(int i=0;i!=numClasses;++i,offset=offset+8) {
 			int inner_class_idx = read_u2(offset);
-			int outer_class_idx = read_u2(offset+2);
+			int outer_class_idx = read_u2(offset+2);			
 			int inner_class_access_flags = read_u2(offset+6);
 			List<Modifier> mods = listModifiers(inner_class_access_flags,false);
 			
@@ -449,17 +449,16 @@ public class ClassFileReader {
 			// indicates an anonymous class.
 			
 			if(inner_class_idx == 0) {
-				String outer_class_name = getClassName(read_u2(offset+2));
+				String outer_class_name = getClassName(outer_class_idx);
 				Type.Clazz outerT = parseClassDescriptor("L" + outer_class_name + ";");				
 				inners.add(new Triple(outerT,null,mods));			
 			} else if(outer_class_idx == 0) {
-				String inner_class_name = getClassName(read_u2(offset));
+				String inner_class_name = getClassName(inner_class_idx);
 				Type.Clazz innerT = parseClassDescriptor("L" + inner_class_name + ";");				
 				inners.add(new Triple(null,innerT,mods));
 			} else {
-
-				String inner_class_name = getClassName(read_u2(offset));
-				String outer_class_name = getClassName(read_u2(offset+2)); 				
+				String outer_class_name = getClassName(outer_class_idx);
+				String inner_class_name = getClassName(inner_class_idx); 				
 				Type.Clazz innerT = parseClassDescriptor("L" + inner_class_name + ";");
 				Type.Clazz outerT = parseClassDescriptor("L" + outer_class_name + ";");				
 				inners.add(new Triple(outerT,innerT,mods));			

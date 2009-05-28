@@ -50,8 +50,12 @@ public class InnerClasses implements Attribute {
 	public void addPoolItems(Set<Constant.Info> constantPool) {
 		Constant.addPoolItem(new Constant.Utf8("InnerClasses"), constantPool);
 		for(Triple<Type.Clazz,Type.Clazz,List<Modifier>> i : inners) {			
-			Constant.addPoolItem(Constant.buildClass(i.first()),constantPool);
-			Constant.addPoolItem(Constant.buildClass(i.second()),constantPool);
+			if(i.first() != null) {
+				Constant.addPoolItem(Constant.buildClass(i.first()),constantPool);
+			}
+			if(i.second() != null) {
+				Constant.addPoolItem(Constant.buildClass(i.second()),constantPool);
+			}
 			String name = i.second().lastComponent().first();
 			Constant.addPoolItem(new Constant.Utf8(name),constantPool);										
 		}		
@@ -63,8 +67,14 @@ public class InnerClasses implements Attribute {
 		for(Triple<Type.Clazz,Type.Clazz,List<Modifier>> i : inners) {
 			String name = i.second().lastComponent().first();
 			int nameIndex = constantPool.get(new Constant.Utf8(name));
-			int outerIndex = constantPool.get(Constant.buildClass(i.first()));
-			int innerIndex = constantPool.get(Constant.buildClass(i.second()));	
+			int outerIndex = 0;
+			if(i.first() != null) {
+				outerIndex = constantPool.get(Constant.buildClass(i.first()));
+			}			
+			int innerIndex = 0;
+			if(i.second() != null) {
+				innerIndex = constantPool.get(Constant.buildClass(i.second()));
+			}
 			output.print("   ");			
 			output.print(nameIndex + " (");
 			BytecodeFileWriter.writeModifiers(i.third(),output);					
@@ -89,7 +99,7 @@ public class InnerClasses implements Attribute {
 		output.write_u2(ninners);
 		
 		for(Triple<Type.Clazz,Type.Clazz,List<Modifier>> i : inners) {
-			if(i.second() == null) {
+			if(i.second() == null) {								
 				output.write_u2(0);
 			} else {
 				output.write_u2(constantPool.get(Constant.buildClass(i.second())));
@@ -99,8 +109,7 @@ public class InnerClasses implements Attribute {
 			} else {
 				output.write_u2(constantPool.get(Constant.buildClass(i.first())));
 			}
-			output.write_u2(constantPool.get(Constant.buildClass(type)));
-			String name = i.second().lastComponent().first();			
+			String name = i.second().lastComponent().first();
 			output.write_u2(constantPool.get(new Constant.Utf8(name)));
 			ClassFileWriter.writeModifiers(i.third(),output);			
 		}		
