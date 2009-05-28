@@ -182,11 +182,11 @@ public class ClassFileReader {
 			} else if(a instanceof InnerClasses) {
 				InnerClasses ic = (InnerClasses) a;
 				
-				for(Pair<Type.Clazz,List<Modifier>> p : ic.inners()) {
-					if(p.first().equals(type))  {
-						lmodifiers.addAll(p.second());						
+				for(Triple<Type.Clazz,Type.Clazz,List<Modifier>> p : ic.inners()) {					
+					if(p.second().equals(type))  {						
+						lmodifiers.addAll(p.third());						
 					}					
-				}
+				}				
 			}
 		} 					
 		
@@ -437,28 +437,36 @@ public class ClassFileReader {
 		offset += 6;
 		int numClasses = read_u2(offset);
 		offset += 2;
-		ArrayList<Pair<Type.Clazz,List<Modifier>>> inners = new ArrayList();
-		ArrayList<Pair<Type.Clazz,List<Modifier>>> outers = new ArrayList();
+		ArrayList<Triple<Type.Clazz,Type.Clazz,List<Modifier>>> inners = new ArrayList();		
 		
 		for(int i=0;i!=numClasses;++i,offset=offset+8) {
-			String inner_class_name = getClassName(read_u2(offset));
-			String outer_class_name = getClassName(read_u2(offset+2)); 
-			
-			int inner_name_idx = read_u2(offset+4);
+			int inner_class_idx = read_u2(offset);
+			int outer_class_idx = read_u2(offset+2);
 			int inner_class_access_flags = read_u2(offset+6);
-			
-			Type.Clazz innerT = parseClassDescriptor("L" + inner_class_name + ";");
-			Type.Clazz outerT = parseClassDescriptor("L" + outer_class_name + ";");
 			List<Modifier> mods = listModifiers(inner_class_access_flags,false);
 			
-			if(innerT.components().size() != type.components().size()) {
-				inners.add(new Pair(innerT,mods));
+			// Note, either the inner or outer indices can be zero. This
+			// indicates an anonymous class.
+			
+			if(inner_class_idx == 0) {
+				String outer_class_name = getClassName(read_u2(offset+2));
+				Type.Clazz outerT = parseClassDescriptor("L" + outer_class_name + ";");				
+				inners.add(new Triple(outerT,null,mods));			
+			} else if(outer_class_idx == 0) {
+				String inner_class_name = getClassName(read_u2(offset));
+				Type.Clazz innerT = parseClassDescriptor("L" + inner_class_name + ";");				
+				inners.add(new Triple(null,innerT,mods));
 			} else {
-				outers.add(new Pair(outerT,mods));
+
+				String inner_class_name = getClassName(read_u2(offset));
+				String outer_class_name = getClassName(read_u2(offset+2)); 				
+				Type.Clazz innerT = parseClassDescriptor("L" + inner_class_name + ";");
+				Type.Clazz outerT = parseClassDescriptor("L" + outer_class_name + ";");				
+				inners.add(new Triple(outerT,innerT,mods));			
 			}
 		}
 		
-		return new InnerClasses(type,inners, outers);
+		return new InnerClasses(type,inners);
 	}
 	
 	/**

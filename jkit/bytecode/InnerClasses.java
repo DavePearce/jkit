@@ -10,11 +10,10 @@ import java.util.Set;
 import jkit.jil.tree.JilClass;
 import jkit.jil.tree.Modifier;
 import jkit.jil.tree.Type;
-import jkit.util.Pair;
+import jkit.util.Triple;
 
 public class InnerClasses implements Attribute {
-	protected List<Pair<Type.Clazz,List<Modifier>>> inners;
-	protected List<Pair<Type.Clazz,List<Modifier>>> outers;
+	protected List<Triple<Type.Clazz,Type.Clazz,List<Modifier>>> inners;	
 	protected Type.Clazz type;
 	
 	public String name() {
@@ -29,19 +28,15 @@ public class InnerClasses implements Attribute {
 	 * @param outers-  the types and modifiers for all classes containing this class.
 	 */
 	public InnerClasses(Type.Clazz type,
-			List<Pair<Type.Clazz, List<Modifier>>> inners,
-			List<Pair<Type.Clazz, List<Modifier>>> outers) {
+			List<Triple<Type.Clazz, Type.Clazz, List<Modifier>>> inners) {
 		this.type = type;
-		this.inners = inners;
-		this.outers = outers;
+		this.inners = inners;		
 	}
 	
-	protected List<Pair<Type.Clazz,List<Modifier>>> inners() {
+	protected List<Triple<Type.Clazz,Type.Clazz,List<Modifier>>> inners() {
 		return inners;
 	}
-	protected List<Pair<Type.Clazz,List<Modifier>>> outers() {
-		return outers;
-	}
+	
 	protected Type.Clazz type() {
 		return type;
 	}
@@ -54,42 +49,25 @@ public class InnerClasses implements Attribute {
 	 */
 	public void addPoolItems(Set<Constant.Info> constantPool) {
 		Constant.addPoolItem(new Constant.Utf8("InnerClasses"), constantPool);
-		for(Pair<Type.Clazz,List<Modifier>> i : outers) {
-			Constant.addPoolItem(Constant.buildClass(type),constantPool);
+		for(Triple<Type.Clazz,Type.Clazz,List<Modifier>> i : inners) {			
 			Constant.addPoolItem(Constant.buildClass(i.first()),constantPool);
-			String name = type.lastComponent().first();
-			Constant.addPoolItem(new Constant.Utf8(name),constantPool);		
-		}
-		
-		for(Pair<Type.Clazz,List<Modifier>> i : inners) {
-			Constant.addPoolItem(Constant.buildClass(type),constantPool);
-			Constant.addPoolItem(Constant.buildClass(i.first()),constantPool);
-			String name = i.first().lastComponent().first();
+			Constant.addPoolItem(Constant.buildClass(i.second()),constantPool);
+			String name = i.second().lastComponent().first();
 			Constant.addPoolItem(new Constant.Utf8(name),constantPool);										
 		}		
 	}
 	
 	public void print(PrintWriter output, Map<Constant.Info, Integer> constantPool) {
 		output.println("  InnerClasses:");
-		for(Pair<Type.Clazz,List<Modifier>> i : outers) {
-			String name = type.lastComponent().first();
-			int nameIndex = constantPool.get(new Constant.Utf8(name));			
-			int outerIndex = constantPool.get(Constant.buildClass(i.first()));
-			int innerIndex = constantPool.get(Constant.buildClass(type));
-			output.print("   ");			
-			output.print(nameIndex + " (");
-			BytecodeFileWriter.writeModifiers(i.second(),output);					
-			output.println(") = " + innerIndex + " of " + outerIndex);
-		}	
 		
-		for(Pair<Type.Clazz,List<Modifier>> i : inners) {
-			String name = i.first().lastComponent().first();
+		for(Triple<Type.Clazz,Type.Clazz,List<Modifier>> i : inners) {
+			String name = i.second().lastComponent().first();
 			int nameIndex = constantPool.get(new Constant.Utf8(name));
-			int outerIndex = constantPool.get(Constant.buildClass(type));
-			int innerIndex = constantPool.get(Constant.buildClass(i.first()));	
+			int outerIndex = constantPool.get(Constant.buildClass(i.first()));
+			int innerIndex = constantPool.get(Constant.buildClass(i.second()));	
 			output.print("   ");			
 			output.print(nameIndex + " (");
-			BytecodeFileWriter.writeModifiers(i.second(),output);					
+			BytecodeFileWriter.writeModifiers(i.third(),output);					
 			output.println(") = " + innerIndex + " of " + outerIndex);
 		}			
 	}
@@ -105,25 +83,26 @@ public class InnerClasses implements Attribute {
 			Map<Constant.Info, Integer> constantPool) throws IOException {
 		output.write_u2(constantPool.get(new Constant.Utf8("InnerClasses")));
 		
-		int ninners = inners.size() + outers.size();
+		int ninners = inners.size();
 		
 		output.write_u4(2 + (8 * ninners));
 		output.write_u2(ninners);
 		
-		for(Pair<Type.Clazz,List<Modifier>> i : outers) {
+		for(Triple<Type.Clazz,Type.Clazz,List<Modifier>> i : inners) {
+			if(i.second() == null) {
+				output.write_u2(0);
+			} else {
+				output.write_u2(constantPool.get(Constant.buildClass(i.second())));
+			}
+			if(i.first() == null) {
+				output.write_u2(0);
+			} else {
+				output.write_u2(constantPool.get(Constant.buildClass(i.first())));
+			}
 			output.write_u2(constantPool.get(Constant.buildClass(type)));
-			output.write_u2(constantPool.get(Constant.buildClass(i.first())));
-			String name = type.lastComponent().first();
+			String name = i.second().lastComponent().first();			
 			output.write_u2(constantPool.get(new Constant.Utf8(name)));
-			ClassFileWriter.writeModifiers(i.second(),output);								
-		}		
-		
-		for(Pair<Type.Clazz,List<Modifier>> i : inners) {
-			output.write_u2(constantPool.get(Constant.buildClass(i.first())));
-			output.write_u2(constantPool.get(Constant.buildClass(type)));
-			String name = i.first().lastComponent().first();
-			output.write_u2(constantPool.get(new Constant.Utf8(name)));
-			ClassFileWriter.writeModifiers(i.second(),output);			
+			ClassFileWriter.writeModifiers(i.third(),output);			
 		}		
 	}
 	

@@ -54,8 +54,7 @@ public class ClassFileBuilder {
 	protected void buildInnerClasses(JilClass clazz, ClassFile cfile) {
 		if(clazz.isInnerClass() || !clazz.inners().isEmpty()) {			
 			// this is basically about building the inner classes attribute
-			ArrayList<Pair<Type.Clazz,List<Modifier>>> inners = new ArrayList();
-			ArrayList<Pair<Type.Clazz,List<Modifier>>> outers = new ArrayList();
+			ArrayList<Triple<Type.Clazz,Type.Clazz,List<Modifier>>> inners = new ArrayList();			
 
 			Type.Clazz inner = clazz.type();
 			List<Pair<String,List<Type.Reference>>> components = inner.components();
@@ -65,7 +64,7 @@ public class ClassFileBuilder {
 				Type.Clazz ref = new Type.Clazz(inner.pkg(),ncomponents);
 				try {
 					Clazz ic = loader.loadClass(ref);
-					outers.add(new Pair(ic.type(),ic.modifiers()));
+					inners.add(new Triple(ic.type(),inner,ic.modifiers()));
 				} catch(ClassNotFoundException e) {
 					// this is a problem, but for now we'll just ignore it
 				}
@@ -74,13 +73,13 @@ public class ClassFileBuilder {
 			for(Type.Clazz tc : clazz.inners()) {
 				try {
 					Clazz ic = loader.loadClass(tc);
-					inners.add(new Pair(ic.type(),ic.modifiers()));
+					inners.add(new Triple(inner,ic.type(),ic.modifiers()));
 				} catch(ClassNotFoundException e) {
 					// this is a problem, but for now we'll just ignore it
 				}
 			}
 			
-			cfile.attributes().add(new InnerClasses(clazz.type(),inners,outers));
+			cfile.attributes().add(new InnerClasses(clazz.type(),inners));
 		}
 	}
 	

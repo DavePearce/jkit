@@ -585,16 +585,13 @@ public class InnerClassRewrite {
 				// Ok, this is an inner class construction. So, we need to check
 				// whether it's static or not.
 				try {
-					Clazz clazz = loader.loadClass(tc);
-					
-					System.out.println("LOOKING AT CLASS: " + clazz.type());
+					Clazz clazz = loader.loadClass(tc);										
 					
 					if(!clazz.isStatic()) {						
 						// First, update the arguments to the new call
 						Type.Clazz parentType = parentType(tc);
 						
-						if(e.context() == null) {
-							System.out.println("ADDING this pointer: " + parentType);
+						if(e.context() == null) {							
 							Expr.LocalVariable thiz = new Expr.LocalVariable(
 									"this", parentType,loc);
 							e.parameters().add(0,thiz);							
