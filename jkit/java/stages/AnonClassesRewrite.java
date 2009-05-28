@@ -370,16 +370,19 @@ public class AnonClassesRewrite {
 				.attribute(JilBuilder.MethodInfo.class);
 								
 				// Second, determine non-local variables
-				if(params.size() > 0) {
-					ArrayList<Type> nparams = new ArrayList<Type>(mi.type.parameterTypes());
-					for(Map.Entry<String,Type> en : params.entrySet()) {
+				if (params.size() > 0) {
+					ArrayList<Type> nparams = new ArrayList<Type>(mi.type
+							.parameterTypes());
+					for (Map.Entry<String, Type> en : params.entrySet()) {
 						nparams.add(en.getValue());
-						// FIXME: Actually need to determine whether or not this is a
-						// local variable, or a non-local from a method further up.
-						Expr arg = new Expr.LocalVariable(en.getKey(),en.getValue(),loc);
+						// FIXME: Actually need to determine whether or not this
+						// is a local variable, or a non-local from a method
+						// further up.
+						Expr arg = new Expr.LocalVariable(en.getKey(), en
+								.getValue(), loc);
 						e.parameters().add(arg);
 					}
-					mi.type = new Type.Function(mi.type.returnType(),nparams);
+					mi.type = new Type.Function(mi.type.returnType(), nparams);
 				}
 				
 				// Third, create an appropriate constructor.

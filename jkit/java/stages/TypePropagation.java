@@ -537,7 +537,7 @@ public class TypePropagation {
 		
 		// Third, check whether this is constructing an anonymous class ...
 		if(e.declarations().size() > 0) {
-			Type.Clazz tc = (Type.Clazz) type;
+			Type.Clazz tc = (Type.Clazz) scopes.peek().attribute(Type.class);
 			ArrayList<Pair<String, List<Type.Reference>>> ncomponents = new ArrayList(
 					tc.components());
 			ncomponents.add(new Pair(Integer.toString(++anonymousClassCount),
@@ -548,6 +548,8 @@ public class TypePropagation {
 				doDeclaration(d);
 			}
 		}
+		
+		System.out.println("TYPE IS: " + type);
 		
 		e.attributes().add(type);
 	}
