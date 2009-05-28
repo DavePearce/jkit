@@ -674,8 +674,8 @@ public class TypeSystem {
 		}
 		
 		// At this point, we need to consider variable arity methods. 
-		if(variableArity) {			
-			Type cType = concreteParams.get(paramLength); // hack for now.			
+		if(variableArity && concreteParams.size() >= templateParams.size()) {			
+			Type cType = concreteParams.get(paramLength);			
 			Type.Array vaType = (Type.Array) templateParams.get(paramLength);		
 			
 			if(arrayDepth(cType) == arrayDepth(vaType)) {
