@@ -1450,7 +1450,7 @@ public class ClassFileReader {
 	
     // ============================================================
 	// OTHER HELPER METHODS
-	// ============================================================	
+	// ============================================================		
 	
 	protected List<Modifier> listModifiers(int modifiers, boolean methodDecl) {
 		int[] masks = { 
