@@ -332,9 +332,9 @@ public class ClassLoader {
 					// Update our knowledge base of classes.					
 					classtable.put(refName(clazz.type()), clazz);					
 					return clazz;
-				} else {
-					File classFile = new File(filename + ".class");					
-					File srcFile = new File(srcFilename + ".java");
+				} else {					
+					File classFile = new File(location.getPath(),filename + ".class");					
+					File srcFile = new File(location.getPath(),srcFilename + ".java");
 					
 					if (srcFile.exists()
 							&& !compiler.isCompiling(srcFile)
