@@ -794,13 +794,13 @@ public class InnerClassRewrite {
 			Type.Function ntype = new Type.Function(m.type().returnType(),nparams);
 			m.setType(ntype);
 			ArrayList<Modifier> mods = new ArrayList<Modifier>();
-			mods.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL));
+			mods.add(Modifier.ACC_FINAL);
 			m.parameters().add(0, new Pair("this$0",mods));
 		}
 		
 		// Finally, add a field with the appropriate name.
 		ArrayList<Modifier> modifiers = new ArrayList<Modifier>();
-		modifiers.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL));
+		modifiers.add(Modifier.ACC_FINAL);
 		// note: parent pointers must have package access.
 		
 		JilField field = new JilField("this$0",
@@ -813,7 +813,7 @@ public class InnerClassRewrite {
 			Type.Clazz parentType, SourceLocation loc) {
 				
 		ArrayList<Modifier> mods = new ArrayList<Modifier>();
-		mods.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL));
+		mods.add(Modifier.ACC_FINAL);
 		constructor.parameters().add(0, new Triple("this$0", mods, parentType));
 		Expr.LocalVariable param = new Expr.LocalVariable("this$0", parentType, loc);
 		Expr.LocalVariable thiz = new Expr.LocalVariable("this", ownerType, loc);
@@ -853,11 +853,11 @@ public class InnerClassRewrite {
 			
 			JilExpr thisVar = null;
 			ArrayList<Modifier> mods = new ArrayList<Modifier>();
-			mods.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL));
+			mods.add(Modifier.ACC_FINAL);
 			ArrayList<Pair<String,List<Modifier>>> params = new ArrayList(); 
 			Type.Function ft;
 			
-			modifiers.add(new Modifier.Base(java.lang.reflect.Modifier.STATIC));
+			modifiers.add(Modifier.ACC_STATIC);
 			
 			if(field.isStatic()) {
 				thisVar = new JilExpr.ClassVariable(clazz.type());				
@@ -908,12 +908,12 @@ public class InnerClassRewrite {
 			JilExpr thisVar = null;
 			
 			ArrayList<Modifier> mods = new ArrayList<Modifier>();
-			mods.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL));
+			mods.add(Modifier.ACC_FINAL);
 			ArrayList<Pair<String,List<Modifier>>> params = new ArrayList(); 
 			
 			Type.Function ft;
 			
-			modifiers.add(new Modifier.Base(java.lang.reflect.Modifier.STATIC));
+			modifiers.add(Modifier.ACC_STATIC);
 			
 			if(field.isStatic()) {				
 				thisVar = new JilExpr.ClassVariable(clazz.type());

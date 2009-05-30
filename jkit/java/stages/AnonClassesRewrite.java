@@ -531,8 +531,8 @@ public class AnonClassesRewrite {
 		// now add fields for non-local variables.
 		for(Map.Entry<String,Type> en : nonlocalParams.entrySet()) {
 			ArrayList<Modifier> mods = new ArrayList();
-			mods.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL));
-			mods.add(new Modifier.Base(java.lang.reflect.Modifier.PRIVATE));			
+			mods.add(Modifier.ACC_FINAL);
+			mods.add(Modifier.ACC_PRIVATE);			
 			Decl.JavaField f = new Decl.JavaField(mods, "val$" + en.getKey(),
 					fromJilType(en.getValue()), null, loc);
 			jc.declarations().add(f);
@@ -554,7 +554,7 @@ public class AnonClassesRewrite {
 		ArrayList<Expr> args = new ArrayList<Expr>();
 		ArrayList<Type> superParams = new ArrayList<Type>();
 		ArrayList<Modifier> mods = new ArrayList<Modifier>();
-		mods.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL));
+		mods.add(Modifier.ACC_FINAL);
 		int p = 0;
 		int trigger = (type.parameterTypes().size() - nonlocalParams.size());
 		for (Type t : type.parameterTypes()) {

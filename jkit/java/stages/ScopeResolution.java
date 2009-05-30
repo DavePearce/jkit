@@ -283,7 +283,7 @@ public class ScopeResolution {
 			// put in a type for the special "this" variable, and "super"
 			// variable (if appropriate).
 			ArrayList<Modifier> ms = new ArrayList<Modifier>();
-			ms.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL));
+			ms.add(Modifier.ACC_FINAL);
 			ClassScope cs = ((ClassScope) findEnclosingScope(ClassScope.class));
 			Pair<Type, List<Modifier>> p = new Pair(cs.type,ms);
 			myScope.variables.put("this",p);
@@ -306,7 +306,7 @@ public class ScopeResolution {
 		if (!d.isStatic()) {
 			// put in a type for the special "this" variable
 			ArrayList<Modifier> ms = new ArrayList<Modifier>();
-			ms.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL));
+			ms.add(Modifier.ACC_FINAL);
 			ClassScope cs = ((ClassScope) findEnclosingScope(ClassScope.class)); 
 			Pair<Type, List<Modifier>> p = new Pair(cs.type,ms);
 			myScope.variables.put("this",p);
@@ -329,7 +329,7 @@ public class ScopeResolution {
 		// put in a type for the special "this" variable, and "super"
 		// variable (if appropriate).
 		ArrayList<Modifier> ms = new ArrayList<Modifier>();
-		ms.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL));
+		ms.add(Modifier.ACC_FINAL);
 		ClassScope cs = ((ClassScope) findEnclosingScope(ClassScope.class));
 		Pair<Type, List<Modifier>> p = new Pair(cs.type,ms);
 		myScope.variables.put("this",p);
@@ -968,8 +968,7 @@ public class ScopeResolution {
 				} else {
 					// Check whether or not the non-local variable is declared
 					// final (as this is a Java requirement).
-					if (!hasModifier(java.lang.reflect.Modifier.FINAL,
-							s.variables.get(e.value()).second())) {
+					if (!hasFinalModifier(s.variables.get(e.value()).second())) {
 						// no it doesn't
 						syntax_error(
 								"local variable \""
@@ -1072,13 +1071,10 @@ public class ScopeResolution {
 	 * @param modifiers
 	 * @return
 	 */
-	protected boolean hasModifier(int modifier, List<Modifier> modifiers) {
+	protected boolean hasFinalModifier(List<Modifier> modifiers) {
 		for(Modifier m : modifiers) {
-			if(m instanceof Modifier.Base) {
-				Modifier.Base b = (Modifier.Base) m;
-				if(b.modifier() == modifier) {
-					return true;
-				}
+			if(m instanceof Modifier.Final) {
+				return true;
 			}
 		}
 		return false;

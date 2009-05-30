@@ -32,8 +32,7 @@ public class ClassFileBuilder {
 	
 	public ClassFile build(jkit.jil.tree.JilClass clazz) {				
 		ClassFile cfile = new ClassFile(version, clazz.type(), clazz
-				.superClass(), clazz.interfaces(), filterClassModifiers(clazz
-				.modifiers()));
+				.superClass(), clazz.interfaces(), clazz.modifiers());
 		
 		if (needClassSignature(clazz)) {
 			cfile.attributes().add(
@@ -78,33 +77,7 @@ public class ClassFileBuilder {
 			
 			cfile.attributes().add(new InnerClasses(clazz.type(),inners));
 		}
-	}
-	
-	/**
-	 * The purpose of this method is to remove modifiers that cannot be used in
-	 * the outermost modifier position for a class. In particular, a class
-	 * cannot be declared "static" in its outermost modifiers mask; rather, this
-	 * has to be done within the InnerClasses attributes.
-	 * 
-	 * @param _mods
-	 * @return
-	 */
-	protected List<Modifier> filterClassModifiers(List<Modifier> _mods) {
-		List<Modifier> mods = _mods;
-		for(Modifier m : _mods) {
-			if(m instanceof Modifier.Base) {
-				Modifier.Base b = (Modifier.Base) m;
-				if((b.modifier() & java.lang.reflect.Modifier.STATIC) != 0) {
-					if(_mods == mods) {
-						// copy the original modifier list lazily.
-						mods = new ArrayList<Modifier>(_mods);						
-					} 
-					mods.remove(m);
-				}
-			}
-		}
-		return mods;
-	}
+	}		
 	
 	protected void buildFields(JilClass clazz, ClassFile cfile) {
 		for (JilField f : clazz.fields()) {
@@ -130,13 +103,13 @@ public class ClassFileBuilder {
 			if (clazz.isInterface() && !cfm.isPublic()) {
 				// interfaces cannot have non-public methods in the bytecode.
 				cfm.modifiers().add(
-						new Modifier.Base(java.lang.reflect.Modifier.PUBLIC));				
+						Modifier.ACC_PUBLIC);				
 			}
 			
 			if (clazz.isInterface() && !cfm.isAbstract()) {
 				// interfaces cannot have non-abstract methods in the bytecode.
 				cfm.modifiers().add(
-						new Modifier.Base(java.lang.reflect.Modifier.ABSTRACT));				
+						Modifier.ACC_ABSTRACT);				
 			}
 			
 			if(!m.exceptions().isEmpty()) {

@@ -1572,28 +1572,32 @@ public class JavaFileReader {
 			Tree mc = ms.getChild(i);
 			SourceLocation loc = new SourceLocation(mc.getLine(),mc.getCharPositionInLine());
 			String m = mc.getText();
-			if (m.equals("public")) {
-				mods.add(new Modifier.Base(java.lang.reflect.Modifier.PUBLIC,loc));
-			} else if (m.equals("private")) {
-				mods.add(new Modifier.Base(java.lang.reflect.Modifier.PRIVATE,loc));
-			} else if (m.equals("protected")) {
-				mods.add(new Modifier.Base(java.lang.reflect.Modifier.PROTECTED,loc));
-			} else if (m.equals("static")) {
-				mods.add(new Modifier.Base(java.lang.reflect.Modifier.STATIC,loc));
-			} else if (m.equals("abstract")) {
-				mods.add(new Modifier.Base(java.lang.reflect.Modifier.ABSTRACT,loc));
-			} else if (m.equals("final")) {
-				mods.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL,loc));
-			} else if (m.equals("native")) {
-				mods.add(new Modifier.Base(java.lang.reflect.Modifier.NATIVE,loc));
-			} else if (m.equals("synchronized")) {
-				mods.add(new Modifier.Base(java.lang.reflect.Modifier.SYNCHRONIZED,loc));
-			} else if (m.equals("transient")) {
-				mods.add(new Modifier.Base(java.lang.reflect.Modifier.TRANSIENT,loc));
-			} else if (m.equals("volatile")) {
-				mods.add(new Modifier.Base(java.lang.reflect.Modifier.VOLATILE,loc));
-			} else if (m.equals("strictfp")) {
-				mods.add(new Modifier.Base(java.lang.reflect.Modifier.STRICT,loc));
+			if(m.charAt(0) <= 'p') {
+				if (m.equals("public")) {
+					mods.add(new Modifier.Public(loc));
+				} else if (m.equals("private")) {
+					mods.add(new Modifier.Private(loc));
+				} else if (m.equals("protected")) {
+					mods.add(new Modifier.Protected(loc));
+				} else if (m.equals("abstract")) {
+					mods.add(new Modifier.Abstract(loc));
+				} else if (m.equals("final")) {
+					mods.add(new Modifier.Final(loc));
+				} else if (m.equals("native")) {
+					mods.add(new Modifier.Native(loc));
+				} 
+			} else if(m.charAt(0) > 'p') {
+				if (m.equals("static")) {
+					mods.add(new Modifier.Static(loc));
+				} else if (m.equals("synchronized")) {
+					mods.add(new Modifier.Synchronized(loc));
+				} else if (m.equals("strictfp")) {
+					mods.add(new Modifier.StrictFP(loc));
+				} else if (m.equals("transient")) {
+					mods.add(new Modifier.Transient(loc));
+				} else if (m.equals("volatile")) {
+					mods.add(new Modifier.Volatile(loc));
+				} 
 			} else if (mc.getType() == ANNOTATION) {
 				String name = mc.getChild(0).getText();
 				ArrayList<Expr> arguments = new ArrayList<Expr>();

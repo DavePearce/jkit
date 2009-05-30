@@ -1058,21 +1058,19 @@ public class JavaFileWriter {
 	}
 	
 	protected void writeModifiers(List<Modifier> modifiers) {
-		for(Modifier x : modifiers) {
-			if(x instanceof Modifier.Base) {
-				int mod = ((Modifier.Base)x).modifier();
-				if((mod & java.lang.reflect.Modifier.PRIVATE)!=0) { write("private "); }
-				if((mod & java.lang.reflect.Modifier.PROTECTED)!=0) { write("protected "); }
-				if((mod & java.lang.reflect.Modifier.PUBLIC)!=0) { write("public "); }
-				if((mod & java.lang.reflect.Modifier.STATIC)!=0) { write("static "); }
-				if((mod & java.lang.reflect.Modifier.ABSTRACT)!=0) { write("abstract "); }
-				if((mod & java.lang.reflect.Modifier.FINAL)!=0) { write("final "); }
-				if((mod & java.lang.reflect.Modifier.NATIVE)!=0) { write("native "); }				
-				if((mod & java.lang.reflect.Modifier.STRICT)!=0) { write("strictfp "); }
-				if((mod & java.lang.reflect.Modifier.SYNCHRONIZED)!=0) { write("synchronized "); }
-				if((mod & java.lang.reflect.Modifier.TRANSIENT)!=0) { write("transient "); }
-				if((mod & java.lang.reflect.Modifier.VOLATILE)!=0) { write("volatile "); }
-			} else if(x instanceof Modifier.Annotation){
+		for(Modifier x : modifiers) {						
+			if(x instanceof Modifier.Private) { write("private "); }
+			else if(x instanceof Modifier.Protected) { write("protected "); }
+			else if(x instanceof Modifier.Public) { write("public "); }
+			else if(x instanceof Modifier.Static) { write("static "); }
+			else if(x instanceof Modifier.Abstract) { write("abstract "); }
+			else if(x instanceof Modifier.Final) { write("final "); }
+			else if(x instanceof Modifier.Native) { write("native "); }				
+			else if(x instanceof Modifier.StrictFP) { write("strictfp "); }
+			else if(x instanceof Modifier.Synchronized) { write("synchronized "); }
+			else if(x instanceof Modifier.Transient) { write("transient "); }
+			else if(x instanceof Modifier.Volatile) { write("volatile "); }
+			else if(x instanceof Modifier.Annotation){
 				Modifier.Annotation a = (Modifier.Annotation) x;
 				write("@");
 				write(a.name());

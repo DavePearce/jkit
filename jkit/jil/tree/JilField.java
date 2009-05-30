@@ -68,19 +68,16 @@ public class JilField extends SyntacticElementImpl implements jkit.compiler.Claz
 	
 	/**
      * Check whether this field has one of the "base" modifiers (e.g. static,
-     * public, private, etc). These are found in java.lang.reflect.Modifier.
+     * public, private, etc). These are found in Modifier.ACC_
      * 
      * @param modifier
      * @return true if it does!
      */
-	public boolean hasModifier(int modifier) {
+	public boolean hasModifier(Class modClass) {
 		for(Modifier m : modifiers) {
-			if(m instanceof Modifier.Base) {
-				Modifier.Base b = (Modifier.Base) m;
-				if(b.modifier() == modifier) {
-					return true;
-				}
-			}
+			if(m.getClass().equals(modClass)) {
+				return true;
+			}			
 		}
 		return false;
 	}
@@ -89,41 +86,72 @@ public class JilField extends SyntacticElementImpl implements jkit.compiler.Claz
 	 * Check whether this field is abstract
 	 */
 	public boolean isAbstract() {
-		return hasModifier(java.lang.reflect.Modifier.ABSTRACT);
+		for(Modifier m : modifiers) {
+			if(m instanceof Modifier.Abstract) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
 	 * Check whether this field is final
 	 */
-	public boolean isFinal() {
-		return hasModifier(java.lang.reflect.Modifier.FINAL);
+	public boolean isFinal() {		
+		for(Modifier m : modifiers) {
+			if(m instanceof Modifier.Final) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
 	 * Check whether this field is static
 	 */
-	public boolean isStatic() {
-		return hasModifier(java.lang.reflect.Modifier.STATIC);
+	public boolean isStatic() {		
+		for(Modifier m : modifiers) {
+			if(m instanceof Modifier.Static) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
 	 * Check whether this field is public
 	 */
 	public boolean isPublic() {
-		return hasModifier(java.lang.reflect.Modifier.PUBLIC);
+		for(Modifier m : modifiers) {
+			if(m instanceof Modifier.Public) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
 	 * Check whether this field is protected
 	 */
 	public boolean isProtected() {
-		return hasModifier(java.lang.reflect.Modifier.PROTECTED);
+		for(Modifier m : modifiers) {
+			if(m instanceof Modifier.Protected) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
 	 * Check whether this field is private
 	 */
-	public boolean isPrivate() {
-		return hasModifier(java.lang.reflect.Modifier.PRIVATE);
+	public boolean isPrivate() {		
+		for(Modifier m : modifiers) {
+			if(m instanceof Modifier.Private) {
+				return true;
+			}
+		}
+		return false;
 	}
+
 }

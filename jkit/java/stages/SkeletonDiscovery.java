@@ -12,6 +12,7 @@ import jkit.jil.tree.JilClass;
 import jkit.jil.tree.SourceLocation;
 import jkit.jil.tree.SyntacticElement;
 import jkit.jil.tree.Type;
+import jkit.jil.tree.Modifier;
 import jkit.util.Pair;
 
 /**
@@ -70,9 +71,7 @@ public class SkeletonDiscovery {
 			Type.Clazz parent) {
 		List<JilClass> cs = doClass(d, pkg, parent);
 		cs.get(cs.size() - 1).modifiers()
-				.add(
-						new jkit.jil.tree.Modifier.Base(
-								java.lang.reflect.Modifier.INTERFACE));
+				.add(Modifier.ACC_INTERFACE);
 		return cs;
 	}
 	

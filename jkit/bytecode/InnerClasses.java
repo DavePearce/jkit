@@ -111,7 +111,9 @@ public class InnerClasses implements Attribute {
 			}
 			String name = i.second().lastComponent().first();
 			output.write_u2(constantPool.get(new Constant.Utf8(name)));
-			ClassFileWriter.writeModifiers(i.third(),output);			
+			ClassFileWriter.writeModifiers(i.third(),
+					ClassFileReader.innerclass_masks,
+					ClassFileReader.innerclass_mods, output);			
 		}		
 	}
 	

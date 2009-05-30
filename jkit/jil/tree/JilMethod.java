@@ -125,19 +125,16 @@ public class JilMethod extends SyntacticElementImpl implements jkit.compiler.Cla
 	
 	/**
      * Check whether this method has one of the "base" modifiers (e.g. static,
-     * public, private, etc). These are found in java.lang.reflect.Modifier.
+     * public, private, etc). These are found in Modifier.ACC_
      * 
      * @param modifier
      * @return true if it does!
      */
-	public boolean hasModifier(int modifier) {
+	public boolean hasModifier(Class modClass) {
 		for(Modifier m : modifiers) {
-			if(m instanceof Modifier.Base) {
-				Modifier.Base b = (Modifier.Base) m;
-				if(b.modifier() == modifier) {
-					return true;
-				}
-			}
+			if(m.getClass().equals(modClass)) {
+				return true;
+			}			
 		}
 		return false;
 	}
@@ -146,65 +143,101 @@ public class JilMethod extends SyntacticElementImpl implements jkit.compiler.Cla
 	 * Check whether this method is abstract
 	 */
 	public boolean isAbstract() {
-		return hasModifier(java.lang.reflect.Modifier.ABSTRACT);
+		for(Modifier m : modifiers) { 
+			if(m instanceof Modifier.Abstract) {
+				return true;
+			}
+		}
+		return false;		
 	}
 
 	/**
 	 * Check whether this method is final
 	 */
 	public boolean isFinal() {
-		return hasModifier(java.lang.reflect.Modifier.FINAL);
+		for (Modifier m : modifiers) {
+			if (m instanceof Modifier.Final) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
 	 * Check whether this method is static
 	 */
 	public boolean isStatic() {
-		return hasModifier(java.lang.reflect.Modifier.STATIC);
+		for (Modifier m : modifiers) {
+			if (m instanceof Modifier.Static) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
 	 * Check whether this method is public
 	 */
 	public boolean isPublic() {
-		return hasModifier(java.lang.reflect.Modifier.PUBLIC);
+		for (Modifier m : modifiers) {
+			if (m instanceof Modifier.Public) {
+				return true;
+			}
+		}		
+		return false;
 	}
 
 	/**
 	 * Check whether this method is protected
 	 */
 	public boolean isProtected() {
-		return hasModifier(java.lang.reflect.Modifier.PROTECTED);
+		for(Modifier m : modifiers) { if(m instanceof Modifier.Protected) { return true; }}
+		return false;
 	}
 
 	/**
 	 * Check whether this method is private
 	 */
 	public boolean isPrivate() {
-		return hasModifier(java.lang.reflect.Modifier.PRIVATE);
+		for (Modifier m : modifiers) {
+			if (m instanceof Modifier.Private) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
 	 * Check whether this method is native
 	 */
 	public boolean isNative() {
-		return hasModifier(java.lang.reflect.Modifier.NATIVE);
+		for (Modifier m : modifiers) {
+			if (m instanceof Modifier.Native) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
 	 * Check whether this method is synchronized
 	 */
 	public boolean isSynchronized() {
-		return hasModifier(java.lang.reflect.Modifier.SYNCHRONIZED);
+		for (Modifier m : modifiers) {
+			if (m instanceof Modifier.Synchronized) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
 	 * Check whether this method has varargs
 	 */
 	public boolean isVariableArity() {
-		for(Modifier m : modifiers) {
-			if(m instanceof Modifier.VarArgs) {				
-				return true;				
+		for (Modifier m : modifiers) {
+			if (m instanceof Modifier.VarArgs) {
+				return true;
 			}
 		}
 		return false;

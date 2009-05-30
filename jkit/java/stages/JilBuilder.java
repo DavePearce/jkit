@@ -1576,7 +1576,7 @@ public class JilBuilder {
 		List<JilMethod> si = parent.methods("<clinit>");
 		if(si.size() == 0) {		
 			ArrayList<Modifier> mods = new ArrayList<Modifier>();
-			mods.add(new Modifier.Base(java.lang.reflect.Modifier.STATIC));
+			mods.add(Modifier.ACC_STATIC);
 			JilMethod r = new JilMethod("<clinit>", new Type.Function(
 					Types.T_VOID), new ArrayList(), mods,
 					new ArrayList<Type.Clazz>());

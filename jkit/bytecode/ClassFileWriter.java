@@ -68,7 +68,7 @@ public class ClassFileWriter {
 		}
 		
 		// ok, done that now write more stuff
-		writeModifiers(cfile.modifiers());
+		writeClassModifiers(cfile.modifiers());
 		output.write_u2(poolMap.get(Constant.buildClass(cfile.type())));
 		if (cfile.superClass() != null) {
 			output.write_u2(poolMap.get(Constant.buildClass(cfile.superClass())));
@@ -98,7 +98,7 @@ public class ClassFileWriter {
 	
 	protected void writeField(ClassFile.Field f,
 			HashMap<Constant.Info, Integer> constantPool) throws IOException {
-		writeModifiers(f.modifiers());
+		writeFieldModifiers(f.modifiers());
 		output.write_u2(constantPool.get(new Constant.Utf8(f.name())));
 		output.write_u2(constantPool.get(new Constant.Utf8(ClassFile
 				.descriptor(f.type(), false))));
@@ -114,7 +114,7 @@ public class ClassFileWriter {
 	protected void writeMethod(ClassFile.Method m,
 			HashMap<Constant.Info, Integer> constantPool) throws IOException {
 
-		writeModifiers(m.modifiers());
+		writeMethodModifiers(m.modifiers());
 		output.write_u2(constantPool.get(new Constant.Utf8(m.name())));
 		output.write_u2(constantPool.get(new Constant.Utf8(ClassFile
 				.descriptor(m.type(), false))));
@@ -125,24 +125,111 @@ public class ClassFileWriter {
 			a.write(output, constantPool);
 		}
 	}
-
-	protected void writeModifiers(List<Modifier> modifiers)
-			throws IOException {
-		writeModifiers(modifiers, output);
-	}
 	
-	// static so that it can be reused.
-	public static void writeModifiers(List<Modifier> modifiers,
-			BinaryOutputStream output) throws IOException {
-		int mods = 0;
+	protected void writeClassModifiers(List<Modifier> modifiers)
+			throws IOException {
 
-		for (Modifier x : modifiers) {
-			if (x instanceof Modifier.Base) {
-				Modifier.Base b = (Modifier.Base) x;				
-				mods |= b.modifier();
+		int mods = 0;
+		for(Modifier m : modifiers) {
+			if(m instanceof Modifier.Public) {
+				mods |= ClassFileReader.ACC_PUBLIC;
+			} else if(m instanceof Modifier.Final) {
+				mods |= ClassFileReader.ACC_FINAL;
+			} else if(m instanceof Modifier.Super) {
+				mods |= ClassFileReader.ACC_SUPER;
+			} else if(m instanceof Modifier.Interface) {
+				mods |= ClassFileReader.ACC_INTERFACE;
+			} else if(m instanceof Modifier.Abstract) {
+				mods |= ClassFileReader.ACC_ABSTRACT;
+			} else if(m instanceof Modifier.Annotation) {
+				mods |= ClassFileReader.ACC_ANNOTATION;
+			} else if(m instanceof Modifier.Enum) {
+				mods |= ClassFileReader.ACC_ENUM;
+			}
+		}
+		
+		output.write_u2(mods);
+	}
+
+	protected void writeFieldModifiers(List<Modifier> modifiers)
+			throws IOException {
+		
+		int mods = 0;
+		for(Modifier m : modifiers) {
+			if(m instanceof Modifier.Public) {
+				mods |= ClassFileReader.ACC_PUBLIC;
+			} else if(m instanceof Modifier.Private) {
+				mods |= ClassFileReader.ACC_PRIVATE;
+			} else if(m instanceof Modifier.Protected) {
+				mods |= ClassFileReader.ACC_PROTECTED;
+			} else if(m instanceof Modifier.Static) {
+				mods |= ClassFileReader.ACC_STATIC;
+			} else if(m instanceof Modifier.Final) {
+				mods |= ClassFileReader.ACC_FINAL;
+			} else if(m instanceof Modifier.Volatile) {
+				mods |= ClassFileReader.ACC_VOLATILE;
+			} else if(m instanceof Modifier.Transient) {
+				mods |= ClassFileReader.ACC_TRANSIENT;
+			} else if(m instanceof Modifier.Synthetic) {
+				mods |= ClassFileReader.ACC_SYNTHETIC;
+			} else if(m instanceof Modifier.Enum) {
+				mods |= ClassFileReader.ACC_ENUM;
+			}
+		}
+		
+		output.write_u2(mods);
+	}
+
+	protected void writeMethodModifiers(List<Modifier> modifiers)
+			throws IOException {		
+		int mods = 0;
+		for(Modifier m : modifiers) {
+			if(m instanceof Modifier.Public) {
+				mods |= ClassFileReader.ACC_PUBLIC;
+			} else if(m instanceof Modifier.Private) {
+				mods |= ClassFileReader.ACC_PRIVATE;
+			} else if(m instanceof Modifier.Protected) {
+				mods |= ClassFileReader.ACC_PROTECTED;
+			} else if(m instanceof Modifier.Static) {
+				mods |= ClassFileReader.ACC_STATIC;
+			} else if(m instanceof Modifier.Final) {
+				mods |= ClassFileReader.ACC_FINAL;
+			} else if(m instanceof Modifier.Volatile) {
+				mods |= ClassFileReader.ACC_VOLATILE;
+			} else if(m instanceof Modifier.Synchronized) {
+				mods |= ClassFileReader.ACC_SYNCHRONIZED;
+			} else if(m instanceof Modifier.Bridge) {
+				mods |= ClassFileReader.ACC_BRIDGE;
+			} else if(m instanceof Modifier.VarArgs) {
+				mods |= ClassFileReader.ACC_VARARGS;
+			} else if(m instanceof Modifier.Native) {
+				mods |= ClassFileReader.ACC_NATIVE;
+			} else if(m instanceof Modifier.Abstract) {
+				mods |= ClassFileReader.ACC_ABSTRACT;
+			} else if(m instanceof Modifier.Synthetic) {
+				mods |= ClassFileReader.ACC_SYNTHETIC;
+			} else if(m instanceof Modifier.StrictFP) {
+				mods |= ClassFileReader.ACC_STRICT;
+			}
+		}
+		
+		output.write_u2(mods);
+	}
+		
+	protected static void writeModifiers(List<Modifier> modifiers, int[] masks,
+			Modifier[] mods, BinaryOutputStream output) throws IOException {
+		ArrayList<Modifier> r = new ArrayList<Modifier>();
+
+		int mask = 0;
+
+		for (Modifier m : modifiers) {
+			for (int i = 0; i != mods.length; ++i) {
+				if (mods[i].getClass().equals(m.getClass())) {
+					mask |= masks[i];
+				}
 			}
 		}
 
-		output.write_u2(mods);
-	}	
+		output.write_u2(mask);
+	}
 }

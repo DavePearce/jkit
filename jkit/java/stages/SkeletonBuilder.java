@@ -129,8 +129,7 @@ public class SkeletonBuilder {
 						syntax_error("No support for ENUMS that have methods",enc);
 					} else {
 						List<Modifier> modifiers = new ArrayList<Modifier>();
-						modifiers.add(new Modifier.Base(
-								java.lang.reflect.Modifier.PUBLIC));
+						modifiers.add(Modifier.ACC_PUBLIC);
 						skeleton.fields().add(
 								new JilField(enc.name(), t, modifiers,
 										new ArrayList(enc.attributes())));
@@ -441,7 +440,7 @@ public class SkeletonBuilder {
 				ArrayList<Modifier> modifiers = new ArrayList<Modifier>();
 				
 				if(inStaticContext()) {
-					modifiers.add(new Modifier.Base(java.lang.reflect.Modifier.STATIC));
+					modifiers.add(Modifier.ACC_STATIC);
 				}
 				
 				if (superClazz.isInterface()) {
@@ -551,7 +550,7 @@ public class SkeletonBuilder {
 			SourceLocation loc) {
 
 		ArrayList<Modifier> mods = new ArrayList<Modifier>();
-		mods.add(new Modifier.Base(java.lang.reflect.Modifier.PUBLIC));		
+		mods.add(Modifier.ACC_PUBLIC);		
 		Expr.Invoke ivk = new Expr.Invoke(null, "super", new ArrayList(),
 				new ArrayList(), loc);
 		ArrayList<Stmt> stmts = new ArrayList();

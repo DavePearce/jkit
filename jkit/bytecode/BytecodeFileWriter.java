@@ -115,50 +115,45 @@ public class BytecodeFileWriter {
 		writeModifiers(modifiers,output);
 	}
 	
-	public static void writeModifiers(List<Modifier> modifiers, PrintWriter output) {
+	static void writeModifiers(List<Modifier> modifiers, PrintWriter output) {
 		for (Modifier x : modifiers) {
-			if (x instanceof Modifier.Base) {
-				int mod = ((Modifier.Base) x).modifier();
-				if ((mod & java.lang.reflect.Modifier.PRIVATE) != 0) {
-					output.print("private ");
-				}
-				if ((mod & java.lang.reflect.Modifier.PROTECTED) != 0) {
-					output.print("protected ");
-				}
-				if ((mod & java.lang.reflect.Modifier.PUBLIC) != 0) {
-					output.print("public ");
-				}
-				if ((mod & java.lang.reflect.Modifier.STATIC) != 0) {
-					output.print("static ");
-				}
-				if ((mod & java.lang.reflect.Modifier.ABSTRACT) != 0) {
-					output.print("abstract ");
-				}
-				if ((mod & java.lang.reflect.Modifier.FINAL) != 0) {
-					output.print("final ");
-				}
-				if ((mod & java.lang.reflect.Modifier.NATIVE) != 0) {
-					output.print("native ");
-				}
-				if ((mod & java.lang.reflect.Modifier.STRICT) != 0) {
-					output.print("strictfp ");
-				}
-				if ((mod & java.lang.reflect.Modifier.SYNCHRONIZED) != 0) {
-					output.print("synchronized ");
-				}
-				if ((mod & java.lang.reflect.Modifier.TRANSIENT) != 0) {
-					output.print("transient ");
-				}
-				if ((mod & java.lang.reflect.Modifier.VOLATILE) != 0) {
-					output.print("volatile ");
-				}
+			if (x instanceof Modifier.Private) {
+				output.write("private ");
+			} else if (x instanceof Modifier.Protected) {
+				output.write("protected ");
+			} else if (x instanceof Modifier.Public) {
+				output.write("public ");
+			} else if (x instanceof Modifier.Static) {
+				output.write("static ");
+			} else if (x instanceof Modifier.Abstract) {
+				output.write("abstract ");
+			} else if (x instanceof Modifier.Final) {
+				output.write("final ");
+			} else if (x instanceof Modifier.Super) {
+				output.write("super ");
+			} else if (x instanceof Modifier.Bridge) {
+				output.write("bridge ");
+			} else if (x instanceof Modifier.Enum) {
+				output.write("enum ");
+			} else if (x instanceof Modifier.Synthetic) {
+				output.write("synthetic ");
+			} else if (x instanceof Modifier.Native) {
+				output.write("native ");
+			} else if (x instanceof Modifier.StrictFP) {
+				output.write("strictfp ");
+			} else if (x instanceof Modifier.Synchronized) {
+				output.write("synchronized ");
+			} else if (x instanceof Modifier.Transient) {
+				output.write("transient ");
+			} else if (x instanceof Modifier.Volatile) {
+				output.write("volatile ");
 			} else if (x instanceof Modifier.Annotation) {
 				Modifier.Annotation a = (Modifier.Annotation) x;
-				output.print("@");
-				output.print(a.name());
+				output.write("@");
+				output.write(a.name());
 			} else {
-				// do nothing
+				output.write("unknown ");
 			}
 		}
-	}
+	}	
 }

@@ -171,7 +171,7 @@ public class ClassFileReader {
 		
 		ClassSignature s = null;				
 		
-		List<Modifier> lmodifiers = listModifiers(modifiers,false);
+		List<Modifier> lmodifiers = parseClassModifiers(modifiers);
 		
 		for(Attribute a : attributes) {
 			if(a instanceof ClassSignature) { 
@@ -265,8 +265,8 @@ public class ClassFileReader {
 			} 
 		}					
 		
-		ClassFile.Field f = new ClassFile.Field(name, type, listModifiers(
-				modifiers, false));
+		ClassFile.Field f = new ClassFile.Field(name, type,
+				parseFieldModifiers(modifiers));
 		
 		f.attributes().addAll(attributes);
 		
@@ -328,8 +328,8 @@ public class ClassFileReader {
 			} 
 		}								
 		
-		ClassFile.Method cm = new ClassFile.Method(name, type, listModifiers(
-				modifiers, true));
+		ClassFile.Method cm = new ClassFile.Method(name, type,
+				parseMethodModifiers(modifiers));
 		cm.attributes.addAll(attributes);
 		return cm;
 	}
@@ -443,7 +443,7 @@ public class ClassFileReader {
 			int inner_class_idx = read_u2(offset);
 			int outer_class_idx = read_u2(offset+2);			
 			int inner_class_access_flags = read_u2(offset+6);
-			List<Modifier> mods = listModifiers(inner_class_access_flags,false);
+			List<Modifier> mods = parseInnerClassModifiers(inner_class_access_flags);
 			
 			// Note, either the inner or outer indices can be zero. This
 			// indicates an anonymous class.
@@ -1452,35 +1452,168 @@ public class ClassFileReader {
 	// OTHER HELPER METHODS
 	// ============================================================		
 	
-	protected List<Modifier> listModifiers(int modifiers, boolean methodDecl) {
-		int[] masks = { 
-				java.lang.reflect.Modifier.ABSTRACT,
-				java.lang.reflect.Modifier.FINAL,
-				java.lang.reflect.Modifier.INTERFACE,
-				java.lang.reflect.Modifier.NATIVE,
-				java.lang.reflect.Modifier.PRIVATE,
-				java.lang.reflect.Modifier.PUBLIC,
-				java.lang.reflect.Modifier.PROTECTED,
-				java.lang.reflect.Modifier.STATIC,
-				java.lang.reflect.Modifier.STRICT,
-				java.lang.reflect.Modifier.SYNCHRONIZED,
-				java.lang.reflect.Modifier.TRANSIENT,
-				java.lang.reflect.Modifier.VOLATILE				
-				};
-		
-		ArrayList<Modifier> mods = new ArrayList<Modifier>();
-		
-		for(int m : masks) {
-			if((modifiers & m) != 0) {
-				if(m == java.lang.reflect.Modifier.TRANSIENT && methodDecl) {
-					mods.add(new Modifier.VarArgs());
-				} else {
-					mods.add(new Modifier.Base(m));
-				}
+    // access flags for fields / methods / classes
+
+	public static final int ACC_PUBLIC = 0x0001; 
+	public static final int ACC_PRIVATE = 0x0002; 
+	public static final int ACC_PROTECTED = 0x0004; 
+	public static final int ACC_STATIC = 0x0008; 
+	public static final int ACC_FINAL = 0x0010;         
+	public static final int ACC_VOLATILE = 0x0040;
+	public static final int ACC_TRANSIENT = 0x0080;
+	public static final int ACC_SYNTHETIC = 0x1000;	
+	public static final int ACC_BRIDGE = 0x0040;
+	public static final int ACC_VARARGS = 0x0080;
+	public static final int ACC_ANNOTATION = 0x2000;
+	public static final int ACC_ENUM = 0x4000;
+	    
+    // access flags for methods / classes 
+    
+	public static final int ACC_SYNCHRONIZED = 0x0020;
+	public static final int ACC_NATIVE = 0x0100;	
+	public static final int ACC_ABSTRACT = 0x0400;
+	public static final int ACC_STRICT = 0x0800; 
+    
+    // access flags for classes
+    
+    public static final int ACC_INTERFACE = 0x0200; 
+    public static final int ACC_SUPER = 0x0020; 
+
+	
+	static final int[] class_masks = { 
+		ACC_PUBLIC,
+		ACC_FINAL,
+		ACC_SUPER,
+		ACC_INTERFACE,
+		ACC_ABSTRACT,
+		ACC_SYNTHETIC,
+		ACC_ANNOTATION,
+		ACC_ENUM							
+		};
+
+	static final Modifier[] class_mods = {
+		Modifier.ACC_PUBLIC,
+		Modifier.ACC_FINAL,
+		Modifier.ACC_SUPER,
+		Modifier.ACC_INTERFACE,
+		Modifier.ACC_ABSTRACT,
+		Modifier.ACC_SYNTHETIC,
+		Modifier.ACC_ANNOTATION,
+		Modifier.ACC_ENUM											
+	};
+	
+	protected List<Modifier> parseClassModifiers(int modifiers) {			
+		return parseModifiers(modifiers,class_masks,class_mods);
+	}	
+
+	static final int[] field_masks = { 
+		ACC_PUBLIC,
+		ACC_PRIVATE,
+		ACC_PROTECTED,
+		ACC_STATIC,
+		ACC_FINAL,
+		ACC_VOLATILE,
+		ACC_TRANSIENT,
+		ACC_SYNTHETIC,
+		ACC_ENUM
+		};
+
+	static final Modifier[] field_mods = { 
+		Modifier.ACC_PUBLIC,
+		Modifier.ACC_PRIVATE,
+		Modifier.ACC_PROTECTED,
+		Modifier.ACC_STATIC,
+		Modifier.ACC_FINAL,
+		Modifier.ACC_VOLATILE,
+		Modifier.ACC_TRANSIENT,
+		Modifier.ACC_SYNTHETIC,
+		Modifier.ACC_ENUM
+	};
+
+	protected List<Modifier> parseFieldModifiers(int modifiers) {			
+		return parseModifiers(modifiers,field_masks,field_mods);
+	}	
+
+	static final int[] method_masks = { 
+		ACC_PUBLIC,
+		ACC_PRIVATE,
+		ACC_PROTECTED,
+		ACC_STATIC,
+		ACC_FINAL,
+		ACC_VOLATILE,
+		ACC_SYNCHRONIZED,
+		ACC_BRIDGE,
+		ACC_VARARGS,
+		ACC_NATIVE,
+		ACC_ABSTRACT,
+		ACC_STRICT,
+		ACC_SYNTHETIC
+	};
+
+	static final Modifier[] method_mods = { 
+		Modifier.ACC_PUBLIC,
+		Modifier.ACC_PRIVATE,
+		Modifier.ACC_PROTECTED,
+		Modifier.ACC_STATIC,
+		Modifier.ACC_FINAL,
+		Modifier.ACC_VOLATILE,
+		Modifier.ACC_SYNCHRONIZED,
+		Modifier.ACC_BRIDGE,
+		Modifier.ACC_VARARGS,
+		Modifier.ACC_NATIVE,
+		Modifier.ACC_ABSTRACT,
+		Modifier.ACC_STRICT,
+		Modifier.ACC_SYNTHETIC
+	};
+
+	protected List<Modifier> parseMethodModifiers(int modifiers) {			
+		return parseModifiers(modifiers,method_masks,method_mods);
+	}
+	
+	static final int[] innerclass_masks = { 
+		ACC_PUBLIC,
+		ACC_PRIVATE,
+		ACC_PROTECTED,
+		ACC_STATIC,
+		ACC_FINAL,
+		ACC_INTERFACE,
+		ACC_ABSTRACT,		
+		ACC_SYNTHETIC,
+		ACC_ANNOTATION,
+		ACC_ENUM
+	};
+	
+	static final Modifier[] innerclass_mods = { 
+		Modifier.ACC_PUBLIC,
+		Modifier.ACC_PRIVATE,
+		Modifier.ACC_PROTECTED,
+		Modifier.ACC_STATIC,
+		Modifier.ACC_FINAL,
+		Modifier.ACC_INTERFACE,
+		Modifier.ACC_ABSTRACT,		
+		Modifier.ACC_SYNTHETIC,
+		Modifier.ACC_ANNOTATION,
+		Modifier.ACC_ENUM
+	};
+	
+	protected List<Modifier> parseInnerClassModifiers(int modifiers) {			
+		return parseModifiers(modifiers,innerclass_masks,innerclass_mods);
+	}
+	
+	protected static List<Modifier> parseModifiers(int modifiers, int[] masks,
+			Modifier[] mods) {
+		ArrayList<Modifier> r = new ArrayList<Modifier>();
+
+		for (int i = 0; i != masks.length; ++i) {
+			if(modifiers == 0) { break; } // early termination
+			int mask = masks[i];
+			if ((modifiers & mask) != 0) {
+				r.add(mods[i]);
+				modifiers &= ~mask;
 			}
 		}
-				
-		return mods;
+
+		return r;
 	}
 	
 	/** 
@@ -1715,33 +1848,7 @@ public class ClassFileReader {
 	protected static final int CONSTANT_Double = 6;
 	protected static final int CONSTANT_NameAndType = 12;
 	protected static final int CONSTANT_Utf8 = 1;
-	
-    // access flags for fields / methods / classes
-
-	public static final int ACC_PUBLIC = 0x0001; 
-	public static final int ACC_PRIVATE = 0x0002; 
-	public static final int ACC_public = 0x0004; 
-	public static final int ACC_STATIC = 0x0008; 
-	public static final int ACC_FINAL = 0x0010;         
-	public static final int ACC_VOLATILE = 0x0040;
-	public static final int ACC_TRANSIENT = 0x0080;
-	public static final int ACC_SYNTHETIC = 0x1000;
-	public static final int ACC_ENUM = 0x2000;
-	public static final int ACC_BRIDGE = 0x0040;
-	public static final int ACC_VARARGS = 0x0080;
 	    
-    // access flags for methods / classes 
-    
-	public static final int ACC_SYNCHRONIZED = 0x0020;
-	public static final int ACC_NATIVE = 0x0100;
-	public static final int ACC_ABSTRACT = 0x0400;
-	public static final int ACC_STRICT = 0x0800; 
-    
-    // access flags for classes
-    
-    public static final int ACC_INTERFACE = 0x0200; 
-    public static final int ACC_SUPER = 0x0020; 
-    
     // from the VM SPEC
 	public static final byte VM_BOOLEAN = 4;
 	public static final byte VM_CHAR = 5;

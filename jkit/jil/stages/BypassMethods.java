@@ -149,7 +149,7 @@ public class BypassMethods {
 			String n = "param$" + i;
 			
 			ArrayList<Modifier> mods = new ArrayList<Modifier>();
-			mods.add(new Modifier.Base(java.lang.reflect.Modifier.FINAL));
+			mods.add(Modifier.ACC_FINAL);
 			params.add(new Pair(n, mods));
 			
 			if (from.parameterTypes().get(i) instanceof Type.Variable) {
@@ -180,7 +180,7 @@ public class BypassMethods {
 		}
 
 		ArrayList<Modifier> modifiers = new ArrayList<Modifier>();
-		modifiers.add(new Modifier.Base(java.lang.reflect.Modifier.PUBLIC));
+		modifiers.add(Modifier.ACC_PUBLIC);
 		
 		JilMethod r = new JilMethod(name, ftype, params, modifiers,
 				new ArrayList<Type.Clazz>());

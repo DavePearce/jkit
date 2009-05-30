@@ -3,6 +3,8 @@ package jkit.jil.io;
 import java.io.*;
 import java.util.List;
 import jkit.util.Pair;
+import jkit.java.tree.Expr;
+import jkit.java.tree.Stmt;
 import jkit.jil.tree.*;
 
 /**
@@ -414,50 +416,26 @@ public class JilFileWriter {
 	}
 	
 	protected void writeModifiers(List<Modifier> modifiers) {
-		for (Modifier x : modifiers) {
-			if (x instanceof Modifier.Base) {
-				int mod = ((Modifier.Base) x).modifier();
-				if ((mod & java.lang.reflect.Modifier.PRIVATE) != 0) {
-					output.write("private ");
-				}
-				if ((mod & java.lang.reflect.Modifier.PROTECTED) != 0) {
-					output.write("protected ");
-				}
-				if ((mod & java.lang.reflect.Modifier.PUBLIC) != 0) {
-					output.write("public ");
-				}
-				if ((mod & java.lang.reflect.Modifier.STATIC) != 0) {
-					output.write("static ");
-				}
-				if ((mod & java.lang.reflect.Modifier.ABSTRACT) != 0) {
-					output.write("abstract ");
-				}
-				if ((mod & java.lang.reflect.Modifier.FINAL) != 0) {
-					output.write("final ");
-				}
-				if ((mod & java.lang.reflect.Modifier.NATIVE) != 0) {
-					output.write("native ");
-				}
-				if ((mod & java.lang.reflect.Modifier.STRICT) != 0) {
-					output.write("strictfp ");
-				}
-				if ((mod & java.lang.reflect.Modifier.SYNCHRONIZED) != 0) {
-					output.write("synchronized ");
-				}
-				if ((mod & java.lang.reflect.Modifier.TRANSIENT) != 0) {
-					output.write("transient ");
-				}
-				if ((mod & java.lang.reflect.Modifier.VOLATILE) != 0) {
-					output.write("volatile ");
-				}
-			} else if (x instanceof Modifier.Annotation) {
+		for(Modifier x : modifiers) {						
+			if(x instanceof Modifier.Private) { output.write("private "); }
+			else if(x instanceof Modifier.Protected) { output.write("protected "); }
+			else if(x instanceof Modifier.Public) { output.write("public "); }
+			else if(x instanceof Modifier.Static) { output.write("static "); }
+			else if(x instanceof Modifier.Abstract) { output.write("abstract "); }
+			else if(x instanceof Modifier.Final) { output.write("final "); }
+			else if(x instanceof Modifier.Native) { output.write("native "); }				
+			else if(x instanceof Modifier.StrictFP) { output.write("strictfp "); }
+			else if(x instanceof Modifier.Synchronized) { output.write("synchronized "); }
+			else if(x instanceof Modifier.Transient) { output.write("transient "); }
+			else if(x instanceof Modifier.Volatile) { output.write("volatile "); }
+			else if (x instanceof Modifier.Annotation) {
 				Modifier.Annotation a = (Modifier.Annotation) x;
 				output.write("@");
 				output.write(a.name());
-			} else {
-				// do nothing
+			} else {				
+				output.write("unknown ");				
 			}
-		}
+		}					
 	}
 	
 	protected void writeExpressionWithBracketsIfNecessary(JilExpr e) {

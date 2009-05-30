@@ -104,7 +104,7 @@ public interface Clazz {
      * @param modifier
      * @return true if it does!
      */
-	public boolean hasModifier(int modifier);
+	public boolean hasModifier(Class modifier);
 	
 	/**
 	 * Check whether this method is abstract
@@ -189,7 +189,7 @@ public interface Clazz {
 	     * @param modifier
 	     * @return true if it does!
 	     */
-		public boolean hasModifier(int modifier);
+		public boolean hasModifier(Class modifier);
 		
 		/**
 		 * Check whether this field is abstract
@@ -263,7 +263,7 @@ public interface Clazz {
 	     * @param modifier
 	     * @return true if it does!
 	     */
-		public boolean hasModifier(int modifier);
+		public boolean hasModifier(Class modifier);
 		
 		/**
 		 * Check whether this method is abstract
