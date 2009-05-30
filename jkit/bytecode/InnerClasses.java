@@ -110,11 +110,40 @@ public class InnerClasses implements Attribute {
 				output.write_u2(constantPool.get(Constant.buildClass(i.first())));
 			}
 			String name = i.second().lastComponent().first();
-			output.write_u2(constantPool.get(new Constant.Utf8(name)));
-			ClassFileWriter.writeModifiers(i.third(),
-					ClassFileReader.innerclass_masks,
-					ClassFileReader.innerclass_mods, output);			
+			output.write_u2(constantPool.get(new Constant.Utf8(name)));			
+			writeInnerModifiers(i.third(),output);			
 		}		
 	}
+	
+	private static void writeInnerModifiers(List<Modifier> modifiers,
+			BinaryOutputStream output)
+			throws IOException {
+		int mods = 0;
+		for (Modifier m : modifiers) {
+			if (m instanceof Modifier.Public) {
+				mods |= ClassFileReader.ACC_PUBLIC;
+			} else if (m instanceof Modifier.Private) {
+				mods |= ClassFileReader.ACC_PRIVATE;
+			} else if (m instanceof Modifier.Protected) {
+				mods |= ClassFileReader.ACC_PROTECTED;
+			} else if (m instanceof Modifier.Static) {
+				mods |= ClassFileReader.ACC_STATIC;
+			} else if (m instanceof Modifier.Final) {
+				mods |= ClassFileReader.ACC_FINAL;
+			} else if (m instanceof Modifier.Interface) {
+				mods |= ClassFileReader.ACC_INTERFACE;
+			} else if (m instanceof Modifier.Abstract) {
+				mods |= ClassFileReader.ACC_ABSTRACT;
+			} else if (m instanceof Modifier.Synthetic) {
+				mods |= ClassFileReader.ACC_SYNTHETIC;
+			} else if (m instanceof Modifier.Annotation) {
+				mods |= ClassFileReader.ACC_ANNOTATION;
+			} else if (m instanceof Modifier.Enum) {
+				mods |= ClassFileReader.ACC_ENUM;
+			} 
+		}
+
+		output.write_u2(mods);
+}
 	
 }

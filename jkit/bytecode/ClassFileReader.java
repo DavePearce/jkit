@@ -33,10 +33,10 @@ import jkit.jil.tree.Type;
 import jkit.jil.util.*;
 import jkit.util.*;
 
-public class ClassFileReader {	
+public final class ClassFileReader {	
 	private final byte[] bytes;      // byte array of class
-	private int[] items;       // start indices of constant pool items	
-	private Object[] objects;  // cache for constant pool objects
+	private final int[] items;       // start indices of constant pool items	
+	private final Object[] objects;  // cache for constant pool objects
 	
 	/**
 	 * Construct reader for classfile. This method looks in all the places
@@ -70,9 +70,10 @@ public class ClassFileReader {
 	 * @throws ClassFormatError if the classfile is invalid.
 	 */
 	public ClassFileReader(byte[] b) {						
-		bytes = b;	
-		items = null;
-		objects = null;
+		bytes = b;			
+		int nitems = read_u2(8);
+		items = new int[nitems];				
+		objects = new Object[nitems];
 	}
 				
 	/**
@@ -90,9 +91,7 @@ public class ClassFileReader {
 		int version = read_i4(4); 	
 		// parse constant pool
 		int index = 4+2+2+2;
-		int nitems = read_u2(8);
-		items = new int[nitems];				
-		objects = new Object[nitems];
+		int nitems = read_u2(8);	
 		// process each item		
 		for(int i=1;i!=nitems;++i) {			
 			int type = read_u1(index);
@@ -180,11 +179,11 @@ public class ClassFileReader {
 				superType = s.superClass();
 				interfaces = s.interfaces();
 			} else if(a instanceof InnerClasses) {
-				InnerClasses ic = (InnerClasses) a;
-				
+				InnerClasses ic = (InnerClasses) a;								
+												
 				for(Triple<Type.Clazz,Type.Clazz,List<Modifier>> p : ic.inners()) {					
-					if(p.second().equals(type))  {						
-						lmodifiers.addAll(p.third());						
+					if(matchedInnerTypes(type,p.second()))  {
+						lmodifiers.addAll(p.third());								
 					}					
 				}				
 			}
@@ -1478,142 +1477,145 @@ public class ClassFileReader {
     
     public static final int ACC_INTERFACE = 0x0200; 
     public static final int ACC_SUPER = 0x0020; 
-
 	
-	static final int[] class_masks = { 
-		ACC_PUBLIC,
-		ACC_FINAL,
-		ACC_SUPER,
-		ACC_INTERFACE,
-		ACC_ABSTRACT,
-		ACC_SYNTHETIC,
-		ACC_ANNOTATION,
-		ACC_ENUM							
-		};
-
-	static final Modifier[] class_mods = {
-		Modifier.ACC_PUBLIC,
-		Modifier.ACC_FINAL,
-		Modifier.ACC_SUPER,
-		Modifier.ACC_INTERFACE,
-		Modifier.ACC_ABSTRACT,
-		Modifier.ACC_SYNTHETIC,
-		Modifier.ACC_ANNOTATION,
-		Modifier.ACC_ENUM											
-	};
-	
-	protected List<Modifier> parseClassModifiers(int modifiers) {			
-		return parseModifiers(modifiers,class_masks,class_mods);
-	}	
-
-	static final int[] field_masks = { 
-		ACC_PUBLIC,
-		ACC_PRIVATE,
-		ACC_PROTECTED,
-		ACC_STATIC,
-		ACC_FINAL,
-		ACC_VOLATILE,
-		ACC_TRANSIENT,
-		ACC_SYNTHETIC,
-		ACC_ENUM
-		};
-
-	static final Modifier[] field_mods = { 
-		Modifier.ACC_PUBLIC,
-		Modifier.ACC_PRIVATE,
-		Modifier.ACC_PROTECTED,
-		Modifier.ACC_STATIC,
-		Modifier.ACC_FINAL,
-		Modifier.ACC_VOLATILE,
-		Modifier.ACC_TRANSIENT,
-		Modifier.ACC_SYNTHETIC,
-		Modifier.ACC_ENUM
-	};
-
-	protected List<Modifier> parseFieldModifiers(int modifiers) {			
-		return parseModifiers(modifiers,field_masks,field_mods);
-	}	
-
-	static final int[] method_masks = { 
-		ACC_PUBLIC,
-		ACC_PRIVATE,
-		ACC_PROTECTED,
-		ACC_STATIC,
-		ACC_FINAL,
-		ACC_VOLATILE,
-		ACC_SYNCHRONIZED,
-		ACC_BRIDGE,
-		ACC_VARARGS,
-		ACC_NATIVE,
-		ACC_ABSTRACT,
-		ACC_STRICT,
-		ACC_SYNTHETIC
-	};
-
-	static final Modifier[] method_mods = { 
-		Modifier.ACC_PUBLIC,
-		Modifier.ACC_PRIVATE,
-		Modifier.ACC_PROTECTED,
-		Modifier.ACC_STATIC,
-		Modifier.ACC_FINAL,
-		Modifier.ACC_VOLATILE,
-		Modifier.ACC_SYNCHRONIZED,
-		Modifier.ACC_BRIDGE,
-		Modifier.ACC_VARARGS,
-		Modifier.ACC_NATIVE,
-		Modifier.ACC_ABSTRACT,
-		Modifier.ACC_STRICT,
-		Modifier.ACC_SYNTHETIC
-	};
-
-	protected List<Modifier> parseMethodModifiers(int modifiers) {			
-		return parseModifiers(modifiers,method_masks,method_mods);
-	}
-	
-	static final int[] innerclass_masks = { 
-		ACC_PUBLIC,
-		ACC_PRIVATE,
-		ACC_PROTECTED,
-		ACC_STATIC,
-		ACC_FINAL,
-		ACC_INTERFACE,
-		ACC_ABSTRACT,		
-		ACC_SYNTHETIC,
-		ACC_ANNOTATION,
-		ACC_ENUM
-	};
-	
-	static final Modifier[] innerclass_mods = { 
-		Modifier.ACC_PUBLIC,
-		Modifier.ACC_PRIVATE,
-		Modifier.ACC_PROTECTED,
-		Modifier.ACC_STATIC,
-		Modifier.ACC_FINAL,
-		Modifier.ACC_INTERFACE,
-		Modifier.ACC_ABSTRACT,		
-		Modifier.ACC_SYNTHETIC,
-		Modifier.ACC_ANNOTATION,
-		Modifier.ACC_ENUM
-	};
-	
-	protected List<Modifier> parseInnerClassModifiers(int modifiers) {			
-		return parseModifiers(modifiers,innerclass_masks,innerclass_mods);
-	}
-	
-	protected static List<Modifier> parseModifiers(int modifiers, int[] masks,
-			Modifier[] mods) {
-		ArrayList<Modifier> r = new ArrayList<Modifier>();
-
-		for (int i = 0; i != masks.length; ++i) {
-			if(modifiers == 0) { break; } // early termination
-			int mask = masks[i];
-			if ((modifiers & mask) != 0) {
-				r.add(mods[i]);
-				modifiers &= ~mask;
-			}
+	private final List<Modifier> parseClassModifiers(int modifiers) {
+		ArrayList<Modifier> mods = new ArrayList<Modifier>();
+		if((modifiers & ACC_PUBLIC) != 0) {
+			mods.add(Modifier.ACC_PUBLIC);
 		}
+		if((modifiers & ACC_FINAL) != 0) {
+			mods.add(Modifier.ACC_FINAL);
+		}
+		if((modifiers & ACC_SUPER) != 0) {
+			mods.add(Modifier.ACC_SUPER);
+		}
+		if((modifiers & ACC_INTERFACE) != 0) {
+			mods.add(Modifier.ACC_INTERFACE);
+		}
+		if((modifiers & ACC_ABSTRACT) != 0) {
+			mods.add(Modifier.ACC_ABSTRACT);
+		}
+		if((modifiers & ACC_SYNTHETIC) != 0) {
+			mods.add(Modifier.ACC_SYNTHETIC);
+		}
+		if((modifiers & ACC_ANNOTATION) != 0) {
+			mods.add(Modifier.ACC_ANNOTATION);
+		}
+		if((modifiers & ACC_ENUM) != 0) {
+			mods.add(Modifier.ACC_ENUM);
+		}
+		return mods;
+	}	
 
-		return r;
+	private final List<Modifier> parseFieldModifiers(int modifiers) {
+		ArrayList<Modifier> mods = new ArrayList<Modifier>();
+		if((modifiers & ACC_PUBLIC) != 0) {
+			mods.add(Modifier.ACC_PUBLIC);
+		}
+		if((modifiers & ACC_PRIVATE) != 0) {
+			mods.add(Modifier.ACC_PRIVATE);
+		}
+		if((modifiers & ACC_PROTECTED) != 0) {
+			mods.add(Modifier.ACC_PROTECTED);
+		}
+		if((modifiers & ACC_STATIC) != 0) {
+			mods.add(Modifier.ACC_STATIC);
+		}
+		if((modifiers & ACC_FINAL) != 0) {
+			mods.add(Modifier.ACC_FINAL);
+		}
+		if((modifiers & ACC_VOLATILE) != 0) {
+			mods.add(Modifier.ACC_VOLATILE);
+		}
+		if((modifiers & ACC_TRANSIENT) != 0) {
+			mods.add(Modifier.ACC_TRANSIENT);
+		}
+		if((modifiers & ACC_SYNTHETIC) != 0) {
+			mods.add(Modifier.ACC_SYNTHETIC);
+		}
+		if((modifiers & ACC_ENUM) != 0) {
+			mods.add(Modifier.ACC_ENUM);
+		}
+		return mods;
+	}	
+
+	private final List<Modifier> parseMethodModifiers(int modifiers) {			
+		ArrayList<Modifier> mods = new ArrayList<Modifier>();
+		if((modifiers & ACC_PUBLIC) != 0) {
+			mods.add(Modifier.ACC_PUBLIC);
+		}
+		if((modifiers & ACC_PRIVATE) != 0) {
+			mods.add(Modifier.ACC_PRIVATE);
+		}
+		if((modifiers & ACC_PROTECTED) != 0) {
+			mods.add(Modifier.ACC_PROTECTED);
+		}
+		if((modifiers & ACC_STATIC) != 0) {
+			mods.add(Modifier.ACC_STATIC);
+		}
+		if((modifiers & ACC_FINAL) != 0) {
+			mods.add(Modifier.ACC_FINAL);
+		}
+		if((modifiers & ACC_VOLATILE) != 0) {
+			mods.add(Modifier.ACC_VOLATILE);
+		}
+		if((modifiers & ACC_SYNCHRONIZED) != 0) {
+			mods.add(Modifier.ACC_SYNCHRONIZED);
+		}
+		if((modifiers & ACC_BRIDGE) != 0) {
+			mods.add(Modifier.ACC_BRIDGE);
+		}
+		if((modifiers & ACC_VARARGS) != 0) {
+			mods.add(Modifier.ACC_VARARGS);
+		}
+		if((modifiers & ACC_NATIVE) != 0) {
+			mods.add(Modifier.ACC_NATIVE);
+		}
+		if((modifiers & ACC_ABSTRACT) != 0) {
+			mods.add(Modifier.ACC_ABSTRACT);
+		}
+		if((modifiers & ACC_STRICT) != 0) {
+			mods.add(Modifier.ACC_STRICT);
+		}
+		if((modifiers & ACC_SYNTHETIC) != 0) {
+			mods.add(Modifier.ACC_SYNTHETIC);
+		}
+		return mods;
+	}	
+	
+	private static List<Modifier> parseInnerClassModifiers(int modifiers) {			
+		ArrayList<Modifier> mods = new ArrayList<Modifier>();
+		if((modifiers & ACC_PUBLIC) != 0) {
+			mods.add(Modifier.ACC_PUBLIC);
+		}
+		if((modifiers & ACC_PRIVATE) != 0) {
+			mods.add(Modifier.ACC_PRIVATE);
+		}
+		if((modifiers & ACC_PROTECTED) != 0) {
+			mods.add(Modifier.ACC_PROTECTED);
+		}
+		if((modifiers & ACC_STATIC) != 0) {
+			mods.add(Modifier.ACC_STATIC);
+		}
+		if((modifiers & ACC_FINAL) != 0) {
+			mods.add(Modifier.ACC_FINAL);
+		}
+		if((modifiers & ACC_INTERFACE) != 0) {
+			mods.add(Modifier.ACC_INTERFACE);
+		}
+		if((modifiers & ACC_ABSTRACT) != 0) {
+			mods.add(Modifier.ACC_ABSTRACT);
+		}
+		if((modifiers & ACC_SYNTHETIC) != 0) {
+			mods.add(Modifier.ACC_SYNTHETIC);
+		}
+		if((modifiers & ACC_ANNOTATION) != 0) {
+			mods.add(Modifier.ACC_ANNOTATION);
+		}
+		if((modifiers & ACC_ENUM) != 0) {
+			mods.add(Modifier.ACC_ENUM);
+		}
+		return mods;
 	}
 	
 	/** 
@@ -1710,6 +1712,25 @@ public class ClassFileReader {
 		default:
 			throw new RuntimeException("unreachable code reached!");
 		}				
+	}
+	
+	private static final boolean matchedInnerTypes(Type.Clazz t1, Type.Clazz t2) {
+		List<Pair<String, List<Type.Reference>>> t1comps = t1.components();
+		List<Pair<String, List<Type.Reference>>> t2comps = t2.components();
+		int t1comps_size = t1comps.size();
+
+		if (!t1.pkg().equals(t2.pkg()) || t1comps_size != t2comps.size()) {
+			return false;
+		}
+
+		for (int i = 0; i != t1comps_size; ++i) {
+			String t1s = t1comps.get(i).first();
+			String t2s = t2comps.get(i).first();
+			if (!t1s.equals(t2s)) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	/**
