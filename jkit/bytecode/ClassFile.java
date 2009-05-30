@@ -32,9 +32,13 @@ public class ClassFile implements Clazz {
 		return type;
 	}
 	
+	public void setType(Type.Clazz t) {
+		type = t;
+	}	
+	
 	public String name() {
 		return type.lastComponent().first();
-	}
+	}	
 	
 	public Type.Clazz superClass() {
 		return superClazz;
@@ -234,10 +238,18 @@ public class ClassFile implements Clazz {
 			return name;
 		}
 
+		public void setName(String n) {
+			name = n;
+		}
+		
 		public Type type() {
 			return type;
 		}
 
+		public void setType(Type t) {
+			type = t;
+		}
+		
 		public List<Modifier> modifiers() {
 			return modifiers;
 		}
@@ -358,13 +370,13 @@ public class ClassFile implements Clazz {
 			return type;
 		}
 
-		public List<Modifier> modifiers() {
-			return modifiers;
+		public void setType(Type.Function t) {
+			type = t;
 		}
 		
-		public List<List<Modifier>> parameterModifiers() {
-			return new ArrayList();
-		}
+		public List<Modifier> modifiers() {
+			return modifiers;
+		}		
 		
 		public List<Type.Clazz> exceptions() {
 			for(Attribute a : attributes) {
@@ -697,7 +709,8 @@ public class ClassFile implements Clazz {
 				r += descriptor(pt,generic);
 			}
 
-			return r + ")" + descriptor(ft.returnType(),generic);
+			r = r + ")" + descriptor(ft.returnType(),generic);
+			return r;
 		} else if(t instanceof Type.Variable) {
 			if(generic) {
 				Type.Variable tv = (Type.Variable) t;
@@ -722,6 +735,11 @@ public class ClassFile implements Clazz {
 			} else {
 				return "Ljava/lang/Object;";
 			}
+		} else if(t instanceof Type.Intersection) {
+			Type.Intersection it = (Type.Intersection) t;
+			if(it.bounds().size() == 1) {
+				return descriptor(it.bounds().get(0),generic);
+			} 
 		}
 		 
 		throw new RuntimeException("Invalid type passed to descriptor(): " + t);

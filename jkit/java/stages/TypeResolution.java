@@ -734,7 +734,7 @@ public class TypeResolution {
 	}
 	
 	/**
-	 * The aim of this method is to substitute occurences of type variables for
+	 * The aim of this method is to substitute occurrences of type variables for
 	 * their "full" generic type. For example, consider this code:
 	 * 
 	 * <pre>

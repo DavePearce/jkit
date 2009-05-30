@@ -3,6 +3,7 @@ package jkit.jil.util;
 import java.util.*;
 
 import static jkit.compiler.SyntaxError.*;
+import jkit.java.stages.TypeSystem.BindError;
 import jkit.jil.tree.SyntacticElement;
 import jkit.jil.tree.Type;
 import jkit.util.Pair;
@@ -118,7 +119,111 @@ public class Types {
 		}
 		return false;
 	}
+	/**
+     * This method accepts a binding from type variables to concrete types, and
+     * then substitutes each such variable occuring in the target type with its
+     * corresponding instantation. For example, suppose we have this binding:
+     * 
+     * <pre>
+     *  K -&gt; String
+     *  V -&gt; Integer
+     * </pre>
+     * 
+     * Then, substituting against <code>HashMap<K,V></code> yields
+     * <code>HashMap<String,Integer></code>.
+     * 
+     * @param type
+     * @param binding
+     * @return
+     */
+	public static Type.Reference substitute(Type.Reference type, Map<String,Type.Reference> binding) {
+		if (type instanceof Type.Variable) {
+			// Ok, we've reached a type variable, so we can now bind this with
+			// what we already have.
+			Type.Variable v = (Type.Variable) type;
+			Type.Reference r = binding.get(v.variable());
+			if(r == null) {
+				// if the variable is not part of the binding, then we simply do
+                // not do anything with it.
+				return v;
+			} else {
+				return r;
+			}
+		} else if(type instanceof Type.Wildcard) {
+			Type.Wildcard wc = (Type.Wildcard) type;
+			Type.Reference lb = wc.lowerBound();
+			Type.Reference ub = wc.upperBound();
+			if(lb != null) { lb = substitute(lb,binding); }
+			if(ub != null) { ub = substitute(ub,binding); }
+			return new Type.Wildcard(lb,ub);
+		} else if(type instanceof Type.Array) {
+			Type.Array at = (Type.Array) type;
+			if(at.element() instanceof Type.Reference) {
+				return new Type.Array(substitute((Type.Reference) at.element(),binding));
+			} else {
+				return type;
+			}
+		} else if(type instanceof Type.Clazz) {
+			Type.Clazz ct = (Type.Clazz) type;
+			ArrayList<Pair<String,List<Type.Reference>>> ncomponents = new ArrayList();
+			List<Pair<String,List<Type.Reference>>> components = ct.components();
+			
+			for(Pair<String,List<Type.Reference>> c : components) {
+				ArrayList<Type.Reference> nc = new ArrayList<Type.Reference>();
+				for(Type.Reference r : c.second()) {
+					nc.add(substitute(r,binding));
+				}
+				ncomponents.add(new Pair(c.first(),nc));
+			}
+			
+			return new Type.Clazz(ct.pkg(),ncomponents);
+		}
+		
+		throw new BindError("Cannot substitute against type " + type);
+	}
 	
+	/**
+	 * This method accepts a binding from type variables to concrete types, and
+	 * then substitutes each such variable occuring in the target (function)
+	 * type with its corresponding instantation. For example, suppose we have
+	 * this binding:
+	 * 
+	 * <pre>
+	 *  K -&gt; String
+	 *  V -&gt; Integer
+	 * </pre>
+	 * 
+	 * Then, substituting against <code>v f(K)</code> yields
+	 * <code>Integer f(String)</code>.
+	 * 
+	 * @param type
+	 * @param binding
+	 * @return
+	 */
+	public static Type.Function substitute(Type.Function type, Map<String,Type.Reference> binding) {
+		Type returnType = type.returnType();
+		
+		if(returnType instanceof Type.Reference) {
+			returnType = substitute((Type.Reference) returnType,binding);
+		}
+		
+		ArrayList<Type> paramTypes = new ArrayList<Type>();
+		for(Type t : type.parameterTypes()) {
+			if(t instanceof Type.Reference) {
+				t = substitute((Type.Reference)t,binding);
+			}
+			paramTypes.add(t);
+		}
+		
+		ArrayList<Type.Variable> varTypes = new ArrayList<Type.Variable>();
+		for(Type.Variable v : type.typeArguments()) {
+			if(!binding.containsKey(v.variable())) {
+				varTypes.add(v);	
+			}			
+		}
+		
+		return new Type.Function(returnType,paramTypes,varTypes);
+	}
 	/**
      * Check wither a given type is a reference to java.lang.Object or not.
      * 

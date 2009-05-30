@@ -178,6 +178,7 @@ public final class ClassFileReader {
 				type = s.type();
 				superType = s.superClass();
 				interfaces = s.interfaces();
+				substituteTypeVars(fields,methods,type);
 			} else if(a instanceof InnerClasses) {
 				InnerClasses ic = (InnerClasses) a;								
 												
@@ -196,6 +197,54 @@ public final class ClassFileReader {
 		cfile.fields().addAll(fields);
 		
 		return 	cfile;			 		
+	}
+	
+	/**
+	 * The purpose of this method is to iterate types found in fields and method
+	 * signatures, and substitute type variables for their full type where
+	 * possible. For example, consider this class:
+	 * 
+	 * <pre>
+	 * class Test&lt;T extends Number&gt; {
+	 * 	Test(T x) {
+	 * 	}
+	 * }
+	 * </pre>
+	 * 
+	 * After initial parsing, the type for the constructor will be just
+	 * <code>T</code>. What we want, however, is the type
+	 * <code>T extends Number</code>. Therefore, we substitute for type
+	 * variables based on their declaration.
+	 * 
+	 * @param fields
+	 * @param methods
+	 * @param clazz
+	 */
+	protected static void substituteTypeVars(ArrayList<ClassFile.Field> fields,
+			ArrayList<ClassFile.Method> methods, Type.Clazz clazz) {
+
+		// First, build the binding.
+		HashMap<String,Type.Reference> binding = new HashMap();
+		for(Type.Variable v : clazz.usedVariables()) {
+			binding.put(v.variable(), v);
+		}
+		
+		// Second, iterate fields and substitute
+		for(ClassFile.Field f : fields) {
+			Type type = f.type();
+			if(type instanceof Type.Reference) {
+				type = Types.substitute((Type.Reference) type, binding);
+				f.setType(type);
+			}
+		}
+		
+		// Third, iterate fields and substitute
+		for(ClassFile.Method m : methods) {			
+			Type.Function type = m.type();	
+			type = Types.substitute(type, binding);
+			System.out.println(type);
+			m.setType(type);
+		}
 	}
 	
     // ============================================================
@@ -295,7 +344,7 @@ public final class ClassFileReader {
 	
 	protected ClassFile.Method parseMethod(int offset, String owner) {
 		String name = getString(read_u2(offset+2));
-		String desc = getString(read_u2(offset+4));		
+		String desc = getString(read_u2(offset+4));						
 		
 		if(name.equals("<init>")) {
 			// Need to strip off any enclosing class names here.
@@ -316,15 +365,15 @@ public final class ClassFileReader {
 			index += len + 6;
 		}
 				
-		Type.Function type = parseMethodDescriptor(desc);	
+		Type.Function type = parseMethodDescriptor(desc);			
 		
         // we use the desc type, unless there is a 
 		// signature attribute, since this provides
 		// additional generic information
 		for(Attribute at : attributes) {
 			if(at instanceof MethodSignature) {				
-					type = (Type.Function) ((MethodSignature) at).type();					
-			} 
+					type = (Type.Function) ((MethodSignature) at).type();
+				} 
 		}								
 		
 		ClassFile.Method cm = new ClassFile.Method(name, type,

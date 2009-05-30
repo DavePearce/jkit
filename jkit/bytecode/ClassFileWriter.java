@@ -118,7 +118,7 @@ public class ClassFileWriter {
 		output.write_u2(constantPool.get(new Constant.Utf8(m.name())));
 		output.write_u2(constantPool.get(new Constant.Utf8(ClassFile
 				.descriptor(m.type(), false))));
-
+		
 		output.write_u2(m.attributes.size());
 
 		for (Attribute a : m.attributes) {

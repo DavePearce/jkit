@@ -93,15 +93,13 @@ public class BytecodeFileWriter {
 		output.print("(");
 		boolean firstTime=true;
 		
-		List<Type> paramTypes = type.parameterTypes();
-		List<List<Modifier>> params = method.parameterModifiers();
+		List<Type> paramTypes = type.parameterTypes();				
 		
-		for(int i = 0; i != params.size();++i) {
+		for(int i = 0; i != paramTypes.size();++i) {
 			if(!firstTime) {
 				output.print(", ");
 			}
-			firstTime=false;
-			writeModifiers(params.get(i));			
+			firstTime=false;					
 			output.print(paramTypes.get(i));
 		}
 		
