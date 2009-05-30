@@ -399,6 +399,10 @@ public interface Type extends Attribute, Comparable<Type> {
 		private final Type element;
 		
 		public Array(Type element) {
+			if (element == null) {
+				throw new IllegalArgumentException(
+						"Supplied element type cannot be null.");
+			}
 			this.element = element;			
 		}
 		
@@ -447,6 +451,10 @@ public interface Type extends Attribute, Comparable<Type> {
 		private final List<Pair<String, List<Type.Reference>>> components;
 		
 		public Clazz(String pkg, List<Pair<String, List<Type.Reference>>> components) {
+			if (components == null) {
+				throw new IllegalArgumentException(
+						"Supplied class components type cannot be null.");
+			}
 			this.pkg = pkg;
 			this.components = components;
 		}		
@@ -772,6 +780,13 @@ public interface Type extends Attribute, Comparable<Type> {
 		public Intersection(List<Type.Reference> bounds,
 				Attribute... attributes) {
 			super(attributes);
+			if (bounds == null) {
+				throw new IllegalArgumentException(
+						"Supplied bounds cannot be null.");
+			} else if(bounds.size() <= 1) {
+				throw new IllegalArgumentException(
+				"Require more than one bound.");
+			}
 			this.bounds = new ArrayList<Type.Reference>(bounds);
 		}
 		
@@ -859,6 +874,10 @@ public interface Type extends Attribute, Comparable<Type> {
 		private final List<Type.Variable> typeArgs;
 		
 		public Function(Type returnType, Type... parameters) {
+			if (returnType == null) {
+				throw new IllegalArgumentException(
+						"Supplied return type cannot be null.");
+			}
 			this.returnType = returnType;
 			this.parameters = new ArrayList<Type>();
 			this.typeArgs = new ArrayList();
@@ -868,12 +887,20 @@ public interface Type extends Attribute, Comparable<Type> {
 		}
 		
 		public Function(Type returnType, List<Type> parameters) {
+			if (returnType == null) {
+				throw new IllegalArgumentException(
+						"Supplied return type cannot be null.");
+			}
 			this.returnType = returnType;
 			this.parameters = parameters;
 			this.typeArgs = new ArrayList();
 		}
 		
 		public Function(Type returnType, List<Type> parameters, List<Type.Variable> typeArgs) {
+			if (returnType == null) {
+				throw new IllegalArgumentException(
+						"Supplied return type cannot be null.");
+			}
 			this.returnType = returnType;
 			this.parameters = parameters;
 			this.typeArgs = typeArgs;

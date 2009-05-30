@@ -77,7 +77,7 @@ public class BytecodeCompiler extends JavaCompiler {
 		
 		start = System.currentTimeMillis();
 		
-		new BytecodeFileWriter(out).write(cfile);		
+		new BytecodeFileWriter(out,loader).write(cfile);		
 		
 		logTimedMessage("[" + outputFile.getPath() + "] Wrote " + outputFile.getPath(),
 				(System.currentTimeMillis() - start));	

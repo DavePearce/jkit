@@ -603,11 +603,9 @@ public final class ClassFileReader {
 			Type type = new Type.Variable(descriptor.substring(start,pos), null);
 			return new Pair<Type,Integer>(type,pos+1);
 		} else if(c == '+') {			
-			// FIXME: added wildcard upper bound
 			Pair<Type,Integer> r = parseInternalDescriptor(descriptor,pos+1);
 			return new Pair(new Type.Wildcard((Type.Reference)r.first(),null),r.second());
 		} else if(c == '-') {
-			// FIXME: added wildcard lower bound
 			Pair<Type,Integer> r = parseInternalDescriptor(descriptor,pos+1);
 			return new Pair(new Type.Wildcard(null,(Type.Reference)r.first()),r.second());			
 		} else {
@@ -702,7 +700,7 @@ public final class ClassFileReader {
 			pos = rt.second();
 		}
 		Type.Reference lb = null;
-		if(lowerBounds.size() > 0) {
+		if(lowerBounds.size() > 1) {
 			lb = new Type.Intersection(lowerBounds);
 		} else if(lowerBounds.size() == 1) {
 			lb = lowerBounds.get(0);
@@ -735,7 +733,7 @@ public final class ClassFileReader {
 		}		
 		// finally, parse the return type
 		Pair<Type, Integer> rtype = parseInternalDescriptor(descriptor, pos + 1);
-		
+				
 		Type.Function rf = new Type.Function(rtype.first(), params, targs);
 						
 		return rf;
@@ -1753,7 +1751,7 @@ public final class ClassFileReader {
 			if(getConstant(index) != null) {
 				return Types.JAVA_LANG_STRING;
 			} else {
-				return new Type.Null();
+				return Types.T_NULL;
 			}
 		case CONSTANT_Double:
 			return Types.T_DOUBLE;						

@@ -259,8 +259,14 @@ public class BypassMethods {
 				paramTypes.add(stripGenerics(tfParamTypes.get(i)));
 			}
 			return new Type.Function(retType, paramTypes);
-		} else {
-			return null;
-		}
+		} else if(type instanceof Type.Intersection) {
+			Type.Intersection i = (Type.Intersection) type;
+			if(i.bounds().size() == 1) {
+			//	return stripGenerics(i.bounds().get(0));
+			}
+		} 
+
+		throw new RuntimeException("Unknown type encountered: " + type
+				+ "(" + type.getClass().getName() + ")");	
 	}
 }

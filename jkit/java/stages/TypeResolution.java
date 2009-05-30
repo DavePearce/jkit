@@ -212,7 +212,7 @@ public class TypeResolution {
 			p.third().attributes().add(pt);
 			parameterTypes.add(pt);
 		}
-		
+				
 		d.attributes().add(
 				new Type.Function(returnType, parameterTypes,
 						typeVars));		

@@ -709,7 +709,7 @@ public class ClassFile implements Clazz {
 			for (Type pt : ft.parameterTypes()) {				
 				r += descriptor(pt,generic);
 			}
-
+			
 			r = r + ")" + descriptor(ft.returnType(),generic);
 			return r;
 		} else if(t instanceof Type.Variable) {
@@ -736,12 +736,7 @@ public class ClassFile implements Clazz {
 			} else {
 				return "Ljava/lang/Object;";
 			}
-		} else if(t instanceof Type.Intersection) {
-			Type.Intersection it = (Type.Intersection) t;
-			if(it.bounds().size() == 1) {
-				return descriptor(it.bounds().get(0),generic);
-			} 
-		}
+		} 
 		 
 		throw new RuntimeException("Invalid type passed to descriptor(): " + t);
 	}
