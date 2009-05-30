@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
 
+import jkit.compiler.ClassLoader;
 import jkit.jil.tree.Type;
 
 public class Exceptions implements Attribute {
@@ -29,7 +30,7 @@ public class Exceptions implements Attribute {
 	 * @throws IOException
 	 */
 	public void write(BinaryOutputStream writer,
-			Map<Constant.Info, Integer> constantPool) throws IOException {
+			Map<Constant.Info, Integer> constantPool, ClassLoader loader) throws IOException {
 		
 		writer.write_u2(constantPool.get(new Constant.Utf8("Exceptions")));
 		writer.write_u4(2 + (2 * exceptions.size()));
@@ -45,14 +46,14 @@ public class Exceptions implements Attribute {
 	 * 
 	 * @param constantPool
 	 */
-	public void addPoolItems(Set<Constant.Info> constantPool) {
+	public void addPoolItems(Set<Constant.Info> constantPool, ClassLoader loader) {
 		Constant.addPoolItem(new Constant.Utf8("Exceptions"), constantPool);
 		for (Type.Clazz e : exceptions) {
 			Constant.addPoolItem(Constant.buildClass(e), constantPool);
 		}
 	}
 	
-	public void print(PrintWriter output, Map<Constant.Info, Integer> constantPool) {
+	public void print(PrintWriter output, Map<Constant.Info, Integer> constantPool, ClassLoader loader) {
 		output.println("  Exceptions:");
 		boolean firstTime = true; 
 		output.print("   ");

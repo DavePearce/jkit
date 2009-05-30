@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import jkit.compiler.ClassLoader;
 import jkit.jil.tree.JilClass;
 import jkit.jil.tree.Modifier;
 import jkit.jil.tree.Type;
@@ -47,7 +48,7 @@ public class InnerClasses implements Attribute {
 	 * 
 	 * @param constantPool
 	 */
-	public void addPoolItems(Set<Constant.Info> constantPool) {
+	public void addPoolItems(Set<Constant.Info> constantPool, ClassLoader loader) {
 		Constant.addPoolItem(new Constant.Utf8("InnerClasses"), constantPool);
 		for(Triple<Type.Clazz,Type.Clazz,List<Modifier>> i : inners) {			
 			if(i.first() != null) {
@@ -61,7 +62,7 @@ public class InnerClasses implements Attribute {
 		}		
 	}
 	
-	public void print(PrintWriter output, Map<Constant.Info, Integer> constantPool) {
+	public void print(PrintWriter output, Map<Constant.Info, Integer> constantPool, ClassLoader loader) {
 		output.println("  InnerClasses:");
 		
 		for(Triple<Type.Clazz,Type.Clazz,List<Modifier>> i : inners) {
@@ -90,7 +91,8 @@ public class InnerClasses implements Attribute {
      * @param constantPool
      */
 	public void write(BinaryOutputStream output,
-			Map<Constant.Info, Integer> constantPool) throws IOException {
+			Map<Constant.Info, Integer> constantPool, ClassLoader loader)
+			throws IOException {
 		output.write_u2(constantPool.get(new Constant.Utf8("InnerClasses")));
 		
 		int ninners = inners.size();

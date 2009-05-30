@@ -46,7 +46,7 @@ public class ClassFileWriter {
 	}
 	
 	public void write(ClassFile cfile) throws IOException {
-		ArrayList<Constant.Info> constantPool = cfile.constantPool();
+		ArrayList<Constant.Info> constantPool = cfile.constantPool(loader);
 		HashMap<Constant.Info,Integer> poolMap = new HashMap<Constant.Info,Integer>();
 		
 		int index = 0;
@@ -90,7 +90,7 @@ public class ClassFileWriter {
 
 		output.write_u2(cfile.attributes.size());
 		for(Attribute a : cfile.attributes()) {
-			a.write(output, poolMap);
+			a.write(output, poolMap, loader);
 		}
 		
 		output.flush();
@@ -107,7 +107,7 @@ public class ClassFileWriter {
 		output.write_u2(f.attributes().size());
 
 		for (Attribute a : f.attributes()) {
-			a.write(output, constantPool);
+			a.write(output, constantPool, loader);
 		}
 	}
 
@@ -122,7 +122,7 @@ public class ClassFileWriter {
 		output.write_u2(m.attributes.size());
 
 		for (Attribute a : m.attributes) {
-			a.write(output, constantPool);
+			a.write(output, constantPool, loader);
 		}
 	}
 	

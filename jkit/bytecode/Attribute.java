@@ -2,6 +2,7 @@ package jkit.bytecode;
 
 import java.util.*;
 import java.io.*;
+import jkit.compiler.ClassLoader;
 
 public interface Attribute {
 	public String name();
@@ -14,7 +15,8 @@ public interface Attribute {
 	 * @throws IOException
 	 */
 	public void write(BinaryOutputStream writer,
-			Map<Constant.Info, Integer> constantPool) throws IOException;
+			Map<Constant.Info, Integer> constantPool, ClassLoader loader)
+			throws IOException;
 	
 	/**
 	 * When this method is called, the attribute must add all items that it
@@ -22,7 +24,7 @@ public interface Attribute {
 	 * 
 	 * @param constantPool
 	 */
-	public void addPoolItems(Set<Constant.Info> constantPool);
+	public void addPoolItems(Set<Constant.Info> constantPool, ClassLoader loader);
 	
 	/**
 	 * This method is used to print the contents of the attribute in
@@ -32,7 +34,8 @@ public interface Attribute {
 	 * @param constantPool
 	 * @throws IOException
 	 */
-	public void print(PrintWriter output, Map<Constant.Info, Integer> constantPool)
+	public void print(PrintWriter output,
+			Map<Constant.Info, Integer> constantPool, ClassLoader loader)
 			throws IOException;
 	
 	/**
@@ -53,18 +56,18 @@ public interface Attribute {
 			return name;
 		}
 		
-		public void addPoolItems(Set<Constant.Info> constantPool) {
+		public void addPoolItems(Set<Constant.Info> constantPool, ClassLoader loader) {
 			// this seems a little broken, but what can we do?
 		}
 		
 		public void write(BinaryOutputStream writer,
-				Map<Constant.Info, Integer> constantPool) throws IOException {
+				Map<Constant.Info, Integer> constantPool, ClassLoader loader) throws IOException {
 			writer.write(bytes);
 		}
 		
 		public void print(PrintWriter output,
-				Map<Constant.Info, Integer> constantPool) throws IOException {
-			output.println("  Unknown: ");
+				Map<Constant.Info, Integer> constantPool, ClassLoader loader) throws IOException {
+			output.println("  Unknown: " + name);
 			output.println("   Size: " + bytes.length);
 		}
 	}

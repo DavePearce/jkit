@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
 
+import jkit.compiler.ClassLoader;
 import jkit.bytecode.ClassFile.Method;
 import jkit.jil.tree.Type;
 import jkit.jil.util.*;
@@ -103,7 +104,7 @@ public class Code implements Attribute {
 		return handlers;
 	}
 
-	public void addPoolItems(Set<Constant.Info> constantPool) {
+	public void addPoolItems(Set<Constant.Info> constantPool, ClassLoader loader) {
 		Constant.addPoolItem(new Constant.Utf8("Code"), constantPool);
 
 		for (Bytecode b : bytecodes()) {
@@ -146,7 +147,7 @@ public class Code implements Attribute {
 	}	
 	
 	public void write(BinaryOutputStream writer,
-			Map<Constant.Info, Integer> constantPool) throws IOException {
+			Map<Constant.Info, Integer> constantPool, ClassLoader loader) throws IOException {
 
 		// This method is a little tricky. The basic strategy is to first
 		// translate each bytecode into it's binary representation. One
@@ -240,7 +241,8 @@ public class Code implements Attribute {
 		writer.write_u2(0); // no attributes for now
 	}
 	
-	public void print(PrintWriter output, Map<Constant.Info, Integer> constantPool) {
+	public void print(PrintWriter output,
+			Map<Constant.Info, Integer> constantPool, ClassLoader loader) {
 		output.println("  Code:");
 		output.println("   stack = " + maxStack() + ", locals = "
 				+ maxLocals());

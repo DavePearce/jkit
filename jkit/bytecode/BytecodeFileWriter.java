@@ -3,18 +3,21 @@ package jkit.bytecode;
 import java.io.*;
 import java.util.*;
 
+import jkit.compiler.ClassLoader;
 import jkit.jil.tree.Modifier;
 import jkit.jil.tree.Type;
 
 public class BytecodeFileWriter {	
 	protected final PrintWriter output;
+	protected final ClassLoader loader;
 	
-	public BytecodeFileWriter(OutputStream o) {
+	public BytecodeFileWriter(OutputStream o, ClassLoader loader) {
 		output = new PrintWriter(o);
+		this.loader = loader;
 	}	
 
 	public void write(ClassFile cfile) throws IOException {
-		ArrayList<Constant.Info> constantPool = cfile.constantPool();
+		ArrayList<Constant.Info> constantPool = cfile.constantPool(loader);
 		HashMap<Constant.Info,Integer> poolMap = new HashMap<Constant.Info,Integer>();
 		
 		int index = 0;
@@ -50,7 +53,7 @@ public class BytecodeFileWriter {
 		output.println();
 		
 		for(Attribute a : cfile.attributes()) {
-			a.print(output,poolMap);
+			a.print(output,poolMap,loader);
 		}
 		
 		output.println(" {");
@@ -80,7 +83,7 @@ public class BytecodeFileWriter {
 		output.print(f.type());
 		output.println(" " + f.name() + ";");
 		for(Attribute a : f.attributes()) {
-			a.print(output,poolMap);
+			a.print(output,poolMap,loader);
 		}
 	}
 
@@ -106,7 +109,7 @@ public class BytecodeFileWriter {
 		output.println(");");
 		
 		for(Attribute a : method.attributes()) {
-			a.print(output,poolMap);
+			a.print(output,poolMap,loader);
 		}					
 	}	
 	protected void writeModifiers(List<Modifier> modifiers) {	

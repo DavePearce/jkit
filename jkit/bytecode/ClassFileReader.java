@@ -175,10 +175,9 @@ public final class ClassFileReader {
 		for(Attribute a : attributes) {
 			if(a instanceof ClassSignature) { 
 				s = (ClassSignature) a;
-				type = s.type();
-				superType = s.superClass();
+				type = s.type();								
+				superType = substituteTypeVars(fields,methods,s);
 				interfaces = s.interfaces();
-				substituteTypeVars(fields,methods,type);
 			} else if(a instanceof InnerClasses) {
 				InnerClasses ic = (InnerClasses) a;								
 												
@@ -195,6 +194,8 @@ public final class ClassFileReader {
 		cfile.attributes().addAll(attributes);
 		cfile.methods().addAll(methods);
 		cfile.fields().addAll(fields);
+		
+		
 		
 		return 	cfile;			 		
 	}
@@ -220,12 +221,13 @@ public final class ClassFileReader {
 	 * @param methods
 	 * @param clazz
 	 */
-	protected static void substituteTypeVars(ArrayList<ClassFile.Field> fields,
-			ArrayList<ClassFile.Method> methods, Type.Clazz clazz) {
+	protected static Type.Clazz substituteTypeVars(
+			ArrayList<ClassFile.Field> fields,
+			ArrayList<ClassFile.Method> methods, ClassSignature s) {
 
 		// First, build the binding.
 		HashMap<String,Type.Reference> binding = new HashMap();
-		for(Type.Variable v : clazz.usedVariables()) {
+		for(Type.Variable v : s.type().usedVariables()) {
 			binding.put(v.variable(), v);
 		}
 		
@@ -241,10 +243,18 @@ public final class ClassFileReader {
 		// Third, iterate fields and substitute
 		for(ClassFile.Method m : methods) {			
 			Type.Function type = m.type();	
-			type = Types.substitute(type, binding);
-			System.out.println(type);
+			type = Types.substitute(type, binding);			
 			m.setType(type);
 		}
+		
+		List<Type.Clazz> interfaces = s.interfaces;
+		for (int i = 0; i != interfaces.size(); ++i) {
+			Type.Clazz type = (Type.Clazz) Types.substitute(interfaces.get(i),
+					binding);
+			interfaces.set(i, type);
+		}
+		
+		return (Type.Clazz) Types.substitute(s.superClass(), binding);
 	}
 	
     // ============================================================

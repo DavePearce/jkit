@@ -3,6 +3,7 @@ package jkit.bytecode;
 import java.util.*;
 
 import jkit.compiler.Clazz;
+import jkit.compiler.ClassLoader;
 import jkit.jil.tree.*;
 import jkit.util.Pair;
 
@@ -526,7 +527,7 @@ public class ClassFile implements Clazz {
 	 * 
 	 * @return
 	 */
-	public ArrayList<Constant.Info> constantPool() {
+	public ArrayList<Constant.Info> constantPool(ClassLoader loader) {
 		HashSet<Constant.Info> constantPool = new HashSet<Constant.Info>();
 		// Now, add constant pool items
 		Constant.addPoolItem(Constant.buildClass(type),constantPool);
@@ -573,7 +574,7 @@ public class ClassFile implements Clazz {
 					new Constant.Utf8(descriptor(f.type(), false)),
 					constantPool);
 			for(Attribute a : f.attributes()) {
-				a.addPoolItems(constantPool);
+				a.addPoolItems(constantPool,loader);
 			}
 		}
 		
@@ -584,12 +585,12 @@ public class ClassFile implements Clazz {
 					false)), constantPool);
 
 			for(Attribute a : m.attributes()) {
-				a.addPoolItems(constantPool);
+				a.addPoolItems(constantPool,loader);
 			}			
 		}
 		
 		for(Attribute a : attributes) {
-			a.addPoolItems(constantPool);
+			a.addPoolItems(constantPool,loader);
 		}
 		
 		// Finally, we need to flatten the constant pool

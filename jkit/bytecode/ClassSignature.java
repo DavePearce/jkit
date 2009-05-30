@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import jkit.compiler.Clazz;
+import jkit.compiler.ClassLoader;
 import jkit.jil.tree.*;
 import jkit.util.Pair;
 
@@ -14,7 +16,8 @@ public class ClassSignature implements Attribute {
 	protected Type.Clazz superClazz;
 	protected List<Type.Clazz> interfaces;
 	
-	public ClassSignature(Type.Clazz type, Type.Clazz superClazz, List<Type.Clazz> interfaces) {
+	public ClassSignature(Type.Clazz type, Type.Clazz superClazz,
+			List<Type.Clazz> interfaces) {
 		this.type = type;
 		this.superClazz = superClazz;
 		this.interfaces = interfaces;
@@ -37,15 +40,17 @@ public class ClassSignature implements Attribute {
 	}
 	
 	public void write(BinaryOutputStream writer,
-			Map<Constant.Info, Integer> constantPool) throws IOException {
+			Map<Constant.Info, Integer> constantPool, ClassLoader loader)
+			throws IOException {
 		writer.write_u2(constantPool.get(new Constant.Utf8("Signature")));
 		writer.write_u4(2);
-		writer.write_u2(constantPool.get(new Constant.Utf8(classSignature())));
+		writer.write_u2(constantPool.get(new Constant.Utf8(
+				classSignature(loader))));
 	}
 	
-	public void addPoolItems(Set<Constant.Info> constantPool) {
-		Constant.addPoolItem(
-				new Constant.Utf8(classSignature()),constantPool);
+	public void addPoolItems(Set<Constant.Info> constantPool, ClassLoader loader) {
+		Constant.addPoolItem(new Constant.Utf8(classSignature(loader)),
+				constantPool);
 	}
 	
 	/**
@@ -54,7 +59,7 @@ public class ClassSignature implements Attribute {
 	 * @param clazz
 	 * @return
 	 */
-	public String classSignature() {
+	public String classSignature(ClassLoader loader) {
 		String desc = "";
 		
 		List<Pair<String,List<Type.Reference>>> classes = type.components();
@@ -75,16 +80,16 @@ public class ClassSignature implements Attribute {
 						// absence of super class. It's actually really annoying
 						// since it couples this code with ClassTable ... grrr.
 						
-						/*
-						 * This code is temporarily bypassed ... it needs to be fixed! 
 						try {
-							Clazz tmp = ClassTable.findClass((Type.Reference) lb);
-							if(tmp.isInterface()) { desc += ":"; }
-							desc += Types.descriptor(lb, true);
-						} catch(ClassNotFoundException ce) {
-							throw new RuntimeException("Type bound " + lb + " not found");
-						}
-						*/						
+							Clazz tmp = loader.loadClass((Type.Clazz) lb);
+							if (tmp.isInterface()) {
+								desc += ":";
+							}
+							desc += ClassFile.descriptor(lb, true);
+						} catch (ClassNotFoundException ce) {
+							throw new RuntimeException("Type bound " + lb
+									+ " not found");
+						}						
 					}
 				} else {
 					throw new RuntimeException("Type Variable required in Class Signature!");
@@ -101,8 +106,9 @@ public class ClassSignature implements Attribute {
 		return desc;
 	}
 	
-	public void print(PrintWriter output, Map<Constant.Info, Integer> constantPool) {
+	public void print(PrintWriter output,
+			Map<Constant.Info, Integer> constantPool, ClassLoader loader) {
 		output.println("Signature: "
-				+ constantPool.get(new Constant.Utf8(classSignature())));
+				+ constantPool.get(new Constant.Utf8(classSignature(loader))));
 	}
 }

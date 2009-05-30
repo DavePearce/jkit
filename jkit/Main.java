@@ -25,6 +25,7 @@ import java.io.*;
 import java.util.*;
 
 import jkit.bytecode.*;
+import jkit.compiler.ClassLoader;
 import jkit.compiler.SyntaxError;
 import jkit.java.*;
 
@@ -134,7 +135,8 @@ public class Main {
 		try {
 
 			if(dump) {
-				BytecodeFileWriter bfw = new BytecodeFileWriter(System.out);
+				BytecodeFileWriter bfw = new BytecodeFileWriter(System.out,
+						new ClassLoader(classPath, null));
 				for(int i=fileArgsBegin;i!=args.length;++i) {
 					ClassFileReader cfr = new ClassFileReader(args[i]);
 					bfw.write(cfr.readClass());

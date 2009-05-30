@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
 import java.util.Set;
+import jkit.compiler.ClassLoader;
 
 public class ConstantValue implements Attribute {
 	private String name;
@@ -30,20 +31,20 @@ public class ConstantValue implements Attribute {
 		return "ConstantValue";
 	}
 	
-	public void addPoolItems(Set<Constant.Info> constantPool) {
+	public void addPoolItems(Set<Constant.Info> constantPool, ClassLoader loader) {
 		Constant.addPoolItem(new Constant.Utf8("Exceptions"), constantPool);
 		Constant.addPoolItem(getConstantInfo(), constantPool);
 	}
 	
 	public void write(BinaryOutputStream writer,
-			Map<Constant.Info, Integer> constantPool) throws IOException {
+			Map<Constant.Info, Integer> constantPool, ClassLoader loader) throws IOException {
 		writer.write_u2(constantPool.get(new Constant.Utf8("ConstantValue")));
 		writer.write_u4(2);
 		writer.write_u2(constantPool.get(getConstantInfo()));
 	}
 	
 	public void print(PrintWriter output,
-			Map<Constant.Info, Integer> constantPool) throws IOException {
+			Map<Constant.Info, Integer> constantPool, ClassLoader loader) throws IOException {
 		output.println("  ConstantValue: ");
 		output.println("   " + name + ": " + constant.toString());
 	}
