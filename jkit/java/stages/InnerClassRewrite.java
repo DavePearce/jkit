@@ -566,6 +566,8 @@ public class InnerClassRewrite {
 			parameters.set(i,doExpression(p));
 		}
 		
+		doExpression(e.context());		
+		
 		if(e.declarations().size() > 0) {	
 			Type.Clazz clazz = (Type.Clazz) e.type().attribute(Type.Clazz.class);
 			enclosingClasses.add(clazz);
@@ -595,6 +597,9 @@ public class InnerClassRewrite {
 							Expr.LocalVariable thiz = new Expr.LocalVariable(
 									"this", parentType,loc);
 							e.parameters().add(0,thiz);							
+						} else {
+							e.parameters().add(0,e.context());
+							e.setContext(null); // bypassed now!
 						}
 						
 						// Second, update the function type.

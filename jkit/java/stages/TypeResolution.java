@@ -162,7 +162,6 @@ public class TypeResolution {
 			doDeclaration(d);
 		}
 		
-		imports.removeFirst();
 		scopes.pop(); // undo my type
 	}
 
