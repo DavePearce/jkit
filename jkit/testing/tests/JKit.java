@@ -53,15 +53,13 @@ public class JKit extends TestHarness {
 
 	@Ignore("Known bug") @Test public void JLS_7_5_3_StaticImport_1() { runTest("JLS_7_5_3_StaticImport_1"); }
 	
-	@Test public void JLS_8_1_2_GenericTypes_1() { runTest("JLS_8_1_2_GenericTypes_1"); }
-	// fails because it needs type bounds to work properly.
-	@Ignore("Known Bug") @Test public void JLS_8_1_2_GenericTypes_2() { runTest("JLS_8_1_2_GenericTypes_2"); }
+	@Test public void JLS_8_1_2_GenericTypes_1() { runTest("JLS_8_1_2_GenericTypes_1"); }	
+	@Test public void JLS_8_1_2_GenericTypes_2() { runTest("JLS_8_1_2_GenericTypes_2"); }
 	@Test public void JLS_8_1_2_GenericTypes_3() { runTest("JLS_8_1_2_GenericTypes_3"); }	
 	@Test public void JLS_8_1_2_GenericTypes_4() { runTest("JLS_8_1_2_GenericTypes_4"); }
-	// unsure why this fails.
-	@Ignore("Known Bug") @Test public void JLS_8_1_2_GenericTypes_5() { runTest("JLS_8_1_2_GenericTypes_5"); }
+	@Test public void JLS_8_1_2_GenericTypes_5() { runTest("JLS_8_1_2_GenericTypes_5"); }
 	@Test public void JLS_8_1_2_GenericTypes_6() { runTest("JLS_8_1_2_GenericTypes_6"); }
-	@Ignore("Known Bug") @Test public void JLS_8_1_2_GenericTypes_7() { runTest("JLS_8_1_2_GenericTypes_7"); }
+	@Test public void JLS_8_1_2_GenericTypes_7() { runTest("JLS_8_1_2_GenericTypes_7"); }
 	@Test public void JLS_8_1_3_InnerClasses_1() { runTest("JLS_8_1_3_InnerClasses_1"); }
 	@Test public void JLS_8_1_3_InnerClasses_2() { runTest("JLS_8_1_3_InnerClasses_2"); }
 	@Test public void JLS_8_1_3_InnerClasses_3() { runTest("JLS_8_1_3_InnerClasses_3"); }
@@ -159,8 +157,7 @@ public class JKit extends TestHarness {
 	@Test public void JLS_15_12_VarArgs_3() { compileFailTest("JLS_15_12_VarArgs_3"); }
 	@Test public void JLS_15_12_VarArgs_4() { runTest("JLS_15_12_VarArgs_4"); }
 	@Test public void JLS_15_12_VarArgs_5() { runTest("JLS_15_12_VarArgs_5"); }
-	// Fails due to some classpath issue.
-	@Ignore("Known Bug") @Test public void JLS_15_12_VarArgs_6() { runTest("JLS_15_12_VarArgs_6"); }		
+	@Test public void JLS_15_12_VarArgs_6() { runTest("JLS_15_12_VarArgs_6"); }		
 	@Test public void JLS_15_13_ArrayAccess_1() { runTest("JLS_15_13_ArrayAccess_1"); }
 	@Test public void JLS_15_13_ArrayAccess_2() { runTest("JLS_15_13_ArrayAccess_2"); }
 	@Test public void JLS_15_13_ArrayAccess_3() { runTest("JLS_15_13_ArrayAccess_3"); }
