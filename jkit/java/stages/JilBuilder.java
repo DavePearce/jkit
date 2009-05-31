@@ -392,7 +392,7 @@ public class JilBuilder {
 		for(JilStmt s : block) {
 			if(s instanceof JilStmt.Label) {
 				JilStmt.Label l = (JilStmt.Label) s;
-				labels.add(l.label());
+				labels.add(l.label());				
 			}
 		}			
 		
@@ -417,21 +417,14 @@ public class JilBuilder {
 				lastNonBranch = false;
 			} else if(stmt instanceof JilStmt.IfGoto) {
 				JilStmt.IfGoto g = (JilStmt.IfGoto) stmt;
-				if(!labels.contains(g.label())) {
-					// houston, we have a problem.
-					throw new RuntimeException("Houston, we have a problem");
-				}				
-			} else if(!(stmt instanceof JilStmt.Label)){
-				// Now, we need to check for non-local exists caused by
-				// exceptions!
-				for(Pair<Type.Clazz,String> ex : stmt.exceptions()) {					
-					String target = ex.second();
-					if(!labels.contains(target)) {
-						// houston, we have a problem.
-						throw new RuntimeException("Houston, we have a problem");
-					}
-				}
 				
+				if(!labels.contains(g.label())) {
+					// houston, we have a problem. I'm not really sure how we
+					// can actually get here though.
+					throw new RuntimeException(
+							"An internal failure has occurred in JilBuilder.  Please report it, along with the generating code!");
+				}				
+			} else if(!(stmt instanceof JilStmt.Label)){				
 				// Add the default exceptional edge for exceptional flow.				
 				stmt = stmt.addException(Types.JAVA_LANG_THROWABLE, exceptionLabel);
 				block.set(i, stmt);
@@ -445,7 +438,7 @@ public class JilBuilder {
 		if(lastNonBranch) {
 			block.addAll(finallyBlk);
 			block.add(new JilStmt.Goto(exitLabel));
-		}
+		}		
 		
 		// Now, process exceptional exit
 		block.add(new JilStmt.Label(exceptionLabel));
