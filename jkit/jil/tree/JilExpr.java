@@ -1,10 +1,40 @@
 package jkit.jil.tree;
 
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.*;
 
-public interface JilExpr extends SyntacticElement {
+public interface JilExpr extends SyntacticElement,Cloneable {
 	
 	public Type type();
+	
+	public static class AbstractExpr {
+		private final ArrayList<Attribute> attributes;
+		
+		public AbstractExpr(Attribute... attributes) {
+			this.attributes = new ArrayList();
+			for(Attribute a : attributes) {
+				this.attributes.add(a);
+			}
+		}
+		
+		public AbstractExpr(List<Attribute> attributes) {
+			this.attributes = new ArrayList(attributes);			
+		}
+				
+		public Attribute attribute(java.lang.Class ac) {
+			for(Attribute a : attributes) {
+				if(a.getClass().equals(ac)) {
+					return a;
+				}
+			}
+			return null;
+		}
+		
+		public List<Attribute> attributes() {
+			// this is to prevent any kind of aliasing issues.
+			return new CopyOnWriteArrayList<Attribute>(attributes);
+		}
+	}
 	
 	/**
 	 * A Variable object represents a local variable access. A variable
@@ -15,37 +45,41 @@ public interface JilExpr extends SyntacticElement {
 	 * @author djp
 	 * 
 	 */
-	public static final class Variable extends SyntacticElementImpl implements JilExpr {
-		private String value;
-		private Type type;
+	public static final class Variable extends AbstractExpr implements JilExpr {
+		private final String value;
+		private final Type type;
 
 		public Variable(String value, Type type, Attribute... attributes) {
 			super(attributes);
+			if(value == null) {
+				throw new IllegalArgumentException("supplied variable cannot be null");
+			} 
+			if(type == null) {
+				throw new IllegalArgumentException("supplied type cannot be null");
+			}
 			this.value = value;
 			this.type = type;
 		}
 		
 		public Variable(String value, Type type, List<Attribute> attributes) {
 			super(attributes);
+			if(value == null) {
+				throw new IllegalArgumentException("supplied variable cannot be null");
+			} 
+			if(type == null) {
+				throw new IllegalArgumentException("supplied type cannot be null");
+			}
 			this.value = value;
 			this.type = type;
 		}
 
 		public String value() {
 			return value;
-		}
-		
-		public void setValue(String value) {
-			this.value = value;
-		}
+		}		
 		
 		public Type type() {
 			return type;
-		}
-		
-		public void setType(Type type) {
-			this.type = type;
-		}
+		}	
 	}
 	
 	/**
@@ -56,21 +90,27 @@ public interface JilExpr extends SyntacticElement {
 	 */
 	public static final class ClassVariable extends SyntacticElementImpl
 			implements JilExpr {		
-		private Type.Clazz type;
+		private final Type.Clazz type;
 
 		public ClassVariable(Type.Clazz type, Attribute... attributes) {
 			super(attributes);			
+			if(type == null) {
+				throw new IllegalArgumentException("supplied type cannot be null");
+			}
 			this.type = type;
 		}
 
 		public ClassVariable(Type.Clazz type, List<Attribute> attributes) {
 			super(attributes);
+			if(type == null) {
+				throw new IllegalArgumentException("supplied type cannot be null");
+			}
 			this.type = type;
 		}
 
 		public Type.Clazz type() {
 			return type;
-		}
+		}		
 	}
 
 	
@@ -81,17 +121,29 @@ public interface JilExpr extends SyntacticElement {
 	 *
 	 */
 	public static final class Cast extends SyntacticElementImpl implements JilExpr {
-		protected JilExpr expr;
-		protected Type type;
+		private final JilExpr expr;
+		private final Type type;
 
 		public Cast(JilExpr expr, Type type, Attribute... attributes) {
 			super(attributes);
+			if(expr == null) {
+				throw new IllegalArgumentException("supplied expression cannot be null");
+			}
+			if(type == null) {
+				throw new IllegalArgumentException("supplied type cannot be null");
+			}
 			this.expr = expr;
 			this.type = type;
 		}
 
 		public Cast(JilExpr expr, Type type, List<Attribute> attributes) {
 			super(attributes);
+			if(expr == null) {
+				throw new IllegalArgumentException("supplied expression cannot be null");
+			}
+			if(type == null) {
+				throw new IllegalArgumentException("supplied type cannot be null");
+			}
 			this.expr = expr;
 			this.type = type;
 		}
@@ -100,16 +152,8 @@ public interface JilExpr extends SyntacticElement {
 			return expr;
 		}
 
-		public void setExpr(JilExpr e) {
-			expr = e;
-		}
-		
 		public Type type() {
 			return type;
-		}
-		
-		public void setType(Type t) {
-			type = t;
 		}
 	}
 
@@ -120,17 +164,29 @@ public interface JilExpr extends SyntacticElement {
 	 *
 	 */
 	public static final class Convert extends SyntacticElementImpl implements JilExpr {
-		protected JilExpr expr;
-		protected Type.Primitive type;
+		private final JilExpr expr;
+		private final Type.Primitive type;
 
 		public Convert(Type.Primitive type, JilExpr expr, Attribute... attributes) {
 			super(attributes);
+			if(expr == null) {
+				throw new IllegalArgumentException("supplied expression cannot be null");
+			}
+			if(type == null) {
+				throw new IllegalArgumentException("supplied type cannot be null");
+			}
 			this.expr = expr;
 			this.type = type;
 		}
 
 		public Convert(Type.Primitive type, JilExpr expr, List<Attribute> attributes) {
 			super(attributes);
+			if(expr == null) {
+				throw new IllegalArgumentException("supplied expression cannot be null");
+			}
+			if(type == null) {
+				throw new IllegalArgumentException("supplied type cannot be null");
+			}
 			this.expr = expr;
 			this.type = type;
 		}
@@ -141,11 +197,7 @@ public interface JilExpr extends SyntacticElement {
 
 		public Type.Primitive type() {
 			return type;
-		}
-		
-		public void setType(Type.Primitive type) {
-			this.type = type;
-		}
+		}		
 	}
 	
 	/**
@@ -155,12 +207,18 @@ public interface JilExpr extends SyntacticElement {
 	 * 
 	 */
 	public static final class InstanceOf extends SyntacticElementImpl implements JilExpr {
-		protected JilExpr lhs;
-		protected Type.Reference rhs;
-		protected Type type;
+		private final JilExpr lhs;
+		private final Type.Reference rhs;
+		private final Type type;
 
 		public InstanceOf(JilExpr lhs, Type.Reference rhs, Type type, Attribute... attributes) {
 			super(attributes);
+			if(lhs == null) {
+				throw new IllegalArgumentException("supplied expression cannot be null");
+			}			
+			if(type == null || rhs == null) {
+				throw new IllegalArgumentException("supplied type cannot be null");
+			}
 			this.lhs = lhs;
 			this.rhs = rhs;
 			this.type = type;
@@ -168,6 +226,12 @@ public interface JilExpr extends SyntacticElement {
 
 		public InstanceOf(JilExpr lhs, Type.Reference rhs, Type type, List<Attribute> attributes) {
 			super(attributes);
+			if(lhs == null) {
+				throw new IllegalArgumentException("supplied expression cannot be null");
+			}			
+			if(type == null || rhs == null) {
+				throw new IllegalArgumentException("supplied type cannot be null");
+			}
 			this.lhs = lhs;
 			this.rhs = rhs;
 			this.type = type;
@@ -177,25 +241,13 @@ public interface JilExpr extends SyntacticElement {
 			return lhs;
 		}
 
-		public void setLhs(JilExpr e) {
-			lhs = e;
-		}
-		
 		public Type.Reference rhs() {
 			return rhs;
 		}
 		
-		public void setRhs(Type.Reference e) {
-			rhs = e;
-		}
-		
 		public Type type() {
 			return type;
-		}
-		
-		public void setType(Type e) {
-			type = e;
-		}
+		}		
 	}
 
 	/**
@@ -209,12 +261,18 @@ public interface JilExpr extends SyntacticElement {
 		public static final int INV = 1;
 		public static final int NEG = 2;
 
-		protected JilExpr expr;
-		protected int op;
-		protected Type.Primitive type;
+		private final JilExpr expr;
+		private final int op;
+		private final Type.Primitive type;
 		
 		public UnOp(JilExpr expr, int op, Type.Primitive type, Attribute... attributes) {
 			super(attributes);
+			if(expr == null) {
+				throw new IllegalArgumentException("supplied expression cannot be null");
+			}			
+			if(type == null) {
+				throw new IllegalArgumentException("supplied type cannot be null");
+			}
 			this.expr = expr;
 			this.op = op;
 			this.type = type;
@@ -222,6 +280,12 @@ public interface JilExpr extends SyntacticElement {
 
 		public UnOp(JilExpr expr, int op, Type.Primitive type, List<Attribute> attributes) {
 			super(attributes);
+			if(expr == null) {
+				throw new IllegalArgumentException("supplied expression cannot be null");
+			}			
+			if(type == null) {
+				throw new IllegalArgumentException("supplied type cannot be null");
+			}
 			this.expr = expr;
 			this.op = op;
 			this.type = type;
@@ -231,25 +295,13 @@ public interface JilExpr extends SyntacticElement {
 			return op;
 		}
 
-		public void setOp(int op) {
-			this.op = op;
-		}
-		
 		public JilExpr expr() {
 			return expr;
 		}
 		
-		public void setExpr(JilExpr expr) {
-			this.expr = expr;
-		}
-		
 		public Type.Primitive type() {
 			return type;
-		}
-		
-		public void setType(Type.Primitive type) {
-			this.type = type;
-		}
+		}		
 	}
 
 	/**
@@ -281,13 +333,19 @@ public interface JilExpr extends SyntacticElement {
 		public static final int LAND = 17;
 		public static final int LOR = 18;
 
-		protected JilExpr lhs;
-		protected JilExpr rhs;
-		protected int op;
-		protected Type.Primitive type;
+		private final JilExpr lhs;
+		private final JilExpr rhs;
+		private final int op;
+		private final Type.Primitive type;
 
 		public BinOp(JilExpr lhs, JilExpr rhs, int op, Type.Primitive type, Attribute... attributes) {
 			super(attributes);
+			if(lhs == null || rhs == null) {
+				throw new IllegalArgumentException("supplied expression(s) cannot be null");
+			}			
+			if(type == null) {
+				throw new IllegalArgumentException("supplied type cannot be null");
+			}
 			this.lhs = lhs;
 			this.rhs = rhs;
 			this.op = op;
@@ -296,6 +354,12 @@ public interface JilExpr extends SyntacticElement {
 
 		public BinOp(JilExpr lhs, JilExpr rhs, int op, Type.Primitive type, List<Attribute> attributes) {
 			super(attributes);
+			if(lhs == null || rhs == null) {
+				throw new IllegalArgumentException("supplied expression(s) cannot be null");
+			}			
+			if(type == null) {
+				throw new IllegalArgumentException("supplied type cannot be null");
+			}
 			this.lhs = lhs;
 			this.rhs = rhs;
 			this.op = op;
@@ -306,33 +370,17 @@ public interface JilExpr extends SyntacticElement {
 			return op;
 		}
 
-		public void setOp(int op) {
-			this.op = op;
-		}
-		
 		public JilExpr lhs() {
 			return lhs;
-		}
-
-		public void setLhs(JilExpr lhs) {
-			this.lhs = lhs;
 		}
 		
 		public JilExpr rhs() {
 			return rhs;
 		}
 		
-		public void setRhs(JilExpr rhs) {
-			this.rhs = rhs;
-		}
-		
 		public Type.Primitive type() {
 			return type;
-		}
-		
-		public void setType(Type.Primitive type) {
-			this.type = type;
-		}
+		}		
 	}
 
 	/**
@@ -344,12 +392,12 @@ public interface JilExpr extends SyntacticElement {
 	 * @author djp
 	 * 
 	 */
-	public static class Invoke extends JilStmt.AbstractStmt implements JilExpr {
-		protected JilExpr target;
-		protected String name;
-		protected List<JilExpr> parameters;
-		protected Type type; 		
-		protected Type.Function funType;		
+	public static class Invoke extends jkit.jil.tree.JilStmt.AbstractStmt implements JilExpr {
+		private final JilExpr target;
+		private final String name;
+		private final ArrayList<JilExpr> parameters;
+		private final Type type; 		
+		private final Type.Function funType;		
 				
 		/**
 		 * Construct a method which may, or may not be polymorphic.
@@ -370,9 +418,18 @@ public interface JilExpr extends SyntacticElement {
 		public Invoke(JilExpr target, String name, List<JilExpr> parameters,
 				Type.Function funType, Type type, Attribute... attributes) {
 			super(attributes);
+			if(target == null) {
+				throw new IllegalArgumentException("supplied expression(s) cannot be null");
+			}
+			if(parameters == null || parameters.contains(null)) {
+				throw new IllegalArgumentException("supplied parameter(s) cannot be null");
+			}
+			if(type == null) {
+				throw new IllegalArgumentException("supplied type cannot be null");
+			}
 			this.target = target;
 			this.name = name;
-			this.parameters = parameters;
+			this.parameters = new ArrayList(parameters);
 			this.type = type;
 			this.funType = funType;
 		}
@@ -396,9 +453,18 @@ public interface JilExpr extends SyntacticElement {
 		public Invoke(JilExpr target, String name, List<JilExpr> parameters,
 				Type.Function funType, Type type, List<Attribute> attributes) {
 			super(attributes);
+			if(target == null) {
+				throw new IllegalArgumentException("supplied expression(s) cannot be null");
+			}
+			if(parameters == null || parameters.contains(null)) {
+				throw new IllegalArgumentException("supplied parameter(s) cannot be null");
+			}
+			if(type == null) {
+				throw new IllegalArgumentException("supplied type cannot be null");
+			}
 			this.target = target;
 			this.name = name;
-			this.parameters = parameters;
+			this.parameters = new ArrayList(parameters);			
 			this.type = type;
 			this.funType = funType;
 		}
@@ -406,41 +472,26 @@ public interface JilExpr extends SyntacticElement {
 		public JilExpr target() {
 			return target;
 		}
-
-		public void setTarget(JilExpr target) {
-			this.target = target;
-		}
 		
 		public String name() {
 			return name;
-		}
-
-		public void setName(String name) {
-			this.name = name;
 		}
 
 		public Type type() {
 			return type;
 		}
 		
-		public void setType(Type type) {
-			this.type = type;
-		}
-		
 		public Type.Function funType() {
 			return funType;
 		}
 		
-		public void setFunType(Type.Function funtype) {
-			this.funType = funtype;
-		}		
-		
-		public List<JilExpr> parameters() {
+		public List<? extends JilExpr> parameters() {
 			return parameters;
 		}
 		
-		public void setParameters(List<JilExpr> parameters) {
-			this.parameters = parameters;
+		public Invoke clone() {
+			return new Invoke(target, name, parameters, funType, type,
+					attributes());
 		}
 	}
 
@@ -501,6 +552,13 @@ public interface JilExpr extends SyntacticElement {
 				Type.Function funType, Type type, List<Attribute> attributes) {
 			super(target,name,parameters,funType,type,attributes);			
 		}
+		
+		public Invoke clone() {
+			// Note, the unsafe cast below is actually safe!
+			return new SpecialInvoke(target(), name(),
+					(List<JilExpr>) parameters(), funType(), type(),
+					attributes());
+		}
 	}
 		
 	
@@ -514,10 +572,9 @@ public interface JilExpr extends SyntacticElement {
 	 * 
 	 */
 	public static final class New extends JilStmt.AbstractStmt implements JilExpr {
-		private Type.Reference type;
-		private JilExpr context;
-		private List<JilExpr> parameters;
-		private Type.Function funType;
+		private final Type.Reference type;		
+		private final ArrayList<JilExpr> parameters;
+		private final Type.Function funType;
 		
 		/**
 		 * Create an AST node represent a new statement or expression.
@@ -535,10 +592,15 @@ public interface JilExpr extends SyntacticElement {
 		 */
 		public New(Type.Reference type, List<JilExpr> parameters,
 				Type.Function funType, Attribute... attributes) {
-			super(attributes);
-			this.type = type;
-			this.context = context;
-			this.parameters = parameters;
+			super(attributes);			
+			if(parameters == null || parameters.contains(null)) {
+				throw new IllegalArgumentException("supplied parameter(s) cannot be null");
+			}
+			if(type == null || funType == null) {
+				throw new IllegalArgumentException("supplied type cannot be null");
+			}
+			this.type = type;			
+			this.parameters = new ArrayList(parameters);			
 			this.funType = funType;
 		}
 
@@ -555,9 +617,14 @@ public interface JilExpr extends SyntacticElement {
 		public New(Type.Reference type, List<JilExpr> parameters,
 				Type.Function funType, List<Attribute> attributes) {
 			super(attributes);
-			this.type = type;
-			this.context = context;
-			this.parameters = parameters;			
+			if(parameters == null || parameters.contains(null)) {
+				throw new IllegalArgumentException("supplied parameter(s) cannot be null");
+			}
+			if(type == null || funType == null) {
+				throw new IllegalArgumentException("supplied type cannot be null");
+			}
+			this.type = type;			
+			this.parameters = new ArrayList(parameters);			
 			this.funType = funType;
 		}
 		
@@ -565,32 +632,17 @@ public interface JilExpr extends SyntacticElement {
 			return type;
 		}
 
-		public void setType(Type.Reference type) {
-			this.type = type;
-		}
-
 		public Type.Function funType() {
 			return funType;
 		}
-
-		public void setFunType(Type.Function funType) {
-			this.funType = funType;
-		}
 		
-		public List<JilExpr> parameters() {
+		public List<? extends JilExpr> parameters() {
 			return parameters;
 		}
-
-		public void setParameters(List<JilExpr> parameters) {
-			this.parameters = parameters;
-		}
-
-		public JilExpr context() {
-			return context;
-		}
-
-		public void setContext(JilExpr context) {
-			this.context = context;
+		
+		public New clone() {
+			return new New(type, parameters, funType, 
+					attributes());
 		}
 	}
 
@@ -600,15 +652,24 @@ public interface JilExpr extends SyntacticElement {
 	 * @author djp
 	 * 
 	 */
-	public static final class Deref extends SyntacticElementImpl implements JilExpr {
-		protected JilExpr target;
-		protected String name;
-		protected Type type;
-		protected boolean isStatic;
+	public static final class Deref extends AbstractExpr implements JilExpr {
+		private final JilExpr target;
+		private final String name;
+		private final Type type;
+		private final boolean isStatic;
 		
 		public Deref(JilExpr lhs, String rhs, boolean isStatic, Type type,
 				Attribute... attributes) {
 			super(attributes);
+			if(lhs == null) {
+				throw new IllegalArgumentException("supplied expression cannot be null");
+			}
+			if(rhs == null) {
+				throw new IllegalArgumentException("supplied string cannot be null");
+			}
+			if(type == null) {
+				throw new IllegalArgumentException("supplied type cannot be null");
+			}
 			this.target = lhs;
 			this.name = rhs;
 			this.type = type;
@@ -618,6 +679,15 @@ public interface JilExpr extends SyntacticElement {
 		public Deref(JilExpr lhs, String rhs, boolean isStatic, Type type, 
 				List<Attribute> attributes) {
 			super(attributes);
+			if(lhs == null) {
+				throw new IllegalArgumentException("supplied expression cannot be null");
+			}
+			if(rhs == null) {
+				throw new IllegalArgumentException("supplied string cannot be null");
+			}
+			if(type == null) {
+				throw new IllegalArgumentException("supplied type cannot be null");
+			}
 			this.target = lhs;
 			this.name = rhs;
 			this.type = type;
@@ -627,34 +697,18 @@ public interface JilExpr extends SyntacticElement {
 		public JilExpr target() {
 			return target;
 		}
-
-		public void setTarget(JilExpr target) {
-			this.target = target;
-		}
 		
 		public String name() {
 			return name;
 		}
-		
-		public void setName(String name) {
-			this.name = name;
-		}
-		
+				
 		public Type type() {
 			return type;
-		}
-
-		public void setType(Type type) {
-			this.type = type;
 		}
 		
 		public boolean isStatic() {
 			return isStatic;
-		}
-		
-		public void setIsStatic(boolean isStatic) {
-			this.isStatic = isStatic;
-		}
+		}		
 	}
 
 	/**
@@ -663,13 +717,19 @@ public interface JilExpr extends SyntacticElement {
 	 * @author djp
 	 * 
 	 */
-	public static final class ArrayIndex extends SyntacticElementImpl implements JilExpr {
-		protected JilExpr array;
-		protected JilExpr idx;
-		protected Type type;
+	public static final class ArrayIndex extends AbstractExpr implements JilExpr {
+		private final JilExpr array;
+		private final JilExpr idx;
+		private final Type type;
 
 		public ArrayIndex(JilExpr array, JilExpr idx, Type type, Attribute... attributes) {
 			super(attributes);
+			if(array == null || idx == null) {
+				throw new IllegalArgumentException("supplied expression(s) cannot be null");
+			}			
+			if(type == null) {
+				throw new IllegalArgumentException("supplied type cannot be null");
+			}
 			this.array = array;
 			this.idx = idx;
 			this.type = type;
@@ -677,6 +737,12 @@ public interface JilExpr extends SyntacticElement {
 
 		public ArrayIndex(JilExpr array, JilExpr idx, Type type, List<Attribute> attributes) {
 			super(attributes);
+			if(array == null || idx == null) {
+				throw new IllegalArgumentException("supplied expression(s) cannot be null");
+			}			
+			if(type == null) {
+				throw new IllegalArgumentException("supplied type cannot be null");
+			}
 			this.array = array;
 			this.idx = idx;
 			this.type = type;
@@ -690,20 +756,8 @@ public interface JilExpr extends SyntacticElement {
 			return idx;
 		}
 		
-		public void setIndex(JilExpr e) {
-			idx = e;
-		}
-		
-		public void setTarget(JilExpr e) {
-			array = e;
-		}
-		
 		public Type type() {
 			return type;
-		}
-
-		public void setType(Type type) {
-			this.type = type;
 		}
 	}
 	
@@ -713,18 +767,24 @@ public interface JilExpr extends SyntacticElement {
 	 * @author djp
 	 *
 	 */
-	public static class Number extends SyntacticElementImpl implements JilExpr {
-		protected int value;
-		protected Type.Primitive type;
+	public static class Number extends AbstractExpr implements JilExpr {
+		protected final int value;
+		private final Type.Primitive type;
 		
 		public Number(int value, Type.Primitive type, Attribute... attributes) {
-			super(attributes);
+			super(attributes);					
+			if(type == null) {
+				throw new IllegalArgumentException("supplied type cannot be null");
+			}
 			this.value = value;
 			this.type = type;
 		}
 		
 		public Number(int value, Type.Primitive type, List<Attribute> attributes) {
 			super(attributes);
+			if(type == null) {
+				throw new IllegalArgumentException("supplied type cannot be null");
+			}
 			this.value = value;
 			this.type = type;
 		}
@@ -735,10 +795,6 @@ public interface JilExpr extends SyntacticElement {
 		
 		public Type.Primitive type() {
 			return type;
-		}
-		
-		public void setType(Type.Primitive type) {
-			this.type = type;
 		}		
 	}
 	
@@ -847,11 +903,11 @@ public interface JilExpr extends SyntacticElement {
      * @author djp
      * 
      */
-	public static final class Long extends SyntacticElementImpl implements JilExpr {
-		private long value;
+	public static final class Long extends AbstractExpr implements JilExpr {
+		private final long value;
 		
 		public Long(long value, Attribute... attributes) {
-			super(attributes);
+			super(attributes);			
 			this.value=value;
 		}
 		
@@ -875,8 +931,8 @@ public interface JilExpr extends SyntacticElement {
      * @author djp
      * 
      */
-	public static final class Float extends SyntacticElementImpl implements JilExpr {
-		private float value;
+	public static final class Float extends AbstractExpr implements JilExpr {
+		private final float value;
 		
 		public Float(float value, Attribute... attributes) {
 			super(attributes);
@@ -903,8 +959,8 @@ public interface JilExpr extends SyntacticElement {
      * @author djp
      * 
      */
-	public static final class Double extends SyntacticElementImpl implements JilExpr {
-		private double value;
+	public static final class Double extends AbstractExpr implements JilExpr {
+		private final double value;
 		
 		public Double(double value, Attribute... attributes) {
 			super(attributes);
@@ -931,8 +987,8 @@ public interface JilExpr extends SyntacticElement {
      * @author djp
      * 
      */
-	public static final class StringVal extends SyntacticElementImpl implements JilExpr {
-		private java.lang.String value;
+	public static final class StringVal extends AbstractExpr implements JilExpr {
+		private final java.lang.String value;
 		
 		public StringVal(java.lang.String value, Attribute... attributes) {
 			super(attributes);
@@ -949,7 +1005,7 @@ public interface JilExpr extends SyntacticElement {
 		}
 		
 		public Type.Clazz type() {
-			return new Type.Clazz("java.lang","String");
+			return jkit.jil.util.Types.JAVA_LANG_STRING;			
 		}
 	}		
 	
@@ -959,13 +1015,13 @@ public interface JilExpr extends SyntacticElement {
      * @author djp
      * 
      */
-	public static final class Null extends SyntacticElementImpl implements JilExpr {
+	public static final class Null extends AbstractExpr implements JilExpr {
 		public Null(Attribute... attributes) {
 			super(attributes);
 		}
 		
 		public Type.Null type() {
-			return new Type.Null();
+			return jkit.jil.util.Types.T_NULL;
 		}
 	}
 			
@@ -975,19 +1031,31 @@ public interface JilExpr extends SyntacticElement {
      * @author djp
      * 
      */
-	public static final class Array extends SyntacticElementImpl implements JilExpr {
-		private List<JilExpr> values;
-		private Type.Array type;
+	public static final class Array extends AbstractExpr implements JilExpr {
+		private final ArrayList<JilExpr> values;
+		private final Type.Array type;
 		
 		public Array(List<JilExpr> values, Type.Array type, Attribute... attributes) {
 			super(attributes);
-			this.values = values;
+			if(values == null || values.contains(null)) {
+				throw new IllegalArgumentException("supplied expression(s) cannot be null");
+			}			
+			if(type == null) {
+				throw new IllegalArgumentException("supplied type cannot be null");
+			}
+			this.values = new ArrayList(values);
 			this.type = type;
 		}
 		
 		public Array(List<JilExpr> values, Type.Array type, List<Attribute> attributes) {
 			super(attributes);
-			this.values = values;
+			if(values == null || values.contains(null)) {
+				throw new IllegalArgumentException("supplied expression(s) cannot be null");
+			}			
+			if(type == null) {
+				throw new IllegalArgumentException("supplied type cannot be null");
+			}
+			this.values = new ArrayList(values);
 			this.type = type;
 		}
 		
@@ -997,29 +1065,31 @@ public interface JilExpr extends SyntacticElement {
 		
 		public Type.Array type() {
 			return type;
-		}
-		
-		public void setType(Type.Array type) {
-			this.type = type;
-		}
+		}		
 	}	
 	
 	/**
 	 * Represents a Class Constant
 	 * 
 	 */
-	public static final class Class extends SyntacticElementImpl implements JilExpr {
-		private Type classType;
-		private Type.Clazz type;
+	public static final class Class extends AbstractExpr implements JilExpr {
+		private final Type classType;
+		private final Type.Clazz type;
 
 		public Class(Type classType, Type.Clazz type, Attribute... attributes) {
 			super(attributes);
+			if(classType == null || type == null) {
+				throw new IllegalArgumentException("supplied type(s) cannot be null");
+			}
 			this.type = type;
 			this.classType = classType;
 		}
 
 		public Class(Type classType, Type.Clazz type, List<Attribute> attributes) {
 			super(attributes);
+			if(classType == null || type == null) {
+				throw new IllegalArgumentException("supplied type(s) cannot be null");
+			}
 			this.type = type;
 			this.classType = classType;
 		}
@@ -1028,16 +1098,8 @@ public interface JilExpr extends SyntacticElement {
 			return type;
 		}
 		
-		public void setType(Type.Clazz type) {
-			this.type = type;
-		}
-		
 		public Type classType() {
 			return classType;
-		}
-		
-		public void setClassType(Type type) {
-			this.classType = type;
-		}
+		}		
 	}
 }

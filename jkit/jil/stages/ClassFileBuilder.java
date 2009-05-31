@@ -621,7 +621,7 @@ public class ClassFileBuilder {
 			} else {
 				// now, this is a variable-arity method --- so we need to
 				// package up some arguments into an array.
-				List<JilExpr> arguments = stmt.parameters();
+				List<? extends JilExpr> arguments = stmt.parameters();
 				List<Type> paramTypes = m.type().parameterTypes();
 				int vargcount = stmt.parameters().size() - paramTypes.size() + 1;
 				int arg = 0;

@@ -1,9 +1,13 @@
 package jkit.jil.tree;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import jkit.util.*;
 
-public interface JilStmt extends SyntacticElement {
+public interface JilStmt extends SyntacticElement, Cloneable {
+	
+	public JilStmt clone() throws CloneNotSupportedException;
 	
 	/**
 	 * This method returns the exceptional branches associated with this
@@ -12,23 +16,59 @@ public interface JilStmt extends SyntacticElement {
 	 * 
 	 * @return
 	 */
-	public List<Pair<Type.Clazz,String>> exceptions();
+	public List<? extends Pair<Type.Clazz,String>> exceptions();
 	
-	public static class AbstractStmt extends SyntacticElementImpl implements
-			JilStmt,SyntacticElement {
-		protected final ArrayList<Pair<Type.Clazz, String>> exceptions = new ArrayList();
+	public JilStmt addException(Type.Clazz t, String v);
+	public JilStmt addExceptions(List<Pair<Type.Clazz,String>> exceptions);
+	
+	public static abstract class AbstractStmt implements
+			JilStmt,SyntacticElement{
+		private final ArrayList<Attribute> attributes;
+		private final ArrayList<Pair<Type.Clazz, String>> exceptions = new ArrayList();
 
 		public AbstractStmt(Attribute... attributes) {
-			super(attributes);
+			this.attributes = new ArrayList();
+			for(Attribute a : attributes) {
+				this.attributes.add(a);
+			}
 		}
 		
 		public AbstractStmt(List<Attribute> attributes) {
-			super(attributes);
+			this.attributes = new ArrayList(attributes);			
 		}
 		
-		public List<Pair<Type.Clazz, String>> exceptions() {
+		public List<? extends Pair<Type.Clazz, String>> exceptions() {
 			return exceptions;
+		}			
+		
+		public JilStmt addExceptions(
+				List<Pair<Type.Clazz, String>> exceptions) {
+			AbstractStmt r = clone();
+			r.exceptions.addAll(exceptions);
+			return r;
 		}
+
+		public JilStmt addException(Type.Clazz exception, String label) {
+			AbstractStmt r = clone();
+			r.exceptions.add(new Pair(exception,label));
+			return r;
+		}
+
+		public Attribute attribute(java.lang.Class ac) {
+			for (Attribute a : attributes) {
+				if (a.getClass().equals(ac)) {
+					return a;
+				}
+			}
+			return null;
+		}
+		
+		public List<Attribute> attributes() {
+			// this is to prevent any kind of aliasing issues.
+			return new CopyOnWriteArrayList<Attribute>(attributes);
+		}
+		
+		public abstract AbstractStmt clone();
 	}
 	
 	/**
@@ -38,7 +78,7 @@ public interface JilStmt extends SyntacticElement {
 	 *
 	 */
 	public static final class Assign extends AbstractStmt {
-		private JilExpr lhs, rhs;
+		private final JilExpr lhs, rhs;
 
 		public Assign(JilExpr lhs, JilExpr rhs,
 				Attribute... attributes) {
@@ -61,13 +101,9 @@ public interface JilStmt extends SyntacticElement {
 		public JilExpr rhs() {
 			return rhs;
 		}
-		
-		public void setLhs(JilExpr lhs) {
-			this.lhs = lhs;
-		}
-
-		public void setRhs(JilExpr rhs) {
-			this.rhs = rhs;
+	
+		public Assign clone() {
+			return new Assign(lhs,rhs,attributes());
 		}
 	}
 	
@@ -75,7 +111,7 @@ public interface JilStmt extends SyntacticElement {
 	 * A return statement.
 	 */
 	public static final class Return extends AbstractStmt {
-		private JilExpr expr;
+		private final JilExpr expr;
 
 		public Return(JilExpr expr, Attribute... attributes) {
 			super(attributes);
@@ -89,10 +125,10 @@ public interface JilStmt extends SyntacticElement {
 
 		public JilExpr expr() {
 			return expr;
-		}
+		}		
 		
-		public void setExpr(JilExpr expr) {
-			this.expr = expr;
+		public Return clone() {
+			return new Return(expr,attributes());
 		}
 	}
 	
@@ -103,7 +139,7 @@ public interface JilStmt extends SyntacticElement {
 	 *
 	 */
 	public static final class Throw extends AbstractStmt {
-		private JilExpr expr;
+		private final JilExpr expr;
 
 		public Throw(JilExpr expr, Attribute... attributes) {
 			super(attributes);
@@ -117,10 +153,10 @@ public interface JilStmt extends SyntacticElement {
 		
 		public JilExpr expr() {
 			return expr;
-		}
+		}		
 		
-		public void setExpr(JilExpr expr) {
-			this.expr = expr;
+		public Throw clone() {
+			return new Throw(expr,attributes());
 		}
 	}
 	
@@ -128,10 +164,10 @@ public interface JilStmt extends SyntacticElement {
 	 * An unconditional goto statement.
 	 * 
 	 * @author djp
-	 *
+	 * 
 	 */
 	public static final class Goto extends AbstractStmt {
-		private String label;
+		private final String label;
 
 		public Goto(String label, Attribute... attributes) {
 			super(attributes);
@@ -145,10 +181,10 @@ public interface JilStmt extends SyntacticElement {
 		
 		public String label() {
 			return label;
-		}
+		}		
 		
-		public void setLabel(String label) {
-			this.label = label;
+		public Goto clone() {
+			return new Goto(label,attributes());
 		}
 	}
 	
@@ -159,8 +195,8 @@ public interface JilStmt extends SyntacticElement {
 	 *
 	 */
 	public static final class IfGoto extends AbstractStmt {
-		private JilExpr condition;
-		private String label;
+		private final JilExpr condition;
+		private final String label;
 
 		public IfGoto(JilExpr condition, String label, Attribute... attributes) {
 			super(attributes);
@@ -178,16 +214,12 @@ public interface JilStmt extends SyntacticElement {
 			return condition;
 		}
 		
-		public void setCondition(JilExpr expr) {
-			this.condition = expr;
-		}
-		
 		public String label() {
 			return label;
-		}
+		}		
 		
-		public void setLabel(String label) {
-			this.label = label;
+		public IfGoto clone() {
+			return new IfGoto(condition,label,attributes());
 		}
 	}
 	
@@ -206,18 +238,27 @@ public interface JilStmt extends SyntacticElement {
 		
 		public String label() {
 			return label;
-		}
+		}		
 		
-		public void setLabel(String label) {
-			this.label = label;
+		public Label clone() {
+			return new Label(label,attributes());
 		}
 	}
 	
 	public static final class Nop extends AbstractStmt {
+		public Nop(Attribute... attributes) {
+			super(attributes);
+		}
+		public Nop(List<Attribute> attributes) {
+			super(attributes);
+		}
+		public Nop clone() {
+			return new Nop(attributes());
+		}
 	}
 	
 	public static final class Lock extends AbstractStmt {
-		private JilExpr expr;
+		private final JilExpr expr;
 
 		public Lock(JilExpr expr, Attribute... attributes) {
 			super(attributes);
@@ -231,15 +272,15 @@ public interface JilStmt extends SyntacticElement {
 		
 		public JilExpr expr() {
 			return expr;
-		}
+		}	
 		
-		public void setExpr(JilExpr expr) {
-			this.expr = expr;
+		public Lock clone() {
+			return new Lock(expr,attributes());
 		}
 	}
 	
 	public static final class Unlock extends AbstractStmt {
-		private JilExpr expr;
+		private final JilExpr expr;
 
 		public Unlock(JilExpr expr, Attribute... attributes) {
 			super(attributes);
@@ -255,21 +296,21 @@ public interface JilStmt extends SyntacticElement {
 			return expr;
 		}
 		
-		public void setExpr(JilExpr expr) {
-			this.expr = expr;
+		public Unlock clone() {
+			return new Unlock(expr,attributes());
 		}
 	}
 	
 	public static final class Switch extends AbstractStmt {
-		private JilExpr condition;
-		private final List<Pair<JilExpr.Number,String>> cases;
-		private String defaultLab;
+		private final JilExpr condition;
+		private final ArrayList<Pair<JilExpr.Number,String>> cases;
+		private final String defaultLab;
 		
 		public Switch(JilExpr condition, List<Pair<JilExpr.Number, String>> cases,
 				String defaultLab, Attribute... attributes) {
 			super(attributes);
 			this.condition = condition;
-			this.cases = cases;
+			this.cases = new ArrayList(cases);
 			this.defaultLab = defaultLab;
 		}
 
@@ -277,7 +318,7 @@ public interface JilStmt extends SyntacticElement {
 				String defaultLab, List<Attribute> attributes) {
 			super(attributes);
 			this.condition = condition;
-			this.cases = cases;
+			this.cases = new ArrayList(cases);
 			this.defaultLab = defaultLab;
 		}
 		
@@ -285,11 +326,8 @@ public interface JilStmt extends SyntacticElement {
 			return condition;
 		}
 		
-		public void setCondition(JilExpr condition) {
-			this.condition = condition;
-		}
 		
-		public List<Pair<JilExpr.Number,String>> cases() {
+		public List<? extends Pair<JilExpr.Number,String>> cases() {
 			return cases;
 		}		
 		
@@ -301,6 +339,10 @@ public interface JilStmt extends SyntacticElement {
 		 */
 		public String defaultLabel() {
 			return defaultLab;
+		}
+		
+		public Switch clone() {
+			return new Switch(condition, cases, defaultLab, attributes());
 		}
 	}
 }

@@ -197,7 +197,7 @@ public class JilFileWriter {
 		output.println("    }");
 	}
 	
-	protected void write(List<Pair<Type.Clazz,String>> exceptions) {		
+	protected void write(List<? extends Pair<Type.Clazz,String>> exceptions) {		
 		for(Pair<Type.Clazz,String> p : exceptions) {			
 			output.print(", ");						
 			output.print(p.first() + " goto " + p.second());

@@ -332,19 +332,21 @@ public class JilBuilder {
 		int i = tryhandler_label;
 		for(Stmt.CatchBlock cb : block.handlers()) {
 			String handlerLab = "tryhandler" + i++;
-			for (JilStmt s : r) {
+			for(int j=0;j!=r.size();++j) {
+				JilStmt s = r.get(j);
 				Type.Clazz ct = (Type.Clazz) cb.type().attribute(
 						Type.Clazz.class);
-				// This is very pedantic. Almost certainly, we could rule out
-				// certain kinds of exception branches. However, it's difficult
-				// to do this properly and, therefore, we remain quite
-				// conservative at this point. See the following paper for an
-				// excellent discussion of this:
-				// 
-				// "Improving the precision and correctness of exception
-				// analysis in Soot", John Jorgensen, 2003.
-				s.exceptions()
-						.add(new Pair<Type.Clazz, String>(ct, handlerLab));
+				if(!(s instanceof JilStmt.Goto)) {
+					// This is very pedantic. Almost certainly, we could rule out
+					// certain kinds of exception branches. However, it's difficult
+					// to do this properly and, therefore, we remain quite
+					// conservative at this point. See the following paper for an
+					// excellent discussion of this:
+					// 
+					// "Improving the precision and correctness of exception
+					// analysis in Soot", John Jorgensen, 2003. 
+					r.set(i,s.addException(ct, handlerLab));
+				}
 			}
 		}
 		
@@ -358,7 +360,7 @@ public class JilBuilder {
 					.attributes()), new JilExpr.Variable("$", ct,
 					cb.attributes())));					
 			// At this point, we have a slightly interesting problem. We need to
-			// search
+			// search			
 			r.addAll(doCatchBlock(cb));
 			r.add(new JilStmt.Goto(exitLab,cb.attributes()));
 		}
@@ -372,6 +374,8 @@ public class JilBuilder {
 		return r;
 	}
 	
+	protected static int finallyex_label = 0;
+	
 	protected void addFinallyBlock(List<JilStmt> block, List<JilStmt> finallyBlk) {
 		// So, to add the finally block properly, we need to iterate through the
 		// block and find any situations where we exit the block. This includes
@@ -379,14 +383,19 @@ public class JilBuilder {
 		// exceptional flow, and simply executing the last statement of the
 		// block.
 		
+		// First, collect all local labels, so we can distinguish local from
+		// non-local branches.
 		HashSet<String> labels = new HashSet<String>();
 		for(JilStmt s : block) {
 			if(s instanceof JilStmt.Label) {
 				JilStmt.Label l = (JilStmt.Label) s;
 				labels.add(l.label());
 			}
-		}				
+		}			
 		
+		String exceptionLabel = "finally" + finallyex_label++; 
+		
+		// Now, iterate the block looking for non-local branches.
 		boolean lastNonBranch = false;
 		for(int i=0;i!=block.size();++i) {
 			lastNonBranch = true;
@@ -401,7 +410,7 @@ public class JilBuilder {
 					// this is a non-local branch statement.
 					block.addAll(i,finallyBlk);
 					i += finallyBlk.size();					
-				}
+				} 
 				lastNonBranch = false;
 			} else if(stmt instanceof JilStmt.IfGoto) {
 				JilStmt.IfGoto g = (JilStmt.IfGoto) stmt;
@@ -409,11 +418,40 @@ public class JilBuilder {
 					// houston, we have a problem.
 					throw new RuntimeException("Houston, we have a problem");
 				}				
+			} else {
+				// Now, we need to check for non-local exists caused by
+				// exceptions!
+				for(Pair<Type.Clazz,String> ex : stmt.exceptions()) {					
+					String target = ex.second();
+					if(!labels.contains(target)) {
+						// houston, we have a problem.
+						throw new RuntimeException("Houston, we have a problem");
+					}
+				}
+				
+				// Add the default exceptional edge for exceptional flow.
+				stmt = stmt.addException(Types.JAVA_LANG_THROWABLE, exceptionLabel);
+				block.set(i, stmt);
 			}
 		}
 		
+		String exitLabel = "finallyexit" + (finallyex_label-1); 
 		if(lastNonBranch) {
 			block.addAll(finallyBlk);
+			block.add(new JilStmt.Goto(exitLabel));
+		}
+		
+		// Now, process exceptional exit
+		block.add(new JilStmt.Label(exceptionLabel));
+		block.add(new JilStmt.Assign(new JilExpr.Variable(exceptionLabel + "$",
+				Types.JAVA_LANG_THROWABLE), new JilExpr.Variable("$",
+				Types.JAVA_LANG_THROWABLE)));	
+		block.addAll(finallyBlk);
+		block.add(new JilStmt.Throw(new JilExpr.Variable(exceptionLabel + "$",
+				Types.JAVA_LANG_THROWABLE)));
+		
+		if(lastNonBranch) {
+			block.add(new JilStmt.Label(exitLabel));
 		}
 	}
 	
@@ -1049,8 +1087,9 @@ public class JilBuilder {
 			return new Pair<JilExpr, List<JilStmt>>(new JilExpr.New(type, params
 					.first(), mi.type, e.attributes()), r);
 		} else if(type instanceof Type.Array){
-			return new Pair<JilExpr, List<JilStmt>>(new JilExpr.New(type, params
-					.first(), null, e.attributes()), r);
+			return new Pair<JilExpr, List<JilStmt>>(new JilExpr.New(type,
+					params.first(), new Type.Function(Types.T_VOID), e
+							.attributes()), r);
 		} else {
 			syntax_error("internal failure --- unable to find method information",e);
 			return null;
@@ -1080,6 +1119,9 @@ public class JilBuilder {
 					.first(), e.name(), params.first(), mi.type, type, e
 					.attributes()), r);
 		} else {
+			if(type == null) {
+				syntax_error("problem",e);
+			}
 			return new Pair<JilExpr, List<JilStmt>>(new JilExpr.Invoke(target.first(), e
 					.name(), params.first(), mi.type, type, e
 					.attributes()), r);
@@ -1657,5 +1699,5 @@ public class JilBuilder {
 					&& c.components().get(0).first().equals("String");			
 		}
 		return false;
-	}	
+	}		
 }

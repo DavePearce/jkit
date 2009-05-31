@@ -634,12 +634,8 @@ public class TypePropagation {
 							arrType.element()));
 				}
 			}
-			
-			// Secondly, we must add type information to the expression.			
-			if (!(f.returnType() instanceof Type.Void)) {				
-				e.attributes().add(f.returnType());
-			}						
-						
+									
+			e.attributes().add(f.returnType());					
 			e.attributes().add(new JilBuilder.MethodInfo(m.exceptions(),m.type()));								
 		} catch(ClassNotFoundException cnfe) {
 			syntax_error(cnfe.getMessage(), e, cnfe);

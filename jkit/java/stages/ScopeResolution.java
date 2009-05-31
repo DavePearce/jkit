@@ -639,9 +639,7 @@ public class ScopeResolution {
 					syntax_error(cne.getMessage(),e,cne);
 				}
 			}
-		}
-		
-		if(target instanceof Expr.ClassVariable) {
+		} else if(target instanceof Expr.ClassVariable) {
 			// The question we need to consider here is. If we're dereferencing a
 			// ClassVariable, then does it actually contain the field given, or is
 			// it an inner class?						

@@ -4,13 +4,10 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class SyntacticElementImpl  implements SyntacticElement {
-	private List<Attribute> attributes;
+	protected ArrayList<Attribute> attributes;
 	
 	public SyntacticElementImpl() {
-		// I use copy on write here, since for the most part I don't expect
-		// attributes to change, and hence can be safely aliased. But, when they
-		// do change I need fresh copies.
-		attributes = new CopyOnWriteArrayList<Attribute>();
+		attributes = new ArrayList<Attribute>();
 	}
 	
 	public SyntacticElementImpl(Attribute x) {
