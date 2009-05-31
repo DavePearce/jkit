@@ -152,6 +152,7 @@ public class JKit extends TestHarness {
 	@Test public void JLS_15_9_5_AnonymousClasses_10() { runTest("JLS_15_9_5_AnonymousClasses_10"); }
 	@Test public void JLS_15_9_5_AnonymousClasses_11() { runTest("JLS_15_9_5_AnonymousClasses_11"); }
 	@Test public void JLS_15_9_5_AnonymousClasses_12() { runTest("JLS_15_9_5_AnonymousClasses_12"); }
+	@Test public void JLS_15_9_5_AnonymousClasses_13() { runTest("JLS_15_9_5_AnonymousClasses_13"); }
 	@Test public void JLS_15_12_VarArgs_1() { runTest("JLS_15_12_VarArgs_1"); }
 	@Test public void JLS_15_12_VarArgs_2() { runTest("JLS_15_12_VarArgs_2"); }
 	@Test public void JLS_15_12_VarArgs_3() { compileFailTest("JLS_15_12_VarArgs_3"); }
