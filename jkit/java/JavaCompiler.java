@@ -420,7 +420,7 @@ public class JavaCompiler implements Compiler {
 	protected void generateJilCode(File srcfile, JavaFile jfile, ClassLoader loader) {
 		long start = System.currentTimeMillis();
 		new JilBuilder(loader, new TypeSystem()).apply(jfile);
-		logTimedMessage("[" + srcfile.getPath() + "] Jil generation completed ",
+		logTimedMessage("[" + srcfile.getPath() + "] Jil generation completed",
 				(System.currentTimeMillis() - start));
 	}
 
@@ -435,7 +435,7 @@ public class JavaCompiler implements Compiler {
 	protected void addBypassMethods(File srcfile, JilClass jfile, ClassLoader loader) {
 		long start = System.currentTimeMillis();
 		new BypassMethods(loader, new TypeSystem()).apply(jfile);
-		logTimedMessage("[" + srcfile.getPath() + "] Added bypass methods ",
+		logTimedMessage("[" + srcfile.getPath() + "] Added bypass methods",
 				(System.currentTimeMillis() - start));
 	}
 	
