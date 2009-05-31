@@ -155,7 +155,7 @@ public class JilFileWriter {
 	}
 	
 	protected void write(JilStmt.Throw s) {
-		output.println("    throw");
+		output.print("    throw");
 		if(s.expr() != null) {
 			output.print(" ");
 			write(s.expr());

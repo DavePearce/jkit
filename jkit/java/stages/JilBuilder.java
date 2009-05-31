@@ -435,6 +435,9 @@ public class JilBuilder {
 				// Add the default exceptional edge for exceptional flow.				
 				stmt = stmt.addException(Types.JAVA_LANG_THROWABLE, exceptionLabel);
 				block.set(i, stmt);
+				
+				// just for the (unlikely) case when last statement is a throw.
+				if(stmt instanceof JilStmt.Throw) {	lastNonBranch = false; } 
 			}
 		}
 		

@@ -24,18 +24,27 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 	public static abstract class AbstractStmt implements
 			JilStmt,SyntacticElement{
 		private final ArrayList<Attribute> attributes;
-		private final ArrayList<Pair<Type.Clazz, String>> exceptions = new ArrayList();
+		private final ArrayList<Pair<Type.Clazz, String>> exceptions;
 
 		public AbstractStmt(Attribute... attributes) {
 			this.attributes = new ArrayList();
 			for(Attribute a : attributes) {
 				this.attributes.add(a);
 			}
+			this.exceptions = new ArrayList();
 		}
 		
 		public AbstractStmt(List<Attribute> attributes) {
 			this.attributes = new ArrayList(attributes);			
+			this.exceptions = new ArrayList();
 		}
+		
+		public AbstractStmt(List<Pair<Type.Clazz, String>> exceptions,
+				List<Attribute> attributes) {
+			this.attributes = new ArrayList(attributes);
+			this.exceptions = new ArrayList(exceptions);
+		}
+		
 		
 		public List<? extends Pair<Type.Clazz, String>> exceptions() {
 			return exceptions;
@@ -94,6 +103,14 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 			this.rhs = rhs;
 		}
 		
+		public Assign(JilExpr lhs, JilExpr rhs,
+				List<Pair<Type.Clazz, String>> exceptions,
+				List<Attribute> attributes) {
+			super(exceptions,attributes);
+			this.lhs = lhs;
+			this.rhs = rhs;
+		}
+		
 		public JilExpr lhs() {
 			return lhs;
 		}
@@ -103,7 +120,8 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 		}
 	
 		public Assign clone() {
-			return new Assign(lhs,rhs,attributes());
+			return new Assign(lhs, rhs,
+					(List<Pair<Type.Clazz, String>>) exceptions(), attributes());
 		}
 	}
 	
@@ -123,12 +141,19 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 			this.expr = expr;
 		}
 
+		public Return(JilExpr expr, List<Pair<Type.Clazz, String>> exceptions,
+				List<Attribute> attributes) {
+			super(exceptions,attributes);
+			this.expr = expr;
+		}
+		
 		public JilExpr expr() {
 			return expr;
 		}		
 		
 		public Return clone() {
-			return new Return(expr,attributes());
+			return new Return(expr,
+					(List<Pair<Type.Clazz, String>>) exceptions(), attributes());
 		}
 	}
 	
@@ -151,12 +176,19 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 			this.expr = expr;
 		}
 		
+		public Throw(JilExpr expr, List<Pair<Type.Clazz, String>> exceptions,
+				List<Attribute> attributes) {
+			super(exceptions,attributes);
+			this.expr = expr;
+		}
+		
 		public JilExpr expr() {
 			return expr;
 		}		
 		
 		public Throw clone() {
-			return new Throw(expr,attributes());
+			return new Throw(expr,
+					(List<Pair<Type.Clazz, String>>) exceptions(),attributes());
 		}
 	}
 	
@@ -179,12 +211,20 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 			this.label = label;
 		}
 		
+		public Goto(String label, List<Pair<Type.Clazz, String>> exceptions,
+				List<Attribute> attributes) {
+			super(exceptions,attributes);
+			this.label = label;
+		}
+		
+		
 		public String label() {
 			return label;
 		}		
 		
 		public Goto clone() {
-			return new Goto(label,attributes());
+			return new Goto(label,
+					(List<Pair<Type.Clazz, String>>) exceptions(),attributes());
 		}
 	}
 	
@@ -210,6 +250,15 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 			this.label = label;
 		}
 		
+		public IfGoto(JilExpr condition, String label,
+				List<Pair<Type.Clazz, String>> exceptions,
+				List<Attribute> attributes) {
+			super(exceptions,attributes);
+			this.condition = condition;
+			this.label = label;
+		}
+		
+		
 		public JilExpr condition() {
 			return condition;
 		}
@@ -219,7 +268,8 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 		}		
 		
 		public IfGoto clone() {
-			return new IfGoto(condition,label,attributes());
+			return new IfGoto(condition, label,
+					(List<Pair<Type.Clazz, String>>) exceptions(), attributes());
 		}
 	}
 	
@@ -236,12 +286,19 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 			this.label = label;
 		}
 		
+		public Label(String label, List<Pair<Type.Clazz, String>> exceptions,
+				List<Attribute> attributes) {
+			super(exceptions,attributes);
+			this.label = label;
+		}
+		
 		public String label() {
 			return label;
 		}		
 		
 		public Label clone() {
-			return new Label(label,attributes());
+			return new Label(label,
+					(List<Pair<Type.Clazz, String>>) exceptions(),attributes());
 		}
 	}
 	
@@ -252,8 +309,12 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 		public Nop(List<Attribute> attributes) {
 			super(attributes);
 		}
+		public Nop(List<Pair<Type.Clazz, String>> exceptions,
+				List<Attribute> attributes) {
+			super(exceptions,attributes);
+		}
 		public Nop clone() {
-			return new Nop(attributes());
+			return new Nop((List<Pair<Type.Clazz, String>>) exceptions(),attributes());
 		}
 	}
 	
@@ -270,12 +331,19 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 			this.expr = expr;
 		}
 		
+		public Lock(JilExpr expr, List<Pair<Type.Clazz, String>> exceptions,
+				List<Attribute> attributes) {
+			super(exceptions,attributes);
+			this.expr = expr;
+		}
+		
 		public JilExpr expr() {
 			return expr;
 		}	
 		
 		public Lock clone() {
-			return new Lock(expr,attributes());
+			return new Lock(expr,
+					(List<Pair<Type.Clazz, String>>) exceptions(),attributes());
 		}
 	}
 	
@@ -292,12 +360,19 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 			this.expr = expr;
 		}
 		
+		public Unlock(JilExpr expr, List<Pair<Type.Clazz, String>> exceptions,
+				List<Attribute> attributes) {
+			super(exceptions,attributes);
+			this.expr = expr;
+		}
+		
 		public JilExpr expr() {
 			return expr;
 		}
 		
 		public Unlock clone() {
-			return new Unlock(expr,attributes());
+			return new Unlock(expr,
+					(List<Pair<Type.Clazz, String>>) exceptions(),attributes());
 		}
 	}
 	
@@ -322,10 +397,19 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 			this.defaultLab = defaultLab;
 		}
 		
-		public JilExpr condition() {
-			return condition;
+		public Switch(JilExpr condition, List<Pair<JilExpr.Number, String>> cases,
+				String defaultLab,
+				List<Pair<Type.Clazz, String>> exceptions,
+				List<Attribute> attributes) {
+			super(exceptions,attributes);
+			this.condition = condition;
+			this.cases = new ArrayList(cases);
+			this.defaultLab = defaultLab;
 		}
 		
+		public JilExpr condition() {
+			return condition;
+		}		
 		
 		public List<? extends Pair<JilExpr.Number,String>> cases() {
 			return cases;
@@ -342,7 +426,8 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 		}
 		
 		public Switch clone() {
-			return new Switch(condition, cases, defaultLab, attributes());
+			return new Switch(condition, cases, defaultLab,
+					(List<Pair<Type.Clazz, String>>) exceptions(), attributes());
 		}
 	}
 }
