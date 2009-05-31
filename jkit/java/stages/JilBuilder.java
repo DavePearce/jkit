@@ -345,7 +345,7 @@ public class JilBuilder {
 					// 
 					// "Improving the precision and correctness of exception
 					// analysis in Soot", John Jorgensen, 2003. 
-					r.set(i,s.addException(ct, handlerLab));
+					r.set(j,s.addException(ct, handlerLab));
 				}
 			}
 		}

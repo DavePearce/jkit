@@ -950,7 +950,7 @@ public class ClassFileBuilder {
 			ArrayList<Bytecode> bytecodes) {						
 		List<JilExpr> params = new ArrayList<JilExpr>();
 		params.add(new JilExpr.Int(av.values().size()));
-		translateNew(new JilExpr.New(av.type(), params, null), varmap, bytecodes,
+		translateNew(new JilExpr.New(av.type(), params, new Type.Function(Types.T_VOID)), varmap, bytecodes,
 				true);
 
 		int index = 0;
