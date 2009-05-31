@@ -2,6 +2,7 @@ package jkit.jil.tree;
 
 import java.util.*;
 import java.util.concurrent.*;
+import jkit.util.Pair;
 
 public interface JilExpr extends SyntacticElement,Cloneable {
 	
@@ -469,6 +470,27 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 			this.funType = funType;
 		}
 		
+		public Invoke(JilExpr target, String name, List<JilExpr> parameters,
+				Type.Function funType, Type type,
+				List<Pair<Type.Clazz, String>> exceptions,
+				List<Attribute> attributes) {
+			super(exceptions, attributes);
+			if(target == null) {
+				throw new IllegalArgumentException("supplied expression(s) cannot be null");
+			}
+			if(parameters == null || parameters.contains(null)) {
+				throw new IllegalArgumentException("supplied parameter(s) cannot be null");
+			}
+			if(type == null) {
+				throw new IllegalArgumentException("supplied type cannot be null");
+			}
+			this.target = target;
+			this.name = name;
+			this.parameters = new ArrayList(parameters);			
+			this.type = type;
+			this.funType = funType;
+		}
+		
 		public JilExpr target() {
 			return target;
 		}
@@ -491,7 +513,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		
 		public Invoke clone() {
 			return new Invoke(target, name, parameters, funType, type,
-					attributes());
+					(List<Pair<Type.Clazz, String>>) exceptions(),attributes());
 		}
 	}
 
@@ -553,11 +575,18 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 			super(target,name,parameters,funType,type,attributes);			
 		}
 		
+		public SpecialInvoke(JilExpr target, String name,
+				List<JilExpr> parameters, Type.Function funType, Type type,
+				List<Pair<Type.Clazz, String>> exceptions,
+				List<Attribute> attributes) {
+			super(target,name,parameters,funType,type,exceptions,attributes);			
+		}
+		
 		public Invoke clone() {
 			// Note, the unsafe cast below is actually safe!
 			return new SpecialInvoke(target(), name(),
 					(List<JilExpr>) parameters(), funType(), type(),
-					attributes());
+					(List<Pair<Type.Clazz, String>>) exceptions(),attributes());
 		}
 	}
 		
@@ -628,6 +657,22 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 			this.funType = funType;
 		}
 		
+		public New(Type.Reference type, List<JilExpr> parameters,
+				Type.Function funType,
+				List<Pair<Type.Clazz, String>> exceptions,
+				List<Attribute> attributes) {
+			super(exceptions,attributes);
+			if(parameters == null || parameters.contains(null)) {
+				throw new IllegalArgumentException("supplied parameter(s) cannot be null");
+			}
+			if(type == null || funType == null) {
+				throw new IllegalArgumentException("supplied type cannot be null");
+			}
+			this.type = type;			
+			this.parameters = new ArrayList(parameters);			
+			this.funType = funType;
+		}
+		
 		public Type.Reference type() {
 			return type;
 		}
@@ -642,7 +687,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		
 		public New clone() {
 			return new New(type, parameters, funType, 
-					attributes());
+					(List<Pair<Type.Clazz, String>>) exceptions(),attributes());
 		}
 	}
 
