@@ -589,7 +589,7 @@ public class AnonClassesRewrite {
 		}
 		Expr.Invoke ivk = new Expr.Invoke(target, "super", args,
 				new ArrayList(), loc, new JilBuilder.MethodInfo(exceptions,
-						new Type.Function(type.returnType(),superParams)));
+						new Type.Function(type.returnType(),superParams)),type.returnType());
 		stmts.add(ivk);
 		
 		Stmt.Block block = new Stmt.Block(stmts,loc);
