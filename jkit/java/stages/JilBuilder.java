@@ -335,15 +335,16 @@ public class JilBuilder {
 			for (JilStmt s : r) {
 				Type.Clazz ct = (Type.Clazz) cb.type().attribute(
 						Type.Clazz.class);
-				try {
-					if (!(s instanceof JilStmt.Label || s instanceof JilStmt.Goto)
-							&& canThrowException(s, ct)) {
-						s.exceptions().add(
-								new Pair<Type.Clazz, String>(ct, handlerLab));
-					}
-				} catch (ClassNotFoundException cnfe) {
-					syntax_error(cnfe.getMessage(), cb, cnfe);
-				}
+				// This is very pedantic. Almost certainly, we could rule out
+				// certain kinds of exception branches. However, it's difficult
+				// to do this properly and, therefore, we remain quite
+				// conservative at this point. See the following paper for an
+				// excellent discussion of this:
+				// 
+				// "Improving the precision and correctness of exception
+				// analysis in Soot", John Jorgensen, 2003.
+				s.exceptions()
+						.add(new Pair<Type.Clazz, String>(ct, handlerLab));
 			}
 		}
 		
@@ -355,15 +356,65 @@ public class JilBuilder {
 			r.add(new JilStmt.Label(handlerLab,cb.attributes()));
 			r.add(new JilStmt.Assign(new JilExpr.Variable(cb.variable(), ct, cb
 					.attributes()), new JilExpr.Variable("$", ct,
-					cb.attributes())));
+					cb.attributes())));					
+			// At this point, we have a slightly interesting problem. We need to
+			// search
 			r.addAll(doCatchBlock(cb));
 			r.add(new JilStmt.Goto(exitLab,cb.attributes()));
 		}
 		
 		r.add(new JilStmt.Label(exitLab,block.attributes()));
-		r.addAll(doBlock(block.finaly()));		
+		List<JilStmt> finallyBlock = doBlock(block.finaly());
+		// Now, we add the finally block. This is done in a separate method
+		// because it's actually quite challenging.
+		addFinallyBlock(r,finallyBlock);			
 		
 		return r;
+	}
+	
+	protected void addFinallyBlock(List<JilStmt> block, List<JilStmt> finallyBlk) {
+		// So, to add the finally block properly, we need to iterate through the
+		// block and find any situations where we exit the block. This includes
+		// return statements, branches to labels which are not in the block,
+		// exceptional flow, and simply executing the last statement of the
+		// block.
+		
+		HashSet<String> labels = new HashSet<String>();
+		for(JilStmt s : block) {
+			if(s instanceof JilStmt.Label) {
+				JilStmt.Label l = (JilStmt.Label) s;
+				labels.add(l.label());
+			}
+		}				
+		
+		boolean lastNonBranch = false;
+		for(int i=0;i!=block.size();++i) {
+			lastNonBranch = true;
+			JilStmt stmt = block.get(i);
+			if(stmt instanceof JilStmt.Return) {
+				block.addAll(i,finallyBlk);
+				i += finallyBlk.size();
+				lastNonBranch = false;
+			} else if(stmt instanceof JilStmt.Goto) {
+				JilStmt.Goto g = (JilStmt.Goto) stmt;
+				if(!labels.contains(g.label())) {
+					// this is a non-local branch statement.
+					block.addAll(i,finallyBlk);
+					i += finallyBlk.size();					
+				}
+				lastNonBranch = false;
+			} else if(stmt instanceof JilStmt.IfGoto) {
+				JilStmt.IfGoto g = (JilStmt.IfGoto) stmt;
+				if(!labels.contains(g.label())) {
+					// houston, we have a problem.
+					throw new RuntimeException("Houston, we have a problem");
+				}				
+			}
+		}
+		
+		if(lastNonBranch) {
+			block.addAll(finallyBlk);
+		}
 	}
 	
 	protected List<JilStmt> doVarDef(Stmt.VarDef def) {		

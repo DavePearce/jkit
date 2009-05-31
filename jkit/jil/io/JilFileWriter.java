@@ -62,14 +62,14 @@ public class JilFileWriter {
 	}
 	
 	public void write(JilField f) {
-		output.print("\t");
+		output.print("  ");
 		writeModifiers(f.modifiers());
 		output.print(f.type());
 		output.println(" " + f.name() + ";");		
 	}
 	
 	public void write(JilMethod m) {
-		output.print("\t");
+		output.print("  ");
 		writeModifiers(m.modifiers());
 		Type.Function type = m.type(); 
 		output.print(type.returnType() + " " + m.name());
@@ -95,7 +95,7 @@ public class JilFileWriter {
 			write(s);
 		}
 		
-		output.println("\t}");	
+		output.println("  }");	
 	}
 	
 	protected void write(JilStmt s) {
@@ -113,12 +113,12 @@ public class JilFileWriter {
 		} else if(s instanceof JilStmt.Label) {
 			write((JilStmt.Label)s);
 		} else if(s instanceof JilExpr.New) {
-			output.print("\t\t");
+			output.print("    ");
 			write((JilExpr.New)s);
 			write(s.exceptions());
 			output.println(";");
 		} else if(s instanceof JilExpr.Invoke) {
-			output.print("\t\t");
+			output.print("    ");
 			write((JilExpr.Invoke)s);
 			write(s.exceptions());
 			output.println(";");
@@ -131,7 +131,7 @@ public class JilFileWriter {
 	}
 	
 	protected void write(JilStmt.Assign s) {
-		output.print("\t\t");
+		output.print("    ");
 		
 		if(s.lhs() instanceof JilExpr.Variable) {
 			output.print(s.rhs().type() + " ");
@@ -145,7 +145,7 @@ public class JilFileWriter {
 	}
 	
 	protected void write(JilStmt.Return s) {
-		output.print("\t\treturn");
+		output.print("    return");
 		if(s.expr() != null) {
 			output.print(" ");
 			write(s.expr());
@@ -155,7 +155,7 @@ public class JilFileWriter {
 	}
 	
 	protected void write(JilStmt.Throw s) {
-		output.println("\t\tthrow");
+		output.println("    throw");
 		if(s.expr() != null) {
 			output.print(" ");
 			write(s.expr());
@@ -165,13 +165,13 @@ public class JilFileWriter {
 	}
 	
 	protected void write(JilStmt.Goto s) {
-		output.print("\t\tgoto " + s.label());
+		output.print("    goto " + s.label());
 		write(s.exceptions());
 		output.println(";");
 	}
 	
 	protected void write(JilStmt.IfGoto s) {
-		output.print("\t\tif(");
+		output.print("    if(");
 		write(s.condition());
 		output.print(") goto " + s.label());
 		write(s.exceptions());
@@ -179,22 +179,22 @@ public class JilFileWriter {
 	}
 	
 	protected void write(JilStmt.Label s) {
-		output.print("\t" + s.label() + ":");
+		output.print("  " + s.label() + ":");
 		write(s.exceptions()); // should be nothing	
 		output.println();
 	}
 	
 	protected void write(JilStmt.Switch s) {
-		output.print("\t\tswitch("); 
+		output.print("    switch("); 
 		write(s.condition());
 		output.print(") ");
 		write(s.exceptions());
 		output.println(" {");
 		for(Pair<JilExpr.Number,String> c : s.cases()) {
-			output.println("\t\tcase " + c.first() + ": goto " + c.second() + ";");			
+			output.println("    case " + c.first() + ": goto " + c.second() + ";");			
 		}
-		output.println("\t\tdefault: goto " + s.defaultLabel() + ";");		
-		output.println("\t\t}");
+		output.println("    default: goto " + s.defaultLabel() + ";");		
+		output.println("    }");
 	}
 	
 	protected void write(List<Pair<Type.Clazz,String>> exceptions) {		
@@ -376,14 +376,14 @@ public class JilFileWriter {
 	protected void write(JilExpr.Deref e) {
 		write(e.target());		
 		output.print(".");
-		output.print("[" + e.type() + "]");
+		// output.print("[" + e.type() + "]");
 		output.print(e.name());						
 	}
 	
 	protected void write(JilExpr.Invoke e) {
 		write(e.target());				
 		output.print(".");
-		output.print("[" + e.funType() + "]");
+		// output.print("[" + e.funType() + "]");
 		output.print(e.name());
 		if (e instanceof JilExpr.SpecialInvoke) {
 			output.print("!");
