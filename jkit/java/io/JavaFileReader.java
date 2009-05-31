@@ -1171,6 +1171,9 @@ public class JavaFileReader {
 			} else if (child.getType() == FIELD) {
 				declarations.addAll(parseField(child, genericVariables));
 				end = Math.min(i, end);
+			} else if (child.getType() == BLOCK) {
+				declarations.addAll(parseDeclaration(child, genericVariables));
+				end = Math.min(i, end);
 			}
 		}
 
