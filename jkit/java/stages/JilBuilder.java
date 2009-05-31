@@ -336,7 +336,7 @@ public class JilBuilder {
 				JilStmt s = r.get(j);
 				Type.Clazz ct = (Type.Clazz) cb.type().attribute(
 						Type.Clazz.class);
-				if(!(s instanceof JilStmt.Goto)) {
+				if(!(s instanceof JilStmt.Goto || s instanceof JilStmt.Label)) {
 					// This is very pedantic. Almost certainly, we could rule out
 					// certain kinds of exception branches. However, it's difficult
 					// to do this properly and, therefore, we remain quite
@@ -366,10 +366,13 @@ public class JilBuilder {
 		}
 		
 		r.add(new JilStmt.Label(exitLab,block.attributes()));
+				
 		List<JilStmt> finallyBlock = doBlock(block.finaly());
-		// Now, we add the finally block. This is done in a separate method
-		// because it's actually quite challenging.
-		addFinallyBlock(r,finallyBlock);			
+		if(!finallyBlock.isEmpty()) {
+			// Now, we add the finally block. This is done in a separate method
+			// because it's actually quite challenging.
+			addFinallyBlock(r,finallyBlock);			
+		}
 		
 		return r;
 	}
@@ -418,7 +421,7 @@ public class JilBuilder {
 					// houston, we have a problem.
 					throw new RuntimeException("Houston, we have a problem");
 				}				
-			} else {
+			} else if(!(stmt instanceof JilStmt.Label)){
 				// Now, we need to check for non-local exists caused by
 				// exceptions!
 				for(Pair<Type.Clazz,String> ex : stmt.exceptions()) {					
@@ -429,7 +432,7 @@ public class JilBuilder {
 					}
 				}
 				
-				// Add the default exceptional edge for exceptional flow.
+				// Add the default exceptional edge for exceptional flow.				
 				stmt = stmt.addException(Types.JAVA_LANG_THROWABLE, exceptionLabel);
 				block.set(i, stmt);
 			}
@@ -1118,10 +1121,7 @@ public class JilBuilder {
 			return new Pair<JilExpr, List<JilStmt>>(new JilExpr.SpecialInvoke(target
 					.first(), e.name(), params.first(), mi.type, type, e
 					.attributes()), r);
-		} else {
-			if(type == null) {
-				syntax_error("problem",e);
-			}
+		} else {			
 			return new Pair<JilExpr, List<JilStmt>>(new JilExpr.Invoke(target.first(), e
 					.name(), params.first(), mi.type, type, e
 					.attributes()), r);
