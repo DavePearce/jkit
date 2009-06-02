@@ -2,13 +2,7 @@ package jkit.jil.stages;
 
 import java.util.*;
 
-import jkit.bytecode.Bytecode;
-import jkit.bytecode.ClassFile;
-import jkit.bytecode.ClassSignature;
-import jkit.bytecode.Code;
-import jkit.bytecode.Exceptions;
-import jkit.bytecode.FieldSignature;
-import jkit.bytecode.InnerClasses;
+import jkit.bytecode.*;
 import jkit.bytecode.Bytecode.*;
 import jkit.compiler.Clazz;
 import jkit.compiler.ClassLoader;
@@ -85,6 +79,10 @@ public class ClassFileBuilder {
 			cfile.fields().add(cf);
 			if(isGeneric(f.type())) {
 				cf.attributes().add(new FieldSignature(f.type()));
+			} 
+			if(f instanceof JilConstant) {
+				JilConstant c = (JilConstant) f;
+				cf.attributes().add(new ConstantValue(c.initialiser()));
 			}
 		}
 	}

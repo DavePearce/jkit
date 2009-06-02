@@ -6,8 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import jkit.compiler.ClassLoader;
 
-public class ConstantValue implements Attribute {
-	private String name;
+public class ConstantValue implements Attribute {	
 	private Object constant;
 	
 	/**
@@ -15,13 +14,11 @@ public class ConstantValue implements Attribute {
 	 * instanceof of Boolean, Byte, Character, Short, Integer, Float, Double or
 	 * String.
 	 * 
-	 * @param name
 	 * @param constant
 	 */
-	public ConstantValue(String name, Object constant) {
-		this.name = name;
+	public ConstantValue(Object constant) {		
 		this.constant = constant;
-		if(getConstantInfo() == null) {
+		if (getConstantInfo() == null) {
 			throw new IllegalArgumentException(
 					"constant must be instance of Boolean, Byte, Character, Short, Integer, Float, Double or String");
 		}
@@ -32,7 +29,7 @@ public class ConstantValue implements Attribute {
 	}
 	
 	public void addPoolItems(Set<Constant.Info> constantPool, ClassLoader loader) {
-		Constant.addPoolItem(new Constant.Utf8("Exceptions"), constantPool);
+		Constant.addPoolItem(new Constant.Utf8("ConstantValue"), constantPool);
 		Constant.addPoolItem(getConstantInfo(), constantPool);
 	}
 	
@@ -44,9 +41,21 @@ public class ConstantValue implements Attribute {
 	}
 	
 	public void print(PrintWriter output,
-			Map<Constant.Info, Integer> constantPool, ClassLoader loader) throws IOException {
-		output.println("  ConstantValue: ");
-		output.println("   " + name + ": " + constant.toString());
+			Map<Constant.Info, Integer> constantPool, ClassLoader loader)
+			throws IOException {
+		String type;
+		if (constant instanceof Byte || constant instanceof Character
+				|| constant instanceof Boolean || constant instanceof Short
+				|| constant instanceof Integer) {
+			type = "int";
+		} else if (constant instanceof Long) {
+			type = "long";
+		} else if (constant instanceof Float) {
+			type = "float";
+		} else {
+			type = "double";
+		}
+		output.println("  Constant value: " + type + " " + constant.toString());
 	}
 	
 	private Constant.Info getConstantInfo() {

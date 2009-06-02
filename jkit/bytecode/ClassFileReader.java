@@ -488,7 +488,7 @@ public final class ClassFileReader {
 	
 	protected ConstantValue parseConstantValue(int offset, String name) {
 		Object obj = getConstant(read_u2(offset+6));
-		return new ConstantValue(name, obj);
+		return new ConstantValue(obj);
 	}	
 	
 	protected InnerClasses parseInnerClasses(int offset, String name, Type.Clazz type) {			

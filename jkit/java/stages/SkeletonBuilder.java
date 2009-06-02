@@ -13,6 +13,7 @@ import jkit.java.tree.Value;
 import jkit.java.tree.Stmt.Case;
 import jkit.jil.tree.JilClass;
 import jkit.jil.tree.JilField;
+import jkit.jil.tree.JilConstant;
 import jkit.jil.tree.JilMethod;
 import jkit.jil.tree.Modifier;
 import jkit.jil.tree.SourceLocation;
@@ -174,14 +175,39 @@ public class SkeletonBuilder {
 		doStatement(d.body(), skeleton);
 	}
 
-	protected void doField(Decl.JavaField d, JilClass skeleton) {		
-		Decl.JavaField f = (Decl.JavaField) d;
-		Type t = (Type) f.type().attribute(Type.class);		
-		skeleton.fields().add(
-				new JilField(f.name(), t, f.modifiers(), new ArrayList(f
-						.attributes())));
+	protected void doField(Decl.JavaField f, JilClass skeleton) {				
+		Type t = (Type) f.type().attribute(Type.class);	
+		
+		if(skeleton.isInterface()) {
+			if(f.isConstant()) {
+				ArrayList<Modifier> mods = new ArrayList(f.modifiers());
+				if(!f.isProtected()) {
+					mods.add(Modifier.ACC_PUBLIC);
+				} 
+				if(!f.isFinal()) {
+					mods.add(Modifier.ACC_FINAL);
+				}
+				if(!f.isStatic()) {
+					mods.add(Modifier.ACC_STATIC);
+				}
+				skeleton.fields().add(
+						new JilConstant(f.name(), t, f.constant(), mods,
+								new ArrayList(f.attributes())));
+			} else {
+				syntax_error("invalid constant initialiser",f);
+			}
+		} else if(f.isConstant() && f.isStatic() && f.isFinal()) {
+			// Ok, this is actually a constant field.
+			skeleton.fields().add(
+					new JilConstant(f.name(), t, f.constant(), f.modifiers(),
+							new ArrayList(f.attributes())));
+		} else {
+			skeleton.fields().add(
+					new JilField(f.name(), t, f.modifiers(), new ArrayList(f
+							.attributes())));
+		}
 
-		doExpression(d.initialiser(), skeleton);		
+		doExpression(f.initialiser(), skeleton);		
 	}
 	
 	protected void doInitialiserBlock(Decl.InitialiserBlock d,

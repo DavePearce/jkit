@@ -170,17 +170,19 @@ public class JilBuilder {
 		
 		if(tmp != null) {
 			if(d.isStatic()) {
-				// This is a static field with an initialiser. Therefore, we
-				// need to add it to the static initialiser.
-				JilMethod staticInit = createStaticInitialiser(parent);
-				JilExpr.Deref df = new JilExpr.Deref(new JilExpr.ClassVariable(
-						parent.type()), d.name(), isStatic, fieldT, d
-						.attributes());
-				JilStmt.Assign ae = new JilStmt.Assign(df, tmp.first(), d
-						.attributes());
-				// add to the front so the ordering is correct.
-				staticInit.body().add(0,ae);
-				staticInit.body().addAll(0,tmp.second());
+				if((!d.isFinal() && d.isConstant())) {
+					// This is a static field with an non-constant initialiser.
+					// Therefore, we need to add it to the static initialiser.
+					JilMethod staticInit = createStaticInitialiser(parent);
+					JilExpr.Deref df = new JilExpr.Deref(new JilExpr.ClassVariable(
+							parent.type()), d.name(), isStatic, fieldT, d
+							.attributes());
+					JilStmt.Assign ae = new JilStmt.Assign(df, tmp.first(), d
+							.attributes());
+					// add to the front so the ordering is correct.
+					staticInit.body().add(0,ae);
+					staticInit.body().addAll(0,tmp.second());
+				} 
 			} else {
 				// This is a non-static field with an initialiser. Therefore, we
 				// need to add it to the beginning of all constructors. One issue is

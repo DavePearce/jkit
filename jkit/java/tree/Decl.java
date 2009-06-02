@@ -508,6 +508,44 @@ public interface Decl extends SyntacticElement {
 		}
 		
 		/**
+		 * Check whether this field represents a constant or not.
+		 * 
+		 * @return
+		 */
+		public boolean isConstant() {
+			return initialiser != null && initialiser instanceof Value
+					&& !(initialiser instanceof Value.Array);
+		}
+		
+		public Object constant() {
+			if(initialiser instanceof Value.Bool) {
+				Value.Bool i = (Value.Bool) initialiser;
+				return i.value();
+			} else if(initialiser instanceof Value.Byte) {
+				Value.Byte i = (Value.Byte) initialiser;
+				return i.value();
+			} else if(initialiser instanceof Value.Char) {
+				Value.Char i = (Value.Char) initialiser;
+				return i.value();
+			} else if(initialiser instanceof Value.Short) {
+				Value.Short i = (Value.Short) initialiser;
+				return i.value();
+			} else if(initialiser instanceof Value.Int) {
+				Value.Int i = (Value.Int) initialiser;
+				return i.value();
+			} else if(initialiser instanceof Value.Long) {
+				Value.Long i = (Value.Long) initialiser;
+				return i.value();
+			} else if(initialiser instanceof Value.Float) {
+				Value.Float i = (Value.Float) initialiser;
+				return i.value();
+			} else  {
+				Value.Double i = (Value.Double) initialiser;
+				return i.value();
+			}
+		}
+		
+		/**
 	     * Check whether this field has one of the "base" modifiers (e.g. static,
 	     * public, private, etc). These are found in Modifier.ACC_
 	     * 
