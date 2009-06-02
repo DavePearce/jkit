@@ -118,7 +118,9 @@ public class JilBuilder {
 			// beginning, after super call (if there is one).
 			ArrayList<Decl> fields = new ArrayList<Decl>();
 			for(Decl d : c.declarations()) {
-				if(!(d instanceof Decl.JavaField) && !(d instanceof Decl.InitialiserBlock)) {
+				if (!(d instanceof Decl.JavaField)
+						&& !(d instanceof Decl.InitialiserBlock)
+						&& !(d instanceof Decl.StaticInitialiserBlock)) {
 					doDeclaration(d, skeleton);
 				} else {
 					fields.add(d);
@@ -166,11 +168,11 @@ public class JilBuilder {
 	protected void doField(Decl.JavaField d, JilClass parent) {		
 		Pair<JilExpr,List<JilStmt>> tmp = doExpression(d.initialiser());
 		Type fieldT = (Type) d.type().attribute(Type.class);
-		boolean isStatic = d.isStatic();
+		boolean isStatic = d.isStatic();			
 		
 		if(tmp != null) {
-			if(d.isStatic()) {
-				if((!d.isFinal() && d.isConstant())) {
+			if(d.isStatic()) {				
+				if(!(d.isFinal() && d.isConstant())) {
 					// This is a static field with an non-constant initialiser.
 					// Therefore, we need to add it to the static initialiser.
 					JilMethod staticInit = createStaticInitialiser(parent);
@@ -179,7 +181,7 @@ public class JilBuilder {
 							.attributes());
 					JilStmt.Assign ae = new JilStmt.Assign(df, tmp.first(), d
 							.attributes());
-					// add to the front so the ordering is correct.
+					// add them at the beginning to get the right ordering.
 					staticInit.body().add(0,ae);
 					staticInit.body().addAll(0,tmp.second());
 				} 
@@ -233,7 +235,8 @@ public class JilBuilder {
 		}		
 		
 		JilMethod m = createStaticInitialiser(parent);
-		m.body().addAll(stmts);
+		// Again, add at beginning to ensure the right order.
+		m.body().addAll(0,stmts);
 	}
 	
 	protected List<JilStmt> doStatement(Stmt e) {
