@@ -485,24 +485,19 @@ public class JilBuilder {
 	
 	protected Pair<JilExpr,List<JilStmt>> doAssignmentOp(Stmt.AssignmentOp def) {
 		ArrayList<JilStmt> r = new ArrayList<JilStmt>();
+		
 		Pair<JilExpr,List<JilStmt>> lhs = doExpression(def.lhs());
-		Pair<JilExpr,List<JilStmt>> rhs = doExpression(def.rhs());
+		Pair<JilExpr, List<JilStmt>> rhs = doExpression(new Expr.BinOp(
+				def.op(), def.lhs(), def.rhs(), def.attributes()));
 		
-		if(!lhs.second().isEmpty()) {
-			syntax_error("required variable or field on left-hand side",def);
-		}
-		
-		Type.Primitive lhs_t = (Type.Primitive) lhs.first().type(); // could be a
-															// problem here, see
-															// doBinOp.
-		
+		Type lhs_t = lhs.first().type();
+
 		if (rhs.second().isEmpty() || lhs.first() instanceof JilExpr.Variable) {		
 			JilExpr tmpVar = new JilExpr.Variable(getTempVar(), lhs_t, def
 					.attributes());
 			r.add(new JilStmt.Assign(tmpVar, lhs.first(), def.attributes()));
 			r.addAll(rhs.second());
-			r.add(new JilStmt.Assign(lhs.first(), new JilExpr.BinOp(tmpVar, rhs
-					.first(), def.op(), lhs_t, def.attributes()), def
+			r.add(new JilStmt.Assign(lhs.first(), rhs.first(), def
 					.attributes()));
 			return new Pair(lhs.first(), r);
 		} else if(lhs.first() instanceof JilExpr.Deref) {
@@ -514,8 +509,8 @@ public class JilBuilder {
 			r.addAll(rhs.second());
 			JilExpr.Deref deref2 = new JilExpr.Deref(tmpVar, deref1.name(),
 					deref1.isStatic(), deref1.type(), deref1.attributes()); 
-			r.add(new JilStmt.Assign(deref2, new JilExpr.BinOp(deref2, rhs
-					.first(), def.op(), lhs_t, def.attributes()), def
+			r
+			.add(new JilStmt.Assign(deref2, rhs.first(), def
 					.attributes()));
 			return new Pair(deref2, r);
 		} else if(lhs.first() instanceof JilExpr.ArrayIndex) {
@@ -532,8 +527,8 @@ public class JilBuilder {
 			r.addAll(rhs.second());
 			JilExpr.ArrayIndex aindex2 = new JilExpr.ArrayIndex(targetVar,
 					indexVar, aindex1.type(), aindex1.attributes());
-			r.add(new JilStmt.Assign(aindex2, new JilExpr.BinOp(aindex2, rhs
-					.first(), def.op(), lhs_t, def.attributes()), def
+			r
+			.add(new JilStmt.Assign(aindex2, rhs.first(), def
 					.attributes()));
 			return new Pair(aindex2, r);
 		} else {
@@ -541,7 +536,7 @@ public class JilBuilder {
 					"unknown l-value encountered on assignment with side-effects",
 					def);
 			return null; // unreachable.
-		}
+		}	
 	}
 	
 	protected Pair<JilExpr,List<JilStmt>> doAssignment(Stmt.Assignment def) {
@@ -1295,13 +1290,17 @@ public class JilBuilder {
 	}
 		
 	protected Pair<JilExpr,List<JilStmt>> doBinOp(Expr.BinOp e) {				
-		Type _type = (Type) e.attribute(Type.class);
 		
-		if(_type instanceof Type.Primitive) {
-			Pair<JilExpr,List<JilStmt>> lhs = doExpression(e.lhs());
-			Pair<JilExpr,List<JilStmt>> rhs = doExpression(e.rhs());
-			
-			Type.Primitive type = (Type.Primitive) _type;
+		if(e.op() == Expr.BinOp.CONCAT) {
+			return doStringConcat(e);
+		}
+		
+		Pair<JilExpr,List<JilStmt>> lhs = doExpression(e.lhs());
+		Pair<JilExpr,List<JilStmt>> rhs = doExpression(e.rhs());
+
+		if(lhs.first().type() instanceof Type.Primitive) {
+
+			Type.Primitive type = (Type.Primitive) lhs.first().type();
 
 			List<JilStmt> r = lhs.second();
 
@@ -1321,10 +1320,10 @@ public class JilBuilder {
 				return new Pair<JilExpr, List<JilStmt>>(new JilExpr.BinOp(tmpVar, rhs
 						.first(), e.op(), type, e.attributes()), r);
 			}
-		} else if(e.op() == Expr.BinOp.CONCAT) {
-			return doStringConcat(e);
 		} else {
-			syntax_error("internal failure --- problem processing binary operator",e);
+			syntax_error(
+					"internal failure --- problem processing binary operator ("
+							+ lhs.first().type() + ")", e);
 			return null;
 		}
 	}

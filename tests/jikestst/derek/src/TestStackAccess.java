@@ -220,7 +220,7 @@ class TestStackAccess
    static void
    dup()
       {
-      Test t = new Test();                // dup
+      TestStackAccess t = new TestStackAccess();                // dup
 
       System.out.print(t.buf[t.pos++]);   // dup_x1
 

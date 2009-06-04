@@ -259,8 +259,18 @@ public class TypePropagation {
 		} 
 		
 		def.setRhs(implicitCast(def.rhs(),lhs_t));		
-		
+					
 		def.attributes().add(lhs_t);
+		
+		// special case for dealing with assignment ops
+		if (def instanceof Stmt.AssignmentOp
+				&& lhs_t instanceof Type.Clazz) {
+			Type.Clazz tc = (Type.Clazz) lhs_t;
+			if(Types.isJavaLangString(tc)) {
+				Stmt.AssignmentOp aop = (Stmt.AssignmentOp) def;
+				aop.setOp(Expr.BinOp.CONCAT);
+			}
+		}
 	}
 	
 	protected void doReturn(Stmt.Return ret, JavaMethod m) {
