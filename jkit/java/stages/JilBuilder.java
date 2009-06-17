@@ -1291,6 +1291,7 @@ public class JilBuilder {
 		
 	protected Pair<JilExpr,List<JilStmt>> doBinOp(Expr.BinOp e) {				
 		
+		// First, check for special string concatenation operator.
 		if(e.op() == Expr.BinOp.CONCAT) {
 			return doStringConcat(e);
 		}
@@ -1298,10 +1299,10 @@ public class JilBuilder {
 		Pair<JilExpr,List<JilStmt>> lhs = doExpression(e.lhs());
 		Pair<JilExpr,List<JilStmt>> rhs = doExpression(e.rhs());
 
-		if(lhs.first().type() instanceof Type.Primitive) {
+		Type type = (Type) e.attribute(Type.class);
 
-			Type.Primitive type = (Type.Primitive) lhs.first().type();
-
+		if(type instanceof Type.Primitive) {
+			Type.Primitive ptype = (Type.Primitive) type;
 			List<JilStmt> r = lhs.second();
 
 			if(rhs.second().isEmpty()) {
@@ -1309,16 +1310,19 @@ public class JilBuilder {
 				r.addAll(rhs.second());
 
 				return new Pair<JilExpr, List<JilStmt>>(new JilExpr.BinOp(lhs.first(), rhs
-						.first(), e.op(), type, e.attributes()), r);
+						.first(), e.op(), ptype, e.attributes()), r);
 			} else {
 				// This is the harder case: we have side-effects in the rhs.
-				// Now, to deal with this i'm going to be a little conservative.
+				// Now, to deal with this i'm going to be a little conservative
+				// and use a temporary variable. In some cases, it may be
+				// possible to avoid the temporary variable, but for simplicity
+				// I don't do this yet.
 				JilExpr.Variable tmpVar = new JilExpr.Variable(getTempVar(),
 						lhs.first().type(), e.attributes());
 				r.add(new JilStmt.Assign(tmpVar,lhs.first(),e.attributes()));
 				r.addAll(rhs.second());
 				return new Pair<JilExpr, List<JilStmt>>(new JilExpr.BinOp(tmpVar, rhs
-						.first(), e.op(), type, e.attributes()), r);
+						.first(), e.op(), ptype, e.attributes()), r);
 			}
 		} else {
 			syntax_error(
