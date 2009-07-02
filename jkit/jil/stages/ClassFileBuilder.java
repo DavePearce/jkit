@@ -77,7 +77,7 @@ public class ClassFileBuilder {
 		for (JilField f : clazz.fields()) {
 			ClassFile.Field cf = new ClassFile.Field(f.name(), f.type(), f.modifiers()); 
 			cfile.fields().add(cf);
-			if(isGeneric(f.type())) {
+			if(Types.isGeneric(f.type())) {
 				cf.attributes().add(new FieldSignature(f.type()));
 			} 
 			if(f instanceof JilConstant) {
@@ -123,9 +123,9 @@ public class ClassFileBuilder {
 				Code codeAttr = new Code(bytecodes,handlers,cfm);
 				cfm.attributes().add(codeAttr);
 			}
-			
-			if (isGeneric(m.type())) {
-				cfm.attributes().add(new FieldSignature(m.type()));
+						
+			if (Types.isGeneric(m.type())) {				
+				cfm.attributes().add(new MethodSignature(m.type()));
 			}			
 			
 			cfile.methods().add(cfm);
@@ -672,7 +672,8 @@ public class ClassFileBuilder {
 					// it from
 					// the stack
 					bytecodes.add(new Bytecode.Pop(retT));
-				} else if ((retT instanceof Type.Variable || isGenericArray(retT))
+				} else if ((retT instanceof Type.Variable || Types
+						.isGenericArray(retT))
 						&& !(stmt.type() instanceof Type.Variable)
 						&& !stmt.type().equals(
 								new Type.Clazz("java.lang", "Object"))) {
@@ -1192,44 +1193,15 @@ public class ClassFileBuilder {
 			receiver = c.superClass();
 		}
 		throw new FieldNotFoundException(name,receiver.toString());
-	}
-	
-	protected static boolean isGeneric(Type t) {
-		if (t instanceof Type.Variable) {
-			return true;
-		} else if (!(t instanceof Type.Clazz)) {
-			return false;
-		}
-		Type.Clazz ref = (Type.Clazz) t;
-		for(Pair<String, List<Type.Reference>> p : ref.components()) {
-			if(p.second().size() > 0) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	protected static boolean isGenericArray(Type t) {
-		if(t instanceof Type.Array) {
-			Type et = ((Type.Array)t).element();
-			if(et instanceof Type.Variable) {
-				return true;
-			} else {
-				return isGenericArray(et);
-			}
-		} 
-		
-		return false;	
-	}
-	
+	}			
 	
 	protected boolean needClassSignature(JilClass c) {
-		if (isGeneric(c.type())
-				|| (c.superClass() != null && isGeneric(c.superClass()))) {
+		if (Types.isGeneric(c.type())
+				|| (c.superClass() != null && Types.isGeneric(c.superClass()))) {
 			return true;
 		}
 		for (Type.Reference t : c.interfaces()) {
-			if (isGeneric(t)) {
+			if (Types.isGeneric(t)) {
 				return true;
 			}
 		}

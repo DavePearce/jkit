@@ -263,6 +263,46 @@ public class Types {
 		return false;
 	}
 	
+	public static boolean isGeneric(Type t) {
+		if (t instanceof Type.Variable) {
+			return true;
+		} else if(t instanceof Type.Function) {
+			Type.Function ft = (Type.Function) t;
+			if(ft.typeArguments().size() > 0) {
+				return true;
+			} else {
+				for(Type p : ft.parameterTypes()) {
+					if(isGeneric(p)) {
+						return true;
+					}
+				}
+			}
+			return isGeneric(ft.returnType());
+		} else if (!(t instanceof Type.Clazz)) {
+			return false;
+		}
+		Type.Clazz ref = (Type.Clazz) t;
+		for(Pair<String, List<Type.Reference>> p : ref.components()) {
+			if(p.second().size() > 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static boolean isGenericArray(Type t) {
+		if(t instanceof Type.Array) {
+			Type et = ((Type.Array)t).element();
+			if(et instanceof Type.Variable) {
+				return true;
+			} else {
+				return isGenericArray(et);
+			}
+		} 
+		
+		return false;	
+	}
+	
 	/**
 	 * Return the depth of array nesting. E.g. "int" has 0 depth, "int[]" has
 	 * depth 1, "int[][]" has depth 2, etc.
