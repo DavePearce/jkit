@@ -540,31 +540,7 @@ public class ClassFile implements Clazz {
 
 		for (Type.Reference i : interfaces) {
 			Constant.addPoolItem(Constant.buildClass(i), constantPool);
-		}
-		
-		// FIXME: support for inner classes
-//		if (clazz.inners().size() > 0 || clazz.isInnerClass()) {
-//			Constant.addPoolItem(new Constant.Utf8("InnerClasses"),constantPool);
-//			for(Triple<Type.Reference,Integer,Boolean> i : clazz.inners()) {
-//				Constant.addPoolItem(Constant.buildClass(i.first()), constantPool);
-//				Constant.addPoolItem(new Constant.Utf8(i.first().name()), constantPool);
-//			}
-//			if(clazz.isInnerClass()) {
-//				Type.Reference inner = clazz.type();
-//				Pair<String,Type[]>[] classes = clazz.type().classes();
-//				for(int i=classes.length-1;i>0;--i) {
-//					// First, we need to construct the outer reference type.
-//					Pair<String,Type[]>[] nclasses = new Pair[i];
-//					System.arraycopy(classes,0,nclasses,0,nclasses.length);				
-//					Type.Reference outer = Type.referenceType(inner.pkg(),nclasses);
-//					// Now, we can actually write the information.									
-//					Constant.addPoolItem(Constant.buildClass(outer), constantPool);
-//					Constant.addPoolItem(Constant.buildClass(inner), constantPool);
-//					Constant.addPoolItem(new Constant.Utf8(inner.name()), constantPool);									
-//					inner = outer;				
-//				}
-//			}	
-//		}
+		}			
 		
 		// Now, add all constant pool information for fields
 		for (Field f : fields) {

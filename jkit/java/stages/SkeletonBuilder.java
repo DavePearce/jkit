@@ -125,14 +125,15 @@ public class SkeletonBuilder {
 			if(c instanceof Decl.JavaEnum) {
 				Decl.JavaEnum ec = (Decl.JavaEnum) c;
 				for(Decl.EnumConstant enc : ec.constants()) {
-					Type t = (Type) enc.attribute(Type.class);
 					if(enc.declarations().size() > 0) {
 						syntax_error("No support for ENUMS that have methods",enc);
 					} else {
 						List<Modifier> modifiers = new ArrayList<Modifier>();
 						modifiers.add(Modifier.ACC_PUBLIC);
+						modifiers.add(Modifier.ACC_STATIC);
+						modifiers.add(Modifier.ACC_FINAL);
 						skeleton.fields().add(
-								new JilField(enc.name(), t, modifiers,
+								new JilField(enc.name(), type, modifiers,
 										new ArrayList(enc.attributes())));
 					}
 				}
