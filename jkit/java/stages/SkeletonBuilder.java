@@ -144,7 +144,12 @@ public class SkeletonBuilder {
 	}
 
 	protected void doEnum(Decl.JavaEnum ec, JilClass skeleton) {	
+		// What we need to do here is add the appropriate public interface for
+        // enumerations. This simplifies the pipeline later on, by ensuring that
+        // code which trys to access this interface will compile.
 		Type.Clazz type = (Type.Clazz) ec.attribute(Type.class);
+		
+		// First, add the public fields that represent the enum constants. 
 		for(Decl.EnumConstant enc : ec.constants()) {
 			if(enc.declarations().size() > 0) {
 				syntax_error("No support for ENUMS that have methods",enc);
@@ -159,27 +164,8 @@ public class SkeletonBuilder {
 			}
 		}
 		
-		// Now add the $VALUES field
-		List<Modifier> modifiers = new ArrayList<Modifier>();
-		modifiers.add(Modifier.ACC_PRIVATE);
-		modifiers.add(Modifier.ACC_STATIC);
-		modifiers.add(Modifier.ACC_FINAL);
-		
-		skeleton.fields()
-				.add(
-						new JilField("$VALUES", new Type.Array(type),
-								modifiers));
-		
-		// Now, create the values() method
-		Decl.JavaMethod values = createValuesMethod(ec,type);
-		// Now, create the initialiser
-		Decl.StaticInitialiserBlock initialiser = createInitialiser(ec,type);
-		ec.declarations().add(values);
-		ec.declarations().add(initialiser);
-		
-		// Finally, add new methods to skeleton.
-		doDeclaration(values,skeleton);
-		doDeclaration(initialiser,skeleton);
+		// Second, add the necessary public methods with which you can access an
+        // enumeration.
 	}
 	
 	protected void doMethod(Decl.JavaMethod d, JilClass skeleton) {		
@@ -618,63 +604,7 @@ public class SkeletonBuilder {
 		
 		return m;
 	}
-	
-	protected Decl.JavaMethod createValuesMethod(Decl.JavaEnum ec, Type.Clazz type) {
-		SourceLocation loc = (SourceLocation) ec
-				.attribute(SourceLocation.class);
-		
-		Type.Function ftype = new Type.Function(new Type.Array(type));
-		ArrayList<Modifier> mods = new ArrayList<Modifier>();
-		mods.add(Modifier.ACC_PUBLIC);		
-		ArrayList<Stmt> stmts = new ArrayList();
-		
-		// load, clone, cast and return array
-		Expr.UnresolvedVariable uv = new Expr.UnresolvedVariable(ec.name());
-		Expr.Deref load = new Expr.Deref(uv, "$VALUES",loc);
-		Expr.Invoke clone = new Expr.Invoke(load,"clone",new ArrayList(),
-				new ArrayList(), loc);
-		jkit.java.tree.Type rtype = new jkit.java.tree.Type.Array(
-				new jkit.java.tree.Type.Clazz(ec.name(), loc));  
-		Expr.Cast cast = new Expr.Cast(rtype,clone,loc);
-		cast.type().attributes().add(new Type.Array(type));
-		Stmt.Return ret = new Stmt.Return(cast,loc); 
-		stmts.add(ret);
-		
-		Stmt.Block block = new Stmt.Block(stmts, loc);
-
-		Decl.JavaMethod m = new Decl.JavaMethod(mods, "values",
-				rtype, new ArrayList(), false,
-				new ArrayList(), new ArrayList(), block, loc);
-
-		m.attributes().add(ftype);
-		
-		return m;		
-	}
-	
-	protected Decl.StaticInitialiserBlock createInitialiser(Decl.JavaEnum ec, Type.Clazz type) {
-		SourceLocation loc = (SourceLocation) ec
-				.attribute(SourceLocation.class);
-		jkit.java.tree.Type.Clazz ecType = new jkit.java.tree.Type.Clazz(ec.name(), loc);
-		int i=0;
-		ArrayList<Stmt> stmts = new ArrayList();
-		for(Decl.EnumConstant c : ec.constants()) {
-			ArrayList<Expr> arguments = new ArrayList();
-			arguments.add(new Value.String(c.name()));
-			arguments.add(new Value.Int(i));
-			arguments.addAll(c.arguments());
-			Expr.New nuw = new Expr.New(ecType,null,arguments, new ArrayList(),new ArrayList(c.attributes())); 
-			nuw.type().attributes().add(type);
-			Expr.UnresolvedVariable uv = new Expr.UnresolvedVariable("$VALUES",new ArrayList(c.attributes()));
-			Expr.ArrayIndex array = new Expr.ArrayIndex(uv,new Value.Int(i++),new ArrayList(c.attributes()));
-			Stmt.Assignment assign = new Stmt.Assignment(array,nuw);
-			stmts.add(assign);
-		}
-
-		Decl.StaticInitialiserBlock blk = new Decl.StaticInitialiserBlock(stmts,loc);
-				
-		return blk;	
-	}
-	
+			
 	protected boolean inStaticContext() {
 		Decl d = context.peek();
 		

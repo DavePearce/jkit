@@ -9,6 +9,9 @@ import jkit.java.io.JavaFile;
 import jkit.java.tree.*;
 import jkit.java.tree.Decl.*;
 import jkit.java.tree.Stmt.Case;
+import jkit.jil.tree.JilClass;
+import jkit.jil.tree.JilField;
+import jkit.jil.tree.Modifier;
 import jkit.jil.tree.SourceLocation;
 import jkit.jil.tree.Type;
 import jkit.util.Triple;
@@ -46,6 +49,23 @@ public class EnumRewrite {
 			syntax_error("internal failure (unknown declaration \"" + d
 					+ "\" encountered)",d);			
 		}
+	}
+	
+	protected void doEnum(Decl.JavaEnum ec, JilClass skeleton) {	
+		
+		// Now add the $VALUES field
+		List<Modifier> modifiers = new ArrayList<Modifier>();
+		modifiers.add(Modifier.ACC_PRIVATE);
+		modifiers.add(Modifier.ACC_STATIC);
+		modifiers.add(Modifier.ACC_FINAL);
+		
+		skeleton.fields()
+				.add(
+						new JilField("$VALUES", new Type.Array(type),
+								modifiers));
+		
+		// Now, create the values() method
+		
 	}
 	
 	protected void doInterface(JavaInterface d) {
@@ -404,5 +424,61 @@ public class EnumRewrite {
 		e.setFalseBranch(doExpression(e.falseBranch()));
 		e.setTrueBranch(doExpression(e.trueBranch()));
 		return e;
+	}
+	
+	protected Decl.JavaMethod createValuesMethod(Decl.JavaEnum ec, Type.Clazz type) {
+		SourceLocation loc = (SourceLocation) ec
+				.attribute(SourceLocation.class);
+		
+		Type.Function ftype = new Type.Function(new Type.Array(type));
+		ArrayList<Modifier> mods = new ArrayList<Modifier>();
+		mods.add(Modifier.ACC_PUBLIC);		
+		ArrayList<Stmt> stmts = new ArrayList();
+		
+		// load, clone, cast and return array
+		Expr.UnresolvedVariable uv = new Expr.UnresolvedVariable(ec.name());
+		Expr.Deref load = new Expr.Deref(uv, "$VALUES",loc);
+		Expr.Invoke clone = new Expr.Invoke(load,"clone",new ArrayList(),
+				new ArrayList(), loc);
+		jkit.java.tree.Type rtype = new jkit.java.tree.Type.Array(
+				new jkit.java.tree.Type.Clazz(ec.name(), loc));  
+		Expr.Cast cast = new Expr.Cast(rtype,clone,loc);
+		cast.type().attributes().add(new Type.Array(type));
+		Stmt.Return ret = new Stmt.Return(cast,loc); 
+		stmts.add(ret);
+		
+		Stmt.Block block = new Stmt.Block(stmts, loc);
+
+		Decl.JavaMethod m = new Decl.JavaMethod(mods, "values",
+				rtype, new ArrayList(), false,
+				new ArrayList(), new ArrayList(), block, loc);
+
+		m.attributes().add(ftype);
+		
+		return m;		
+	}
+	
+	protected Decl.StaticInitialiserBlock createInitialiser(Decl.JavaEnum ec, Type.Clazz type) {
+		SourceLocation loc = (SourceLocation) ec
+				.attribute(SourceLocation.class);
+		jkit.java.tree.Type.Clazz ecType = new jkit.java.tree.Type.Clazz(ec.name(), loc);
+		int i=0;
+		ArrayList<Stmt> stmts = new ArrayList();
+		for(Decl.EnumConstant c : ec.constants()) {
+			ArrayList<Expr> arguments = new ArrayList();
+			arguments.add(new Value.String(c.name()));
+			arguments.add(new Value.Int(i));
+			arguments.addAll(c.arguments());
+			Expr.New nuw = new Expr.New(ecType,null,arguments, new ArrayList(),new ArrayList(c.attributes())); 
+			nuw.type().attributes().add(type);
+			Expr.UnresolvedVariable uv = new Expr.UnresolvedVariable("$VALUES",new ArrayList(c.attributes()));
+			Expr.ArrayIndex array = new Expr.ArrayIndex(uv,new Value.Int(i++),new ArrayList(c.attributes()));
+			Stmt.Assignment assign = new Stmt.Assignment(array,nuw);
+			stmts.add(assign);
+		}
+
+		Decl.StaticInitialiserBlock blk = new Decl.StaticInitialiserBlock(stmts,loc);
+				
+		return blk;	
 	}
 }
