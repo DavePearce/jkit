@@ -220,10 +220,13 @@ public class JavaCompiler implements Compiler {
 			// Ninth, rewrite inner classes
 			rewriteInnerClasses(filename,jfile,loader);
 						
-			// Tenth, eliminate side effects from expressions
+			// Tenth, rewriten enumerations
+			rewriteEnumerations(filename,jfile,loader);
+			
+			// Eleventh, eliminate side effects from expressions
 			generateJilCode(filename, jfile, loader);
 			
-			// Eleventh, add bypass methods
+			// Twelth, add bypass methods
 			for(JilClass clazz : skeletons) {
 				addBypassMethods(filename,clazz,loader);
 			}
@@ -405,6 +408,23 @@ public class JavaCompiler implements Compiler {
 		new InnerClassRewrite(loader, new TypeSystem()).apply(jfile);
 		logTimedMessage("[" + srcfile.getPath()
 				+ "] Inner classes rewritten", (System
+				.currentTimeMillis() - start));
+	}
+	
+	/**
+     * This is the Tenth stage in the compilation pipeline --- we must rewrite
+     * enumerations to include the necessary setup information, and include
+     * appropriate accessors.
+     * 
+     * @param srcfile
+     * @param jfile
+     * @param loader
+     */
+	protected void rewriteEnumerations(File srcfile, JavaFile jfile, ClassLoader loader) {
+		long start = System.currentTimeMillis();
+		new EnumRewrite(loader, new TypeSystem()).apply(jfile);
+		logTimedMessage("[" + srcfile.getPath()
+				+ "] Enumerations rewritten", (System
 				.currentTimeMillis() - start));
 	}
 	

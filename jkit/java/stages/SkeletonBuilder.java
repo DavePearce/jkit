@@ -173,13 +173,13 @@ public class SkeletonBuilder {
 		// Now, create the values() method
 		Decl.JavaMethod values = createValuesMethod(ec,type);
 		// Now, create the initialiser
-		// Decl.JavaMethod initialiser = createInitialiser(ec);
+		Decl.StaticInitialiserBlock initialiser = createInitialiser(ec,type);
 		ec.declarations().add(values);
-		//ec.declarations().add(initialiser);
+		ec.declarations().add(initialiser);
 		
 		// Finally, add new methods to skeleton.
 		doDeclaration(values,skeleton);
-		// doDeclaration(initialiser,skeleton);
+		doDeclaration(initialiser,skeleton);
 	}
 	
 	protected void doMethod(Decl.JavaMethod d, JilClass skeleton) {		
@@ -649,6 +649,30 @@ public class SkeletonBuilder {
 		m.attributes().add(ftype);
 		
 		return m;		
+	}
+	
+	protected Decl.StaticInitialiserBlock createInitialiser(Decl.JavaEnum ec, Type.Clazz type) {
+		SourceLocation loc = (SourceLocation) ec
+				.attribute(SourceLocation.class);
+		jkit.java.tree.Type.Clazz ecType = new jkit.java.tree.Type.Clazz(ec.name(), loc);
+		int i=0;
+		ArrayList<Stmt> stmts = new ArrayList();
+		for(Decl.EnumConstant c : ec.constants()) {
+			ArrayList<Expr> arguments = new ArrayList();
+			arguments.add(new Value.String(c.name()));
+			arguments.add(new Value.Int(i));
+			arguments.addAll(c.arguments());
+			Expr.New nuw = new Expr.New(ecType,null,arguments, new ArrayList(),new ArrayList(c.attributes())); 
+			nuw.type().attributes().add(type);
+			Expr.UnresolvedVariable uv = new Expr.UnresolvedVariable("$VALUES",new ArrayList(c.attributes()));
+			Expr.ArrayIndex array = new Expr.ArrayIndex(uv,new Value.Int(i++),new ArrayList(c.attributes()));
+			Stmt.Assignment assign = new Stmt.Assignment(array,nuw);
+			stmts.add(assign);
+		}
+
+		Decl.StaticInitialiserBlock blk = new Decl.StaticInitialiserBlock(stmts,loc);
+				
+		return blk;	
 	}
 	
 	protected boolean inStaticContext() {

@@ -64,7 +64,10 @@ public class SkeletonDiscovery {
 	}
 	
 	protected List<JilClass> doEnum(Decl.JavaEnum d, String pkg, Type.Clazz parent) {
-		return doClass(d,pkg,parent);
+		List<JilClass> cs = doClass(d, pkg, parent);
+		cs.get(cs.size() - 1).modifiers()
+				.add(Modifier.ACC_STATIC);
+		return cs;		
 	}
 	
 	protected List<JilClass> doInterface(Decl.JavaInterface d, String pkg,
