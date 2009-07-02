@@ -233,15 +233,15 @@ public class JavaCompiler implements Compiler {
 			String path = filename.getPath();
 			int i = 0;
 			int rootEnd = path.lastIndexOf(File.separatorChar,path.length()-1);
-			while(i != -1) {
-				i = jfile.pkg().indexOf('.',i);
-				rootEnd = path.lastIndexOf(File.separatorChar,rootEnd);
+			while(i != -1) {				
+				i = jfile.pkg().indexOf('.',i+1);
+				rootEnd = path.lastIndexOf(File.separatorChar,rootEnd-1);
 			}	
 			File outdir = outputDirectory;
 			if(rootEnd != -1) {
 				String root = path.substring(0, rootEnd);				
 				outdir = new File(outputDirectory,root);
-			}
+			}							
 			
 			// Ninth, write out the compiled class file(s).			
 			for(JilClass clazz : skeletons) {				
@@ -509,9 +509,9 @@ public class JavaCompiler implements Compiler {
 	 * @return
 	 */
 	public String createBasename(Type.Clazz tc) {
-		String filename = tc.pkg().replace('.', File.pathSeparatorChar);
+		String filename = tc.pkg().replace('.', File.separatorChar);
 		if(!filename.equals("")) {
-			filename = filename + File.pathSeparatorChar;
+			filename = filename + File.separatorChar;
 		}
 		boolean firstTime=true;
 		for(Pair<String,List<Type.Reference>> c : tc.components()) {

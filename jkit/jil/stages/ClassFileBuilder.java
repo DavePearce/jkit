@@ -26,7 +26,7 @@ public class ClassFileBuilder {
 	
 	public ClassFile build(jkit.jil.tree.JilClass clazz) {				
 		ClassFile cfile = new ClassFile(version, clazz.type(), clazz
-				.superClass(), clazz.interfaces(), clazz.modifiers());
+				.superClass(), clazz.interfaces(), clazz.modifiers());		
 		
 		if (needClassSignature(clazz)) {
 			cfile.attributes().add(
@@ -36,7 +36,7 @@ public class ClassFileBuilder {
 		
 		buildInnerClasses(clazz,cfile);
 		buildFields(clazz,cfile);
-		buildMethods(clazz,cfile);				
+		buildMethods(clazz,cfile);		
 		
 		return cfile;
 	}
