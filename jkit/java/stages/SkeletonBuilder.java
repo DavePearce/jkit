@@ -18,6 +18,7 @@ import jkit.jil.tree.JilMethod;
 import jkit.jil.tree.Modifier;
 import jkit.jil.tree.SourceLocation;
 import jkit.jil.tree.Type;
+import jkit.jil.util.Types;
 import jkit.util.*;
 
 /**
@@ -148,6 +149,7 @@ public class SkeletonBuilder {
         // enumerations. This simplifies the pipeline later on, by ensuring that
         // code which trys to access this interface will compile.
 		Type.Clazz type = (Type.Clazz) ec.attribute(Type.class);
+		SourceLocation loc = (SourceLocation) ec.attribute(SourceLocation.class);
 		
 		// First, add the public fields that represent the enum constants. 
 		for(Decl.EnumConstant enc : ec.constants()) {
@@ -166,6 +168,22 @@ public class SkeletonBuilder {
 		
 		// Second, add the necessary public methods with which you can access an
         // enumeration.
+		ArrayList<Modifier> modifiers = new ArrayList<Modifier>();
+		modifiers.add(Modifier.ACC_PUBLIC);
+		modifiers.add(Modifier.ACC_STATIC);
+		JilMethod values = new JilMethod("values", new Type.Function(
+				new Type.Array(type)), new ArrayList(), modifiers,
+				new ArrayList(),loc);
+		
+		ArrayList<Pair<String,List<Modifier>>> params = new ArrayList();
+		params.add(new Pair("key",new ArrayList())); // could add final modifier=		
+		JilMethod valueOf = new JilMethod("valueOf", new Type.Function(
+				type,Types.JAVA_LANG_STRING), params, modifiers,
+				new ArrayList(),loc);
+		
+		
+		skeleton.methods().add(values);
+		skeleton.methods().add(valueOf);		
 	}
 	
 	protected void doMethod(Decl.JavaMethod d, JilClass skeleton) {		
