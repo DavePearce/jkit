@@ -266,8 +266,7 @@ public class ScopeResolution {
 		scopes.pop();
 	}
 
-	protected void doMethod(JavaMethod d, JavaFile file) {
-		
+	protected void doMethod(JavaMethod d, JavaFile file) {		
 		MethodScope myScope = new MethodScope(d.isStatic());
 		
 		scopes.push(myScope);

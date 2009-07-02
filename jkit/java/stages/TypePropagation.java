@@ -280,6 +280,7 @@ public class TypePropagation {
 			// Integer that actually returns "1" must box this at the point of
 			// return.
 			doExpression(ret.expr());
+			
 			ret.setExpr(implicitCast(ret.expr(), (Type) m.returnType()
 					.attribute(Type.class)));
 		}

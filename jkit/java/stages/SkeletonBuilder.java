@@ -121,22 +121,9 @@ public class SkeletonBuilder {
 			}		
 			
 			// Now, deal with some special cases when this is not actually a
-			// class			
+			// class per se			
 			if(c instanceof Decl.JavaEnum) {
-				Decl.JavaEnum ec = (Decl.JavaEnum) c;
-				for(Decl.EnumConstant enc : ec.constants()) {
-					if(enc.declarations().size() > 0) {
-						syntax_error("No support for ENUMS that have methods",enc);
-					} else {
-						List<Modifier> modifiers = new ArrayList<Modifier>();
-						modifiers.add(Modifier.ACC_PUBLIC);
-						modifiers.add(Modifier.ACC_STATIC);
-						modifiers.add(Modifier.ACC_FINAL);
-						skeleton.fields().add(
-								new JilField(enc.name(), type, modifiers,
-										new ArrayList(enc.attributes())));
-					}
-				}
+				doEnum((Decl.JavaEnum)c,skeleton);
 			}
 			
 			if (!skeleton.isInterface()
@@ -156,6 +143,45 @@ public class SkeletonBuilder {
 		}		
 	}
 
+	protected void doEnum(Decl.JavaEnum ec, JilClass skeleton) {	
+		Type.Clazz type = (Type.Clazz) ec.attribute(Type.class);
+		for(Decl.EnumConstant enc : ec.constants()) {
+			if(enc.declarations().size() > 0) {
+				syntax_error("No support for ENUMS that have methods",enc);
+			} else {
+				List<Modifier> modifiers = new ArrayList<Modifier>();
+				modifiers.add(Modifier.ACC_PUBLIC);
+				modifiers.add(Modifier.ACC_STATIC);
+				modifiers.add(Modifier.ACC_FINAL);
+				skeleton.fields().add(
+						new JilField(enc.name(), type, modifiers,
+								new ArrayList(enc.attributes())));
+			}
+		}
+		
+		// Now add the $VALUES field
+		List<Modifier> modifiers = new ArrayList<Modifier>();
+		modifiers.add(Modifier.ACC_PRIVATE);
+		modifiers.add(Modifier.ACC_STATIC);
+		modifiers.add(Modifier.ACC_FINAL);
+		
+		skeleton.fields()
+				.add(
+						new JilField("$VALUES", new Type.Array(type),
+								modifiers));
+		
+		// Now, create the values() method
+		Decl.JavaMethod values = createValuesMethod(ec,type);
+		// Now, create the initialiser
+		// Decl.JavaMethod initialiser = createInitialiser(ec);
+		ec.declarations().add(values);
+		//ec.declarations().add(initialiser);
+		
+		// Finally, add new methods to skeleton.
+		doDeclaration(values,skeleton);
+		// doDeclaration(initialiser,skeleton);
+	}
+	
 	protected void doMethod(Decl.JavaMethod d, JilClass skeleton) {		
 		Type.Function type = (Type.Function) d.attribute(Type.class);
 		List<Type.Clazz> exceptions = new ArrayList<Type.Clazz>();
@@ -591,6 +617,38 @@ public class SkeletonBuilder {
 		m.attributes().add(new Type.Function(new Type.Void()));
 		
 		return m;
+	}
+	
+	protected Decl.JavaMethod createValuesMethod(Decl.JavaEnum ec, Type.Clazz type) {
+		SourceLocation loc = (SourceLocation) ec
+				.attribute(SourceLocation.class);
+		
+		Type.Function ftype = new Type.Function(new Type.Array(type));
+		ArrayList<Modifier> mods = new ArrayList<Modifier>();
+		mods.add(Modifier.ACC_PUBLIC);		
+		ArrayList<Stmt> stmts = new ArrayList();
+		
+		// load, clone, cast and return array
+		Expr.UnresolvedVariable uv = new Expr.UnresolvedVariable(ec.name());
+		Expr.Deref load = new Expr.Deref(uv, "$VALUES",loc);
+		Expr.Invoke clone = new Expr.Invoke(load,"clone",new ArrayList(),
+				new ArrayList(), loc);
+		jkit.java.tree.Type rtype = new jkit.java.tree.Type.Array(
+				new jkit.java.tree.Type.Clazz(ec.name(), loc));  
+		Expr.Cast cast = new Expr.Cast(rtype,clone,loc);
+		cast.type().attributes().add(new Type.Array(type));
+		Stmt.Return ret = new Stmt.Return(cast,loc); 
+		stmts.add(ret);
+		
+		Stmt.Block block = new Stmt.Block(stmts, loc);
+
+		Decl.JavaMethod m = new Decl.JavaMethod(mods, "values",
+				rtype, new ArrayList(), false,
+				new ArrayList(), new ArrayList(), block, loc);
+
+		m.attributes().add(ftype);
+		
+		return m;		
 	}
 	
 	protected boolean inStaticContext() {
