@@ -79,8 +79,8 @@ public class EnumRewrite {
 			ec.declarations().add(valueOf);
 			
 			// Third, create the static initialiser
-			//Decl.StaticInitialiserBlock init = createStaticInitialiser(ec,type);
-			//ec.declarations().add(init);
+			Decl.StaticInitialiserBlock init = createStaticInitialiser(ec,type);
+			ec.declarations().add(init);
 			
 			// Finally, augment the constructor(s) appropriately.
 			if(skeleton.methods(ec.name()).isEmpty()) {
@@ -575,8 +575,6 @@ public class EnumRewrite {
 	}
 	
 	protected void augmentConstructors(Decl.JavaEnum ec, JilClass skeleton) {
-		SourceLocation loc = (SourceLocation) ec.attribute(SourceLocation.class);
-		
 		// First do the skeleton's constructors		
 		for(JilMethod m : skeleton.methods()) {
 			if(m.name().equals(ec.name())) {
