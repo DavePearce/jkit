@@ -125,9 +125,7 @@ public class SkeletonBuilder {
 			// class per se			
 			if(c instanceof Decl.JavaEnum) {
 				doEnum((Decl.JavaEnum)c,skeleton);
-			}
-			
-			if (!skeleton.isInterface()
+			} else if (!skeleton.isInterface()
 					&& skeleton.methods(skeleton.name()).isEmpty()) {
 				// if we get here, then no constructor has been provided.
 				// Therefore, must add the default constructor.
@@ -184,6 +182,8 @@ public class SkeletonBuilder {
 		
 		skeleton.methods().add(values);
 		skeleton.methods().add(valueOf);		
+		
+		skeleton.setSuperClass(new Type.Clazz("java.lang", "Enum"));
 	}
 	
 	protected void doMethod(Decl.JavaMethod d, JilClass skeleton) {		

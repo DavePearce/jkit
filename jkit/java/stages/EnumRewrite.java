@@ -11,9 +11,12 @@ import jkit.java.tree.Decl.*;
 import jkit.java.tree.Stmt.Case;
 import jkit.jil.tree.JilClass;
 import jkit.jil.tree.JilField;
+import jkit.jil.tree.JilMethod;
 import jkit.jil.tree.Modifier;
 import jkit.jil.tree.SourceLocation;
 import jkit.jil.tree.Type;
+import jkit.jil.util.Types;
+import jkit.util.Pair;
 import jkit.util.Triple;
 
 public class EnumRewrite {
@@ -35,6 +38,8 @@ public class EnumRewrite {
 	protected void doDeclaration(Decl d) {
 		if(d instanceof JavaInterface) {
 			doInterface((JavaInterface)d);
+		} else if(d instanceof JavaEnum) {
+			doEnum((JavaEnum)d);
 		} else if(d instanceof JavaClass) {
 			doClass((JavaClass)d);
 		} else if(d instanceof JavaMethod) {
@@ -51,21 +56,43 @@ public class EnumRewrite {
 		}
 	}
 	
-	protected void doEnum(Decl.JavaEnum ec, JilClass skeleton) {	
-		
-		// Now add the $VALUES field
-		List<Modifier> modifiers = new ArrayList<Modifier>();
-		modifiers.add(Modifier.ACC_PRIVATE);
-		modifiers.add(Modifier.ACC_STATIC);
-		modifiers.add(Modifier.ACC_FINAL);
-		
-		skeleton.fields()
-				.add(
-						new JilField("$VALUES", new Type.Array(type),
-								modifiers));
-		
-		// Now, create the values() method
-		
+	protected void doEnum(Decl.JavaEnum ec) {	
+		Type.Clazz type = (Type.Clazz) ec.attribute(Type.Clazz.class);
+		try {
+			JilClass skeleton = (JilClass) loader.loadClass(type);
+
+			// First, add the $VALUES field
+			List<Modifier> modifiers = new ArrayList<Modifier>();
+			modifiers.add(Modifier.ACC_PRIVATE);
+			modifiers.add(Modifier.ACC_STATIC);
+			modifiers.add(Modifier.ACC_FINAL);
+
+			skeleton.fields()
+			.add(
+					new JilField("$VALUES", new Type.Array(type),
+							modifiers));
+
+			// Second, create necessary public methods.
+			Decl.JavaMethod values = createValuesMethod(ec,type);
+			Decl.JavaMethod valueOf = createValueOfMethod(ec,type);			
+			ec.declarations().add(values);
+			ec.declarations().add(valueOf);
+			
+			// Third, create the static initialiser
+			//Decl.StaticInitialiserBlock init = createStaticInitialiser(ec,type);
+			//ec.declarations().add(init);
+			
+			// Finally, augment the constructor(s) appropriately.
+			if(skeleton.methods(ec.name()).isEmpty()) {
+				createDefaultConstructor(ec,skeleton);
+			} else {
+				augmentConstructors(ec,skeleton);
+			}
+			
+		} catch(ClassNotFoundException cne) {
+			syntax_error("internal failure (skeleton for \"" + type
+					+ "\" not found)", ec, cne);
+		}		
 	}
 	
 	protected void doInterface(JavaInterface d) {
@@ -436,21 +463,31 @@ public class EnumRewrite {
 		ArrayList<Stmt> stmts = new ArrayList();
 		
 		// load, clone, cast and return array
-		Expr.UnresolvedVariable uv = new Expr.UnresolvedVariable(ec.name());
-		Expr.Deref load = new Expr.Deref(uv, "$VALUES",loc);
+		Expr.ClassVariable thisClass = new Expr.ClassVariable(ec.name(),loc);
+		thisClass.attributes().add(type);
+		Expr.Deref load = new Expr.Deref(thisClass, "$VALUES",loc);
+		load.attributes().add(new Type.Array(type));
+		
 		Expr.Invoke clone = new Expr.Invoke(load,"clone",new ArrayList(),
 				new ArrayList(), loc);
-		jkit.java.tree.Type rtype = new jkit.java.tree.Type.Array(
+		clone.attributes().add(Types.JAVA_LANG_OBJECT);
+		Type.Function cloneFtype = new Type.Function(Types.JAVA_LANG_OBJECT);
+		clone.attributes().add(new JilBuilder.MethodInfo(new ArrayList(),cloneFtype));
+		
+		Type.Array rtype = new Type.Array(type);
+		jkit.java.tree.Type jrtype = new jkit.java.tree.Type.Array(
 				new jkit.java.tree.Type.Clazz(ec.name(), loc));  
-		Expr.Cast cast = new Expr.Cast(rtype,clone,loc);
-		cast.type().attributes().add(new Type.Array(type));
+		Expr.Cast cast = new Expr.Cast(jrtype,clone,loc);
+		cast.type().attributes().add(rtype);
+		cast.attributes().add(rtype);
+		
 		Stmt.Return ret = new Stmt.Return(cast,loc); 
 		stmts.add(ret);
 		
 		Stmt.Block block = new Stmt.Block(stmts, loc);
 
 		Decl.JavaMethod m = new Decl.JavaMethod(mods, "values",
-				rtype, new ArrayList(), false,
+				jrtype, new ArrayList(), false,
 				new ArrayList(), new ArrayList(), block, loc);
 
 		m.attributes().add(ftype);
@@ -458,12 +495,67 @@ public class EnumRewrite {
 		return m;		
 	}
 	
-	protected Decl.StaticInitialiserBlock createInitialiser(Decl.JavaEnum ec, Type.Clazz type) {
+	protected Decl.JavaMethod createValueOfMethod(Decl.JavaEnum ec, Type.Clazz type) {
+		SourceLocation loc = (SourceLocation) ec
+				.attribute(SourceLocation.class);
+		
+		jkit.java.tree.Type jtype = new jkit.java.tree.Type.Clazz(ec.name(), loc);  
+		Type.Function ftype = new Type.Function(type,Types.JAVA_LANG_STRING);
+		ArrayList<Modifier> mods = new ArrayList<Modifier>();
+		mods.add(Modifier.ACC_PUBLIC);		
+		ArrayList<Stmt> stmts = new ArrayList();
+		
+		Expr.ClassVariable enumClass = new Expr.ClassVariable("java.lang.Enum");
+		enumClass.attributes().add(new Type.Clazz("java.lang","Enum"));
+		
+		Value.Class p1 = new Value.Class(jtype,loc);
+		p1.attributes().add(new Type.Clazz("java.lang", "Class"));
+		Expr.LocalVariable p2 = new Expr.LocalVariable("key",loc);
+		p2.attributes().add(Types.JAVA_LANG_STRING);		
+				
+		ArrayList<Expr> params = new ArrayList();
+		params.add(p1);
+		params.add(p2);
+				
+		Expr.Invoke ivk = new Expr.Invoke(enumClass,"valueOf",params,
+				new ArrayList(), loc);
+		ivk.attributes().add(Types.JAVA_LANG_OBJECT);
+		Type.Function ivkFtype = new Type.Function(Types.JAVA_LANG_OBJECT,
+				new Type.Clazz("java.lang", "Class"), Types.JAVA_LANG_STRING);
+		ivk.attributes().add(new JilBuilder.MethodInfo(new ArrayList(),ivkFtype));
+						
+		Expr.Cast cast = new Expr.Cast(jtype,ivk,loc);		
+		cast.type().attributes().add(type);
+		cast.attributes().add(type);
+		
+		Stmt.Return ret = new Stmt.Return(cast,loc); 
+		stmts.add(ret);
+		
+		Stmt.Block block = new Stmt.Block(stmts, loc);
+
+		ArrayList<Triple<String, List<Modifier>, jkit.java.tree.Type>> mparams = new ArrayList();
+		jkit.java.tree.Type stype = new jkit.java.tree.Type.Clazz("java.lang.String");
+		stype.attributes().add(Types.JAVA_LANG_STRING);
+		mparams.add(new Triple("key",new ArrayList(), stype));
+		
+		Decl.JavaMethod m = new Decl.JavaMethod(mods, "valueOf",
+				jtype, mparams, false,
+				new ArrayList(), new ArrayList(), block, loc);
+
+		m.attributes().add(ftype);
+		
+		return m;		
+	}
+	
+	protected Decl.StaticInitialiserBlock createStaticInitialiser(Decl.JavaEnum ec, Type.Clazz type) {
 		SourceLocation loc = (SourceLocation) ec
 				.attribute(SourceLocation.class);
 		jkit.java.tree.Type.Clazz ecType = new jkit.java.tree.Type.Clazz(ec.name(), loc);
+		
+		Expr.ClassVariable thisClass = new Expr.ClassVariable(ec.name(),loc);
+		thisClass.attributes().add(type);
 		int i=0;
-		ArrayList<Stmt> stmts = new ArrayList();
+		ArrayList<Stmt> stmts = new ArrayList();		
 		for(Decl.EnumConstant c : ec.constants()) {
 			ArrayList<Expr> arguments = new ArrayList();
 			arguments.add(new Value.String(c.name()));
@@ -471,8 +563,8 @@ public class EnumRewrite {
 			arguments.addAll(c.arguments());
 			Expr.New nuw = new Expr.New(ecType,null,arguments, new ArrayList(),new ArrayList(c.attributes())); 
 			nuw.type().attributes().add(type);
-			Expr.UnresolvedVariable uv = new Expr.UnresolvedVariable("$VALUES",new ArrayList(c.attributes()));
-			Expr.ArrayIndex array = new Expr.ArrayIndex(uv,new Value.Int(i++),new ArrayList(c.attributes()));
+			Expr.Deref deref = new Expr.Deref(thisClass,"$VALUES",new ArrayList(c.attributes()));
+			Expr.ArrayIndex array = new Expr.ArrayIndex(deref,new Value.Int(i++),new ArrayList(c.attributes()));
 			Stmt.Assignment assign = new Stmt.Assignment(array,nuw);
 			stmts.add(assign);
 		}
@@ -480,5 +572,115 @@ public class EnumRewrite {
 		Decl.StaticInitialiserBlock blk = new Decl.StaticInitialiserBlock(stmts,loc);
 				
 		return blk;	
+	}
+	
+	protected void augmentConstructors(Decl.JavaEnum ec, JilClass skeleton) {
+		SourceLocation loc = (SourceLocation) ec.attribute(SourceLocation.class);
+		
+		// First do the skeleton's constructors		
+		for(JilMethod m : skeleton.methods()) {
+			if(m.name().equals(ec.name())) {
+				// this is a constructor.
+				
+				// first, update it's type
+				Type.Function oldType = m.type();
+				ArrayList<Type> nparams = new ArrayList<Type>();
+				nparams.add(Types.JAVA_LANG_STRING);
+				nparams.add(Types.T_INT);
+				nparams.addAll(oldType.parameterTypes());
+				Type.Function newType = new Type.Function(Types.T_VOID,nparams);
+				m.setType(newType);
+
+				// second, update its modifiers
+				List<Modifier> mods = m.modifiers();
+				if(mods.contains(Modifier.ACC_PUBLIC)) {
+					// This should probably be done earlier in the pipeline.
+                    // Otherwise, you could call the constructor explicitly and
+                    // it would not fail type checking.
+					mods.remove(Modifier.ACC_PUBLIC);
+					mods.add(Modifier.ACC_PRIVATE);
+				}
+			}
+		}
+		
+		// Second (harder), do the source constructors.
+		for(Decl d : ec.declarations()) {
+			if(d instanceof Decl.JavaMethod) {
+				Decl.JavaMethod m = (Decl.JavaMethod) d;
+				if(m.name().equals(ec.name())) {
+					augmentConstructor(ec,m);
+				}
+			}
+		}
+	}
+	
+	protected void augmentConstructor(Decl.JavaEnum ec, Decl.JavaMethod m) {
+		ArrayList<Triple<String, List<Modifier>, jkit.java.tree.Type>> params = new ArrayList();
+						
+		// First, update the number of parameters to the constructor.
+		jkit.java.tree.Type intType = new jkit.java.tree.Type.Int();
+		intType.attributes().add(Types.T_INT);
+		jkit.java.tree.Type stringType = new jkit.java.tree.Type.Clazz("java.lang.String");
+		stringType.attributes().add(Types.JAVA_LANG_STRING);
+		// parameters must go at front of list.		
+		params.add(0,new Triple("$1",new ArrayList(),stringType));
+		params.add(1,new Triple("$2",new ArrayList(),intType));
+		
+		// Second, add code to the constructor.
+	}
+	
+	protected void createDefaultConstructor(Decl.JavaEnum ec, JilClass skeleton) {		
+		SourceLocation loc = (SourceLocation) ec.attribute(SourceLocation.class);
+		Type.Function ftype = new Type.Function(Types.T_VOID,Types.JAVA_LANG_STRING,Types.T_INT);
+		
+		// First, create a source code constructor.
+		ArrayList<Modifier> mods = new ArrayList<Modifier>();
+		mods.add(Modifier.ACC_PRIVATE);
+		
+		Expr.LocalVariable p1 = new Expr.LocalVariable("$1");
+		p1.attributes().add(Types.JAVA_LANG_STRING);
+		Expr.LocalVariable p2 = new Expr.LocalVariable("$2");
+		p2.attributes().add(Types.T_INT);		
+		ArrayList<Expr> params = new ArrayList<Expr>();
+		params.add(p1);
+		params.add(p2);
+		
+		Expr.LocalVariable supeR = new Expr.LocalVariable("super",loc);
+		supeR.attributes().add(new Type.Clazz("java.lang","Enum"));
+		
+		Expr.Invoke ivk = new Expr.Invoke(supeR, "super", params,
+				new ArrayList(), loc);
+		ivk.attributes().add(ftype.returnType());
+		ivk.attributes().add(new JilBuilder.MethodInfo(new ArrayList(), ftype));
+		
+		ArrayList<Stmt> stmts = new ArrayList();
+		stmts.add(ivk);
+		Stmt.Block block = new Stmt.Block(stmts, loc);
+		ArrayList<Triple<String, List<Modifier>, jkit.java.tree.Type>> mparams = new ArrayList();
+		jkit.java.tree.Type intType = new jkit.java.tree.Type.Int();
+		intType.attributes().add(Types.T_INT);
+		jkit.java.tree.Type stringType = new jkit.java.tree.Type.Clazz("java.lang.String");
+		stringType.attributes().add(Types.JAVA_LANG_STRING);
+		// parameters must go at front of list.		
+		mparams.add(0,new Triple("$1",new ArrayList(),stringType));
+		mparams.add(1,new Triple("$2",new ArrayList(),intType));
+				
+		Decl.JavaMethod m = new Decl.JavaMethod(mods, ec.name(),
+				new jkit.java.tree.Type.Void(), mparams, false,
+				new ArrayList(), new ArrayList(), block, loc);
+
+
+		m.attributes().add(ftype);
+		
+		ec.declarations().add(m);
+		
+		// second, add a skeleton constructor
+		ArrayList<Pair<String,List<Modifier>>> nparams = new ArrayList();
+		nparams.add(new Pair("$1",new ArrayList()));
+		nparams.add(new Pair("$2",new ArrayList()));
+		JilMethod jm = new JilMethod(ec.name(), ftype, nparams, mods,
+				new ArrayList(),loc);
+		
+		skeleton.methods().add(jm);
 	}
 }
