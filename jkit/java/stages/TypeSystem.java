@@ -605,11 +605,16 @@ public class TypeSystem {
 									v.variable(), JAVA_LANG_OBJECT));
 						}
 					} else if(ts.size() <= j) {
-						// This is a strange case, and i'm not sure whether it
-						// could arise in practice (other than as a syntax
-						// error, that is).
-						throw new BindError("cannot bind type " + concrete
-								+ " against (erased?) template " + template);
+						// We need to deal with the case of erased types. For
+						// example, when binding java.util.ArrayList with
+						// java.util.ArrayList<T> we must assume that the first type
+						// is, in fact, java.util.ArrayList<Object>.						
+						Type.Reference cr = cs.get(j);
+						List<Type.Variable> vars = cr.usedVariables();
+						for(Type.Variable v : vars) {
+							constraints.add(new EqualityConstraint(
+									v.variable(), JAVA_LANG_OBJECT));
+						}
 					} else {
 						Type.Reference cr = cs.get(j);
 						Type.Reference tr = ts.get(j);
