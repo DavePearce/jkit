@@ -216,7 +216,7 @@ public class Constant {
 			return bout.toByteArray();
 		}
 		
-		public java.lang.String toString() { return "Utf8(" + str + ")"; }
+		public java.lang.String toString() { return "Utf8(\"" + str + "\")"; }
 	}
 	
 	public final static class String extends Info {

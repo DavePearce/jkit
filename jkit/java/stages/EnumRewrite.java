@@ -551,38 +551,41 @@ public class EnumRewrite {
 		SourceLocation loc = (SourceLocation) ec
 				.attribute(SourceLocation.class);
 		jkit.java.tree.Type.Clazz ecType = new jkit.java.tree.Type.Clazz(ec.name(), loc);
+		jkit.java.tree.Type.Array aecType = new jkit.java.tree.Type.Array(ecType);
+		Type aType = new Type.Array(type);
+
+		Expr.ClassVariable thisClass = new Expr.ClassVariable(ec.name(),loc,type);
 		
-		Expr.ClassVariable thisClass = new Expr.ClassVariable(ec.name(),loc);
-		thisClass.attributes().add(type);
-		int i=0;
 		ArrayList<Stmt> stmts = new ArrayList();	
+
+		// First, create the array to hold the types.
+		Expr param = new Value.Int(ec.constants().size(),Types.T_INT);
+		ArrayList<Expr> arguments = new ArrayList();
+		arguments.add(param);
 		
+		Expr.New anew = new Expr.New(aecType, null, arguments, new ArrayList(),loc,aType);
+		anew.type().attributes().add(aType);
+		Expr.Deref aderef = new Expr.Deref(thisClass, "$VALUES",aType);					
+		stmts.add(new Stmt.Assignment(aderef,anew));
+		
+		// Second, add the enum constants to the array
+		int i=0;
 		for (Decl.EnumConstant c : ec.constants()) {
-			ArrayList<Expr> arguments = new ArrayList();
-			Expr a1 = new Value.String(c.name());
-			Expr a2 = new Value.Int(i);
+			arguments = new ArrayList();						
 			
-			a1.attributes().add(Types.JAVA_LANG_STRING);
-			a2.attributes().add(Types.T_INT);
-			
-			arguments.add(a1);
-			arguments.add(a2);
+			arguments.add(new Value.String(c.name(),Types.JAVA_LANG_STRING));
+			arguments.add(new Value.Int(i,Types.T_INT));
 			arguments.addAll(c.arguments());
 			Expr.New nuw = new Expr.New(ecType, null, arguments,
-					new ArrayList(), new ArrayList(c.attributes()));
+					new ArrayList(), loc,type);
 			nuw.type().attributes().add(type);
-			nuw.attributes().add(type);
 			
 			Type.Function ftype = new Type.Function(Types.T_VOID,Types.JAVA_LANG_STRING,Types.T_INT);
-			nuw.attributes().add(new JilBuilder.MethodInfo(new ArrayList(),ftype));
-			
+			nuw.attributes().add(new JilBuilder.MethodInfo(new ArrayList(),ftype));			
 			Expr.Deref deref = new Expr.Deref(thisClass, "$VALUES",
-					new ArrayList(c.attributes()));			
-			deref.attributes().add(new Type.Array(type));
-			
+					aType);									
 			Expr index = new Value.Int(i++, Types.T_INT);			
-			Expr.ArrayIndex array = new Expr.ArrayIndex(deref, index, new ArrayList(c.attributes()));
-			array.attributes().add(type);
+			Expr.ArrayIndex array = new Expr.ArrayIndex(deref, index, type);
 			
 			Stmt.Assignment assign = new Stmt.Assignment(array, nuw);
 			stmts.add(assign);
