@@ -864,13 +864,13 @@ public class TypePropagation {
 		doExpression(e.expr());
 		Type expr_t = (Type) e.expr().attribute(Type.class);
 		
-		if(e.op() == Expr.UnOp.INV || e.op() == Expr.UnOp.NEG) {
-			expr_t = unaryNumericPromotion(expr_t,e.expr());	
-			e.setExpr(implicitCast(e.expr(),expr_t));
-			e.attributes().add(expr_t);		
-		} else {
-			e.attributes().add(expr_t);
-		}
+		if (e.op() == Expr.UnOp.INV || e.op() == Expr.UnOp.NEG) {
+			expr_t = unaryNumericPromotion(expr_t, e.expr());
+		} else if (expr_t instanceof Type.Clazz) {
+			expr_t = unboxedType((Type.Clazz) expr_t, e);
+		}					
+		e.setExpr(implicitCast(e.expr(),expr_t));
+		e.attributes().add(expr_t);
 	}
 		
 	protected void doBinOp(Expr.BinOp e) {				
