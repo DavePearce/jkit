@@ -760,6 +760,8 @@ public class TypeChecking {
 			case BinOp.AND:
 			case BinOp.OR:
 			case BinOp.XOR:
+			case BinOp.EQ:
+			case BinOp.NEQ:
 				return; // OK							
 			}
 		} else if((isJavaLangString(lhs_t) || isJavaLangString(rhs_t)) && e.op() == Expr.BinOp.CONCAT) {
