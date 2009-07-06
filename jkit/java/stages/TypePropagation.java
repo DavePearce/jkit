@@ -66,6 +66,8 @@ public class TypePropagation {
 	protected void doDeclaration(Decl d) {
 		if(d instanceof JavaInterface) {
 			doInterface((JavaInterface)d);
+		} else if(d instanceof JavaEnum) {
+			doEnum((JavaEnum)d);
 		} else if(d instanceof JavaClass) {
 			doClass((JavaClass)d);
 		} else if(d instanceof JavaMethod) {
@@ -84,6 +86,16 @@ public class TypePropagation {
 	
 	protected void doInterface(JavaInterface d) {
 		doClass(d);
+	}
+	
+	protected void doEnum(JavaEnum en) {				
+		doClass(en);
+		
+		for (Decl.EnumConstant c : en.constants()) {
+			for(Expr e : c.arguments()) {
+				doExpression(e);
+			}
+		}
 	}
 	
 	protected void doClass(JavaClass c) {

@@ -64,7 +64,7 @@ public class JavaFileReader {
 
 		try {
 			ast = (Tree) parser.compilationUnit().getTree();
-			// printTree(ast, 0, -1);
+			 // printTree(ast, 0, -1);
 		} catch (RecognitionException e) {
 		}
 	}
@@ -295,7 +295,7 @@ public class JavaFileReader {
 		// ====================================================================
 
 		ArrayList<Decl> declarations = new ArrayList<Decl>();
-		for (; idx < decl.getChildCount(); ++idx) {
+		for (; idx < decl.getChildCount(); ++idx) {			
 			declarations.addAll(parseDeclaration(decl.getChild(idx), genericVariables));
 		}
 

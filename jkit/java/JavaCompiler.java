@@ -183,7 +183,7 @@ public class JavaCompiler implements Compiler {
 			// tree.
 			
 			JavaFile jfile = parseSourceFile(filename);
-			
+		
 			// Second, we need to resolve types. That is, for each class
 			// reference type, determine what package it's in.			
 			List<JilClass> skeletons = discoverSkeletons(filename, jfile, loader);			
@@ -197,7 +197,7 @@ public class JavaCompiler implements Compiler {
 			// 1) traverse the class heirarchy
 			// 2) determine what fields are declared.			
 			skeletons.addAll(buildSkeletons(filename, jfile, loader));			
-
+			
 			// Fifth, perform the scope resolution itself. The aim here is, for
 			// each variable access, to determine whether it is a local
 			// variable access, an inherited field access, an enclosing field
@@ -224,7 +224,7 @@ public class JavaCompiler implements Compiler {
 			rewriteEnumerations(filename,jfile,loader);
 			
 			// Eleventh, eliminate side effects from expressions
-			generateJilCode(filename, jfile, loader);
+			generateJilCode(filename, jfile, loader);			
 			
 			// Twelth, add bypass methods
 			for(JilClass clazz : skeletons) {
@@ -248,7 +248,8 @@ public class JavaCompiler implements Compiler {
 			
 			// Ninth, write out the compiled class file(s).			
 			for(JilClass clazz : skeletons) {				
-				writeOutputFile(createBasename(clazz.type()), clazz, outdir);				
+				String baseName = createBasename(clazz.type());
+				writeOutputFile(baseName, clazz, outdir);				
 			}
 						
 			compiling.remove(filename);

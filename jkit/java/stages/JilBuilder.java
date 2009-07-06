@@ -143,7 +143,7 @@ public class JilBuilder {
 
 	protected void doMethod(Decl.JavaMethod d, JilClass parent) {			
 		Type.Function type = (Type.Function) d.attribute(Type.class);
-		List<JilStmt> stmts = doStatement(d.body());
+		List<JilStmt> stmts = doStatement(d.body());		
 		
 		// First, off. If this is a constructor, then check whether there is an
 		// explicit super constructor call or not.  If not, then add one.

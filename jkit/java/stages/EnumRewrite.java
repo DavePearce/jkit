@@ -579,8 +579,16 @@ public class EnumRewrite {
 			Expr.New nuw = new Expr.New(ecType, null, arguments,
 					new ArrayList(), loc,type);
 			nuw.type().attributes().add(type);
+			ArrayList<Type> paramTypes = new ArrayList<Type>();
+			paramTypes.add(Types.JAVA_LANG_STRING);
+			paramTypes.add(Types.T_INT);
+			for(Expr e : c.arguments()) {
+				Type t = (Type) e.attribute(Type.class);				
+				paramTypes.add(t);
+			}
 			
-			Type.Function ftype = new Type.Function(Types.T_VOID,Types.JAVA_LANG_STRING,Types.T_INT);
+			Type.Function ftype = new Type.Function(Types.T_VOID,paramTypes);
+			
 			nuw.attributes().add(new JilBuilder.MethodInfo(new ArrayList(),ftype));			
 			Expr.Deref deref = new Expr.Deref(thisClass, "$VALUES",
 					aType);									
@@ -611,8 +619,15 @@ public class EnumRewrite {
 				Type.Function newType = new Type.Function(Types.T_VOID,nparams);
 				m.setType(newType);
 
-				// second, update its modifiers
-				List<Modifier> mods = m.modifiers();
+				// second, update its parameters
+				List<Pair<String,List<Modifier>>> params = m.parameters();
+				List<Modifier> mods = new ArrayList<Modifier>();
+				mods.add(Modifier.ACC_FINAL);
+				params.add(0,new Pair("$1",mods));
+				params.add(1,new Pair("$2",new ArrayList(mods)));
+				
+				// third, update its modifiers
+				mods = m.modifiers();
 				if(mods.contains(Modifier.ACC_PUBLIC)) {
 					// This should probably be done earlier in the pipeline.
                     // Otherwise, you could call the constructor explicitly and
@@ -635,18 +650,52 @@ public class EnumRewrite {
 	}
 	
 	protected void augmentConstructor(Decl.JavaEnum ec, Decl.JavaMethod m) {
-		ArrayList<Triple<String, List<Modifier>, jkit.java.tree.Type>> params = new ArrayList();
-						
+		SourceLocation loc = (SourceLocation) ec.attribute(SourceLocation.class);
+		List<Triple<String, List<Modifier>, jkit.java.tree.Type>> params = m.parameters();
+		
+		// First, update method type
+		Type.Function oldType = (Type.Function) m.attribute(Type.Function.class);
+		m.attributes().remove(oldType);
+		ArrayList<Type> nparams = new ArrayList<Type>();
+		nparams.add(Types.JAVA_LANG_STRING);
+		nparams.add(Types.T_INT);
+		nparams.addAll(oldType.parameterTypes());
+		Type.Function newType = new Type.Function(Types.T_VOID,nparams);
+		m.attributes().add(newType);
+		
 		// First, update the number of parameters to the constructor.
 		jkit.java.tree.Type intType = new jkit.java.tree.Type.Int();
 		intType.attributes().add(Types.T_INT);
 		jkit.java.tree.Type stringType = new jkit.java.tree.Type.Clazz("java.lang.String");
 		stringType.attributes().add(Types.JAVA_LANG_STRING);
+		
 		// parameters must go at front of list.		
 		params.add(0,new Triple("$1",new ArrayList(),stringType));
-		params.add(1,new Triple("$2",new ArrayList(),intType));
-		
+		params.add(1,new Triple("$2",new ArrayList(),intType));				
+						
 		// Second, add code to the constructor.
+		Type.Function ftype = new Type.Function(Types.T_VOID,Types.JAVA_LANG_STRING,Types.T_INT);
+		
+		ArrayList<Modifier> mods = new ArrayList<Modifier>();
+		mods.add(Modifier.ACC_PRIVATE);
+		
+		Expr.LocalVariable p1 = new Expr.LocalVariable("$1");
+		p1.attributes().add(Types.JAVA_LANG_STRING);
+		Expr.LocalVariable p2 = new Expr.LocalVariable("$2");
+		p2.attributes().add(Types.T_INT);		
+		ArrayList<Expr> superParams = new ArrayList<Expr>();
+		superParams.add(p1);
+		superParams.add(p2);
+		
+		Expr.LocalVariable supeR = new Expr.LocalVariable("super",loc);
+		supeR.attributes().add(new Type.Clazz("java.lang","Enum"));
+		
+		Expr.Invoke ivk = new Expr.Invoke(supeR, "super", superParams,
+				new ArrayList(), loc);
+		ivk.attributes().add(ftype.returnType());
+		ivk.attributes().add(new JilBuilder.MethodInfo(new ArrayList(), ftype));
+		
+		m.body().statements().add(0,ivk);
 	}
 	
 	protected void createDefaultConstructor(Decl.JavaEnum ec, JilClass skeleton) {		
@@ -696,8 +745,10 @@ public class EnumRewrite {
 		
 		// second, add a skeleton constructor
 		ArrayList<Pair<String,List<Modifier>>> nparams = new ArrayList();
-		nparams.add(new Pair("$1",new ArrayList()));
-		nparams.add(new Pair("$2",new ArrayList()));
+		mods = new ArrayList();
+		mods.add(Modifier.ACC_FINAL);		
+		nparams.add(new Pair("$1",mods));
+		nparams.add(new Pair("$2",new ArrayList(mods)));
 		JilMethod jm = new JilMethod(ec.name(), ftype, nparams, mods,
 				new ArrayList(),loc);
 		
