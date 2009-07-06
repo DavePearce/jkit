@@ -756,7 +756,10 @@ public class TypeChecking {
 		} else if(lhs_t instanceof Type.Bool && rhs_t instanceof Type.Bool) {
 			switch(e.op()) {
 			case BinOp.LOR:
-			case BinOp.LAND:
+			case BinOp.LAND:				
+			case BinOp.AND:
+			case BinOp.OR:
+			case BinOp.XOR:
 				return; // OK							
 			}
 		} else if((isJavaLangString(lhs_t) || isJavaLangString(rhs_t)) && e.op() == Expr.BinOp.CONCAT) {
