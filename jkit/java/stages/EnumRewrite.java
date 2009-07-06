@@ -555,7 +555,8 @@ public class EnumRewrite {
 		Expr.ClassVariable thisClass = new Expr.ClassVariable(ec.name(),loc);
 		thisClass.attributes().add(type);
 		int i=0;
-		ArrayList<Stmt> stmts = new ArrayList();		
+		ArrayList<Stmt> stmts = new ArrayList();	
+		
 		for (Decl.EnumConstant c : ec.constants()) {
 			ArrayList<Expr> arguments = new ArrayList();
 			Expr a1 = new Value.String(c.name());
@@ -572,7 +573,7 @@ public class EnumRewrite {
 			nuw.type().attributes().add(type);
 			nuw.attributes().add(type);
 			
-			Type.Function ftype = new Type.Function(type,Types.JAVA_LANG_STRING,Types.T_INT);
+			Type.Function ftype = new Type.Function(Types.T_VOID,Types.JAVA_LANG_STRING,Types.T_INT);
 			nuw.attributes().add(new JilBuilder.MethodInfo(new ArrayList(),ftype));
 			
 			Expr.Deref deref = new Expr.Deref(thisClass, "$VALUES",
