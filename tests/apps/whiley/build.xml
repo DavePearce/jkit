@@ -1,0 +1,36 @@
+<project name="whiley" default="build">
+  <target name="compile">
+    <javac debug="true" srcdir="."/> 
+  </target>
+
+  <target name="build" depends="compile">
+  	<mkdir dir="tmp"/>
+    <manifest file="tmp/MANIFEST.MF">
+      <attribute name="Built-By" value="${user.name}"/>
+      <attribute name="Main-Class" value="Main"/>
+    </manifest>
+    <jar destfile="whiley.jar" basedir="." includes="**/*.class,**/*.java,*.xml" manifest="tmp/MANIFEST.MF"/>
+  </target>
+
+  <target name="doc">
+    <javadoc
+       packagenames="whiley.*,wone.*"
+       sourcepath="."
+       destdir="docs/api"
+       author="true"
+       version="true"
+       use="true"
+       windowtitle="Whiley API">
+      <doctitle><![CDATA[<h1>The Whiley Programming Language</h1>]]></doctitle>
+      <bottom><![CDATA[<i>Copyright &#169; 2009 David J. Pearce. All Rights Reserved.</i>]]></bottom>
+      </javadoc>
+  </target>
+
+ <target name="clean">
+  <delete includeEmptyDirs="true" failonerror="false">
+   <fileset file="lib/*.jar"/>
+   <fileset dir="." includes="**/*.class"/>
+   <fileset dir="tmp/" includes="**"/>
+  </delete>
+ </target>
+</project>
