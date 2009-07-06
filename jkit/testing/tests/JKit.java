@@ -92,8 +92,8 @@ public class JKit extends TestHarness {
 	@Test public void JLS_8_8_7_2_Super_4() { runTest("JLS_8_8_7_2_Super_4"); }	
 	
 	// Fails because no support for enums as yet!
-	@Ignore("Known Bug") @Test public void JLS_8_9_Enums_1() { runTest("JLS_8_9_Enums_1"); }
-	@Ignore("Known Bug") @Test public void JLS_8_9_Enums_2() { runTest("JLS_8_9_Enums_2"); }
+	@Test public void JLS_8_9_Enums_1() { runTest("JLS_8_9_Enums_1"); }
+	@Test public void JLS_8_9_Enums_2() { runTest("JLS_8_9_Enums_2"); }
 	@Test public void JLS_8_9_Enums_3() { runTest("JLS_8_9_Enums_3"); }
 	
 	@Test public void JLS_10_6_ArrayInitialisers_1() { runTest("JLS_10_6_ArrayInitialisers_1"); }
