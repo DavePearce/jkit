@@ -147,16 +147,19 @@ public class InnerClassRewrite {
 		for(Decl d : c.declarations()) {
 			doDeclaration(d);
 		}
-		
-		if (type.components().size() > 1 && !c.isStatic()
-				&& !(c instanceof JavaInterface)) {
-			// Ok, we've found a non-static inner class here. Therefore, we need
-			// to rewrite all constructors to accept a parent pointer.
-			try {
-				addParentPtr(c,type,Types.parentType(type));
-			} catch(ClassNotFoundException cne) {
-				syntax_error(cne.getMessage(),c,cne);
-			}
+		try {
+			if (type.components().size() > 1 && !c.isStatic()
+					&& !(c instanceof JavaInterface)
+					&& !(c instanceof JavaEnum)) {
+				// Ok, we've found a non-static inner class here. Therefore, we
+				// need
+				// to rewrite all constructors to accept a parent pointer.
+
+				addParentPtr(c, type, Types.parentType(type));
+
+			} 
+		} catch(ClassNotFoundException cne) {
+			syntax_error(cne.getMessage(),c,cne);
 		}
 		
 		enclosingClasses.pop();
@@ -763,7 +766,7 @@ public class InnerClassRewrite {
 		
 		return true;
 	}
-	
+		
 	/**
 	 * The purpose of this method is to add a parent pointer to the class in
 	 * question. This involves several things: firstly, we add the field with
@@ -803,7 +806,7 @@ public class InnerClassRewrite {
 			m.parameters().add(0, new Pair("this$0",mods));
 		}
 		
-		// Finally, add a field with the appropriate name.
+		// Second, add a field with the appropriate name.
 		ArrayList<Modifier> modifiers = new ArrayList<Modifier>();
 		modifiers.add(Modifier.ACC_FINAL);
 		// note: parent pointers must have package access.
@@ -811,7 +814,7 @@ public class InnerClassRewrite {
 		JilField field = new JilField("this$0",
 				parentType, modifiers, loc);
 		
-		oc.fields().add(field);
+		oc.fields().add(field);		
 	}
 	
 	protected void rewriteConstructor(JavaMethod constructor, Type.Clazz ownerType,

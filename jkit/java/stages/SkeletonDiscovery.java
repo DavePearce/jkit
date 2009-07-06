@@ -65,8 +65,9 @@ public class SkeletonDiscovery {
 	
 	protected List<JilClass> doEnum(Decl.JavaEnum d, String pkg, Type.Clazz parent) {
 		List<JilClass> cs = doClass(d, pkg, parent);
-		cs.get(cs.size() - 1).modifiers()
-				.add(Modifier.ACC_STATIC);
+		List<Modifier> modifiers = cs.get(cs.size() - 1).modifiers();
+		modifiers.add(Modifier.ACC_ENUM);
+		modifiers.add(Modifier.ACC_FINAL);
 		return cs;		
 	}
 	

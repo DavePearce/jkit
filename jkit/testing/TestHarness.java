@@ -81,7 +81,7 @@ public class TestHarness {
 		args[1] = path + ";" + classpath;
 		args[2] = path + File.separatorChar + name + "." + srcExtension;		
 		
-		return new Main().compile(args);
+		return new JKitC().compile(args);
 	}
 	
 	/**

@@ -37,7 +37,7 @@ import jkit.java.*;
  * @author djp
  * 
  */
-public class Main {
+public class JKitC {
 
 	public static final int MAJOR_VERSION = 0;
 	public static final int MINOR_VERSION = 5;
@@ -49,7 +49,7 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(String[] args) {		
-		if(!new Main().compile(args)) {	
+		if(!new JKitC().compile(args)) {	
 			System.exit(1);
 		} else {
 			System.exit(0);
@@ -62,8 +62,7 @@ public class Main {
 		String outputDirectory = null;		
 		boolean verbose = false;
 		boolean bytecodeOutput = false;
-		boolean jilOutput = false;	
-		boolean dump = false;
+		boolean jilOutput = false;			
 		
 		if (args.length == 0) {
 			// no command-line arguments provided
@@ -83,7 +82,7 @@ public class Main {
 					usage();
 					System.exit(0);
 				} else if (arg.equals("-version")) {
-					System.out.println("JKit, version " + MAJOR_VERSION + "."
+					System.out.println("JKit Compiler, version " + MAJOR_VERSION + "."
 							+ MINOR_VERSION + "." + MINOR_REVISION);
 				} else if (arg.equals("-verbose")) {
 					verbose = true;
@@ -103,8 +102,6 @@ public class Main {
 					bytecodeOutput = true;
 				} else if (arg.equals("-jil")) {
 					jilOutput = true;
-				} else if (arg.equals("-dump")) {
-					dump = true;
 				} else {
 					throw new RuntimeException("Unknown option: " + args[i]);
 				}
@@ -134,39 +131,31 @@ public class Main {
 		
 		try {
 
-			if(dump) {
-				BytecodeFileWriter bfw = new BytecodeFileWriter(System.out,
-						new ClassLoader(classPath, null));
-				for(int i=fileArgsBegin;i!=args.length;++i) {
-					ClassFileReader cfr = new ClassFileReader(args[i]);
-					bfw.write(cfr.readClass());
-				}
+
+			JavaCompiler compiler;
+
+			if(bytecodeOutput) {
+				compiler = new BytecodeCompiler(classPath, verbOutput);	
+			} else if(jilOutput) {
+				compiler = new JilCompiler(classPath, verbOutput);
 			} else {
-				JavaCompiler compiler;
-
-				if(bytecodeOutput) {
-					compiler = new BytecodeCompiler(classPath, verbOutput);	
-				} else if(jilOutput) {
-					compiler = new JilCompiler(classPath, verbOutput);
-				} else {
-					compiler = new JavaCompiler(classPath, verbOutput);
-				}
-
-				if (outputDirectory != null) {
-					compiler.setOutputDirectory(new File(outputDirectory));
-				}
-
-				// ======================================================
-				// ============== Third, load skeletons ================
-				// ======================================================		
-
-
-				List<File> srcfiles = new ArrayList<File>();
-				for(int i=fileArgsBegin;i!=args.length;++i) {
-					srcfiles.add(new File(args[i]));
-				}
-				compiler.compile(srcfiles);			
+				compiler = new JavaCompiler(classPath, verbOutput);
 			}
+
+			if (outputDirectory != null) {
+				compiler.setOutputDirectory(new File(outputDirectory));
+			}
+
+			// ======================================================
+			// ============== Third, load skeletons ================
+			// ======================================================		
+
+
+			List<File> srcfiles = new ArrayList<File>();
+			for(int i=fileArgsBegin;i!=args.length;++i) {
+				srcfiles.add(new File(args[i]));
+			}
+			compiler.compile(srcfiles);						
 		} catch (SyntaxError e) {
 			outputSourceError(e.fileName(), e.line(), e.column(), e.width(), e
 					.getMessage());
