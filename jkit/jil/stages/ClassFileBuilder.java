@@ -637,13 +637,13 @@ public class ClassFileBuilder {
 				if (arrType.element() instanceof Type.Variable
 						|| arrType.element() instanceof Type.Wildcard) {
 					if ((arg + 1) == arguments.size()
-							&& arguments.get(arg) instanceof Type.Array) {
-						arrType = (Type.Array) arguments.get(arg);
+							&& arguments.get(arg).type() instanceof Type.Array) {
+						arrType = (Type.Array) arguments.get(arg).type();
 					} else {
 						arrType = new Type.Array(Types.JAVA_LANG_OBJECT);
 					}
 				}
-				
+												
 				if ((arg + 1) == arguments.size()
 						&& arguments.get(arg).type().equals(arrType)) {				
 					// this is the special case when an appropriate array is
@@ -1042,8 +1042,8 @@ public class ClassFileBuilder {
 				if (arrType.element() instanceof Type.Variable
 						|| arrType.element() instanceof Type.Wildcard) {
 					if ((arg + 1) == arguments.size()
-							&& arguments.get(arg) instanceof Type.Array) {
-						arrType = (Type.Array) arguments.get(arg);
+							&& arguments.get(arg).type() instanceof Type.Array) {
+						arrType = (Type.Array) arguments.get(arg).type();
 					} else {
 						arrType = new Type.Array(Types.JAVA_LANG_OBJECT);
 					}
