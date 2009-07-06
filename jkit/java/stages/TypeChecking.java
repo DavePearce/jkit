@@ -16,6 +16,7 @@ import jkit.java.tree.Expr.*;
 import jkit.java.tree.Stmt.*;
 import jkit.jil.tree.SourceLocation;
 import jkit.jil.tree.Type;
+import jkit.jil.util.Types;
 import jkit.util.Triple;
 
 /**
@@ -114,6 +115,8 @@ public class TypeChecking {
 			checkBlock((Stmt.Block)e);
 		} else if(e instanceof Stmt.VarDef) {
 			checkVarDef((Stmt.VarDef) e);
+		} else if(e instanceof Stmt.AssignmentOp) {
+			checkAssignmentOp((Stmt.AssignmentOp) e);
 		} else if(e instanceof Stmt.Assignment) {
 			checkAssignment((Stmt.Assignment) e);
 		} else if(e instanceof Stmt.Return) {
@@ -181,7 +184,7 @@ public class TypeChecking {
 		for(Stmt.CatchBlock cb : block.handlers()) {
 			checkBlock(cb);
 			try {
-				if (!types.subtype(new Type.Clazz("java.lang", "Throwable"),
+				if (!types.subtype(Types.JAVA_LANG_THROWABLE,
 						(Type.Clazz) cb.type().attribute(Type.class), loader)) {
 					syntax_error(
 							"required subtype of java.lang.Throwable, found type "
@@ -228,6 +231,29 @@ public class TypeChecking {
 		
 		try {			
 			if (!types.subtype(lhs_t, rhs_t, loader)) {
+				syntax_error(
+						"required type " + lhs_t + ", found type " + rhs_t, def);
+			}
+		} catch (ClassNotFoundException ex) {
+			syntax_error(ex.getMessage(), def);
+		}	
+	}
+	
+	protected void checkAssignmentOp(Stmt.AssignmentOp def) {
+		checkExpression(def.lhs());	
+		checkExpression(def.rhs());					
+				
+		Type lhs_t = (Type) def.lhs().attribute(Type.class);
+		Type rhs_t = (Type) def.rhs().attribute(Type.class);
+		
+		try {	
+			if(def.op() == Expr.BinOp.CONCAT) {
+				// special case.
+				if (!types.subtype(Types.JAVA_LANG_STRING,lhs_t, loader)) {
+					syntax_error(
+							"required type string, found type " + lhs_t, def);
+				}
+			} else if (!types.subtype(lhs_t, rhs_t, loader)) {
 				syntax_error(
 						"required type " + lhs_t + ", found type " + rhs_t, def);
 			}
