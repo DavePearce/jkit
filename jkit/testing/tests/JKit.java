@@ -171,7 +171,8 @@ public class JKit extends TestHarness {
 	@Test public void JLS_15_12_VarArgs_3() { compileFailTest("JLS_15_12_VarArgs_3"); }
 	@Test public void JLS_15_12_VarArgs_4() { runTest("JLS_15_12_VarArgs_4"); }
 	@Test public void JLS_15_12_VarArgs_5() { runTest("JLS_15_12_VarArgs_5"); }
-	@Test public void JLS_15_12_VarArgs_6() { runTest("JLS_15_12_VarArgs_6"); }		
+	@Test public void JLS_15_12_VarArgs_6() { runTest("JLS_15_12_VarArgs_6"); }
+	@Test public void JLS_15_12_VarArgs_7() { runTest("JLS_15_12_VarArgs_7"); }		
 	@Test public void JLS_15_13_ArrayAccess_1() { runTest("JLS_15_13_ArrayAccess_1"); }
 	@Test public void JLS_15_13_ArrayAccess_2() { runTest("JLS_15_13_ArrayAccess_2"); }
 	@Test public void JLS_15_13_ArrayAccess_3() { runTest("JLS_15_13_ArrayAccess_3"); }
