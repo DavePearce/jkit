@@ -588,15 +588,16 @@ public class EnumRewrite {
 			}
 			
 			Type.Function ftype = new Type.Function(Types.T_VOID,paramTypes);
-			
+						
 			nuw.attributes().add(new JilBuilder.MethodInfo(new ArrayList(),ftype));			
 			Expr.Deref deref = new Expr.Deref(thisClass, "$VALUES",
 					aType);									
 			Expr index = new Value.Int(i++, Types.T_INT);			
 			Expr.ArrayIndex array = new Expr.ArrayIndex(deref, index, type);
 			
-			Stmt.Assignment assign = new Stmt.Assignment(array, nuw);
-			stmts.add(assign);
+			Expr.Deref fderef = new Expr.Deref(thisClass, c.name(), type);			
+			stmts.add(new Stmt.Assignment(fderef, nuw));
+			stmts.add(new Stmt.Assignment(array, fderef));			
 		}
 
 		Decl.StaticInitialiserBlock blk = new Decl.StaticInitialiserBlock(stmts,loc);
