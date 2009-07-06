@@ -707,8 +707,7 @@ public class ClassFileBuilder {
 			syntax_error(mnfe.getMessage(),stmt,mnfe);			
 		}
 	}
-
-
+		
 	/**
 	 * Translate a Return statement.
 	 * 
@@ -979,23 +978,18 @@ public class ClassFileBuilder {
 			ArrayList<Bytecode> bytecodes, boolean needReturnValue) {
 
 		if (news.type() instanceof Type.Clazz) {
-			Type.Clazz type = (Type.Clazz) news.type();
-
+			Type.Clazz type = (Type.Clazz) news.type();								
+			
 			bytecodes.add(new Bytecode.New(news.type()));
 			bytecodes.add(new Bytecode.Dup(news.type()));
 
-			ArrayList<Type> paramTypes = new ArrayList<Type>();
-			for (JilExpr p : news.parameters()) {
-				translateExpression(p, varmap, bytecodes);
-				paramTypes.add(p.type());
-			}
+			// Now, translate the parameters.
+			translateNewHelper(type,news,varmap,bytecodes);
 
 			// call the appropriate constructor
 			bytecodes.add(new Bytecode.Invoke(type, "<init>", news.funType(),
 					Bytecode.SPECIAL));
 		} else if (news.type() instanceof Type.Array) {
-			int usedStack = 0;
-
 			for (JilExpr p : news.parameters()) {
 				translateExpression(p, varmap, bytecodes);				
 			}
@@ -1011,6 +1005,73 @@ public class ClassFileBuilder {
 		}
 	}
 
+	protected void translateNewHelper(Type.Clazz targetT, JilExpr.New stmt,
+			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes) {
+		// Ideally, this method should be combined with translateInvokeHelper.
+		// To do this, will probably need to combine JilExpr.New and
+		// JilExpr.Invoke via
+		// inheritance somehow.
+		try {
+			String name = targetT.lastComponent().first();
+			Pair<Clazz, Clazz.Method> cm = determineMethod(targetT, name, stmt
+					.funType());			
+			Clazz.Method m = cm.second();		
+
+			if(!m.isVariableArity()) {
+				for(JilExpr e : stmt.parameters()) {
+					translateExpression(e, varmap, bytecodes);
+				}
+			} else {
+				// now, this is a variable-arity method --- so we need to
+				// package up some arguments into an array.
+				List<? extends JilExpr> arguments = stmt.parameters();
+				List<Type> paramTypes = m.type().parameterTypes();
+
+				int vargcount = stmt.parameters().size() - paramTypes.size() + 1;
+				int arg = 0;
+				for(;arg!=arguments.size()-vargcount;++arg) {
+					JilExpr e = arguments.get(arg);
+					translateExpression(e, varmap, bytecodes);
+				}
+
+				Type.Array arrType = (Type.Array) paramTypes.get(paramTypes
+						.size() - 1);								
+
+				// At this point, we need to deal with the case where the
+				// element type of the array is actually a generic type.
+				if (arrType.element() instanceof Type.Variable
+						|| arrType.element() instanceof Type.Wildcard) {
+					if ((arg + 1) == arguments.size()
+							&& arguments.get(arg) instanceof Type.Array) {
+						arrType = (Type.Array) arguments.get(arg);
+					} else {
+						arrType = new Type.Array(Types.JAVA_LANG_OBJECT);
+					}
+				}
+
+				if ((arg + 1) == arguments.size()
+						&& arguments.get(arg).type().equals(arrType)) {				
+					// this is the special case when an appropriate array is
+					// supplied directly to the variable argument list.
+					translateExpression(arguments.get(arg), varmap, bytecodes);
+				} else {
+					bytecodes.add(new LoadConst(vargcount));
+					bytecodes.add(new Bytecode.New(arrType,1));
+					for(int i=0;arg!=arguments.size();++arg,++i) {
+						bytecodes.add(new Bytecode.Dup(arrType));
+						bytecodes.add(new LoadConst(i));
+						translateExpression(arguments.get(arg), varmap, bytecodes);
+						bytecodes.add(new Bytecode.ArrayStore(arrType));
+					}	
+				}
+			}
+		} catch (ClassNotFoundException cnfe) {
+			syntax_error(cnfe.getMessage(),stmt,cnfe);
+		} catch (MethodNotFoundException mnfe) {
+			syntax_error(mnfe.getMessage(),stmt,mnfe);			
+		}
+	}
+	
 	protected void translateBinaryOp(JilExpr.BinOp bop, HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes) {
 

@@ -517,7 +517,8 @@ public class TypePropagation {
 					.resolveMethod(tc, constructorName, parameterTypes,
 							loader);
 					Type.Function f = r.third();
-
+					Method m = r.second();
+					
 					// At this stage, we have (finally) figured out what method is to be
 					// called. There are a few things that remain to be done, however.
 					// Firstly, we must add any implicitCasts that are required for
@@ -525,12 +526,26 @@ public class TypePropagation {
 
 					List<Expr> e_parameters = e.parameters();
 					List<Type> ft_parameters = f.parameterTypes();
-					for (int i = 0; i != e_parameters.size(); ++i) {
-						Type pt = ft_parameters.get(i);
-						e_parameters.set(i, implicitCast(e_parameters.get(i), pt));
+					
+					if(!m.isVariableArity() || e_parameters.size() < ft_parameters.size()) {
+						for (int i = 0; i != e_parameters.size(); ++i) {					
+							Type pt = ft_parameters.get(i);
+							e_parameters.set(i, implicitCast(e_parameters.get(i), pt));
+						}	
+					} else {
+						int arg = 0;
+						for (; arg != ft_parameters.size()-1; ++arg) {
+							Type pt = ft_parameters.get(arg);
+							e_parameters.set(arg, implicitCast(e_parameters.get(arg), pt));
+						}
+						Type.Array arrType = (Type.Array) ft_parameters.get(ft_parameters.size()-1);
+						
+						for (; arg != e_parameters.size(); ++arg) {					
+							e_parameters.set(arg, implicitCast(e_parameters.get(arg),
+									arrType.element()));
+						}
 					}
-
-					Method m = r.second();
+										
 					e.attributes().add(new JilBuilder.MethodInfo(m.exceptions(),m.type()));								
 				}
 			} catch(ClassNotFoundException cnfe) {
