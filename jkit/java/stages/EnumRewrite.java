@@ -556,16 +556,34 @@ public class EnumRewrite {
 		thisClass.attributes().add(type);
 		int i=0;
 		ArrayList<Stmt> stmts = new ArrayList();		
-		for(Decl.EnumConstant c : ec.constants()) {
+		for (Decl.EnumConstant c : ec.constants()) {
 			ArrayList<Expr> arguments = new ArrayList();
-			arguments.add(new Value.String(c.name()));
-			arguments.add(new Value.Int(i));
+			Expr a1 = new Value.String(c.name());
+			Expr a2 = new Value.Int(i);
+			
+			a1.attributes().add(Types.JAVA_LANG_STRING);
+			a2.attributes().add(Types.T_INT);
+			
+			arguments.add(a1);
+			arguments.add(a2);
 			arguments.addAll(c.arguments());
-			Expr.New nuw = new Expr.New(ecType,null,arguments, new ArrayList(),new ArrayList(c.attributes())); 
+			Expr.New nuw = new Expr.New(ecType, null, arguments,
+					new ArrayList(), new ArrayList(c.attributes()));
 			nuw.type().attributes().add(type);
-			Expr.Deref deref = new Expr.Deref(thisClass,"$VALUES",new ArrayList(c.attributes()));
-			Expr.ArrayIndex array = new Expr.ArrayIndex(deref,new Value.Int(i++),new ArrayList(c.attributes()));
-			Stmt.Assignment assign = new Stmt.Assignment(array,nuw);
+			nuw.attributes().add(type);
+			
+			Type.Function ftype = new Type.Function(type,Types.JAVA_LANG_STRING,Types.T_INT);
+			nuw.attributes().add(new JilBuilder.MethodInfo(new ArrayList(),ftype));
+			
+			Expr.Deref deref = new Expr.Deref(thisClass, "$VALUES",
+					new ArrayList(c.attributes()));			
+			deref.attributes().add(new Type.Array(type));
+			
+			Expr index = new Value.Int(i++, Types.T_INT);			
+			Expr.ArrayIndex array = new Expr.ArrayIndex(deref, index, new ArrayList(c.attributes()));
+			array.attributes().add(type);
+			
+			Stmt.Assignment assign = new Stmt.Assignment(array, nuw);
 			stmts.add(assign);
 		}
 
