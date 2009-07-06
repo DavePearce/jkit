@@ -864,32 +864,9 @@ public class TypePropagation {
 		doExpression(e.expr());
 		Type expr_t = (Type) e.expr().attribute(Type.class);
 		
-		switch(e.op()) {
-		case Expr.UnOp.NEG:
-			if (expr_t instanceof Type.Byte || expr_t instanceof Type.Char
-					|| expr_t instanceof Type.Short) {
-				// This is a strange feature of javac. I don't really understand
-				// why it's necessary.
-				e.setExpr(implicitCast(e.expr(),T_INT));
-				e.attributes().add(T_INT);				
-			} else {
-				e.attributes().add(expr_t);				
-			}
-			break;		
-		case Expr.UnOp.INV:
-			if (expr_t instanceof Type.Byte || expr_t instanceof Type.Char
-					|| expr_t instanceof Type.Short) {
-				// This is a strange feature of javac. I don't really understand
-				// why it's necessary.
-				e.setExpr(implicitCast(e.expr(),T_INT));
-				e.attributes().add(T_INT);				
-			} else {
-				e.attributes().add(expr_t);
-			} 
-			break;	
-		default:
-			e.attributes().add(expr_t);	
-		}		
+		expr_t = unaryNumericPromotion(expr_t,e.expr());	
+		e.setExpr(implicitCast(e.expr(),expr_t));
+		e.attributes().add(expr_t);		
 	}
 		
 	protected void doBinOp(Expr.BinOp e) {				
