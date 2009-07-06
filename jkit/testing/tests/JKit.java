@@ -61,22 +61,22 @@ public class JKit extends TestHarness {
 	@Test public void JLS_8_1_2_GenericTypes_5() { runTest("JLS_8_1_2_GenericTypes_5"); }
 	@Test public void JLS_8_1_2_GenericTypes_6() { runTest("JLS_8_1_2_GenericTypes_6"); }
 	@Test public void JLS_8_1_2_GenericTypes_7() { runTest("JLS_8_1_2_GenericTypes_7"); }
+	@Test public void JLS_8_1_2_GenericTypes_8() { runTest("JLS_8_1_2_GenericTypes_8"); }
+	
 	@Test public void JLS_8_1_3_InnerClasses_1() { runTest("JLS_8_1_3_InnerClasses_1"); }
 	@Test public void JLS_8_1_3_InnerClasses_2() { runTest("JLS_8_1_3_InnerClasses_2"); }
 	@Test public void JLS_8_1_3_InnerClasses_3() { runTest("JLS_8_1_3_InnerClasses_3"); }
 	@Test public void JLS_8_1_3_InnerClasses_4() { runTest("JLS_8_1_3_InnerClasses_4"); }	
 	@Test public void JLS_8_1_3_InnerClasses_5() { runTest("JLS_8_1_3_InnerClasses_5"); }
-	
-	@Ignore("Known Bug") @Test public void JLS_8_1_1_3_StrictClasses_1() { runTest("JLS_8_1_1_3_StrictClasses_1"); }
-	
 	@Test public void JLS_8_1_3_InnerClasses_6() { runTest("JLS_8_1_3_InnerClasses_6"); }
 	@Test public void JLS_8_1_3_InnerClasses_7() { runTest("JLS_8_1_3_InnerClasses_7"); }
 	@Test public void JLS_8_1_3_InnerClasses_8() { runTest("JLS_8_1_3_InnerClasses_8"); }
 	@Test public void JLS_8_1_3_InnerClasses_9() { runTest("JLS_8_1_3_InnerClasses_9"); }
 	@Test public void JLS_8_1_3_InnerClasses_10() { runTest("JLS_8_1_3_InnerClasses_10"); }
-	
 	// Fails because no support for classes declared inside methods.
 	@Ignore("Known Bug") @Test public void JLS_8_1_3_InnerClasses_11() { runTest("JLS_8_1_3_InnerClasses_11"); }
+	
+	@Ignore("Known Bug") @Test public void JLS_8_1_1_3_StrictClasses_1() { runTest("JLS_8_1_1_3_StrictClasses_1"); }
 	
 	@Test public void JLS_8_3_2_FieldInit_2() { runTest("JLS_8_3_2_FieldInit_2"); }
 	
