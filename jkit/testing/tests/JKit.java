@@ -174,6 +174,7 @@ public class JKit extends TestHarness {
 	@Test public void JLS_15_17_BinaryOperators_1() { runTest("JLS_15_17_BinaryOperators_1"); }
 	@Test public void JLS_15_17_BinaryOperators_2() { runTest("JLS_15_17_BinaryOperators_2"); }
 	@Test public void JLS_15_17_1_MultiplicationOperator_1() { runTest("JLS_15_17_1_MultiplicationOperator_1"); }	
+	@Test public void JLS_15_17_1_MultiplicationOperator_2() { runTest("JLS_15_17_1_MultiplicationOperator_2"); }
 	@Test public void JLS_15_17_2_DivisionOperator_1() { runTest("JLS_15_17_2_DivisionOperator_1"); }
 	@Test public void JLS_15_17_2_DivisionOperator_2() { runTest("JLS_15_17_2_DivisionOperator_2"); }
 	@Test public void JLS_15_17_3_RemainderOperator_1() { runTest("JLS_15_17_3_RemainderOperator_1"); }
