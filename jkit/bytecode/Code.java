@@ -88,7 +88,7 @@ public class Code implements Attribute {
 				// handlers begin with the thrown exception object on the stack,
 				// hence we must account for this.
 				current = current + 1;
-			}
+			}			
 			current = current + b.stackDiff();
 			max = Math.max(current,max);
 			idx = idx + 1;

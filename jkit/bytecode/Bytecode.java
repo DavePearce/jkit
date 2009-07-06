@@ -656,7 +656,7 @@ public abstract class Bytecode {
 			if(mode == STATIC) {
 				return ClassFile.slotSize(type);
 			} else {
-				return 1 - ClassFile.slotSize(type);
+				return -1 + ClassFile.slotSize(type);
 			}
 		}
 		
