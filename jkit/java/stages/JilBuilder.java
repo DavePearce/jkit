@@ -1660,7 +1660,7 @@ public class JilBuilder {
 		for(JilStmt stmt : stmts) {
 			if(stmt instanceof JilExpr.Invoke) {
 				JilExpr.Invoke sc = (JilExpr.Invoke) stmt;
-				if (sc.name().equals("super")) {
+				if (sc.name().equals("super") || sc.name().equals("this")) {
 					return r;
 				}	
 			}

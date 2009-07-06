@@ -590,7 +590,7 @@ public class ClassFileBuilder {
 			JilExpr.Invoke stmt, HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes, boolean needReturnValue) {
 
-		if (stmt.name().equals("super")) {
+		if (stmt.name().equals("super") || stmt.name().equals("this")) {
 			// catch explicit super constructor call.
 			translateExpression(stmt.target(), varmap, bytecodes);
 			for (JilExpr p : stmt.parameters()) {
@@ -599,7 +599,7 @@ public class ClassFileBuilder {
 			bytecodes.add(new Bytecode.Invoke(targetT, "<init>",
 					stmt.funType(), Bytecode.SPECIAL));
 			return;
-		}
+		} 
 
 		try {			
 			Pair<Clazz,Clazz.Method> cm = determineMethod(targetT, stmt.name(), stmt
