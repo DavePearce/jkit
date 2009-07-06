@@ -87,6 +87,8 @@ public class JKit extends TestHarness {
 	@Test public void JLS_8_6_InstanceInitializers_1() { runTest("JLS_8_6_InstanceInitializers_1"); }
 	@Test public void JLS_8_7_StaticInitializers_1() { runTest("JLS_8_7_StaticInitializers_1"); }
 	@Test public void JLS_8_7_StaticInitializers_2() { runTest("JLS_8_7_StaticInitializers_2"); }
+
+	@Test public void JLS_8_8_7_1_ConstructorInvocations_1() { runTest("JLS_8_8_7_1_ConstructorInvocations_1"); }
 	@Test public void JLS_8_8_7_2_Super_1() { runTest("JLS_8_8_7_2_Super_1"); }
 	@Test public void JLS_8_8_7_2_Super_2() { runTest("JLS_8_8_7_2_Super_2"); }
 	@Test public void JLS_8_8_7_2_Super_3() { runTest("JLS_8_8_7_2_Super_3"); }
