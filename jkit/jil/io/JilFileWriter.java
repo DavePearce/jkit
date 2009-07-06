@@ -95,11 +95,10 @@ public class JilFileWriter {
 			write(s);
 		}
 		
-		output.println("  }");	
+		output.println("  }\n");	
 	}
 	
-	protected void write(JilStmt s) {
-		output.println();
+	protected void write(JilStmt s) {		
 		if(s instanceof JilStmt.Assign) {
 			write((JilStmt.Assign)s);
 		} else if(s instanceof JilStmt.Return) {

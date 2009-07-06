@@ -621,14 +621,28 @@ public class ClassFileBuilder {
 				// package up some arguments into an array.
 				List<? extends JilExpr> arguments = stmt.parameters();
 				List<Type> paramTypes = m.type().parameterTypes();
+				
 				int vargcount = stmt.parameters().size() - paramTypes.size() + 1;
 				int arg = 0;
 				for(;arg!=arguments.size()-vargcount;++arg) {
-					translateExpression(arguments.get(arg), varmap, bytecodes);
+					JilExpr e = arguments.get(arg);
+					translateExpression(e, varmap, bytecodes);
 				}
 				
 				Type.Array arrType = (Type.Array) paramTypes.get(paramTypes
-						.size() - 1);
+						.size() - 1);								
+				
+				// At this point, we need to deal with the case where the
+				// element type of the array is actually a generic type.
+				if (arrType.element() instanceof Type.Variable
+						|| arrType.element() instanceof Type.Wildcard) {
+					if ((arg + 1) == arguments.size()
+							&& arguments.get(arg) instanceof Type.Array) {
+						arrType = (Type.Array) arguments.get(arg);
+					} else {
+						arrType = new Type.Array(Types.JAVA_LANG_OBJECT);
+					}
+				}
 				
 				if ((arg + 1) == arguments.size()
 						&& arguments.get(arg).type().equals(arrType)) {				
@@ -636,7 +650,6 @@ public class ClassFileBuilder {
 					// supplied directly to the variable argument list.
 					translateExpression(arguments.get(arg), varmap, bytecodes);
 				} else {
-
 					bytecodes.add(new LoadConst(vargcount));
 					bytecodes.add(new Bytecode.New(arrType,1));
 					for(int i=0;arg!=arguments.size();++arg,++i) {
