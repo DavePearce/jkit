@@ -1167,6 +1167,9 @@ public class ClassFileBuilder {
 				if (fdesc.equals(mdesc)) {
 					return new Pair(outer,m);
 				}
+			}
+			for(Type.Clazz i : c.interfaces()) {
+				interfaceWorklist.push(i);
 			}			
 		}
 		
@@ -1184,15 +1187,41 @@ public class ClassFileBuilder {
 	 */
 	protected Type determineFieldType(Type.Clazz receiver, String name)
 			throws ClassNotFoundException, FieldNotFoundException {
-		Type.Clazz tmp = receiver;
-		while (tmp != null) {
-			Clazz c = loader.loadClass(tmp);
+		
+		Stack<Type.Clazz> worklist = new Stack<Type.Clazz>();
+		Stack<Type.Clazz> interfaceWorklist = new Stack<Type.Clazz>();
+		worklist.push(receiver);
+		
+		// Need to save the class of the static receiver type, since this
+		// determines whether to use an invokevirtual or invokeinterface. Could
+		// probably optimise this to avoid two identical calls to load class.
+		Clazz outer = loader.loadClass(worklist.peek());
+		
+		while (!worklist.isEmpty()) {
+			Clazz c = loader.loadClass(worklist.pop());									
 			Clazz.Field f = c.field(name);
 			if (f != null) {
 				return f.type();
 			}
-			tmp = c.superClass();
+			if(c.superClass() != null) {
+				worklist.push(c.superClass());
+			}
+			for(Type.Clazz i : c.interfaces()) {
+				interfaceWorklist.push(i);
+			}
 		}
+
+		while (!interfaceWorklist.isEmpty()) {
+			Clazz c = loader.loadClass(interfaceWorklist.pop());			
+			Clazz.Field f = c.field(name);
+			if (f != null) {
+				return f.type();
+			}			
+			for(Type.Clazz i : c.interfaces()) {
+				interfaceWorklist.push(i);
+			}		
+		}
+				
 		throw new FieldNotFoundException(name,receiver.toString());
 	}			
 	

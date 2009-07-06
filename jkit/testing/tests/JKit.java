@@ -96,6 +96,9 @@ public class JKit extends TestHarness {
 	@Test public void JLS_8_9_Enums_2() { runTest("JLS_8_9_Enums_2"); }
 	@Test public void JLS_8_9_Enums_3() { runTest("JLS_8_9_Enums_3"); }
 	
+	@Test public void JLS_9_3_ConstantFields_1() { runTest("JLS_9_3_ConstantFields_1"); }
+	@Test public void JLS_9_3_ConstantFields_2() { runTest("JLS_9_3_ConstantFields_2"); }
+	
 	@Test public void JLS_10_6_ArrayInitialisers_1() { runTest("JLS_10_6_ArrayInitialisers_1"); }
 	@Test public void JLS_10_6_ArrayInitialisers_2() { compileFailTest("JLS_10_6_ArrayInitialisers_2"); }
 	@Test public void JLS_10_6_ArrayInitialisers_3() { runTest("JLS_10_6_ArrayInitialisers_3"); }
