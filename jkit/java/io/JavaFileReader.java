@@ -744,6 +744,7 @@ public class JavaFileReader {
 		}
 		Expr lhs = parseExpression(tree.getChild(1), genericVariables);
 		Expr rhs = parseExpression(tree.getChild(2), genericVariables);
+		
 		return new Stmt.AssignmentOp(op, lhs, rhs, new SourceLocation(tree
 				.getLine(), tree.getCharPositionInLine()));
 	}

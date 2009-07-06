@@ -712,16 +712,16 @@ expression
 	:	conditionalExpression 
 		(
 			'=' expression -> ^(ASSIGN conditionalExpression expression)
-			| i+='+' '=' expression -> ^(ASSIGNOP ADD conditionalExpression expression)
-			| i+='-' '=' expression -> ^(ASSIGNOP SUB conditionalExpression expression)
-			| i+='*' '=' expression -> ^(ASSIGNOP MUL conditionalExpression expression)
-			| i+='/' '=' expression -> ^(ASSIGNOP DIV conditionalExpression expression)			
+			| '+' '=' expression -> ^(ASSIGNOP ADD conditionalExpression expression)
+			| '-' '=' expression -> ^(ASSIGNOP SUB conditionalExpression expression)
+			| '*' '=' expression -> ^(ASSIGNOP MUL conditionalExpression expression)
+			| '/' '=' expression -> ^(ASSIGNOP DIV conditionalExpression expression)			
 			| '&=' expression -> ^(ASSIGNOP AND conditionalExpression expression)
 			| '|=' expression -> ^(ASSIGNOP OR conditionalExpression expression)
 			| '^=' expression -> ^(ASSIGNOP XOR conditionalExpression expression)			
-			| i+='%' '=' expression -> ^(ASSIGNOP MOD conditionalExpression expression)
-			| i+='<' '<' '=' expression -> ^(ASSIGNOP SHL conditionalExpression expression)
-			| i+='>' '>' '=' expression -> ^(ASSIGNOP SHR conditionalExpression expression)
+			| '%' '=' expression -> ^(ASSIGNOP MOD conditionalExpression expression)
+			| '<' '<' '=' expression -> ^(ASSIGNOP SHL conditionalExpression expression)
+			| '>' '>' '=' expression -> ^(ASSIGNOP SHR conditionalExpression expression)
 			| '>' '>' '>' '=' expression -> ^(ASSIGNOP USHR conditionalExpression expression)
 			| -> conditionalExpression
 		) 
