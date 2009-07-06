@@ -1250,7 +1250,7 @@ public class JilBuilder {
 		case Expr.UnOp.PREDEC:
 		{				
 			JilExpr lhs = r.first();
-			JilExpr rhs = new JilExpr.BinOp(lhs, new JilExpr.Int(1), JilExpr.BinOp.SUB,
+			JilExpr rhs = new JilExpr.BinOp(lhs, constant(1,lhs.type()), JilExpr.BinOp.SUB,
 					type, e.attributes());
 			stmts.add(new JilStmt.Assign(lhs,rhs,e.attributes()));
 			return new Pair<JilExpr, List<JilStmt>>(r.first(),stmts);		
@@ -1258,7 +1258,7 @@ public class JilBuilder {
 		case Expr.UnOp.PREINC:
 		{
 			JilExpr lhs = r.first();
-			JilExpr rhs = new JilExpr.BinOp(lhs, new JilExpr.Int(1), JilExpr.BinOp.ADD,
+			JilExpr rhs = new JilExpr.BinOp(lhs, constant(1,lhs.type()), JilExpr.BinOp.ADD,
 					type, e.attributes());
 			stmts.add(new JilStmt.Assign(lhs,rhs,e.attributes()));
 			return new Pair<JilExpr, List<JilStmt>>(r.first(),stmts);
@@ -1268,7 +1268,7 @@ public class JilBuilder {
 			JilExpr lhs = r.first();	
 			JilExpr.Variable tmp = new JilExpr.Variable(getTempVar(),type,lhs.attributes());			
 			stmts.add(new JilStmt.Assign(tmp,lhs,e.attributes()));			
-			JilExpr rhs = new JilExpr.BinOp(lhs, new JilExpr.Int(1), JilExpr.BinOp.ADD,
+			JilExpr rhs = new JilExpr.BinOp(lhs, constant(1,lhs.type()), JilExpr.BinOp.ADD,
 					type, e.attributes());
 			stmts.add(new JilStmt.Assign(lhs,rhs,e.attributes()));
 			return new Pair<JilExpr, List<JilStmt>>(tmp,stmts);		
@@ -1278,7 +1278,7 @@ public class JilBuilder {
 			JilExpr lhs = r.first();
 			JilExpr.Variable tmp = new JilExpr.Variable(getTempVar(),type,lhs.attributes());			
 			stmts.add(new JilStmt.Assign(tmp,lhs,e.attributes()));			
-			JilExpr rhs = new JilExpr.BinOp(lhs, new JilExpr.Int(1), JilExpr.BinOp.SUB,
+			JilExpr rhs = new JilExpr.BinOp(lhs, constant(1,lhs.type()), JilExpr.BinOp.SUB,
 					type, e.attributes());
 			stmts.add(new JilStmt.Assign(lhs,rhs,e.attributes()));
 			return new Pair<JilExpr, List<JilStmt>>(tmp,stmts);
@@ -1682,6 +1682,24 @@ public class JilBuilder {
 		} else {
 			// It should be impossible to have more than one.
 			return si.get(0);
+		}
+	}
+	
+	protected JilExpr constant(int constant, Type t) {
+		if(t instanceof Type.Byte) {
+			return new JilExpr.Byte((byte)constant);
+		} else if(t instanceof Type.Char) {
+			return new JilExpr.Char((char)constant);
+		} else if(t instanceof Type.Short) {
+			return new JilExpr.Short((short)constant);
+		} else if(t instanceof Type.Int) {
+			return new JilExpr.Int(constant);
+		} else if(t instanceof Type.Long) {
+			return new JilExpr.Long((long)constant);
+		} else if(t instanceof Type.Float) {
+			return new JilExpr.Float((float)constant);
+		} else {
+			return new JilExpr.Double((double)constant);
 		}
 	}
 	
