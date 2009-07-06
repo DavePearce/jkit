@@ -34,4 +34,4 @@ else
     JKIT_CLASSPATH="$LIBDIR/jkit.jar:$CLASSPATH"
 fi
 
-java -Xmx512M -cp "$JKIT_CLASSPATH" jkit.Main "$@"
+java -Xmx512M -cp "$JKIT_CLASSPATH" jkit.JKitC "$@"
