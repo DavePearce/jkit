@@ -148,6 +148,9 @@ public class JKit extends TestHarness {
 	@Test public void JLS_15_7_EvaluationOrder_1() { runTest("JLS_15_7_EvaluationOrder_1"); }
 	@Test public void JLS_15_7_EvaluationOrder_2() { runTest("JLS_15_7_EvaluationOrder_2"); }
 	@Test public void JLS_15_7_EvaluationOrder_3() { runTest("JLS_15_7_EvaluationOrder_3"); }
+	
+	@Test public void JLS_15_8_1_StringConcatenation_1() { runTest("JLS_15_8_1_StringConcatenation_1"); }
+	
 	@Test public void JLS_15_9_5_AnonymousClasses_1() { runTest("JLS_15_9_5_AnonymousClasses_1"); }
 	@Test public void JLS_15_9_5_AnonymousClasses_2() { runTest("JLS_15_9_5_AnonymousClasses_2"); }
 	@Test public void JLS_15_9_5_AnonymousClasses_3() { runTest("JLS_15_9_5_AnonymousClasses_3"); }
