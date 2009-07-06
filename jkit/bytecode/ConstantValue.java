@@ -20,7 +20,8 @@ public class ConstantValue implements Attribute {
 		this.constant = constant;
 		if (getConstantInfo() == null) {
 			throw new IllegalArgumentException(
-					"constant must be instance of Boolean, Byte, Character, Short, Integer, Float, Double or String");
+					"constant must be instance of Boolean, Byte, Character, Short, Integer, Float, Double or String (got "
+							+ constant.getClass().getName() + ")");
 		}
 	}
 	
@@ -80,7 +81,9 @@ public class ConstantValue implements Attribute {
 			return new Constant.Float((Float)constant);
 		} else if(constant instanceof Double) {
 			return new Constant.Double((Double)constant);
-		} else {
+		} else if(constant instanceof String) {
+			return new Constant.String(new Constant.Utf8((String) constant));
+		} else {		
 			return null;
 		}
 	}

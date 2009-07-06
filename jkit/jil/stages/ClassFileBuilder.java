@@ -1184,13 +1184,14 @@ public class ClassFileBuilder {
 	 */
 	protected Type determineFieldType(Type.Clazz receiver, String name)
 			throws ClassNotFoundException, FieldNotFoundException {
-		while (receiver != null) {
-			Clazz c = loader.loadClass(receiver);
+		Type.Clazz tmp = receiver;
+		while (tmp != null) {
+			Clazz c = loader.loadClass(tmp);
 			Clazz.Field f = c.field(name);
 			if (f != null) {
 				return f.type();
 			}
-			receiver = c.superClass();
+			tmp = c.superClass();
 		}
 		throw new FieldNotFoundException(name,receiver.toString());
 	}			
