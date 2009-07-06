@@ -20,6 +20,7 @@ import jkit.jil.tree.Type;
 import jkit.jil.tree.SourceLocation;
 import jkit.jil.tree.SyntacticElement;
 import jkit.jil.stages.BypassMethods;
+import jkit.jil.stages.DeadCodeElimination;
 
 /**
  * A Java compiler is responsible for compiling Java source files into class
@@ -228,7 +229,8 @@ public class JavaCompiler implements Compiler {
 			
 			// Twelth, add bypass methods
 			for(JilClass clazz : skeletons) {
-				addBypassMethods(filename,clazz,loader);
+				eliminateDeadCode(filename,clazz,loader);
+				addBypassMethods(filename,clazz,loader);				
 			}
 			
 			// Ok, at this point, we need to determine the root component of the
@@ -447,6 +449,21 @@ public class JavaCompiler implements Compiler {
 
 	/**
 	 * This is the eleven	th stage in the compilation pipeline --- we are now
+	 * beginning the process of code-generation. In this stage, we generate jil
+	 * code from the java source file.
+	 * 
+	 * @param jfile
+	 * @param loader
+	 */
+	protected void eliminateDeadCode(File srcfile, JilClass jfile, ClassLoader loader) {
+		long start = System.currentTimeMillis();
+		new DeadCodeElimination().apply(jfile);
+		logTimedMessage("[" + srcfile.getPath() + "] Eliminated Dead code",
+				(System.currentTimeMillis() - start));
+	}
+	
+	/**
+	 * This is the twelth stage in the compilation pipeline --- we are now
 	 * beginning the process of code-generation. In this stage, we generate jil
 	 * code from the java source file.
 	 * 

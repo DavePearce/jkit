@@ -1644,7 +1644,7 @@ public class JilBuilder {
 
 		return false;
 	}
-	
+		
 	protected Scope findEnclosingScope(Class c) {
 		for(int i=scopes.size()-1;i>=0;--i) {
 			Scope s = scopes.get(i);
