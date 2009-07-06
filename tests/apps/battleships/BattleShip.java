@@ -1,5 +1,3 @@
-package battleships;
-
 /**
  * This class represents a battle ship!
  * @author djp

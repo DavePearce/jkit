@@ -1,5 +1,3 @@
-package raytracer;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Vector;

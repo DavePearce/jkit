@@ -1,5 +1,3 @@
-package raytracer;
-
 public class Sphere extends Object3D {
 	Vector3D center = new Vector3D(0,0,0);
 	double radius;

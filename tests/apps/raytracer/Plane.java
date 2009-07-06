@@ -1,5 +1,3 @@
-package raytracer;
-
 public class Plane extends Object3D {
 	Vector3D center = new Vector3D(0,0,0);
 	Vector3D normal = new Vector3D(0,1,0);

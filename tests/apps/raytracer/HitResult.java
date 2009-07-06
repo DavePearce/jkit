@@ -1,5 +1,3 @@
-package raytracer;
-
 public class HitResult {
 	boolean hit = false;
 	double distance;

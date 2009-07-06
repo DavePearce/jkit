@@ -1,5 +1,3 @@
-package battleships;
-
 import javax.swing.ImageIcon;
 
 /**

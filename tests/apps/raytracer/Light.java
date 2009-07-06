@@ -1,5 +1,3 @@
-package raytracer;
-
 public class Light {
 	public Vector3D pos;
 	public Vector3D colour;

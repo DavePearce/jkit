@@ -1,5 +1,3 @@
-package battleships;
-
 /**
  * This interface represents a single square on the grid
  * @author djp 

@@ -1,5 +1,3 @@
-package raytracer;
-
 public class Vector3D {
 	public double x = 0, y = 0, z = 0;
 	

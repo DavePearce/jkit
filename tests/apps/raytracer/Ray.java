@@ -1,5 +1,3 @@
-package raytracer;
-
 public class Ray {
 
 	public Vector3D origin, direction;

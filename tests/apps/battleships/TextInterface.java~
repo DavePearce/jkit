@@ -1,4 +1,4 @@
-package engr202.battleships;
+package battleships;
 
 import java.util.*;
 
