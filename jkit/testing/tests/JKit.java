@@ -48,6 +48,7 @@ public class JKit extends TestHarness {
 	@Test public void JLS_5_1_7_BoxingConversion_2() { runTest("JLS_5_1_7_BoxingConversion_2"); }
 	@Test public void JLS_5_1_7_BoxingConversion_3() { runTest("JLS_5_1_7_BoxingConversion_3"); }
 	@Test public void JLS_5_1_7_BoxingConversion_4() { runTest("JLS_5_1_7_BoxingConversion_4"); }
+	@Test public void JLS_5_1_7_BoxingConversion_5() { runTest("JLS_5_1_7_BoxingConversion_5"); }
 	@Test public void JLS_5_5_CastingConversion_1() { runTest("JLS_5_5_CastingConversion_1"); }
 	@Test public void JLS_5_5_CastingConversion_2() { runTest("JLS_5_5_CastingConversion_2"); }
 	@Test public void JLS_5_6_2_BinaryPromotion_1() { runTest("JLS_5_6_2_BinaryPromotion_1"); }
