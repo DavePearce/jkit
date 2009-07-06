@@ -183,7 +183,12 @@ public final class ClassFileReader {
 												
 				for(Triple<Type.Clazz,Type.Clazz,List<Modifier>> p : ic.inners()) {					
 					if(matchedInnerTypes(type,p.second()))  {
-						lmodifiers.addAll(p.third());								
+						List<Modifier> tmp = p.third();
+						for(Modifier m : tmp) {
+							if(!lmodifiers.contains(m)) {
+								lmodifiers.add(m);
+							}
+						}													
 					}					
 				}				
 			}
@@ -1560,7 +1565,8 @@ public final class ClassFileReader {
 		}
 		if((modifiers & ACC_ENUM) != 0) {
 			mods.add(Modifier.ACC_ENUM);
-		}
+		}				
+		
 		return mods;
 	}	
 

@@ -750,6 +750,8 @@ public class EnumRewrite {
 		mods.add(Modifier.ACC_FINAL);		
 		nparams.add(new Pair("$1",mods));
 		nparams.add(new Pair("$2",new ArrayList(mods)));
+		mods = new ArrayList();
+		mods.add(Modifier.ACC_PRIVATE);
 		JilMethod jm = new JilMethod(ec.name(), ftype, nparams, mods,
 				new ArrayList(),loc);
 		

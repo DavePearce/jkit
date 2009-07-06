@@ -68,6 +68,7 @@ public class SkeletonDiscovery {
 		List<Modifier> modifiers = cs.get(cs.size() - 1).modifiers();
 		modifiers.add(Modifier.ACC_ENUM);
 		modifiers.add(Modifier.ACC_FINAL);
+		modifiers.add(Modifier.ACC_STATIC);
 		return cs;		
 	}
 	

@@ -33,6 +33,7 @@ public class BytecodeFileWriter {
 			}
 		}
 		output.println();
+
 		writeModifiers(cfile.modifiers());
 		output.print("class " + cfile.type() + " ");
 		if(cfile.superClass() != null) {
@@ -117,7 +118,7 @@ public class BytecodeFileWriter {
 	}
 	
 	static void writeModifiers(List<Modifier> modifiers, PrintWriter output) {
-		for (Modifier x : modifiers) {
+		for (Modifier x : modifiers) {			
 			if (x instanceof Modifier.Private) {
 				output.write("private ");
 			} else if (x instanceof Modifier.Protected) {
