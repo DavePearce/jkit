@@ -1244,7 +1244,6 @@ public class JilBuilder {
 		Pair<JilExpr, List<JilStmt>> r = doExpression(e.expr());		
 		Type.Primitive type = (Type.Primitive) e.attribute(Type.class);
 		List<JilStmt> stmts = r.second();
-		Expr.LocalVariable lval;
 
 		switch (e.op()) {
 		case Expr.UnOp.PREDEC:
