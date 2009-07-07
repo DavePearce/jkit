@@ -99,7 +99,8 @@ public class BypassMethods {
 			List<Type> ftParamTypes = ft.parameterTypes();
 			List<Type> mtParamTypes = mt.parameterTypes();
 
-			boolean isMatch = ft.returnType() instanceof Type.Variable;
+			boolean isMatch = ft.returnType() instanceof Type.Variable
+					|| !ft.returnType().equals(mt.returnType());
 			for (int i = 0; i != ftParamTypes.size(); ++i) {
 				Type fp = ftParamTypes.get(i);
 				Type mp = mtParamTypes.get(i);
