@@ -921,15 +921,15 @@ public class ScopeResolution {
 					Triple<Clazz, Clazz.Field, Type> r = types
 							.resolveField(cs.type, e.value(), loader);
 					
-					// Ok, this variable access corresponds to a field load.
-					if(isThis && !isStatic) {						
+					// Ok, this variable access corresponds to a field load.					
+					if(isThis && !isStatic && !r.second().isStatic()) {												
 						Expr thisvar = new Expr.LocalVariable("this",
 								new ArrayList(e.attributes()));
 						thisvar.attributes().add(cs.type);
 						return new Expr.Deref(thisvar, e.value(), e
 							.attributes());
-					} else if(!isStatic){						
-						// Create a class access variable.
+					} else if(!isStatic && !r.second().isStatic()){			
+						// Create a class access variable via a parent pointer
 						Expr.ClassVariable cv = new Expr.ClassVariable(cs.type.toString());
 						cv.attributes().add(cs.type);
 						return new Expr.Deref(new Expr.Deref(cv, "this",
@@ -985,7 +985,7 @@ public class ScopeResolution {
 			} else if(s instanceof FieldScope) {
 				isStatic = ((FieldScope)s).isStatic;
 			}
-		}
+		}		
 		
 		// If we get here, then this variable access is either a syntax error,
 		// or a static class access. For example, in "System.out" we initially

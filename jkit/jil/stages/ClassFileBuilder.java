@@ -737,16 +737,17 @@ public class ClassFileBuilder {
 			translateExpression(stmt.rhs(), varmap, bytecodes);
 			bytecodes.add(new Bytecode.Store(slot, stmt.lhs().type()));
 		} else if (stmt.lhs() instanceof JilExpr.Deref) {
-			JilExpr.Deref der = (JilExpr.Deref) stmt.lhs();
-			translateExpression(der.target(), varmap, bytecodes);
-			translateExpression(stmt.rhs(), varmap, bytecodes);
+			JilExpr.Deref der = (JilExpr.Deref) stmt.lhs();			
 			// figure out the type of the field involved
 			Type.Clazz lhs_t = (Type.Clazz) der.target().type();
 			
 			if (der.isStatic()) {
+				translateExpression(stmt.rhs(), varmap, bytecodes);
 				bytecodes.add(new Bytecode.PutField(lhs_t, der.name(), der
 						.type(), Bytecode.STATIC));
 			} else {
+				translateExpression(der.target(), varmap, bytecodes);
+				translateExpression(stmt.rhs(), varmap, bytecodes);
 				bytecodes.add(new Bytecode.PutField(lhs_t, der.name(), der
 						.type(), Bytecode.NONSTATIC));
 			}
@@ -921,8 +922,8 @@ public class ClassFileBuilder {
 						bytecodeType = tv.lowerBound();
 					}
 				}
-								
-				if (def.isStatic()) {
+				
+				if (def.isStatic()) {					
 					// This is a static field load					
 					bytecodes.add(new Bytecode.GetField(lhs_t, def.name(),
 							bytecodeType, Bytecode.STATIC));				

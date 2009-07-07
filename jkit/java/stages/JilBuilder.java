@@ -1260,7 +1260,7 @@ public class JilBuilder {
 			JilExpr rhs = new JilExpr.BinOp(lhs, constant(1,lhs.type()), JilExpr.BinOp.ADD,
 					type, new ArrayList(e.attributes()));
 			stmts.add(new JilStmt.Assign(lhs,rhs,new ArrayList(e.attributes())));
-			return new Pair<JilExpr, List<JilStmt>>(r.first(),stmts);
+			return new Pair<JilExpr, List<JilStmt>>(lhs,stmts);
 		}
 		case Expr.UnOp.POSTINC:
 		{
