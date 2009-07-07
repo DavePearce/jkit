@@ -251,10 +251,10 @@ public class JavaCompiler implements Compiler {
 			
 			String root = "";
 			for(int k=0;k<=i;++k) {
-				root = root + paths[i] + File.separatorChar;
+				root = root + paths[k] + File.separatorChar;
 			}
 			
-			if(i >= 0) {
+			if(i >= 0) {				
 				outdir = new File(outputDirectory,root);
 			}			
 			
