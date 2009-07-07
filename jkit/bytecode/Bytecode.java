@@ -1219,7 +1219,7 @@ public abstract class Bytecode {
 				int index = 0;
 				for (int i = lo; i <= hi; i++) {
 					Pair<Integer,String> c = cases.get(index);
-					if (c.first() == i) {
+					if (c.first() == i) {						
 						int target = labelOffsets.get(c.second()) - offset;						
 						write_i4(out, target);
 						index++;

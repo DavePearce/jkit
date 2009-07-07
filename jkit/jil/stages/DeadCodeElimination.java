@@ -1,6 +1,7 @@
 package jkit.jil.stages;
 
 import java.util.*;
+
 import jkit.util.Pair;
 import jkit.jil.tree.*;
 
@@ -100,6 +101,21 @@ public class DeadCodeElimination {
 			if(!visited.contains(target)) {
 				worklist.add(target);
 				visited.add(target);
+			}
+		} else if(stmt instanceof JilStmt.Switch) {
+			JilStmt.Switch swt = (JilStmt.Switch) stmt;
+			for(Pair<JilExpr.Number,String> c : swt.cases()) {
+				int target = labels.get(c.second());				
+				if(!visited.contains(target)) {
+					worklist.add(target);
+					visited.add(target);
+				}	
+			}
+			// And, don't forget the default label!
+			int deftarget = labels.get(swt.defaultLabel());				
+			if(!visited.contains(deftarget)) {
+				worklist.add(deftarget);
+				visited.add(deftarget);
 			}
 		} else if(!(stmt instanceof JilStmt.Return || stmt instanceof JilStmt.Throw)) {
 			// this is a statement with a sequential exit

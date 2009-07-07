@@ -187,27 +187,8 @@ public class JKitC {
 				{"cp <path>", "Specific where to find user class files"},
 				{"bootclasspath <path>",
 				"Specific where to find system class files"},
-				{"ls [pipeline]",
-				"List stages of pipeline.  If none given, list for all pipelines."},
-				{"liststages [pipeline]",
-				"List stages of pipeline.  If none given, list for all pipelines."},
-				{"is <stage name> [pipeline]",
-				"Ignore pipeline stage.  If no pipeline supplied, then apply to all pipelines]"},
-				{"ignorestage <stage name> [pipeline]",
-				"Ignore pipeline stage.  If no pipeline supplied, applies to all pipelines]"},
-				{
-					"ss <stage name> [pipeline]",
-				"Stop after pipeline stage.  If no pipeline supplied, applies to all pipelines]"},
-				{
-					"stopstage <stage name> [pipeline]",
-				"Stop after pipeline stage.  If no pipeline supplied, applies to all pipelines]"},
-				{"t <filetype>",
-				"Output to file of given filetype, using list of registered filetypes"},
-				{"-target <filetype>",
-				"Output to file of given filetype, using list of registered filetypes"},
-				{"-lt", "Print list of registered filetypes."},
-				{"-listtargets <filetype>",
-				"Print list of registered filetypes."},};
+				{"jil","output jil intermediate representation"},
+				{"bytecode","output bytecode in textual format"}};
 		System.out.println("Usage: jkit <options> <source-files>");
 		System.out.println("Options:");
 

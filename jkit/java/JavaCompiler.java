@@ -235,12 +235,13 @@ public class JavaCompiler implements Compiler {
 			
 			// Ok, at this point, we need to determine the root component of the
 			// original filename.
+			
 			String path = filename.getPath();
 			int i = 0;
 			int rootEnd = path.lastIndexOf(File.separatorChar,path.length()-1);
-			while(i != -1) {				
+			while(i != -1) {								
 				i = jfile.pkg().indexOf('.',i+1);
-				rootEnd = path.lastIndexOf(File.separatorChar,rootEnd-1);
+				rootEnd = path.lastIndexOf(File.separatorChar,rootEnd);
 			}	
 			File outdir = outputDirectory;
 			if(rootEnd != -1) {
