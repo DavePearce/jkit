@@ -372,7 +372,7 @@ public class JilBuilder {
 		
 		r.add(new JilStmt.Label(exitLab,block.attributes()));
 				
-		List<JilStmt> finallyBlock = doBlock(block.finaly());
+		List<JilStmt> finallyBlock = doBlock(block.finaly());		
 		if(!finallyBlock.isEmpty()) {
 			// Now, we add the finally block. This is done in a separate method
 			// because it's actually quite challenging.
@@ -409,14 +409,14 @@ public class JilBuilder {
 			lastNonBranch = true;
 			JilStmt stmt = block.get(i);
 			if(stmt instanceof JilStmt.Return) {
-				block.addAll(i,finallyBlk);
+				block.addAll(i,copyBlock(finallyBlk));
 				i += finallyBlk.size();
 				lastNonBranch = false;
 			} else if(stmt instanceof JilStmt.Goto) {
 				JilStmt.Goto g = (JilStmt.Goto) stmt;
 				if(!labels.contains(g.label())) {
 					// this is a non-local branch statement.
-					block.addAll(i,finallyBlk);
+					block.addAll(i,copyBlock(finallyBlk));
 					i += finallyBlk.size();					
 				} 
 				lastNonBranch = false;
@@ -450,13 +450,92 @@ public class JilBuilder {
 		block.add(new JilStmt.Assign(new JilExpr.Variable(exceptionLabel + "$",
 				Types.JAVA_LANG_THROWABLE), new JilExpr.Variable("$",
 				Types.JAVA_LANG_THROWABLE)));	
-		block.addAll(finallyBlk);
+		block.addAll(copyBlock(finallyBlk));
 		block.add(new JilStmt.Throw(new JilExpr.Variable(exceptionLabel + "$",
 				Types.JAVA_LANG_THROWABLE)));
 		
 		if(lastNonBranch) {
 			block.add(new JilStmt.Label(exitLabel));
 		}
+	}
+	
+	protected static int copy_label = 0;
+	protected List<JilStmt> copyBlock(List<JilStmt> block) {
+		// The purpose of this method is to create a copy of the block.
+		// In particular, labels within the block must be copied.
+				
+		HashSet<String> labels = new HashSet<String>();
+		for(JilStmt stmt : block) {
+			if(stmt instanceof JilStmt.Label) {
+				JilStmt.Label lab = (JilStmt.Label) stmt;
+				labels.add(lab.label());
+			}
+		}
+		
+		ArrayList<JilStmt> nblock = new ArrayList<JilStmt>();
+		for(JilStmt stmt : block) {
+			ArrayList<Pair<Type.Clazz, String>> nexceptions = new ArrayList();
+			
+			for(Pair<Type.Clazz, String> p : stmt.exceptions()) {
+				String target = p.second();
+				if(labels.contains(target)) {
+					target = target + "$copy" + copy_label;
+				} 
+				nexceptions.add(new Pair(p.first(),target));
+			}
+			
+			if(stmt instanceof JilStmt.Goto) {
+				JilStmt.Goto gto = (JilStmt.Goto) stmt;
+				String target = gto.label();
+				if(labels.contains(target)) {
+					target = target + "$copy" + copy_label;
+				} 
+				nblock.add(new JilStmt.Goto(target, nexceptions,
+						new ArrayList<Attribute>(stmt.attributes())));
+			} else if(stmt instanceof JilStmt.IfGoto) {
+				JilStmt.IfGoto igto = (JilStmt.IfGoto) stmt;
+				String target = igto.label();
+				if(labels.contains(target)) {
+					target = target + "$copy" + copy_label;
+				} 
+				nblock.add(new JilStmt.IfGoto(igto.condition(), target,
+						nexceptions,
+						new ArrayList<Attribute>(stmt.attributes())));
+			} else if(stmt instanceof JilStmt.Switch) {
+				JilStmt.Switch swt = (JilStmt.Switch) stmt;
+				ArrayList<Pair<JilExpr.Number,String>> ncases = new ArrayList();
+				for(Pair<JilExpr.Number,String> c : swt.cases()) {
+					String target = c.second();				
+					if(labels.contains(target)) {
+						target = target + "$copy" + copy_label;
+					} 	
+					ncases.add(new Pair(c.first(),target));
+				}
+				// And, don't forget the default label!
+				String deftarget = swt.defaultLabel();
+				if(labels.contains(deftarget)) {
+					deftarget = deftarget + "$copy" + copy_label;
+				} 	
+				nblock.add(new JilStmt.Switch(swt.condition(), ncases,
+						deftarget, new ArrayList<Attribute>(swt.attributes())));
+			} else if(stmt instanceof JilStmt.Label) {			
+				JilStmt.Label lab = (JilStmt.Label) stmt;
+				String target = lab.label();
+				if(labels.contains(target)) {
+					target = target + "$copy" + copy_label;
+				} 
+				nblock.add(new JilStmt.Label(target,
+						new ArrayList<Attribute>(stmt.attributes())));
+			} else {
+				// there is a bug relating to switch statements.
+				JilStmt nstmt = stmt.clearAddExceptions(nexceptions);
+				nblock.add(nstmt);
+			}
+		}
+		
+		copy_label = copy_label + 1;
+		
+		return nblock;
 	}
 	
 	protected List<JilStmt> doVarDef(Stmt.VarDef def) {		

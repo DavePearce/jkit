@@ -12,9 +12,9 @@ public class JikesHPJ extends TestHarness {
 	@Test public void BigComp() { runTest("BigComp"); }	
 	@Test public void Const() { runTest("Const"); }
 	@Test public void DTest() { runTest("DTest"); }
-	@Test public void FISTest() { runTest("FISTest"); }
+
 	@Test public void FOSTest() { runTest("FOSTest"); }
-	@Test public void FTest() { runTest("FTest"); }	
+		
 	@Test public void LoopTest() { runTest("LoopTest"); }	
 	@Test public void QuesStmt() { runTest("QuesStmt"); }
 	@Test public void RAFTest() { runTest("RAFTest"); }

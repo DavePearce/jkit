@@ -20,6 +20,7 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 	
 	public JilStmt addException(Type.Clazz t, String v);
 	public JilStmt addExceptions(List<Pair<Type.Clazz,String>> exceptions);
+	public JilStmt clearAddExceptions(List<Pair<Type.Clazz,String>> exceptions);
 	
 	public static abstract class AbstractStmt implements
 			JilStmt,SyntacticElement{
@@ -57,6 +58,13 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 			return r;
 		}
 
+		public JilStmt clearAddExceptions(List<Pair<Type.Clazz, String>> exceptions) {
+			AbstractStmt r = clone();
+			r.exceptions.clear();
+			r.exceptions.addAll(exceptions);
+			return r;
+		}
+		
 		public JilStmt addException(Type.Clazz exception, String label) {
 			AbstractStmt r = clone();
 			r.exceptions.add(new Pair(exception,label));
