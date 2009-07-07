@@ -235,19 +235,28 @@ public class JavaCompiler implements Compiler {
 			
 			// Ok, at this point, we need to determine the root component of the
 			// original filename.
+			File outdir = outputDirectory;						
+			String[] paths = File.separatorChar == '\\' ? filename.getPath()
+					.split("\\\\") : filename.getPath().split(
+					"" + File.separatorChar);
+			String[] comps = jfile.pkg().split("\\.");
 			
-			String path = filename.getPath();
-			int i = 0;
-			int rootEnd = path.lastIndexOf(File.separatorChar,path.length()-1);
-			while(i != -1) {								
-				i = jfile.pkg().indexOf('.',i+1);
-				rootEnd = path.lastIndexOf(File.separatorChar,rootEnd);
-			}	
-			File outdir = outputDirectory;
-			if(rootEnd != -1) {
-				String root = path.substring(0, rootEnd);				
+			int i = paths.length - 2;
+			int j = comps.length - 1;
+			
+			while(i >= 0 && j >= 0 && paths[i].equals(comps[j])) {				
+				i=i-1;
+				j=j-1;
+			}
+			
+			String root = "";
+			for(int k=0;k<=i;++k) {
+				root = root + paths[i] + File.separatorChar;
+			}
+			
+			if(i >= 0) {
 				outdir = new File(outputDirectory,root);
-			}							
+			}			
 			
 			// Ninth, write out the compiled class file(s).			
 			for(JilClass clazz : skeletons) {				
