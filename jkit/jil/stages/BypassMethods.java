@@ -98,9 +98,11 @@ public class BypassMethods {
 			Type.Function mt = method.type();
 			List<Type> ftParamTypes = ft.parameterTypes();
 			List<Type> mtParamTypes = mt.parameterTypes();
-
+			Type ftReturnType = stripGenerics(ft.returnType());
+			Type mtReturnType = stripGenerics(mt.returnType());
+			
 			boolean isMatch = ft.returnType() instanceof Type.Variable
-					|| !ft.returnType().equals(mt.returnType());
+					|| !ftReturnType.equals(mtReturnType);
 			for (int i = 0; i != ftParamTypes.size(); ++i) {
 				Type fp = ftParamTypes.get(i);
 				Type mp = mtParamTypes.get(i);
