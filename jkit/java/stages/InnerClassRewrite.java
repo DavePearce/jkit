@@ -874,7 +874,7 @@ public class InnerClassRewrite {
 				thisVar = new JilExpr.Variable("thisp",clazz.type());
 				params.add(new Pair("thisp",mods));
 				ft = new Type.Function(field.type(),clazz.type());
-			}
+			}						
 			
 			accessor = new JilMethod("access$" + accessors.size() + "00",
 					ft, params,
@@ -932,7 +932,7 @@ public class InnerClassRewrite {
 				ft = new Type.Function(field.type(),clazz.type(),field.type());
 			}
 			
-			params.add(new Pair("tmp",mods));			
+			params.add(new Pair("tmp",mods));									
 			
 			accessor = new JilMethod("access$" + accessors.size() + "02", ft,
 					params, modifiers, new ArrayList<Type.Clazz>()); 						

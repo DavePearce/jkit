@@ -53,14 +53,16 @@ public class BypassMethods {
 		HashSet<Triple<Clazz, Clazz.Method, Type.Function>> matches = new HashSet();
 
 		// First, we identify all the problem cases.
-		for (JilMethod m : owner.methods()) {
-			// Look through interfaces
-			for (Type.Clazz i : owner.interfaces()) {
-				checkForProblem(m, i, matches);
-			}
-			// Now, look through the super class (if there is one)
-			if (owner.superClass() != null) {
-				checkForProblem(m, owner.superClass(), matches);
+		for (JilMethod m : owner.methods()) {			
+			if(!m.isStatic()) {
+				// Look through interfaces
+				for (Type.Clazz i : owner.interfaces()) {
+					checkForProblem(m, i, matches);
+				}
+				// Now, look through the super class (if there is one)
+				if (owner.superClass() != null) {
+					checkForProblem(m, owner.superClass(), matches);
+				}
 			}
 		}
 
@@ -102,7 +104,7 @@ public class BypassMethods {
 			Type mtReturnType = stripGenerics(mt.returnType());
 			
 			boolean isMatch = ft.returnType() instanceof Type.Variable
-					|| !ftReturnType.equals(mtReturnType);
+					|| (!ftReturnType.equals(mtReturnType));
 			for (int i = 0; i != ftParamTypes.size(); ++i) {
 				Type fp = ftParamTypes.get(i);
 				Type mp = mtParamTypes.get(i);
@@ -112,7 +114,7 @@ public class BypassMethods {
 						| (fp instanceof Type.Variable && !(mp instanceof Type.Variable));
 			}
 
-			if (isMatch) {
+			if (isMatch) {							
 				problems.add(new Triple<Clazz, Clazz.Method, Type.Function>(minfo
 						.first(), minfo.second(), method.type()));
 			}
