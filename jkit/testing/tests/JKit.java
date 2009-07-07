@@ -202,6 +202,7 @@ public class JKit extends TestHarness {
 	@Test public void JLS_15_19_ShiftOperators_2() { runTest("JLS_15_19_ShiftOperators_2"); }
 	@Test public void JLS_15_20_2_InstanceofOperator_1() { runTest("JLS_15_20_2_InstanceofOperator_1"); }	
 	@Test public void JLS_15_20_2_InstanceofOperator_2() { compileFailTest("JLS_15_20_2_InstanceofOperator_2"); }
+	@Test public void JLS_15_20_2_InstanceofOperator_3() { compileFailTest("JLS_15_20_2_InstanceofOperator_3"); }
 	@Test public void JLS_15_21_EqualityOperator_1() { runTest("JLS_15_21_EqualityOperator_1"); }
 	@Test public void JLS_15_24_ConditionalOr_1() { runTest("JLS_15_24_ConditionalOr_1"); }
 	@Test public void JLS_15_25_ConditionalOperator_1() { runTest("JLS_15_25_ConditionalOperator_1"); }
