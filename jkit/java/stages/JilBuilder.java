@@ -1250,36 +1250,36 @@ public class JilBuilder {
 		{				
 			JilExpr lhs = r.first();
 			JilExpr rhs = new JilExpr.BinOp(lhs, constant(1,lhs.type()), JilExpr.BinOp.SUB,
-					type, e.attributes());
-			stmts.add(new JilStmt.Assign(lhs,rhs,e.attributes()));
+					type, new ArrayList(e.attributes()));
+			stmts.add(new JilStmt.Assign(lhs,rhs,new ArrayList(e.attributes())));
 			return new Pair<JilExpr, List<JilStmt>>(r.first(),stmts);		
 		}
 		case Expr.UnOp.PREINC:
 		{
 			JilExpr lhs = r.first();
 			JilExpr rhs = new JilExpr.BinOp(lhs, constant(1,lhs.type()), JilExpr.BinOp.ADD,
-					type, e.attributes());
-			stmts.add(new JilStmt.Assign(lhs,rhs,e.attributes()));
+					type, new ArrayList(e.attributes()));
+			stmts.add(new JilStmt.Assign(lhs,rhs,new ArrayList(e.attributes())));
 			return new Pair<JilExpr, List<JilStmt>>(r.first(),stmts);
 		}
 		case Expr.UnOp.POSTINC:
 		{
 			JilExpr lhs = r.first();	
-			JilExpr.Variable tmp = new JilExpr.Variable(getTempVar(),type,lhs.attributes());			
-			stmts.add(new JilStmt.Assign(tmp,lhs,e.attributes()));			
+			JilExpr.Variable tmp = new JilExpr.Variable(getTempVar(),type,new ArrayList(lhs.attributes()));			
+			stmts.add(new JilStmt.Assign(tmp,lhs,new ArrayList(e.attributes())));			
 			JilExpr rhs = new JilExpr.BinOp(lhs, constant(1,lhs.type()), JilExpr.BinOp.ADD,
 					type, e.attributes());
-			stmts.add(new JilStmt.Assign(lhs,rhs,e.attributes()));
+			stmts.add(new JilStmt.Assign(lhs,rhs,new ArrayList(e.attributes())));
 			return new Pair<JilExpr, List<JilStmt>>(tmp,stmts);		
 		}
 		case Expr.UnOp.POSTDEC:
 		{
 			JilExpr lhs = r.first();
-			JilExpr.Variable tmp = new JilExpr.Variable(getTempVar(),type,lhs.attributes());			
-			stmts.add(new JilStmt.Assign(tmp,lhs,e.attributes()));			
+			JilExpr.Variable tmp = new JilExpr.Variable(getTempVar(),type,new ArrayList(lhs.attributes()));			
+			stmts.add(new JilStmt.Assign(tmp,lhs,new ArrayList(e.attributes())));			
 			JilExpr rhs = new JilExpr.BinOp(lhs, constant(1,lhs.type()), JilExpr.BinOp.SUB,
-					type, e.attributes());
-			stmts.add(new JilStmt.Assign(lhs,rhs,e.attributes()));
+					type, new ArrayList(e.attributes()));
+			stmts.add(new JilStmt.Assign(lhs,rhs,new ArrayList(e.attributes())));
 			return new Pair<JilExpr, List<JilStmt>>(tmp,stmts);
 		}
 		default:
