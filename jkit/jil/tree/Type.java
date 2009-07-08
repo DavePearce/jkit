@@ -614,8 +614,20 @@ public interface Type extends Attribute, Comparable<Type> {
 		public boolean equals(Object o) {
 			if (o instanceof Wildcard) {
 				Wildcard w = (Wildcard) o;
-				return lowerBound.equals(w.lowerBound)
-						&& upperBound.equals(w.upperBound);
+				boolean lb;
+				if(lowerBound == null) {
+					lb = w.lowerBound == null;
+				} else {
+					lb = lowerBound.equals(w.lowerBound);
+				}
+				boolean ub;
+				if(upperBound == null) {
+					ub = w.upperBound == null;
+				} else {
+					ub = upperBound.equals(w.upperBound);
+				}
+				
+				return lb && ub;
 			}
 			return false;
 		}
