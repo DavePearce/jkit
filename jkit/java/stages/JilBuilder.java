@@ -49,6 +49,14 @@ public class JilBuilder {
 	}
 	
 	private static class Scope {}
+	
+	private static class LabelScope extends Scope {
+		public String label;
+		public LabelScope(String lab) {
+			label = lab;
+		}
+	}
+	
 	private static class LoopScope extends Scope {
 		public String continueLab;
 		public String exitLab;
@@ -702,7 +710,23 @@ public class JilBuilder {
 			LoopScope ls = (LoopScope) findEnclosingScope(LoopScope.class);
 			r.add(new JilStmt.Goto(ls.exitLab,brk.attributes()));
 		} else {
-			r.add(new JilStmt.Goto(brk.label(),brk.attributes()));
+			String label = brk.label();
+			LoopScope lastLoop = null;
+			for(int i=scopes.size()-1;i>=0;--i) {
+				Scope s = scopes.get(i);
+				if(s instanceof LoopScope) {
+					lastLoop = (LoopScope) s;
+				} else if(s instanceof LabelScope) {
+					LabelScope lab = (LabelScope) s;
+					if(lab.label.equals(label)) {
+						break;
+					}
+				}
+			}
+			if(lastLoop == null) {
+				syntax_error("no enclosing loop instance",brk);
+			}
+			r.add(new JilStmt.Goto(lastLoop.exitLab,brk.attributes()));
 		}
 		
 		return r;
@@ -715,15 +739,32 @@ public class JilBuilder {
 			LoopScope ls = (LoopScope) findEnclosingScope(LoopScope.class);
 			r.add(new JilStmt.Goto(ls.continueLab,brk.attributes()));
 		} else {
-			// this must be broken.
-			r.add(new JilStmt.Goto(brk.label(),brk.attributes()));
+			String label = brk.label();
+			LoopScope lastLoop = null;
+			for(int i=scopes.size()-1;i>=0;--i) {
+				Scope s = scopes.get(i);
+				if(s instanceof LoopScope) {
+					lastLoop = (LoopScope) s;
+				} else if(s instanceof LabelScope) {
+					LabelScope lab = (LabelScope) s;
+					if(lab.label.equals(label)) {
+						break;
+					}
+				}
+			}
+			if(lastLoop == null) {
+				syntax_error("no enclosing loop instance",brk);
+			}
+			r.add(new JilStmt.Goto(lastLoop.continueLab,brk.attributes()));
 		}
 		
 		return r;
 	}
 	
-	protected List<JilStmt> doLabel(Stmt.Label lab) {						
+	protected List<JilStmt> doLabel(Stmt.Label lab) {
+		scopes.push(new LabelScope(lab.label()));
 		List<JilStmt> r = doStatement(lab.statement());
+		scopes.pop();
 		r.add(0, new JilStmt.Label(lab.label(), lab.attributes()));
 		return r;
 	}
