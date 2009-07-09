@@ -234,30 +234,10 @@ public class JavaCompiler implements Compiler {
 			}
 			
 			// Ok, at this point, we need to determine the root component of the
-			// original filename.
-			File outdir = outputDirectory;						
-			String[] paths = File.separatorChar == '\\' ? filename.getPath()
-					.split("\\\\") : filename.getPath().split(
-					"" + File.separatorChar);
-			String[] comps = jfile.pkg().split("\\.");
-			
-			int i = paths.length - 2;
-			int j = comps.length - 1;
-			
-			while(i >= 0 && j >= 0 && paths[i].equals(comps[j])) {				
-				i=i-1;
-				j=j-1;
-			}
-			
-			String root = "";
-			for(int k=0;k<=i;++k) {
-				root = root + paths[k] + File.separatorChar;
-			}
-			
-			if(i >= 0) {				
-				outdir = new File(outputDirectory,root);
-			}			
-			
+			// original filename.			
+			String root = determinePackageRoot(filename,jfile);			
+			File outdir = root == null ? outputDirectory : new File(outputDirectory,root);		
+					
 			// Ninth, write out the compiled class file(s).			
 			for(JilClass clazz : skeletons) {				
 				String baseName = createBasename(clazz.type());
@@ -277,6 +257,52 @@ public class JavaCompiler implements Compiler {
 		}
 	}
 
+	/**
+     * This method attempts to determine the root of the package hierarchy. This
+     * is necessary because we may not be compiling a source file from the root.
+     * For example, suppose we have class Test in package tmp, which is rooted
+     * in the src directory:
+     * 
+     * <pre>
+     * src / tmp / Test.java
+     * </pre>
+     * 
+     * Now, suppose we are in the outermost directory, and compile the src file
+     * "src/tmp/Test.java". In order for the compiler to correctly locate other
+     * source files that may need to be computed, it needs to know that the root
+     * of the hierarchy is in src/. Therefore, this method would return "src".
+     * 
+     * @param filename
+     * @param srcFile
+     * @return
+     */
+	protected String determinePackageRoot(File filename, JavaFile srcFile) {
+		String[] paths = File.separatorChar == '\\' ? filename.getPath()
+				.split("\\\\") : filename.getPath().split(
+				"" + File.separatorChar);
+		String[] comps = srcFile.pkg().split("\\.");
+		
+		int i = paths.length - 2;
+		int j = comps.length - 1;
+		
+		while(i >= 0 && j >= 0 && paths[i].equals(comps[j])) {				
+			i=i-1;
+			j=j-1;
+		}
+		
+		String root = "";
+		for(int k=0;k<=i;++k) {
+			root = root + paths[k] + File.separatorChar;
+		}
+		
+		
+		if(i >= 0) {				
+			return root;
+		} else {
+			return null;
+		}
+	}
+	
 	/**
 	 * This is the first stage in the compilation pipeline --- given a source
 	 * file, we must parse it into an Abstract Syntax Tree.
