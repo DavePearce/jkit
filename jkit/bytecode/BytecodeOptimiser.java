@@ -23,6 +23,15 @@ package jkit.bytecode;
 
 import java.util.*;
 
+import jkit.bytecode.Bytecode.BinOp;
+import jkit.bytecode.Bytecode.If;
+import jkit.bytecode.Bytecode.IfCmp;
+import jkit.bytecode.Bytecode.Load;
+import jkit.bytecode.Bytecode.LoadConst;
+import jkit.bytecode.Bytecode.Pop;
+import jkit.bytecode.Bytecode.Store;
+import jkit.jil.tree.Type;
+
 /**
  * A bytecode optimiser is essentially a peep hole optimiser. The aim is to
  * identify and reduce common patterns that are inefficient. For example, the
@@ -97,57 +106,80 @@ import java.util.*;
  * 
  */
 
-public abstract class BytecodeOptimiser {
-	/**
-	 * This method is called to optimise the list of bytecodes provided by any
-	 * means possible; of course, only safe transformations are permitted!
-	 * 
-	 * @param bytecodes
-	 *            The list of bytecodes to optimise!
-	 * @param handlers
-	 *            The list of exception handlers associated with the bytecodes
-	 */
-	public abstract void optimise(List<Bytecode> bytecodes,			
-			List<ClassFileWriter.ExceptionHandler> handlers);
-
-	/**
-	 * The purpose of this method is to replace a number of bytecodes with 0 or
-	 * more bytecodes, whilst updating the exception handlers list accordingly.
-	 * 
-	 * @param start
-	 *            The index of the first bytecode to replace
-	 * @param length
-	 *            The number of bytecodes to replace
-	 * @param bytecodes
-	 *            The list of bytecodes to update
-	 * @param handlers
-	 *            The list of exception handlers that must be updated properly
-	 * @param replacements
-	 *            A list of bytecodes to put in their place
-	 */
-	public void replace(int start, int length, List<Bytecode> bytecodes,
-			List<ClassFileWriter.ExceptionHandler> handlers,
-			Bytecode... replacements) {
-		int delta = replacements.length - length;
+public abstract class BytecodeOptimiser {	
+	public void optimise(List<Bytecode> bytecodes,
+			List<ClassFileWriter.ExceptionHandler> handlers) {
 		
-		for(int i=0;i!=length;++i) {
-			bytecodes.remove(start);
+		for(int i=0;i<bytecodes.size();++i) {			
+			i += tryPushPop(i,bytecodes,handlers);
+			i += tryIncPlusOne(i,bytecodes,handlers);
+			i += tryIfNonNull(i,bytecodes,handlers);
 		}
-		
-		bytecodes.addAll(start,Arrays.asList(replacements));
-		
-		// Now, update the handlers appropriately		
-		int end = start+length;		
-		for(ClassFileWriter.ExceptionHandler h : handlers) {			
-			if(h.start <= start && h.end > start) {				
-				h.end += delta;
-			} else if(h.start >= end) {
-				h.start += delta;
-				h.end += delta;
-			} else if (h.start > start) {
-				throw new RuntimeException(
-						"Attempt to optimise an instruction that partially straddles an exception boundary!");
+				
+	}
+	
+	private int tryIfNonNull(int i, List<Bytecode> bytecodes,
+			List<ClassFileWriter.ExceptionHandler> handlers) {
+		// Need at least two bytecodes remaining
+		if((i+1) >= bytecodes.size()) { return 0; }
+		Bytecode b1 = bytecodes.get(i);
+		Bytecode b2 = bytecodes.get(i+1);
+		if(b1 instanceof LoadConst && b2 instanceof IfCmp) {
+			LoadConst lc1 = (LoadConst) b1;
+			IfCmp ic1 = (IfCmp) b2;
+			if(lc1.constant == null && ic1.cond == IfCmp.EQ) {
+				// ifnull case
+				replace(i,2, bytecodes, handlers, new Bytecode.If(If.NULL,ic1.label));
+				return -1;
+			} else if(lc1.constant == null && ic1.cond == IfCmp.NE) {
+				// ifnonnull case
+				replace(i,2, bytecodes, handlers, new Bytecode.If(If.NONNULL,ic1.label));
+				return -1;
 			}
 		}
+		return 0;
+	}
+	
+	private int tryPushPop(int i, List<Bytecode> bytecodes,
+			List<ClassFileWriter.ExceptionHandler> handlers) {
+		// Need at least two bytecodes remaining
+		if((i+1) >= bytecodes.size()) { return 0; }
+		Bytecode b1 = bytecodes.get(i);
+		Bytecode b2 = bytecodes.get(i+1);
+		// Now, try to match sequence
+		if ((b1 instanceof Load || b1 instanceof LoadConst)
+				&& b2 instanceof Pop) {
+			replace(i,2,bytecodes,handlers);
+			return -2;
+		}
+		return 0;
+	}
+	
+	private int tryIncPlusOne(int i, List<Bytecode> bytecodes,
+			List<ClassFileWriter.ExceptionHandler> handlers) {
+		// Need at least four bytecodes remaining
+		if((i+3) >= bytecodes.size()) { return 0; }
+		Bytecode b1 = bytecodes.get(i);
+		Bytecode b2 = bytecodes.get(i+1);
+		Bytecode b3 = bytecodes.get(i+2);
+		Bytecode b4 = bytecodes.get(i+3);
+		// Now, try to match sequence
+		if (b1 instanceof Load && b2 instanceof LoadConst
+				&& b3 instanceof BinOp && b4 instanceof Store) {
+
+			Load l1 = (Load) b1;
+			LoadConst lc2 = (LoadConst) b2;
+			BinOp a3 = (BinOp) b3;
+			Store s4 = (Store) b4;
+			// Need more sanity checks
+			if (l1.slot == s4.slot && lc2.constant.equals(1)
+					&& a3.op == BinOp.ADD && l1.type instanceof Type.Int) {
+				// Ok, matched!
+				replace(i, 4, bytecodes, handlers,
+						new Bytecode.Iinc(l1.slot, 1));
+				return -3;
+			}
+		}
+		return 0;
 	}
 }
