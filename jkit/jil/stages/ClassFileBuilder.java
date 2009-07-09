@@ -360,43 +360,47 @@ public class ClassFileBuilder {
 	 */
 	protected void translateStatement(JilStmt stmt,
 			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes) {
-		if (stmt instanceof JilStmt.Return) {
-			translateReturn((JilStmt.Return) stmt, varmap,
-					bytecodes);
-		} else if (stmt instanceof JilStmt.Assign) {
-			translateAssign((JilStmt.Assign) stmt, varmap,
-					bytecodes);
-		} else if (stmt instanceof JilExpr.Invoke) {
-			translateInvoke((JilExpr.Invoke) stmt, varmap,
-					bytecodes, false);
-		} else if (stmt instanceof JilExpr.New) {
-			translateNew((JilExpr.New) stmt, varmap, bytecodes,
-					false);
-		} else if (stmt instanceof JilStmt.Nop) {
-			bytecodes.add(new Bytecode.Nop());
-		} else if (stmt instanceof JilStmt.Throw) {
-			translateThrow((JilStmt.Throw) stmt, varmap, bytecodes);
-		} else if (stmt instanceof JilStmt.Lock) {
-			translateLock((JilStmt.Lock) stmt, varmap, bytecodes);
-		} else if (stmt instanceof JilStmt.Unlock) {
-			translateUnlock((JilStmt.Unlock) stmt, varmap,
-					bytecodes);
-		} else if(stmt instanceof JilStmt.Label) {
-			translateLabel((JilStmt.Label)stmt,varmap,bytecodes);
-		} else if(stmt instanceof JilStmt.IfGoto) {
-			translateIfGoto((JilStmt.IfGoto)stmt,varmap,bytecodes);
-		} else if(stmt instanceof JilStmt.Goto) {
-			translateGoto((JilStmt.Goto)stmt,varmap,bytecodes);
-		} else if(stmt instanceof JilStmt.Switch) {
-			translateSwitch((JilStmt.Switch)stmt,varmap,bytecodes);
-		} else {
-			throw new RuntimeException("Unknown statement encountered: " + stmt);
+		try {
+			if (stmt instanceof JilStmt.Return) {
+				translateReturn((JilStmt.Return) stmt, varmap,
+						bytecodes);
+			} else if (stmt instanceof JilStmt.Assign) {
+				translateAssign((JilStmt.Assign) stmt, varmap,
+						bytecodes);
+			} else if (stmt instanceof JilExpr.Invoke) {
+				translateInvoke((JilExpr.Invoke) stmt, varmap,
+						bytecodes, false);
+			} else if (stmt instanceof JilExpr.New) {
+				translateNew((JilExpr.New) stmt, varmap, bytecodes,
+						false);
+			} else if (stmt instanceof JilStmt.Nop) {
+				bytecodes.add(new Bytecode.Nop());
+			} else if (stmt instanceof JilStmt.Throw) {
+				translateThrow((JilStmt.Throw) stmt, varmap, bytecodes);
+			} else if (stmt instanceof JilStmt.Lock) {
+				translateLock((JilStmt.Lock) stmt, varmap, bytecodes);
+			} else if (stmt instanceof JilStmt.Unlock) {
+				translateUnlock((JilStmt.Unlock) stmt, varmap,
+						bytecodes);
+			} else if(stmt instanceof JilStmt.Label) {
+				translateLabel((JilStmt.Label)stmt,varmap,bytecodes);
+			} else if(stmt instanceof JilStmt.IfGoto) {
+				translateIfGoto((JilStmt.IfGoto)stmt,varmap,bytecodes);
+			} else if(stmt instanceof JilStmt.Goto) {
+				translateGoto((JilStmt.Goto)stmt,varmap,bytecodes);
+			} else if(stmt instanceof JilStmt.Switch) {
+				translateSwitch((JilStmt.Switch)stmt,varmap,bytecodes);
+			} else {
+				throw new RuntimeException("Unknown statement encountered: " + stmt);
+			}
+		} catch(Exception ex) {
+			internal_error(stmt,ex);
 		}
 	}
 
 
 	protected void translateIfGoto(JilStmt.IfGoto stmt,
-			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes) {
+			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes) throws ClassNotFoundException, MethodNotFoundException {
 		translateConditionalBranch(stmt.condition(), stmt.label(), varmap,
 				bytecodes);
 	}
@@ -416,7 +420,7 @@ public class ClassFileBuilder {
 	 */
 	protected static int condLabelCount = 0;
 	protected void translateConditionalBranch(JilExpr condition, String trueLabel,
-			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes) {
+			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes) throws ClassNotFoundException, MethodNotFoundException {
 		
 		if (condition instanceof JilExpr.BinOp) {
 			JilExpr.BinOp bop = (JilExpr.BinOp) condition;
@@ -579,7 +583,7 @@ public class ClassFileBuilder {
 
 	protected void translateInvoke(JilExpr.Invoke stmt,
 			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes,
-			boolean needReturnValue) {
+			boolean needReturnValue) throws ClassNotFoundException, MethodNotFoundException {
 		
 		Type.Reference _targetT = (Type.Reference) stmt.target().type();
 		
@@ -609,7 +613,7 @@ public class ClassFileBuilder {
 	
 	protected void translateInvokeHelper(Type.Clazz targetT,
 			JilExpr.Invoke stmt, HashMap<String, Integer> varmap,
-			ArrayList<Bytecode> bytecodes, boolean needReturnValue) {
+			ArrayList<Bytecode> bytecodes, boolean needReturnValue) throws ClassNotFoundException, MethodNotFoundException {
 
 		if (stmt.name().equals("super") || stmt.name().equals("this")) {
 			// catch explicit super constructor call.
@@ -621,112 +625,106 @@ public class ClassFileBuilder {
 					stmt.funType(), Bytecode.SPECIAL));
 			return;
 		} 
+					
+		Pair<Clazz,Clazz.Method> cm = determineMethod(targetT, stmt.name(), stmt
+				.funType());
+		Clazz c = cm.first();
+		Clazz.Method m = cm.second();
 
-		try {			
-			Pair<Clazz,Clazz.Method> cm = determineMethod(targetT, stmt.name(), stmt
-					.funType());
-			Clazz c = cm.first();
-			Clazz.Method m = cm.second();
-			
-			if (!m.isStatic()) {
-				// must be non-static invocation
-				translateExpression(stmt.target(), varmap, bytecodes);
-			}
-														
-			if(!m.isVariableArity()) {
-				for(JilExpr e : stmt.parameters()) {
-					translateExpression(e, varmap, bytecodes);
-				}
-			} else {
-				// now, this is a variable-arity method --- so we need to
-				// package up some arguments into an array.
-				List<? extends JilExpr> arguments = stmt.parameters();
-				List<Type> paramTypes = m.type().parameterTypes();
-				
-				int vargcount = stmt.parameters().size() - paramTypes.size() + 1;
-				int arg = 0;
-				for(;arg!=arguments.size()-vargcount;++arg) {
-					JilExpr e = arguments.get(arg);
-					translateExpression(e, varmap, bytecodes);
-				}
-				
-				Type.Array arrType = (Type.Array) paramTypes.get(paramTypes
-						.size() - 1);								
-				
-				// At this point, we need to deal with the case where the
-				// element type of the array is actually a generic type.
-				if (arrType.element() instanceof Type.Variable
-						|| arrType.element() instanceof Type.Wildcard) {
-					if ((arg + 1) == arguments.size()
-							&& arguments.get(arg).type() instanceof Type.Array) {
-						arrType = (Type.Array) arguments.get(arg).type();
-					} else {
-						arrType = new Type.Array(Types.JAVA_LANG_OBJECT);
-					}
-				}
-												
-				if ((arg + 1) == arguments.size()
-						&& arguments.get(arg).type().equals(arrType)) {				
-					// this is the special case when an appropriate array is
-					// supplied directly to the variable argument list.
-					translateExpression(arguments.get(arg), varmap, bytecodes);
-				} else {
-					bytecodes.add(new LoadConst(vargcount));
-					bytecodes.add(new Bytecode.New(arrType,1));
-					for(int i=0;arg!=arguments.size();++arg,++i) {
-						bytecodes.add(new Bytecode.Dup(arrType));
-						bytecodes.add(new LoadConst(i));
-						translateExpression(arguments.get(arg), varmap, bytecodes);
-						bytecodes.add(new Bytecode.ArrayStore(arrType));
-					}	
-				}
-			}
-
-			if (stmt instanceof JilExpr.SpecialInvoke) {
-				bytecodes.add(new Bytecode.Invoke(targetT, stmt.name(), stmt
-						.funType(), Bytecode.SPECIAL));
-			} else if (m.isStatic()) {
-				// STATIC
-				bytecodes.add(new Bytecode.Invoke(targetT, stmt.name(), stmt
-						.funType(), Bytecode.STATIC));
-			} else if (c.isInterface()) {
-				bytecodes.add(new Bytecode.Invoke(targetT, stmt.name(), stmt
-						.funType(), Bytecode.INTERFACE));
-			} else {
-				bytecodes.add(new Bytecode.Invoke(targetT, stmt.name(), stmt
-						.funType(), Bytecode.VIRTUAL));
-			}
-
-			Type retT = m.type().returnType();
-
-			if (!(retT instanceof Type.Void)) {
-				// Need to account for space occupied by return type!
-				if (!needReturnValue) {
-					// the return value is not required, so we need to pop
-					// it from
-					// the stack
-					bytecodes.add(new Bytecode.Pop(retT));
-				} else if ((retT instanceof Type.Variable || Types
-						.isGenericArray(retT))
-						&& !(stmt.type() instanceof Type.Variable)
-						&& !stmt.type().equals(
-								new Type.Clazz("java.lang", "Object"))) {
-					// Here, the actual return type is a (generic) type
-					// variable (e.g. T or T[]), and we're expecting it to
-					// return a real value (e.g. String, substituted for T).
-					// This issue is
-					// that, because of erasure, the returned type will be
-					// Object and we need to cast it to whatever it needs to be
-					// (e.g. String). Note, if the value substituted for T is
-					// actually Object, then we just do nothing!
-					bytecodes.add(new Bytecode.CheckCast(stmt.type()));
-				}
-			}
-		} catch (ClassNotFoundException cnfe) {
-			syntax_error(cnfe.getMessage(),stmt,cnfe);
-		} catch (MethodNotFoundException mnfe) {
-			syntax_error(mnfe.getMessage(),stmt,mnfe);			
+		if (!m.isStatic()) {
+			// must be non-static invocation
+			translateExpression(stmt.target(), varmap, bytecodes);
 		}
+
+		if(!m.isVariableArity()) {
+			for(JilExpr e : stmt.parameters()) {
+				translateExpression(e, varmap, bytecodes);
+			}
+		} else {
+			// now, this is a variable-arity method --- so we need to
+			// package up some arguments into an array.
+			List<? extends JilExpr> arguments = stmt.parameters();
+			List<Type> paramTypes = m.type().parameterTypes();
+
+			int vargcount = stmt.parameters().size() - paramTypes.size() + 1;
+			int arg = 0;
+			for(;arg!=arguments.size()-vargcount;++arg) {
+				JilExpr e = arguments.get(arg);
+				translateExpression(e, varmap, bytecodes);
+			}
+
+			Type.Array arrType = (Type.Array) paramTypes.get(paramTypes
+					.size() - 1);								
+
+			// At this point, we need to deal with the case where the
+			// element type of the array is actually a generic type.
+			if (arrType.element() instanceof Type.Variable
+					|| arrType.element() instanceof Type.Wildcard) {
+				if ((arg + 1) == arguments.size()
+						&& arguments.get(arg).type() instanceof Type.Array) {
+					arrType = (Type.Array) arguments.get(arg).type();
+				} else {
+					arrType = new Type.Array(Types.JAVA_LANG_OBJECT);
+				}
+			}
+
+			if ((arg + 1) == arguments.size()
+					&& arguments.get(arg).type().equals(arrType)) {				
+				// this is the special case when an appropriate array is
+				// supplied directly to the variable argument list.
+				translateExpression(arguments.get(arg), varmap, bytecodes);
+			} else {
+				bytecodes.add(new LoadConst(vargcount));
+				bytecodes.add(new Bytecode.New(arrType,1));
+				for(int i=0;arg!=arguments.size();++arg,++i) {
+					bytecodes.add(new Bytecode.Dup(arrType));
+					bytecodes.add(new LoadConst(i));
+					translateExpression(arguments.get(arg), varmap, bytecodes);
+					bytecodes.add(new Bytecode.ArrayStore(arrType));
+				}	
+			}
+		}
+
+		if (stmt instanceof JilExpr.SpecialInvoke) {
+			bytecodes.add(new Bytecode.Invoke(targetT, stmt.name(), stmt
+					.funType(), Bytecode.SPECIAL));
+		} else if (m.isStatic()) {
+			// STATIC
+			bytecodes.add(new Bytecode.Invoke(targetT, stmt.name(), stmt
+					.funType(), Bytecode.STATIC));
+		} else if (c.isInterface()) {
+			bytecodes.add(new Bytecode.Invoke(targetT, stmt.name(), stmt
+					.funType(), Bytecode.INTERFACE));
+		} else {
+			bytecodes.add(new Bytecode.Invoke(targetT, stmt.name(), stmt
+					.funType(), Bytecode.VIRTUAL));
+		}
+
+		Type retT = m.type().returnType();
+
+		if (!(retT instanceof Type.Void)) {
+			// Need to account for space occupied by return type!
+			if (!needReturnValue) {
+				// the return value is not required, so we need to pop
+				// it from
+				// the stack
+				bytecodes.add(new Bytecode.Pop(retT));
+			} else if ((retT instanceof Type.Variable || Types
+					.isGenericArray(retT))
+					&& !(stmt.type() instanceof Type.Variable)
+					&& !stmt.type().equals(
+							new Type.Clazz("java.lang", "Object"))) {
+				// Here, the actual return type is a (generic) type
+				// variable (e.g. T or T[]), and we're expecting it to
+				// return a real value (e.g. String, substituted for T).
+				// This issue is
+				// that, because of erasure, the returned type will be
+				// Object and we need to cast it to whatever it needs to be
+				// (e.g. String). Note, if the value substituted for T is
+				// actually Object, then we just do nothing!
+				bytecodes.add(new Bytecode.CheckCast(stmt.type()));
+			}
+		}	
 	}
 		
 	/**
@@ -838,73 +836,77 @@ public class ClassFileBuilder {
 	protected void translateExpression(JilExpr expr,
 			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes) {
 
-		if (expr instanceof JilExpr.Bool) {			
-			bytecodes.add(new Bytecode.LoadConst(((JilExpr.Bool) expr).value()));
-		} else if (expr instanceof JilExpr.Byte) {
-			bytecodes.add(new Bytecode.LoadConst(((JilExpr.Byte) expr).value()));
-		} else if (expr instanceof JilExpr.Char) {
-			bytecodes.add(new Bytecode.LoadConst(((JilExpr.Char) expr).value()));
-		} else if (expr instanceof JilExpr.Short) {
-			bytecodes.add(new Bytecode.LoadConst(((JilExpr.Short) expr).value()));
-		} else if (expr instanceof JilExpr.Int) {
-			bytecodes.add(new Bytecode.LoadConst(((JilExpr.Int) expr).value()));
-		} else if (expr instanceof JilExpr.Long) {
-			bytecodes.add(new Bytecode.LoadConst(((JilExpr.Long) expr).value()));
-		} else if (expr instanceof JilExpr.Float) {
-			bytecodes.add(new Bytecode.LoadConst(((JilExpr.Float) expr).value()));
-		} else if (expr instanceof JilExpr.Double) {
-			bytecodes.add(new Bytecode.LoadConst(((JilExpr.Double) expr).value()));
-		} else if (expr instanceof JilExpr.Null) {
-			bytecodes.add(new Bytecode.LoadConst(null));
-		} else if (expr instanceof JilExpr.StringVal) {
-			bytecodes.add(new Bytecode.LoadConst(((JilExpr.StringVal) expr).value()));
-		} else if (expr instanceof JilExpr.Array) {
-			translateArrayVal((JilExpr.Array) expr, varmap, bytecodes);
-		} else if (expr instanceof JilExpr.Class) {
-			translateClassVal((JilExpr.Class) expr, varmap, bytecodes);
-		} else if (expr instanceof JilExpr.Variable) {
-			JilExpr.Variable lv = (JilExpr.Variable) expr;
-			
-			if (varmap.containsKey(lv.value())) {				
-				bytecodes.add(new Bytecode.Load(varmap.get(lv.value()), lv.type()));				
-			} else if(lv.value().equals("$")) {
-				// this is the special variable used to get an Exception object
-				// off the stack in an exception handler.
-				//
-				// In this case, we don't actually have to do anything since
-				// it's already on the stack!
+		try {
+			if (expr instanceof JilExpr.Bool) {			
+				bytecodes.add(new Bytecode.LoadConst(((JilExpr.Bool) expr).value()));
+			} else if (expr instanceof JilExpr.Byte) {
+				bytecodes.add(new Bytecode.LoadConst(((JilExpr.Byte) expr).value()));
+			} else if (expr instanceof JilExpr.Char) {
+				bytecodes.add(new Bytecode.LoadConst(((JilExpr.Char) expr).value()));
+			} else if (expr instanceof JilExpr.Short) {
+				bytecodes.add(new Bytecode.LoadConst(((JilExpr.Short) expr).value()));
+			} else if (expr instanceof JilExpr.Int) {
+				bytecodes.add(new Bytecode.LoadConst(((JilExpr.Int) expr).value()));
+			} else if (expr instanceof JilExpr.Long) {
+				bytecodes.add(new Bytecode.LoadConst(((JilExpr.Long) expr).value()));
+			} else if (expr instanceof JilExpr.Float) {
+				bytecodes.add(new Bytecode.LoadConst(((JilExpr.Float) expr).value()));
+			} else if (expr instanceof JilExpr.Double) {
+				bytecodes.add(new Bytecode.LoadConst(((JilExpr.Double) expr).value()));
+			} else if (expr instanceof JilExpr.Null) {
+				bytecodes.add(new Bytecode.LoadConst(null));
+			} else if (expr instanceof JilExpr.StringVal) {
+				bytecodes.add(new Bytecode.LoadConst(((JilExpr.StringVal) expr).value()));
+			} else if (expr instanceof JilExpr.Array) {
+				translateArrayVal((JilExpr.Array) expr, varmap, bytecodes);
+			} else if (expr instanceof JilExpr.Class) {
+				translateClassVal((JilExpr.Class) expr, varmap, bytecodes);
+			} else if (expr instanceof JilExpr.Variable) {
+				JilExpr.Variable lv = (JilExpr.Variable) expr;
+
+				if (varmap.containsKey(lv.value())) {				
+					bytecodes.add(new Bytecode.Load(varmap.get(lv.value()), lv.type()));				
+				} else if(lv.value().equals("$")) {
+					// this is the special variable used to get an Exception object
+					// off the stack in an exception handler.
+					//
+					// In this case, we don't actually have to do anything since
+					// it's already on the stack!
+				} else {
+					syntax_error("unknown variable \"" + lv.value() + "\"", expr);
+				}
+			} else if (expr instanceof JilExpr.New) {
+				translateNew((JilExpr.New) expr, varmap, bytecodes,true);
+			} else if (expr instanceof JilExpr.Deref) {
+				translateDeref((JilExpr.Deref) expr, varmap, bytecodes);
+			} else if (expr instanceof JilExpr.ArrayIndex) {
+				JilExpr.ArrayIndex ai = (JilExpr.ArrayIndex) expr;
+				translateExpression(ai.target(), varmap, bytecodes);
+				translateExpression(ai.index(), varmap, bytecodes);
+				Type arr_t = ai.target().type();
+				bytecodes.add(new Bytecode.ArrayLoad((Type.Array) arr_t));			
+			} else if (expr instanceof JilExpr.Invoke) {
+				translateInvoke((JilExpr.Invoke) expr, varmap, bytecodes, true);
+			} else if (expr instanceof JilExpr.UnOp) {
+				translateUnaryOp((JilExpr.UnOp) expr, varmap,bytecodes);
+			} else if (expr instanceof JilExpr.BinOp) {
+				translateBinaryOp((JilExpr.BinOp) expr, varmap,bytecodes);
+			} else if (expr instanceof JilExpr.InstanceOf) {
+				JilExpr.InstanceOf iof = (JilExpr.InstanceOf) expr;
+				translateExpression(iof.lhs(), varmap, bytecodes);
+				bytecodes.add(new Bytecode.InstanceOf(iof.rhs()));
+			} else if (expr instanceof JilExpr.Cast) {
+				translateCast((JilExpr.Cast) expr, varmap,bytecodes);
+			} else if (expr instanceof JilExpr.Convert) {
+				translateConvert((JilExpr.Convert) expr, varmap,bytecodes);
+			} else if (expr instanceof JilExpr.ClassVariable) {
+				translateClassVariable((JilExpr.ClassVariable)expr,varmap,bytecodes);
 			} else {
-				syntax_error("unknown variable \"" + lv.value() + "\"", expr);
+				throw new RuntimeException("Unknown expression encountered ("
+						+ expr + ")");
 			}
-		} else if (expr instanceof JilExpr.New) {
-			translateNew((JilExpr.New) expr, varmap, bytecodes,true);
-		} else if (expr instanceof JilExpr.Deref) {
-			translateDeref((JilExpr.Deref) expr, varmap, bytecodes);
-		} else if (expr instanceof JilExpr.ArrayIndex) {
-			JilExpr.ArrayIndex ai = (JilExpr.ArrayIndex) expr;
-			translateExpression(ai.target(), varmap, bytecodes);
-			translateExpression(ai.index(), varmap, bytecodes);
-			Type arr_t = ai.target().type();
-			bytecodes.add(new Bytecode.ArrayLoad((Type.Array) arr_t));			
-		} else if (expr instanceof JilExpr.Invoke) {
-			translateInvoke((JilExpr.Invoke) expr, varmap, bytecodes, true);
-		} else if (expr instanceof JilExpr.UnOp) {
-			translateUnaryOp((JilExpr.UnOp) expr, varmap,bytecodes);
-		} else if (expr instanceof JilExpr.BinOp) {
-			translateBinaryOp((JilExpr.BinOp) expr, varmap,bytecodes);
-		} else if (expr instanceof JilExpr.InstanceOf) {
-			JilExpr.InstanceOf iof = (JilExpr.InstanceOf) expr;
-			translateExpression(iof.lhs(), varmap, bytecodes);
-			bytecodes.add(new Bytecode.InstanceOf(iof.rhs()));
-		} else if (expr instanceof JilExpr.Cast) {
-			translateCast((JilExpr.Cast) expr, varmap,bytecodes);
-		} else if (expr instanceof JilExpr.Convert) {
-			translateConvert((JilExpr.Convert) expr, varmap,bytecodes);
-		} else if (expr instanceof JilExpr.ClassVariable) {
-			translateClassVariable((JilExpr.ClassVariable)expr,varmap,bytecodes);
-		} else {
-			throw new RuntimeException("Unknown expression encountered ("
-					+ expr + ")");
+		} catch(Exception ex) {
+			internal_error(expr,ex);
 		}
 	}
 
@@ -925,50 +927,45 @@ public class ClassFileBuilder {
 	}
 	
 	public void translateDeref(JilExpr.Deref def, HashMap<String, Integer> varmap,
-			ArrayList<Bytecode> bytecodes) {
+			ArrayList<Bytecode> bytecodes) throws ClassNotFoundException, FieldNotFoundException {
 		Type tmp_t = def.target().type();
 
 		if (tmp_t instanceof Type.Clazz) {
 			Type.Clazz lhs_t = (Type.Clazz) tmp_t;
 
-			try {
-				Type actualFieldType = determineFieldType(lhs_t,def.name());
-				Type bytecodeType = actualFieldType;				
-				
-				if(actualFieldType instanceof Type.Variable) {
-					Type.Variable tv = (Type.Variable) actualFieldType;
-					if(tv.lowerBound() == null) {
-						bytecodeType = new Type.Clazz("java.lang","Object");
-					} else {
-						bytecodeType = tv.lowerBound();
-					}
-				}
-				
-				if (def.isStatic()) {					
-					// This is a static field load					
-					bytecodes.add(new Bytecode.GetField(lhs_t, def.name(),
-							bytecodeType, Bytecode.STATIC));				
+
+			Type actualFieldType = determineFieldType(lhs_t,def.name());
+			Type bytecodeType = actualFieldType;				
+
+			if(actualFieldType instanceof Type.Variable) {
+				Type.Variable tv = (Type.Variable) actualFieldType;
+				if(tv.lowerBound() == null) {
+					bytecodeType = new Type.Clazz("java.lang","Object");
 				} else {
-					// Non-static field load
-					translateExpression(def.target(), varmap, bytecodes);
-
-					bytecodes.add(new Bytecode.GetField(lhs_t, def.name(),
-							bytecodeType, Bytecode.NONSTATIC));		
-
-					if (actualFieldType instanceof Type.Variable
-							&& !(def.type() instanceof Type.Variable)
-							&& !def.type().equals(new Type.Clazz("java.lang",
-							"Object"))) {
-						// Ok, actual type is a (generic) type variable. Need to
-						// cast to the desired type!
-						bytecodes.add(new Bytecode.CheckCast(def.type()));					
-					}		
+					bytecodeType = tv.lowerBound();
 				}
-			} catch(ClassNotFoundException e) {
-				syntax_error(e.getMessage(),def,e);
-			} catch(FieldNotFoundException e) {
-				syntax_error(e.getMessage(),def,e);
-			}			
+			}
+
+			if (def.isStatic()) {					
+				// This is a static field load					
+				bytecodes.add(new Bytecode.GetField(lhs_t, def.name(),
+						bytecodeType, Bytecode.STATIC));				
+			} else {
+				// Non-static field load
+				translateExpression(def.target(), varmap, bytecodes);
+
+				bytecodes.add(new Bytecode.GetField(lhs_t, def.name(),
+						bytecodeType, Bytecode.NONSTATIC));		
+
+				if (actualFieldType instanceof Type.Variable
+						&& !(def.type() instanceof Type.Variable)
+						&& !def.type().equals(new Type.Clazz("java.lang",
+						"Object"))) {
+					// Ok, actual type is a (generic) type variable. Need to
+					// cast to the desired type!
+					bytecodes.add(new Bytecode.CheckCast(def.type()));					
+				}		
+			}					
 		} else if (tmp_t instanceof Type.Array && def.name().equals("length")) {
 			translateExpression(def.target(), varmap, bytecodes);
 			bytecodes.add(new Bytecode.ArrayLength());
@@ -980,7 +977,7 @@ public class ClassFileBuilder {
 	}
 
 	public void translateArrayVal(JilExpr.Array av, HashMap<String, Integer> varmap,
-			ArrayList<Bytecode> bytecodes) {						
+			ArrayList<Bytecode> bytecodes) throws ClassNotFoundException, MethodNotFoundException {						
 		List<JilExpr> params = new ArrayList<JilExpr>();
 		params.add(new JilExpr.Int(av.values().size()));
 		translateNew(new JilExpr.New(av.type(), params, new Type.Function(Types.T_VOID)), varmap, bytecodes,
@@ -997,7 +994,8 @@ public class ClassFileBuilder {
 	}
 
 	public void translateNew(JilExpr.New news, HashMap<String, Integer> varmap,
-			ArrayList<Bytecode> bytecodes, boolean needReturnValue) {
+			ArrayList<Bytecode> bytecodes, boolean needReturnValue)
+			throws ClassNotFoundException, MethodNotFoundException {
 
 		if (news.type() instanceof Type.Clazz) {
 			Type.Clazz type = (Type.Clazz) news.type();								
@@ -1028,74 +1026,70 @@ public class ClassFileBuilder {
 	}
 
 	protected void translateNewHelper(Type.Clazz targetT, JilExpr.New stmt,
-			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes) {
+			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes)
+			throws ClassNotFoundException, MethodNotFoundException {
 		// Ideally, this method should be combined with translateInvokeHelper.
 		// To do this, will probably need to combine JilExpr.New and
 		// JilExpr.Invoke via
 		// inheritance somehow.
-		try {
-			String name = targetT.lastComponent().first();
-			Pair<Clazz, Clazz.Method> cm = determineMethod(targetT, name, stmt
-					.funType());			
-			Clazz.Method m = cm.second();		
+		
+		String name = targetT.lastComponent().first();
+		Pair<Clazz, Clazz.Method> cm = determineMethod(targetT, name, stmt
+				.funType());			
+		Clazz.Method m = cm.second();		
 
-			if(!m.isVariableArity()) {
-				for(JilExpr e : stmt.parameters()) {
-					translateExpression(e, varmap, bytecodes);
-				}
-			} else {
-				// now, this is a variable-arity method --- so we need to
-				// package up some arguments into an array.
-				List<? extends JilExpr> arguments = stmt.parameters();
-				List<Type> paramTypes = m.type().parameterTypes();
+		if(!m.isVariableArity()) {
+			for(JilExpr e : stmt.parameters()) {
+				translateExpression(e, varmap, bytecodes);
+			}
+		} else {
+			// now, this is a variable-arity method --- so we need to
+			// package up some arguments into an array.
+			List<? extends JilExpr> arguments = stmt.parameters();
+			List<Type> paramTypes = m.type().parameterTypes();
 
-				int vargcount = stmt.parameters().size() - paramTypes.size() + 1;
-				int arg = 0;
-				for(;arg!=arguments.size()-vargcount;++arg) {
-					JilExpr e = arguments.get(arg);
-					translateExpression(e, varmap, bytecodes);
-				}
+			int vargcount = stmt.parameters().size() - paramTypes.size() + 1;
+			int arg = 0;
+			for(;arg!=arguments.size()-vargcount;++arg) {
+				JilExpr e = arguments.get(arg);
+				translateExpression(e, varmap, bytecodes);
+			}
 
-				Type.Array arrType = (Type.Array) paramTypes.get(paramTypes
-						.size() - 1);								
+			Type.Array arrType = (Type.Array) paramTypes.get(paramTypes
+					.size() - 1);								
 
-				// At this point, we need to deal with the case where the
-				// element type of the array is actually a generic type.
-				if (arrType.element() instanceof Type.Variable
-						|| arrType.element() instanceof Type.Wildcard) {
-					if ((arg + 1) == arguments.size()
-							&& arguments.get(arg).type() instanceof Type.Array) {
-						arrType = (Type.Array) arguments.get(arg).type();
-					} else {
-						arrType = new Type.Array(Types.JAVA_LANG_OBJECT);
-					}
-				}
-
+			// At this point, we need to deal with the case where the
+			// element type of the array is actually a generic type.
+			if (arrType.element() instanceof Type.Variable
+					|| arrType.element() instanceof Type.Wildcard) {
 				if ((arg + 1) == arguments.size()
-						&& arguments.get(arg).type().equals(arrType)) {				
-					// this is the special case when an appropriate array is
-					// supplied directly to the variable argument list.
-					translateExpression(arguments.get(arg), varmap, bytecodes);
+						&& arguments.get(arg).type() instanceof Type.Array) {
+					arrType = (Type.Array) arguments.get(arg).type();
 				} else {
-					bytecodes.add(new LoadConst(vargcount));
-					bytecodes.add(new Bytecode.New(arrType,1));
-					for(int i=0;arg!=arguments.size();++arg,++i) {
-						bytecodes.add(new Bytecode.Dup(arrType));
-						bytecodes.add(new LoadConst(i));
-						translateExpression(arguments.get(arg), varmap, bytecodes);
-						bytecodes.add(new Bytecode.ArrayStore(arrType));
-					}	
+					arrType = new Type.Array(Types.JAVA_LANG_OBJECT);
 				}
 			}
-		} catch (ClassNotFoundException cnfe) {
-			syntax_error(cnfe.getMessage(),stmt,cnfe);
-		} catch (MethodNotFoundException mnfe) {
-			syntax_error(mnfe.getMessage(),stmt,mnfe);			
+
+			if ((arg + 1) == arguments.size()
+					&& arguments.get(arg).type().equals(arrType)) {				
+				// this is the special case when an appropriate array is
+				// supplied directly to the variable argument list.
+				translateExpression(arguments.get(arg), varmap, bytecodes);
+			} else {
+				bytecodes.add(new LoadConst(vargcount));
+				bytecodes.add(new Bytecode.New(arrType,1));
+				for(int i=0;arg!=arguments.size();++arg,++i) {
+					bytecodes.add(new Bytecode.Dup(arrType));
+					bytecodes.add(new LoadConst(i));
+					translateExpression(arguments.get(arg), varmap, bytecodes);
+					bytecodes.add(new Bytecode.ArrayStore(arrType));
+				}	
+			}
 		}
 	}
 	
 	protected void translateBinaryOp(JilExpr.BinOp bop, HashMap<String, Integer> varmap,
-			ArrayList<Bytecode> bytecodes) {
+			ArrayList<Bytecode> bytecodes) throws ClassNotFoundException, MethodNotFoundException {
 
 		// second, translate the binary operator.
 		switch (bop.op()) {
@@ -1126,7 +1120,8 @@ public class ClassFileBuilder {
 	}
 
 	protected void translateUnaryOp(JilExpr.UnOp uop, HashMap<String, Integer> varmap,
-			ArrayList<Bytecode> bytecodes) {
+			ArrayList<Bytecode> bytecodes)
+			throws ClassNotFoundException, MethodNotFoundException {
 
 		switch (uop.op()) {
 		case JilExpr.UnOp.NOT:

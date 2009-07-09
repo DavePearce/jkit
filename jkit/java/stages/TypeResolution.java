@@ -119,29 +119,33 @@ public class TypeResolution {
 	}
 	
 	protected void doDeclaration(Decl d) {
-		if(d instanceof JavaInterface) {
-			doInterface((JavaInterface)d);
-		} else if(d instanceof JavaClass) {
-			doClass((JavaClass)d);
-		} else if(d instanceof JavaMethod) {
-			doMethod((JavaMethod)d);
-		} else if(d instanceof JavaField) {
-			doField((JavaField)d);
-		} else if (d instanceof Decl.InitialiserBlock) {
-			doInitialiserBlock((Decl.InitialiserBlock) d);
-		} else if (d instanceof Decl.StaticInitialiserBlock) {
-			doStaticInitialiserBlock((Decl.StaticInitialiserBlock) d);
-		} else {
-			syntax_error("internal failure (unknown declaration \"" + d
-					+ "\" encountered)",d);
+		try {
+			if(d instanceof JavaInterface) {
+				doInterface((JavaInterface)d);
+			} else if(d instanceof JavaClass) {
+				doClass((JavaClass)d);
+			} else if(d instanceof JavaMethod) {
+				doMethod((JavaMethod)d);
+			} else if(d instanceof JavaField) {
+				doField((JavaField)d);
+			} else if (d instanceof Decl.InitialiserBlock) {
+				doInitialiserBlock((Decl.InitialiserBlock) d);
+			} else if (d instanceof Decl.StaticInitialiserBlock) {
+				doStaticInitialiserBlock((Decl.StaticInitialiserBlock) d);
+			} else {
+				syntax_error("internal failure (unknown declaration \"" + d
+						+ "\" encountered)",d);
+			}
+		} catch(Exception ex) {
+			internal_error(d,ex);
 		}
 	}
 	
-	protected void doInterface(JavaInterface d) {
+	protected void doInterface(JavaInterface d) throws ClassNotFoundException {
 		doClass(d);
 	}
 	
-	protected void doClass(JavaClass c) {		
+	protected void doClass(JavaClass c) throws ClassNotFoundException {		
 		// First, add myself to the import list, since that means we'll search
 		// in my class for types before searching anywhere else i've declared
 		// and/or on the CLASSPATH.
@@ -186,7 +190,7 @@ public class TypeResolution {
 		scopes.pop(); // undo my type
 	}
 
-	protected void doMethod(JavaMethod d) {
+	protected void doMethod(JavaMethod d) throws ClassNotFoundException {
 		Scope myScope = new Scope();		
 		scopes.push(myScope);
 		
@@ -244,7 +248,7 @@ public class TypeResolution {
 		scopes.pop();
 	}
 	
-	protected void doField(JavaField d) {
+	protected void doField(JavaField d) throws ClassNotFoundException {
 		doExpression(d.initialiser());		
 		d.type().attributes().add(substituteTypeVars(resolve(d.type())));
 	}
@@ -266,52 +270,56 @@ public class TypeResolution {
 	}
 	
 	protected void doStatement(Stmt e) {
-		if(e instanceof Stmt.SynchronisedBlock) {
-			doSynchronisedBlock((Stmt.SynchronisedBlock)e);
-		} else if(e instanceof Stmt.TryCatchBlock) {
-			doTryCatchBlock((Stmt.TryCatchBlock)e);
-		} else if(e instanceof Stmt.Block) {
-			doBlock((Stmt.Block)e);
-		} else if(e instanceof Stmt.VarDef) {
-			doVarDef((Stmt.VarDef) e);
-		} else if(e instanceof Stmt.Assignment) {
-			doAssignment((Stmt.Assignment) e);
-		} else if(e instanceof Stmt.Return) {
-			doReturn((Stmt.Return) e);
-		} else if(e instanceof Stmt.Throw) {
-			doThrow((Stmt.Throw) e);
-		} else if(e instanceof Stmt.Assert) {
-			doAssert((Stmt.Assert) e);
-		} else if(e instanceof Stmt.Break) {
-			doBreak((Stmt.Break) e);
-		} else if(e instanceof Stmt.Continue) {
-			doContinue((Stmt.Continue) e);
-		} else if(e instanceof Stmt.Label) {
-			doLabel((Stmt.Label) e);
-		} else if(e instanceof Stmt.If) {
-			doIf((Stmt.If) e);
-		} else if(e instanceof Stmt.For) {
-			doFor((Stmt.For) e);
-		} else if(e instanceof Stmt.ForEach) {
-			doForEach((Stmt.ForEach) e);
-		} else if(e instanceof Stmt.While) {
-			doWhile((Stmt.While) e);
-		} else if(e instanceof Stmt.DoWhile) {
-			doDoWhile((Stmt.DoWhile) e);
-		} else if(e instanceof Stmt.Switch) {
-			doSwitch((Stmt.Switch) e);
-		} else if(e instanceof Expr.Invoke) {
-			doInvoke((Expr.Invoke) e);
-		} else if(e instanceof Expr.New) {
-			doNew((Expr.New) e);
-		} else if(e instanceof Decl.JavaClass) {
-			doClass((Decl.JavaClass)e);
-		} else if(e instanceof Stmt.PrePostIncDec) {
-			doExpression((Stmt.PrePostIncDec)e);
-		} else if(e != null) {
-			syntax_error("Invalid statement encountered: "
-					+ e.getClass(),e);
-		}		
+		try {
+			if(e instanceof Stmt.SynchronisedBlock) {
+				doSynchronisedBlock((Stmt.SynchronisedBlock)e);
+			} else if(e instanceof Stmt.TryCatchBlock) {
+				doTryCatchBlock((Stmt.TryCatchBlock)e);
+			} else if(e instanceof Stmt.Block) {
+				doBlock((Stmt.Block)e);
+			} else if(e instanceof Stmt.VarDef) {
+				doVarDef((Stmt.VarDef) e);
+			} else if(e instanceof Stmt.Assignment) {
+				doAssignment((Stmt.Assignment) e);
+			} else if(e instanceof Stmt.Return) {
+				doReturn((Stmt.Return) e);
+			} else if(e instanceof Stmt.Throw) {
+				doThrow((Stmt.Throw) e);
+			} else if(e instanceof Stmt.Assert) {
+				doAssert((Stmt.Assert) e);
+			} else if(e instanceof Stmt.Break) {
+				doBreak((Stmt.Break) e);
+			} else if(e instanceof Stmt.Continue) {
+				doContinue((Stmt.Continue) e);
+			} else if(e instanceof Stmt.Label) {
+				doLabel((Stmt.Label) e);
+			} else if(e instanceof Stmt.If) {
+				doIf((Stmt.If) e);
+			} else if(e instanceof Stmt.For) {
+				doFor((Stmt.For) e);
+			} else if(e instanceof Stmt.ForEach) {
+				doForEach((Stmt.ForEach) e);
+			} else if(e instanceof Stmt.While) {
+				doWhile((Stmt.While) e);
+			} else if(e instanceof Stmt.DoWhile) {
+				doDoWhile((Stmt.DoWhile) e);
+			} else if(e instanceof Stmt.Switch) {
+				doSwitch((Stmt.Switch) e);
+			} else if(e instanceof Expr.Invoke) {
+				doInvoke((Expr.Invoke) e);
+			} else if(e instanceof Expr.New) {
+				doNew((Expr.New) e);
+			} else if(e instanceof Decl.JavaClass) {
+				doClass((Decl.JavaClass)e);
+			} else if(e instanceof Stmt.PrePostIncDec) {
+				doExpression((Stmt.PrePostIncDec)e);
+			} else if(e != null) {
+				syntax_error("Invalid statement encountered: "
+						+ e.getClass(),e);
+			}		
+		} catch(Exception ex) {
+			internal_error(e,ex);
+		}
 	}
 	
 	protected void doBlock(Stmt.Block block) {
@@ -328,7 +336,7 @@ public class TypeResolution {
 		doExpression(block.expr());
 	}
 	
-	protected void doTryCatchBlock(Stmt.TryCatchBlock block) {
+	protected void doTryCatchBlock(Stmt.TryCatchBlock block) throws ClassNotFoundException {
 		doBlock(block);		
 		doBlock(block.finaly());		
 		
@@ -338,7 +346,7 @@ public class TypeResolution {
 		}
 	}
 	
-	protected void doVarDef(Stmt.VarDef def) {
+	protected void doVarDef(Stmt.VarDef def) throws ClassNotFoundException {
 		Type t = substituteTypeVars(resolve(def.type()));		
 		def.type().attributes().add(t);
 		
@@ -401,7 +409,7 @@ public class TypeResolution {
 		doStatement(stmt.body());	
 	}
 	
-	protected void doForEach(Stmt.ForEach stmt) {
+	protected void doForEach(Stmt.ForEach stmt) throws ClassNotFoundException {
 		Type t = substituteTypeVars(resolve(stmt.type()));
 		stmt.type().attributes().add(t);
 		doExpression(stmt.source());
@@ -420,55 +428,59 @@ public class TypeResolution {
 		// should check that case conditions are final constants here.
 	}
 	
-	protected void doExpression(Expr e) {	
-		if(e instanceof Value.Bool) {
-			doBoolVal((Value.Bool)e);
-		} else if(e instanceof Value.Char) {
-			doCharVal((Value.Char)e);
-		} else if(e instanceof Value.Int) {
-			doIntVal((Value.Int)e);
-		} else if(e instanceof Value.Long) {
-			doLongVal((Value.Long)e);
-		} else if(e instanceof Value.Float) {
-			doFloatVal((Value.Float)e);
-		} else if(e instanceof Value.Double) {
-			doDoubleVal((Value.Double)e);
-		} else if(e instanceof Value.String) {
-			doStringVal((Value.String)e);
-		} else if(e instanceof Value.Null) {
-			doNullVal((Value.Null)e);
-		} else if(e instanceof Value.TypedArray) {
-			doTypedArrayVal((Value.TypedArray)e);
-		} else if(e instanceof Value.Array) {
-			doArrayVal((Value.Array)e);
-		} else if(e instanceof Value.Class) {
-			doClassVal((Value.Class) e);
-		} else if(e instanceof Expr.UnresolvedVariable) {
-			doVariable((Expr.UnresolvedVariable)e);
-		} else if(e instanceof Expr.UnOp) {
-			doUnOp((Expr.UnOp)e);
-		} else if(e instanceof Expr.BinOp) {
-			doBinOp((Expr.BinOp)e);
-		} else if(e instanceof Expr.TernOp) {
-			doTernOp((Expr.TernOp)e);
-		} else if(e instanceof Expr.Cast) {
-			doCast((Expr.Cast)e);
-		} else if(e instanceof Expr.InstanceOf) {
-			doInstanceOf((Expr.InstanceOf)e);
-		} else if(e instanceof Expr.Invoke) {
-			doInvoke((Expr.Invoke) e);
-		} else if(e instanceof Expr.New) {
-			doNew((Expr.New) e);
-		} else if(e instanceof Expr.ArrayIndex) {
-			doArrayIndex((Expr.ArrayIndex) e);
-		} else if(e instanceof Expr.Deref) {
-			doDeref((Expr.Deref) e);
-		} else if(e instanceof Stmt.Assignment) {
-			// force brackets			
-			doAssignment((Stmt.Assignment) e);			
-		} else if(e != null) {
-			syntax_error("Invalid expression encountered: "
-					+ e.getClass(),e);
+	protected void doExpression(Expr e) {
+		try {
+			if(e instanceof Value.Bool) {
+				doBoolVal((Value.Bool)e);
+			} else if(e instanceof Value.Char) {
+				doCharVal((Value.Char)e);
+			} else if(e instanceof Value.Int) {
+				doIntVal((Value.Int)e);
+			} else if(e instanceof Value.Long) {
+				doLongVal((Value.Long)e);
+			} else if(e instanceof Value.Float) {
+				doFloatVal((Value.Float)e);
+			} else if(e instanceof Value.Double) {
+				doDoubleVal((Value.Double)e);
+			} else if(e instanceof Value.String) {
+				doStringVal((Value.String)e);
+			} else if(e instanceof Value.Null) {
+				doNullVal((Value.Null)e);
+			} else if(e instanceof Value.TypedArray) {
+				doTypedArrayVal((Value.TypedArray)e);
+			} else if(e instanceof Value.Array) {
+				doArrayVal((Value.Array)e);
+			} else if(e instanceof Value.Class) {
+				doClassVal((Value.Class) e);
+			} else if(e instanceof Expr.UnresolvedVariable) {
+				doVariable((Expr.UnresolvedVariable)e);
+			} else if(e instanceof Expr.UnOp) {
+				doUnOp((Expr.UnOp)e);
+			} else if(e instanceof Expr.BinOp) {
+				doBinOp((Expr.BinOp)e);
+			} else if(e instanceof Expr.TernOp) {
+				doTernOp((Expr.TernOp)e);
+			} else if(e instanceof Expr.Cast) {
+				doCast((Expr.Cast)e);
+			} else if(e instanceof Expr.InstanceOf) {
+				doInstanceOf((Expr.InstanceOf)e);
+			} else if(e instanceof Expr.Invoke) {
+				doInvoke((Expr.Invoke) e);
+			} else if(e instanceof Expr.New) {
+				doNew((Expr.New) e);
+			} else if(e instanceof Expr.ArrayIndex) {
+				doArrayIndex((Expr.ArrayIndex) e);
+			} else if(e instanceof Expr.Deref) {
+				doDeref((Expr.Deref) e);
+			} else if(e instanceof Stmt.Assignment) {
+				// force brackets			
+				doAssignment((Stmt.Assignment) e);			
+			} else if(e != null) {
+				syntax_error("Invalid expression encountered: "
+						+ e.getClass(),e);
+			}
+		} catch(Exception ex) {
+			internal_error(e,ex);
 		}
 	}
 	
@@ -482,7 +494,7 @@ public class TypeResolution {
 		doExpression(e.index());
 	}
 	
-	protected void doNew(Expr.New e) {
+	protected void doNew(Expr.New e) throws ClassNotFoundException {
 		// First, figure out the type being created.		
 		Type t = substituteTypeVars(resolve(e.type()));			
 		e.type().attributes().add(t);	
@@ -510,12 +522,12 @@ public class TypeResolution {
 		}
 	}
 	
-	protected void doInstanceOf(Expr.InstanceOf e) {		
+	protected void doInstanceOf(Expr.InstanceOf e) throws ClassNotFoundException {		
 		e.rhs().attributes().add(substituteTypeVars(resolve(e.rhs())));
 		doExpression(e.lhs());
 	}
 	
-	protected void doCast(Expr.Cast e) {
+	protected void doCast(Expr.Cast e) throws ClassNotFoundException {
 		e.type().attributes().add(substituteTypeVars(resolve(e.type())));
 		doExpression(e.expr());
 	}
@@ -536,7 +548,7 @@ public class TypeResolution {
 	
 	protected void doNullVal(Value.Null e) {}
 	
-	protected void doTypedArrayVal(Value.TypedArray e) {
+	protected void doTypedArrayVal(Value.TypedArray e) throws ClassNotFoundException  {
 		e.type().attributes().add(substituteTypeVars(resolve(e.type())));
 		for(Expr v : e.values()) {
 			doExpression(v);
@@ -549,7 +561,7 @@ public class TypeResolution {
 		}
 	}
 		
-	protected void doClassVal(Value.Class e) {		
+	protected void doClassVal(Value.Class e) throws ClassNotFoundException  {		
 		e.value().attributes().add(substituteTypeVars(resolve(e.value())));
 	}
 	
@@ -580,7 +592,7 @@ public class TypeResolution {
 	 * @param file
 	 * @return
 	 */
-	protected jkit.jil.tree.Type resolve(jkit.java.tree.Type t) {
+	protected jkit.jil.tree.Type resolve(jkit.java.tree.Type t) throws ClassNotFoundException {
 		if(t instanceof jkit.java.tree.Type.Primitive) {
 			return resolve((jkit.java.tree.Type.Primitive)t);
 		} else if(t instanceof jkit.java.tree.Type.Clazz) {
@@ -598,7 +610,7 @@ public class TypeResolution {
 		return null;
 	}
 	
-	protected jkit.jil.tree.Type.Intersection resolve(jkit.java.tree.Type.Intersection pt) {
+	protected jkit.jil.tree.Type.Intersection resolve(jkit.java.tree.Type.Intersection pt) throws ClassNotFoundException {
 		ArrayList<jkit.jil.tree.Type.Reference> bounds = new ArrayList();
 		for(jkit.java.tree.Type.Reference b : pt.bounds()) {
 			bounds.add((Type.Reference) resolve(b));
@@ -628,17 +640,17 @@ public class TypeResolution {
 		}
 	}
 	
-	protected jkit.jil.tree.Type.Array resolve(jkit.java.tree.Type.Array t) {
+	protected jkit.jil.tree.Type.Array resolve(jkit.java.tree.Type.Array t) throws ClassNotFoundException {
 		return new jkit.jil.tree.Type.Array(resolve(t.element()));
 	}
 	
-	protected jkit.jil.tree.Type.Wildcard resolve(jkit.java.tree.Type.Wildcard t) {				
+	protected jkit.jil.tree.Type.Wildcard resolve(jkit.java.tree.Type.Wildcard t) throws ClassNotFoundException {				
 		 jkit.jil.tree.Type.Wildcard r = new jkit.jil.tree.Type.Wildcard((Type.Reference) resolve(t
 				.lowerBound()), (Type.Reference) resolve(t.upperBound()));		 
 		 return r;
 	}
 	
-	protected jkit.jil.tree.Type.Variable resolve(jkit.java.tree.Type.Variable t) {		
+	protected jkit.jil.tree.Type.Variable resolve(jkit.java.tree.Type.Variable t) throws ClassNotFoundException  {		
 		Type.Reference arg = null;
 		if(t.lowerBound() != null) {					
 			arg = (Type.Reference) resolve(t.lowerBound());
@@ -674,7 +686,8 @@ public class TypeResolution {
 	 *            determine the import list.
 	 * @return
 	 */
-	protected jkit.jil.tree.Type.Reference resolve(jkit.java.tree.Type.Clazz ct) {		
+	protected jkit.jil.tree.Type.Reference resolve(jkit.java.tree.Type.Clazz ct)
+			throws ClassNotFoundException {		
 		ArrayList<Pair<String,List<jkit.jil.tree.Type.Reference>>> ncomponents = new ArrayList();
 		String className = "";
 		String pkg = "";
@@ -719,38 +732,33 @@ public class TypeResolution {
 		// So, at this point, it seems there was no package information in the
 		// source code and, hence, we need to determine this from the CLASSPATH
 		// and the import list. There are two phases. 
-		
-		try {			
-			Type.Clazz r = loader.resolve(className,imports);
-			
-			// The following loop is required for two reasons:
-			//
-			// 1) we may not have full type information in the source code.
-			// 2) we may have generic type information in the source code which
-			// need to keep.
-			//
-			// For example, imagine a class Test, with inner class Inner<G>. The
-			// source code may include a reference "Inner<String>". Via resolve
-			// above, we'll determine the type to be "Test.Inner<G>". But, the
-			// actual type we want is "Test.Inner<String>". Therefore, the
-			// following loop combines all the information we have together to
-			// achieve this.
-			
-			List<Pair<String,List<jkit.jil.tree.Type.Reference>>> rcomponents = r.components();
-			for(int i=0;i!=r.components().size();++i) {
-				Pair<String,List<jkit.jil.tree.Type.Reference>> p = rcomponents.get(i); 
-				if(p.first().equals(ncomponents.get(i).first())) {
-					break;
-				} else {
-					ncomponents.add(i,p);
-				}
+
+		Type.Clazz r = loader.resolve(className,imports);
+
+		// The following loop is required for two reasons:
+		//
+		// 1) we may not have full type information in the source code.
+		// 2) we may have generic type information in the source code which
+		// need to keep.
+		//
+		// For example, imagine a class Test, with inner class Inner<G>. The
+		// source code may include a reference "Inner<String>". Via resolve
+		// above, we'll determine the type to be "Test.Inner<G>". But, the
+		// actual type we want is "Test.Inner<String>". Therefore, the
+		// following loop combines all the information we have together to
+		// achieve this.
+
+		List<Pair<String,List<jkit.jil.tree.Type.Reference>>> rcomponents = r.components();
+		for(int i=0;i!=r.components().size();++i) {
+			Pair<String,List<jkit.jil.tree.Type.Reference>> p = rcomponents.get(i); 
+			if(p.first().equals(ncomponents.get(i).first())) {
+				break;
+			} else {
+				ncomponents.add(i,p);
 			}
-			
-			return new jkit.jil.tree.Type.Clazz(r.pkg(),ncomponents);					
-		} catch(ClassNotFoundException e) {
-			syntax_error("unable to find class " + className,ct,e);
-			return null;
 		}
+
+		return new jkit.jil.tree.Type.Clazz(r.pkg(),ncomponents);					
 	}
 	
 	/**

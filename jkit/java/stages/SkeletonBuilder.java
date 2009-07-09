@@ -83,84 +83,85 @@ public class SkeletonBuilder {
 	protected void doDeclaration(Decl d, JilClass skeleton) {		
 		context.push(d);
 		
-		if(d instanceof Decl.JavaInterface) {
-			doInterface((Decl.JavaInterface)d, skeleton);
-		} else if(d instanceof Decl.JavaClass) {
-			doClass((Decl.JavaClass)d, skeleton);
-		} else if(d instanceof Decl.JavaMethod) {
-			doMethod((Decl.JavaMethod)d, skeleton);
-		} else if(d instanceof Decl.JavaField) {
-			doField((Decl.JavaField)d, skeleton);
-		} else if (d instanceof Decl.InitialiserBlock) {
-			doInitialiserBlock((Decl.InitialiserBlock) d, skeleton);
-		} else if (d instanceof Decl.StaticInitialiserBlock) {
-			doStaticInitialiserBlock((Decl.StaticInitialiserBlock) d, skeleton);
-		} else {
-			syntax_error("internal failure (unknown declaration \"" + d
-					+ "\" encountered)",d);
+		try {
+			if(d instanceof Decl.JavaInterface) {
+				doInterface((Decl.JavaInterface)d, skeleton);
+			} else if(d instanceof Decl.JavaClass) {
+				doClass((Decl.JavaClass)d, skeleton);
+			} else if(d instanceof Decl.JavaMethod) {
+				doMethod((Decl.JavaMethod)d, skeleton);
+			} else if(d instanceof Decl.JavaField) {
+				doField((Decl.JavaField)d, skeleton);
+			} else if (d instanceof Decl.InitialiserBlock) {
+				doInitialiserBlock((Decl.InitialiserBlock) d, skeleton);
+			} else if (d instanceof Decl.StaticInitialiserBlock) {
+				doStaticInitialiserBlock((Decl.StaticInitialiserBlock) d, skeleton);
+			} else {
+				syntax_error("internal failure (unknown declaration \"" + d
+						+ "\" encountered)",d);
+			}
+		} catch(Exception ex) {
+			internal_error(d,ex);
 		}
 		
 		context.pop();		
 	}
 			
-	protected void doInterface(Decl.JavaInterface d, JilClass skeleton) {
+	protected void doInterface(Decl.JavaInterface d, JilClass skeleton) throws ClassNotFoundException {
 		doClass(d, skeleton);
 	}
 	
-	protected void doClass(Decl.JavaClass c, JilClass skeleton) {
+	protected void doClass(Decl.JavaClass c, JilClass skeleton) throws ClassNotFoundException {
 		Type.Clazz type = (Type.Clazz) c.attribute(Type.class);
-		try {
-			// We, need to update the skeleton so that any methods and fields
-			// discovered below this are attributed to this class!			
-			skeleton = (JilClass) loader.loadClass(type);	
-			
-			// Next, we need to update as much information about the skeleton as
-			// we can.
-			Type.Clazz superClass = new Type.Clazz("java.lang","Object");
-			
-			if(c.superclass() != null) {
-				// Observe, after type resolution, this will give the correct
-				// superclass type. However, prior to type resolution it will just
-				// return null.
-				superClass = (Type.Clazz) c.superclass().attribute(Type.class);
-			}			
-			
-			ArrayList<Type.Clazz> interfaces = new ArrayList();
-			for(jkit.java.tree.Type.Clazz i : c.interfaces()) {
-				Type.Clazz t = (Type.Clazz) i.attribute(Type.class);
-				if(t != null) {
-					interfaces.add(t);
-				}
+		
+		// We, need to update the skeleton so that any methods and fields
+		// discovered below this are attributed to this class!
+		skeleton = (JilClass) loader.loadClass(type);
+
+		// Next, we need to update as much information about the skeleton as
+		// we can.
+		Type.Clazz superClass = new Type.Clazz("java.lang", "Object");
+
+		if (c.superclass() != null) {
+			// Observe, after type resolution, this will give the correct
+			// superclass type. However, prior to type resolution it will just
+			// return null.
+			superClass = (Type.Clazz) c.superclass().attribute(Type.class);
+		}
+
+		ArrayList<Type.Clazz> interfaces = new ArrayList();
+		for (jkit.java.tree.Type.Clazz i : c.interfaces()) {
+			Type.Clazz t = (Type.Clazz) i.attribute(Type.class);
+			if (t != null) {
+				interfaces.add(t);
 			}
-			
-			skeleton.setType(type);
-			skeleton.setSuperClass(superClass);
-			skeleton.setInterfaces(interfaces);
-			
-			// ok, now update information for declarations in this skeleton.
-			for(Decl d : c.declarations()) {
-				doDeclaration(d, skeleton);
-			}		
-			
-			// Now, deal with some special cases when this is not actually a
-			// class per se			
-			if(c instanceof Decl.JavaEnum) {
-				doEnum((Decl.JavaEnum)c,skeleton);
-			} else if (!skeleton.isInterface()
-					&& skeleton.methods(skeleton.name()).isEmpty()) {
-				// if we get here, then no constructor has been provided.
-				// Therefore, must add the default constructor.
-				SourceLocation loc = (SourceLocation) c.attribute(SourceLocation.class);
-				Decl.JavaMethod m = createDefaultConstructor(skeleton.name(),loc);
-				c.declarations().add(m);	
-								
-				// Finally, add the constructor to the skeleton.
-				doDeclaration(m,skeleton);				
-			}
-		} catch(ClassNotFoundException cne) {
-			syntax_error("internal failure (skeleton for \"" + type
-					+ "\" not found)", c, cne);
-		}		
+		}
+
+		skeleton.setType(type);
+		skeleton.setSuperClass(superClass);
+		skeleton.setInterfaces(interfaces);
+
+		// ok, now update information for declarations in this skeleton.
+		for (Decl d : c.declarations()) {
+			doDeclaration(d, skeleton);
+		}
+
+		// Now, deal with some special cases when this is not actually a
+		// class per se
+		if (c instanceof Decl.JavaEnum) {
+			doEnum((Decl.JavaEnum) c, skeleton);
+		} else if (!skeleton.isInterface()
+				&& skeleton.methods(skeleton.name()).isEmpty()) {
+			// if we get here, then no constructor has been provided.
+			// Therefore, must add the default constructor.
+			SourceLocation loc = (SourceLocation) c
+					.attribute(SourceLocation.class);
+			Decl.JavaMethod m = createDefaultConstructor(skeleton.name(), loc);
+			c.declarations().add(m);
+
+			// Finally, add the constructor to the skeleton.
+			doDeclaration(m, skeleton);
+		}
 	}
 
 	protected void doEnum(Decl.JavaEnum ec, JilClass skeleton) {	
@@ -281,52 +282,56 @@ public class SkeletonBuilder {
 	}
 	
 	protected void doStatement(Stmt e, JilClass skeleton) {
-		if(e instanceof Stmt.SynchronisedBlock) {
-			doSynchronisedBlock((Stmt.SynchronisedBlock)e, skeleton);
-		} else if(e instanceof Stmt.TryCatchBlock) {
-			doTryCatchBlock((Stmt.TryCatchBlock)e, skeleton);
-		} else if(e instanceof Stmt.Block) {
-			doBlock((Stmt.Block)e, skeleton);
-		} else if(e instanceof Stmt.VarDef) {
-			doVarDef((Stmt.VarDef) e, skeleton);
-		} else if(e instanceof Stmt.Assignment) {
-			doAssignment((Stmt.Assignment) e, skeleton);
-		} else if(e instanceof Stmt.Return) {
-			doReturn((Stmt.Return) e, skeleton);
-		} else if(e instanceof Stmt.Throw) {
-			doThrow((Stmt.Throw) e, skeleton);
-		} else if(e instanceof Stmt.Assert) {
-			doAssert((Stmt.Assert) e, skeleton);
-		} else if(e instanceof Stmt.Break) {
-			doBreak((Stmt.Break) e, skeleton);
-		} else if(e instanceof Stmt.Continue) {
-			doContinue((Stmt.Continue) e, skeleton);
-		} else if(e instanceof Stmt.Label) {
-			doLabel((Stmt.Label) e, skeleton);
-		} else if(e instanceof Stmt.If) {
-			doIf((Stmt.If) e, skeleton);
-		} else if(e instanceof Stmt.For) {
-			doFor((Stmt.For) e, skeleton);
-		} else if(e instanceof Stmt.ForEach) {
-			doForEach((Stmt.ForEach) e, skeleton);
-		} else if(e instanceof Stmt.While) {
-			doWhile((Stmt.While) e, skeleton);
-		} else if(e instanceof Stmt.DoWhile) {
-			doDoWhile((Stmt.DoWhile) e, skeleton);
-		} else if(e instanceof Stmt.Switch) {
-			doSwitch((Stmt.Switch) e, skeleton);
-		} else if(e instanceof Expr.Invoke) {
-			doInvoke((Expr.Invoke) e, skeleton);
-		} else if(e instanceof Expr.New) {
-			doNew((Expr.New) e, skeleton);
-		} else if(e instanceof Decl.JavaClass) {
-			doClass((Decl.JavaClass)e, skeleton);
-		} else if(e instanceof Stmt.PrePostIncDec) {
-			doExpression((Stmt.PrePostIncDec)e, skeleton);
-		} else if(e != null) {
-			syntax_error("Internal failure (invalid statement \""
-					+ e.getClass() + "\" encountered)", e);			
-		}		
+		try {
+			if(e instanceof Stmt.SynchronisedBlock) {
+				doSynchronisedBlock((Stmt.SynchronisedBlock)e, skeleton);
+			} else if(e instanceof Stmt.TryCatchBlock) {
+				doTryCatchBlock((Stmt.TryCatchBlock)e, skeleton);
+			} else if(e instanceof Stmt.Block) {
+				doBlock((Stmt.Block)e, skeleton);
+			} else if(e instanceof Stmt.VarDef) {
+				doVarDef((Stmt.VarDef) e, skeleton);
+			} else if(e instanceof Stmt.Assignment) {
+				doAssignment((Stmt.Assignment) e, skeleton);
+			} else if(e instanceof Stmt.Return) {
+				doReturn((Stmt.Return) e, skeleton);
+			} else if(e instanceof Stmt.Throw) {
+				doThrow((Stmt.Throw) e, skeleton);
+			} else if(e instanceof Stmt.Assert) {
+				doAssert((Stmt.Assert) e, skeleton);
+			} else if(e instanceof Stmt.Break) {
+				doBreak((Stmt.Break) e, skeleton);
+			} else if(e instanceof Stmt.Continue) {
+				doContinue((Stmt.Continue) e, skeleton);
+			} else if(e instanceof Stmt.Label) {
+				doLabel((Stmt.Label) e, skeleton);
+			} else if(e instanceof Stmt.If) {
+				doIf((Stmt.If) e, skeleton);
+			} else if(e instanceof Stmt.For) {
+				doFor((Stmt.For) e, skeleton);
+			} else if(e instanceof Stmt.ForEach) {
+				doForEach((Stmt.ForEach) e, skeleton);
+			} else if(e instanceof Stmt.While) {
+				doWhile((Stmt.While) e, skeleton);
+			} else if(e instanceof Stmt.DoWhile) {
+				doDoWhile((Stmt.DoWhile) e, skeleton);
+			} else if(e instanceof Stmt.Switch) {
+				doSwitch((Stmt.Switch) e, skeleton);
+			} else if(e instanceof Expr.Invoke) {
+				doInvoke((Expr.Invoke) e, skeleton);
+			} else if(e instanceof Expr.New) {
+				doNew((Expr.New) e, skeleton);
+			} else if(e instanceof Decl.JavaClass) {
+				doClass((Decl.JavaClass)e, skeleton);
+			} else if(e instanceof Stmt.PrePostIncDec) {
+				doExpression((Stmt.PrePostIncDec)e, skeleton);
+			} else if(e != null) {
+				syntax_error("Internal failure (invalid statement \""
+						+ e.getClass() + "\" encountered)", e);			
+			}		
+		} catch(Exception ex) {
+			internal_error(e,ex);
+		}
 	}
 	
 	protected void doBlock(Stmt.Block block, JilClass skeleton) {
@@ -429,56 +434,60 @@ public class SkeletonBuilder {
 	}
 	
 	protected void doExpression(Expr e, JilClass skeleton) {	
-		if(e instanceof Value.Bool) {
-			doBoolVal((Value.Bool)e, skeleton);
-		} else if(e instanceof Value.Char) {
-			doCharVal((Value.Char)e, skeleton);
-		} else if(e instanceof Value.Int) {
-			doIntVal((Value.Int)e, skeleton);
-		} else if(e instanceof Value.Long) {
-			doLongVal((Value.Long)e, skeleton);
-		} else if(e instanceof Value.Float) {
-			doFloatVal((Value.Float)e, skeleton);
-		} else if(e instanceof Value.Double) {
-			doDoubleVal((Value.Double)e, skeleton);
-		} else if(e instanceof Value.String) {
-			doStringVal((Value.String)e, skeleton);
-		} else if(e instanceof Value.Null) {
-			doNullVal((Value.Null)e, skeleton);
-		} else if(e instanceof Value.TypedArray) {
-			doTypedArrayVal((Value.TypedArray)e, skeleton);
-		} else if(e instanceof Value.Array) {
-			doArrayVal((Value.Array)e, skeleton);
-		} else if(e instanceof Value.Class) {
-			doClassVal((Value.Class) e, skeleton);
-		} else if(e instanceof Expr.UnresolvedVariable) {
-			doUnresolvedVariable((Expr.UnresolvedVariable)e, skeleton);
-		} else if(e instanceof Expr.ClassVariable) {
-			doClassVariable((Expr.ClassVariable)e, skeleton);
-		} else if(e instanceof Expr.UnOp) {
-			doUnOp((Expr.UnOp)e, skeleton);
-		} else if(e instanceof Expr.BinOp) {
-			doBinOp((Expr.BinOp)e, skeleton);
-		} else if(e instanceof Expr.TernOp) {
-			doTernOp((Expr.TernOp)e, skeleton);
-		} else if(e instanceof Expr.Cast) {
-			doCast((Expr.Cast)e, skeleton);
-		} else if(e instanceof Expr.InstanceOf) {
-			doInstanceOf((Expr.InstanceOf)e, skeleton);
-		} else if(e instanceof Expr.Invoke) {
-			doInvoke((Expr.Invoke) e, skeleton);
-		} else if(e instanceof Expr.New) {
-			doNew((Expr.New) e, skeleton);
-		} else if(e instanceof Expr.ArrayIndex) {
-			doArrayIndex((Expr.ArrayIndex) e, skeleton);
-		} else if(e instanceof Expr.Deref) {
-			doDeref((Expr.Deref) e, skeleton);
-		} else if(e instanceof Stmt.Assignment) {
-			// force brackets			
-			doAssignment((Stmt.Assignment) e, skeleton);			
-		} else if(e != null) {
-			syntax_error("Internal failure (invalid expression \""
-					+ e.getClass() + "\" encountered)", e);			
+		try {
+			if(e instanceof Value.Bool) {
+				doBoolVal((Value.Bool)e, skeleton);
+			} else if(e instanceof Value.Char) {
+				doCharVal((Value.Char)e, skeleton);
+			} else if(e instanceof Value.Int) {
+				doIntVal((Value.Int)e, skeleton);
+			} else if(e instanceof Value.Long) {
+				doLongVal((Value.Long)e, skeleton);
+			} else if(e instanceof Value.Float) {
+				doFloatVal((Value.Float)e, skeleton);
+			} else if(e instanceof Value.Double) {
+				doDoubleVal((Value.Double)e, skeleton);
+			} else if(e instanceof Value.String) {
+				doStringVal((Value.String)e, skeleton);
+			} else if(e instanceof Value.Null) {
+				doNullVal((Value.Null)e, skeleton);
+			} else if(e instanceof Value.TypedArray) {
+				doTypedArrayVal((Value.TypedArray)e, skeleton);
+			} else if(e instanceof Value.Array) {
+				doArrayVal((Value.Array)e, skeleton);
+			} else if(e instanceof Value.Class) {
+				doClassVal((Value.Class) e, skeleton);
+			} else if(e instanceof Expr.UnresolvedVariable) {
+				doUnresolvedVariable((Expr.UnresolvedVariable)e, skeleton);
+			} else if(e instanceof Expr.ClassVariable) {
+				doClassVariable((Expr.ClassVariable)e, skeleton);
+			} else if(e instanceof Expr.UnOp) {
+				doUnOp((Expr.UnOp)e, skeleton);
+			} else if(e instanceof Expr.BinOp) {
+				doBinOp((Expr.BinOp)e, skeleton);
+			} else if(e instanceof Expr.TernOp) {
+				doTernOp((Expr.TernOp)e, skeleton);
+			} else if(e instanceof Expr.Cast) {
+				doCast((Expr.Cast)e, skeleton);
+			} else if(e instanceof Expr.InstanceOf) {
+				doInstanceOf((Expr.InstanceOf)e, skeleton);
+			} else if(e instanceof Expr.Invoke) {
+				doInvoke((Expr.Invoke) e, skeleton);
+			} else if(e instanceof Expr.New) {
+				doNew((Expr.New) e, skeleton);
+			} else if(e instanceof Expr.ArrayIndex) {
+				doArrayIndex((Expr.ArrayIndex) e, skeleton);
+			} else if(e instanceof Expr.Deref) {
+				doDeref((Expr.Deref) e, skeleton);
+			} else if(e instanceof Stmt.Assignment) {
+				// force brackets			
+				doAssignment((Stmt.Assignment) e, skeleton);			
+			} else if(e != null) {
+				syntax_error("Internal failure (invalid expression \""
+						+ e.getClass() + "\" encountered)", e);			
+			}
+		} catch(Exception ex) {
+			internal_error(e,ex);
 		}
 	}
 	
@@ -491,7 +500,7 @@ public class SkeletonBuilder {
 		doExpression(e.index(), skeleton);		
 	}
 	
-	protected void doNew(Expr.New e, JilClass skeleton) {
+	protected void doNew(Expr.New e, JilClass skeleton) throws ClassNotFoundException {
 		// Second, recurse through any parameters supplied ...
 		for(Expr p : e.parameters()) {
 			doExpression(p, skeleton);
@@ -504,52 +513,46 @@ public class SkeletonBuilder {
 			
 			Type.Clazz superType = (Type.Clazz) e.type().attribute(Type.class);
 			
-			try {								
+			
 				Clazz superClazz = (Clazz) loader.loadClass(superType);
-				String name = Integer.toString(++anonymousClassCount);
-				
-				ArrayList<Pair<String, List<Type.Reference>>> ncomponents = new ArrayList(
-						skeleton.type().components());
-				ncomponents.add(new Pair(name,
-						new ArrayList()));
-				Type.Clazz myType = new Type.Clazz(skeleton.type().pkg(),
-						ncomponents);											
-				
-				ArrayList<Modifier> modifiers = new ArrayList<Modifier>();
-				
-				if(inStaticContext()) {
-					modifiers.add(Modifier.ACC_STATIC);
-				}
-				
-				if (superClazz.isInterface()) {
-					// In this case, we're extending from an interface rather
-					// than a super class.
-					ArrayList<Type.Clazz> interfaces = new ArrayList<Type.Clazz>();
-					interfaces.add(superType);										
-					
-					skeleton = new JilClass(myType, modifiers,
-							new Type.Clazz("java.lang", "Object"), interfaces,
-							new ArrayList<Type.Clazz>(),
-							new ArrayList<JilField>(),
-							new ArrayList<JilMethod>(), e.attributes());									
-				} else {
-					// In this case, we're extending directly from a super
-					// class.
-					skeleton = new JilClass(myType, modifiers,
-							superType, new ArrayList<Type.Clazz>(),
-							new ArrayList<Type.Clazz>(),
-							new ArrayList<JilField>(),
-							new ArrayList<JilMethod>(), e.attributes());
-				}																				
-				
-				skeletons.add(skeleton);
-				loader.register(skeleton);
+			String name = Integer.toString(++anonymousClassCount);
 
-				for(Decl d : e.declarations()) {
-					doDeclaration(d, skeleton);
-				}								
-			} catch (ClassNotFoundException cne) {
-				syntax_error("Unable to load class " + superType, e, cne);
+			ArrayList<Pair<String, List<Type.Reference>>> ncomponents = new ArrayList(
+					skeleton.type().components());
+			ncomponents.add(new Pair(name, new ArrayList()));
+			Type.Clazz myType = new Type.Clazz(skeleton.type().pkg(),
+					ncomponents);
+
+			ArrayList<Modifier> modifiers = new ArrayList<Modifier>();
+
+			if (inStaticContext()) {
+				modifiers.add(Modifier.ACC_STATIC);
+			}
+
+			if (superClazz.isInterface()) {
+				// In this case, we're extending from an interface rather
+				// than a super class.
+				ArrayList<Type.Clazz> interfaces = new ArrayList<Type.Clazz>();
+				interfaces.add(superType);
+
+				skeleton = new JilClass(myType, modifiers, new Type.Clazz(
+						"java.lang", "Object"), interfaces,
+						new ArrayList<Type.Clazz>(), new ArrayList<JilField>(),
+						new ArrayList<JilMethod>(), e.attributes());
+			} else {
+				// In this case, we're extending directly from a super
+				// class.
+				skeleton = new JilClass(myType, modifiers, superType,
+						new ArrayList<Type.Clazz>(),
+						new ArrayList<Type.Clazz>(), new ArrayList<JilField>(),
+						new ArrayList<JilMethod>(), e.attributes());
+			}
+
+			skeletons.add(skeleton);
+			loader.register(skeleton);
+
+			for (Decl d : e.declarations()) {
+				doDeclaration(d, skeleton);
 			}
 		}
 	}

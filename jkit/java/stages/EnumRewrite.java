@@ -21,7 +21,7 @@
 
 package jkit.java.stages;
 
-import static jkit.compiler.SyntaxError.syntax_error;
+import static jkit.compiler.SyntaxError.internal_error;
 
 import java.util.*;
 
@@ -57,63 +57,62 @@ public class EnumRewrite {
 	}
 	
 	protected void doDeclaration(Decl d) {
-		if(d instanceof JavaInterface) {
-			doInterface((JavaInterface)d);
-		} else if(d instanceof JavaEnum) {
-			doEnum((JavaEnum)d);
-		} else if(d instanceof JavaClass) {
-			doClass((JavaClass)d);
-		} else if(d instanceof JavaMethod) {
-			doMethod((JavaMethod)d);
-		} else if(d instanceof JavaField) {
-			doField((JavaField)d);
-		} else if (d instanceof Decl.InitialiserBlock) {
-			doInitialiserBlock((Decl.InitialiserBlock) d);
-		} else if (d instanceof Decl.StaticInitialiserBlock) {
-			doStaticInitialiserBlock((Decl.StaticInitialiserBlock) d);
-		} else {
-			syntax_error("internal failure (unknown declaration \"" + d
-					+ "\" encountered)",d);			
-		}
+		try {
+			if(d instanceof JavaInterface) {
+				doInterface((JavaInterface)d);
+			} else if(d instanceof JavaEnum) {
+				doEnum((JavaEnum)d);
+			} else if(d instanceof JavaClass) {
+				doClass((JavaClass)d);
+			} else if(d instanceof JavaMethod) {
+				doMethod((JavaMethod)d);
+			} else if(d instanceof JavaField) {
+				doField((JavaField)d);
+			} else if (d instanceof Decl.InitialiserBlock) {
+				doInitialiserBlock((Decl.InitialiserBlock) d);
+			} else if (d instanceof Decl.StaticInitialiserBlock) {
+				doStaticInitialiserBlock((Decl.StaticInitialiserBlock) d);
+			} else {
+				internal_error("unknown declaration \"" + d
+							+ "\" encountered",d);	
+			}
+		} catch(Exception ex) {
+			internal_error(d, ex);
+		}		
+						
 	}
 	
-	protected void doEnum(Decl.JavaEnum ec) {	
-		Type.Clazz type = (Type.Clazz) ec.attribute(Type.Clazz.class);
-		try {
-			JilClass skeleton = (JilClass) loader.loadClass(type);
+	protected void doEnum(Decl.JavaEnum ec) throws ClassNotFoundException {	
+		Type.Clazz type = (Type.Clazz) ec.attribute(Type.Clazz.class);		
+		JilClass skeleton = (JilClass) loader.loadClass(type);
 
-			// First, add the $VALUES field
-			List<Modifier> modifiers = new ArrayList<Modifier>();
-			modifiers.add(Modifier.ACC_PRIVATE);
-			modifiers.add(Modifier.ACC_STATIC);
-			modifiers.add(Modifier.ACC_FINAL);
+		// First, add the $VALUES field
+		List<Modifier> modifiers = new ArrayList<Modifier>();
+		modifiers.add(Modifier.ACC_PRIVATE);
+		modifiers.add(Modifier.ACC_STATIC);
+		modifiers.add(Modifier.ACC_FINAL);
 
-			skeleton.fields()
-			.add(
-					new JilField("$VALUES", new Type.Array(type),
-							modifiers));
+		skeleton.fields()
+		.add(
+				new JilField("$VALUES", new Type.Array(type),
+						modifiers));
 
-			// Second, create necessary public methods.
-			Decl.JavaMethod values = createValuesMethod(ec,type);
-			Decl.JavaMethod valueOf = createValueOfMethod(ec,type);			
-			ec.declarations().add(values);
-			ec.declarations().add(valueOf);
-			
-			// Third, create the static initialiser
-			Decl.StaticInitialiserBlock init = createStaticInitialiser(ec,type);
-			ec.declarations().add(init);
-			
-			// Finally, augment the constructor(s) appropriately.
-			if(skeleton.methods(ec.name()).isEmpty()) {
-				createDefaultConstructor(ec,skeleton);
-			} else {
-				augmentConstructors(ec,skeleton);
-			}
-			
-		} catch(ClassNotFoundException cne) {
-			syntax_error("internal failure (skeleton for \"" + type
-					+ "\" not found)", ec, cne);
-		}		
+		// Second, create necessary public methods.
+		Decl.JavaMethod values = createValuesMethod(ec,type);
+		Decl.JavaMethod valueOf = createValueOfMethod(ec,type);			
+		ec.declarations().add(values);
+		ec.declarations().add(valueOf);
+
+		// Third, create the static initialiser
+		Decl.StaticInitialiserBlock init = createStaticInitialiser(ec,type);
+		ec.declarations().add(init);
+
+		// Finally, augment the constructor(s) appropriately.
+		if(skeleton.methods(ec.name()).isEmpty()) {
+			createDefaultConstructor(ec,skeleton);
+		} else {
+			augmentConstructors(ec,skeleton);
+		}
 	}
 	
 	protected void doInterface(JavaInterface d) {
@@ -192,7 +191,7 @@ public class EnumRewrite {
 		} else if(e instanceof Stmt.PrePostIncDec) {
 			doExpression((Stmt.PrePostIncDec)e);
 		} else if(e != null) {
-			syntax_error("Invalid statement encountered: "
+			internal_error("invalid statement encountered: "
 					+ e.getClass(),e);			
 		}				
 	}
@@ -296,64 +295,68 @@ public class EnumRewrite {
 	}
 	
 	protected Expr doExpression(Expr e) {	
-		if(e instanceof Value.Bool) {
-			return doBoolVal((Value.Bool)e);
-		} else if(e instanceof Value.Byte) {
-			return doByteVal((Value.Byte)e);
-		} else if(e instanceof Value.Char) {
-			return doCharVal((Value.Char)e);
-		} else if(e instanceof Value.Short) {
-			return doShortVal((Value.Short)e);
-		} else if(e instanceof Value.Int) {
-			return doIntVal((Value.Int)e);
-		} else if(e instanceof Value.Long) {
-			return doLongVal((Value.Long)e);
-		} else if(e instanceof Value.Float) {
-			return doFloatVal((Value.Float)e);
-		} else if(e instanceof Value.Double) {
-			return doDoubleVal((Value.Double)e);
-		} else if(e instanceof Value.String) {
-			return doStringVal((Value.String)e);
-		} else if(e instanceof Value.Null) {
-			return doNullVal((Value.Null)e);
-		} else if(e instanceof Value.TypedArray) {
-			return doTypedArrayVal((Value.TypedArray)e);
-		} else if(e instanceof Value.Array) {
-			return doArrayVal((Value.Array)e);
-		} else if(e instanceof Value.Class) {
-			return doClassVal((Value.Class) e);
-		} else if(e instanceof Expr.LocalVariable) {
-			return doLocalVariable((Expr.LocalVariable)e);
-		} else if(e instanceof Expr.NonLocalVariable) {
-			return doNonLocalVariable((Expr.NonLocalVariable)e);
-		} else if(e instanceof Expr.ClassVariable) {
-			return doClassVariable((Expr.ClassVariable)e);
-		} else if(e instanceof Expr.UnOp) {
-			return doUnOp((Expr.UnOp)e);
-		} else if(e instanceof Expr.BinOp) {
-			return doBinOp((Expr.BinOp)e);
-		} else if(e instanceof Expr.TernOp) {
-			return doTernOp((Expr.TernOp)e);
-		} else if(e instanceof Expr.Cast) {
-			return doCast((Expr.Cast)e);
-		} else if(e instanceof Expr.Convert) {
-			return doConvert((Expr.Convert)e);
-		} else if(e instanceof Expr.InstanceOf) {
-			return doInstanceOf((Expr.InstanceOf)e);
-		} else if(e instanceof Expr.Invoke) {
-			return doInvoke((Expr.Invoke) e);
-		} else if(e instanceof Expr.New) {
-			return doNew((Expr.New) e);
-		} else if(e instanceof Expr.ArrayIndex) {
-			return doArrayIndex((Expr.ArrayIndex) e);
-		} else if(e instanceof Expr.Deref) {
-			return doDeref((Expr.Deref) e);
-		} else if(e instanceof Stmt.Assignment) {
-			// force brackets			
-			return doAssignment((Stmt.Assignment) e);			
-		} else if(e != null) {
-			syntax_error("Invalid expression encountered: "
-					+ e.getClass(),e);
+		try {
+			if(e instanceof Value.Bool) {
+				return doBoolVal((Value.Bool)e);
+			} else if(e instanceof Value.Byte) {
+				return doByteVal((Value.Byte)e);
+			} else if(e instanceof Value.Char) {
+				return doCharVal((Value.Char)e);
+			} else if(e instanceof Value.Short) {
+				return doShortVal((Value.Short)e);
+			} else if(e instanceof Value.Int) {
+				return doIntVal((Value.Int)e);
+			} else if(e instanceof Value.Long) {
+				return doLongVal((Value.Long)e);
+			} else if(e instanceof Value.Float) {
+				return doFloatVal((Value.Float)e);
+			} else if(e instanceof Value.Double) {
+				return doDoubleVal((Value.Double)e);
+			} else if(e instanceof Value.String) {
+				return doStringVal((Value.String)e);
+			} else if(e instanceof Value.Null) {
+				return doNullVal((Value.Null)e);
+			} else if(e instanceof Value.TypedArray) {
+				return doTypedArrayVal((Value.TypedArray)e);
+			} else if(e instanceof Value.Array) {
+				return doArrayVal((Value.Array)e);
+			} else if(e instanceof Value.Class) {
+				return doClassVal((Value.Class) e);
+			} else if(e instanceof Expr.LocalVariable) {
+				return doLocalVariable((Expr.LocalVariable)e);
+			} else if(e instanceof Expr.NonLocalVariable) {
+				return doNonLocalVariable((Expr.NonLocalVariable)e);
+			} else if(e instanceof Expr.ClassVariable) {
+				return doClassVariable((Expr.ClassVariable)e);
+			} else if(e instanceof Expr.UnOp) {
+				return doUnOp((Expr.UnOp)e);
+			} else if(e instanceof Expr.BinOp) {
+				return doBinOp((Expr.BinOp)e);
+			} else if(e instanceof Expr.TernOp) {
+				return doTernOp((Expr.TernOp)e);
+			} else if(e instanceof Expr.Cast) {
+				return doCast((Expr.Cast)e);
+			} else if(e instanceof Expr.Convert) {
+				return doConvert((Expr.Convert)e);
+			} else if(e instanceof Expr.InstanceOf) {
+				return doInstanceOf((Expr.InstanceOf)e);
+			} else if(e instanceof Expr.Invoke) {
+				return doInvoke((Expr.Invoke) e);
+			} else if(e instanceof Expr.New) {
+				return doNew((Expr.New) e);
+			} else if(e instanceof Expr.ArrayIndex) {
+				return doArrayIndex((Expr.ArrayIndex) e);
+			} else if(e instanceof Expr.Deref) {
+				return doDeref((Expr.Deref) e);
+			} else if(e instanceof Stmt.Assignment) {
+				// force brackets			
+				return doAssignment((Stmt.Assignment) e);			
+			} else if(e != null) {
+				internal_error("invalid expression encountered: "
+						+ e.getClass(),e);
+			}
+		} catch(Exception ex) {
+			internal_error(e,ex);
 		}
 		return null;
 	}

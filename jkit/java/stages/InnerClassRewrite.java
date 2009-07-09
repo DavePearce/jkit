@@ -21,7 +21,7 @@
 
 package jkit.java.stages;
 
-import static jkit.compiler.SyntaxError.syntax_error;
+import static jkit.compiler.SyntaxError.internal_error;
 
 import java.util.*;
 
@@ -139,49 +139,49 @@ public class InnerClassRewrite {
 	}
 	
 	protected void doDeclaration(Decl d) {
-		if(d instanceof JavaInterface) {
-			doInterface((JavaInterface)d);
-		} else if(d instanceof JavaClass) {
-			doClass((JavaClass)d);
-		} else if(d instanceof JavaMethod) {
-			doMethod((JavaMethod)d);
-		} else if(d instanceof JavaField) {
-			doField((JavaField)d);
-		} else if (d instanceof Decl.InitialiserBlock) {
-			doInitialiserBlock((Decl.InitialiserBlock) d);
-		} else if (d instanceof Decl.StaticInitialiserBlock) {
-			doStaticInitialiserBlock((Decl.StaticInitialiserBlock) d);
-		} else {
-			syntax_error("internal failure (unknown declaration \"" + d
-					+ "\" encountered)",d);
-		}
+		try {
+			if(d instanceof JavaInterface) {
+				doInterface((JavaInterface)d);
+			} else if(d instanceof JavaClass) {
+				doClass((JavaClass)d);
+			} else if(d instanceof JavaMethod) {
+				doMethod((JavaMethod)d);
+			} else if(d instanceof JavaField) {
+				doField((JavaField)d);
+			} else if (d instanceof Decl.InitialiserBlock) {
+				doInitialiserBlock((Decl.InitialiserBlock) d);
+			} else if (d instanceof Decl.StaticInitialiserBlock) {
+				doStaticInitialiserBlock((Decl.StaticInitialiserBlock) d);
+			} else {
+				internal_error("unknown declaration \"" + d + "\" encountered", d);
+			}
+		} catch(Exception ex) {
+			internal_error(d,ex);
+		}								
 	}
 	
-	protected void doInterface(JavaInterface d) {
+	protected void doInterface(JavaInterface d) throws ClassNotFoundException {
 		doClass(d);
 	}
 	
-	protected void doClass(JavaClass c) {
+	protected void doClass(JavaClass c) throws ClassNotFoundException {
 		Type.Clazz type = (Type.Clazz) c.attribute(Type.class);
 		enclosingClasses.add(type);		
 		
 		for(Decl d : c.declarations()) {
 			doDeclaration(d);
 		}
-		try {
-			if (type.components().size() > 1 && !c.isStatic()
-					&& !(c instanceof JavaInterface)
-					&& !(c instanceof JavaEnum)) {
-				// Ok, we've found a non-static inner class here. Therefore, we
-				// need
-				// to rewrite all constructors to accept a parent pointer.
+		
+		if (type.components().size() > 1 && !c.isStatic()
+				&& !(c instanceof JavaInterface)
+				&& !(c instanceof JavaEnum)) {
+			// Ok, we've found a non-static inner class here. Therefore, we
+			// need
+			// to rewrite all constructors to accept a parent pointer.
 
-				addParentPtr(c, type, Types.parentType(type));
+			addParentPtr(c, type, Types.parentType(type));
 
-			} 
-		} catch(ClassNotFoundException cne) {
-			syntax_error(cne.getMessage(),c,cne);
-		}
+		} 
 		
 		enclosingClasses.pop();
 	}
@@ -209,52 +209,57 @@ public class InnerClassRewrite {
 	}
 	
 	protected Stmt doStatement(Stmt e) {
-		if(e instanceof Stmt.SynchronisedBlock) {
-			doSynchronisedBlock((Stmt.SynchronisedBlock)e);
-		} else if(e instanceof Stmt.TryCatchBlock) {
-			doTryCatchBlock((Stmt.TryCatchBlock)e);
-		} else if(e instanceof Stmt.Block) {
-			doBlock((Stmt.Block)e);
-		} else if(e instanceof Stmt.VarDef) {
-			doVarDef((Stmt.VarDef) e);
-		} else if(e instanceof Stmt.Assignment) {
-			return (Stmt) doAssignment((Stmt.Assignment) e);
-		} else if(e instanceof Stmt.Return) {
-			doReturn((Stmt.Return) e);
-		} else if(e instanceof Stmt.Throw) {
-			doThrow((Stmt.Throw) e);
-		} else if(e instanceof Stmt.Assert) {
-			doAssert((Stmt.Assert) e);
-		} else if(e instanceof Stmt.Break) {
-			doBreak((Stmt.Break) e);
-		} else if(e instanceof Stmt.Continue) {
-			doContinue((Stmt.Continue) e);
-		} else if(e instanceof Stmt.Label) {
-			doLabel((Stmt.Label) e);
-		} else if(e instanceof Stmt.If) {
-			doIf((Stmt.If) e);
-		} else if(e instanceof Stmt.For) {
-			doFor((Stmt.For) e);
-		} else if(e instanceof Stmt.ForEach) {
-			doForEach((Stmt.ForEach) e);
-		} else if(e instanceof Stmt.While) {
-			doWhile((Stmt.While) e);
-		} else if(e instanceof Stmt.DoWhile) {
-			doDoWhile((Stmt.DoWhile) e);
-		} else if(e instanceof Stmt.Switch) {
-			doSwitch((Stmt.Switch) e);
-		} else if(e instanceof Expr.Invoke) {
-			doInvoke((Expr.Invoke) e);
-		} else if(e instanceof Expr.New) {
-			doNew((Expr.New) e);
-		} else if(e instanceof Decl.JavaClass) {
-			doClass((Decl.JavaClass)e);
-		} else if(e instanceof Stmt.PrePostIncDec) {
-			doExpression((Stmt.PrePostIncDec)e);
-		} else if(e != null) {
-			syntax_error("Invalid statement encountered: "
-					+ e.getClass(),e);
+		try {
+			if(e instanceof Stmt.SynchronisedBlock) {
+				doSynchronisedBlock((Stmt.SynchronisedBlock)e);
+			} else if(e instanceof Stmt.TryCatchBlock) {
+				doTryCatchBlock((Stmt.TryCatchBlock)e);
+			} else if(e instanceof Stmt.Block) {
+				doBlock((Stmt.Block)e);
+			} else if(e instanceof Stmt.VarDef) {
+				doVarDef((Stmt.VarDef) e);
+			} else if(e instanceof Stmt.Assignment) {
+				return (Stmt) doAssignment((Stmt.Assignment) e);
+			} else if(e instanceof Stmt.Return) {
+				doReturn((Stmt.Return) e);
+			} else if(e instanceof Stmt.Throw) {
+				doThrow((Stmt.Throw) e);
+			} else if(e instanceof Stmt.Assert) {
+				doAssert((Stmt.Assert) e);
+			} else if(e instanceof Stmt.Break) {
+				doBreak((Stmt.Break) e);
+			} else if(e instanceof Stmt.Continue) {
+				doContinue((Stmt.Continue) e);
+			} else if(e instanceof Stmt.Label) {
+				doLabel((Stmt.Label) e);
+			} else if(e instanceof Stmt.If) {
+				doIf((Stmt.If) e);
+			} else if(e instanceof Stmt.For) {
+				doFor((Stmt.For) e);
+			} else if(e instanceof Stmt.ForEach) {
+				doForEach((Stmt.ForEach) e);
+			} else if(e instanceof Stmt.While) {
+				doWhile((Stmt.While) e);
+			} else if(e instanceof Stmt.DoWhile) {
+				doDoWhile((Stmt.DoWhile) e);
+			} else if(e instanceof Stmt.Switch) {
+				doSwitch((Stmt.Switch) e);
+			} else if(e instanceof Expr.Invoke) {
+				doInvoke((Expr.Invoke) e);
+			} else if(e instanceof Expr.New) {
+				doNew((Expr.New) e);
+			} else if(e instanceof Decl.JavaClass) {
+				doClass((Decl.JavaClass)e);
+			} else if(e instanceof Stmt.PrePostIncDec) {
+				doExpression((Stmt.PrePostIncDec)e);
+			} else if(e != null) {
+				internal_error("invalid statement encountered: "
+						+ e.getClass(),e);
+			}
+		} catch(Exception ex) {
+			internal_error(e,ex);
 		}
+		
 		
 		return e;
 	}
@@ -308,7 +313,7 @@ public class InnerClassRewrite {
 		}		
 	}
 	
-	protected Expr doAssignment(Stmt.Assignment def) {			
+	protected Expr doAssignment(Stmt.Assignment def) throws ClassNotFoundException,FieldNotFoundException {			
 		// first, do the right-hand side
 		def.setRhs(doExpression(def.rhs()));
 		
@@ -333,44 +338,37 @@ public class InnerClassRewrite {
 					
 					// don't need to do anything here.
 				} else {
-					// now, perform field lookup!
-					try {
-						Triple<Clazz, Clazz.Field, Type> r = types
-								.resolveField(target, e.name(), loader);
-						
-						Clazz.Field f = r.second();															
-						Clazz c = r.first();
-											
-						if (f.isPrivate()
-								&& isStrictInnerClass(enclosingClasses.peek(), c.type())) {
-							// Ok, we have found a dereference of a field. This
-							// means we need to add an accessor method, unless there
-							// already is one.
-						
-							if(!(c instanceof jkit.jil.tree.JilClass)) {
-								// it should be impossible to get here.
-								syntax_error(
-										"internal failure --- jil class required, found "
-												+ c.getClass().getName(), e);
-							}
+					// now, perform field lookup!					
+					Triple<Clazz, Clazz.Field, Type> r = types
+					.resolveField(target, e.name(), loader);
 
-							ArrayList<jkit.jil.tree.Attribute> attributes = new ArrayList(e.attributes());
-							Clazz.Method accessor = createWriteAccessor(f, (jkit.jil.tree.JilClass) c);
-							attributes.add(new JilBuilder.MethodInfo(accessor.exceptions(),accessor.type()));						
-							ArrayList<Expr> params = new ArrayList<Expr>();							
-							params.add(e.target());
-							params.add(def.rhs());
-							
-							return new Expr.Invoke(new Expr.ClassVariable(c
-									.type().toString(), c.type()), accessor
-									.name(), params, new ArrayList(),
-									attributes);
+					Clazz.Field f = r.second();															
+					Clazz c = r.first();
+
+					if (f.isPrivate()
+							&& isStrictInnerClass(enclosingClasses.peek(), c.type())) {
+						// Ok, we have found a dereference of a field. This
+						// means we need to add an accessor method, unless there
+						// already is one.
+
+						if (!(c instanceof jkit.jil.tree.JilClass)) {
+							// it should be impossible to get here.
+							internal_error(
+									"internal failure --- jil class required, found "
+									+ c.getClass().getName(), e);
 						}
-						
-					} catch(ClassNotFoundException cne) {
-						syntax_error("class not found: " + target,e,cne);
-					} catch(FieldNotFoundException fne) {
-						syntax_error("field not found: " + target + "." + e.name(),e,fne);
+
+						ArrayList<jkit.jil.tree.Attribute> attributes = new ArrayList(e.attributes());
+						Clazz.Method accessor = createWriteAccessor(f, (jkit.jil.tree.JilClass) c);
+						attributes.add(new JilBuilder.MethodInfo(accessor.exceptions(),accessor.type()));						
+						ArrayList<Expr> params = new ArrayList<Expr>();							
+						params.add(e.target());
+						params.add(def.rhs());
+
+						return new Expr.Invoke(new Expr.ClassVariable(c
+								.type().toString(), c.type()), accessor
+								.name(), params, new ArrayList(),
+								attributes);
 					}
 				}
 			}
@@ -448,70 +446,75 @@ public class InnerClassRewrite {
 	}
 	
 	protected Expr doExpression(Expr e) {	
-		if(e instanceof Value.Bool) {
-			return doBoolVal((Value.Bool)e);
-		} if(e instanceof Value.Byte) {
-			return doByteVal((Value.Byte)e);
-		} else if(e instanceof Value.Char) {
-			return doCharVal((Value.Char)e);
-		} else if(e instanceof Value.Short) {
-			return doShortVal((Value.Short)e);
-		} else if(e instanceof Value.Int) {
-			return doIntVal((Value.Int)e);
-		} else if(e instanceof Value.Long) {
-			return doLongVal((Value.Long)e);
-		} else if(e instanceof Value.Float) {
-			return doFloatVal((Value.Float)e);
-		} else if(e instanceof Value.Double) {
-			return doDoubleVal((Value.Double)e);
-		} else if(e instanceof Value.String) {
-			return doStringVal((Value.String)e);
-		} else if(e instanceof Value.Null) {
-			return doNullVal((Value.Null)e);
-		} else if(e instanceof Value.TypedArray) {
-			return doTypedArrayVal((Value.TypedArray)e);
-		} else if(e instanceof Value.Array) {
-			return doArrayVal((Value.Array)e);
-		} else if(e instanceof Value.Class) {
-			return doClassVal((Value.Class) e);
-		} else if(e instanceof Expr.LocalVariable) {
-			return doLocalVariable((Expr.LocalVariable)e);
-		} else if(e instanceof Expr.NonLocalVariable) {
-			return doNonLocalVariable((Expr.NonLocalVariable)e);
-		} else if(e instanceof Expr.ClassVariable) {
-			return doClassVariable((Expr.ClassVariable)e);
-		} else if(e instanceof Expr.UnOp) {
-			return doUnOp((Expr.UnOp)e);
-		} else if(e instanceof Expr.BinOp) {
-			return doBinOp((Expr.BinOp)e);
-		} else if(e instanceof Expr.TernOp) {	
-			return doTernOp((Expr.TernOp)e);
-		} else if(e instanceof Expr.Cast) {
-			return doCast((Expr.Cast)e);
-		} else if(e instanceof Expr.Convert) {
-			return doConvert((Expr.Convert)e);
-		} else if(e instanceof Expr.InstanceOf) {
-			return doInstanceOf((Expr.InstanceOf)e);
-		} else if(e instanceof Expr.Invoke) {
-			return doInvoke((Expr.Invoke) e);
-		} else if(e instanceof Expr.New) {
-			return doNew((Expr.New) e);
-		} else if(e instanceof Expr.ArrayIndex) {
-			return doArrayIndex((Expr.ArrayIndex) e);
-		} else if(e instanceof Expr.Deref) {
-			return doDeref((Expr.Deref) e);
-		} else if(e instanceof Stmt.Assignment) {
-			// force brackets			
-			return doAssignment((Stmt.Assignment) e);			
-		} else if(e != null) {
-			syntax_error("Invalid expression encountered: "
-					+ e.getClass(),e);			
+		try {
+			if(e instanceof Value.Bool) {
+				return doBoolVal((Value.Bool)e);
+			} if(e instanceof Value.Byte) {
+				return doByteVal((Value.Byte)e);
+			} else if(e instanceof Value.Char) {
+				return doCharVal((Value.Char)e);
+			} else if(e instanceof Value.Short) {
+				return doShortVal((Value.Short)e);
+			} else if(e instanceof Value.Int) {
+				return doIntVal((Value.Int)e);
+			} else if(e instanceof Value.Long) {
+				return doLongVal((Value.Long)e);
+			} else if(e instanceof Value.Float) {
+				return doFloatVal((Value.Float)e);
+			} else if(e instanceof Value.Double) {
+				return doDoubleVal((Value.Double)e);
+			} else if(e instanceof Value.String) {
+				return doStringVal((Value.String)e);
+			} else if(e instanceof Value.Null) {
+				return doNullVal((Value.Null)e);
+			} else if(e instanceof Value.TypedArray) {
+				return doTypedArrayVal((Value.TypedArray)e);
+			} else if(e instanceof Value.Array) {
+				return doArrayVal((Value.Array)e);
+			} else if(e instanceof Value.Class) {
+				return doClassVal((Value.Class) e);
+			} else if(e instanceof Expr.LocalVariable) {
+				return doLocalVariable((Expr.LocalVariable)e);
+			} else if(e instanceof Expr.NonLocalVariable) {
+				return doNonLocalVariable((Expr.NonLocalVariable)e);
+			} else if(e instanceof Expr.ClassVariable) {
+				return doClassVariable((Expr.ClassVariable)e);
+			} else if(e instanceof Expr.UnOp) {
+				return doUnOp((Expr.UnOp)e);
+			} else if(e instanceof Expr.BinOp) {
+				return doBinOp((Expr.BinOp)e);
+			} else if(e instanceof Expr.TernOp) {	
+				return doTernOp((Expr.TernOp)e);
+			} else if(e instanceof Expr.Cast) {
+				return doCast((Expr.Cast)e);
+			} else if(e instanceof Expr.Convert) {
+				return doConvert((Expr.Convert)e);
+			} else if(e instanceof Expr.InstanceOf) {
+				return doInstanceOf((Expr.InstanceOf)e);
+			} else if(e instanceof Expr.Invoke) {
+				return doInvoke((Expr.Invoke) e);
+			} else if(e instanceof Expr.New) {
+				return doNew((Expr.New) e);
+			} else if(e instanceof Expr.ArrayIndex) {
+				return doArrayIndex((Expr.ArrayIndex) e);
+			} else if(e instanceof Expr.Deref) {
+				return doDeref((Expr.Deref) e);
+			} else if(e instanceof Stmt.Assignment) {
+				// force brackets			
+				return doAssignment((Stmt.Assignment) e);			
+			}
+		} catch(Exception ex) {
+			internal_error(e,ex);
+		}
+			
+		if (e != null) {
+			internal_error("Invalid expression encountered: " + e.getClass(), e);
 		}
 		
 		return null;
 	}
 	
-	protected Expr doDeref(Expr.Deref e) {		
+	protected Expr doDeref(Expr.Deref e) throws ClassNotFoundException,FieldNotFoundException {		
 		e.setTarget(doExpression(e.target()));
 		
 		Type tmp = (Type) e.target().attribute(Type.class);
@@ -532,41 +535,34 @@ public class InnerClassRewrite {
 				
 				// don't need to do anything here.
 			} else {
-				// now, perform field lookup!
-				try {
-					Triple<Clazz, Clazz.Field, Type> r = types
-							.resolveField(target, e.name(), loader);
-					
-					Clazz.Field f = r.second();															
-					Clazz c = r.first();										
-					
-					if (f.isPrivate()
-							&& isStrictInnerClass(enclosingClasses.peek(), c.type())) {						
-						// Ok, we have found a dereference of a field. This
-						// means we need to add an accessor method, unless there
-						// already is one.
-					
-						if(!(c instanceof jkit.jil.tree.JilClass)) {
-							// it should be impossible to get here.
-							syntax_error(
-									"internal failure --- jil class required, found "
-											+ c.getClass().getName(), e);
-						}
-												
-						ArrayList<jkit.jil.tree.Attribute> attributes = new ArrayList(e.attributes());
-						Clazz.Method accessor = createReadAccessor(f, (jkit.jil.tree.JilClass) c);
-						attributes.add(new JilBuilder.MethodInfo(accessor.exceptions(),accessor.type()));						
-						ArrayList<Expr> params = new ArrayList<Expr>();
-						params.add(e.target());
-						return new Expr.Invoke(new Expr.ClassVariable(c.type()
-								.toString(), c.type()), accessor.name(),
-								params, new ArrayList(), attributes);
+				// now, perform field lookup!				
+				Triple<Clazz, Clazz.Field, Type> r = types
+				.resolveField(target, e.name(), loader);
+
+				Clazz.Field f = r.second();															
+				Clazz c = r.first();										
+
+				if (f.isPrivate()
+						&& isStrictInnerClass(enclosingClasses.peek(), c.type())) {						
+					// Ok, we have found a dereference of a field. This
+					// means we need to add an accessor method, unless there
+					// already is one.
+
+					if(!(c instanceof jkit.jil.tree.JilClass)) {
+						// it should be impossible to get here.
+						internal_error(
+								"internal failure --- jil class required, found "
+								+ c.getClass().getName(), e);
 					}
-					
-				} catch(ClassNotFoundException cne) {
-					syntax_error("class not found: " + target,e,cne);
-				} catch(FieldNotFoundException fne) {
-					syntax_error("field not found: " + target + "." + e.name(),e,fne);
+
+					ArrayList<jkit.jil.tree.Attribute> attributes = new ArrayList(e.attributes());
+					Clazz.Method accessor = createReadAccessor(f, (jkit.jil.tree.JilClass) c);
+					attributes.add(new JilBuilder.MethodInfo(accessor.exceptions(),accessor.type()));						
+					ArrayList<Expr> params = new ArrayList<Expr>();
+					params.add(e.target());
+					return new Expr.Invoke(new Expr.ClassVariable(c.type()
+							.toString(), c.type()), accessor.name(),
+							params, new ArrayList(), attributes);
 				}
 			}
 		}	
@@ -580,7 +576,7 @@ public class InnerClassRewrite {
 		return e;
 	}
 	
-	protected Expr doNew(Expr.New e) {
+	protected Expr doNew(Expr.New e) throws ClassNotFoundException {
 		// Second, recurse through any parameters supplied ...
 		SourceLocation loc = (SourceLocation) e.type().attribute(SourceLocation.class);
 		Type type = (Type) e.type().attribute(Type.class);
@@ -609,34 +605,30 @@ public class InnerClassRewrite {
 			Type.Clazz tc = (Type.Clazz) type;
 			if(tc.components().size() > 1) {
 				// Ok, this is an inner class construction. So, we need to check
-				// whether it's static or not.
-				try {
-					Clazz clazz = loader.loadClass(tc);										
-					
-					if(!clazz.isStatic()) {						
-						// First, update the arguments to the new call
-						Type.Clazz parentType = parentType(tc);
-						
-						if(e.context() == null) {							
-							Expr.LocalVariable thiz = new Expr.LocalVariable(
-									"this", parentType,loc);
-							e.parameters().add(0,thiz);							
-						} else {
-							e.parameters().add(0,e.context());
-							e.setContext(null); // bypassed now!
-						}
-						
-						// Second, update the function type.
-						JilBuilder.MethodInfo mi = (JilBuilder.MethodInfo) e
-								.attribute(JilBuilder.MethodInfo.class); 
-						Type.Function mt = mi.type;
-						ArrayList<Type> nparamtypes = new ArrayList<Type>(mt.parameterTypes());	
-						nparamtypes.add(0,parentType);
-						mi.type = new Type.Function(mt.returnType(), nparamtypes,
-								mt.typeArguments());
+				// whether it's static or not.				
+				Clazz clazz = loader.loadClass(tc);										
+
+				if(!clazz.isStatic()) {						
+					// First, update the arguments to the new call
+					Type.Clazz parentType = parentType(tc);
+
+					if(e.context() == null) {							
+						Expr.LocalVariable thiz = new Expr.LocalVariable(
+								"this", parentType,loc);
+						e.parameters().add(0,thiz);							
+					} else {
+						e.parameters().add(0,e.context());
+						e.setContext(null); // bypassed now!
 					}
-				} catch(ClassNotFoundException cne) {
-					syntax_error(cne.getMessage(),e,cne);
+
+					// Second, update the function type.
+					JilBuilder.MethodInfo mi = (JilBuilder.MethodInfo) e
+					.attribute(JilBuilder.MethodInfo.class); 
+					Type.Function mt = mi.type;
+					ArrayList<Type> nparamtypes = new ArrayList<Type>(mt.parameterTypes());	
+					nparamtypes.add(0,parentType);
+					mi.type = new Type.Function(mt.returnType(), nparamtypes,
+							mt.typeArguments());
 				}
 			}			
 		}

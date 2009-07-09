@@ -221,15 +221,22 @@ public class SyntaxError extends RuntimeException {
 	 * location and throwing an exception based on that. In this case, we also
 	 * have an internal exception which has given rise to this particular
 	 * problem.
-	 * 
-	 * @param msg
-	 *            --- the error message
+	 *
 	 * @param e
 	 *            --- the syntactic element causing the error
 	 * @parem ex --- an internal exception, the details of which we want to
 	 *        keep.
 	 */
-	public static void syntax_error(String msg, SyntacticElement e, Throwable ex) {
+	public static void internal_error(SyntacticElement e, Throwable ex) {
+		
+		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
+		int line = -1;
+		int column = -1;
+		
+		if(loc != null) {
+			line = loc.line();
+			column = loc.column();
+		}
 		
 		if(ex instanceof SyntaxError) {
 			// in the special case that the cause of this exception was already
@@ -237,13 +244,39 @@ public class SyntaxError extends RuntimeException {
             // attribute the wrong error message and line number.
 			SyntaxError se = (SyntaxError) ex;
 			throw se;
-		}
+		} else if(ex instanceof ClassNotFoundException) {
+			throw new SyntaxError("class not found (" + ex.getMessage() + ")",line,column,ex);			
+		} else if(ex instanceof MethodNotFoundException) {
+			throw new SyntaxError("method not found (" + ex.getMessage() + ")",line,column,ex);
+		} else if(ex instanceof FieldNotFoundException) {
+			throw new SyntaxError("field not found (" + ex.getMessage() + ")",line,column,ex);
+		} 			
+				
+		throw new SyntaxError("internal failure (" + ex.getMessage() + ")",line,column,ex);
+				
+	}		
+	
+	/**
+	 * This method is just to factor out the code for looking up the source
+	 * location .
+	 * 
+	 * @param msg
+	 *            --- the error message
+	 * @param e
+	 *            --- the syntactic element causing the error
+	 */
+	public static void internal_error(String msg, SyntacticElement e) {
 		
 		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
+		int line = -1;
+		int column = -1;
+		
 		if(loc != null) {
-			throw new SyntaxError(msg,loc.line(),loc.column(),ex);
-		} else {
-			throw new SyntaxError(msg,-1,-1,ex);
+			line = loc.line();
+			column = loc.column();
 		}		
-	}
+				
+		throw new SyntaxError("internal failure (" + msg + ")",line,column);
+				
+	}		
 }

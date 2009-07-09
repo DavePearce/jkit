@@ -21,7 +21,7 @@
 
 package jkit.java.stages;
 
-import static jkit.compiler.SyntaxError.syntax_error;
+import static jkit.compiler.SyntaxError.internal_error;
 import static jkit.java.tree.Type.fromJilType;
 
 import java.util.*;
@@ -78,8 +78,8 @@ public class AnonClassesRewrite {
 		} else if (d instanceof Decl.StaticInitialiserBlock) {
 			doStaticInitialiserBlock((Decl.StaticInitialiserBlock) d);
 		} else {
-			syntax_error("internal failure (unknown declaration \"" + d
-					+ "\" encountered)",d);			
+			internal_error("unknown declaration \"" + d
+					+ "\" encountered",d);			
 		}
 	}
 	
@@ -126,51 +126,54 @@ public class AnonClassesRewrite {
 	}
 	
 	protected void doStatement(Stmt e) {
-		if(e instanceof Stmt.SynchronisedBlock) {
-			doSynchronisedBlock((Stmt.SynchronisedBlock)e);
-		} else if(e instanceof Stmt.TryCatchBlock) {
-			doTryCatchBlock((Stmt.TryCatchBlock)e);
-		} else if(e instanceof Stmt.Block) {
-			doBlock((Stmt.Block)e);
-		} else if(e instanceof Stmt.VarDef) {
-			doVarDef((Stmt.VarDef) e);
-		} else if(e instanceof Stmt.Assignment) {
-			doAssignment((Stmt.Assignment) e);
-		} else if(e instanceof Stmt.Return) {
-			doReturn((Stmt.Return) e);
-		} else if(e instanceof Stmt.Throw) {
-			doThrow((Stmt.Throw) e);
-		} else if(e instanceof Stmt.Assert) {
-			doAssert((Stmt.Assert) e);
-		} else if(e instanceof Stmt.Break) {
-			doBreak((Stmt.Break) e);
-		} else if(e instanceof Stmt.Continue) {
-			doContinue((Stmt.Continue) e);
-		} else if(e instanceof Stmt.Label) {
-			doLabel((Stmt.Label) e);
-		} else if(e instanceof Stmt.If) {
-			doIf((Stmt.If) e);
-		} else if(e instanceof Stmt.For) {
-			doFor((Stmt.For) e);
-		} else if(e instanceof Stmt.ForEach) {
-			doForEach((Stmt.ForEach) e);
-		} else if(e instanceof Stmt.While) {
-			doWhile((Stmt.While) e);
-		} else if(e instanceof Stmt.DoWhile) {
-			doDoWhile((Stmt.DoWhile) e);
-		} else if(e instanceof Stmt.Switch) {
-			doSwitch((Stmt.Switch) e);
-		} else if(e instanceof Expr.Invoke) {
-			doInvoke((Expr.Invoke) e);
-		} else if(e instanceof Expr.New) {
-			doNew((Expr.New) e);
-		} else if(e instanceof Decl.JavaClass) {
-			doClass((Decl.JavaClass)e);
-		} else if(e instanceof Stmt.PrePostIncDec) {
-			doExpression((Stmt.PrePostIncDec)e);
-		} else if(e != null) {
-			syntax_error("Invalid statement encountered: "
-					+ e.getClass(),e);			
+		try {
+			if(e instanceof Stmt.SynchronisedBlock) {
+				doSynchronisedBlock((Stmt.SynchronisedBlock)e);
+			} else if(e instanceof Stmt.TryCatchBlock) {
+				doTryCatchBlock((Stmt.TryCatchBlock)e);
+			} else if(e instanceof Stmt.Block) {
+				doBlock((Stmt.Block)e);
+			} else if(e instanceof Stmt.VarDef) {
+				doVarDef((Stmt.VarDef) e);
+			} else if(e instanceof Stmt.Assignment) {
+				doAssignment((Stmt.Assignment) e);
+			} else if(e instanceof Stmt.Return) {
+				doReturn((Stmt.Return) e);
+			} else if(e instanceof Stmt.Throw) {
+				doThrow((Stmt.Throw) e);
+			} else if(e instanceof Stmt.Assert) {
+				doAssert((Stmt.Assert) e);
+			} else if(e instanceof Stmt.Break) {
+				doBreak((Stmt.Break) e);
+			} else if(e instanceof Stmt.Continue) {
+				doContinue((Stmt.Continue) e);
+			} else if(e instanceof Stmt.Label) {
+				doLabel((Stmt.Label) e);
+			} else if(e instanceof Stmt.If) {
+				doIf((Stmt.If) e);
+			} else if(e instanceof Stmt.For) {
+				doFor((Stmt.For) e);
+			} else if(e instanceof Stmt.ForEach) {
+				doForEach((Stmt.ForEach) e);
+			} else if(e instanceof Stmt.While) {
+				doWhile((Stmt.While) e);
+			} else if(e instanceof Stmt.DoWhile) {
+				doDoWhile((Stmt.DoWhile) e);
+			} else if(e instanceof Stmt.Switch) {
+				doSwitch((Stmt.Switch) e);
+			} else if(e instanceof Expr.Invoke) {
+				doInvoke((Expr.Invoke) e);
+			} else if(e instanceof Expr.New) {
+				doNew((Expr.New) e);
+			} else if(e instanceof Decl.JavaClass) {
+				doClass((Decl.JavaClass)e);
+			} else if(e instanceof Stmt.PrePostIncDec) {
+				doExpression((Stmt.PrePostIncDec)e);
+			} else if (e != null) {
+				internal_error("Invalid statement encountered: " + e.getClass(), e);
+			}	
+		} catch(Exception ex) {
+			internal_error(e,ex);
 		}				
 	}
 	
@@ -272,64 +275,70 @@ public class AnonClassesRewrite {
 		}		
 	}
 	
-	protected Expr doExpression(Expr e) {	
-		if(e instanceof Value.Bool) {
-			return doBoolVal((Value.Bool)e);
-		} else if(e instanceof Value.Byte) {
-			return doByteVal((Value.Byte)e);
-		} else if(e instanceof Value.Char) {
-			return doCharVal((Value.Char)e);
-		} else if(e instanceof Value.Short) {
-			return doShortVal((Value.Short)e);
-		} else if(e instanceof Value.Int) {
-			return doIntVal((Value.Int)e);
-		} else if(e instanceof Value.Long) {
-			return doLongVal((Value.Long)e);
-		} else if(e instanceof Value.Float) {
-			return doFloatVal((Value.Float)e);
-		} else if(e instanceof Value.Double) {
-			return doDoubleVal((Value.Double)e);
-		} else if(e instanceof Value.String) {
-			return doStringVal((Value.String)e);
-		} else if(e instanceof Value.Null) {
-			return doNullVal((Value.Null)e);
-		} else if(e instanceof Value.TypedArray) {
-			return doTypedArrayVal((Value.TypedArray)e);
-		} else if(e instanceof Value.Array) {
-			return doArrayVal((Value.Array)e);
-		} else if(e instanceof Value.Class) {
-			return doClassVal((Value.Class) e);
-		} else if(e instanceof Expr.LocalVariable) {
-			return doLocalVariable((Expr.LocalVariable)e);
-		} else if(e instanceof Expr.NonLocalVariable) {
-			return doNonLocalVariable((Expr.NonLocalVariable)e);
-		} else if(e instanceof Expr.ClassVariable) {
-			return doClassVariable((Expr.ClassVariable)e);
-		} else if(e instanceof Expr.UnOp) {
-			return doUnOp((Expr.UnOp)e);
-		} else if(e instanceof Expr.BinOp) {
-			return doBinOp((Expr.BinOp)e);
-		} else if(e instanceof Expr.TernOp) {
-			return doTernOp((Expr.TernOp)e);
-		} else if(e instanceof Expr.Cast) {
-			return doCast((Expr.Cast)e);
-		} else if(e instanceof Expr.Convert) {
-			return doConvert((Expr.Convert)e);
-		} else if(e instanceof Expr.InstanceOf) {
-			return doInstanceOf((Expr.InstanceOf)e);
-		} else if(e instanceof Expr.Invoke) {
-			return doInvoke((Expr.Invoke) e);
-		} else if(e instanceof Expr.New) {
-			return doNew((Expr.New) e);
-		} else if(e instanceof Expr.ArrayIndex) {
-			return doArrayIndex((Expr.ArrayIndex) e);
-		} else if(e instanceof Expr.Deref) {
-			return doDeref((Expr.Deref) e);
-		} else if(e instanceof Stmt.Assignment) {
-			// force brackets			
-			return doAssignment((Stmt.Assignment) e);			
-		} else if(e != null) {
-			syntax_error("Invalid expression encountered: "
+	protected Expr doExpression(Expr e) {
+		try {
+			if(e instanceof Value.Bool) {
+				return doBoolVal((Value.Bool)e);
+			} else if(e instanceof Value.Byte) {
+				return doByteVal((Value.Byte)e);
+			} else if(e instanceof Value.Char) {
+				return doCharVal((Value.Char)e);
+			} else if(e instanceof Value.Short) {
+				return doShortVal((Value.Short)e);
+			} else if(e instanceof Value.Int) {
+				return doIntVal((Value.Int)e);
+			} else if(e instanceof Value.Long) {
+				return doLongVal((Value.Long)e);
+			} else if(e instanceof Value.Float) {
+				return doFloatVal((Value.Float)e);
+			} else if(e instanceof Value.Double) {
+				return doDoubleVal((Value.Double)e);
+			} else if(e instanceof Value.String) {
+				return doStringVal((Value.String)e);
+			} else if(e instanceof Value.Null) {
+				return doNullVal((Value.Null)e);
+			} else if(e instanceof Value.TypedArray) {
+				return doTypedArrayVal((Value.TypedArray)e);
+			} else if(e instanceof Value.Array) {
+				return doArrayVal((Value.Array)e);
+			} else if(e instanceof Value.Class) {
+				return doClassVal((Value.Class) e);
+			} else if(e instanceof Expr.LocalVariable) {
+				return doLocalVariable((Expr.LocalVariable)e);
+			} else if(e instanceof Expr.NonLocalVariable) {
+				return doNonLocalVariable((Expr.NonLocalVariable)e);
+			} else if(e instanceof Expr.ClassVariable) {
+				return doClassVariable((Expr.ClassVariable)e);
+			} else if(e instanceof Expr.UnOp) {
+				return doUnOp((Expr.UnOp)e);
+			} else if(e instanceof Expr.BinOp) {
+				return doBinOp((Expr.BinOp)e);
+			} else if(e instanceof Expr.TernOp) {
+				return doTernOp((Expr.TernOp)e);
+			} else if(e instanceof Expr.Cast) {
+				return doCast((Expr.Cast)e);
+			} else if(e instanceof Expr.Convert) {
+				return doConvert((Expr.Convert)e);
+			} else if(e instanceof Expr.InstanceOf) {
+				return doInstanceOf((Expr.InstanceOf)e);
+			} else if(e instanceof Expr.Invoke) {
+				return doInvoke((Expr.Invoke) e);
+			} else if(e instanceof Expr.New) {
+				return doNew((Expr.New) e);
+			} else if(e instanceof Expr.ArrayIndex) {
+				return doArrayIndex((Expr.ArrayIndex) e);
+			} else if(e instanceof Expr.Deref) {
+				return doDeref((Expr.Deref) e);
+			} else if(e instanceof Stmt.Assignment) {
+				// force brackets			
+				return doAssignment((Stmt.Assignment) e);			
+			} 
+		} catch(Exception ex) {
+			internal_error(e,ex);
+		}
+		
+		if(e != null) {
+			internal_error("Invalid expression encountered: "
 					+ e.getClass(),e);
 		}
 		return null;
@@ -346,7 +355,7 @@ public class AnonClassesRewrite {
 		return e;
 	}
 	
-	protected Expr doNew(Expr.New e) {				
+	protected Expr doNew(Expr.New e) throws ClassNotFoundException {				
 		e.setContext(doExpression(e.context()));
 			
 		for(int i = 0;i!=e.parameters().size();++i) {
@@ -362,68 +371,63 @@ public class AnonClassesRewrite {
 			String name = Integer.toString(++anonymousClassCount);
 			Type.Clazz parent = (Type.Clazz) e.type().attribute(Type.Clazz.class);			
 			Type.Clazz aType = anonClassType(name);											
-			
-			try {
-				Clazz parentClass = (Clazz) loader.loadClass(parent);
-				JilClass anonClass = (JilClass) loader.loadClass(aType);
-				SourceLocation loc = (SourceLocation) e
-						.attribute(SourceLocation.class);
-				Decl.JavaClass ac = buildAnonClass(anonClass, loc);
-				
-				HashMap<String,Type> params = new HashMap();
-				nonLocals.push(params);
-				anonClasses.push(aType);			
-				context.push(ac);
-				// break down any anonymous classes held internally to this
-				// anonymous class.
-				for(Decl d : e.declarations()) {
-					doDeclaration(d);
-				}
-				context.pop();
-				anonClasses.pop();
-				nonLocals.pop();
-				
-				// First, update the type of the new expression
-				e.type().attributes().remove(parent);
-				e.type().attributes().add(aType);
+						
+			Clazz parentClass = (Clazz) loader.loadClass(parent);
+			JilClass anonClass = (JilClass) loader.loadClass(aType);
+			SourceLocation loc = (SourceLocation) e
+			.attribute(SourceLocation.class);
+			Decl.JavaClass ac = buildAnonClass(anonClass, loc);
 
-				JilBuilder.MethodInfo mi = (JilBuilder.MethodInfo) e
-				.attribute(JilBuilder.MethodInfo.class);
-								
-				// Second, determine non-local variables
-				if (params.size() > 0) {
-					ArrayList<Type> nparams = new ArrayList<Type>(mi.type
-							.parameterTypes());
-					for (Map.Entry<String, Type> en : params.entrySet()) {
-						nparams.add(en.getValue());
-						// FIXME: Actually need to determine whether or not this
-						// is a local variable, or a non-local from a method
-						// further up.
-						Expr arg = new Expr.LocalVariable(en.getKey(), en
-								.getValue(), loc);
-						e.parameters().add(arg);
-					}
-					mi.type = new Type.Function(mi.type.returnType(), nparams);
+			HashMap<String,Type> params = new HashMap();
+			nonLocals.push(params);
+			anonClasses.push(aType);			
+			context.push(ac);
+			// break down any anonymous classes held internally to this
+			// anonymous class.
+			for(Decl d : e.declarations()) {
+				doDeclaration(d);
+			}
+			context.pop();
+			anonClasses.pop();
+			nonLocals.pop();
+
+			// First, update the type of the new expression
+			e.type().attributes().remove(parent);
+			e.type().attributes().add(aType);
+
+			JilBuilder.MethodInfo mi = (JilBuilder.MethodInfo) e
+			.attribute(JilBuilder.MethodInfo.class);
+
+			// Second, determine non-local variables
+			if (params.size() > 0) {
+				ArrayList<Type> nparams = new ArrayList<Type>(mi.type
+						.parameterTypes());
+				for (Map.Entry<String, Type> en : params.entrySet()) {
+					nparams.add(en.getValue());
+					// FIXME: Actually need to determine whether or not this
+					// is a local variable, or a non-local from a method
+					// further up.
+					Expr arg = new Expr.LocalVariable(en.getKey(), en
+							.getValue(), loc);
+					e.parameters().add(arg);
 				}
-				
-				// Third, create an appropriate constructor.
-				Decl.JavaMethod constructor = buildAnonConstructor(name,
-						mi.type, mi.exceptions, params, parentClass,
-						anonClass, loc);
-				
-				// Finally, create an appropriate java class.
-				
-				addNonLocalFields(anonClass,ac,params,loc);			
-				
-				ac.declarations().add(constructor);
-				ac.declarations().addAll(e.declarations());								
-				
-				context.peek().declarations().add(ac);
-				e.declarations().clear(); // need to do this.
-				
-			} catch(ClassNotFoundException cne) {
-				syntax_error(cne.getMessage(),e,cne);
-			}			
+				mi.type = new Type.Function(mi.type.returnType(), nparams);
+			}
+
+			// Third, create an appropriate constructor.
+			Decl.JavaMethod constructor = buildAnonConstructor(name,
+					mi.type, mi.exceptions, params, parentClass,
+					anonClass, loc);
+
+			// Finally, create an appropriate java class.
+
+			addNonLocalFields(anonClass,ac,params,loc);			
+
+			ac.declarations().add(constructor);
+			ac.declarations().addAll(e.declarations());								
+
+			context.peek().declarations().add(ac);
+			e.declarations().clear(); // need to do this.					
 		}		
 		
 		return e;

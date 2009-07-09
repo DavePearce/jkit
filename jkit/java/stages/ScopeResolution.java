@@ -235,21 +235,25 @@ public class ScopeResolution {
 	}
 	
 	protected void doDeclaration(Decl d, JavaFile file) {
-		if(d instanceof JavaInterface) {
-			doInterface((JavaInterface)d, file);
-		} else if(d instanceof JavaClass) {
-			doClass((JavaClass)d, file);
-		} else if(d instanceof JavaMethod) {
-			doMethod((JavaMethod)d, file);
-		} else if(d instanceof JavaField) {
-			doField((JavaField)d, file);
-		} else if (d instanceof Decl.InitialiserBlock) {
-			doInitialiserBlock((Decl.InitialiserBlock) d, file);
-		} else if (d instanceof Decl.StaticInitialiserBlock) {
-			doStaticInitialiserBlock((Decl.StaticInitialiserBlock) d, file);
-		} else {
-			syntax_error("internal failure (unknown declaration \"" + d
-					+ "\" encountered)",d);
+		try {
+			if(d instanceof JavaInterface) {
+				doInterface((JavaInterface)d, file);
+			} else if(d instanceof JavaClass) {
+				doClass((JavaClass)d, file);
+			} else if(d instanceof JavaMethod) {
+				doMethod((JavaMethod)d, file);
+			} else if(d instanceof JavaField) {
+				doField((JavaField)d, file);
+			} else if (d instanceof Decl.InitialiserBlock) {
+				doInitialiserBlock((Decl.InitialiserBlock) d, file);
+			} else if (d instanceof Decl.StaticInitialiserBlock) {
+				doStaticInitialiserBlock((Decl.StaticInitialiserBlock) d, file);
+			} else {
+				syntax_error("internal failure (unknown declaration \"" + d
+						+ "\" encountered)",d);
+			}
+		} catch(Exception ex) {
+			internal_error(d,ex);
 		}
 	}
 	
@@ -381,52 +385,56 @@ public class ScopeResolution {
 	}
 	
 	protected void doStatement(Stmt e, JavaFile file) {
-		if(e instanceof Stmt.SynchronisedBlock) {
-			doSynchronisedBlock((Stmt.SynchronisedBlock)e, file);
-		} else if(e instanceof Stmt.TryCatchBlock) {
-			doTryCatchBlock((Stmt.TryCatchBlock)e, file);
-		} else if(e instanceof Stmt.Block) {
-			doBlock((Stmt.Block)e, file);
-		} else if(e instanceof Stmt.VarDef) {
-			doVarDef((Stmt.VarDef) e, file);
-		} else if(e instanceof Stmt.Assignment) {
-			doAssignment((Stmt.Assignment) e, file);
-		} else if(e instanceof Stmt.Return) {
-			doReturn((Stmt.Return) e, file);
-		} else if(e instanceof Stmt.Throw) {
-			doThrow((Stmt.Throw) e, file);
-		} else if(e instanceof Stmt.Assert) {
-			doAssert((Stmt.Assert) e, file);
-		} else if(e instanceof Stmt.Break) {
-			doBreak((Stmt.Break) e, file);
-		} else if(e instanceof Stmt.Continue) {
-			doContinue((Stmt.Continue) e, file);
-		} else if(e instanceof Stmt.Label) {
-			doLabel((Stmt.Label) e, file);
-		} else if(e instanceof Stmt.If) {
-			doIf((Stmt.If) e, file);
-		} else if(e instanceof Stmt.For) {
-			doFor((Stmt.For) e, file);
-		} else if(e instanceof Stmt.ForEach) {
-			doForEach((Stmt.ForEach) e, file);
-		} else if(e instanceof Stmt.While) {
-			doWhile((Stmt.While) e, file);
-		} else if(e instanceof Stmt.DoWhile) {
-			doDoWhile((Stmt.DoWhile) e, file);
-		} else if(e instanceof Stmt.Switch) {
-			doSwitch((Stmt.Switch) e, file);
-		} else if(e instanceof Expr.Invoke) {
-			doInvoke((Expr.Invoke) e, file);
-		} else if(e instanceof Expr.New) {
-			doNew((Expr.New) e, file);
-		} else if(e instanceof Decl.JavaClass) {
-			doClass((Decl.JavaClass)e, file);
-		} else if(e instanceof Stmt.PrePostIncDec) {
-			doExpression((Stmt.PrePostIncDec)e, file);
-		} else if(e != null) {
-			syntax_error("Invalid statement encountered: "
-					+ e.getClass(),e);
-		}		
+		try {
+			if(e instanceof Stmt.SynchronisedBlock) {
+				doSynchronisedBlock((Stmt.SynchronisedBlock)e, file);
+			} else if(e instanceof Stmt.TryCatchBlock) {
+				doTryCatchBlock((Stmt.TryCatchBlock)e, file);
+			} else if(e instanceof Stmt.Block) {
+				doBlock((Stmt.Block)e, file);
+			} else if(e instanceof Stmt.VarDef) {
+				doVarDef((Stmt.VarDef) e, file);
+			} else if(e instanceof Stmt.Assignment) {
+				doAssignment((Stmt.Assignment) e, file);
+			} else if(e instanceof Stmt.Return) {
+				doReturn((Stmt.Return) e, file);
+			} else if(e instanceof Stmt.Throw) {
+				doThrow((Stmt.Throw) e, file);
+			} else if(e instanceof Stmt.Assert) {
+				doAssert((Stmt.Assert) e, file);
+			} else if(e instanceof Stmt.Break) {
+				doBreak((Stmt.Break) e, file);
+			} else if(e instanceof Stmt.Continue) {
+				doContinue((Stmt.Continue) e, file);
+			} else if(e instanceof Stmt.Label) {
+				doLabel((Stmt.Label) e, file);
+			} else if(e instanceof Stmt.If) {
+				doIf((Stmt.If) e, file);
+			} else if(e instanceof Stmt.For) {
+				doFor((Stmt.For) e, file);
+			} else if(e instanceof Stmt.ForEach) {
+				doForEach((Stmt.ForEach) e, file);
+			} else if(e instanceof Stmt.While) {
+				doWhile((Stmt.While) e, file);
+			} else if(e instanceof Stmt.DoWhile) {
+				doDoWhile((Stmt.DoWhile) e, file);
+			} else if(e instanceof Stmt.Switch) {
+				doSwitch((Stmt.Switch) e, file);
+			} else if(e instanceof Expr.Invoke) {
+				doInvoke((Expr.Invoke) e, file);
+			} else if(e instanceof Expr.New) {
+				doNew((Expr.New) e, file);
+			} else if(e instanceof Decl.JavaClass) {
+				doClass((Decl.JavaClass)e, file);
+			} else if(e instanceof Stmt.PrePostIncDec) {
+				doExpression((Stmt.PrePostIncDec)e, file);
+			} else if(e != null) {
+				syntax_error("Invalid statement encountered: "
+						+ e.getClass(),e);
+			}	
+		} catch(Exception ex) {
+			internal_error(e,ex);
+		}
 	}
 	
 	protected void doBlock(Stmt.Block block, JavaFile file) {
@@ -577,56 +585,61 @@ public class ScopeResolution {
 	}
 	
 	protected Expr doExpression(Expr e, JavaFile file) {	
-		if(e instanceof Value.Bool) {
-			return doBoolVal((Value.Bool)e, file);
-		} else if(e instanceof Value.Byte) {
-			return doByteVal((Value.Byte)e, file);
-		} else if(e instanceof Value.Char) {
-			return doCharVal((Value.Char)e, file);
-		} else if(e instanceof Value.Short) {
-			return doShortVal((Value.Short)e, file);
-		} else if(e instanceof Value.Int) {
-			return doIntVal((Value.Int)e, file);
-		} else if(e instanceof Value.Long) {
-			return doLongVal((Value.Long)e, file);
-		} else if(e instanceof Value.Float) {
-			return doFloatVal((Value.Float)e, file);
-		} else if(e instanceof Value.Double) {
-			return doDoubleVal((Value.Double)e, file);
-		} else if(e instanceof Value.String) {
-			return doStringVal((Value.String)e, file);
-		} else if(e instanceof Value.Null) {
-			return doNullVal((Value.Null)e, file);
-		} else if(e instanceof Value.TypedArray) {
-			return doTypedArrayVal((Value.TypedArray)e, file);
-		} else if(e instanceof Value.Array) {
-			return doArrayVal((Value.Array)e, file);
-		} else if(e instanceof Value.Class) {
-			return doClassVal((Value.Class) e, file);
-		} else if(e instanceof Expr.UnresolvedVariable) {
-			return doUnresolvedVariable((Expr.UnresolvedVariable)e, file);
-		} else if(e instanceof Expr.UnOp) {
-			return doUnOp((Expr.UnOp)e, file);
-		} else if(e instanceof Expr.BinOp) {
-			return doBinOp((Expr.BinOp)e, file);
-		} else if(e instanceof Expr.TernOp) {
-			return doTernOp((Expr.TernOp)e, file);
-		} else if(e instanceof Expr.Cast) {
-			return doCast((Expr.Cast)e, file);
-		} else if(e instanceof Expr.InstanceOf) {
-			return doInstanceOf((Expr.InstanceOf)e, file);
-		} else if(e instanceof Expr.Invoke) {
-			return doInvoke((Expr.Invoke) e, file);
-		} else if(e instanceof Expr.New) {
-			return doNew((Expr.New) e, file);
-		} else if(e instanceof Expr.ArrayIndex) {
-			return doArrayIndex((Expr.ArrayIndex) e, file);
-		} else if(e instanceof Expr.Deref) {
-			return doDeref((Expr.Deref) e, file);
-		} else if(e instanceof Stmt.Assignment) {
-			// force brackets			
-			return doAssignment((Stmt.Assignment) e, file);			
-		} else if(e != null) {
+		try {
+			if(e instanceof Value.Bool) {
+				return doBoolVal((Value.Bool)e, file);
+			} else if(e instanceof Value.Byte) {
+				return doByteVal((Value.Byte)e, file);
+			} else if(e instanceof Value.Char) {
+				return doCharVal((Value.Char)e, file);
+			} else if(e instanceof Value.Short) {
+				return doShortVal((Value.Short)e, file);
+			} else if(e instanceof Value.Int) {
+				return doIntVal((Value.Int)e, file);
+			} else if(e instanceof Value.Long) {
+				return doLongVal((Value.Long)e, file);
+			} else if(e instanceof Value.Float) {
+				return doFloatVal((Value.Float)e, file);
+			} else if(e instanceof Value.Double) {
+				return doDoubleVal((Value.Double)e, file);
+			} else if(e instanceof Value.String) {
+				return doStringVal((Value.String)e, file);
+			} else if(e instanceof Value.Null) {
+				return doNullVal((Value.Null)e, file);
+			} else if(e instanceof Value.TypedArray) {
+				return doTypedArrayVal((Value.TypedArray)e, file);
+			} else if(e instanceof Value.Array) {
+				return doArrayVal((Value.Array)e, file);
+			} else if(e instanceof Value.Class) {
+				return doClassVal((Value.Class) e, file);
+			} else if(e instanceof Expr.UnresolvedVariable) {
+				return doUnresolvedVariable((Expr.UnresolvedVariable)e, file);
+			} else if(e instanceof Expr.UnOp) {
+				return doUnOp((Expr.UnOp)e, file);
+			} else if(e instanceof Expr.BinOp) {
+				return doBinOp((Expr.BinOp)e, file);
+			} else if(e instanceof Expr.TernOp) {
+				return doTernOp((Expr.TernOp)e, file);
+			} else if(e instanceof Expr.Cast) {
+				return doCast((Expr.Cast)e, file);
+			} else if(e instanceof Expr.InstanceOf) {
+				return doInstanceOf((Expr.InstanceOf)e, file);
+			} else if(e instanceof Expr.Invoke) {
+				return doInvoke((Expr.Invoke) e, file);
+			} else if(e instanceof Expr.New) {
+				return doNew((Expr.New) e, file);
+			} else if(e instanceof Expr.ArrayIndex) {
+				return doArrayIndex((Expr.ArrayIndex) e, file);
+			} else if(e instanceof Expr.Deref) {
+				return doDeref((Expr.Deref) e, file);
+			} else if(e instanceof Stmt.Assignment) {
+				// force brackets			
+				return doAssignment((Stmt.Assignment) e, file);			
+			}
+		} catch(Exception ex) {
+			internal_error(e,ex);
+		}
+		if(e != null) {		
 			syntax_error("Invalid expression encountered: "
 					+ e.getClass(),e);			
 		}
@@ -634,7 +647,7 @@ public class ScopeResolution {
 		return null;
 	}
 	
-	protected Expr doDeref(Expr.Deref e, JavaFile file) {
+	protected Expr doDeref(Expr.Deref e, JavaFile file) throws ClassNotFoundException {
 		Expr target = doExpression(e.target(), file);
 		
 		if(target instanceof Expr.UnresolvedVariable) {
@@ -647,17 +660,13 @@ public class ScopeResolution {
 			if(loader.isPackage(uv.value() + "." + e.name())) {
 				return new Expr.UnresolvedVariable(uv.value() + "." + e.name(),
 						new ArrayList(e.attributes()));
-			} else {
-				try {
-					// Ok, need to sanity test that this is indeed a class.
-					jkit.compiler.Clazz c = loader.loadClass(new Type.Clazz(uv
-							.value(), e.name()));
-					Expr r = new Expr.ClassVariable(uv.value() + "." + e.name(),new ArrayList(e.attributes()));
-					r.attributes().add(c.type());
-					return r;
-				} catch(ClassNotFoundException cne) {
-					syntax_error(cne.getMessage(),e,cne);
-				}
+			} else {				
+				// Ok, need to sanity test that this is indeed a class.
+				jkit.compiler.Clazz c = loader.loadClass(new Type.Clazz(uv
+						.value(), e.name()));
+				Expr r = new Expr.ClassVariable(uv.value() + "." + e.name(),new ArrayList(e.attributes()));
+				r.attributes().add(c.type());
+				return r;				
 			}
 		} else if(target instanceof Expr.ClassVariable) {
 			// The question we need to consider here is. If we're dereferencing a
@@ -672,8 +681,6 @@ public class ScopeResolution {
 				// if we get here, then there is such a field.
 				//
 				// so do nothing!
-			} catch(ClassNotFoundException cne) {
-				syntax_error(cne.getMessage(),e,cne);				
 			} catch(FieldNotFoundException fne) {	
 				// Right, if we get here then there is no field ... so maybe
 				// this is actually an inner class (or a syntax error :)
@@ -686,7 +693,7 @@ public class ScopeResolution {
 					return r;
 				} catch(ClassNotFoundException cne) {
 					// this must be an error...
-					syntax_error("field does not exist: " + cv.type() + "." + e.name(),e,cne);
+					syntax_error("field does not exist: " + cv.type() + "." + e.name(),e);
 				}
 			}
 		}
@@ -741,19 +748,16 @@ public class ScopeResolution {
 		return e;
 	}
 	
-	protected Expr doInvoke(Expr.Invoke e, JavaFile file) {				
+	protected Expr doInvoke(Expr.Invoke e, JavaFile file) throws ClassNotFoundException {				
 		Expr target = doExpression(e.target(), file);
 		
 		if(target == null && e.name().equals("super")) {
 			// Special case. We're invoking the super constructor. There's not
 			// much we can do here.
-			Type.Clazz thisType = ((ClassScope) findEnclosingScope(ClassScope.class)).type;
-			try {
-				Type superType = getSuperClass(thisType);
-				target = new Expr.LocalVariable("super",superType);
-			} catch(ClassNotFoundException cne) {
-				syntax_error(cne.getMessage(), e, cne);
-			}			
+			Type.Clazz thisType = ((ClassScope) findEnclosingScope(ClassScope.class)).type;			
+			Type superType = getSuperClass(thisType);
+			target = new Expr.LocalVariable("super",superType);
+
 		} else if(target == null && e.name().equals("this")) {
 			// Special case. We're invoking the super constructor. There's not
 			// much we can do here.
@@ -791,32 +795,28 @@ public class ScopeResolution {
 				if(s instanceof ClassScope) {
 					// We've found a scope that may contain the method we're
 					// after ...
-					ClassScope cs = (ClassScope) s;							
-					try {
-						// Now, the method we're after may not be declared
-						// explicitly in this scope; rather it may be declared
-						// in a superclass of this class and we must account for
-						// this.
-						if(types.hasMethod(cs.type,e.name(),loader)) {
-							// Ok, we have found the relevant method in question.
-							if(isThis && !isStatic) {
-								target = new Expr.LocalVariable("this",
-										new ArrayList(e.attributes()));			
-								target.attributes().add(cs.type);
-							} else if(!isStatic) {
-								Expr.ClassVariable cv = new Expr.ClassVariable(cs.type.toString());
-								cv.attributes().add(cs.type);
-								target = new Expr.Deref(cv, "this",
-										new ArrayList(e.attributes()));								
-							} else {															
-								target = new Expr.ClassVariable(cs.type.toString());
-								target.attributes().add(cs.type);
-							}
-							break;
+					ClassScope cs = (ClassScope) s;												
+					// Now, the method we're after may not be declared
+					// explicitly in this scope; rather it may be declared
+					// in a superclass of this class and we must account for
+					// this.
+					if(types.hasMethod(cs.type,e.name(),loader)) {
+						// Ok, we have found the relevant method in question.
+						if(isThis && !isStatic) {
+							target = new Expr.LocalVariable("this",
+									new ArrayList(e.attributes()));			
+							target.attributes().add(cs.type);
+						} else if(!isStatic) {
+							Expr.ClassVariable cv = new Expr.ClassVariable(cs.type.toString());
+							cv.attributes().add(cs.type);
+							target = new Expr.Deref(cv, "this",
+									new ArrayList(e.attributes()));								
+						} else {															
+							target = new Expr.ClassVariable(cs.type.toString());
+							target.attributes().add(cs.type);
 						}
-					} catch(ClassNotFoundException cne) {
-						syntax_error(cne.getMessage(), e, cne);
-					}
+						break;
+					}					
 					
 					isThis = false;
 					isStatic = cs.isStatic;
@@ -1026,7 +1026,7 @@ public class ScopeResolution {
 				return e;
 			} else {
 				syntax_error("Cannot find symbol - variable \"" + e.value() + "\"",
-						e, ex);
+						e);
 				return null; // so very dead!!!
 			}		
 		}

@@ -69,14 +69,18 @@ public class TypeChecking {
 	}
 	
 	protected void checkDeclaration(Decl d) {
-		if(d instanceof JavaInterface) {
-			checkInterface((JavaInterface)d);
-		} else if(d instanceof JavaClass) {
-			checkClass((JavaClass)d);
-		} else if(d instanceof JavaMethod) {
-			checkMethod((JavaMethod)d);
-		} else if(d instanceof JavaField) {
-			checkField((JavaField)d);
+		try {
+			if(d instanceof JavaInterface) {
+				checkInterface((JavaInterface)d);
+			} else if(d instanceof JavaClass) {
+				checkClass((JavaClass)d);
+			} else if(d instanceof JavaMethod) {
+				checkMethod((JavaMethod)d);
+			} else if(d instanceof JavaField) {
+				checkField((JavaField)d);
+			}
+		} catch(Exception ex) {
+			internal_error(d,ex);
 		}
 	}
 	
@@ -128,54 +132,58 @@ public class TypeChecking {
 	}
 	
 	protected void checkStatement(Stmt e) {
-		if(e instanceof Stmt.SynchronisedBlock) {
-			checkSynchronisedBlock((Stmt.SynchronisedBlock)e);
-		} else if(e instanceof Stmt.TryCatchBlock) {
-			checkTryCatchBlock((Stmt.TryCatchBlock)e);
-		} else if(e instanceof Stmt.Block) {
-			checkBlock((Stmt.Block)e);
-		} else if(e instanceof Stmt.VarDef) {
-			checkVarDef((Stmt.VarDef) e);
-		} else if(e instanceof Stmt.AssignmentOp) {
-			checkAssignmentOp((Stmt.AssignmentOp) e);
-		} else if(e instanceof Stmt.Assignment) {
-			checkAssignment((Stmt.Assignment) e);
-		} else if(e instanceof Stmt.Return) {
-			checkReturn((Stmt.Return) e);
-		} else if(e instanceof Stmt.Throw) {
-			checkThrow((Stmt.Throw) e);
-		} else if(e instanceof Stmt.Assert) {
-			checkAssert((Stmt.Assert) e);
-		} else if(e instanceof Stmt.Break) {
-			checkBreak((Stmt.Break) e);
-		} else if(e instanceof Stmt.Continue) {
-			checkContinue((Stmt.Continue) e);
-		} else if(e instanceof Stmt.Label) {
-			checkLabel((Stmt.Label) e);
-		} else if(e instanceof Stmt.If) {
-			checkIf((Stmt.If) e);
-		} else if(e instanceof Stmt.For) {
-			checkFor((Stmt.For) e);
-		} else if(e instanceof Stmt.ForEach) {
-			checkForEach((Stmt.ForEach) e);
-		} else if(e instanceof Stmt.While) {
-			checkWhile((Stmt.While) e);
-		} else if(e instanceof Stmt.DoWhile) {
-			checkDoWhile((Stmt.DoWhile) e);
-		} else if(e instanceof Stmt.Switch) {
-			checkSwitch((Stmt.Switch) e);
-		} else if(e instanceof Expr.Invoke) {
-			checkInvoke((Expr.Invoke) e);
-		} else if(e instanceof Expr.New) {
-			checkNew((Expr.New) e);
-		} else if(e instanceof Decl.JavaClass) {
-			checkClass((Decl.JavaClass)e);
-		} else if(e instanceof Stmt.PrePostIncDec) {
-			checkExpression((Stmt.PrePostIncDec)e);
-		} else if(e != null) {
-			throw new RuntimeException("Invalid statement encountered: "
-					+ e.getClass());
-		}		
+		try {
+			if(e instanceof Stmt.SynchronisedBlock) {
+				checkSynchronisedBlock((Stmt.SynchronisedBlock)e);
+			} else if(e instanceof Stmt.TryCatchBlock) {
+				checkTryCatchBlock((Stmt.TryCatchBlock)e);
+			} else if(e instanceof Stmt.Block) {
+				checkBlock((Stmt.Block)e);
+			} else if(e instanceof Stmt.VarDef) {
+				checkVarDef((Stmt.VarDef) e);
+			} else if(e instanceof Stmt.AssignmentOp) {
+				checkAssignmentOp((Stmt.AssignmentOp) e);
+			} else if(e instanceof Stmt.Assignment) {
+				checkAssignment((Stmt.Assignment) e);
+			} else if(e instanceof Stmt.Return) {
+				checkReturn((Stmt.Return) e);
+			} else if(e instanceof Stmt.Throw) {
+				checkThrow((Stmt.Throw) e);
+			} else if(e instanceof Stmt.Assert) {
+				checkAssert((Stmt.Assert) e);
+			} else if(e instanceof Stmt.Break) {
+				checkBreak((Stmt.Break) e);
+			} else if(e instanceof Stmt.Continue) {
+				checkContinue((Stmt.Continue) e);
+			} else if(e instanceof Stmt.Label) {
+				checkLabel((Stmt.Label) e);
+			} else if(e instanceof Stmt.If) {
+				checkIf((Stmt.If) e);
+			} else if(e instanceof Stmt.For) {
+				checkFor((Stmt.For) e);
+			} else if(e instanceof Stmt.ForEach) {
+				checkForEach((Stmt.ForEach) e);
+			} else if(e instanceof Stmt.While) {
+				checkWhile((Stmt.While) e);
+			} else if(e instanceof Stmt.DoWhile) {
+				checkDoWhile((Stmt.DoWhile) e);
+			} else if(e instanceof Stmt.Switch) {
+				checkSwitch((Stmt.Switch) e);
+			} else if(e instanceof Expr.Invoke) {
+				checkInvoke((Expr.Invoke) e);
+			} else if(e instanceof Expr.New) {
+				checkNew((Expr.New) e);
+			} else if(e instanceof Decl.JavaClass) {
+				checkClass((Decl.JavaClass)e);
+			} else if(e instanceof Stmt.PrePostIncDec) {
+				checkExpression((Stmt.PrePostIncDec)e);
+			} else if(e != null) {
+				throw new RuntimeException("Invalid statement encountered: "
+						+ e.getClass());
+			}		
+		} catch(Exception ex) {
+			internal_error(e,ex);
+		}
 	}
 	
 	protected void checkBlock(Stmt.Block block) {	
@@ -419,64 +427,68 @@ public class TypeChecking {
 		}
 	}
 	
-	protected void checkExpression(Expr e) {	
-		if(e instanceof Value.Bool) {
-			checkBoolVal((Value.Bool)e);
-		} else if(e instanceof Value.Byte) {
-			checkByteVal((Value.Byte)e);
-		} else if(e instanceof Value.Char) {
-			checkCharVal((Value.Char)e);
-		} else if(e instanceof Value.Int) {
-			checkIntVal((Value.Int)e);
-		} else if(e instanceof Value.Short) {
-			checkShortVal((Value.Short)e);
-		} else if(e instanceof Value.Long) {
-			checkLongVal((Value.Long)e);
-		} else if(e instanceof Value.Float) {
-			checkFloatVal((Value.Float)e);
-		} else if(e instanceof Value.Double) {
-			checkDoubleVal((Value.Double)e);
-		} else if(e instanceof Value.String) {
-			checkStringVal((Value.String)e);
-		} else if(e instanceof Value.Null) {
-			checkNullVal((Value.Null)e);
-		} else if(e instanceof Value.TypedArray) {
-			checkTypedArrayVal((Value.TypedArray)e);
-		} else if(e instanceof Value.Array) {
-			checkArrayVal((Value.Array)e);
-		} else if(e instanceof Value.Class) {
-			checkClassVal((Value.Class) e);
-		} else if(e instanceof Expr.LocalVariable) {
-			checkLocalVariable((Expr.LocalVariable)e);
-		} else if(e instanceof Expr.NonLocalVariable) {
-			checkNonLocalVariable((Expr.NonLocalVariable)e);
-		} else if(e instanceof Expr.ClassVariable) {
-			checkClassVariable((Expr.ClassVariable)e);
-		} else if(e instanceof Expr.UnOp) {
-			checkUnOp((Expr.UnOp)e);
-		} else if(e instanceof Expr.BinOp) {
-			checkBinOp((Expr.BinOp)e);
-		} else if(e instanceof Expr.TernOp) {
-			checkTernOp((Expr.TernOp)e);
-		} else if(e instanceof Expr.Cast) {
-			checkCast((Expr.Cast)e);
-		} else if(e instanceof Expr.Convert) {
-			checkConvert((Expr.Convert)e);
-		} else if(e instanceof Expr.InstanceOf) {
-			checkInstanceOf((Expr.InstanceOf)e);
-		} else if(e instanceof Expr.Invoke) {
-			checkInvoke((Expr.Invoke) e);
-		} else if(e instanceof Expr.New) {
-			checkNew((Expr.New) e);
-		} else if(e instanceof Expr.ArrayIndex) {
-			checkArrayIndex((Expr.ArrayIndex) e);
-		} else if(e instanceof Expr.Deref) {
-			checkDeref((Expr.Deref) e);
-		} else if(e instanceof Stmt.Assignment) {
-			checkAssignment((Stmt.Assignment) e);			
-		} else if(e != null) {
-			throw new RuntimeException("Invalid expression encountered: "
-					+ e.getClass());
+	protected void checkExpression(Expr e) {
+		try {
+			if(e instanceof Value.Bool) {
+				checkBoolVal((Value.Bool)e);
+			} else if(e instanceof Value.Byte) {
+				checkByteVal((Value.Byte)e);
+			} else if(e instanceof Value.Char) {
+				checkCharVal((Value.Char)e);
+			} else if(e instanceof Value.Int) {
+				checkIntVal((Value.Int)e);
+			} else if(e instanceof Value.Short) {
+				checkShortVal((Value.Short)e);
+			} else if(e instanceof Value.Long) {
+				checkLongVal((Value.Long)e);
+			} else if(e instanceof Value.Float) {
+				checkFloatVal((Value.Float)e);
+			} else if(e instanceof Value.Double) {
+				checkDoubleVal((Value.Double)e);
+			} else if(e instanceof Value.String) {
+				checkStringVal((Value.String)e);
+			} else if(e instanceof Value.Null) {
+				checkNullVal((Value.Null)e);
+			} else if(e instanceof Value.TypedArray) {
+				checkTypedArrayVal((Value.TypedArray)e);
+			} else if(e instanceof Value.Array) {
+				checkArrayVal((Value.Array)e);
+			} else if(e instanceof Value.Class) {
+				checkClassVal((Value.Class) e);
+			} else if(e instanceof Expr.LocalVariable) {
+				checkLocalVariable((Expr.LocalVariable)e);
+			} else if(e instanceof Expr.NonLocalVariable) {
+				checkNonLocalVariable((Expr.NonLocalVariable)e);
+			} else if(e instanceof Expr.ClassVariable) {
+				checkClassVariable((Expr.ClassVariable)e);
+			} else if(e instanceof Expr.UnOp) {
+				checkUnOp((Expr.UnOp)e);
+			} else if(e instanceof Expr.BinOp) {
+				checkBinOp((Expr.BinOp)e);
+			} else if(e instanceof Expr.TernOp) {
+				checkTernOp((Expr.TernOp)e);
+			} else if(e instanceof Expr.Cast) {
+				checkCast((Expr.Cast)e);
+			} else if(e instanceof Expr.Convert) {
+				checkConvert((Expr.Convert)e);
+			} else if(e instanceof Expr.InstanceOf) {
+				checkInstanceOf((Expr.InstanceOf)e);
+			} else if(e instanceof Expr.Invoke) {
+				checkInvoke((Expr.Invoke) e);
+			} else if(e instanceof Expr.New) {
+				checkNew((Expr.New) e);
+			} else if(e instanceof Expr.ArrayIndex) {
+				checkArrayIndex((Expr.ArrayIndex) e);
+			} else if(e instanceof Expr.Deref) {
+				checkDeref((Expr.Deref) e);
+			} else if(e instanceof Stmt.Assignment) {
+				checkAssignment((Stmt.Assignment) e);			
+			} else if(e != null) {
+				throw new RuntimeException("Invalid expression encountered: "
+						+ e.getClass());
+			}
+		} catch(Exception ex) {
+			internal_error(e,ex);
 		}
 	}
 	
@@ -516,24 +528,20 @@ public class TypeChecking {
 		}
 	}
 	
-	protected void checkInstanceOf(Expr.InstanceOf e) {		
+	protected void checkInstanceOf(Expr.InstanceOf e) throws ClassNotFoundException {		
 		checkExpression(e.lhs());
 		
 		Type lhs_t = (Type) e.lhs().attribute(Type.class);
 		Type rhs_t = (Type) e.rhs().attribute(Type.class);
-		
-		try {
-			if(lhs_t instanceof Type.Primitive) {
-				syntax_error("required reference type, found " + lhs_t , e);			
-			} else if(!(rhs_t instanceof Type.Reference)) {
-				syntax_error("required class or array type, found " + rhs_t , e);
-			} else if((lhs_t instanceof Type.Array || rhs_t instanceof Type.Array)
-					&& !(types.subtype(lhs_t,rhs_t,loader))) {
-				syntax_error("inconvertible types: " + lhs_t + ", " + rhs_t, e);
-			}
-		} catch(ClassNotFoundException cne) {
-			syntax_error("type error",e,cne);
-		}
+
+		if(lhs_t instanceof Type.Primitive) {
+			syntax_error("required reference type, found " + lhs_t , e);			
+		} else if(!(rhs_t instanceof Type.Reference)) {
+			syntax_error("required class or array type, found " + rhs_t , e);
+		} else if((lhs_t instanceof Type.Array || rhs_t instanceof Type.Array)
+				&& !(types.subtype(lhs_t,rhs_t,loader))) {
+			syntax_error("inconvertible types: " + lhs_t + ", " + rhs_t, e);
+		}	
 	}
 	
 	protected void checkCast(Expr.Cast e) {

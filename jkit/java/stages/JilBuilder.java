@@ -110,62 +110,62 @@ public class JilBuilder {
 	}
 	
 	protected void doDeclaration(Decl d, JilClass parent) {
-		if(d instanceof Decl.JavaInterface) {
-			doInterface((Decl.JavaInterface)d);
-		} else if(d instanceof Decl.JavaClass) {
-			doClass((Decl.JavaClass)d);
-		} else if(d instanceof Decl.JavaMethod) {
-			doMethod((Decl.JavaMethod)d, parent);
-		} else if(d instanceof Decl.JavaField) {
-			doField((Decl.JavaField)d, parent);
-		} else if (d instanceof Decl.InitialiserBlock) {
-			doInitialiserBlock((Decl.InitialiserBlock)d , parent);
-		} else if (d instanceof Decl.StaticInitialiserBlock) {
-			doStaticInitialiserBlock((Decl.StaticInitialiserBlock) d, parent);
-		} else {
-			syntax_error("internal failure (unknown declaration \"" + d
-					+ "\" encountered)",d);
+		try {
+			if(d instanceof Decl.JavaInterface) {
+				doInterface((Decl.JavaInterface)d);
+			} else if(d instanceof Decl.JavaClass) {
+				doClass((Decl.JavaClass)d);
+			} else if(d instanceof Decl.JavaMethod) {
+				doMethod((Decl.JavaMethod)d, parent);
+			} else if(d instanceof Decl.JavaField) {
+				doField((Decl.JavaField)d, parent);
+			} else if (d instanceof Decl.InitialiserBlock) {
+				doInitialiserBlock((Decl.InitialiserBlock)d , parent);
+			} else if (d instanceof Decl.StaticInitialiserBlock) {
+				doStaticInitialiserBlock((Decl.StaticInitialiserBlock) d, parent);
+			}
+		} catch(Exception ex) {
+			internal_error(d,ex);
 		}
+						
+		syntax_error("internal failure (unknown declaration \"" + d
+				+ "\" encountered)", d);		
 	}
 	
-	protected void doInterface(Decl.JavaInterface d) {
+	protected void doInterface(Decl.JavaInterface d) throws ClassNotFoundException {
 		doClass(d);
 	}
 	
-	protected void doClass(Decl.JavaClass c) {
+	protected void doClass(Decl.JavaClass c) throws ClassNotFoundException {
 		Type.Clazz type = (Type.Clazz) c.attribute(Type.class);
-		scopes.push(new ClassScope(type));
-		try {
-			// We, need to update the skeleton so that any methods and fields
-			// discovered below this are attributed to this class!			
-			JilClass skeleton = (JilClass) loader.loadClass(type);
-			
-			// I do fields after everything else, so as to simplify the process
-			// of adding field initialisers to constructors. This is because it
-			// means I can be sure that the constructor has been otherwise
-			// completely generated, so all I need is to add initialisers at
-			// beginning, after super call (if there is one).
-			ArrayList<Decl> fields = new ArrayList<Decl>();
-			for(Decl d : c.declarations()) {
-				if (!(d instanceof Decl.JavaField)
-						&& !(d instanceof Decl.InitialiserBlock)
-						&& !(d instanceof Decl.StaticInitialiserBlock)) {
-					doDeclaration(d, skeleton);
-				} else {
-					fields.add(d);
-				}
+		scopes.push(new ClassScope(type));		
+		// We, need to update the skeleton so that any methods and fields
+		// discovered below this are attributed to this class!			
+		JilClass skeleton = (JilClass) loader.loadClass(type);
+
+		// I do fields after everything else, so as to simplify the process
+		// of adding field initialisers to constructors. This is because it
+		// means I can be sure that the constructor has been otherwise
+		// completely generated, so all I need is to add initialisers at
+		// beginning, after super call (if there is one).
+		ArrayList<Decl> fields = new ArrayList<Decl>();
+		for(Decl d : c.declarations()) {
+			if (!(d instanceof Decl.JavaField)
+					&& !(d instanceof Decl.InitialiserBlock)
+					&& !(d instanceof Decl.StaticInitialiserBlock)) {
+				doDeclaration(d, skeleton);
+			} else {
+				fields.add(d);
 			}
-			
-			// Note, I iterate the field declarations in reverse order to ensure
-			// that field initialisers are added to constructors in the right
-			// order.
-			for(int i=fields.size();i>0;--i) {
-				Decl d = fields.get(i-1);
-				doDeclaration(d, skeleton);				
-			}					
-		} catch(ClassNotFoundException cne) {
-			syntax_error("internal failure (skeleton not found for " + type,c,cne);
-		}			
+		}
+
+		// Note, I iterate the field declarations in reverse order to ensure
+		// that field initialisers are added to constructors in the right
+		// order.
+		for(int i=fields.size();i>0;--i) {
+			Decl d = fields.get(i-1);
+			doDeclaration(d, skeleton);				
+		}										
 		
 		scopes.pop();
 	}
@@ -269,59 +269,65 @@ public class JilBuilder {
 	}
 	
 	protected List<JilStmt> doStatement(Stmt e) {
-		if(e instanceof Stmt.SynchronisedBlock) {
-			return doSynchronisedBlock((Stmt.SynchronisedBlock)e);
-		} else if(e instanceof Stmt.TryCatchBlock) {
-			return doTryCatchBlock((Stmt.TryCatchBlock)e);
-		} else if(e instanceof Stmt.Block) {
-			return doBlock((Stmt.Block)e);
-		} else if(e instanceof Stmt.VarDef) {
-			return doVarDef((Stmt.VarDef) e);
-		} else if(e instanceof Stmt.AssignmentOp) {
-			return doAssignmentOp((Stmt.AssignmentOp) e).second();
-		} else if(e instanceof Stmt.Assignment) {
-			return doAssignment((Stmt.Assignment) e).second();
-		} else if(e instanceof Stmt.Return) {
-			return doReturn((Stmt.Return) e);
-		} else if(e instanceof Stmt.Throw) {
-			return doThrow((Stmt.Throw) e);
-		} else if(e instanceof Stmt.Assert) {
-			return doAssert((Stmt.Assert) e);
-		} else if(e instanceof Stmt.Break) {
-			return doBreak((Stmt.Break) e);
-		} else if(e instanceof Stmt.Continue) {
-			return doContinue((Stmt.Continue) e);
-		} else if(e instanceof Stmt.Label) {
-			return doLabel((Stmt.Label) e);
-		} else if(e instanceof Stmt.If) {
-			return doIf((Stmt.If) e);
-		} else if(e instanceof Stmt.For) {
-			return doFor((Stmt.For) e);
-		} else if(e instanceof Stmt.ForEach) {
-			return doForEach((Stmt.ForEach) e);
-		} else if(e instanceof Stmt.While) {
-			return doWhile((Stmt.While) e);
-		} else if(e instanceof Stmt.DoWhile) {
-			return doDoWhile((Stmt.DoWhile) e);
-		} else if(e instanceof Stmt.Switch) {
-			return doSwitch((Stmt.Switch) e);
-		} else if(e instanceof Expr.Invoke) {
-			Pair<JilExpr, List<JilStmt>> r = doInvoke((Expr.Invoke) e);
-			r.second().add((JilExpr.Invoke) r.first());
-			return r.second();
-		} else if(e instanceof Expr.New) {
-			Pair<JilExpr, List<JilStmt>> r =  doNew((Expr.New) e);
-			r.second().add((JilExpr.New) r.first());
-			return r.second();
-		} else if(e instanceof Decl.JavaClass) {
-			doClass((Decl.JavaClass)e);			
-		} else if(e instanceof Stmt.PrePostIncDec) {
-			Pair<JilExpr, List<JilStmt>> r = doExpression((Stmt.PrePostIncDec) e);
-			return r.second();
-		} else if(e != null) {
-			syntax_error("Invalid statement encountered: "
-					+ e.getClass(),e);
-		}		
+		try {
+			if(e instanceof Stmt.SynchronisedBlock) {
+				return doSynchronisedBlock((Stmt.SynchronisedBlock)e);
+			} else if(e instanceof Stmt.TryCatchBlock) {
+				return doTryCatchBlock((Stmt.TryCatchBlock)e);
+			} else if(e instanceof Stmt.Block) {
+				return doBlock((Stmt.Block)e);
+			} else if(e instanceof Stmt.VarDef) {
+				return doVarDef((Stmt.VarDef) e);
+			} else if(e instanceof Stmt.AssignmentOp) {
+				return doAssignmentOp((Stmt.AssignmentOp) e).second();
+			} else if(e instanceof Stmt.Assignment) {
+				return doAssignment((Stmt.Assignment) e).second();
+			} else if(e instanceof Stmt.Return) {
+				return doReturn((Stmt.Return) e);
+			} else if(e instanceof Stmt.Throw) {
+				return doThrow((Stmt.Throw) e);
+			} else if(e instanceof Stmt.Assert) {
+				return doAssert((Stmt.Assert) e);
+			} else if(e instanceof Stmt.Break) {
+				return doBreak((Stmt.Break) e);
+			} else if(e instanceof Stmt.Continue) {
+				return doContinue((Stmt.Continue) e);
+			} else if(e instanceof Stmt.Label) {
+				return doLabel((Stmt.Label) e);
+			} else if(e instanceof Stmt.If) {
+				return doIf((Stmt.If) e);
+			} else if(e instanceof Stmt.For) {
+				return doFor((Stmt.For) e);
+			} else if(e instanceof Stmt.ForEach) {
+				return doForEach((Stmt.ForEach) e);
+			} else if(e instanceof Stmt.While) {
+				return doWhile((Stmt.While) e);
+			} else if(e instanceof Stmt.DoWhile) {
+				return doDoWhile((Stmt.DoWhile) e);
+			} else if(e instanceof Stmt.Switch) {
+				return doSwitch((Stmt.Switch) e);
+			} else if(e instanceof Expr.Invoke) {
+				Pair<JilExpr, List<JilStmt>> r = doInvoke((Expr.Invoke) e);
+				r.second().add((JilExpr.Invoke) r.first());
+				return r.second();
+			} else if(e instanceof Expr.New) {
+				Pair<JilExpr, List<JilStmt>> r =  doNew((Expr.New) e);
+				r.second().add((JilExpr.New) r.first());
+				return r.second();
+			} else if(e instanceof Decl.JavaClass) {
+				doClass((Decl.JavaClass)e);			
+			} else if(e instanceof Stmt.PrePostIncDec) {
+				Pair<JilExpr, List<JilStmt>> r = doExpression((Stmt.PrePostIncDec) e);
+				return r.second();
+			}
+		} catch(Exception ex) {
+			internal_error(e,ex);
+		}
+			
+		if (e != null) {
+			syntax_error("Invalid statement encountered: " + e.getClass(), e);
+		}	
+		
 		return new ArrayList<JilStmt>();
 	}
 	
@@ -1070,65 +1076,71 @@ public class JilBuilder {
 	}
 	
 	protected Pair<JilExpr,List<JilStmt>> doExpression(Expr e) {	
-		if(e instanceof Value.Bool) {
-			return doBoolVal((Value.Bool)e);
-		} else if(e instanceof Value.Byte) {
-			return doByteVal((Value.Byte)e);
-		} else if(e instanceof Value.Char) {
-			return doCharVal((Value.Char)e);
-		} else if(e instanceof Value.Short) {
-			return doShortVal((Value.Short)e);
-		} else if(e instanceof Value.Int) {
-			return doIntVal((Value.Int)e);
-		} else if(e instanceof Value.Long) {
-			return doLongVal((Value.Long)e);
-		} else if(e instanceof Value.Float) {
-			return doFloatVal((Value.Float)e);
-		} else if(e instanceof Value.Double) {
-			return doDoubleVal((Value.Double)e);
-		} else if(e instanceof Value.String) {
-			return doStringVal((Value.String)e);
-		} else if(e instanceof Value.Null) {
-			return doNullVal((Value.Null)e);
-		} else if(e instanceof Value.TypedArray) {
-			return doTypedArrayVal((Value.TypedArray)e);
-		} else if(e instanceof Value.Array) {
-			return doArrayVal((Value.Array)e);
-		} else if(e instanceof Value.Class) {
-			return doClassVal((Value.Class) e);
-		} else if(e instanceof Expr.LocalVariable) {
-			return doLocalVariable((Expr.LocalVariable)e);
-		} else if(e instanceof Expr.NonLocalVariable) {
-			return doNonLocalVariable((Expr.NonLocalVariable)e);
-		} else if(e instanceof Expr.ClassVariable) {
-			return doClassVariable((Expr.ClassVariable)e);
-		} else if(e instanceof Expr.UnOp) {
-			return doUnOp((Expr.UnOp)e);
-		} else if(e instanceof Expr.BinOp) {
-			return doBinOp((Expr.BinOp)e);
-		} else if(e instanceof Expr.TernOp) {
-			return doTernOp((Expr.TernOp)e);
-		} else if(e instanceof Expr.Cast) {
-			return doCast((Expr.Cast)e);
-		} else if(e instanceof Expr.Convert) {
-			return doConvert((Expr.Convert)e);
-		} else if(e instanceof Expr.InstanceOf) {
-			return doInstanceOf((Expr.InstanceOf)e);
-		} else if(e instanceof Expr.Invoke) {
-			return doInvoke((Expr.Invoke) e);
-		} else if(e instanceof Expr.New) {
-			return doNew((Expr.New) e);
-		} else if(e instanceof Expr.ArrayIndex) {
-			return doArrayIndex((Expr.ArrayIndex) e);
-		} else if(e instanceof Expr.Deref) {
-			return doDeref((Expr.Deref) e);
-		} else if(e instanceof Stmt.AssignmentOp) {
-			// force brackets			
-			return doAssignmentOp((Stmt.AssignmentOp) e);			
-		} else if(e instanceof Stmt.Assignment) {
-			// force brackets			
-			return doAssignment((Stmt.Assignment) e);			
-		} else if(e != null) {
+		try {
+			if(e instanceof Value.Bool) {
+				return doBoolVal((Value.Bool)e);
+			} else if(e instanceof Value.Byte) {
+				return doByteVal((Value.Byte)e);
+			} else if(e instanceof Value.Char) {
+				return doCharVal((Value.Char)e);
+			} else if(e instanceof Value.Short) {
+				return doShortVal((Value.Short)e);
+			} else if(e instanceof Value.Int) {
+				return doIntVal((Value.Int)e);
+			} else if(e instanceof Value.Long) {
+				return doLongVal((Value.Long)e);
+			} else if(e instanceof Value.Float) {
+				return doFloatVal((Value.Float)e);
+			} else if(e instanceof Value.Double) {
+				return doDoubleVal((Value.Double)e);
+			} else if(e instanceof Value.String) {
+				return doStringVal((Value.String)e);
+			} else if(e instanceof Value.Null) {
+				return doNullVal((Value.Null)e);
+			} else if(e instanceof Value.TypedArray) {
+				return doTypedArrayVal((Value.TypedArray)e);
+			} else if(e instanceof Value.Array) {
+				return doArrayVal((Value.Array)e);
+			} else if(e instanceof Value.Class) {
+				return doClassVal((Value.Class) e);
+			} else if(e instanceof Expr.LocalVariable) {
+				return doLocalVariable((Expr.LocalVariable)e);
+			} else if(e instanceof Expr.NonLocalVariable) {
+				return doNonLocalVariable((Expr.NonLocalVariable)e);
+			} else if(e instanceof Expr.ClassVariable) {
+				return doClassVariable((Expr.ClassVariable)e);
+			} else if(e instanceof Expr.UnOp) {
+				return doUnOp((Expr.UnOp)e);
+			} else if(e instanceof Expr.BinOp) {
+				return doBinOp((Expr.BinOp)e);
+			} else if(e instanceof Expr.TernOp) {
+				return doTernOp((Expr.TernOp)e);
+			} else if(e instanceof Expr.Cast) {
+				return doCast((Expr.Cast)e);
+			} else if(e instanceof Expr.Convert) {
+				return doConvert((Expr.Convert)e);
+			} else if(e instanceof Expr.InstanceOf) {
+				return doInstanceOf((Expr.InstanceOf)e);
+			} else if(e instanceof Expr.Invoke) {
+				return doInvoke((Expr.Invoke) e);
+			} else if(e instanceof Expr.New) {
+				return doNew((Expr.New) e);
+			} else if(e instanceof Expr.ArrayIndex) {
+				return doArrayIndex((Expr.ArrayIndex) e);
+			} else if(e instanceof Expr.Deref) {
+				return doDeref((Expr.Deref) e);
+			} else if(e instanceof Stmt.AssignmentOp) {
+				// force brackets			
+				return doAssignmentOp((Stmt.AssignmentOp) e);			
+			} else if(e instanceof Stmt.Assignment) {
+				// force brackets			
+				return doAssignment((Stmt.Assignment) e);			
+			}
+		} catch(Exception ex) {
+			internal_error(e,ex);
+		}
+		
+		if(e != null) {
 			syntax_error("Invalid expression encountered: "
 					+ e.getClass(),e);			
 		}
@@ -1136,7 +1148,8 @@ public class JilBuilder {
 		return null;
 	}
 	
-	protected Pair<JilExpr,List<JilStmt>> doDeref(Expr.Deref e) {
+	protected Pair<JilExpr, List<JilStmt>> doDeref(Expr.Deref e)
+			throws ClassNotFoundException, FieldNotFoundException {
 		Pair<JilExpr,List<JilStmt>> target = doExpression(e.target());
 		Type type = (Type) e.attribute(Type.class);
 		Type.Reference _targetT = (Type.Reference) e.target().attribute(Type.class);
@@ -1158,20 +1171,13 @@ public class JilBuilder {
 					level = level - 1;
 				}
 				return new Pair(r,  new ArrayList<JilStmt>());
-			} else {				
-				try {
-					Triple<Clazz, Clazz.Field, Type> r = types
-					.resolveField(targetT, e.name(), loader);
-					
-					return new Pair<JilExpr, List<JilStmt>>(new JilExpr.Deref(target.first(), e
-							.name(),r.second().isStatic(), type,  e.attributes()),
-							target.second());
-				} catch(ClassNotFoundException cne) {
-					syntax_error(cne.getMessage(),e,cne);				
-				} catch(FieldNotFoundException fne) {	
-					// this must be an error...
-					syntax_error("field does not exist: " + type + "." + e.name(),e,fne);		
-				}
+			} else {								
+				Triple<Clazz, Clazz.Field, Type> r = types
+				.resolveField(targetT, e.name(), loader);
+
+				return new Pair<JilExpr, List<JilStmt>>(new JilExpr.Deref(target.first(), e
+						.name(),r.second().isStatic(), type,  e.attributes()),
+						target.second());				
 			}
 		} else if(_targetT instanceof Type.Array && e.name().equals("length")) {
 			return new Pair<JilExpr, List<JilStmt>>(new JilExpr.Deref(target.first(), e

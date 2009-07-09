@@ -174,49 +174,55 @@ public class TypePropagation {
 	}
 	
 	protected void doStatement(Stmt e, JavaMethod m) {
-		if(e instanceof Stmt.SynchronisedBlock) {
-			doSynchronisedBlock((Stmt.SynchronisedBlock)e, m);
-		} else if(e instanceof Stmt.TryCatchBlock) {
-			doTryCatchBlock((Stmt.TryCatchBlock)e, m);
-		} else if(e instanceof Stmt.Block) {
-			doBlock((Stmt.Block)e, m);
-		} else if(e instanceof Stmt.VarDef) {
-			doVarDef((Stmt.VarDef) e, m);
-		} else if(e instanceof Stmt.Assignment) {
-			doAssignment((Stmt.Assignment) e, m);
-		} else if(e instanceof Stmt.Return) {
-			doReturn((Stmt.Return) e, m);
-		} else if(e instanceof Stmt.Throw) {
-			doThrow((Stmt.Throw) e, m);
-		} else if(e instanceof Stmt.Assert) {
-			doAssert((Stmt.Assert) e, m);
-		} else if(e instanceof Stmt.Break) {
-			doBreak((Stmt.Break) e, m);
-		} else if(e instanceof Stmt.Continue) {
-			doContinue((Stmt.Continue) e, m);
-		} else if(e instanceof Stmt.Label) {
-			doLabel((Stmt.Label) e, m);
-		} else if(e instanceof Stmt.If) {
-			doIf((Stmt.If) e, m);
-		} else if(e instanceof Stmt.For) {
-			doFor((Stmt.For) e, m);
-		} else if(e instanceof Stmt.ForEach) {
-			doForEach((Stmt.ForEach) e, m);
-		} else if(e instanceof Stmt.While) {
-			doWhile((Stmt.While) e, m);
-		} else if(e instanceof Stmt.DoWhile) {
-			doDoWhile((Stmt.DoWhile) e, m);
-		} else if(e instanceof Stmt.Switch) {
-			doSwitch((Stmt.Switch) e, m);
-		} else if(e instanceof Expr.Invoke) {
-			doInvoke((Expr.Invoke) e);
-		} else if(e instanceof Expr.New) {
-			doNew((Expr.New) e);
-		} else if(e instanceof Decl.JavaClass) {
-			doClass((Decl.JavaClass)e);
-		} else if(e instanceof Stmt.PrePostIncDec) {
-			doExpression((Stmt.PrePostIncDec)e);
-		} else if(e != null) {
+		try {
+			if(e instanceof Stmt.SynchronisedBlock) {
+				doSynchronisedBlock((Stmt.SynchronisedBlock)e, m);
+			} else if(e instanceof Stmt.TryCatchBlock) {
+				doTryCatchBlock((Stmt.TryCatchBlock)e, m);
+			} else if(e instanceof Stmt.Block) {
+				doBlock((Stmt.Block)e, m);
+			} else if(e instanceof Stmt.VarDef) {
+				doVarDef((Stmt.VarDef) e, m);
+			} else if(e instanceof Stmt.Assignment) {
+				doAssignment((Stmt.Assignment) e, m);
+			} else if(e instanceof Stmt.Return) {
+				doReturn((Stmt.Return) e, m);
+			} else if(e instanceof Stmt.Throw) {
+				doThrow((Stmt.Throw) e, m);
+			} else if(e instanceof Stmt.Assert) {
+				doAssert((Stmt.Assert) e, m);
+			} else if(e instanceof Stmt.Break) {
+				doBreak((Stmt.Break) e, m);
+			} else if(e instanceof Stmt.Continue) {
+				doContinue((Stmt.Continue) e, m);
+			} else if(e instanceof Stmt.Label) {
+				doLabel((Stmt.Label) e, m);
+			} else if(e instanceof Stmt.If) {
+				doIf((Stmt.If) e, m);
+			} else if(e instanceof Stmt.For) {
+				doFor((Stmt.For) e, m);
+			} else if(e instanceof Stmt.ForEach) {
+				doForEach((Stmt.ForEach) e, m);
+			} else if(e instanceof Stmt.While) {
+				doWhile((Stmt.While) e, m);
+			} else if(e instanceof Stmt.DoWhile) {
+				doDoWhile((Stmt.DoWhile) e, m);
+			} else if(e instanceof Stmt.Switch) {
+				doSwitch((Stmt.Switch) e, m);
+			} else if(e instanceof Expr.Invoke) {
+				doInvoke((Expr.Invoke) e);
+			} else if(e instanceof Expr.New) {
+				doNew((Expr.New) e);
+			} else if(e instanceof Decl.JavaClass) {
+				doClass((Decl.JavaClass)e);
+			} else if(e instanceof Stmt.PrePostIncDec) {
+				doExpression((Stmt.PrePostIncDec)e);
+			} 
+		} catch(Exception ex) {
+			internal_error(e,ex);
+		}
+		
+		if(e != null) {
 			syntax_error("Internal failure (invalid statement \""
 					+ e.getClass() + "\" encountered)", e);			
 		}		
@@ -386,59 +392,66 @@ public class TypePropagation {
 	}
 	
 	protected void doExpression(Expr e) {	
-		if(e instanceof Value.Bool) {
-			doBoolVal((Value.Bool)e);
-		} else if(e instanceof Value.Char) {
-			doCharVal((Value.Char)e);
-		} else if(e instanceof Value.Int) {
-			doIntVal((Value.Int)e);
-		} else if(e instanceof Value.Long) {
-			doLongVal((Value.Long)e);
-		} else if(e instanceof Value.Float) {
-			doFloatVal((Value.Float)e);
-		} else if(e instanceof Value.Double) {
-			doDoubleVal((Value.Double)e);
-		} else if(e instanceof Value.String) {
-			doStringVal((Value.String)e);
-		} else if(e instanceof Value.Null) {
-			doNullVal((Value.Null)e);
-		} else if(e instanceof Value.TypedArray) {
-			doTypedArrayVal((Value.TypedArray)e);
-		} else if(e instanceof Value.Class) {
-			doClassVal((Value.Class) e);
-		} else if(e instanceof Expr.LocalVariable) {
-			doLocalVariable((Expr.LocalVariable)e);
-		} else if(e instanceof Expr.NonLocalVariable) {
-			doNonLocalVariable((Expr.NonLocalVariable)e);
-		} else if(e instanceof Expr.ClassVariable) {
-			doClassVariable((Expr.ClassVariable)e);
-		} else if(e instanceof Expr.UnOp) {
-			doUnOp((Expr.UnOp)e);
-		} else if(e instanceof Expr.BinOp) {
-			doBinOp((Expr.BinOp)e);
-		} else if(e instanceof Expr.TernOp) {
-			doTernOp((Expr.TernOp)e);
-		} else if(e instanceof Expr.Cast) {
-			doCast((Expr.Cast)e);
-		} else if(e instanceof Expr.InstanceOf) {
-			doInstanceOf((Expr.InstanceOf)e);
-		} else if(e instanceof Expr.Invoke) {
-			doInvoke((Expr.Invoke) e);
-		} else if(e instanceof Expr.New) {
-			doNew((Expr.New) e);
-		} else if(e instanceof Expr.ArrayIndex) {
-			doArrayIndex((Expr.ArrayIndex) e);
-		} else if(e instanceof Expr.Deref) {
-			doDeref((Expr.Deref) e);
-		} else if(e instanceof Stmt.Assignment) {
-			// force brackets			
-			doAssignment((Stmt.Assignment) e, null);			
-		} else if(e != null) {
+		try {
+			if(e instanceof Value.Bool) {
+				doBoolVal((Value.Bool)e);
+			} else if(e instanceof Value.Char) {
+				doCharVal((Value.Char)e);
+			} else if(e instanceof Value.Int) {
+				doIntVal((Value.Int)e);
+			} else if(e instanceof Value.Long) {
+				doLongVal((Value.Long)e);
+			} else if(e instanceof Value.Float) {
+				doFloatVal((Value.Float)e);
+			} else if(e instanceof Value.Double) {
+				doDoubleVal((Value.Double)e);
+			} else if(e instanceof Value.String) {
+				doStringVal((Value.String)e);
+			} else if(e instanceof Value.Null) {
+				doNullVal((Value.Null)e);
+			} else if(e instanceof Value.TypedArray) {
+				doTypedArrayVal((Value.TypedArray)e);
+			} else if(e instanceof Value.Class) {
+				doClassVal((Value.Class) e);
+			} else if(e instanceof Expr.LocalVariable) {
+				doLocalVariable((Expr.LocalVariable)e);
+			} else if(e instanceof Expr.NonLocalVariable) {
+				doNonLocalVariable((Expr.NonLocalVariable)e);
+			} else if(e instanceof Expr.ClassVariable) {
+				doClassVariable((Expr.ClassVariable)e);
+			} else if(e instanceof Expr.UnOp) {
+				doUnOp((Expr.UnOp)e);
+			} else if(e instanceof Expr.BinOp) {
+				doBinOp((Expr.BinOp)e);
+			} else if(e instanceof Expr.TernOp) {
+				doTernOp((Expr.TernOp)e);
+			} else if(e instanceof Expr.Cast) {
+				doCast((Expr.Cast)e);
+			} else if(e instanceof Expr.InstanceOf) {
+				doInstanceOf((Expr.InstanceOf)e);
+			} else if(e instanceof Expr.Invoke) {
+				doInvoke((Expr.Invoke) e);
+			} else if(e instanceof Expr.New) {
+				doNew((Expr.New) e);
+			} else if(e instanceof Expr.ArrayIndex) {
+				doArrayIndex((Expr.ArrayIndex) e);
+			} else if(e instanceof Expr.Deref) {
+				doDeref((Expr.Deref) e);
+			} else if(e instanceof Stmt.Assignment) {
+				// force brackets			
+				doAssignment((Stmt.Assignment) e, null);			
+			}
+		} catch(Exception ex) {
+			internal_error(e,ex);
+		}
+			
+		if(e != null) {
 			syntax_error("Internal failure (invalid expression \"" + e.getClass() + "\" encountered)",e);			
 		}
 	}
 	
-	protected void doDeref(Expr.Deref e) {		
+	protected void doDeref(Expr.Deref e) throws ClassNotFoundException,
+			FieldNotFoundException {		
 		doExpression(e.target());	
 		
 		Type tmp = (Type) e.target().attribute(Type.class);
@@ -466,16 +479,10 @@ public class TypePropagation {
 				// type of the dereference.
 				e.attributes().add(target);
 			} else {
-				// now, perform field lookup!
-				try {
-					Triple<Clazz, Clazz.Field, Type> r = types
-							.resolveField(target, e.name(), loader);
-					e.attributes().add(r.third());			
-				} catch(ClassNotFoundException cne) {
-					syntax_error("class not found: " + target,e,cne);
-				} catch(FieldNotFoundException fne) {
-					syntax_error("field not found: " + target + "." + e.name(),e,fne);
-				}
+				// now, perform field lookup!				
+				Triple<Clazz, Clazz.Field, Type> r = types
+				.resolveField(target, e.name(), loader);
+				e.attributes().add(r.third());							
 			}
 		}
 	}
@@ -497,7 +504,7 @@ public class TypePropagation {
 		}
 	}
 	
-	protected void doNew(Expr.New e) {
+	protected void doNew(Expr.New e) throws ClassNotFoundException,MethodNotFoundException {
 		// First, figure out the type being created.		
 		Type type = (Type) e.type().attribute(Type.class);		
 		
@@ -513,85 +520,63 @@ public class TypePropagation {
 		
 		if(type instanceof Type.Clazz) {
 			Type.Clazz tc = (Type.Clazz) type;
-			try {
-				// Now, we want to determine the actual type of the constructor
-				// being called. Sadly, there is one situation in which
-				// complicates the issue. That is, if we are constructing an
-				// anonymous inner class based on an interface, then clearly the
-				// interface will have no constructor method. In such a
-				// situation, we cannot provide any parameters and, therefore,
-				// it's easy enough to determine the type of the constructor
-				// call.
-				
-				Clazz c = loader.loadClass(tc);
-				
-				if (c.isInterface() && e.declarations().size() > 0) {
-					// Yes, this is an anonymous inner class creation on an
-					// interface.
-					Type.Function ftype = new Type.Function(Types.T_VOID);
-					e.attributes().add(new JilBuilder.MethodInfo(new ArrayList(),ftype));
-				} else {
-					// normal case.
-					
-					String constructorName = tc.components().get(
-							tc.components().size() - 1).first();
-					Triple<Clazz, Clazz.Method, Type.Function> r = types
-					.resolveMethod(tc, constructorName, parameterTypes,
-							loader);
-					Type.Function f = r.third();
-					Method m = r.second();
-					
-					// At this stage, we have (finally) figured out what method is to be
-					// called. There are a few things that remain to be done, however.
-					// Firstly, we must add any implicitCasts that are required for
-					// boxing conversions.  
+			
+			// Now, we want to determine the actual type of the constructor
+			// being called. Sadly, there is one situation in which
+			// complicates the issue. That is, if we are constructing an
+			// anonymous inner class based on an interface, then clearly the
+			// interface will have no constructor method. In such a
+			// situation, we cannot provide any parameters and, therefore,
+			// it's easy enough to determine the type of the constructor
+			// call.
 
-					List<Expr> e_parameters = e.parameters();
-					List<Type> ft_parameters = f.parameterTypes();
-					
-					if(!m.isVariableArity() || e_parameters.size() < ft_parameters.size()) {
-						for (int i = 0; i != e_parameters.size(); ++i) {					
-							Type pt = ft_parameters.get(i);
-							e_parameters.set(i, implicitCast(e_parameters.get(i), pt));
-						}	
-					} else {
-						int arg = 0;
-						for (; arg != ft_parameters.size()-1; ++arg) {
-							Type pt = ft_parameters.get(arg);
-							e_parameters.set(arg, implicitCast(e_parameters.get(arg), pt));
-						}
-						Type.Array arrType = (Type.Array) ft_parameters.get(ft_parameters.size()-1);
-						
-						for (; arg != e_parameters.size(); ++arg) {					
-							e_parameters.set(arg, implicitCast(e_parameters.get(arg),
-									arrType.element()));
-						}
+			Clazz c = loader.loadClass(tc);
+
+			if (c.isInterface() && e.declarations().size() > 0) {
+				// Yes, this is an anonymous inner class creation on an
+				// interface.
+				Type.Function ftype = new Type.Function(Types.T_VOID);
+				e.attributes().add(new JilBuilder.MethodInfo(new ArrayList(),ftype));
+			} else {
+				// normal case.
+
+				String constructorName = tc.components().get(
+						tc.components().size() - 1).first();
+				Triple<Clazz, Clazz.Method, Type.Function> r = types
+				.resolveMethod(tc, constructorName, parameterTypes,
+						loader);
+				Type.Function f = r.third();
+				Method m = r.second();
+
+				// At this stage, we have (finally) figured out what method is to be
+				// called. There are a few things that remain to be done, however.
+				// Firstly, we must add any implicitCasts that are required for
+				// boxing conversions.  
+
+				List<Expr> e_parameters = e.parameters();
+				List<Type> ft_parameters = f.parameterTypes();
+
+				if(!m.isVariableArity() || e_parameters.size() < ft_parameters.size()) {
+					for (int i = 0; i != e_parameters.size(); ++i) {					
+						Type pt = ft_parameters.get(i);
+						e_parameters.set(i, implicitCast(e_parameters.get(i), pt));
+					}	
+				} else {
+					int arg = 0;
+					for (; arg != ft_parameters.size()-1; ++arg) {
+						Type pt = ft_parameters.get(arg);
+						e_parameters.set(arg, implicitCast(e_parameters.get(arg), pt));
 					}
-										
-					e.attributes().add(new JilBuilder.MethodInfo(m.exceptions(),m.type()));								
-				}
-			} catch(ClassNotFoundException cnfe) {
-				syntax_error(cnfe.getMessage(), e, cnfe);
-			} catch(MethodNotFoundException mfne) {				
-				String msg = "constructor not found: " + tc + "(";
-				boolean firstTime = true;
-				for (Type pt : parameterTypes) {
-					if (!firstTime) {
-						msg += ", ";
+					Type.Array arrType = (Type.Array) ft_parameters.get(ft_parameters.size()-1);
+
+					for (; arg != e_parameters.size(); ++arg) {					
+						e_parameters.set(arg, implicitCast(e_parameters.get(arg),
+								arrType.element()));
 					}
-					firstTime = false;
-					msg += pt;
 				}
-				syntax_error(msg + ")", e, mfne);
-			} catch(TypeSystem.BindError be) {
-				// This can happen if the parameters supplied to bind, which is
-				// called by resolveMethod are somehow not "base equivalent"
-				syntax_error(be.getMessage(),e,be);
-			} catch(Exception be) {
-				// General catch all. The reason for having it is so we can
-				// attribute the cause of the internal failure with a line number.
-				syntax_error("internal failure (" + be.getMessage() + ")",e,be);
-			} 
+
+				e.attributes().add(new JilBuilder.MethodInfo(m.exceptions(),m.type()));								
+			}			
 		} else if(type instanceof Type.Array) {
 			// need to do something here also ...
 		}
@@ -619,7 +604,7 @@ public class TypePropagation {
 		e.attributes().add(type);
 	}
 	
-	protected void doInvoke(Expr.Invoke e) {
+	protected void doInvoke(Expr.Invoke e) throws ClassNotFoundException, MethodNotFoundException {
 		ArrayList<Type> parameterTypes = new ArrayList<Type>();
 		
 		doExpression(e.target());
@@ -635,90 +620,67 @@ public class TypePropagation {
 			
 		Type.Reference receiver = null;
 		String e_name = e.name();
-		
-		try {		
-			Type rt = (Type) e.target().attribute(Type.class);
+					
+		Type rt = (Type) e.target().attribute(Type.class);
 
-			if(rt instanceof Type.Variable) {
-				// in this situation, we're trying to dereference a generic
-				// variable. Therefore, we choose the largest type which
-				// this could possibly, and assume the receiver is this type.
-				Type.Variable vt = (Type.Variable) rt;										
+		if(rt instanceof Type.Variable) {
+			// in this situation, we're trying to dereference a generic
+			// variable. Therefore, we choose the largest type which
+			// this could possibly, and assume the receiver is this type.
+			Type.Variable vt = (Type.Variable) rt;										
 
-				if(vt.lowerBound() != null) {
-					receiver = vt.lowerBound(); 
-				} else {						
-					receiver = JAVA_LANG_OBJECT;
-				}
-			} else if(rt instanceof Type.Array) {
+			if(vt.lowerBound() != null) {
+				receiver = vt.lowerBound(); 
+			} else {						
 				receiver = JAVA_LANG_OBJECT;
-			} else {
-				receiver = (Type.Clazz) e.target().attribute(Type.class);
 			}
-			
-			if(e.name().equals("super") || e.name().equals("this")) {				
-				Type.Clazz r = (Type.Clazz) rt;				
-				e_name = r.components().get(r.components().size() - 1).first();
-				receiver = r;
-			} 				
-			
-			Triple<Clazz, Clazz.Method, Type.Function> r = types
-					.resolveMethod(receiver, e_name, parameterTypes, loader);
-									
-			Type.Function f = r.third();
-			Method m = r.second();
-			
-			// At this stage, we have (finally) figured out what method is to be
-			// called. There are a few things that remain to be done, however.
-			// Firstly, we must add any implicitCasts that are required for
-			// boxing conversions.  
-			
-			List<Expr> e_parameters = e.parameters();
-			List<Type> ft_parameters = f.parameterTypes();
-			
-			if(!m.isVariableArity() || e_parameters.size() < ft_parameters.size()) {
-				for (int i = 0; i != e_parameters.size(); ++i) {					
-					Type pt = ft_parameters.get(i);
-					e_parameters.set(i, implicitCast(e_parameters.get(i), pt));
-				}	
-			} else {
-				int arg = 0;
-				for (; arg != ft_parameters.size()-1; ++arg) {
-					Type pt = ft_parameters.get(arg);
-					e_parameters.set(arg, implicitCast(e_parameters.get(arg), pt));
-				}
-				Type.Array arrType = (Type.Array) ft_parameters.get(ft_parameters.size()-1);
-				
-				for (; arg != e_parameters.size(); ++arg) {					
-					e_parameters.set(arg, implicitCast(e_parameters.get(arg),
-							arrType.element()));
-				}
+		} else if(rt instanceof Type.Array) {
+			receiver = JAVA_LANG_OBJECT;
+		} else {
+			receiver = (Type.Clazz) e.target().attribute(Type.class);
+		}
+
+		if(e.name().equals("super") || e.name().equals("this")) {				
+			Type.Clazz r = (Type.Clazz) rt;				
+			e_name = r.components().get(r.components().size() - 1).first();
+			receiver = r;
+		} 				
+
+		Triple<Clazz, Clazz.Method, Type.Function> r = types
+		.resolveMethod(receiver, e_name, parameterTypes, loader);
+
+		Type.Function f = r.third();
+		Method m = r.second();
+
+		// At this stage, we have (finally) figured out what method is to be
+		// called. There are a few things that remain to be done, however.
+		// Firstly, we must add any implicitCasts that are required for
+		// boxing conversions.  
+
+		List<Expr> e_parameters = e.parameters();
+		List<Type> ft_parameters = f.parameterTypes();
+
+		if(!m.isVariableArity() || e_parameters.size() < ft_parameters.size()) {
+			for (int i = 0; i != e_parameters.size(); ++i) {					
+				Type pt = ft_parameters.get(i);
+				e_parameters.set(i, implicitCast(e_parameters.get(i), pt));
+			}	
+		} else {
+			int arg = 0;
+			for (; arg != ft_parameters.size()-1; ++arg) {
+				Type pt = ft_parameters.get(arg);
+				e_parameters.set(arg, implicitCast(e_parameters.get(arg), pt));
 			}
-									
-			e.attributes().add(f.returnType());					
-			e.attributes().add(new JilBuilder.MethodInfo(m.exceptions(),m.type()));								
-		} catch(ClassNotFoundException cnfe) {
-			syntax_error(cnfe.getMessage(), e, cnfe);
-		} catch(MethodNotFoundException mfne) {
-			String msg = "method not found: " + receiver + "." + e_name + "(";
-			boolean firstTime = true;
-			for (Type t : parameterTypes) {
-				if (!firstTime) {
-					msg += ", ";
-				}
-				firstTime = false;
-				msg += t;
+			Type.Array arrType = (Type.Array) ft_parameters.get(ft_parameters.size()-1);
+
+			for (; arg != e_parameters.size(); ++arg) {					
+				e_parameters.set(arg, implicitCast(e_parameters.get(arg),
+						arrType.element()));
 			}
-			syntax_error(msg + ")", e, mfne);
-		} catch(TypeSystem.BindError be) {
-			// This can happen if the parameters supplied to bind, which is
-			// called by resolveMethod are somehow not "base equivalent"
-			syntax_error(be.getMessage(),e,be);
-		} catch(Exception be) {
-			// General catch all. The reason for having it is so we can
-			// attribute the cause of the internal failure with a line number.
-			syntax_error("internal failure (" + be.getMessage() + ")",e,be);
-		} 
+		}
+
+		e.attributes().add(f.returnType());					
+		e.attributes().add(new JilBuilder.MethodInfo(m.exceptions(),m.type()));										 
 	}
 	
 	protected void doInstanceOf(Expr.InstanceOf e) {
@@ -1001,7 +963,7 @@ public class TypePropagation {
 		}		
 	}
 	
-	protected void doTernOp(Expr.TernOp e) {		
+	protected void doTernOp(Expr.TernOp e) throws ClassNotFoundException {		
 		doExpression(e.condition());
 		doExpression(e.falseBranch());
 		doExpression(e.trueBranch());
@@ -1088,14 +1050,9 @@ public class TypePropagation {
 			// At this point, we have some class types and we need to determine
 			// their greatest lower bound.
 			Type rt;			
-			if(lhs_t instanceof Type.Clazz && rhs_t instanceof Type.Clazz) {
-				try {					
-					rt = types.greatestSupertype((Type.Clazz) lhs_t,
-							(Type.Clazz) rhs_t, loader);					
-				} catch(ClassNotFoundException cne) {
-					syntax_error(cne.getMessage(),e,cne);
-					return; // dead code
-				}				
+			if(lhs_t instanceof Type.Clazz && rhs_t instanceof Type.Clazz) {								
+				rt = types.greatestSupertype((Type.Clazz) lhs_t,
+						(Type.Clazz) rhs_t, loader);					
 			} else if(lhs_t instanceof Type.Clazz || rhs_t instanceof Type.Clazz) {
 				rt = JAVA_LANG_OBJECT;
 			} else if(lhs_t.equals(rhs_t)) {
