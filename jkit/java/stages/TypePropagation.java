@@ -28,6 +28,7 @@ import jkit.compiler.Clazz;
 import jkit.compiler.FieldNotFoundException;
 import jkit.compiler.MethodNotFoundException;
 import jkit.compiler.Clazz.Method;
+import jkit.compiler.SyntaxError;
 import static jkit.compiler.SyntaxError.*;
 import static jkit.jil.util.Types.*;
 import static jkit.java.tree.Type.fromJilType;

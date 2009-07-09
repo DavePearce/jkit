@@ -230,6 +230,15 @@ public class SyntaxError extends RuntimeException {
 	 *        keep.
 	 */
 	public static void syntax_error(String msg, SyntacticElement e, Throwable ex) {
+		
+		if(ex instanceof SyntaxError) {
+			// in the special case that the cause of this exception was already
+            // a syntax error, then we simply rethrow it; otherwise, we'll
+            // attribute the wrong error message and line number.
+			SyntaxError se = (SyntaxError) ex;
+			throw se;
+		}
+		
 		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
 		if(loc != null) {
 			throw new SyntaxError(msg,loc.line(),loc.column(),ex);
