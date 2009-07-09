@@ -1,4 +1,4 @@
-// $ANTLR 3.1 jkit/java/parser/Java.g 2009-07-06 18:20:41
+// $ANTLR 3.1 jkit/java/parser/Java.g 2009-07-09 15:50:34
 
 package jkit.java.parser;
 import jkit.compiler.SyntaxError;
@@ -3997,8 +3997,7 @@ public class JavaLexer extends Lexer {
         "\12\uffff}>";
     static final String[] DFA18_transitionS = {
             "\1\2\1\uffff\12\1",
-            "\1\5\1\uffff\12\1\12\uffff\1\4\1\3\1\4\35\uffff\1\4\1\3\1"+
-            "\4",
+            "\1\5\1\uffff\12\1\12\uffff\1\4\1\3\1\4\35\uffff\1\4\1\3\1\4",
             "",
             "\1\6\1\uffff\1\6\2\uffff\12\7",
             "",
@@ -4125,21 +4124,21 @@ public class JavaLexer extends Lexer {
         "\2\uffff\1\ufaff\2\uffff\1\ufaff\1\uffff\1\ufaff\1\145\3\uffff\1"+
         "\144\1\ufaff\1\uffff";
     static final String DFA29_acceptS =
-        "\2\uffff\1\2\3\uffff\1\6\2\uffff\1\12\1\13\1\14\1\uffff\1\16\1"+
-        "\17\2\uffff\1\23\1\24\7\uffff\1\50\1\52\1\53\1\60\1\63\7\uffff\1"+
-        "\110\1\uffff\1\122\2\uffff\1\131\1\132\1\134\1\135\13\uffff\1\54"+
-        "\1\130\1\5\7\uffff\1\105\1\112\1\15\3\uffff\1\115\1\25\21\uffff"+
-        "\1\120\1\102\1\121\1\103\1\136\1\137\1\104\1\106\1\111\1\113\1\107"+
-        "\1\114\1\116\1\123\1\125\1\uffff\1\126\10\uffff\1\64\42\uffff\1"+
-        "\70\3\uffff\1\127\7\uffff\1\44\24\uffff\1\71\5\uffff\1\66\2\uffff"+
-        "\1\124\27\uffff\1\41\2\uffff\1\101\1\uffff\1\65\1\133\1\21\3\uffff"+
-        "\1\56\6\uffff\1\55\1\uffff\1\42\1\uffff\1\45\17\uffff\1\43\1\51"+
-        "\1\uffff\1\7\1\uffff\1\100\3\uffff\1\75\4\uffff\1\32\1\46\1\57\2"+
-        "\uffff\1\76\2\uffff\1\67\2\uffff\1\26\2\uffff\1\3\3\uffff\1\4\2"+
-        "\uffff\1\73\3\uffff\1\22\2\uffff\1\62\1\uffff\1\33\1\uffff\1\47"+
-        "\1\uffff\1\74\1\1\1\uffff\1\30\6\uffff\1\10\3\uffff\1\72\1\40\1"+
-        "\61\4\uffff\1\37\1\uffff\1\77\1\36\1\uffff\1\31\1\27\1\uffff\1\20"+
-        "\2\uffff\1\35\1\11\1\117\2\uffff\1\34";
+        "\2\uffff\1\2\3\uffff\1\6\2\uffff\1\12\1\13\1\14\1\uffff\1\16\1\17"+
+        "\2\uffff\1\23\1\24\7\uffff\1\50\1\52\1\53\1\60\1\63\7\uffff\1\110"+
+        "\1\uffff\1\122\2\uffff\1\131\1\132\1\134\1\135\13\uffff\1\54\1\130"+
+        "\1\5\7\uffff\1\105\1\112\1\15\3\uffff\1\115\1\25\21\uffff\1\120"+
+        "\1\102\1\121\1\103\1\136\1\137\1\104\1\106\1\111\1\113\1\107\1\114"+
+        "\1\116\1\123\1\125\1\uffff\1\126\10\uffff\1\64\42\uffff\1\70\3\uffff"+
+        "\1\127\7\uffff\1\44\24\uffff\1\71\5\uffff\1\66\2\uffff\1\124\27"+
+        "\uffff\1\41\2\uffff\1\101\1\uffff\1\65\1\133\1\21\3\uffff\1\56\6"+
+        "\uffff\1\55\1\uffff\1\42\1\uffff\1\45\17\uffff\1\43\1\51\1\uffff"+
+        "\1\7\1\uffff\1\100\3\uffff\1\75\4\uffff\1\32\1\46\1\57\2\uffff\1"+
+        "\76\2\uffff\1\67\2\uffff\1\26\2\uffff\1\3\3\uffff\1\4\2\uffff\1"+
+        "\73\3\uffff\1\22\2\uffff\1\62\1\uffff\1\33\1\uffff\1\47\1\uffff"+
+        "\1\74\1\1\1\uffff\1\30\6\uffff\1\10\3\uffff\1\72\1\40\1\61\4\uffff"+
+        "\1\37\1\uffff\1\77\1\36\1\uffff\1\31\1\27\1\uffff\1\20\2\uffff\1"+
+        "\35\1\11\1\117\2\uffff\1\34";
     static final String DFA29_specialS =
         "\u0157\uffff}>";
     static final String[] DFA29_transitionS = {
@@ -4191,8 +4190,8 @@ public class JavaLexer extends Lexer {
             "",
             "\1\151",
             "",
-            "\1\73\1\uffff\10\154\2\73\12\uffff\3\73\21\uffff\1\153\13"+
-            "\uffff\3\73\21\uffff\1\153",
+            "\1\73\1\uffff\10\154\2\73\12\uffff\3\73\21\uffff\1\153\13\uffff"+
+            "\3\73\21\uffff\1\153",
             "\1\73\1\uffff\12\156\12\uffff\3\73\35\uffff\3\73",
             "",
             "",
@@ -4273,9 +4272,9 @@ public class JavaLexer extends Lexer {
             "\1\u00a0",
             "\1\u00a1",
             "\1\u00a3\2\uffff\1\u00a2",
-            "\1\55\13\uffff\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\4"+
-            "\55\1\u00a4\25\55\105\uffff\27\55\1\uffff\37\55\1\uffff\u1f08"+
-            "\55\u1040\uffff\u0150\55\u0170\uffff\u0080\55\u0080\uffff\u092e"+
+            "\1\55\13\uffff\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\4\55"+
+            "\1\u00a4\25\55\105\uffff\27\55\1\uffff\37\55\1\uffff\u1f08\55"+
+            "\u1040\uffff\u0150\55\u0170\uffff\u0080\55\u0080\uffff\u092e"+
             "\55\u10d2\uffff\u5200\55\u5900\uffff\u0200\55",
             "\1\u00a6",
             "",
