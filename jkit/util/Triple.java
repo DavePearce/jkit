@@ -17,7 +17,7 @@
 // write to the Free Software Foundation, Inc., 59 Temple Place, 
 // Suite 330, Boston, MA  02111-1307  USA
 //
-// (C) David James Pearce, 2007. 
+// (C) David James Pearce, 2009. 
 
 package jkit.util;
 
