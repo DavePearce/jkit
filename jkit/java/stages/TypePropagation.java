@@ -217,15 +217,13 @@ public class TypePropagation {
 				doClass((Decl.JavaClass)e);
 			} else if(e instanceof Stmt.PrePostIncDec) {
 				doExpression((Stmt.PrePostIncDec)e);
-			} 
+			} else if(e != null) {
+				syntax_error("Internal failure (invalid statement \""
+						+ e.getClass() + "\" encountered)", e);			
+			}	 
 		} catch(Exception ex) {
 			internal_error(e,ex);
-		}
-		
-		if(e != null) {
-			syntax_error("Internal failure (invalid statement \""
-					+ e.getClass() + "\" encountered)", e);			
-		}		
+		}				
 	}
 	
 	protected void doBlock(Stmt.Block block, JavaMethod m) {
@@ -440,14 +438,14 @@ public class TypePropagation {
 			} else if(e instanceof Stmt.Assignment) {
 				// force brackets			
 				doAssignment((Stmt.Assignment) e, null);			
+			} else if (e != null) {
+				syntax_error("Internal failure (invalid expression \""
+						+ e.getClass() + "\" encountered)", e);
 			}
 		} catch(Exception ex) {
 			internal_error(e,ex);
 		}
-			
-		if(e != null) {
-			syntax_error("Internal failure (invalid expression \"" + e.getClass() + "\" encountered)",e);			
-		}
+		
 	}
 	
 	protected void doDeref(Expr.Deref e) throws ClassNotFoundException,

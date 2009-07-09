@@ -123,13 +123,15 @@ public class JilBuilder {
 				doInitialiserBlock((Decl.InitialiserBlock)d , parent);
 			} else if (d instanceof Decl.StaticInitialiserBlock) {
 				doStaticInitialiserBlock((Decl.StaticInitialiserBlock) d, parent);
+			} else {
+				syntax_error("internal failure (unknown declaration \"" + d
+						+ "\" encountered)", d);
 			}
 		} catch(Exception ex) {
 			internal_error(d,ex);
 		}
 						
-		syntax_error("internal failure (unknown declaration \"" + d
-				+ "\" encountered)", d);		
+		
 	}
 	
 	protected void doInterface(Decl.JavaInterface d) throws ClassNotFoundException {
