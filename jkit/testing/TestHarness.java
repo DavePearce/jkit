@@ -76,10 +76,12 @@ public class TestHarness {
 	 */
 	private boolean compile(String path, String name) {		
 		String classpath = System.getenv("CLASSPATH");		
-		final String[] args = new String[3];
-		args[0] = "-cp";
-		args[1] = path + ";" + classpath;
-		args[2] = path + File.separatorChar + name + "." + srcExtension;		
+		final String[] args = new String[5];
+		args[0] = "-sourcepath";
+		args[1] = path;
+		args[2] = "-cp";
+		args[3] = path + ";" + classpath;
+		args[4] = path + File.separatorChar + name + "." + srcExtension;		
 		
 		return new JKitC().compile(args);
 	}

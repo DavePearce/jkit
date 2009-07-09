@@ -457,7 +457,12 @@ public class ClassLoader {
 	 * contain.
 	 */
 	private void buildPackageMap() {
-		// BUG: there's a bug here, since the sourcepath is not considered.
+		// First, consider source path
+		for (String dir : sourcepath) {			
+			recurseDirectoryForClasses(dir, "");			
+		}
+
+		// second, try classpath
 		for (String dir : classpath) {
 			// check if classpath entry is a jarfile or a directory
 			if (dir.endsWith(".jar")) {

@@ -58,7 +58,8 @@ public class JKitC {
 	
 	public boolean compile(String[] args) {
 		ArrayList<String> classPath = null;
-		ArrayList<String> bootClassPath = null;		
+		ArrayList<String> bootClassPath = null;
+		ArrayList<String> sourcePath = null;
 		String outputDirectory = null;		
 		boolean verbose = false;
 		boolean bytecodeOutput = false;
@@ -90,6 +91,11 @@ public class JKitC {
 					classPath = new ArrayList<String>();
 					// split classpath along appropriate separator
 					Collections.addAll(classPath, args[++i]
+					                                   .split(File.pathSeparator));
+				} else if (arg.equals("-sourcepath")) {
+					sourcePath = new ArrayList<String>();
+					// split classpath along appropriate separator
+					Collections.addAll(sourcePath, args[++i]
 					                                   .split(File.pathSeparator));
 				} else if (arg.equals("-bootclaspath")) {
 					bootClassPath = new ArrayList<String>();
@@ -126,6 +132,9 @@ public class JKitC {
 		if (bootClassPath == null) {
 			bootClassPath = buildBootClassPath();
 		}
+		if(sourcePath == null) {
+			sourcePath = new ArrayList<String>();
+		}
 
 		classPath.addAll(bootClassPath);
 		
@@ -135,11 +144,11 @@ public class JKitC {
 			JavaCompiler compiler;
 
 			if(bytecodeOutput) {
-				compiler = new BytecodeCompiler(classPath, verbOutput);	
+				compiler = new BytecodeCompiler(sourcePath, classPath, verbOutput);	
 			} else if(jilOutput) {
-				compiler = new JilCompiler(classPath, verbOutput);
+				compiler = new JilCompiler(sourcePath, classPath, verbOutput);
 			} else {
-				compiler = new JavaCompiler(classPath, verbOutput);
+				compiler = new JavaCompiler(sourcePath, classPath, verbOutput);
 			}
 
 			if (outputDirectory != null) {
