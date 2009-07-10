@@ -23,6 +23,7 @@ package jkit.bytecode;
 
 import java.util.*;
 
+import jkit.jil.util.Types;
 import jkit.bytecode.Bytecode.*;
 import jkit.jil.tree.Type;
 
@@ -160,6 +161,9 @@ public final class BytecodeOptimiser {
 				}
 				if(rewrite == null) {
 					rewrite = tryNegRemoval(i,bytecodes);
+				}
+				if(rewrite == null) {
+					rewrite = tryDupLoad(i,bytecodes);
 				}
 				if(rewrite != null) {
 					rewrites.add(rewrite);
@@ -370,4 +374,48 @@ public final class BytecodeOptimiser {
 		}
 		return null;
 	}	
+	
+	/**
+	 * This rewrite looks for the following pattern:
+	 * <pre>	 
+	 * ldc y or iconst y or load x
+	 * ldc y or iconst y or load x
+	 * </pre>
+	 * and replaces it with the following:
+	 * <pre>
+	 * ldc y or iconst y
+	 * dup
+	 * </pre>
+	 * @param i
+	 * @param bytecodes
+	 * @return
+	 */
+	protected Code.Rewrite tryDupLoad(int i, List<Bytecode> bytecodes) {
+		if((i+1) >= bytecodes.size()) { return null; }
+		Bytecode b1 = bytecodes.get(i);
+		Bytecode b2 = bytecodes.get(i+1);
+		if(b1 instanceof Load && b1.equals(b2)) {
+			Load l1 = (Load) b1;
+			return new Code.Rewrite(i, 2, l1,new Dup(l1.type));
+		} else if(b1 instanceof GetField && b1.equals(b2)) {
+			GetField l1 = (GetField) b1;
+			return new Code.Rewrite(i, 2, l1,new Dup(l1.type));
+		} else if(b1 instanceof LoadConst && b1.equals(b2)) {
+			LoadConst lc1 = (LoadConst) b1;
+			Object constant = lc1.constant;
+			if(constant instanceof Integer) {
+				return new Code.Rewrite(i, 2, b1,new Dup(Types.T_INT));
+			} else if(constant instanceof Long) {
+				return new Code.Rewrite(i, 2, b1,new Dup(Types.T_LONG));
+			} else if(constant instanceof Float) {
+				return new Code.Rewrite(i, 2, b1,new Dup(Types.T_FLOAT));
+			} else if(constant instanceof Double) {
+				return new Code.Rewrite(i, 2, b1,new Dup(Types.T_DOUBLE));
+			} else {
+				// this is a general catch all for aconst instructions.
+				return new Code.Rewrite(i, 2, b1,new Dup(Types.JAVA_LANG_OBJECT));
+			} 
+		}
+		return null;
+	}
 }

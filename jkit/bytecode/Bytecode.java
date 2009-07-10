@@ -112,6 +112,18 @@ public abstract class Bytecode {
 			}		
 			return out.toByteArray();
 		}
+		
+		public boolean equals(Object o) {
+			if (o instanceof Store) {
+				Store s = (Store) o;
+				return type.equals(s.type) && slot == s.slot;
+			}
+			return false;
+		}
+		
+		public int hashCode() {
+			return type.hashCode() + slot;
+		}
 	}
 	
 	/**
@@ -149,6 +161,18 @@ public abstract class Bytecode {
 			}		
 			return out.toByteArray();
 		}
+		
+		public boolean equals(Object o) {
+			if (o instanceof Load) {
+				Load l = (Load) o;
+				return type.equals(l.type) && slot == l.slot;
+			}
+			return false;
+		}
+		
+		public int hashCode() {
+			return type.hashCode() + slot;
+		}
 	}
 
 	/**
@@ -179,6 +203,18 @@ public abstract class Bytecode {
 			write_i1(out,increment);
 			return out.toByteArray();
 		}
+		
+		public boolean equals(Object o) {
+			if (o instanceof Iinc) {
+				Iinc i = (Iinc) o;
+				return increment == i.increment && slot == i.slot;
+			}
+			return false;
+		}
+		
+		public int hashCode() {
+			return increment + slot;
+		}
 	}
 
 	/**
@@ -200,6 +236,18 @@ public abstract class Bytecode {
 		}
 		
 		public String toString() { return typeArrayChar(type.element()) + "aload"; }
+		
+		public boolean equals(Object o) {
+			if (o instanceof ArrayLoad) {
+				ArrayLoad i = (ArrayLoad) o;
+				return type.equals(i.type);
+			}
+			return false;
+		}
+		
+		public int hashCode() {
+			return type.hashCode();
+		}
 	}
 	
 	/**
@@ -221,6 +269,18 @@ public abstract class Bytecode {
 		}
 		
 		public String toString() { return typeArrayChar(type.element()) + "astore"; }
+		
+		public boolean equals(Object o) {
+			if (o instanceof ArrayStore) {
+				ArrayStore i = (ArrayStore) o;
+				return type.equals(i.type);
+			}
+			return false;
+		}
+		
+		public int hashCode() {
+			return type.hashCode();
+		}
 	}
 	
 	/**
@@ -231,7 +291,11 @@ public abstract class Bytecode {
 		public final Object constant;
 		
 		public LoadConst(Object constant) {
-			assert constant == null || constant instanceof Number || constant instanceof String;
+			if (constant != null && !(constant instanceof Number)
+					&& !(constant instanceof String)) {
+				throw new IllegalArgumentException(
+						"Illegal arguments to LoadConst");
+			}			
 			this.constant = constant; 
 		}				
 		
@@ -243,8 +307,10 @@ public abstract class Bytecode {
 		}
 		
 		public void addPoolItems(Set<Constant.Info> constantPool) {
-			if(constant instanceof Integer) {
-				int v = (Integer) constant;
+			if (constant instanceof Boolean || constant instanceof Byte
+					|| constant instanceof Character
+					|| constant instanceof Short || constant instanceof Integer) {
+				int v = ((Number) constant).intValue();
 				if (!(v >= -1 && v <= 5) && !(v >= -128 && v <= 127)
 						&& !(v >= -32768 && v <= 32767)) { 					
 					Constant.addPoolItem(new Constant.Integer(v),constantPool);										
@@ -278,53 +344,26 @@ public abstract class Bytecode {
 				Map<Constant.Info,Integer> constantPool) {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();						
 			
-			if(constant instanceof Boolean) {
-				Boolean b = (Boolean) constant;
-				if(b) {
-					write_u1(out,ICONST_1);
+			if (constant instanceof Boolean || constant instanceof Byte
+					|| constant instanceof Character
+					|| constant instanceof Short || constant instanceof Integer) {
+				int v = ((Number) constant).intValue();
+				if (v >= -1 && v <= 5) {
+					write_u1(out, ICONST_0 + v);
+				} else if (v >= -128 && v <= 127) {
+					write_u1(out, BIPUSH);
+					write_u1(out, v);
+				} else if (v >= -32768 && v <= 32767) {
+					write_u1(out, SIPUSH);
+					write_u2(out, v);
 				} else {
-					write_u1(out,ICONST_0);
-				}
-			} else if(constant instanceof Byte) {
-				int v = (int) ((Byte)constant);								
-				write_u1(out,BIPUSH);
-				write_u1(out,v);			
-			} else if(constant instanceof Character) {
-				int v = (int) ((Character)constant);				
-				if(v >= -128 && v <= 127) {
-					write_u1(out,BIPUSH);
-					write_u1(out,v);
-				} else {
-					write_u1(out,SIPUSH);
-					write_u2(out,v);
-				}
-			} else if(constant instanceof Short) {
-				int v = (int) ((Short)constant);				
-				if(v >= -128 && v <= 127) {
-					write_u1(out,BIPUSH);
-					write_u1(out,v);
-				} else {
-					write_u1(out,SIPUSH);
-					write_u2(out,v);
-				}
-			} else if(constant instanceof Integer) {
-				int v = (Integer) constant;
-				if(v >= -1 && v <= 5) { 
-					write_u1(out,ICONST_0 + v); 
-				} else if(v >= -128 && v <= 127) { 
-					write_u1(out,BIPUSH);
-					write_u1(out,v);
-				} else if(v >= -32768 && v <= 32767) { 
-					write_u1(out,SIPUSH);
-					write_u2(out,v);
-				} else {
-					int idx = constantPool.get(new Constant.Integer(v));					
-					if(idx < 255) {
-						write_u1(out,LDC);					
-						write_u1(out,idx);
+					int idx = constantPool.get(new Constant.Integer(v));
+					if (idx < 255) {
+						write_u1(out, LDC);
+						write_u1(out, idx);
 					} else {
-						write_u1(out,LDC_W);					
-						write_u2(out,idx);
+						write_u1(out, LDC_W);
+						write_u2(out, idx);
 					}
 				}
 			} else if(constant instanceof Long) {
@@ -387,64 +426,72 @@ public abstract class Bytecode {
 		}
 		
 		public String toString() {
-			if(constant instanceof Boolean) {
-				Boolean b = (Boolean) constant;
-				if(b) {
-					return "iconst_1";					
-				} else {
-					return "iconst_0";					
-				}
-			} else if(constant instanceof Character) {
-				int v = (int) ((Character)constant);				
-				if(v >= -128 && v <= 127) {
-					return "bipush " + v;
-				} else {
-					return "sipush " + v;					
-				}				
-			} else if(constant instanceof Integer) {
+			if (constant instanceof Boolean || constant instanceof Byte
+					|| constant instanceof Character
+					|| constant instanceof Short || constant instanceof Integer) {
 				int v = (Integer) constant;
-				if(v >= -1 && v <= 5) { 
+				if (v >= -1 && v <= 5) {
 					return "iconst_" + v;
-				} else if(v >= -128 && v <= 127) { 
+				} else if (v >= -128 && v <= 127) {
 					return "bipush " + v;
-				} else if(v >= -32768 && v <= 32767) { 					
+				} else if (v >= -32768 && v <= 32767) {
 					return "sipush " + v;
 				} else {
-					return "ldc " + v;					
+					return "ldc " + v;
 				}
-			} else if(constant instanceof Long) {
+			} else if (constant instanceof Long) {
 				long v = (Long) constant;
-				if(v == 0 || v == 1) {
-					return "lconst_" + v;					
+				if (v == 0 || v == 1) {
+					return "lconst_" + v;
 				} else {
-					return "ldc2_w " + v;					
+					return "ldc2_w " + v;
 				}
-			} else if(constant instanceof Float) {
+			} else if (constant instanceof Float) {
 				float v = (Float) constant;
-				if(v == 0.0F) {
+				if (v == 0.0F) {
 					return "fconst_0";
-				} else if(v == 1.0F) {
-					return "fconst_1";					
-				} else if(v == 2.0F) {
-					return "fconst_2";					
+				} else if (v == 1.0F) {
+					return "fconst_1";
+				} else if (v == 2.0F) {
+					return "fconst_2";
 				} else {
-					return "ldc " + v;					
-				}				
-			} else if(constant instanceof Double) {
+					return "ldc " + v;
+				}
+			} else if (constant instanceof Double) {
 				double v = (Double) constant;
-				if(v == 0.0D) {
+				if (v == 0.0D) {
 					return "dconst_0";
-				} else if(v == 1.0D) {
+				} else if (v == 1.0D) {
 					return "dconst_1";
 				} else {
 					return "ldc2_w " + v;
 				}
-			} else if(constant instanceof String) {
+			} else if (constant instanceof String) {
 				String v = (String) constant;
 				return "ldc " + v;
 			} else {
 				return "aconst_null";
 			} 
+		}
+		
+		public boolean equals(Object o) {
+			if (o instanceof LoadConst) {
+				LoadConst i = (LoadConst) o;
+				if(constant == null) {
+					return constant == i.constant;
+				} else {
+					return constant.equals(i.constant);
+				}
+			}
+			return false;
+		}
+		
+		public int hashCode() {
+			if(constant == null) {
+				return 0;
+			} else {
+				return constant.hashCode();
+			}
 		}
 	}
 	
@@ -477,6 +524,18 @@ public abstract class Bytecode {
 			if(type == null) { return "return"; } 
 			else { return typeChar(type) + "return"; }
 		}
+		
+		public boolean equals(Object o) {
+			if (o instanceof Return) {
+				Return i = (Return) o;
+				return type.equals(i.type);
+			}
+			return false;
+		}
+		
+		public int hashCode() {
+			return type.hashCode();
+		}
 	}
 	
 	/**
@@ -493,6 +552,18 @@ public abstract class Bytecode {
 		public String toString() { return name + ":"; }
 		public int stackDiff() {
 			return 0;
+		}
+		
+		public boolean equals(Object o) {
+			if (o instanceof Label) {
+				Label i = (Label) o;
+				return name.equals(i.name);
+			}
+			return false;
+		}
+		
+		public int hashCode() {
+			return name.hashCode();
 		}
 	}
 	
@@ -512,6 +583,18 @@ public abstract class Bytecode {
 		}
 		
 		public String toString() { return typeChar(type) + "neg"; }
+		
+		public boolean equals(Object o) {
+			if (o instanceof Neg) {
+				Neg i = (Neg) o;
+				return type.equals(i.type);
+			}
+			return false;
+		}
+		
+		public int hashCode() {
+			return type.hashCode();
+		}
 	}
 	
 	/**
@@ -556,6 +639,18 @@ public abstract class Bytecode {
 		}
 		public String toString() {
 			return typeChar(type) + str[op];
+		}
+		
+		public boolean equals(Object o) {
+			if (o instanceof BinOp) {
+				BinOp i = (BinOp) o;
+				return op == i.op && type.equals(i.type);
+			}
+			return false;
+		}
+		
+		public int hashCode() {
+			return op + type.hashCode();
 		}
 	}
 		
@@ -633,6 +728,19 @@ public abstract class Bytecode {
 				return "putfield " + owner + "." + name + ":" + type;
 			}
 		}
+		
+		public boolean equals(Object o) {
+			if (o instanceof PutField) {
+				PutField b = (PutField) o;
+				return mode == b.mode && name.equals(b.name)
+						&& owner.equals(b.owner) && type.equals(b.type);
+			}
+			return false;
+		}
+		
+		public int hashCode() {
+			return name.hashCode() + type.hashCode() + owner.hashCode();
+		}
 	}	
 	
 	/**
@@ -685,6 +793,19 @@ public abstract class Bytecode {
 			} else {
 				return "getfield " + owner + "." + name + ":" + type;
 			}
+		}
+		
+		public boolean equals(Object o) {
+			if (o instanceof GetField) {
+				GetField b = (GetField) o;
+				return mode == b.mode && name.equals(b.name)
+						&& owner.equals(b.owner) && type.equals(b.type);
+			}
+			return false;
+		}
+		
+		public int hashCode() {
+			return name.hashCode() + type.hashCode() + owner.hashCode();			
 		}
 	}	
 	
@@ -772,6 +893,19 @@ public abstract class Bytecode {
 			} else {
 				return "invokeinterface " + owner + "." + name + " " + type;
 			}
+		}
+		
+		public boolean equals(Object o) {
+			if (o instanceof Invoke) {
+				Invoke b = (Invoke) o;
+				return mode == b.mode && name.equals(b.name)
+						&& owner.equals(b.owner) && type.equals(b.type);
+			}
+			return false;
+		}
+		
+		public int hashCode() {
+			return name.hashCode() + type.hashCode() + owner.hashCode();			
 		}
 	}
 	
@@ -919,6 +1053,17 @@ public abstract class Bytecode {
 			throw new RuntimeException("Invalid conversion operator!");
 		}
 		
+		public boolean equals(Object o) {
+			if (o instanceof Conversion) {
+				Conversion b = (Conversion) o;
+				return from.equals(b.from) && to.equals(b.to);
+			}
+			return false;
+		}
+		
+		public int hashCode() {
+			return from.hashCode() + to.hashCode();			
+		}
 	}
 	
 	/**
@@ -962,6 +1107,18 @@ public abstract class Bytecode {
 		}
 		public String toString() {
 			return "goto " + label;
+		}
+		
+		public boolean equals(Object o) {
+			if (o instanceof Goto) {
+				Goto b = (Goto) o;
+				return label.equals(b.label);
+			}
+			return false;
+		}
+		
+		public int hashCode() {
+			return label.hashCode();			
 		}
 	}
 	
@@ -1013,6 +1170,18 @@ public abstract class Bytecode {
 		}
 		public String toString() {
 			return "if" + str[cond] + " " + label;
+		}
+		
+		public boolean equals(Object o) {
+			if (o instanceof If) {
+				If b = (If) o;
+				return label.equals(b.label) && cond == b.cond;
+			}
+			return false;
+		}
+		
+		public int hashCode() {
+			return label.hashCode() + cond;			
 		}
 	}
 	
@@ -1086,6 +1255,18 @@ public abstract class Bytecode {
 				return "lcmpl";
 			} 
 		}
+		
+		public boolean equals(Object o) {
+			if (o instanceof Cmp) {
+				Cmp b = (Cmp) o;
+				return op == b.op && type.equals(b.type);
+			}
+			return false;
+		}
+		
+		public int hashCode() {
+			return op + type.hashCode();			
+		}
 	}
 	
 	/**
@@ -1143,6 +1324,19 @@ public abstract class Bytecode {
 			} else {
 				return "if_acmp" + str[cond] + " " + label;				
 			}			
+		}
+		
+		public boolean equals(Object o) {
+			if (o instanceof IfCmp) {
+				IfCmp b = (IfCmp) o;
+				return cond == b.cond && type.equals(b.type)
+						&& label.equals(b.label);
+			}
+			return false;
+		}
+		
+		public int hashCode() {
+			return label.hashCode() + type.hashCode();			
 		}
 	}
 	
@@ -1240,6 +1434,19 @@ public abstract class Bytecode {
 			out += "}";
 			return out;
 		}
+		
+		public boolean equals(Object o) {
+			if (o instanceof Switch) {
+				Switch b = (Switch) o;
+				return type == b.type && defaultLabel.equals(b.defaultLabel)
+						&& cases.equals(b.cases);
+			}
+			return false;
+		}
+		
+		public int hashCode() {
+			return defaultLabel.hashCode() + cases.hashCode();			
+		}
 	}
 	
 	/**
@@ -1270,6 +1477,18 @@ public abstract class Bytecode {
 			else {
 				return "pop";
 			}			
+		}
+		
+		public boolean equals(Object o) {
+			if (o instanceof Pop) {
+				Pop b = (Pop) o;
+				return type.equals(b.type);
+			}
+			return false;
+		}
+		
+		public int hashCode() {
+			return type.hashCode();			
 		}
 	}
 	
@@ -1302,6 +1521,18 @@ public abstract class Bytecode {
 				return "dup";
 			}			
 		}
+		
+		public boolean equals(Object o) {
+			if (o instanceof Dup) {
+				Dup b = (Dup) o;
+				return type.equals(b.type);
+			}
+			return false;
+		}
+		
+		public int hashCode() {
+			return type.hashCode();			
+		}
 	}
 	
 	/**
@@ -1322,6 +1553,14 @@ public abstract class Bytecode {
 		public String toString() {			
 			return "dup_x1";			
 		}
+		
+		public boolean equals(Object o) {
+			return o instanceof DupX1;
+		}
+		
+		public int hashCode() {
+			return 12231;			
+		}
 	}
 	
 	/**
@@ -1341,6 +1580,14 @@ public abstract class Bytecode {
 		
 		public String toString() {			
 			return "dup_x2";			
+		}
+		
+		public boolean equals(Object o) {
+			return o instanceof DupX2;
+		}
+		
+		public int hashCode() {
+			return 389282;			
 		}
 	}
 	
@@ -1452,6 +1699,18 @@ public abstract class Bytecode {
 				return "new " + type;
 			}			
 		}
+		
+		public boolean equals(Object o) {
+			if (o instanceof New) {
+				New b = (New) o;
+				return dims == b.dims && type.equals(b.type);
+			}
+			return false;
+		}
+		
+		public int hashCode() {
+			return type.hashCode() + dims;			
+		}
 	}
 	
 	/**
@@ -1469,6 +1728,14 @@ public abstract class Bytecode {
 		}
 		
 		public String toString() { return "arraylength"; }
+		
+		public boolean equals(Object o) {
+			return o instanceof ArrayLength;
+		}
+		
+		public int hashCode() {
+			return 122199;			
+		}
 	}
 	
 	/**
@@ -1539,6 +1806,18 @@ public abstract class Bytecode {
 		public String toString() {						
 			return "checkcast " + type;					
 		}
+		
+		public boolean equals(Object o) {
+			if (o instanceof CheckCast) {
+				CheckCast b = (CheckCast) o;
+				return type.equals(b.type);
+			}
+			return false;
+		}
+		
+		public int hashCode() {
+			return type.hashCode();			
+		}
 	}
 	
 	/**
@@ -1573,6 +1852,18 @@ public abstract class Bytecode {
 		public String toString() {						
 			return "instanceof " + type;					
 		}
+		
+		public boolean equals(Object o) {
+			if (o instanceof InstanceOf) {
+				InstanceOf b = (InstanceOf) o;
+				return type.equals(b.type);
+			}
+			return false;
+		}
+		
+		public int hashCode() {
+			return type.hashCode();			
+		}
 	}
 	
 	/**
@@ -1592,6 +1883,14 @@ public abstract class Bytecode {
 		
 		public String toString() {						
 			return "nop";					
+		}
+		
+		public boolean equals(Object o) {
+			return o instanceof Nop;
+		}
+		
+		public int hashCode() {
+			return 97364;			
 		}
 	}
 	
@@ -1613,6 +1912,14 @@ public abstract class Bytecode {
 		public String toString() {						
 			return "athrow";					
 		}
+		
+		public boolean equals(Object o) {
+			return o instanceof Throw;
+		}
+		
+		public int hashCode() {
+			return 44520;			
+		}
 	}
 		
 	/**
@@ -1631,6 +1938,14 @@ public abstract class Bytecode {
 		
 		public String toString() {						
 			return "monitorenter";					
+		}
+		
+		public boolean equals(Object o) {
+			return o instanceof MonitorEnter;
+		}
+		
+		public int hashCode() {
+			return 998654;			
 		}
 	}
 	
@@ -1651,6 +1966,14 @@ public abstract class Bytecode {
 		
 		public String toString() {						
 			return "monitorexit";					
+		}
+		
+		public boolean equals(Object o) {
+			return o instanceof MonitorExit;
+		}
+		
+		public int hashCode() {
+			return 12354;			
 		}
 	}
 	// ==============================
