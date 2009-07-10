@@ -142,7 +142,10 @@ public final class BytecodeOptimiser {
 		List<Bytecode> bytecodes = code.bytecodes();
 		ArrayList<Code.Rewrite> rewrites = new ArrayList<Code.Rewrite>();
 		
-		do {
+		boolean changed = true;
+		
+		while(changed) {
+			changed = false;
 			rewrites.clear();
 			for(int i=0;i<bytecodes.size();++i) {			
 				Code.Rewrite rewrite;
@@ -181,13 +184,15 @@ public final class BytecodeOptimiser {
 			// rewrites that are not sound because they straddle instruction boundaries.
 			code.validate(rewrites);
 			
+			changed = rewrites.size() > 0;
+			
 			// now, we apply to all attributes which care.
 			code.apply(rewrites);						
 			for(Code.Rewriteable cr : rewritables) {
 				cr.apply(rewrites);
 			}			
 			numRewrites += rewrites.size();
-		} while(rewrites.size() > 0);
+		} 
 				
 		return numRewrites;
 	}

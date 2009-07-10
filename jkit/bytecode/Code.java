@@ -274,13 +274,12 @@ public class Code implements Attribute {
 		for(int i=0;i!=rewrites.size();++i) {
 			Rewrite rw = rewrites.get(i);
 			int start = rw.start;
-			int end = start + rw.length;
-			
-			for(Handler h : handlers) {
+			int end = start + rw.length;			
+			for(Handler h : handlers) {								
 				int hstart = h.start;
 				int hend = h.end;
 				if ((hstart < end && hend >= end)
-						|| (hstart < start && hend >= start)) {
+						|| (hstart < start && hend >= start)) {					
 					// Not OK
 					rewrites.remove(i);
 					i = i - 1;
@@ -311,8 +310,8 @@ public class Code implements Attribute {
 		// Ok, there's a bit of a hack here, since I assume that the rewrites
 		// never increase the number of bytecodes!
 		for(Rewrite rw : rewrites) {
-			int start = rw.start;
-			int pos = start + offset;
+			int start = rw.start + offset;
+			int pos = start;
 			Bytecode[] codes = rw.bytecodes;
 			for(int i=0;i!=codes.length;++i,++pos) {
 				bytecodes.set(pos,codes[i]);
@@ -327,7 +326,7 @@ public class Code implements Attribute {
 			
 			// Now, update the handlers appropriately					
 			int end = start + rw.length;
-			for (Handler h : handlers) {
+			for (Handler h : handlers) {				
 				int hstart = h.start;
 				int hend = h.end;
 				if (hstart <= start && hend > start) {
@@ -336,7 +335,7 @@ public class Code implements Attribute {
 					hstart -= diff;
 					hend -= diff;
 				} else if ((hstart < end && hend >= end)
-						|| (hstart < start && hend >= start)) {
+						|| (hstart < start && hend >= start)) {					
 					throw new RuntimeException(
 							"Attempt to optimise an instruction that partially straddles an exception boundary!");
 				}
