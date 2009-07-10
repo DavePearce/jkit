@@ -23,13 +23,7 @@ package jkit.bytecode;
 
 import java.util.*;
 
-import jkit.bytecode.Bytecode.BinOp;
-import jkit.bytecode.Bytecode.If;
-import jkit.bytecode.Bytecode.IfCmp;
-import jkit.bytecode.Bytecode.Load;
-import jkit.bytecode.Bytecode.LoadConst;
-import jkit.bytecode.Bytecode.Pop;
-import jkit.bytecode.Bytecode.Store;
+import jkit.bytecode.Bytecode.*;
 import jkit.jil.tree.Type;
 
 /**
@@ -164,10 +158,14 @@ public final class BytecodeOptimiser {
 				if(rewrite == null) {
 					rewrite = tryConstPlusStore(i,bytecodes);
 				}
+				if(rewrite == null) {
+					rewrite = tryNegRemoval(i,bytecodes);
+				}
 				if(rewrite != null) {
 					rewrites.add(rewrite);
 					i = i + rewrite.length - 1;
 				}
+				
 			}
 
 			// At this stage, we apply the rewrites that we have.
@@ -206,10 +204,10 @@ public final class BytecodeOptimiser {
 			IfCmp ic1 = (IfCmp) b2;
 			if(lc1.constant == null && ic1.cond == IfCmp.EQ) {
 				// ifnull case
-				return new Code.Rewrite(i,2,new Bytecode.If(If.NULL,ic1.label));
+				return new Code.Rewrite(i,2,new If(If.NULL,ic1.label));
 			} else if(lc1.constant == null && ic1.cond == IfCmp.NE) {
 				// ifnonnull case
-				return new Code.Rewrite(i,2,new Bytecode.If(If.NONNULL,ic1.label));
+				return new Code.Rewrite(i,2,new If(If.NONNULL,ic1.label));
 			}
 		}
 		return null;
@@ -274,11 +272,11 @@ public final class BytecodeOptimiser {
 					&& l1.type instanceof Type.Int) {
 				int c = (Integer) constant;
 				
-				if (a3.op == Bytecode.BinOp.ADD) {
+				if (a3.op == BinOp.ADD) {
 					return new Code.Rewrite(i, 4, new Bytecode.Iinc(l1.slot, c));
-				} else if (a3.op == Bytecode.BinOp.SUB) {
+				} else if (a3.op == BinOp.SUB) {
 					return new Code.Rewrite(i, 4,
-							new Bytecode.Iinc(l1.slot, -c));
+							new Iinc(l1.slot, -c));
 				}
 			}
 		}
@@ -302,7 +300,7 @@ public final class BytecodeOptimiser {
 	 * @return
 	 */
 	protected Code.Rewrite tryConstPlusStore(int i, List<Bytecode> bytecodes) {
-		// Need at least four bytecodes remaining
+		// Need at least three bytecodes remaining
 		if((i+2) >= bytecodes.size()) { return null; }
 		Bytecode b1 = bytecodes.get(i);
 		Bytecode b2 = bytecodes.get(i+1);
@@ -318,14 +316,58 @@ public final class BytecodeOptimiser {
 				if(bo2.op == BinOp.ADD) {
 					return new Code.Rewrite(i, 3,
 							st3,
-							new Bytecode.Iinc(st3.slot, c));
+							new Iinc(st3.slot, c));
 				} else if (bo2.op == BinOp.SUB) {
 					return new Code.Rewrite(i, 3,
 							st3,
-							new Bytecode.Iinc(st3.slot, -c));
+							new Iinc(st3.slot, -c));
 				}
 			}
 		}
 		return null;
 	}
+	
+	/**
+	 * This rewrite looks for the following pattern:
+	 * <pre>	 
+	 * ldc y or iconst y
+	 * ineg
+	 * </pre>
+	 * and replaces it with the following:
+	 * <pre>
+	 * ldc -y or iconst -y
+	 * </pre>
+	 * @param i
+	 * @param bytecodes
+	 * @return
+	 */
+	protected Code.Rewrite tryNegRemoval(int i, List<Bytecode> bytecodes) {
+		// Need at least two bytecodes remaining
+		if((i+1) >= bytecodes.size()) { return null; }
+		Bytecode b1 = bytecodes.get(i);
+		Bytecode b2 = bytecodes.get(i+1);
+		if(b1 instanceof LoadConst && b2 instanceof Neg) {
+			LoadConst lc1 = (LoadConst) b1;
+			Object constant = lc1.constant;
+		
+			if (constant instanceof Integer) {
+				int c = (Integer) constant;
+				if (c != Integer.MIN_VALUE) {
+					return new Code.Rewrite(i, 2, new LoadConst(-c));
+				}				
+			} else if (constant instanceof Long) {
+				long c = (Long) constant;
+				if (c != Long.MIN_VALUE) {
+					return new Code.Rewrite(i, 2, new LoadConst(-c));
+				}				
+			} else if (constant instanceof Float) {
+				float c = (Float) constant;				
+				return new Code.Rewrite(i, 2, new LoadConst(-c));				
+			} else if (constant instanceof Double) {
+				double c = (Double) constant;				
+				return new Code.Rewrite(i, 2, new LoadConst(-c));				
+			}
+		}
+		return null;
+	}	
 }
