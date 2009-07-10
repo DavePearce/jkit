@@ -32,6 +32,7 @@ import jkit.java.tree.Expr;
 import jkit.java.tree.Stmt;
 import jkit.java.tree.Value;
 import jkit.java.tree.Decl.JavaClass;
+import jkit.java.tree.Decl.JavaEnum;
 import jkit.java.tree.Decl.JavaField;
 import jkit.java.tree.Decl.JavaInterface;
 import jkit.java.tree.Decl.JavaMethod;
@@ -122,6 +123,8 @@ public class TypeResolution {
 		try {
 			if(d instanceof JavaInterface) {
 				doInterface((JavaInterface)d);
+			} else if(d instanceof JavaEnum) {
+				doEnum((JavaEnum)d);
 			} else if(d instanceof JavaClass) {
 				doClass((JavaClass)d);
 			} else if(d instanceof JavaMethod) {
@@ -138,6 +141,17 @@ public class TypeResolution {
 			}
 		} catch(Exception ex) {
 			internal_error(d,ex);
+		}
+	}
+	
+
+	protected void doEnum(JavaEnum en) throws ClassNotFoundException {				
+		doClass(en);
+		
+		for (Decl.EnumConstant c : en.constants()) {
+			for(Expr e : c.arguments()) {
+				doExpression(e);
+			}
 		}
 	}
 	
@@ -562,7 +576,8 @@ public class TypeResolution {
 	}
 		
 	protected void doClassVal(Value.Class e) throws ClassNotFoundException  {		
-		e.value().attributes().add(substituteTypeVars(resolve(e.value())));
+		Type t = substituteTypeVars(resolve(e.value()));		
+		e.value().attributes().add(t);
 	}
 	
 	protected void doVariable(Expr.UnresolvedVariable e) {					

@@ -808,7 +808,8 @@ public class TypePropagation {
 		// corresponds to an instance of java.lang.Class<String>. Therefore, we
 		// need to construct a type representing java.lang.Class<X> here.
 		
-		Type t = (Type) e.value().attribute(Type.class);
+		Type t = (Type) e.value().attribute(Type.class);			
+		
 		if(t instanceof Type.Clazz) {
 			Type.Clazz c = (Type.Clazz) t;
 			List<Type.Reference> tvars = new ArrayList();

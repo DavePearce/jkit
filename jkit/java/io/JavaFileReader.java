@@ -1225,7 +1225,7 @@ public class JavaFileReader {
 				new SourceLocation(expr.getLine(), expr.getCharPositionInLine()));
 	}
 
-	public Expr parseGetClass(Tree expr, HashSet<String> genericVariables) {
+	public Expr parseGetClass(Tree expr, HashSet<String> genericVariables) {		
 		return new Value.Class(parseType(expr.getChild(0), genericVariables));
 	}
 

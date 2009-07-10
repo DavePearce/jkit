@@ -223,6 +223,19 @@ public class Type extends SyntacticElementImpl {
 				List<Pair<String, List<Type.Reference>>> components) {
 			this.components = components;
 		}
+		
+		public String toString() {
+			String r = "";
+			boolean firstTime = true;
+			for(Pair<String,List<Type.Reference>> c : components) {
+				if(!firstTime) {
+					r = r + ".";
+				}
+				firstTime = false;
+				r = r + c.first();
+			}
+			return r;
+		}
 	}
 	
 	/**

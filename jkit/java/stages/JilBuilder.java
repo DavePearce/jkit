@@ -1356,14 +1356,15 @@ public class JilBuilder {
 	
 	protected Pair<JilExpr,List<JilStmt>> doClassVal(Value.Class e) {
 		Type classType = (Type) e.value().attribute(Type.class);	
-		Type.Clazz type = (Type.Clazz) e.attribute(Type.class);
+		Type.Clazz type = (Type.Clazz) e.attribute(Type.Clazz.class);
+		
 		if(type instanceof Type.Clazz) {
 			return new Pair<JilExpr, List<JilStmt>>(new JilExpr.Class(
-					classType, type, e.attributes()),
+					classType, type, new ArrayList(e.attributes())),
 					new ArrayList<JilStmt>());
 		} else {
 			return new Pair<JilExpr, List<JilStmt>>(new JilExpr.Class(
-					classType, JAVA_LANG_OBJECT, e.attributes()),
+					classType, JAVA_LANG_OBJECT, new ArrayList(e.attributes())),
 					new ArrayList<JilStmt>());
 		}
 	}

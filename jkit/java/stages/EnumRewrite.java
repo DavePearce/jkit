@@ -531,9 +531,11 @@ public class EnumRewrite {
 		
 		Expr.ClassVariable enumClass = new Expr.ClassVariable("java.lang.Enum");
 		enumClass.attributes().add(new Type.Clazz("java.lang","Enum"));
-		
+					
 		Value.Class p1 = new Value.Class(jtype,loc);
-		p1.attributes().add(new Type.Clazz("java.lang", "Class"));
+		p1.value().attributes().add(type);
+		p1.attributes().add(new Type.Clazz("java.lang", "Class"));		
+				
 		Expr.LocalVariable p2 = new Expr.LocalVariable("key",loc);
 		p2.attributes().add(Types.JAVA_LANG_STRING);		
 				
