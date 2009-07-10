@@ -238,18 +238,21 @@ public class SyntaxError extends RuntimeException {
 			column = loc.column();
 		}
 		
-		if(ex instanceof SyntaxError) {
+		if (ex instanceof SyntaxError) {
 			// in the special case that the cause of this exception was already
-            // a syntax error, then we simply rethrow it; otherwise, we'll
-            // attribute the wrong error message and line number.
+			// a syntax error, then we simply rethrow it; otherwise, we'll
+			// attribute the wrong error message and line number.
 			SyntaxError se = (SyntaxError) ex;
 			throw se;
-		} else if(ex instanceof ClassNotFoundException) {
-			throw new SyntaxError("class not found (" + ex.getMessage() + ")",line,column,ex);			
-		} else if(ex instanceof MethodNotFoundException) {
-			throw new SyntaxError("method not found (" + ex.getMessage() + ")",line,column,ex);
-		} else if(ex instanceof FieldNotFoundException) {
-			throw new SyntaxError("field not found (" + ex.getMessage() + ")",line,column,ex);
+		} else if (ex instanceof ClassNotFoundException) {
+			throw new SyntaxError("class not found (" + ex.getMessage() + ")",
+					line, column, ex);
+		} else if (ex instanceof MethodNotFoundException) {
+			throw new SyntaxError("method not found (" + ex.getMessage() + ")",
+					line, column, ex);
+		} else if (ex instanceof FieldNotFoundException) {
+			throw new SyntaxError("field not found (" + ex.getMessage() + ")",
+					line, column, ex);
 		} 			
 				
 		throw new SyntaxError("internal failure (" + ex.getMessage() + ")",line,column,ex);

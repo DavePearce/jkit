@@ -86,11 +86,30 @@ public class TypeResolution {
 	// classes.
 	
 	private static class Scope {
-		public final HashMap<String,Type.Variable> typeVars = new HashMap();
+		// The type vars map is used to map type variables to their proper type.
+		public final HashMap<String,Type.Variable> typeVars = new HashMap();		
 		public Type.Clazz type;	
-		
-		public Scope() { type = null; }
+				
 		public Scope(Type.Clazz type) { this.type = type; }
+	}	
+	
+	private static class MethodScope extends Scope {		
+		// This set identifies what classes are currently visible.
+		public HashMap<String,String> localClasses = new HashMap();
+		
+		public MethodScope() {
+			super(null);
+		}
+	}
+	
+	private static class ClassScope extends Scope {
+		// The local classes map is used for classes which are declared in
+		// methods.
+		public HashMap<String,Integer> localClasses = new HashMap();
+		
+		public ClassScope() {
+			super(null);
+		}
 	}
 	
 	private Stack<Scope> scopes = new Stack<Scope>();
@@ -163,23 +182,39 @@ public class TypeResolution {
 		// First, add myself to the import list, since that means we'll search
 		// in my class for types before searching anywhere else i've declared
 		// and/or on the CLASSPATH.
-		Type.Clazz parentType = getEnclosingClass();		
+		Type.Clazz parentType = getEnclosingClassType();
+		ClassScope classScope = getEnclosingScope(ClassScope.class);
+		MethodScope methodScope = getEnclosingScope(MethodScope.class);
 		
 		imports.addFirst(computeImportDecl(parentType,c.name()));
 		
 		// Second, create my scope.				
-		Scope myScope = new Scope();
+		ClassScope myScope = new ClassScope();
 		scopes.push(myScope);
 		
 		// Third, build my fully qualified type!
-		List<Pair<String, List<Type.Reference>>> components = new ArrayList(parentType.components());
-		ArrayList<Type.Reference> typevars = new ArrayList<Type.Reference>();		
-		for(jkit.java.tree.Type.Variable v : c.typeParameters()) {
+		List<Pair<String, List<Type.Reference>>> components = new ArrayList(
+				parentType.components());
+		ArrayList<Type.Reference> typevars = new ArrayList<Type.Reference>();
+		for (jkit.java.tree.Type.Variable v : c.typeParameters()) {
 			Type.Variable tv = (Type.Variable) substituteTypeVars(resolve(v));
 			typevars.add(tv);
 			myScope.typeVars.put(tv.variable(), tv);
 		}
-		components.add(new Pair(c.name(),typevars));
+		
+		String name = c.name();
+		if(methodScope != null) {
+			// this is for the rather unusual situation when a class is definied
+			// inside a method.
+			Integer localCount = classScope.localClasses.get(name);
+			int lc = localCount == null ? 1 : localCount;						
+			String newname = lc + name;			
+			classScope.localClasses.put(name,lc+1);
+			methodScope.localClasses.put(name,newname);
+			name = newname;
+		}
+				
+		components.add(new Pair(name,typevars));
 		Type.Clazz myType = new Type.Clazz(parentType.pkg(),components);
 		c.attributes().add(myType); // record the type
 		
@@ -205,7 +240,7 @@ public class TypeResolution {
 	}
 
 	protected void doMethod(JavaMethod d) throws ClassNotFoundException {
-		Scope myScope = new Scope();		
+		Scope myScope = new MethodScope();		
 		scopes.push(myScope);
 		
 		
@@ -323,10 +358,10 @@ public class TypeResolution {
 				doInvoke((Expr.Invoke) e);
 			} else if(e instanceof Expr.New) {
 				doNew((Expr.New) e);
-			} else if(e instanceof Decl.JavaClass) {
-				doClass((Decl.JavaClass)e);
 			} else if(e instanceof Stmt.PrePostIncDec) {
 				doExpression((Stmt.PrePostIncDec)e);
+			} else if(e instanceof Decl.JavaClass) {				
+				doClass((Decl.JavaClass)e);
 			} else if(e != null) {
 				syntax_error("Invalid statement encountered: "
 						+ e.getClass(),e);
@@ -338,9 +373,22 @@ public class TypeResolution {
 	
 	protected void doBlock(Stmt.Block block) {
 		if(block != null) {
+			// I need to push a scope to deal with classes defined locally in
+			// the method.  
+			MethodScope methodScope = getEnclosingScope(MethodScope.class);
+			HashMap<String,String> localClasses = null;
+			if(methodScope != null) {
+				localClasses = methodScope.localClasses;
+				methodScope.localClasses = new HashMap(localClasses);
+			}
+			
 			// now process every statement in this block.
 			for(Stmt s : block.statements()) {
 				doStatement(s);
+			}
+			
+			if(methodScope != null) {
+				methodScope.localClasses = localClasses;
 			}
 		}
 	}
@@ -510,7 +558,37 @@ public class TypeResolution {
 	
 	protected void doNew(Expr.New e) throws ClassNotFoundException {
 		// First, figure out the type being created.		
-		Type t = substituteTypeVars(resolve(e.type()));			
+		jkit.java.tree.Type e_type = e.type();
+		
+		if(e_type instanceof jkit.java.tree.Type.Clazz) {
+			// we need to check whether this is a method local class.
+			jkit.java.tree.Type.Clazz e_class = (jkit.java.tree.Type.Clazz) e_type;
+			List<Pair<String, List<jkit.java.tree.Type.Reference>>> components = e_class
+					.components();
+			String firstComponent = components.get(0).first();
+			for(int i=scopes.size()-1;i>=0;--i) {
+				Scope s = scopes.get(i);
+				if(s instanceof ClassScope) {
+					break;					
+				} else if(s instanceof MethodScope) {
+					MethodScope ms = (MethodScope) s;
+					String name = ms.localClasses.get(firstComponent); 
+					if(name != null) {
+						// ok, this is a locallly defined class.
+						ArrayList<Pair<String, List<jkit.java.tree.Type.Reference>>> ncomponents = new ArrayList();
+						ncomponents.add(new Pair(name, components.get(0)
+								.second()));
+						for(int j=1;j<components.size();++j) {
+							ncomponents.add(components.get(j));
+						}
+						e_type = new jkit.java.tree.Type.Clazz(ncomponents);
+						break;
+					}
+				}
+			}
+		}
+		
+		Type t = substituteTypeVars(resolve(e_type));			
 		e.type().attributes().add(t);	
 		
 		doExpression(e.context());
@@ -844,7 +922,7 @@ public class TypeResolution {
 		return t;
 	}
 	
-	protected Type.Clazz getEnclosingClass() {
+	protected Type.Clazz getEnclosingClassType() {
 		for(int i=scopes.size()-1;i>=0;--i) {
 			Scope c = scopes.get(i);
 			if(c.type != null) {
@@ -853,6 +931,16 @@ public class TypeResolution {
 		}
 		return null;
 	}	
+	
+	protected <T extends Scope> T getEnclosingScope(Class c) {
+		for (int i = scopes.size() - 1; i >= 0; --i) {
+			Scope s = scopes.get(i);
+			if (s.getClass().equals(c)) {
+				return (T) s;
+			}
+		}
+		return null;
+	}
 	
 	/**
 	 * The purpose of this method is to compute an import declaration from a

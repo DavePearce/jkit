@@ -29,6 +29,7 @@ import static jkit.compiler.SyntaxError.*;
 import jkit.java.io.JavaFile;
 import jkit.java.tree.Decl;
 import jkit.java.tree.Decl.JavaField;
+import jkit.java.tree.Stmt;
 import jkit.jil.tree.JilClass;
 import jkit.jil.tree.SourceLocation;
 import jkit.jil.tree.SyntacticElement;
@@ -62,26 +63,30 @@ public class SkeletonDiscovery {
 		return skeletons;
 	}
 	
-	protected List<JilClass> doDeclaration(Decl d, String pkg, Type.Clazz parent) {				
-		if(d instanceof Decl.JavaInterface) {
-			return doInterface((Decl.JavaInterface)d,pkg,parent);
-		} else if(d instanceof Decl.JavaEnum) {
-			return doEnum((Decl.JavaEnum)d,pkg,parent);
-		} else if(d instanceof Decl.JavaClass) {
-			return doClass((Decl.JavaClass)d,pkg,parent);
-		} else if(d instanceof Decl.JavaMethod) {
-			return doMethod((Decl.JavaMethod)d,pkg,parent);
-		} else if(d instanceof Decl.JavaField) {
-			return doField((JavaField)d,pkg,parent);
-		} else if(d instanceof Decl.InitialiserBlock) {
-			return doInitialiserBlock((Decl.InitialiserBlock)d,pkg,parent);
-		} else if(d instanceof Decl.StaticInitialiserBlock) {
-			return doStaticInitialiserBlock((Decl.StaticInitialiserBlock)d,pkg,parent);
-		} else {
-			syntax_error("internal failure (unknown declaration \"" + d
-					+ "\" encountered)",d);
-			return null; // dead code.
+	protected List<JilClass> doDeclaration(Decl d, String pkg, Type.Clazz parent) {	
+		try {
+			if(d instanceof Decl.JavaInterface) {
+				return doInterface((Decl.JavaInterface)d,pkg,parent);
+			} else if(d instanceof Decl.JavaEnum) {
+				return doEnum((Decl.JavaEnum)d,pkg,parent);
+			} else if(d instanceof Decl.JavaClass) {
+				return doClass((Decl.JavaClass)d,pkg,parent);
+			} else if(d instanceof Decl.JavaMethod) {
+				return doMethod((Decl.JavaMethod)d,pkg,parent);
+			} else if(d instanceof Decl.JavaField) {
+				return doField((JavaField)d,pkg,parent);
+			} else if(d instanceof Decl.InitialiserBlock) {
+				return doInitialiserBlock((Decl.InitialiserBlock)d,pkg,parent);
+			} else if(d instanceof Decl.StaticInitialiserBlock) {
+				return doStaticInitialiserBlock((Decl.StaticInitialiserBlock)d,pkg,parent);
+			} else {
+				syntax_error("internal failure (unknown declaration \"" + d
+						+ "\" encountered)",d);		
+			}
+		} catch(Exception ex) {
+			internal_error(d,ex);
 		}
+		return null; // dead code.
 	}
 	
 	protected List<JilClass> doEnum(Decl.JavaEnum d, String pkg, Type.Clazz parent) {
@@ -152,5 +157,5 @@ public class SkeletonDiscovery {
 	protected List<JilClass> doStaticInitialiserBlock(
 			Decl.StaticInitialiserBlock d, String pkg, Type.Clazz parent) {		
 		return new ArrayList<JilClass>();
-	}	
+	}		
 }
