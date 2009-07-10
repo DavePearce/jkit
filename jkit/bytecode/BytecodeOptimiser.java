@@ -152,11 +152,17 @@ public final class BytecodeOptimiser {
 			for(int i=0;i<bytecodes.size();++i) {			
 				Code.Rewrite rewrite;
 				rewrite = tryPushPop(i,bytecodes);
+				
+				// This could be improved by narrowing down based on e.g. the
+				// first bytecode.
 				if(rewrite == null) {
-					rewrite = tryIncPlusOne(i,bytecodes);
+					rewrite = tryIncPlusConst(i,bytecodes);
 				}
 				if(rewrite == null) {
 					rewrite = tryIfNonNull(i,bytecodes);
+				}
+				if(rewrite == null) {
+					rewrite = tryConstPlusStore(i,bytecodes);
 				}
 				if(rewrite != null) {
 					rewrites.add(rewrite);
@@ -235,19 +241,19 @@ public final class BytecodeOptimiser {
 	 * This rewrite looks for the following pattern:
 	 * <pre>
 	 * iload x
-	 * ldc 1
-	 * add
+	 * ldc y or iconst y
+	 * iadd or isub
 	 * istore x
 	 * </pre>
 	 * and replaces it with the following:
 	 * <pre>
-	 * iinc x,1
+	 * iinc x,y
 	 * </pre>
 	 * @param i
 	 * @param bytecodes
 	 * @return
 	 */
-	protected Code.Rewrite tryIncPlusOne(int i, List<Bytecode> bytecodes) {
+	protected Code.Rewrite tryIncPlusConst(int i, List<Bytecode> bytecodes) {
 		// Need at least four bytecodes remaining
 		if((i+3) >= bytecodes.size()) { return null; }
 		Bytecode b1 = bytecodes.get(i);
@@ -263,10 +269,61 @@ public final class BytecodeOptimiser {
 			BinOp a3 = (BinOp) b3;
 			Store s4 = (Store) b4;
 			// Need more sanity checks
-			if (l1.slot == s4.slot && lc2.constant.equals(1)
-					&& a3.op == BinOp.ADD && l1.type instanceof Type.Int) {
-				// Ok, matched!
-				return new Code.Rewrite(i,4,new Bytecode.Iinc(l1.slot, 1));				
+			Object constant = lc2.constant;
+			if (l1.slot == s4.slot && constant instanceof Integer
+					&& l1.type instanceof Type.Int) {
+				int c = (Integer) constant;
+				
+				if (a3.op == Bytecode.BinOp.ADD) {
+					return new Code.Rewrite(i, 4, new Bytecode.Iinc(l1.slot, c));
+				} else if (a3.op == Bytecode.BinOp.SUB) {
+					return new Code.Rewrite(i, 4,
+							new Bytecode.Iinc(l1.slot, -c));
+				}
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * This rewrite looks for the following pattern:
+	 * <pre>	 
+	 * ldc y or iconst y
+	 * iadd or isub
+	 * istore x
+	 * </pre>
+	 * and replaces it with the following:
+	 * <pre>
+	 * istore x
+	 * iinc x,y
+	 * </pre>
+	 * @param i
+	 * @param bytecodes
+	 * @return
+	 */
+	protected Code.Rewrite tryConstPlusStore(int i, List<Bytecode> bytecodes) {
+		// Need at least four bytecodes remaining
+		if((i+2) >= bytecodes.size()) { return null; }
+		Bytecode b1 = bytecodes.get(i);
+		Bytecode b2 = bytecodes.get(i+1);
+		Bytecode b3 = bytecodes.get(i+2);		
+		// Now, try to match sequence
+		if (b1 instanceof LoadConst && b2 instanceof BinOp
+				&& b3 instanceof Store) {
+			LoadConst lc1 = (LoadConst) b1;
+			BinOp bo2 = (BinOp) b2;
+			Store st3 = (Store) b3;
+			if(st3.type instanceof Type.Int && lc1.constant instanceof Integer) {
+				int c = (Integer) lc1.constant;
+				if(bo2.op == BinOp.ADD) {
+					return new Code.Rewrite(i, 3,
+							st3,
+							new Bytecode.Iinc(st3.slot, c));
+				} else if (bo2.op == BinOp.SUB) {
+					return new Code.Rewrite(i, 3,
+							st3,
+							new Bytecode.Iinc(st3.slot, -c));
+				}
 			}
 		}
 		return null;

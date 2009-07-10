@@ -283,7 +283,8 @@ public class Code implements Attribute {
 		// Ok, there's a bit of a hack here, since I assume that the rewrites
 		// always *reduce* the number of bytecodes, never increase them!
 		for(Rewrite rw : rewrites) {
-			int pos = rw.start + offset;
+			int start = rw.start;
+			int pos = start + offset;
 			Bytecode[] codes = rw.bytecodes;
 			for(int i=0;i!=codes.length;++i,++pos) {
 				bytecodes.set(pos,codes[i]);
@@ -295,7 +296,25 @@ public class Code implements Attribute {
 				bytecodes.remove(pos);				
 			}
 			
-			offset -= diff;
+			// Now, update the handlers appropriately					
+			int end = start + rw.length;		
+			for(Handler h : handlers) {
+				int hstart = h.start;
+				int hend = h.end;
+				if(hstart <= start && hend > start) {				
+					hend -= diff;
+				} else if(hstart >= end) {
+					hstart -= diff;
+					hend -= diff;
+				} else if (hstart >= start || (hstart < start && hend >= start)) {
+					throw new RuntimeException(
+							"Attempt to optimise an instruction that partially straddles an exception boundary!");
+				}
+				h.start = hstart + offset;
+				h.end = hend + offset;								
+			}
+			
+			offset -= diff;						
 		}
 	}
 	

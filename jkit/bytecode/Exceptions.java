@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
 
+import jkit.bytecode.Code.Rewrite;
 import jkit.compiler.ClassLoader;
 import jkit.jil.tree.Type;
 
@@ -86,5 +87,5 @@ public class Exceptions implements Attribute {
 			output.print(e);
 		}
 		output.println();
-	}
+	}	
 }
