@@ -286,8 +286,7 @@ public final class BytecodeOptimiser {
 				int c = (Integer) constant;
 				
 				if(c >= Byte.MIN_VALUE && c <= Byte.MAX_VALUE) {
-					if (a3.op == BinOp.ADD) {
-						System.out.println("CONSTANT: " + c);
+					if (a3.op == BinOp.ADD) {						
 						return new Code.Rewrite(i, 4, new Bytecode.Iinc(l1.slot, c));
 					} else if (a3.op == BinOp.SUB) {
 						return new Code.Rewrite(i, 4,
