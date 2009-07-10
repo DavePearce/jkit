@@ -291,6 +291,14 @@ public abstract class Bytecode {
 		public final Object constant;
 		
 		public LoadConst(Object constant) {				
+			if(constant instanceof Boolean) {
+				Boolean b = (Boolean) constant;				
+				constant = b ? 1 : 0;				
+			} else if(constant instanceof Character) {
+				constant = (int)((Character) constant);
+			} else if(constant instanceof Byte || constant instanceof Short) {
+				constant = ((Number)constant).intValue();
+			}
 			this.constant = constant; 
 		}				
 		
@@ -337,14 +345,25 @@ public abstract class Bytecode {
 				Map<Constant.Info,Integer> constantPool) {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();						
 			
-			if(constant instanceof Character) {
-				int v = (int) ((Character)constant);				
-				if(v >= -128 && v <= 127) {
-					write_u1(out,BIPUSH);
-					write_u1(out,v);
+			if (constant instanceof Integer) {
+				int v = (Integer) constant;
+				if (v >= -1 && v <= 5) {
+					write_u1(out, ICONST_0 + v);
+				} else if (v >= -128 && v <= 127) {
+					write_u1(out, BIPUSH);
+					write_u1(out, v);
+				} else if (v >= -32768 && v <= 32767) {
+					write_u1(out, SIPUSH);
+					write_u2(out, v);
 				} else {
-					write_u1(out,SIPUSH);
-					write_u2(out,v);
+					int idx = constantPool.get(new Constant.Integer(v));
+					if (idx < 255) {
+						write_u1(out, LDC);
+						write_u1(out, idx);
+					} else {
+						write_u1(out, LDC_W);
+						write_u2(out, idx);
+					}
 				}
 			} else if(constant instanceof Long) {
 				long v = (Long) constant;
@@ -384,26 +403,6 @@ public abstract class Bytecode {
 					write_u1(out,LDC2_W);
 					write_u2(out,idx);
 				}				
-			} else if (constant instanceof Number) {
-				int v = ((Number) constant).intValue();
-				if (v >= -1 && v <= 5) {
-					write_u1(out, ICONST_0 + v);
-				} else if (v >= -128 && v <= 127) {
-					write_u1(out, BIPUSH);
-					write_u1(out, v);
-				} else if (v >= -32768 && v <= 32767) {
-					write_u1(out, SIPUSH);
-					write_u2(out, v);
-				} else {
-					int idx = constantPool.get(new Constant.Integer(v));
-					if (idx < 255) {
-						write_u1(out, LDC);
-						write_u1(out, idx);
-					} else {
-						write_u1(out, LDC_W);
-						write_u2(out, idx);
-					}
-				}
 			} else if(constant instanceof String) {
 				String v = (String) constant;
 				int idx = constantPool.get(new Constant.String(new Constant.Utf8(v)));
@@ -426,9 +425,7 @@ public abstract class Bytecode {
 		}
 		
 		public String toString() {
-			if (constant instanceof Boolean || constant instanceof Byte
-					|| constant instanceof Character
-					|| constant instanceof Short || constant instanceof Integer) {
+			if (constant instanceof Integer) {
 				int v = (Integer) constant;
 				if (v >= -1 && v <= 5) {
 					return "iconst_" + v;
