@@ -272,9 +272,9 @@ public final class BytecodeOptimiser {
 			Store s4 = (Store) b4;
 			// Need more sanity checks
 			Object constant = lc2.constant;
-			if (l1.slot == s4.slot && constant instanceof Integer
+			if (l1.slot == s4.slot && constant instanceof Number
 					&& l1.type instanceof Type.Int) {
-				int c = (Integer) constant;
+				int c = ((Number) constant).intValue();
 				
 				if (a3.op == BinOp.ADD) {
 					return new Code.Rewrite(i, 4, new Bytecode.Iinc(l1.slot, c));
@@ -315,8 +315,8 @@ public final class BytecodeOptimiser {
 			LoadConst lc1 = (LoadConst) b1;
 			BinOp bo2 = (BinOp) b2;
 			Store st3 = (Store) b3;
-			if(st3.type instanceof Type.Int && lc1.constant instanceof Integer) {
-				int c = (Integer) lc1.constant;
+			if(st3.type instanceof Type.Int && lc1.constant instanceof Number) {
+				int c = ((Number) lc1.constant).intValue();
 				if(bo2.op == BinOp.ADD) {
 					return new Code.Rewrite(i, 3,
 							st3,
@@ -354,12 +354,7 @@ public final class BytecodeOptimiser {
 			LoadConst lc1 = (LoadConst) b1;
 			Object constant = lc1.constant;
 		
-			if (constant instanceof Integer) {
-				int c = (Integer) constant;
-				if (c != Integer.MIN_VALUE) {
-					return new Code.Rewrite(i, 2, new LoadConst(-c));
-				}				
-			} else if (constant instanceof Long) {
+			if (constant instanceof Long) {
 				long c = (Long) constant;
 				if (c != Long.MIN_VALUE) {
 					return new Code.Rewrite(i, 2, new LoadConst(-c));
@@ -370,7 +365,12 @@ public final class BytecodeOptimiser {
 			} else if (constant instanceof Double) {
 				double c = (Double) constant;				
 				return new Code.Rewrite(i, 2, new LoadConst(-c));				
-			}
+			} else if (constant instanceof Number) {
+				int c = ((Number) constant).intValue();
+				if (c != Integer.MIN_VALUE) {
+					return new Code.Rewrite(i, 2, new LoadConst(-c));
+				}				
+			}  
 		}
 		return null;
 	}	
@@ -403,14 +403,15 @@ public final class BytecodeOptimiser {
 		} else if(b1 instanceof LoadConst && b1.equals(b2)) {
 			LoadConst lc1 = (LoadConst) b1;
 			Object constant = lc1.constant;
-			if(constant instanceof Integer) {
-				return new Code.Rewrite(i, 2, b1,new Dup(Types.T_INT));
-			} else if(constant instanceof Long) {
+			
+			if(constant instanceof Long) {
 				return new Code.Rewrite(i, 2, b1,new Dup(Types.T_LONG));
 			} else if(constant instanceof Float) {
 				return new Code.Rewrite(i, 2, b1,new Dup(Types.T_FLOAT));
 			} else if(constant instanceof Double) {
 				return new Code.Rewrite(i, 2, b1,new Dup(Types.T_DOUBLE));
+			} else if(constant instanceof Number) {
+				return new Code.Rewrite(i, 2, b1,new Dup(Types.T_INT));
 			} else {
 				// this is a general catch all for aconst instructions.
 				return new Code.Rewrite(i, 2, b1,new Dup(Types.JAVA_LANG_OBJECT));
