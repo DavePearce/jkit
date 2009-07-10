@@ -558,37 +558,7 @@ public class TypeResolution {
 	
 	protected void doNew(Expr.New e) throws ClassNotFoundException {
 		// First, figure out the type being created.		
-		jkit.java.tree.Type e_type = e.type();
-		
-		if(e_type instanceof jkit.java.tree.Type.Clazz) {
-			// we need to check whether this is a method local class.
-			jkit.java.tree.Type.Clazz e_class = (jkit.java.tree.Type.Clazz) e_type;
-			List<Pair<String, List<jkit.java.tree.Type.Reference>>> components = e_class
-					.components();
-			String firstComponent = components.get(0).first();
-			for(int i=scopes.size()-1;i>=0;--i) {
-				Scope s = scopes.get(i);
-				if(s instanceof ClassScope) {
-					break;					
-				} else if(s instanceof MethodScope) {
-					MethodScope ms = (MethodScope) s;
-					String name = ms.localClasses.get(firstComponent); 
-					if(name != null) {
-						// ok, this is a locallly defined class.
-						ArrayList<Pair<String, List<jkit.java.tree.Type.Reference>>> ncomponents = new ArrayList();
-						ncomponents.add(new Pair(name, components.get(0)
-								.second()));
-						for(int j=1;j<components.size();++j) {
-							ncomponents.add(components.get(j));
-						}
-						e_type = new jkit.java.tree.Type.Clazz(ncomponents);
-						break;
-					}
-				}
-			}
-		}
-		
-		Type t = substituteTypeVars(resolve(e_type));			
+		Type t = substituteTypeVars(resolve(e.type()));			
 		e.type().attributes().add(t);	
 		
 		doExpression(e.context());
@@ -784,13 +754,33 @@ public class TypeResolution {
 		ArrayList<Pair<String,List<jkit.jil.tree.Type.Reference>>> ncomponents = new ArrayList();
 		String className = "";
 		String pkg = "";
-				
+		MethodScope methodScope = getEnclosingScope(MethodScope.class);
+		boolean locallyResolved = false;
+		
 		boolean firstTime = true;
 		for (int i = 0; i != ct.components().size(); ++i) {
 			String tmp = ct.components().get(i).first();
 			String tmppkg = pkg.equals("") ? tmp : pkg + "." + tmp;
-			if (firstTime && loader.isPackage(tmppkg)) {
+			
+			if (firstTime && methodScope != null
+					&& methodScope.localClasses.containsKey(tmp)) {
+				// this indicates a method local class.
+				locallyResolved = true;
+				String name = methodScope.localClasses.get(tmp);
+				ArrayList<jkit.jil.tree.Type.Reference> nvars = new ArrayList();
+				Pair<String, List<jkit.java.tree.Type.Reference>> component = ct
+						.components().get(i);
+				for (jkit.java.tree.Type.Reference r : component.second()) {					
+					nvars.add((jkit.jil.tree.Type.Reference) resolve(r));
+				}
+
+				ncomponents
+						.add(new Pair<String, List<jkit.jil.tree.Type.Reference>>(
+								name, nvars));
+				className += name;
+			} else if (firstTime && loader.isPackage(tmppkg)) {
 				pkg = tmppkg;
+				locallyResolved = true;
 			} else {
 				if (!firstTime) {
 					className += "$";
@@ -816,7 +806,7 @@ public class TypeResolution {
 		// now, some sanity checking.
 		if(className.equals("")) {
 			syntax_error("unable to find class " + pkg,ct);
-		} else if(pkg.length() > 0) {
+		} else if(locallyResolved) {
 			// could add "containsClass" check here. Need to modify
 			// classLoader though.
 			return new jkit.jil.tree.Type.Clazz(pkg,ncomponents);			
