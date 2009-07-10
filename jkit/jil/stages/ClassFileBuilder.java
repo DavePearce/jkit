@@ -1167,7 +1167,7 @@ public class ClassFileBuilder {
 				&& srcType instanceof Type.Primitive) {
 			bytecodes.add(new Bytecode.Conversion((Type.Primitive) srcType,
 					(Type.Primitive) cast.type()));
-		} else if(type instanceof Type.Array || type instanceof Type.Clazz){
+		} else if (type instanceof Type.Array || type instanceof Type.Clazz) {
 			bytecodes.add(new Bytecode.CheckCast(cast.type()));
 		} 		
 	}
