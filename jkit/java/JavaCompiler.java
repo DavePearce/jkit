@@ -100,12 +100,18 @@ public class JavaCompiler implements Compiler {
 		}
 	});
 
+	protected final ClassFileBuilder builder;
+	
+	protected final BytecodeOptimiser optimiser;
+	
 	/**
 	 * @param classpath
 	 *            A list of directory and/or jar file locations.
 	 */
 	public JavaCompiler(List<String> classpath) {
 		this.loader = new ClassLoader(classpath, this);
+		this.builder = new ClassFileBuilder(loader,49);
+		this.optimiser = new BytecodeOptimiser();
 	}
 
 	/**
@@ -116,6 +122,8 @@ public class JavaCompiler implements Compiler {
 	 */
 	public JavaCompiler(List<String> classpath, OutputStream logout) {
 		this.loader = new ClassLoader(classpath, this);
+		this.builder = new ClassFileBuilder(loader,49);
+		this.optimiser = new BytecodeOptimiser();
 		if(logout != null) {
 			this.logout = new PrintStream(logout);
 		}
@@ -132,6 +140,8 @@ public class JavaCompiler implements Compiler {
 	public JavaCompiler(List<String> sourcepath, List<String> classpath,
 			OutputStream logout) {
 		this.loader = new ClassLoader(sourcepath, classpath, this);
+		this.builder = new ClassFileBuilder(loader,49);
+		this.optimiser = new BytecodeOptimiser();
 		if(logout != null) {
 			this.logout = new PrintStream(logout);
 		}
@@ -553,7 +563,7 @@ public class JavaCompiler implements Compiler {
 		}
 
 		OutputStream out = new FileOutputStream(outputFile);		
-		ClassFile cfile = new ClassFileBuilder(loader,49).build(clazz);
+		ClassFile cfile = builder.build(clazz);
 		
 		logTimedMessage("[" + outputFile.getPath() + "] Bytecode generation completed",
 				(System.currentTimeMillis() - start));	
@@ -561,8 +571,9 @@ public class JavaCompiler implements Compiler {
 		start = System.currentTimeMillis();
 		
 		// this is where the bytecode optimisation would occur.
+		int numRewrites = optimiser.optimise(cfile);
 		
-		logTimedMessage("[" + outputFile.getPath() + "] Bytecode optimisation completed",
+		logTimedMessage("[" + outputFile.getPath() + "] Bytecode optimisation completed (" + numRewrites + " rewrites)",
 				(System.currentTimeMillis() - start));	
 		
 		start = System.currentTimeMillis();

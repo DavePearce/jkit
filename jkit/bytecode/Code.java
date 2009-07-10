@@ -262,6 +262,43 @@ public class Code implements Attribute {
 		writer.write_u2(0); // no attributes for now
 	}
 	
+	/**
+	 * This method accepts a list of rewrites which should be applied. For
+	 * efficiency reasons, several constraints are made on the list:
+	 * <ol>
+	 * <li>The rewrites are ordered by their start location, such that the
+	 * first rewrite has the lowest start location</li>
+	 * <li>The rewrites don't overlap. That is, we assume only one rewrite
+	 * can be applied to any given region of bytecodes.</li>
+	 * </ol>
+	 * If the complete set of rewrites cannot be constructed according to
+	 * these constraints, then it needs to be split up into several calls to
+	 * this method.
+	 * 
+	 * @param rewrites
+	 */
+	public void apply(List<Rewrite> rewrites) {
+		int offset = 0;
+		
+		// Ok, there's a bit of a hack here, since I assume that the rewrites
+		// always *reduce* the number of bytecodes, never increase them!
+		for(Rewrite rw : rewrites) {
+			int pos = rw.start + offset;
+			Bytecode[] codes = rw.bytecodes;
+			for(int i=0;i!=codes.length;++i,++pos) {
+				bytecodes.set(pos,codes[i]);
+			}
+			
+			// Now, remove any remaining slots that were erased.
+			int diff = rw.length - codes.length;
+			for(int i=0;i!=diff;++i) {
+				bytecodes.remove(pos);				
+			}
+			
+			offset -= diff;
+		}
+	}
+	
 	public void print(PrintWriter output,
 			Map<Constant.Info, Integer> constantPool, ClassLoader loader) {
 		output.println("  Code:");
@@ -276,4 +313,56 @@ public class Code implements Attribute {
 			}
 		}
 	}		
+	
+	/**
+	 * A rewrite defines a sequence of bytecodes that are to be rewritten as a
+	 * (potentially) smaller sequence.
+	 * 
+	 * @author djp
+	 * 
+	 */
+	public static class Rewrite {
+		public final int start;  // first bytecode in sequence to be replaced
+		public final int length; // number of bytecodes to replace
+		public final Bytecode[] bytecodes; // array of bytecodes to substitute
+		
+		public Rewrite(int start, int length, Bytecode... bytecodes) {
+			this.start = start;
+			this.length = length;
+			this.bytecodes = bytecodes;
+		}
+	}
+	
+	/**
+	 * A Rewriteable attribute is one maps bytecodes to something. For example,
+	 * the Exceptions attribute maps bytecodes to exception handler regions;
+	 * likewise, the LineNumbers attribute maps bytecodes to source code line
+	 * numbers. During bytecode optimisation, the relative position of bytecodes
+	 * may change as a result of eliminating redundant bytecodes. In such a case
+	 * we need to update those attributes which are affected. This interface
+	 * captures those attributes which are affected, and provides a hook to tell
+	 * them about rewrites as they happen.
+	 * 
+	 * @author djp
+	 * 
+	 */
+	public static interface Rewriteable {
+		
+		/**
+		 * This method accepts a list of rewrites which should be applied. For
+		 * efficiency reasons, several constraints are made on the list:
+		 * <ol>
+		 * <li>The rewrites are ordered by their start location, such that the
+		 * first rewrite has the lowest start location</li>
+		 * <li>The rewrites don't overlap. That is, we assume only one rewrite
+		 * can be applied to any given region of bytecodes.</li>
+		 * </ol>
+		 * If the complete set of rewrites cannot be constructed according to
+		 * these constraints, then it needs to be split up into several calls to
+		 * this method.
+		 * 
+		 * @param rewrites
+		 */
+		public void apply(List<Rewrite> rewrites);
+	}
 }	

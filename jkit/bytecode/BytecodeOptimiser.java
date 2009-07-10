@@ -106,22 +106,93 @@ import jkit.jil.tree.Type;
  * 
  */
 
-public abstract class BytecodeOptimiser {	
-	public void optimise(List<Bytecode> bytecodes,
-			List<ClassFileWriter.ExceptionHandler> handlers) {
-		
-		for(int i=0;i<bytecodes.size();++i) {			
-			i += tryPushPop(i,bytecodes,handlers);
-			i += tryIncPlusOne(i,bytecodes,handlers);
-			i += tryIfNonNull(i,bytecodes,handlers);
+public final class BytecodeOptimiser {
+	
+	public int optimise(ClassFile classFile) {
+		int numRewrites = 0;
+		if(!classFile.isInterface()) {
+			// no point trying to optimise interfaces
+			for(ClassFile.Method method : classFile.methods) {
+				if(!method.isAbstract()) {
+					// likewise, no point trying to optimise abstract methods.
+					numRewrites += optimise(method);	
+				}				
+			}
 		}
-				
+		return numRewrites;
 	}
 	
-	private int tryIfNonNull(int i, List<Bytecode> bytecodes,
-			List<ClassFileWriter.ExceptionHandler> handlers) {
+	protected int optimise(ClassFile.Method method) {		
+		ArrayList<Code.Rewriteable> rewritables = new ArrayList<Code.Rewriteable>();
+		Code code = null;
+		
+		for(Attribute attr : method.attributes) {
+			if(attr instanceof Code) {
+				code = (Code) attr;				
+			} else if(attr instanceof Code.Rewriteable) {
+				rewritables.add((Code.Rewriteable) attr);
+			}
+		}
+		
+		if(code != null) {
+			return optimise(method,code,rewritables);
+		} else {
+			return 0;
+		}
+	}
+	
+	protected int optimise(ClassFile.Method method, Code code,
+			ArrayList<Code.Rewriteable> rewritables) {
+		int numRewrites = 0;
+		List<Bytecode> bytecodes = code.bytecodes();
+		ArrayList<Code.Rewrite> rewrites = new ArrayList<Code.Rewrite>();
+		
+		do {
+			rewrites.clear();
+			for(int i=0;i<bytecodes.size();++i) {			
+				Code.Rewrite rewrite;
+				rewrite = tryPushPop(i,bytecodes);
+				if(rewrite == null) {
+					rewrite = tryIncPlusOne(i,bytecodes);
+				}
+				if(rewrite == null) {
+					rewrite = tryIfNonNull(i,bytecodes);
+				}
+				if(rewrite != null) {
+					rewrites.add(rewrite);
+					i = i + rewrite.length - 1;
+				}
+			}
+
+			// At this stage, we apply the rewrites that we have.
+			for(Code.Rewriteable cr : rewritables) {
+				cr.apply(rewrites);
+			}
+			code.apply(rewrites);
+			numRewrites += rewrites.size();
+		} while(rewrites.size() > 0);
+				
+		return numRewrites;
+	}
+	
+	/**
+	 * This rewrite looks for the following patterns:
+	 * <pre>
+	 * ldc null
+	 * ifeq X
+	 * </pre>
+	 * and replaces them with:
+	 * <pre>
+	 * ifnull X
+	 * </pre>
+	 * It also catches the ifnonnull case.
+	 * @param i
+	 * @param bytecodes
+	 * @return
+	 */
+	protected Code.Rewrite tryIfNonNull(int i, List<Bytecode> bytecodes) {
 		// Need at least two bytecodes remaining
-		if((i+1) >= bytecodes.size()) { return 0; }
+		if((i+1) >= bytecodes.size()) { return null; }
 		Bytecode b1 = bytecodes.get(i);
 		Bytecode b2 = bytecodes.get(i+1);
 		if(b1 instanceof LoadConst && b2 instanceof IfCmp) {
@@ -129,36 +200,56 @@ public abstract class BytecodeOptimiser {
 			IfCmp ic1 = (IfCmp) b2;
 			if(lc1.constant == null && ic1.cond == IfCmp.EQ) {
 				// ifnull case
-				replace(i,2, bytecodes, handlers, new Bytecode.If(If.NULL,ic1.label));
-				return -1;
+				return new Code.Rewrite(i,2,new Bytecode.If(If.NULL,ic1.label));
 			} else if(lc1.constant == null && ic1.cond == IfCmp.NE) {
 				// ifnonnull case
-				replace(i,2, bytecodes, handlers, new Bytecode.If(If.NONNULL,ic1.label));
-				return -1;
+				return new Code.Rewrite(i,2,new Bytecode.If(If.NONNULL,ic1.label));
 			}
 		}
-		return 0;
+		return null;
 	}
 	
-	private int tryPushPop(int i, List<Bytecode> bytecodes,
-			List<ClassFileWriter.ExceptionHandler> handlers) {
+	/**
+	 * This rewrite looks for the pattern where a value is pushed onto the
+	 * stack, and then immediately popped off. In this case, it simply removes
+	 * the bytecodes in question.
+	 * 
+	 * @param i
+	 * @param bytecodes
+	 * @return
+	 */
+	protected Code.Rewrite tryPushPop(int i, List<Bytecode> bytecodes) {
 		// Need at least two bytecodes remaining
-		if((i+1) >= bytecodes.size()) { return 0; }
+		if((i+1) >= bytecodes.size()) { return null; }
 		Bytecode b1 = bytecodes.get(i);
 		Bytecode b2 = bytecodes.get(i+1);
 		// Now, try to match sequence
 		if ((b1 instanceof Load || b1 instanceof LoadConst)
 				&& b2 instanceof Pop) {
-			replace(i,2,bytecodes,handlers);
-			return -2;
+			return new Code.Rewrite(i,2);
 		}
-		return 0;
+		return null;
 	}
 	
-	private int tryIncPlusOne(int i, List<Bytecode> bytecodes,
-			List<ClassFileWriter.ExceptionHandler> handlers) {
+	/**
+	 * This rewrite looks for the following pattern:
+	 * <pre>
+	 * iload x
+	 * ldc 1
+	 * add
+	 * istore x
+	 * </pre>
+	 * and replaces it with the following:
+	 * <pre>
+	 * iinc x,1
+	 * </pre>
+	 * @param i
+	 * @param bytecodes
+	 * @return
+	 */
+	protected Code.Rewrite tryIncPlusOne(int i, List<Bytecode> bytecodes) {
 		// Need at least four bytecodes remaining
-		if((i+3) >= bytecodes.size()) { return 0; }
+		if((i+3) >= bytecodes.size()) { return null; }
 		Bytecode b1 = bytecodes.get(i);
 		Bytecode b2 = bytecodes.get(i+1);
 		Bytecode b3 = bytecodes.get(i+2);
@@ -175,11 +266,9 @@ public abstract class BytecodeOptimiser {
 			if (l1.slot == s4.slot && lc2.constant.equals(1)
 					&& a3.op == BinOp.ADD && l1.type instanceof Type.Int) {
 				// Ok, matched!
-				replace(i, 4, bytecodes, handlers,
-						new Bytecode.Iinc(l1.slot, 1));
-				return -3;
+				return new Code.Rewrite(i,4,new Bytecode.Iinc(l1.slot, 1));				
 			}
 		}
-		return 0;
+		return null;
 	}
 }
