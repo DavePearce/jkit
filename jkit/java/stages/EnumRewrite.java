@@ -26,6 +26,7 @@ import static jkit.compiler.SyntaxError.internal_error;
 import java.util.*;
 
 import jkit.compiler.ClassLoader;
+import jkit.compiler.MethodNotFoundException;
 import jkit.java.io.JavaFile;
 import jkit.java.tree.*;
 import jkit.java.tree.Decl.*;
@@ -82,7 +83,7 @@ public class EnumRewrite {
 						
 	}
 	
-	protected void doEnum(Decl.JavaEnum ec) throws ClassNotFoundException {	
+	protected void doEnum(Decl.JavaEnum ec) throws ClassNotFoundException, MethodNotFoundException {	
 		Type.Clazz type = (Type.Clazz) ec.attribute(Type.Clazz.class);		
 		JilClass skeleton = (JilClass) loader.loadClass(type);
 
@@ -103,16 +104,16 @@ public class EnumRewrite {
 		ec.declarations().add(values);
 		ec.declarations().add(valueOf);
 
-		// Third, create the static initialiser
-		Decl.StaticInitialiserBlock init = createStaticInitialiser(ec,type);
-		ec.declarations().add(init);
-
-		// Finally, augment the constructor(s) appropriately.
+		// Third, augment the constructor(s) appropriately.
 		if(skeleton.methods(ec.name()).isEmpty()) {
 			createDefaultConstructor(ec,skeleton);
 		} else {
 			augmentConstructors(ec,skeleton);
 		}
+		
+		// Finally, create the static initialiser
+		Decl.StaticInitialiserBlock init = createStaticInitialiser(ec,type,skeleton);
+		ec.declarations().add(init);
 	}
 	
 	protected void doInterface(JavaInterface d) {
@@ -573,7 +574,9 @@ public class EnumRewrite {
 		return m;		
 	}
 	
-	protected Decl.StaticInitialiserBlock createStaticInitialiser(Decl.JavaEnum ec, Type.Clazz type) {
+	protected Decl.StaticInitialiserBlock createStaticInitialiser(
+			Decl.JavaEnum ec, Type.Clazz type, JilClass skeleton)
+			throws ClassNotFoundException, MethodNotFoundException {
 		SourceLocation loc = (SourceLocation) ec
 				.attribute(SourceLocation.class);
 		jkit.java.tree.Type.Clazz ecType = new jkit.java.tree.Type.Clazz(ec.name(), loc);
@@ -608,13 +611,17 @@ public class EnumRewrite {
 			ArrayList<Type> paramTypes = new ArrayList<Type>();
 			paramTypes.add(Types.JAVA_LANG_STRING);
 			paramTypes.add(Types.T_INT);
+			
 			for(Expr e : c.arguments()) {
-				Type t = (Type) e.attribute(Type.class);				
+				Type t = (Type) e.attribute(Type.class);												
 				paramTypes.add(t);
 			}
 			
-			Type.Function ftype = new Type.Function(Types.T_VOID,paramTypes);
-						
+			// At this point, we have to resolve the constructor.
+			Type.Function ftype = types.resolveMethod(type,
+					type.lastComponent().first(), paramTypes, loader).second()
+					.type();
+			
 			nuw.attributes().add(new JilBuilder.MethodInfo(new ArrayList(),ftype));			
 			Expr.Deref deref = new Expr.Deref(thisClass, "$VALUES",
 					aType);									
