@@ -176,10 +176,16 @@ public final class BytecodeOptimiser {
 			}
 
 			// At this stage, we apply the rewrites that we have.
+			
+			// first, validate the rewrites. We must do this first to eliminate
+			// rewrites that are not sound because they straddle instruction boundaries.
+			code.validate(rewrites);
+			
+			// now, we apply to all attributes which care.
+			code.apply(rewrites);						
 			for(Code.Rewriteable cr : rewritables) {
 				cr.apply(rewrites);
-			}
-			code.apply(rewrites);
+			}			
 			numRewrites += rewrites.size();
 		} while(rewrites.size() > 0);
 				

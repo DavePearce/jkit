@@ -263,17 +263,45 @@ public class Code implements Attribute {
 	}
 	
 	/**
+	 * The purpose of this method is to validate a candidate list of rewrites.
+	 * More specifically, a rewrite is considered to be invalid if it crosses an
+	 * exception handler boundary. Such rewrites are automatically removed from
+	 * the list.
+	 * 
+	 * @param rewrites
+	 */
+	public void validate(List<Rewrite> rewrites) {		
+		for(int i=0;i!=rewrites.size();++i) {
+			Rewrite rw = rewrites.get(i);
+			int start = rw.start;
+			int end = start + rw.length;
+			
+			for(Handler h : handlers) {
+				int hstart = h.start;
+				int hend = h.end;
+				if ((hstart < end && hend >= end)
+						|| (hstart < start && hend >= start)) {
+					// Not OK
+					rewrites.remove(i);
+					i = i - 1;
+					break;
+				}
+			}
+		}
+	}
+	
+	/**
 	 * This method accepts a list of rewrites which should be applied. For
 	 * efficiency reasons, several constraints are made on the list:
 	 * <ol>
 	 * <li>The rewrites are ordered by their start location, such that the
 	 * first rewrite has the lowest start location</li>
-	 * <li>The rewrites don't overlap. That is, we assume only one rewrite
-	 * can be applied to any given region of bytecodes.</li>
+	 * <li>The rewrites don't overlap. That is, we assume only one rewrite can
+	 * be applied to any given region of bytecodes.</li>
 	 * </ol>
-	 * If the complete set of rewrites cannot be constructed according to
-	 * these constraints, then it needs to be split up into several calls to
-	 * this method.
+	 * If the complete set of rewrites cannot be constructed according to these
+	 * constraints, then it needs to be split up into several calls to this
+	 * method.
 	 * 
 	 * @param rewrites
 	 */
@@ -281,7 +309,7 @@ public class Code implements Attribute {
 		int offset = 0;
 		
 		// Ok, there's a bit of a hack here, since I assume that the rewrites
-		// always *reduce* the number of bytecodes, never increase them!
+		// never increase the number of bytecodes!
 		for(Rewrite rw : rewrites) {
 			int start = rw.start;
 			int pos = start + offset;
@@ -295,26 +323,24 @@ public class Code implements Attribute {
 			for(int i=0;i!=diff;++i) {
 				bytecodes.remove(pos);				
 			}
+			offset -= diff;
 			
 			// Now, update the handlers appropriately					
-			int end = start + rw.length;		
-			for(Handler h : handlers) {
+			int end = start + rw.length;
+			for (Handler h : handlers) {
 				int hstart = h.start;
 				int hend = h.end;
-				if(hstart <= start && hend > start) {				
+				if (hstart <= start && hend > start) {
 					hend -= diff;
-				} else if(hstart >= end) {
+				} else if (hstart >= end) {
 					hstart -= diff;
 					hend -= diff;
-				} else if (hstart >= start || (hstart < start && hend >= start)) {
+				} else if ((hstart < end && hend >= end)
+						|| (hstart < start && hend >= start)) {
 					throw new RuntimeException(
 							"Attempt to optimise an instruction that partially straddles an exception boundary!");
 				}
-				h.start = hstart + offset;
-				h.end = hend + offset;								
-			}
-			
-			offset -= diff;						
+			}											
 		}
 	}
 	
