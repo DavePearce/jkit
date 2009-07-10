@@ -1034,6 +1034,7 @@ public class ClassFileBuilder {
 		// inheritance somehow.
 		
 		String name = targetT.lastComponent().first();
+						
 		Pair<Clazz, Clazz.Method> cm = determineMethod(targetT, name, stmt
 				.funType());			
 		Clazz.Method m = cm.second();		
