@@ -165,6 +165,9 @@ public final class BytecodeOptimiser {
 				if(rewrite == null) {
 					rewrite = tryDupLoad(i,bytecodes);
 				}
+				if(rewrite == null) {
+					rewrite = tryStoreLoad(i,bytecodes);
+				}
 				if(rewrite != null) {
 					rewrites.add(rewrite);
 					i = i + rewrite.length - 1;
@@ -420,7 +423,33 @@ public final class BytecodeOptimiser {
 		return null;
 	}
 	
-	protected Code.Rewrite storeload(int i, List<Bytecode> bytecodes) {
+	/**
+	 * This rewrite looks for the following pattern:
+	 * <pre>	 
+	 * store x
+	 * load x
+	 * </pre>
+	 * and replaces it with the following:
+	 * <pre>
+	 * dup
+	 * store x
+	 * </pre>
+	 * @param i
+	 * @param bytecodes
+	 * @return
+	 */
+	protected Code.Rewrite tryStoreLoad(int i, List<Bytecode> bytecodes) {
+		if((i+1) >= bytecodes.size()) { return null; }
+		Bytecode b1 = bytecodes.get(i);
+		Bytecode b2 = bytecodes.get(i+1);
+		if(b1 instanceof Store && b2 instanceof Load) {
+			Store s1 = (Store) b1;
+			Load l2 = (Load) b2;
+			if(s1.slot == l2.slot) {
+				// found a match!
+				return new Code.Rewrite(i, 2, new Dup(s1.type),s1);
+			}
+		}
 		return null;
 	}
 }
