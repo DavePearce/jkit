@@ -340,6 +340,8 @@ public class Code implements Attribute {
 					throw new RuntimeException(
 							"Attempt to optimise an instruction that partially straddles an exception boundary!");
 				}
+				h.start = hstart;
+				h.end = hend;
 			}											
 		}
 	}
