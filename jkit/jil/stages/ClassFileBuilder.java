@@ -1169,7 +1169,14 @@ public class ClassFileBuilder {
 					(Type.Primitive) cast.type()));
 		} else if (type instanceof Type.Array || type instanceof Type.Clazz) {
 			bytecodes.add(new Bytecode.CheckCast(cast.type()));
-		} 		
+		} else if (type instanceof Type.Variable) {
+			Type.Variable tv = (Type.Variable) type;
+			Type.Reference lb = tv.lowerBound();
+			if (lb instanceof Type.Clazz) {
+				// i'm not sure if this is general enough.
+				bytecodes.add(new Bytecode.CheckCast(lb));
+			}
+		}
 	}
 
 	protected void translateConvert(JilExpr.Convert cast, HashMap<String, Integer> varmap,
