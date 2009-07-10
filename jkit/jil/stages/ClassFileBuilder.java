@@ -1160,13 +1160,14 @@ public class ClassFileBuilder {
 		
 		translateExpression(cast.expr(), varmap, bytecodes);
 
+		Type type = cast.type();
 		Type srcType = cast.expr().type();
 		// Now, do implicit conversions
-		if (cast.type() instanceof Type.Primitive
+		if (type instanceof Type.Primitive
 				&& srcType instanceof Type.Primitive) {
 			bytecodes.add(new Bytecode.Conversion((Type.Primitive) srcType,
 					(Type.Primitive) cast.type()));
-		} else {
+		} else if(type instanceof Type.Array || type instanceof Type.Clazz){
 			bytecodes.add(new Bytecode.CheckCast(cast.type()));
 		} 		
 	}
