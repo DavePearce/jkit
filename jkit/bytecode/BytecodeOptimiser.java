@@ -285,11 +285,14 @@ public final class BytecodeOptimiser {
 					&& l1.type instanceof Type.Int) {
 				int c = (Integer) constant;
 				
-				if (a3.op == BinOp.ADD) {
-					return new Code.Rewrite(i, 4, new Bytecode.Iinc(l1.slot, c));
-				} else if (a3.op == BinOp.SUB) {
-					return new Code.Rewrite(i, 4,
-							new Iinc(l1.slot, -c));
+				if(c >= Byte.MIN_VALUE && c <= Byte.MAX_VALUE) {
+					if (a3.op == BinOp.ADD) {
+						System.out.println("CONSTANT: " + c);
+						return new Code.Rewrite(i, 4, new Bytecode.Iinc(l1.slot, c));
+					} else if (a3.op == BinOp.SUB) {
+						return new Code.Rewrite(i, 4,
+								new Iinc(l1.slot, -c));
+					}
 				}
 			}
 		}
@@ -326,14 +329,16 @@ public final class BytecodeOptimiser {
 			Store st3 = (Store) b3;
 			if(st3.type instanceof Type.Int && lc1.constant instanceof Integer) {
 				int c = (Integer) lc1.constant;
-				if(bo2.op == BinOp.ADD) {
-					return new Code.Rewrite(i, 3,
-							st3,
-							new Iinc(st3.slot, c));
-				} else if (bo2.op == BinOp.SUB) {
-					return new Code.Rewrite(i, 3,
-							st3,
-							new Iinc(st3.slot, -c));
+				if(c >= Byte.MIN_VALUE && c <= Byte.MAX_VALUE) {
+					if(bo2.op == BinOp.ADD) {
+						return new Code.Rewrite(i, 3,
+								st3,
+								new Iinc(st3.slot, c));
+					} else if (bo2.op == BinOp.SUB) {
+						return new Code.Rewrite(i, 3,
+								st3,
+								new Iinc(st3.slot, -c));
+					}
 				}
 			}
 		}

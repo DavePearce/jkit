@@ -183,8 +183,11 @@ public abstract class Bytecode {
 		public final int increment;
 		
 		public Iinc(int slot, int increment) {
+			if(increment < Byte.MIN_VALUE || increment > Byte.MAX_VALUE) {
+				throw new IllegalArgumentException("Illegal Iinc increment --- must be between -127 and 128");
+			}
 			this.slot=slot;
-			this.increment = increment;
+			this.increment = increment;			
 		}
 		
 
