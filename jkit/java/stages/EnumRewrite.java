@@ -768,9 +768,8 @@ public class EnumRewrite {
 		mparams.add(0,new Triple("$1",new ArrayList(),stringType));
 		mparams.add(1,new Triple("$2",new ArrayList(),intType));
 				
-		Decl.JavaMethod m = new Decl.JavaMethod(mods, ec.name(),
-				new jkit.java.tree.Type.Void(), mparams, false,
-				new ArrayList(), new ArrayList(), block, loc);
+		Decl.JavaConstructor m = new Decl.JavaConstructor(mods, ec.name(),
+				mparams, false, new ArrayList(), new ArrayList(), block, loc);
 
 
 		m.attributes().add(ftype);

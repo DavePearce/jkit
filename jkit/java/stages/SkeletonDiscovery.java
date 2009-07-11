@@ -62,7 +62,12 @@ public class SkeletonDiscovery {
 	private JavaFile file;
 	
 	private static class Scope {}
-	private static class MethodScope extends Scope {}
+	private static class MethodScope extends Scope {
+		public final boolean isStatic;
+		public MethodScope(boolean isStatic) {
+			this.isStatic = isStatic;
+		}
+	}
 	
 	private static class ClassScope extends Scope {
 		// The local classes map is used for classes which are declared in
@@ -137,6 +142,7 @@ public class SkeletonDiscovery {
 		// hence, we have only basic (i.e. non-generic) type information
 		// available.
 		
+		List<Modifier> modifiers = new ArrayList<Modifier>(c.modifiers());
 		ClassScope classScope = getEnclosingClassScope();
 		List<Pair<String,List<Type.Reference>>> components = new ArrayList();
 		String name = c.name();
@@ -162,6 +168,10 @@ public class SkeletonDiscovery {
 				int lc = count == null ? 1 : count;
 				localClasses.put(name, lc+1);
 				name = lc + name;
+				
+				if(methodScope.isStatic) {
+					modifiers.add(Modifier.ACC_STATIC);
+				}
 			}
 		} 
 		
@@ -187,14 +197,14 @@ public class SkeletonDiscovery {
 		/**
 		 * Now, construct the skeleton for this class!
 		 */
-		skeletons.add(new JilClass(type, c.modifiers(), null, new ArrayList(),
+		skeletons.add(new JilClass(type, modifiers, null, new ArrayList(),
 				inners, new ArrayList(), new ArrayList()));
 						
 		return skeletons;
 	}
 
 	protected List<JilClass> doMethod(Decl.JavaMethod d) {
-		scopes.push(new MethodScope());
+		scopes.push(new MethodScope(d.isStatic()));
 		List<JilClass> classes = doStatement(d.body());
 		scopes.pop();
 		return classes;

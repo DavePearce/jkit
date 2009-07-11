@@ -172,14 +172,16 @@ public class InnerClassRewrite {
 			doDeclaration(d);
 		}
 		
-		if (type.components().size() > 1 && !c.isStatic()
+		JilClass oc = (JilClass) loader.loadClass(type);
+		
+		if (type.components().size() > 1 && !oc.isStatic()
 				&& !(c instanceof JavaInterface)
 				&& !(c instanceof JavaEnum)) {
 			// Ok, we've found a non-static inner class here. Therefore, we
 			// need
 			// to rewrite all constructors to accept a parent pointer.
 
-			addParentPtr(c, type, Types.parentType(type));
+			addParentPtr(c, oc, type, Types.parentType(type));
 
 		} 
 		
@@ -790,7 +792,7 @@ public class InnerClassRewrite {
 	 * @param type
 	 * @param owner
 	 */
-	protected void addParentPtr(JavaClass owner, Type.Clazz ownerType,
+	protected void addParentPtr(JavaClass owner, JilClass oc, Type.Clazz ownerType,
 			Type.Clazz parentType)
 			throws ClassNotFoundException {
 		SourceLocation loc = (SourceLocation) owner.attribute(SourceLocation.class);				
@@ -805,7 +807,7 @@ public class InnerClassRewrite {
 		
 		// Second, update the skeleton types. I know it's a JilClass here, since
 		// it must be the skeleton for the enclosing class which I'm compiling!
-		JilClass oc = (JilClass) loader.loadClass(ownerType);		
+				
 		for(JilMethod m : oc.methods(oc.name())) {					
 			ArrayList<Type> nparams = new ArrayList<Type>(m.type().parameterTypes());
 			nparams.add(0,parentType);

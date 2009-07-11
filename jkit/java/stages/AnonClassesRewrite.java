@@ -567,7 +567,7 @@ public class AnonClassesRewrite {
 		return jc;
 	}
 	
-	protected Decl.JavaMethod buildAnonConstructor(String name,
+	protected Decl.JavaConstructor buildAnonConstructor(String name,
 			Type.Function type, ArrayList<Type.Clazz> exceptions,
 			HashMap<String, Type> nonlocalParams, Clazz parentClass,
 			JilClass anonClass, SourceLocation loc) {
@@ -619,9 +619,9 @@ public class AnonClassesRewrite {
 		
 		Stmt.Block block = new Stmt.Block(stmts,loc);
 		
-		Decl.JavaMethod mc = new Decl.JavaMethod(mods, name,
-				fromJilType(Types.T_VOID), javaparams, false, new ArrayList(),
-				new ArrayList(), block, loc, type);
+		Decl.JavaConstructor mc = new Decl.JavaConstructor(mods, name,
+				javaparams, false, new ArrayList(), new ArrayList(), block,
+				loc, type);
 		
 		// finally, update skeleton accordingly.
 		anonClass.methods().add(new JilMethod(name, type, jilparams,

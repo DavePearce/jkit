@@ -155,7 +155,7 @@ public class SkeletonBuilder {
 			// Therefore, must add the default constructor.
 			SourceLocation loc = (SourceLocation) c
 					.attribute(SourceLocation.class);
-			Decl.JavaMethod m = createDefaultConstructor(skeleton.name(), loc);
+			Decl.JavaConstructor m = createDefaultConstructor(skeleton.name(), loc);
 			c.declarations().add(m);
 
 			// Finally, add the constructor to the skeleton.
@@ -635,7 +635,7 @@ public class SkeletonBuilder {
 		doExpression(e.trueBranch(), skeleton);		
 	}	
 	
-	protected Decl.JavaMethod createDefaultConstructor(String name,
+	protected Decl.JavaConstructor createDefaultConstructor(String name,
 			SourceLocation loc) {
 
 		ArrayList<Modifier> mods = new ArrayList<Modifier>();
@@ -646,9 +646,9 @@ public class SkeletonBuilder {
 		stmts.add(ivk);
 		Stmt.Block block = new Stmt.Block(stmts, loc);
 
-		Decl.JavaMethod m = new Decl.JavaMethod(mods, name,
-				new jkit.java.tree.Type.Void(), new ArrayList(), false,
-				new ArrayList(), new ArrayList(), block, loc);
+		Decl.JavaConstructor m = new Decl.JavaConstructor(mods, name,
+				new ArrayList(), false, new ArrayList(), new ArrayList(),
+				block, loc);
 
 		m.attributes().add(new Type.Function(new Type.Void()));
 		
