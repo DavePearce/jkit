@@ -179,7 +179,7 @@ public class JilBuilder {
 		// First, off. If this is a constructor, then check whether there is an
 		// explicit super constructor call or not.  If not, then add one.
 		if (d instanceof Decl.JavaConstructor) {			
-			if(findSuperCall(stmts) == -1) {			
+			if(findSuperCall(stmts) == -1) {							
 				stmts.add(0, new JilExpr.SpecialInvoke(new JilExpr.Variable("super", parent
 						.superClass()), "super", new ArrayList<JilExpr>(),
 						new Type.Function(T_VOID), T_VOID));
@@ -187,13 +187,13 @@ public class JilBuilder {
 		}				
 		
 		// Now, add this statement list to the jil method representing this java
-		// method.
-		
-		for (JilMethod m : parent.methods()) {
-			if (m.name().equals(d.name()) && m.type().equals(type)) {
+		// method.				
+		String name = d instanceof Decl.JavaConstructor ? parent.name() : d.name();		
+		for (JilMethod m : parent.methods()) {			
+			if (m.name().equals(name) && m.type().equals(type)) {
 				m.body().addAll(stmts);
 			}
-		}		
+		}				
 	}
 
 	protected void doField(Decl.JavaField d, JilClass parent) {		
