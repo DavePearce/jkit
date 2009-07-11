@@ -795,21 +795,18 @@ public class InnerClassRewrite {
 			throws ClassNotFoundException {
 		SourceLocation loc = (SourceLocation) owner.attribute(SourceLocation.class);				
 		
-		// First, update the source code for constructors
-		String constructorName = owner.name();		
+		// First, update the source code for constructors			
 		for(Decl o : owner.declarations()) {
-			if(o instanceof JavaMethod) {
-				JavaMethod m = (JavaMethod) o;
-				if(m.name().equals(constructorName)) {
-					rewriteConstructor(m, ownerType, parentType, loc);
-				}
+			if(o instanceof JavaConstructor) {
+				JavaMethod m = (JavaMethod) o;							
+				rewriteConstructor(m, ownerType, parentType, loc);				
 			}
 		}
 		
 		// Second, update the skeleton types. I know it's a JilClass here, since
 		// it must be the skeleton for the enclosing class which I'm compiling!
 		JilClass oc = (JilClass) loader.loadClass(ownerType);		
-		for(JilMethod m : oc.methods(owner.name())) {			
+		for(JilMethod m : oc.methods(oc.name())) {					
 			ArrayList<Type> nparams = new ArrayList<Type>(m.type().parameterTypes());
 			nparams.add(0,parentType);
 			Type.Function ntype = new Type.Function(m.type().returnType(),nparams);

@@ -540,12 +540,14 @@ public class TypePropagation {
 
 				String constructorName = tc.components().get(
 						tc.components().size() - 1).first();
+												
 				Triple<Clazz, Clazz.Method, Type.Function> r = types
 				.resolveMethod(tc, constructorName, parameterTypes,
-						loader);
+						loader);								
+				
 				Type.Function f = r.third();
 				Method m = r.second();
-
+				
 				// At this stage, we have (finally) figured out what method is to be
 				// called. There are a few things that remain to be done, however.
 				// Firstly, we must add any implicitCasts that are required for

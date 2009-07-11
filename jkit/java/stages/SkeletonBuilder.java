@@ -149,7 +149,8 @@ public class SkeletonBuilder {
 		if (c instanceof Decl.JavaEnum) {
 			doEnum((Decl.JavaEnum) c, skeleton);
 		} else if (!skeleton.isInterface()
-				&& skeleton.methods(skeleton.name()).isEmpty()) {
+				&& skeleton.methods(skeleton.name()).isEmpty()) {						
+			
 			// if we get here, then no constructor has been provided.
 			// Therefore, must add the default constructor.
 			SourceLocation loc = (SourceLocation) c
@@ -219,8 +220,17 @@ public class SkeletonBuilder {
 			exceptions.add((Type.Clazz)tc.attribute(Type.class));
 		}				
 		
+		String name = d.name();
+		if(d instanceof Decl.JavaConstructor) {
+			// the following override is needed for the special case of
+			// method-local inner classes. The issue is that the real
+			// constructor name will actually be different here, because the
+			// class name is prepended with an integer to identify it uniquely.
+			name = skeleton.name();
+		}
+		
 		skeleton.methods().add(
-				new JilMethod(d.name(), type, parameters, d.modifiers(),
+				new JilMethod(name, type, parameters, d.modifiers(),
 						exceptions, new ArrayList(d.attributes())));				
 		
 		doStatement(d.body(), skeleton);
