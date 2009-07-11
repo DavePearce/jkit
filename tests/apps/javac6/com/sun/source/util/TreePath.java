@@ -35,6 +35,22 @@ import java.util.Iterator;
  * @author Jonathan Gibbons
  * @since 1.6
  */
+
+class Result extends Error {
+    static final long serialVersionUID = -5942088234594905625L;
+    TreePath path;
+    Result(TreePath path) {
+	this.path = path;
+    }
+}
+class PathFinder extends TreePathScanner<TreePath,Tree> {
+    public TreePath scan(Tree tree, Tree target) {
+	if (tree == target)
+	    throw new Result(new TreePath(getCurrentPath(), target));
+	return super.scan(tree, target);
+    }
+}
+
 public class TreePath implements Iterable<Tree> {
     /**
      * Gets a tree path for a tree node within a compilation unit.
@@ -52,20 +68,6 @@ public class TreePath implements Iterable<Tree> {
 	path.getClass();
 	target.getClass();
 	
-	class Result extends Error {
-	    static final long serialVersionUID = -5942088234594905625L;
-	    TreePath path;
-	    Result(TreePath path) {
-		this.path = path;
-	    }
-	}
-	class PathFinder extends TreePathScanner<TreePath,Tree> {
-	    public TreePath scan(Tree tree, Tree target) {
-		if (tree == target)
-		    throw new Result(new TreePath(getCurrentPath(), target));
-		return super.scan(tree, target);
-	    }
-	}
 	
 	try {
 	    new PathFinder().scan(path, target);
