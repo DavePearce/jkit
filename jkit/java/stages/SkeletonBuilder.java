@@ -113,11 +113,9 @@ public class SkeletonBuilder {
 	
 	protected void doClass(Decl.JavaClass c, JilClass skeleton) throws ClassNotFoundException {
 		Type.Clazz type = (Type.Clazz) c.attribute(Type.class);
+	
+		skeleton = (JilClass) loader.loadClass(type);		
 		
-		// We, need to update the skeleton so that any methods and fields
-		// discovered below this are attributed to this class!
-		skeleton = (JilClass) loader.loadClass(type);
-
 		// Next, we need to update as much information about the skeleton as
 		// we can.
 		Type.Clazz superClass = new Type.Clazz("java.lang", "Object");
@@ -661,5 +659,5 @@ public class SkeletonBuilder {
 		}
 		
 		return false;
-	}
+	}		
 }

@@ -317,7 +317,8 @@ public class JilBuilder {
 				r.second().add((JilExpr.New) r.first());
 				return r.second();
 			} else if(e instanceof Decl.JavaClass) {
-				doClass((Decl.JavaClass)e);			
+				doClass((Decl.JavaClass)e);
+				return new ArrayList<JilStmt>();
 			} else if(e instanceof Stmt.PrePostIncDec) {
 				Pair<JilExpr, List<JilStmt>> r = doExpression((Stmt.PrePostIncDec) e);
 				return r.second();

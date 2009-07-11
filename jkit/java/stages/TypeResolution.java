@@ -105,7 +105,7 @@ public class TypeResolution {
 	private static class ClassScope extends Scope {
 		// The local classes map is used for classes which are declared in
 		// methods.
-		public HashMap<String,Integer> localClasses = new HashMap();
+		public final HashMap<String,Integer> localClasses = new HashMap();
 		
 		public ClassScope() {
 			super(null);
@@ -559,7 +559,7 @@ public class TypeResolution {
 	protected void doNew(Expr.New e) throws ClassNotFoundException {
 		// First, figure out the type being created.		
 		Type t = substituteTypeVars(resolve(e.type()));			
-		e.type().attributes().add(t);	
+		e.type().attributes().add(t);			
 		
 		doExpression(e.context());
 		
@@ -755,58 +755,46 @@ public class TypeResolution {
 		String className = "";
 		String pkg = "";
 		MethodScope methodScope = getEnclosingScope(MethodScope.class);
-		boolean locallyResolved = false;
-		
+				
 		boolean firstTime = true;
 		for (int i = 0; i != ct.components().size(); ++i) {
 			String tmp = ct.components().get(i).first();
 			String tmppkg = pkg.equals("") ? tmp : pkg + "." + tmp;
 			
-			if (firstTime && methodScope != null
-					&& methodScope.localClasses.containsKey(tmp)) {
-				// this indicates a method local class.
-				locallyResolved = true;
-				String name = methodScope.localClasses.get(tmp);
+			if (firstTime && loader.isPackage(tmppkg)) {
+				pkg = tmppkg;				
+			} else {
+				String name = ct.components().get(i).first();
+				if (!firstTime) {
+					className += "$";
+				} else if(methodScope != null) {
+					String rname = methodScope.localClasses.get(name);
+					if(rname != null) {
+						name = rname;
+					}
+				}
+				firstTime = false;
+				className += name;
+
+				// now, rebuild the component list
+				List<jkit.java.tree.Type.Reference> vars = ct.components().get(
+						i).second();
 				ArrayList<jkit.jil.tree.Type.Reference> nvars = new ArrayList();
-				Pair<String, List<jkit.java.tree.Type.Reference>> component = ct
-						.components().get(i);
-				for (jkit.java.tree.Type.Reference r : component.second()) {					
+
+				for (jkit.java.tree.Type.Reference r : vars) {
 					nvars.add((jkit.jil.tree.Type.Reference) resolve(r));
 				}
 
 				ncomponents
 						.add(new Pair<String, List<jkit.jil.tree.Type.Reference>>(
 								name, nvars));
-				className += name;
-			} else if (firstTime && loader.isPackage(tmppkg)) {
-				pkg = tmppkg;
-				locallyResolved = true;
-			} else {
-				if (!firstTime) {
-					className += "$";
-				}
-				firstTime = false;
-				className += ct.components().get(i).first();
-
-				// now, rebuild the component list
-				Pair<String, List<jkit.java.tree.Type.Reference>> component = ct
-						.components().get(i);
-				ArrayList<jkit.jil.tree.Type.Reference> nvars = new ArrayList();
-
-				for (jkit.java.tree.Type.Reference r : component.second()) {					
-					nvars.add((jkit.jil.tree.Type.Reference) resolve(r));
-				}
-
-				ncomponents
-						.add(new Pair<String, List<jkit.jil.tree.Type.Reference>>(
-								component.first(), nvars));
 			}
 		}
 		
 		// now, some sanity checking.
 		if(className.equals("")) {
 			syntax_error("unable to find class " + pkg,ct);
-		} else if(locallyResolved) {
+		} else if(pkg.length() > 0) {
 			// could add "containsClass" check here. Need to modify
 			// classLoader though.
 			return new jkit.jil.tree.Type.Clazz(pkg,ncomponents);			
