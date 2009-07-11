@@ -166,7 +166,7 @@ public class AnonClassesRewrite {
 			} else if(e instanceof Expr.New) {
 				doNew((Expr.New) e);
 			} else if(e instanceof Decl.JavaClass) {
-				doClass((Decl.JavaClass)e);
+				doMethodLocalClass((Decl.JavaClass)e);
 			} else if(e instanceof Stmt.PrePostIncDec) {
 				doExpression((Stmt.PrePostIncDec)e);
 			} else if (e != null) {
@@ -275,6 +275,39 @@ public class AnonClassesRewrite {
 		}		
 	}
 	
+	protected void doMethodLocalClass(Decl.JavaClass mlclass) throws ClassNotFoundException {
+		Type.Clazz type = (Type.Clazz) mlclass.attribute(Type.class);
+		HashMap<String,Type> params = new HashMap();		
+		nonLocals.push(params);
+		anonClasses.push(type);
+		doClass(mlclass);
+		anonClasses.pop();
+		nonLocals.pop();
+		
+		// Now, augment constructors if there are non-local variables.
+		if (params.size() > 0) {
+			internal_error(
+					"Method-local classes which access non-local variables are not currently supported.  You'll need rewrite them to explicitly pass the non-local variables via constructors.",
+					mlclass);
+			
+			// The following code actually works correctly. The remaining
+			// problem is that we need to connect new calls to the method-local
+			// class with those non-local fields/variables.
+			/*			 
+			SourceLocation loc = (SourceLocation) mlclass.attribute(SourceLocation.class);
+			JilClass mlc = (JilClass) loader.loadClass(type);
+			
+			for(Decl d : mlclass.declarations()) {
+				if(d instanceof Decl.JavaConstructor) {
+					augmentConstructor((Decl.JavaConstructor) d,mlc,params);
+				}
+			}
+						
+			addNonLocalFields(mlc,params,loc);
+			*/
+		}	
+	}
+	
 	protected Expr doExpression(Expr e) {
 		try {
 			if(e instanceof Value.Bool) {
@@ -356,6 +389,7 @@ public class AnonClassesRewrite {
 	}
 	
 	protected Expr doNew(Expr.New e) throws ClassNotFoundException {				
+		Type.Clazz parent = (Type.Clazz) e.type().attribute(Type.Clazz.class);
 		e.setContext(doExpression(e.context()));
 			
 		for(int i = 0;i!=e.parameters().size();++i) {
@@ -368,8 +402,7 @@ public class AnonClassesRewrite {
 			// things here. Firstly, update the type of the new expression to be
 			// that of the anonymous inner class. Second, we need to add
 			// appropriate constructors to the anonymous inner class.
-			String name = Integer.toString(++anonymousClassCount);
-			Type.Clazz parent = (Type.Clazz) e.type().attribute(Type.Clazz.class);			
+			String name = Integer.toString(++anonymousClassCount);					
 			Type.Clazz aType = anonClassType(name);											
 						
 			Clazz parentClass = (Clazz) loader.loadClass(parent);
@@ -421,17 +454,17 @@ public class AnonClassesRewrite {
 
 			// Finally, create an appropriate java class.
 
-			addNonLocalFields(anonClass,ac,params,loc);			
+			addNonLocalFields(anonClass,params,loc);			
 
 			ac.declarations().add(constructor);
 			ac.declarations().addAll(e.declarations());								
 
 			context.peek().declarations().add(ac);
 			e.declarations().clear(); // need to do this.					
-		}		
+		} 
 		
 		return e;
-	}
+	}	
 	
 	protected Expr doInvoke(Expr.Invoke e) {
 		e.setTarget(doExpression(e.target()));
@@ -503,7 +536,7 @@ public class AnonClassesRewrite {
 	}
 
 	protected Expr doNonLocalVariable(Expr.NonLocalVariable e) {
-		Type t = (Type) e.attribute(Type.class);
+		Type t = (Type) e.attribute(Type.class);		
 		nonLocals.peek().put(e.value(),t);
 		
 		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
@@ -549,8 +582,8 @@ public class AnonClassesRewrite {
 		return jc;
 	}
 	
-	protected Decl.JavaClass addNonLocalFields(JilClass anonClass,
-			Decl.JavaClass jc, HashMap<String, Type> nonlocalParams,
+	protected void addNonLocalFields(JilClass anonClass,
+			HashMap<String, Type> nonlocalParams,
 			SourceLocation loc) {
 		
 		// now add fields for non-local variables.
@@ -559,12 +592,50 @@ public class AnonClassesRewrite {
 			mods.add(Modifier.ACC_FINAL);
 			mods.add(Modifier.ACC_PRIVATE);			
 			Decl.JavaField f = new Decl.JavaField(mods, "val$" + en.getKey(),
-					fromJilType(en.getValue()), null, loc);
-			jc.declarations().add(f);
+					fromJilType(en.getValue()), null, loc);		
 			anonClass.fields().add(new JilField("val$" + en.getKey(),en.getValue(),mods));
+		}		
+	}
+	
+	protected void augmentConstructor(Decl.JavaConstructor m, JilClass owner,
+			HashMap<String, Type> nonlocalParams) {
+
+		Type.Function oftype = (Type.Function) m.attribute(Type.Function.class);
+		SourceLocation loc = (SourceLocation) m.attribute(SourceLocation.class);
+		
+		// First, find the skeleton constructor
+		JilMethod skeletonMethod = null;
+		for (JilMethod om : owner.methods()) {
+			if (om.name().equals(owner.name()) && om.type().equals(oftype)) {
+				skeletonMethod = om;
+				break;
+			}
 		}
 		
-		return jc;
+		List<Stmt> stmts = m.body().statements();		
+		
+		List<Pair<String, List<Modifier>>> params = skeletonMethod.parameters();
+		ArrayList<Type> nparams = new ArrayList<Type>(oftype.parameterTypes());
+		
+		int pnum = 0;		
+		for(Map.Entry<String,Type> en : nonlocalParams.entrySet()) {
+			String vn = "x$" + pnum;
+			ArrayList<Modifier> mods = new ArrayList<Modifier>();
+			mods.add(Modifier.ACC_FINAL);
+			Type t = en.getValue();
+			params.add(new Pair(vn,mods));
+			nparams.add(t);
+			Expr thiz = new Expr.LocalVariable("this",owner.type(),loc);
+			Expr lhs = new Expr.Deref(thiz,"val$" + en.getKey(),t,loc);
+			Expr rhs = new Expr.LocalVariable(vn,t);			
+			stmts.add(new Stmt.Assignment(lhs,rhs,loc));
+			pnum = pnum + 1;
+		}
+		
+		Type.Function ftype = new Type.Function(Types.T_VOID,nparams);		
+		m.attributes().remove(oftype);
+		m.attributes().add(ftype);		
+		skeletonMethod.setType(ftype);
 	}
 	
 	protected Decl.JavaConstructor buildAnonConstructor(String name,
@@ -585,11 +656,11 @@ public class AnonClassesRewrite {
 		for (Type t : type.parameterTypes()) {
 			// don't include the first parameter *if* it's the parent pointer,
 			// and the super class is static.
-			jilparams.add(new Pair("x" + p, mods));
-			javaparams.add(new Triple("x" + p, mods, fromJilType(t)));
+			jilparams.add(new Pair("x$" + p, mods));
+			javaparams.add(new Triple("x$" + p, mods, fromJilType(t)));
 			if(p < trigger) {
 				superParams.add(t);
-				args.add(new Expr.LocalVariable("x" + p, t));
+				args.add(new Expr.LocalVariable("x$" + p, t));
 			}
 			p = p + 1;
 		}			
@@ -600,7 +671,7 @@ public class AnonClassesRewrite {
 			Type t = en.getValue();
 			Expr thiz = new Expr.LocalVariable("this",anonClass.type(),loc);
 			Expr lhs = new Expr.Deref(thiz,"val$" + en.getKey(),t,loc);
-			Expr rhs = new Expr.LocalVariable("x" + trigger++,t);
+			Expr rhs = new Expr.LocalVariable("x$" + trigger++,t);
 			
 			stmts.add(new Stmt.Assignment(lhs,rhs,loc));
 		}
@@ -638,5 +709,5 @@ public class AnonClassesRewrite {
 				parent.components());
 		ncomponents.add(new Pair(name, new ArrayList()));
 		return new Type.Clazz(parent.pkg(), ncomponents);
-	}
+	}	
 }
