@@ -693,6 +693,7 @@ public final class ClassFileReader {
 	
 	protected
 	Pair<Type.Variable, Integer> parseFormalType(String descriptor, int pos) {
+		System.out.println("DESCRIPTOR: " + descriptor);
 		int start = pos;	
 		while(descriptor.charAt(pos) != ':') { pos++; }		
 		String id = descriptor.substring(start,pos);
@@ -710,6 +711,7 @@ public final class ClassFileReader {
 		} else if(lowerBounds.size() == 1) {
 			lb = lowerBounds.get(0);
 		}
+		System.out.println("CREATING VAR: " + id + " : " + lb);
 		return new Pair<Type.Variable, Integer>(new Type.Variable(id,lb),pos);				
 	}
 	

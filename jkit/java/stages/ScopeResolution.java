@@ -978,7 +978,8 @@ public class ScopeResolution {
 				isStatic = cs.isStatic; 
 			} else if(s.variables.containsKey(e.value())) {
 				Expr r;
-				if(isThis) {				
+				if(isThis) {			
+					Type t = (Type) s.variables.get(e.value()).first();					
 					r = new Expr.LocalVariable(e.value(),
 							new ArrayList(e.attributes()));
 					r.attributes().add(s.variables.get(e.value()).first());
