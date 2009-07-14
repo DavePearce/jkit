@@ -29,7 +29,7 @@ package jkit.compiler;
  * @author djp
  * 
  */
-public class MethodNotFoundException extends Exception {
+public final class MethodNotFoundException extends Exception {
 	public MethodNotFoundException(String method, String owner) {
 		super("Method \"" + owner + "."  + method + "\" not found.");
 	}

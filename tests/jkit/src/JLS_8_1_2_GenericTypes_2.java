@@ -13,9 +13,7 @@ class Pair<FIRST,SECOND> {
 	public SECOND second() { return second; }
 	
 	public int hashCode() {
-		int fhc = first == null ? 0 : first.hashCode();
-		int shc = second == null ? 0 : second.hashCode();
-		return fhc ^ shc; 
+	    return 0; // hack to make output consistent across implementations
 	}
 		
 	public boolean equals(Object o) {

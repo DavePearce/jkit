@@ -29,7 +29,7 @@ package jkit.compiler;
  * @author djp
  * 
  */
-public class FieldNotFoundException extends Exception {
+public final class FieldNotFoundException extends Exception {
 	public FieldNotFoundException(String field, String owner) {
 		super("Field \"" + owner + "."  + field + "\" not found.");
 	}

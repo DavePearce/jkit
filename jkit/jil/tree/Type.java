@@ -731,6 +731,9 @@ public interface Type extends Attribute, Comparable<Type> {
 		public Variable(String variable, Type.Reference lowerBound,
 				Attribute... attributes) {
 			super(attributes);
+			if(lowerBound == null) {
+				throw new IllegalArgumentException("Type.Variable lowerBound cannot be null");
+			}
 			this.variable = variable;
 			this.lowerBound = lowerBound;
 		}

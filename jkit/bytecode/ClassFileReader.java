@@ -605,7 +605,7 @@ public final class ClassFileReader {
 			// this is a type variable
 			int start = ++pos;
 			while(descriptor.charAt(pos) != ';') { ++pos; }			
-			Type type = new Type.Variable(descriptor.substring(start,pos), null);
+			Type type = new Type.Variable(descriptor.substring(start,pos), Types.JAVA_LANG_OBJECT);
 			return new Pair<Type,Integer>(type,pos+1);
 		} else if(c == '+') {			
 			Pair<Type,Integer> r = parseInternalDescriptor(descriptor,pos+1);
@@ -692,8 +692,7 @@ public final class ClassFileReader {
 	}
 	
 	protected
-	Pair<Type.Variable, Integer> parseFormalType(String descriptor, int pos) {
-		System.out.println("DESCRIPTOR: " + descriptor);
+	Pair<Type.Variable, Integer> parseFormalType(String descriptor, int pos) {		
 		int start = pos;	
 		while(descriptor.charAt(pos) != ':') { pos++; }		
 		String id = descriptor.substring(start,pos);
@@ -710,8 +709,9 @@ public final class ClassFileReader {
 			lb = new Type.Intersection(lowerBounds);
 		} else if(lowerBounds.size() == 1) {
 			lb = lowerBounds.get(0);
+		} else {
+			lb = Types.JAVA_LANG_OBJECT;
 		}
-		System.out.println("CREATING VAR: " + id + " : " + lb);
 		return new Pair<Type.Variable, Integer>(new Type.Variable(id,lb),pos);				
 	}
 	

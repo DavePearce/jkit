@@ -41,6 +41,7 @@ import jkit.jil.tree.Modifier;
 import jkit.jil.tree.SourceLocation;
 import jkit.jil.tree.SyntacticElement;
 import jkit.jil.tree.Type;
+import jkit.jil.util.Types;
 import jkit.util.Pair;
 import jkit.util.Triple;
 
@@ -714,9 +715,11 @@ public class TypeResolution {
 	}
 	
 	protected jkit.jil.tree.Type.Variable resolve(jkit.java.tree.Type.Variable t) throws ClassNotFoundException  {		
-		Type.Reference arg = null;
+		Type.Reference arg;
 		if(t.lowerBound() != null) {					
 			arg = (Type.Reference) resolve(t.lowerBound());
+		} else {
+			arg = Types.JAVA_LANG_OBJECT;
 		}
 		return new jkit.jil.tree.Type.Variable(t.variable(),arg);
 	}

@@ -90,27 +90,22 @@ public class ClassSignature implements Attribute {
 				if(t instanceof Type.Variable) {
 					Type.Variable tv = (Type.Variable) t;
 					desc += tv.variable() + ":";
-					// NOTE: lowerBounds() should *never* be null.
-					if(tv.lowerBound() == null) {
-						desc += "Ljava/lang/Object;";
-					} else {
-						Type lb = tv.lowerBound();
-						// The following check is needed to deal with the case
-						// where the type bounds are only interfaces. In this
-						// case, there must be an extra colon indicating the
-						// absence of super class. It's actually really annoying
-						// since it couples this code with ClassTable ... grrr.
-						
-						try {
-							Clazz tmp = loader.loadClass((Type.Clazz) lb);
-							if (tmp.isInterface()) {
-								desc += ":";
-							}
-							desc += ClassFile.descriptor(lb, true);
-						} catch (ClassNotFoundException ce) {
-							throw new RuntimeException("Type bound " + lb
-									+ " not found");
-						}						
+					Type lb = tv.lowerBound();
+					// The following check is needed to deal with the case
+					// where the type bounds are only interfaces. In this
+					// case, there must be an extra colon indicating the
+					// absence of super class. It's actually really annoying
+					// since it couples this code with ClassTable ... grrr.
+
+					try {
+						Clazz tmp = loader.loadClass((Type.Clazz) lb);
+						if (tmp.isInterface()) {
+							desc += ":";
+						}
+						desc += ClassFile.descriptor(lb, true);
+					} catch (ClassNotFoundException ce) {
+						throw new RuntimeException("Type bound " + lb
+								+ " not found");									
 					}
 				} else {
 					throw new RuntimeException("Type Variable required in Class Signature!");

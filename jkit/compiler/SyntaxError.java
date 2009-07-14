@@ -30,7 +30,7 @@ import jkit.jil.tree.SyntacticElement;
  * @author djp
  * 
  */
-public class SyntaxError extends RuntimeException {
+public final class SyntaxError extends RuntimeException {
 	private final String msg;
 	private final String filename;
 	private final int line;
