@@ -392,13 +392,12 @@ public class Types {
 	public static final Type.Clazz JAVA_IO_SERIALIZABLE = new Type.Clazz("java.io","Serializable");
 	
 	// util
-	public static final Type.Clazz JAVA_UTIL_ITERATOR = new Type.Clazz("java.util","Iterator");
+ 	public static final Type.Clazz JAVA_UTIL_ITERATOR = new Type.Clazz("java.util","Iterator");
 	
 	// exceptions related types
 	public static  final Type.Clazz JAVA_LANG_THROWABLE = new Type.Clazz("java.lang","Throwable");
 	public static  final Type.Clazz JAVA_LANG_RUNTIMEEXCEPTION = new Type.Clazz("java.lang","RuntimeException");
 	public static  final Type.Clazz JAVA_LANG_VIRTUALMACHINEERROR = new Type.Clazz("java.lang","VirtualMachineError");
 	public static  final Type.Clazz JAVA_LANG_NULLPOINTEREXCEPTION = new Type.Clazz("java.lang","NullPointerException");
-	public static  final Type.Clazz JAVA_LANG_ARITHMETICEXCEPTION = new Type.Clazz("java.lang","ArithmeticException");
-	
+	public static  final Type.Clazz JAVA_LANG_ARITHMETICEXCEPTION = new Type.Clazz("java.lang","ArithmeticException");	
 }

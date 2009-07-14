@@ -24,8 +24,6 @@ package jkit.compiler;
 import java.io.*;
 import java.util.*;
 
-import jkit.jil.tree.JilClass;
-
 /**
  * A compiler is an object responsible for compiling a particular source file.
  * 

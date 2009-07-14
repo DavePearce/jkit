@@ -749,10 +749,8 @@ public interface Type extends Attribute, Comparable<Type> {
 		public boolean equals(Object o) {			
 			if (o instanceof Variable) {
 				Variable v = (Variable) o;
-				return variable.equals(v.variable)
-						&& lowerBound == v.lowerBound
-						&& (lowerBound == null || lowerBound
-								.equals(v.lowerBound));
+				return variable.equals(v.variable)						
+						&& lowerBound.equals(v.lowerBound);
 			}
 			return false;
 		}
