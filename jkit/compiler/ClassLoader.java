@@ -38,13 +38,13 @@ import jkit.util.Pair;
  * 
  * @author djp
  */
-public class ClassLoader {
+public final class ClassLoader {
 	
 	/**
 	 * The class path is a list of directories and Jar files which must be
 	 * searched in ascending order for *class files*.
 	 */
-	private ArrayList<String> classpath = new ArrayList<String>();
+	private final ArrayList<String> classpath;
 
 	/**
 	 * The source path is a list of directories and Jar files which must be
@@ -52,7 +52,7 @@ public class ClassLoader {
 	 * as the classpath, although this can be overriden (e.g. by using the
 	 * "-sourcepath <path>" command-line option in jkit or javac).
 	 */
-	private ArrayList<String> sourcepath;
+	private final ArrayList<String> sourcepath;
 	
 	/**
 	 * A map from class names in the form "xxx.yyy$zzz to Clazz objects. This is
@@ -60,7 +60,7 @@ public class ClassLoader {
 	 * process. Once a class has been entered into the classtable, it will not
 	 * be loaded again.
 	 */
-	private HashMap<String,Clazz> classtable = new HashMap<String,Clazz>();
+	private final HashMap<String,Clazz> classtable = new HashMap<String,Clazz>();
 	
 	/**
 	 * A PackageInfo object contains information about a particular package,
@@ -72,19 +72,19 @@ public class ClassLoader {
 	 * 2) what classes it contains.
 	 * 
 	 */
-	private class PackageInfo {
+	private final class PackageInfo {
 		/**
 		 * The classes field contains those classes contained in this package.
 		 * Class names are represented as strings of the form "xxx$yyy".
 		 */
-		public HashSet<String> classes = new HashSet<String>();
+		public final HashSet<String> classes = new HashSet<String>();
 		
 		/**
 		 * The compiledClasses indicates which classes are definitely compiled.
 		 * This is useful for detecting classes that need to be compiled in
 		 * order to correctly resolve types.
 		 */
-		public HashSet<String> compiledClasses = new HashSet<String>();
+		public final HashSet<String> compiledClasses = new HashSet<String>();
 		
 		/**
 		 * The locations list contains the list of locations that have been
@@ -92,7 +92,7 @@ public class ClassLoader {
 		 * a jar file, or a directory. The order of locations found is
 		 * important --- those which come first have higher priority.
 		 */
-		public ArrayList<File> locations = new ArrayList<File>();
+		public final ArrayList<File> locations = new ArrayList<File>();
 	}
 	
 	/**
@@ -102,13 +102,13 @@ public class ClassLoader {
 	 * package accordingly. Therefore, for the class "java.util.Map.Entry" there
 	 * will be an entry "Map$Entry" in the "java.util" package.
 	 */
-	private HashMap<String, PackageInfo> packages = new HashMap<String, PackageInfo>();
+	private final HashMap<String, PackageInfo> packages = new HashMap<String, PackageInfo>();
 	
 	/**
 	 * The ClassCompiler is needed for compiling source files found on the
 	 * sourcepath which are needed to identify inner classes appropriately.
 	 */
-	private Compiler compiler = null;			
+	private final Compiler compiler;			
 	
 	/**
 	 * Construct a ClassLoader with a given classpath. The classpath is a list
