@@ -485,11 +485,8 @@ public final class ClassLoader {
 	private final PackageInfo resolvePackage(String pkg) {		
 		// First, check if we have already resolved this package.
 		PackageInfo pkgInfo = packages.get(pkg);
-		
-		if(pkgInfo != null) {
-			// yes, it's already been resolved and it exists
-			return pkgInfo;
-		} else if(failedPackages.contains(pkg)) {			
+						
+		if(failedPackages.contains(pkg)) {				
 			// yes, it's already been resolved but it doesn't exist.
 			return null;
 		}
@@ -498,7 +495,7 @@ public final class ClassLoader {
 		String filePkg = pkg.replace('.', File.separatorChar);
 		
 		// First, consider source path
-		for (String dir : sourcepath) {					
+		for (String dir : sourcepath) {	
 			pkgInfo = lookForPackage(dir,pkg,filePkg);
 			if(pkgInfo != null) {
 				return pkgInfo;
@@ -506,12 +503,12 @@ public final class ClassLoader {
 		}
 
 		// second, try classpath
-		for (String dir : classpath) {			
+		for (String dir : classpath) {							
 			// check if classpath entry is a jarfile or a directory
 			if (!dir.endsWith(".jar")) {				
 				// dir is not a Jar file, so I assume it's a directory.
 				pkgInfo = lookForPackage(dir,pkg,filePkg);
-				if(pkgInfo != null) {					
+				if(pkgInfo != null) {							
 					return pkgInfo;
 				}				
 			}
