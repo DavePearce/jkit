@@ -93,6 +93,13 @@ public final class ClassLoader {
 		 * important --- those which come first have higher priority.
 		 */
 		public final ArrayList<File> locations = new ArrayList<File>();
+		
+		/**
+         * This indicates whether or not the package information is fully
+         * resolved. This is useful as it tells us whether or not we can avoid
+         * research the classpath and sourcepath looking for packages.
+         */
+		public boolean fullyResolved = false;
 	}
 	
 	/**
@@ -485,8 +492,10 @@ public final class ClassLoader {
 	private final PackageInfo resolvePackage(String pkg) {		
 		// First, check if we have already resolved this package.
 		PackageInfo pkgInfo = packages.get(pkg);
-						
-		if(failedPackages.contains(pkg)) {				
+			
+		if(pkgInfo != null && pkgInfo.fullyResolved) {
+			return pkgInfo;
+		} else if(failedPackages.contains(pkg)) {				
 			// yes, it's already been resolved but it doesn't exist.
 			return null;
 		}
@@ -498,6 +507,7 @@ public final class ClassLoader {
 		for (String dir : sourcepath) {	
 			pkgInfo = lookForPackage(dir,pkg,filePkg);
 			if(pkgInfo != null) {
+				pkgInfo.fullyResolved = true;
 				return pkgInfo;
 			}
 		}
@@ -508,7 +518,8 @@ public final class ClassLoader {
 			if (!dir.endsWith(".jar")) {				
 				// dir is not a Jar file, so I assume it's a directory.
 				pkgInfo = lookForPackage(dir,pkg,filePkg);
-				if(pkgInfo != null) {							
+				if(pkgInfo != null) {
+					pkgInfo.fullyResolved = true;
 					return pkgInfo;
 				}				
 			}
