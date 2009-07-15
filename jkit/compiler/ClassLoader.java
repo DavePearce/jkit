@@ -165,9 +165,7 @@ public final class ClassLoader {
 	 * @return true if the package exists, false otherwise.
 	 */
 	public boolean isPackage(String pkg) {
-		// I'm a little suspect about this method. I think it at least needs to
-		// take an import list
-		return packages.keySet().contains(pkg);
+		return resolvePackage(pkg) != null;
 	}
 	
 	/**
@@ -480,23 +478,24 @@ public final class ClassLoader {
 	 * This builds a list of all the known packages and the classes they
 	 * contain.
 	 */
-	private final PackageInfo resolvePackage(String pkg) {
+	private final PackageInfo resolvePackage(String pkg) {		
 		// First, check if we have already resolved this package.
 		PackageInfo pkgInfo = packages.get(pkg);
 		
 		if(pkgInfo != null) {
 			// yes, it's already been resolved and it exists
 			return pkgInfo;
-		} else if(failedPackages.contains(pkg)) {
+		} else if(failedPackages.contains(pkg)) {			
 			// yes, it's already been resolved but it doesn't exist.
 			return null;
 		}
 		
 		// package has not been previously resolved.
+		String filePkg = pkg.replace('.', File.separatorChar);
 		
 		// First, consider source path
 		for (String dir : sourcepath) {
-			pkgInfo = lookForPackage(dir,pkg);
+			pkgInfo = lookForPackage(dir,filePkg);
 			if(pkgInfo != null) {
 				return pkgInfo;
 			}
@@ -521,7 +520,7 @@ public final class ClassLoader {
 							}
 						}
 					}
-					if(found) {
+					if(found) {						
 						return packages.get(pkg);
 					}
 				} catch (IOException e) {
@@ -530,13 +529,13 @@ public final class ClassLoader {
 				}
 			} else {
 				// dir is not a Jar file, so I assume it's a directory.
-				pkgInfo = lookForPackage(dir,pkg);
+				pkgInfo = lookForPackage(dir,filePkg);
 				if(pkgInfo != null) {
 					return pkgInfo;
 				}				
 			}
 		}
-		
+				
 		failedPackages.add(pkg);
 		return null;
 	}
