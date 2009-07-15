@@ -25,7 +25,7 @@ import java.util.*;
 import jkit.util.Pair;
 import jkit.jil.util.*;
 
-public class JilMethod extends SyntacticElementImpl implements jkit.compiler.Clazz.Method {
+public final class JilMethod extends SyntacticElementImpl implements jkit.compiler.Clazz.Method {
 	private String name;
 	private Type.Function type;
 	private List<Modifier> modifiers;

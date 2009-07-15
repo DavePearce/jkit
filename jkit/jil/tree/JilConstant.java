@@ -31,7 +31,7 @@ import java.util.*;
  * @author djp
  * 
  */
-public class JilConstant extends JilField {	
+public final class JilConstant extends JilField {	
 	private Object initialiser;
 	
 	/**

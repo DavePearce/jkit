@@ -36,7 +36,7 @@ import jkit.util.Pair;
 import jkit.util.Triple;
 import static jkit.compiler.SyntaxError.*;
 
-public class ClassFileBuilder {
+public final class ClassFileBuilder {
 	protected final ClassLoader loader;
 	protected final int version;
 	

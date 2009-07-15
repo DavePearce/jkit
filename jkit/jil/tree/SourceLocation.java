@@ -30,7 +30,7 @@ import jkit.jil.tree.Attribute;
  * @author djp
  * 
  */
-public class SourceLocation implements Attribute {
+public final class SourceLocation implements Attribute {
 	private int line;
 	private int column;	
 

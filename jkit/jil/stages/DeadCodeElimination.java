@@ -60,7 +60,7 @@ import jkit.jil.tree.*;
  * @author djp
  * 
  */
-public class DeadCodeElimination {
+public final class DeadCodeElimination {
 
 	public void apply(JilClass owner) {
 		// First, we identify all the problem cases.

@@ -54,7 +54,7 @@ import jkit.util.*;
  * @author djp
  * 
  */
-public class BypassMethods {
+public final class BypassMethods {
 	private ClassLoader loader = null;
 	private TypeSystem types = null;
 	

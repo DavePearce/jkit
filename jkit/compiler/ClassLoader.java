@@ -105,6 +105,13 @@ public final class ClassLoader {
 	private final HashMap<String, PackageInfo> packages = new HashMap<String, PackageInfo>();
 	
 	/**
+     * The failed packages set is a collection of packages which have been
+     * requested, but are known not to exist. The purpose of this cache is
+     * simply to speek up package resolution.
+     */
+	private final HashSet<String> failedPackages = new HashSet<String>();
+	
+	/**
 	 * The ClassCompiler is needed for compiling source files found on the
 	 * sourcepath which are needed to identify inner classes appropriately.
 	 */
@@ -126,8 +133,6 @@ public final class ClassLoader {
 		this.sourcepath = new ArrayList<String>(classpath);
 		this.classpath = new ArrayList<String>(classpath);
 		this.compiler = compiler;
-		
-		buildPackageMap();		
 	}
 	
 	/**
@@ -149,8 +154,6 @@ public final class ClassLoader {
 		this.sourcepath = new ArrayList<String>(sourcepath);
 		this.classpath = new ArrayList<String>(classpath);
 		this.compiler = compiler;		
-				
-		buildPackageMap();
 	}
 		
 	/**
@@ -252,7 +255,7 @@ public final class ClassLoader {
 		}
 		
 		while(pkg != null) {
-			PackageInfo pkgInfo = packages.get(pkg);			
+			PackageInfo pkgInfo = resolvePackage(pkg);			
 			if (pkgInfo != null) {								
 				if(pkgInfo.classes.contains(fullClassName)) {						
 					// Found the class!!		
@@ -305,7 +308,7 @@ public final class ClassLoader {
 		
 		// Second, locate the information we know about the classes package and
 		// then attempt to locate either a source or class file.
-		PackageInfo pkgInfo = packages.get(ref.pkg());
+		PackageInfo pkgInfo = resolvePackage(ref.pkg());
 		
 		if (pkgInfo == null) { throw new ClassNotFoundException("Unable to load class " + name); }		
 		c = loadClass(name,pkgInfo);
@@ -426,7 +429,7 @@ public final class ClassLoader {
 	 *            The classes being added.
 	 */
 	public void register(Clazz jilClass) {				
-		PackageInfo pkgInfo = packages.get(jilClass.type().pkg());			
+		PackageInfo pkgInfo = resolvePackage(jilClass.type().pkg());			
 		String rn = refName(jilClass.type());			
 		String pc = pathChild(rn);
 		classtable.put(rn, jilClass);			
@@ -477,10 +480,26 @@ public final class ClassLoader {
 	 * This builds a list of all the known packages and the classes they
 	 * contain.
 	 */
-	private void buildPackageMap() {
+	private final PackageInfo resolvePackage(String pkg) {
+		// First, check if we have already resolved this package.
+		PackageInfo pkgInfo = packages.get(pkg);
+		
+		if(pkgInfo != null) {
+			// yes, it's already been resolved and it exists
+			return pkgInfo;
+		} else if(failedPackages.contains(pkg)) {
+			// yes, it's already been resolved but it doesn't exist.
+			return null;
+		}
+		
+		// package has not been previously resolved.
+		
 		// First, consider source path
-		for (String dir : sourcepath) {			
-			recurseDirectoryForClasses(dir, "");			
+		for (String dir : sourcepath) {
+			pkgInfo = lookForPackage(dir,pkg);
+			if(pkgInfo != null) {
+				return pkgInfo;
+			}
 		}
 
 		// second, try classpath
@@ -489,12 +508,21 @@ public final class ClassLoader {
 			if (dir.endsWith(".jar")) {
 				try {
 					JarFile jf = new JarFile(dir);
+					boolean found = false;
 					for (Enumeration<JarEntry> e = jf.entries(); e.hasMoreElements();) {
 						JarEntry je = e.nextElement();
-						String tmp = je.getName().replace("/", ".");
-						// i'm not sure what should happen if a jarfile contains
-						// a source file which is older than the classfile!
-						addPackageItem(pathParent(tmp),new File(dir), true);
+						String entryName = je.getName();
+						if (entryName.endsWith(".class")) {
+							String cname = pathParent(entryName.replace("/", "."));						
+							String cpkg = pathParent(cname);														
+							if(cpkg.equals(pkg)) {
+								found = true;
+								addPackageItem(cname,new File(dir), true);
+							}
+						}
+					}
+					if(found) {
+						return packages.get(pkg);
 					}
 				} catch (IOException e) {
 					// jarfile listed on classpath doesn't exist!
@@ -502,41 +530,40 @@ public final class ClassLoader {
 				}
 			} else {
 				// dir is not a Jar file, so I assume it's a directory.
-				recurseDirectoryForClasses(dir, "");
+				pkgInfo = lookForPackage(dir,pkg);
+				if(pkgInfo != null) {
+					return pkgInfo;
+				}				
 			}
 		}
+		
+		failedPackages.add(pkg);
+		return null;
 	}
 	
 	/**
 	 * This traverses the directory tree, starting from dir, looking for class
 	 * or java files. There's probably a bug if the directory tree is cyclic!
 	 */
-	private void recurseDirectoryForClasses(String root, String dir) {
-		File f = new File(root + File.separatorChar + dir);
+	private PackageInfo lookForPackage(String root, String pkg) {		
+		File f = new File(root + File.separatorChar + pkg);		
 		if (f.isDirectory()) {
 			for (String file : f.list()) {
-				if(file.endsWith(".class") || file.endsWith(".java")) {	
-					if (dir.length() == 0) {
+				if (file.endsWith(".class") || file.endsWith(".java")) {
+					if (pkg.equals("")) {
 						addPackageItem(pathParent(file), new File(root),
 								isCompiled(new File(f.getPath()
 										+ File.separatorChar + file)));
 					} else {
-						addPackageItem(dir.replace(File.separatorChar, '.')
-								+ "." + pathParent(file), new File(root),
-								isCompiled(new File(f.getPath()
-										+ File.separatorChar + file)));
-					}
-				} else {
-					if (dir.length() == 0) {
-						recurseDirectoryForClasses(root,
-								file);
-					} else {
-						recurseDirectoryForClasses(root,
-								dir + File.separatorChar + file);
+						addPackageItem(pkg + "." + pathParent(file), new File(
+								root), isCompiled(new File(f.getPath()
+								+ File.separatorChar + file)));
 					}
 				}
 			}
 		}
+		
+		return packages.get(pkg);		
 	}
 	
 	/**
