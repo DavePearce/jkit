@@ -560,8 +560,11 @@ public interface Decl extends SyntacticElement {
 			} else if(initialiser instanceof Value.Float) {
 				Value.Float i = (Value.Float) initialiser;
 				return i.value();
-			} else  {
+			} else if(initialiser instanceof Value.Double) {
 				Value.Double i = (Value.Double) initialiser;
+				return i.value();
+			} else {
+				Value.String i = (Value.String) initialiser;
 				return i.value();
 			}
 		}
