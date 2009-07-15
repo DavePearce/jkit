@@ -133,6 +133,8 @@ public final class ClassLoader {
 		this.sourcepath = new ArrayList<String>(classpath);
 		this.classpath = new ArrayList<String>(classpath);
 		this.compiler = compiler;
+		
+		buildInitialPackageMap();
 	}
 	
 	/**
@@ -153,7 +155,9 @@ public final class ClassLoader {
 			Compiler compiler) {		
 		this.sourcepath = new ArrayList<String>(sourcepath);
 		this.classpath = new ArrayList<String>(classpath);
-		this.compiler = compiler;		
+		this.compiler = compiler;
+		
+		buildInitialPackageMap();
 	}
 		
 	/**
@@ -164,7 +168,7 @@ public final class ClassLoader {
 	 * 
 	 * @return true if the package exists, false otherwise.
 	 */
-	public boolean isPackage(String pkg) {
+	public boolean isPackage(String pkg) {		
 		return resolvePackage(pkg) != null;
 	}
 	
@@ -494,43 +498,20 @@ public final class ClassLoader {
 		String filePkg = pkg.replace('.', File.separatorChar);
 		
 		// First, consider source path
-		for (String dir : sourcepath) {
-			pkgInfo = lookForPackage(dir,filePkg);
+		for (String dir : sourcepath) {					
+			pkgInfo = lookForPackage(dir,pkg,filePkg);
 			if(pkgInfo != null) {
 				return pkgInfo;
 			}
 		}
 
 		// second, try classpath
-		for (String dir : classpath) {
+		for (String dir : classpath) {			
 			// check if classpath entry is a jarfile or a directory
-			if (dir.endsWith(".jar")) {
-				try {
-					JarFile jf = new JarFile(dir);
-					boolean found = false;
-					for (Enumeration<JarEntry> e = jf.entries(); e.hasMoreElements();) {
-						JarEntry je = e.nextElement();
-						String entryName = je.getName();
-						if (entryName.endsWith(".class")) {
-							String cname = pathParent(entryName.replace("/", "."));						
-							String cpkg = pathParent(cname);														
-							if(cpkg.equals(pkg)) {
-								found = true;
-								addPackageItem(cname,new File(dir), true);
-							}
-						}
-					}
-					if(found) {						
-						return packages.get(pkg);
-					}
-				} catch (IOException e) {
-					// jarfile listed on classpath doesn't exist!
-					// So, silently ignore it (this is what javac does).
-				}
-			} else {
+			if (!dir.endsWith(".jar")) {				
 				// dir is not a Jar file, so I assume it's a directory.
-				pkgInfo = lookForPackage(dir,filePkg);
-				if(pkgInfo != null) {
+				pkgInfo = lookForPackage(dir,pkg,filePkg);
+				if(pkgInfo != null) {					
 					return pkgInfo;
 				}				
 			}
@@ -540,15 +521,45 @@ public final class ClassLoader {
 		return null;
 	}
 	
+	protected void buildInitialPackageMap() {
+		// This attempts to build an initial package map in order to prevent
+        // lots of retraversing the class path.
+		
+		for (String dir : classpath) {			
+			// check if classpath entry is a jarfile or a directory
+			if (dir.endsWith(".jar")) {
+				try {
+					JarFile jf = new JarFile(dir);
+					for (Enumeration<JarEntry> e = jf.entries(); e.hasMoreElements();) {
+						JarEntry je = e.nextElement();
+						String entryName = je.getName();
+						if (entryName.endsWith(".class")) {
+							String cname = pathParent(entryName.replace("/", "."));																													
+							addPackageItem(cname,new File(dir), true);							
+						}
+					}					
+				} catch (IOException e) {
+					// jarfile listed on classpath doesn't exist!
+					// So, silently ignore it (this is what javac does).
+				}
+			} else {
+				// dir is not a Jar file, so it's a directory. We ignored these
+                // here, and resolve them on demand. The reason for this is that
+                // otherwise we'd have to traverse the entire subdirectory
+                // starting at dir which is very expensive.
+			}
+		}
+	}
+	
 	/**
 	 * This traverses the directory tree, starting from dir, looking for class
 	 * or java files. There's probably a bug if the directory tree is cyclic!
 	 */
-	private PackageInfo lookForPackage(String root, String pkg) {		
-		File f = new File(root + File.separatorChar + pkg);		
+	private PackageInfo lookForPackage(String root, String pkg, String filepkg) {		
+		File f = new File(root + File.separatorChar + filepkg);		
 		if (f.isDirectory()) {
 			for (String file : f.list()) {
-				if (file.endsWith(".class") || file.endsWith(".java")) {
+				if (file.endsWith(".class") || file.endsWith(".java")) {					
 					if (pkg.equals("")) {
 						addPackageItem(pathParent(file), new File(root),
 								isCompiled(new File(f.getPath()
@@ -578,7 +589,7 @@ public final class ClassLoader {
 	 */
 	private void addPackageItem(String name, File pkgLocation, boolean isCompiled) {
 		if(name == null) return;
-		
+						
 		// this is a class file.		
 		String pkg = pathParent(name);
 		String clazz = pathChild(name);		
@@ -587,9 +598,9 @@ public final class ClassLoader {
 		
 		PackageInfo items = packages.get(pkg);
 		if (items == null) {						
-			items = new PackageInfo();
+			items = new PackageInfo();			
 			packages.put(pkg, items);
-		}
+		} 
 
 		// add the class in question
 		if(items.classes.add(clazz)) {
