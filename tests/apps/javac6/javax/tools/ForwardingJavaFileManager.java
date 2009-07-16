@@ -60,7 +60,7 @@ public class ForwardingJavaFileManager<M extends JavaFileManager> implements Jav
      * @throws SecurityException {@inheritDoc}
      * @throws IllegalStateException {@inheritDoc}
      */
-    public ClassLoader getClassLoader(Location location) {
+    public ClassLoader getClassLoader(JavaFileManager.Location location) {
         return fileManager.getClassLoader(location);
     }
 
@@ -68,7 +68,7 @@ public class ForwardingJavaFileManager<M extends JavaFileManager> implements Jav
      * @throws IOException {@inheritDoc}
      * @throws IllegalStateException {@inheritDoc}
      */
-    public Iterable<JavaFileObject> list(Location location,
+    public Iterable<JavaFileObject> list(JavaFileManager.Location location,
                                          String packageName,
                                          Set<Kind> kinds,
                                          boolean recurse)
@@ -80,7 +80,7 @@ public class ForwardingJavaFileManager<M extends JavaFileManager> implements Jav
     /**
      * @throws IllegalStateException {@inheritDoc}
      */
-    public String inferBinaryName(Location location, JavaFileObject file) {
+    public String inferBinaryName(JavaFileManager.Location location, JavaFileObject file) {
         return fileManager.inferBinaryName(location, file);
     }
 
@@ -99,7 +99,7 @@ public class ForwardingJavaFileManager<M extends JavaFileManager> implements Jav
         return fileManager.handleOption(current, remaining);
     }
 
-    public boolean hasLocation(Location location) {
+    public boolean hasLocation(JavaFileManager.Location location) {
         return fileManager.hasLocation(location);
     }
 
@@ -111,7 +111,7 @@ public class ForwardingJavaFileManager<M extends JavaFileManager> implements Jav
      * @throws IllegalArgumentException {@inheritDoc}
      * @throws IllegalStateException {@inheritDoc}
      */
-    public JavaFileObject getJavaFileForInput(Location location,
+    public JavaFileObject getJavaFileForInput(JavaFileManager.Location location,
                                               String className,
                                               Kind kind)
         throws IOException
@@ -123,7 +123,7 @@ public class ForwardingJavaFileManager<M extends JavaFileManager> implements Jav
      * @throws IllegalArgumentException {@inheritDoc}
      * @throws IllegalStateException {@inheritDoc}
      */
-    public JavaFileObject getJavaFileForOutput(Location location,
+    public JavaFileObject getJavaFileForOutput(JavaFileManager.Location location,
                                                String className,
                                                Kind kind,
                                                FileObject sibling)
@@ -136,7 +136,7 @@ public class ForwardingJavaFileManager<M extends JavaFileManager> implements Jav
      * @throws IllegalArgumentException {@inheritDoc}
      * @throws IllegalStateException {@inheritDoc}
      */
-    public FileObject getFileForInput(Location location,
+    public FileObject getFileForInput(JavaFileManager.Location location,
                                       String packageName,
                                       String relativeName)
         throws IOException
@@ -148,7 +148,7 @@ public class ForwardingJavaFileManager<M extends JavaFileManager> implements Jav
      * @throws IllegalArgumentException {@inheritDoc}
      * @throws IllegalStateException {@inheritDoc}
      */
-    public FileObject getFileForOutput(Location location,
+    public FileObject getFileForOutput(JavaFileManager.Location location,
                                        String packageName,
                                        String relativeName,
                                        FileObject sibling)
