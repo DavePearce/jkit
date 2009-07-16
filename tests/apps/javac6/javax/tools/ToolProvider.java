@@ -55,7 +55,7 @@ public class ToolProvider {
      *
      *     java ... -Dsun.tools.ToolProvider ...
      */
-    static <T> T trace(Level level, Object reason) {
+    static void trace(Level level, Object reason) {
         // NOTE: do not make this method private as it affects stack traces
         try {
             if (System.getProperty(propertyName) != null) {
@@ -84,7 +84,6 @@ public class ToolProvider {
                               reason,
                               ex.getLocalizedMessage());
         }
-        return null;
     }
 
     /**
@@ -94,12 +93,16 @@ public class ToolProvider {
      * {@code null} if no compiler is provided
      */
     public static JavaCompiler getSystemJavaCompiler() {
-        if (Lazy.compilerClass == null)
-            return trace(WARNING, "Lazy.compilerClass == null");
+        if (Lazy.compilerClass == null) {
+            trace(WARNING, "Lazy.compilerClass == null");
+	    return null;
+	}
+
         try {
             return Lazy.compilerClass.newInstance();
         } catch (Throwable e) {
-            return trace(WARNING, e);
+	    trace(WARNING, e);
+            return null;
         }
     }
 
@@ -113,8 +116,10 @@ public class ToolProvider {
      * or {@code null} if no tools are provided
      */
     public static ClassLoader getSystemToolClassLoader() {
-        if (Lazy.compilerClass == null)
-            return trace(WARNING, "Lazy.compilerClass == null");
+        if (Lazy.compilerClass == null) {
+	    trace(WARNING, "Lazy.compilerClass == null");
+	    return null;
+	}
         return Lazy.compilerClass.getClassLoader();
     }
 
