@@ -839,6 +839,13 @@ public class ScopeResolution {
 								+ s.second(), new ArrayList(e.attributes()));
 						target.attributes().add(tc);									
 					} else if(s.third().equals("*")) {					
+						// NOTE: there is a bug here, in the case of a static
+                        // method which is inherited from a parent class. To get
+                        // around this, we need to use types.resolveMethod().
+                        // However, the difficulty is that at this stage, we
+                        // don't know the types of the parameters. In fact, this
+                        // is not a problem as there only needs to be a static
+                        // method with the same name for this to resolve.
 						Clazz c = loader.loadClass(tc);
 						if(c.methods(e.name()) != null) {
 							target = new Expr.ClassVariable(s.first() + "."
@@ -1044,12 +1051,15 @@ public class ScopeResolution {
 					cv.attributes().add(tc);
 					return new Expr.Deref(cv,e.value(),new ArrayList(e.attributes()));				
 				} else if(s.third().equals("*")) {					
-					Clazz c = loader.loadClass(tc);
-					if(c.field(e.value()) != null) {
+					try {
+						types.resolveField(tc, e.value(), loader);
+					
 						Expr cv = new Expr.ClassVariable(s.first() + "."
 								+ s.second(), new ArrayList(e.attributes()));
 						cv.attributes().add(tc);
 						return new Expr.Deref(cv,e.value(),new ArrayList(e.attributes()));						
+					} catch(FieldNotFoundException fnfe) {
+						// no field so continue
 					}
 				}
 			}
