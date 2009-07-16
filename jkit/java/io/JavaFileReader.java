@@ -1252,9 +1252,33 @@ public class JavaFileReader {
 	}
 
 	protected Expr parseUnOp(int uop, Tree expr, HashSet<String> genericVariables) {
+		
+		Expr e = parseExpression(expr.getChild(0), genericVariables); 
+		
+		if(e instanceof Value) {
+			// this means we can propagate the constant
+			if(e instanceof Value.Int) {
+				int x = ((Value.Int)e).value();
+				switch(uop) {
+					case Expr.UnOp.NEG:
+						return new Value.Int(-x,e.attributes());
+					case Expr.UnOp.INV:
+						return new Value.Int(~x,e.attributes());					
+				}				
+			} else if(e instanceof Value.Long) {
+				long x = ((Value.Long)e).value();
+				switch(uop) {
+					case Expr.UnOp.NEG:
+						return new Value.Long(-x,e.attributes());
+					case Expr.UnOp.INV:
+						return new Value.Long(~x,e.attributes());					
+				}
+			}
+		}
+		
 		return new Expr.UnOp(
 				uop,
-				parseExpression(expr.getChild(0), genericVariables),
+				e,
 				new SourceLocation(expr.getLine(), expr.getCharPositionInLine()));
 	}
 

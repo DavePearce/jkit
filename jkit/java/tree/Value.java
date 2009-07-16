@@ -42,6 +42,11 @@ public interface Value extends Expr {
 			super(attributes);
 			this.value = value;
 		}
+		
+		public Number(int value, List<Attribute> attributes) {
+			super(attributes);
+			this.value = value;
+		}
 	}
 	
 	/**
@@ -118,6 +123,10 @@ public interface Value extends Expr {
 			super(value,attributes);
 		}
 		
+		public Int(int value, List<Attribute> attributes) {
+			super(value,attributes);
+		}
+		
 		public int value() {
 			return value;
 		}
@@ -133,6 +142,11 @@ public interface Value extends Expr {
 		private long value;
 		
 		public Long(long value, Attribute... attributes) {
+			super(attributes);
+			this.value=value;
+		}
+		
+		public Long(long value, List<Attribute> attributes) {
 			super(attributes);
 			this.value=value;
 		}

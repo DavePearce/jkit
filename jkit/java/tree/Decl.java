@@ -533,7 +533,7 @@ public interface Decl extends SyntacticElement {
 		 * 
 		 * @return
 		 */
-		public boolean isConstant() {
+		public boolean isConstant() {			
 			return initialiser != null && initialiser instanceof Value
 					&& !(initialiser instanceof Value.Array);
 		}
