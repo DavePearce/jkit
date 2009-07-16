@@ -634,8 +634,8 @@ public class TypePropagation {
 			} else {						
 				receiver = JAVA_LANG_OBJECT;
 			}
-		} else if(rt instanceof Type.Array) {
-			receiver = JAVA_LANG_OBJECT;
+		} else if(rt instanceof Type.Array) {			
+			receiver = JAVA_LANG_OBJECT;			
 		} else {
 			receiver = (Type.Clazz) e.target().attribute(Type.class);
 		}
@@ -678,8 +678,14 @@ public class TypePropagation {
 						arrType.element()));
 			}
 		}
-
-		e.attributes().add(f.returnType());					
+		
+		if(rt instanceof Type.Array && e.name().equals("clone")) {
+			// this is a special case for array cloning, when it's known that
+			// the cloned object is an array of the same type.
+			e.attributes().add(rt);
+		} else {
+			e.attributes().add(f.returnType());
+		}
 		e.attributes().add(new JilBuilder.MethodInfo(m.exceptions(),m.type()));										 
 	}
 	

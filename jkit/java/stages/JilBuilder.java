@@ -1267,7 +1267,16 @@ public class JilBuilder {
 			return new Pair<JilExpr, List<JilStmt>>(new JilExpr.SpecialInvoke(target
 					.first(), e.name(), params.first(), mi.type, type, e
 					.attributes()), r);
-		} else {			
+		} else if (rec.type() instanceof Type.Array && e.name().equals("clone")) {
+			// this is a special case for array cloning. It should really be in
+			// TypePropagation, but the problem is that implicit cast needs to
+			// be on the returned expression, which type propagation does not
+			// support.
+			JilExpr ie = new JilExpr.Invoke(target.first(), e.name(), params
+					.first(), mi.type, type, e.attributes());
+			ie = new JilExpr.Cast(ie, rec.type());
+			return new Pair<JilExpr, List<JilStmt>>(ie, r);
+		} else {
 			return new Pair<JilExpr, List<JilStmt>>(new JilExpr.Invoke(target.first(), e
 					.name(), params.first(), mi.type, type, e
 					.attributes()), r);

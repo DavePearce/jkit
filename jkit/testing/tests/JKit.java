@@ -142,8 +142,7 @@ public class JKit extends TestHarness {
 	@Test public void JLS_10_6_ArrayInitialisers_2() { compileFailTest("JLS_10_6_ArrayInitialisers_2"); }
 	@Test public void JLS_10_6_ArrayInitialisers_3() { runTest("JLS_10_6_ArrayInitialisers_3"); }
 	@Test public void JLS_10_7_ArrayMembers_1() { runTest("JLS_10_7_ArrayMembers_1"); }
-	// Fails because of broken return type for array clone method
-	@Ignore("Known Bug") @Test public void JLS_10_7_ArrayMembers_2() { runTest("JLS_10_7_ArrayMembers_2"); }
+	@Test public void JLS_10_7_ArrayMembers_2() { runTest("JLS_10_7_ArrayMembers_2"); }
 	
 	@Test public void JLS_14_9_IfStatement_1() { runTest("JLS_14_9_IfStatement_1"); }
 	@Test public void JLS_14_9_IfStatement_2() { runTest("JLS_14_9_IfStatement_2"); }
