@@ -314,14 +314,14 @@ public final class ClassLoader {
 		// class before.
 		Clazz c = classtable.get(name);
 		if(c != null) { return c; }		
-		
+			
 		// Second, locate the information we know about the classes package and
 		// then attempt to locate either a source or class file.
-		PackageInfo pkgInfo = resolvePackage(ref.pkg());
+		PackageInfo pkgInfo = resolvePackage(ref.pkg());				
 		
-		if (pkgInfo == null) { throw new ClassNotFoundException("Unable to load class " + name); }		
-		c = loadClass(name,pkgInfo);
-
+		if (pkgInfo == null) { throw new ClassNotFoundException("Unable to load class " + name); }				
+		c = loadClass(name,pkgInfo);		
+		
 		if(c == null) { throw new ClassNotFoundException("Unable to load class " + name); }		
 				
 		return c;
@@ -349,14 +349,14 @@ public final class ClassLoader {
 		int tmpIndex = filename.indexOf('$');
 		String srcFilename = tmpIndex >= 0 ? filename.substring(0, tmpIndex) : filename;		
 		
-		for(File location : pkgInfo.locations) {
+		for(File location : pkgInfo.locations) {					
 			try {
 				if (location.getName().endsWith(".jar")) {
 					// location is a jar file
 					JarFile jf = new JarFile(location);				
 					JarEntry je = jf.getJarEntry(jarname);
 					if (je == null) { 
-						return null; 
+						continue; 
 					}  
 					ClassFileReader r = new ClassFileReader(jf.getInputStream(je));
 					compiler.logTimedMessage("Loaded " + location + ":"
@@ -409,7 +409,7 @@ public final class ClassLoader {
 				}
 			} catch(IOException e) {
 				// could possibly report stuff back to user here.
-			}
+			}			
 		}
 		return null;
 	}	
@@ -493,7 +493,7 @@ public final class ClassLoader {
 		// First, check if we have already resolved this package.
 		PackageInfo pkgInfo = packages.get(pkg);
 			
-		if(pkgInfo != null && pkgInfo.fullyResolved) {
+		if(pkgInfo != null && pkgInfo.fullyResolved) {		
 			return pkgInfo;
 		} else if(failedPackages.contains(pkg)) {				
 			// yes, it's already been resolved but it doesn't exist.
@@ -506,7 +506,7 @@ public final class ClassLoader {
 		// First, consider source path
 		for (String dir : sourcepath) {	
 			pkgInfo = lookForPackage(dir,pkg,filePkg);
-			if(pkgInfo != null) {
+			if(pkgInfo != null) {				
 				pkgInfo.fullyResolved = true;
 				return pkgInfo;
 			}
@@ -518,7 +518,7 @@ public final class ClassLoader {
 			if (!dir.endsWith(".jar")) {				
 				// dir is not a Jar file, so I assume it's a directory.
 				pkgInfo = lookForPackage(dir,pkg,filePkg);
-				if(pkgInfo != null) {
+				if(pkgInfo != null) {					
 					pkgInfo.fullyResolved = true;
 					return pkgInfo;
 				}				
@@ -600,7 +600,7 @@ public final class ClassLoader {
 						
 		// this is a class file.		
 		String pkg = pathParent(name);
-		String clazz = pathChild(name);		
+		String clazz = pathChild(name);						
 		
 		if(pkg == null) { pkg = ""; } // default package	
 		
