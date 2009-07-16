@@ -826,10 +826,32 @@ public class ScopeResolution {
 					isStatic = ((FieldScope)s).isStatic;
 				}
 			}
+
+			// At this stage, we need to check for any static imports.
+			for(Pair<Boolean,String> p : file.imports()) {
+				if(p.first()) {
+					// this is a static import
+					Triple<String,String,String> s = splitStaticImport(p.second());				
+					Type.Clazz tc = new Type.Clazz(s.first(),s.second());
+					
+					if(s.third().equals(e.name())) {
+						target = new Expr.ClassVariable(s.first() + "."
+								+ s.second(), new ArrayList(e.attributes()));
+						target.attributes().add(tc);									
+					} else if(s.third().equals("*")) {					
+						Clazz c = loader.loadClass(tc);
+						if(c.methods(e.name()) != null) {
+							target = new Expr.ClassVariable(s.first() + "."
+									+ s.second(), new ArrayList(e.attributes()));
+							target.attributes().add(tc);												
+						}
+					}
+				}
+			}
 			
 			if(target == null) {
 				// sanity check
-				syntax_error("internal failure (unable to determine receiver type)",e);
+				syntax_error("unable to determine receiver type",e);
 			}			
 		} 
 				
