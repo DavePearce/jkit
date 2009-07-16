@@ -827,39 +827,41 @@ public class ScopeResolution {
 				}
 			}
 
-			// At this stage, we need to check for any static imports.
-			for(Pair<Boolean,String> p : file.imports()) {
-				if(p.first()) {
-					// this is a static import
-					Triple<String,String,String> s = splitStaticImport(p.second());				
-					Type.Clazz tc = new Type.Clazz(s.first(),s.second());
-					
-					if(s.third().equals(e.name())) {
-						target = new Expr.ClassVariable(s.first() + "."
-								+ s.second(), new ArrayList(e.attributes()));
-						target.attributes().add(tc);									
-					} else if(s.third().equals("*")) {					
-						// NOTE: there is a bug here, in the case of a static
-                        // method which is inherited from a parent class. To get
-                        // around this, we need to use types.resolveMethod().
-                        // However, the difficulty is that at this stage, we
-                        // don't know the types of the parameters. In fact, this
-                        // is not a problem as there only needs to be a static
-                        // method with the same name for this to resolve.
-						Clazz c = loader.loadClass(tc);
-						if(c.methods(e.name()) != null) {
+			if(target == null) {
+				// At this stage, we need to check for any static imports.
+				for(Pair<Boolean,String> p : file.imports()) {
+					if(p.first()) {
+						// this is a static import
+						Triple<String,String,String> s = splitStaticImport(p.second());				
+						Type.Clazz tc = new Type.Clazz(s.first(),s.second());
+
+						if(s.third().equals(e.name())) {
 							target = new Expr.ClassVariable(s.first() + "."
 									+ s.second(), new ArrayList(e.attributes()));
-							target.attributes().add(tc);												
+							target.attributes().add(tc);									
+						} else if(s.third().equals("*")) {					
+							// NOTE: there is a bug here, in the case of a static
+							// method which is inherited from a parent class. To get
+							// around this, we need to use types.resolveMethod().
+							// However, the difficulty is that at this stage, we
+							// don't know the types of the parameters. In fact, this
+							// is not a problem as there only needs to be a static
+							// method with the same name for this to resolve.
+							Clazz c = loader.loadClass(tc);
+							if(c.methods(e.name()) != null) {
+								target = new Expr.ClassVariable(s.first() + "."
+										+ s.second(), new ArrayList(e.attributes()));
+								target.attributes().add(tc);												
+							}
 						}
 					}
 				}
-			}
-			
-			if(target == null) {
-				// sanity check
-				syntax_error("unable to determine receiver type",e);
-			}			
+				
+				if(target == null) {
+					// sanity check
+					syntax_error("unable to determine receiver type",e);
+				}
+			}									
 		} 
 				
 		e.setTarget(target);		
