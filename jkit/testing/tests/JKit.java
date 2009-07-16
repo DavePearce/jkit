@@ -77,7 +77,9 @@ public class JKit extends TestHarness {
 	@Test public void JLS_5_6_2_BinaryPromotion_1() { runTest("JLS_5_6_2_BinaryPromotion_1"); }
 
 	@Test public void JLS_6_8_6_ConstantNames_1() { runTest("JLS_6_8_6_ConstantNames_1"); }
-	@Ignore("Known bug") @Test public void JLS_7_5_3_StaticImport_1() { runTest("JLS_7_5_3_StaticImport_1"); }
+	@Test public void JLS_7_5_3_StaticImport_1() { runTest("JLS_7_5_3_StaticImport_1"); }
+	@Test public void JLS_7_5_3_StaticImport_2() { runTest("JLS_7_5_3_StaticImport_2"); }
+	@Test public void JLS_7_5_3_StaticImport_3() { runTest("JLS_7_5_3_StaticImport_3"); }
 	
 	@Test public void JLS_8_1_2_GenericTypes_1() { runTest("JLS_8_1_2_GenericTypes_1"); }	
 	@Test public void JLS_8_1_2_GenericTypes_2() { runTest("JLS_8_1_2_GenericTypes_2"); }
