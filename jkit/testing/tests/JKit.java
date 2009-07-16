@@ -106,8 +106,10 @@ public class JKit extends TestHarness {
 	// The following fails because method-local classes which access non-local
 	// variables are not currently supported.
 	@Ignore("Known bug") @Test public void JLS_8_1_3_InnerClasses_11() { runTest("JLS_8_1_3_InnerClasses_11"); }
+		
 	@Test public void JLS_8_1_3_InnerClasses_12() { compileFailTest("JLS_8_1_3_InnerClasses_12"); }
 	@Test public void JLS_8_1_3_InnerClasses_13() { runTest("JLS_8_1_3_InnerClasses_13"); }
+	@Test public void JLS_8_1_3_InnerClasses_14() { runTest("JLS_8_1_3_InnerClasses_14"); }
 	
 	@Ignore("Known Bug") @Test public void JLS_8_1_1_3_StrictClasses_1() { runTest("JLS_8_1_1_3_StrictClasses_1"); }
 	
