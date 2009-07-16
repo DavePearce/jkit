@@ -311,16 +311,24 @@ public class TypePropagation {
 		}
 	}
 	
-	protected void doReturn(Stmt.Return ret, JavaMethod m) {
-		if(ret.expr() != null) {
-			// We need to do an implict cast here to account for autoboxing, and
-			// other conversions. For example, a method declared to return
-			// Integer that actually returns "1" must box this at the point of
-			// return.
-			doExpression(ret.expr());
-			
-			ret.setExpr(implicitCast(ret.expr(), (Type) m.returnType()
-					.attribute(Type.class)));
+	protected void doReturn(Stmt.Return ret, JavaMethod m) {		
+		Expr exp = ret.expr();
+		if(exp != null) {			
+			if(isUnknownConstant(exp)) {
+				SourceLocation loc = (SourceLocation) exp.attribute(SourceLocation.class);					
+				exp = unknownConstantInference(exp, (Type) m.returnType()
+						.attribute(Type.class), loc);
+			} else {
+				// We need to do an implict cast here to account for autoboxing, and
+				// other conversions. For example, a method declared to return
+				// Integer that actually returns "1" must box this at the point of
+				// return.
+				doExpression(exp);
+
+				exp = implicitCast(exp, (Type) m.returnType()
+						.attribute(Type.class));
+			}
+			ret.setExpr(exp);
 		}
 	}
 	
