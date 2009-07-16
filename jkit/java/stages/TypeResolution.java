@@ -121,11 +121,13 @@ public class TypeResolution {
 		this.types = types;
 	}
 	
-	public void apply(JavaFile file) {
-		// the following may cause problems with static imports.		
+	public void apply(JavaFile file) { 		
 		imports.add(file.pkg() + ".*");	
 		for(Pair<Boolean,String> i : file.imports()) {
-			imports.add(i.second());
+			if(!i.first()) {
+				// ignore static imports
+				imports.add(i.second());
+			}
 		}											
 		imports.add("java.lang.*");
 		

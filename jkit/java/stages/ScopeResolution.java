@@ -914,7 +914,8 @@ public class ScopeResolution {
 		return e;
 	}
 	
-	protected Expr doUnresolvedVariable(Expr.UnresolvedVariable e, JavaFile file) {
+	protected Expr doUnresolvedVariable(Expr.UnresolvedVariable e, JavaFile file)
+			throws ClassNotFoundException {
 		// This method is really the heart of the whole operation defined in
 		// this class. It is at this point that we have encountered a variable
 		// and we now need to determine what it's scope is. To do this, we
@@ -1008,6 +1009,29 @@ public class ScopeResolution {
 				isStatic = ((FieldScope)s).isStatic;
 			}
 		}		
+		// At this stage, we need to check for any static imports.
+		for(Pair<Boolean,String> p : file.imports()) {
+			if(p.first()) {
+				// this is a static import
+				Triple<String,String,String> s = splitStaticImport(p.second());				
+				Type.Clazz tc = new Type.Clazz(s.first(),s.second());
+				
+				if(s.third().equals(e.value())) {
+					Expr cv = new Expr.ClassVariable(s.first() + "."
+							+ s.second(), new ArrayList(e.attributes()));
+					cv.attributes().add(tc);
+					return new Expr.Deref(cv,e.value(),new ArrayList(e.attributes()));				
+				} else if(s.third().equals("*")) {					
+					Clazz c = loader.loadClass(tc);
+					if(c.field(e.value()) != null) {
+						Expr cv = new Expr.ClassVariable(s.first() + "."
+								+ s.second(), new ArrayList(e.attributes()));
+						cv.attributes().add(tc);
+						return new Expr.Deref(cv,e.value(),new ArrayList(e.attributes()));						
+					}
+				}
+			}
+		}
 		
 		// If we get here, then this variable access is either a syntax error,
 		// or a static class access. For example, in "System.out" we initially
@@ -1127,5 +1151,16 @@ public class ScopeResolution {
 			decl = decl + p.first() + ".";
 		}
 		return decl + "*";
+	}
+	
+	protected Triple<String,String,String> splitStaticImport(String str) {
+		int first = str.lastIndexOf('.');
+		String third = str.substring(first+1);
+		int next = str.lastIndexOf('.',first-1);
+		if(next == -1) {
+			return new Triple("",str.substring(0,first),third);	
+		} else {
+			return new Triple(str.substring(0,next),str.substring(next+1,first),third);
+		}				
 	}
 }
