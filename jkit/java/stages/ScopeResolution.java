@@ -676,11 +676,16 @@ public class ScopeResolution {
 			Type.Clazz type = (Type.Clazz) target.attribute(Type.class);
 			
 			try {
-				Triple<Clazz, Clazz.Field, Type> r = types
-						.resolveField(type, e.name(), loader);
-				// if we get here, then there is such a field.
-				//
-				// so do nothing!
+				// First, deal with special case of "this" field. This is
+				// possible in the case of a non-static inner class attempting
+				// to access the parent pointer.
+				if(!e.name().equals("this")) {
+					Triple<Clazz, Clazz.Field, Type> r = types
+					.resolveField(type, e.name(), loader);
+					// if we get here, then there is such a field.
+					//
+					// so do nothing!
+				}
 			} catch(FieldNotFoundException fne) {	
 				// Right, if we get here then there is no field ... so maybe
 				// this is actually an inner class (or a syntax error :)
