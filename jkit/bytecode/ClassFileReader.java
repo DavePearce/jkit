@@ -717,8 +717,8 @@ public final class ClassFileReader {
 	
 	protected Type.Function parseMethodDescriptor(String descriptor) {		
 		ArrayList<Type.Variable> targs = new ArrayList<Type.Variable>();
-		int pos = 0;
-
+		int pos = 0;		
+		
 		// parse generic parameters (if there are any)
 		if(descriptor.charAt(pos) == '<') { 
 			pos = pos + 1; // skip '<'
@@ -739,10 +739,20 @@ public final class ClassFileReader {
 			pos = tmp.second();			
 		}		
 		// finally, parse the return type
-		Pair<Type, Integer> rtype = parseInternalDescriptor(descriptor, pos + 1);
+		Type rtype = parseInternalDescriptor(descriptor, pos + 1).first();
+		
+		Type.Function rf = new Type.Function(rtype, params, targs);
 				
-		Type.Function rf = new Type.Function(rtype.first(), params, targs);
-						
+		if(targs.size() > 0) {
+			// First, build the binding.
+			HashMap<String,Type.Reference> binding = new HashMap();
+			for(Type.Variable v : targs) {
+				binding.put(v.variable(), v);
+			}
+			
+			rf = Types.substitute(rf, binding);
+		}
+		
 		return rf;
 	}
 	
