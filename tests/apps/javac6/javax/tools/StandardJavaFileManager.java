@@ -224,7 +224,7 @@ public interface StandardJavaFileManager extends JavaFileManager {
      * @throws IOException if location is an output location and path
      * does not represent an existing directory
      */
-    void setLocation(Location location, Iterable<? extends File> path)
+    void setLocation(JavaFileManager.Location location, Iterable<? extends File> path)
         throws IOException;
 
     /**
@@ -235,6 +235,6 @@ public interface StandardJavaFileManager extends JavaFileManager {
      * associated path
      * @see #setLocation
      */
-    Iterable<? extends File> getLocation(Location location);
+    Iterable<? extends File> getLocation(JavaFileManager.Location location);
 
 }
