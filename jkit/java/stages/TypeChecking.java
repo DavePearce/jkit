@@ -305,7 +305,7 @@ public class TypeChecking {
 							"cannot return a value from method whose result type is void",
 							ret);	
 				} else if (!types.subtype(retType, ret_t, loader)) {
-					syntax_error("required return type " + method.returnType()
+					syntax_error("required return type " + retType
 							+ ",  found type " + ret_t, ret);
 				}
 
