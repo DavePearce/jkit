@@ -222,7 +222,9 @@ public class ScopeResolution {
 		// First, setup the imports list (in reverse order).
 		imports.add(file.pkg() + ".*");
 		for(Pair<Boolean,String> i : file.imports()) {
-			imports.add(i.second());
+			if(!i.first()) {
+				imports.add(1,i.second());
+			}
 		}		
 		imports.add("java.lang.*");		
 				

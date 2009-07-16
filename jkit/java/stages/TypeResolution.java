@@ -126,7 +126,7 @@ public class TypeResolution {
 		for(Pair<Boolean,String> i : file.imports()) {
 			if(!i.first()) {
 				// ignore static imports
-				imports.add(i.second());
+				imports.add(1,i.second());
 			}
 		}											
 		imports.add("java.lang.*");
@@ -301,8 +301,8 @@ public class TypeResolution {
 	}
 	
 	protected void doField(JavaField d) throws ClassNotFoundException {
-		doExpression(d.initialiser());		
-		d.type().attributes().add(substituteTypeVars(resolve(d.type())));
+		doExpression(d.initialiser());				
+		d.type().attributes().add(substituteTypeVars(resolve(d.type())));				
 	}
 	
 	protected void doInitialiserBlock(Decl.InitialiserBlock d) {
@@ -808,9 +808,9 @@ public class TypeResolution {
 		// So, at this point, it seems there was no package information in the
 		// source code and, hence, we need to determine this from the CLASSPATH
 		// and the import list. There are two phases. 
-
-		Type.Clazz r = loader.resolve(className,imports);
-
+		
+		Type.Clazz r = loader.resolve(className,imports);		
+		
 		// The following loop is required for two reasons:
 		//
 		// 1) we may not have full type information in the source code.
