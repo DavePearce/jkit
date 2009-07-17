@@ -531,7 +531,7 @@ public class DefaultGraphSelectionModel implements GraphSelectionModel,
 	 * @since 1.3
 	 */
 	public EventListener[] getListeners(Class listenerType) {
-		return listenerList.getListeners(listenerType);
+	    return (EventListener[]) listenerList.getListeners(listenerType);
 	}
 
 	/**
