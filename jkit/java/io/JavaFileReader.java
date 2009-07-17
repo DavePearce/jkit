@@ -1273,7 +1273,19 @@ public class JavaFileReader {
 					case Expr.UnOp.INV:
 						return new Value.Long(~x,e.attributes());					
 				}
-			}
+			} else if(e instanceof Value.Float) {
+				float x = ((Value.Float)e).value();
+				switch(uop) {
+					case Expr.UnOp.NEG:
+						return new Value.Float(-x,e.attributes());								
+				}
+			} else if(e instanceof Value.Double) {
+				double x = ((Value.Double)e).value();
+				switch(uop) {
+					case Expr.UnOp.NEG:
+						return new Value.Double(-x,e.attributes());								
+				}
+			} 
 		}
 		
 		return new Expr.UnOp(

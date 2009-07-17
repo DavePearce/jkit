@@ -170,6 +170,11 @@ public interface Value extends Expr {
 			this.value=value;
 		}
 		
+		public Float(float value, List<Attribute> attributes) {
+			super(attributes);
+			this.value=value;
+		}
+		
 		public float value() {
 			return value;
 		}
@@ -185,6 +190,11 @@ public interface Value extends Expr {
 		private double value;
 		
 		public Double(double value, Attribute... attributes) {
+			super(attributes);
+			this.value=value;
+		}
+		
+		public Double(double value, List<Attribute> attributes) {
 			super(attributes);
 			this.value=value;
 		}
