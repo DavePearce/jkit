@@ -1059,11 +1059,10 @@ public class JilBuilder {
 				}
 			}			
 			if(c.condition() != null) {
-				if(ce.first() instanceof JilExpr.Number) {
+				JilExpr ce_first = ce.first();
+				if(ce_first instanceof JilExpr.Number) {
 					cases.add(new Pair(ce.first(),caseLab));
-				} else {
-					// Need to be more aggressive here, in exploring constant
-					// values.
+				} else {					
 					syntax_error("constant expression required",c.condition());
 				}
 			} else {

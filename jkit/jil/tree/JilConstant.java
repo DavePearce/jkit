@@ -77,4 +77,8 @@ public final class JilConstant extends JilField {
 	public Object initialiser() {
 		return initialiser;
 	}
+	
+	public boolean isConstant() {
+		return true;
+	}
 }

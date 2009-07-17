@@ -297,11 +297,14 @@ public class JavaCompiler implements Compiler {
 						
 			// Tenth, rewriten enumerations
 			rewriteEnumerations(filename,jfile,loader);
+
+			// Eleventh, rewriten enumerations
+			constantPropagation(filename,jfile,loader);
 			
-			// Eleventh, eliminate side effects from expressions
+			// Twelth, eliminate side effects from expressions
 			generateJilCode(filename, jfile, loader);			
 			
-			// Twelth, add bypass methods
+			// Thitienth, add bypass methods
 			for(JilClass clazz : skeletons) {
 				eliminateDeadCode(filename,clazz,loader);
 				addBypassMethods(filename,clazz,loader);				
@@ -541,6 +544,21 @@ public class JavaCompiler implements Compiler {
 				.currentTimeMillis() - start));
 	}
 	
+	/**
+     * This is the Tenth stage in the compilation pipeline --- we must rewrite
+     * constant field accesses to be constants.
+     * 
+     * @param srcfile
+     * @param jfile
+     * @param loader
+     */
+	protected void constantPropagation(File srcfile, JavaFile jfile,
+			ClassLoader loader) {
+		long start = System.currentTimeMillis();
+		new ConstantPropagation(loader, new TypeSystem()).apply(jfile);
+		logTimedMessage("[" + srcfile.getPath() + "] constants propagated",
+				(System.currentTimeMillis() - start));
+	}
 	
 	/**
 	 * This is the tenth stage in the compilation pipeline --- we are now

@@ -241,6 +241,11 @@ public interface Clazz {
 		 * Check whether this field is private
 		 */
 		public boolean isPrivate();
+		
+		/**
+		 * Check whether this field is a constant or not.
+		 */
+		public boolean isConstant();
 	}
 	
 	public static interface Method {

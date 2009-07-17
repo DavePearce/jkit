@@ -368,6 +368,10 @@ public class ClassFile implements Clazz {
 			}
 			return false;
 		}
+		
+		public boolean isConstant() {
+			return false;
+		}
 	}
 	
 	public static class Method implements Clazz.Method {
