@@ -40,6 +40,13 @@ public interface Compiler {
 	public List<? extends Clazz> compile(File srcFile) throws IOException,SyntaxError;
 	
 	/**
+     * Parse the source file to produce a list of one or more jil skeletons.
+     * 
+     * @return
+     */
+	public List<? extends Clazz> parse(File srcFile) throws IOException,SyntaxError;	
+	
+	/**
 	 * The purpose of this method is to indicate that a source file is currently
 	 * being compiled. This is crucial for the ClassLoader, since it prevents
 	 * infinite recursive loops where the classloader attempts to compile the

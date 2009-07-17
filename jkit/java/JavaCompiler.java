@@ -69,7 +69,7 @@ public class JavaCompiler implements Compiler {
 	 * "C2.java" is automatically removed from the queue, thus preventing it
 	 * from being compiled again.
 	 */
-	protected ArrayList<String> compilationQueue = new ArrayList<String>();
+	protected ArrayList<Triple<File,JavaFile,List<JilClass>>> compilationQueue = new ArrayList();
 
 	/**
 	 * The compiling set gives a full list of files which are currently being
@@ -170,8 +170,33 @@ public class JavaCompiler implements Compiler {
 		} catch (IOException e) {
 			return false;
 		}
-	}
+	}	
 
+	/**
+     * Compile a class in the file system, using the appropriate pipeline(s).
+     * 
+     * @param filenames
+     *            a list of the full names of the files to be compiled,
+     *            including their path expressed in the local host format (e.g.
+     *            using File.separatorChar's to indicate directories).
+     * @return
+     */
+	public List<JilClass> compile(File filename) throws IOException,
+			SyntaxError {		
+		
+		parse(filename);					
+
+		ArrayList<JilClass> classes = new ArrayList<JilClass>();
+
+		while (!compilationQueue.isEmpty()) {
+			Triple<File,JavaFile,List<JilClass>> e = compilationQueue.get(0);
+			compilationQueue.remove(0);
+			classes.addAll(finishcompiling(e.first(),e.second(),e.third()));
+		}
+
+		return classes;
+	}
+	
 	/**
 	 * Compile a list of classes in the file system, using the appropriate
 	 * pipeline(s).
@@ -185,31 +210,22 @@ public class JavaCompiler implements Compiler {
 	public List<JilClass> compile(List<File> filenames) throws IOException,
 			SyntaxError {
 		for (File f : filenames) {
-			compilationQueue.add(f.getPath());
+			parse(f);			
 		}
 
 		ArrayList<JilClass> classes = new ArrayList<JilClass>();
 
 		while (!compilationQueue.isEmpty()) {
-			classes.addAll(compile(new File(compilationQueue.get(0))));
+			Triple<File,JavaFile,List<JilClass>> e = compilationQueue.get(0);
+			compilationQueue.remove(0);
+			classes.addAll(finishcompiling(e.first(),e.second(),e.third()));
 		}
 
 		return classes;
 	}
+	
 
-	/**
-	 * Compile a class in the file system, using the appropriate pipeline.
-	 * 
-	 * @param filename
-	 *            the full name of the file to be compiled, including it's path
-	 *            expressed in the local host format (e.g. using
-	 *            File.separatorChar's to indicate directories).
-	 * @return
-	 */
-	public List<JilClass> compile(File filename) throws IOException, SyntaxError {
-		compilationQueue.remove(filename.getPath());
-		compiling.add(filename.getCanonicalPath());
-
+	public List<JilClass> parse(File filename) throws IOException {
 		try {
 			// First, parse the Java source file to yield an abstract syntax
 			// tree.
@@ -228,8 +244,35 @@ public class JavaCompiler implements Compiler {
 			// Specifically, during scope resolution, we need to be able to:
 			// 1) traverse the class heirarchy
 			// 2) determine what fields are declared.			
-			skeletons.addAll(buildSkeletons(filename, jfile, loader));			
+			skeletons.addAll(buildSkeletons(filename, jfile, loader));
 			
+			compilationQueue.add(new Triple(filename,jfile,skeletons));
+			
+			return skeletons;
+		} catch (SyntaxError se) {
+			if (se.fileName() == null) {
+				throw new SyntaxError(se.msg(), filename.getPath(), se.line(),
+						se.column(), se.width(), se);
+			} else {
+				throw se;
+			}
+		}		
+	}
+
+	/**
+     * Finish compiling a class on the compilation queue.
+     * 
+     * @param filename
+     *            the full name of the file to be compiled, including it's path
+     *            expressed in the local host format (e.g. using
+     *            File.separatorChar's to indicate directories).
+     * @return
+     */
+	public List<JilClass> finishcompiling(File filename, JavaFile jfile,
+			List<JilClass> skeletons) throws IOException, SyntaxError {		
+		compiling.add(filename.getCanonicalPath());
+
+		try {			
 			// Fifth, perform the scope resolution itself. The aim here is, for
 			// each variable access, to determine whether it is a local
 			// variable access, an inherited field access, an enclosing field

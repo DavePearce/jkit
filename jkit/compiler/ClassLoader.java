@@ -376,7 +376,7 @@ public final class ClassLoader {
 						// Here, there is a source file, and either there is no class
 						// file, or the class file is older than the source file.
 						// Therefore, we need to (re)compile the source file.
-						List<? extends Clazz> cs = compiler.compile(srcFile);
+						List<? extends Clazz> cs = compiler.parse(srcFile);
 																	
 						compiler.logTimedMessage("Compiled " + srcFile, System
 								.currentTimeMillis()
