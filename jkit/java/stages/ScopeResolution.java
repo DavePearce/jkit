@@ -469,9 +469,10 @@ public class ScopeResolution {
 		}
 	}
 	
-	protected void doSynchronisedBlock(Stmt.SynchronisedBlock block, JavaFile file) {
+	protected void doSynchronisedBlock(Stmt.SynchronisedBlock block,
+			JavaFile file) {
 		doBlock(block, file);
-		doExpression(block.expr(), file);
+		block.setExpr(doExpression(block.expr(), file));
 	}
 	
 	protected void doTryCatchBlock(Stmt.TryCatchBlock block, JavaFile file) {

@@ -99,6 +99,10 @@ public interface Stmt extends SyntacticElement {
 		public Expr expr() {
 			return expr;
 		}
+		
+		public void setExpr(Expr expr) {
+			this.expr = expr;
+		}
 	}
 
 	/**
