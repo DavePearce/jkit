@@ -191,7 +191,7 @@ public class JavaCompiler implements Compiler {
 		while (!compilationQueue.isEmpty()) {
 			Triple<File,JavaFile,List<JilClass>> e = compilationQueue.get(0);
 			compilationQueue.remove(0);
-			classes.addAll(finishcompiling(e.first(),e.second(),e.third()));
+			classes.addAll(finishcompilation(e.first(),e.second(),e.third()));
 		}
 
 		return classes;
@@ -218,7 +218,7 @@ public class JavaCompiler implements Compiler {
 		while (!compilationQueue.isEmpty()) {
 			Triple<File,JavaFile,List<JilClass>> e = compilationQueue.get(0);
 			compilationQueue.remove(0);
-			classes.addAll(finishcompiling(e.first(),e.second(),e.third()));
+			classes.addAll(finishcompilation(e.first(),e.second(),e.third()));
 		}
 
 		return classes;
@@ -268,7 +268,7 @@ public class JavaCompiler implements Compiler {
      *            File.separatorChar's to indicate directories).
      * @return
      */
-	public List<JilClass> finishcompiling(File filename, JavaFile jfile,
+	public List<JilClass> finishcompilation(File filename, JavaFile jfile,
 			List<JilClass> skeletons) throws IOException, SyntaxError {		
 		compiling.add(filename.getCanonicalPath());
 
