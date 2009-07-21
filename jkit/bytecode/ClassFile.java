@@ -370,7 +370,22 @@ public class ClassFile implements Clazz {
 		}
 		
 		public boolean isConstant() {
+			for(Attribute a : attributes) {
+				if(a instanceof ConstantValue) {
+					return true;
+				}
+			}
 			return false;
+		}
+		
+		public Object constant() {
+			for(Attribute a : attributes) {
+				if(a instanceof ConstantValue) {
+					ConstantValue x = (ConstantValue) a;
+					return x.constant();
+				}
+			}
+			return null;
 		}
 	}
 	

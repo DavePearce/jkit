@@ -178,4 +178,8 @@ public class JilField extends SyntacticElementImpl implements jkit.compiler.Claz
 	public boolean isConstant() {
 		return false;
 	}
+	
+	public Object constant() {
+		return null;
+	}
 }

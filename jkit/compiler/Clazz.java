@@ -246,6 +246,11 @@ public interface Clazz {
 		 * Check whether this field is a constant or not.
 		 */
 		public boolean isConstant();
+		
+		/**
+		 * Get the constant value for this field.
+		 */
+		public Object constant();
 	}
 	
 	public static interface Method {

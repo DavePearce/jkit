@@ -50,6 +50,10 @@ public class ConstantValue implements Attribute {
 		return "ConstantValue";
 	}
 	
+	public Object constant() {
+		return constant;
+	}
+	
 	public void addPoolItems(Set<Constant.Info> constantPool, ClassLoader loader) {
 		Constant.addPoolItem(new Constant.Utf8("ConstantValue"), constantPool);
 		Constant.addPoolItem(getConstantInfo(), constantPool);
