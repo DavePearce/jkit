@@ -74,7 +74,7 @@ public final class JilConstant extends JilField {
 		this.initialiser = initialiser;
 	}
 	
-	public Object initialiser() {
+	public Object constant() {		
 		return initialiser;
 	}
 	

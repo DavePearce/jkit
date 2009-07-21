@@ -257,7 +257,7 @@ public class SkeletonBuilder {
 			} else {
 				syntax_error("invalid constant initialiser",f);
 			}
-		} else if(f.isConstant() && f.isStatic() && f.isFinal()) {
+		} else if(f.isConstant() && f.isStatic() && f.isFinal()) {			
 			// Ok, this is actually a constant field.
 			skeleton.fields().add(
 					new JilConstant(f.name(), t, f.constant(), f.modifiers(),

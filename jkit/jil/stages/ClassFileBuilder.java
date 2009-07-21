@@ -103,7 +103,7 @@ public final class ClassFileBuilder {
 			} 
 			if(f instanceof JilConstant) {
 				JilConstant c = (JilConstant) f;
-				cf.attributes().add(new ConstantValue(c.initialiser()));
+				cf.attributes().add(new ConstantValue(c.constant()));
 			}
 		}
 	}

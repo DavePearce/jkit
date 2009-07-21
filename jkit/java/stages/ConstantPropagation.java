@@ -369,15 +369,12 @@ public class ConstantPropagation {
 		Expr target = doExpression(e.target(), file);				
 		e.setTarget(target);
 		
-		if(target instanceof Expr.ClassVariable && !e.name().equals("this")) {
+		if(target instanceof Expr.ClassVariable && !e.name().equals("this")) {			
 			Type.Clazz owner = (Type.Clazz) target.attribute(Type.class);
 			// static field access, which could be a constant
-			Triple<Clazz,Clazz.Field,Type> r = types.resolveField(owner, e.name(), loader);
-			if(r.second().isConstant()) {				
-				Value constant = buildConstant(r.second().constant(),e);				
-				if(constant != null) {
-					return constant;
-				} 
+			Triple<Clazz,Clazz.Field,Type> r = types.resolveField(owner, e.name(), loader);			
+			if(r.second().isConstant()) {								
+				return buildConstant(r.second().constant(),e);												
 			}
 		}
 		
@@ -542,6 +539,7 @@ public class ConstantPropagation {
 		} else if(constant instanceof String) {			
 			return new Value.String((String) constant,attributes);
 		} 
-		return null;
+		syntax_error("unknown constant encountered: " + constant,src);
+		return null; // dead
 	}
 }
