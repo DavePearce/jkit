@@ -62,30 +62,31 @@ public class Code implements Attribute {
 		for(Bytecode b :  bytecodes) {
 			if(b instanceof Bytecode.Store) {
 				Bytecode.Store s = (Bytecode.Store) b;
-				max = Math.max(max, s.slot + ClassFile.slotSize(s.type) - 1);
+				max = Math.max(max, s.slot + ClassFile.slotSize(s.type));
 			} else if(b instanceof Bytecode.Load) {
 				Bytecode.Load l = (Bytecode.Load) b;
-				max = Math.max(max, l.slot + ClassFile.slotSize(l.type) - 1);					
+				max = Math.max(max, l.slot + ClassFile.slotSize(l.type));					
 			} else if(b instanceof Bytecode.Iinc) {
 				Bytecode.Iinc l = (Bytecode.Iinc) b;
-				max = Math.max(max, l.slot);					
+				max = Math.max(max, l.slot+1);					
 			}
-		}
-
+		}		
+		
 		// The reason for the following, is that we must compute the
 		// *minimal* number of slots required. Essentially, this is enough
 		// to hold the "this" pointer (if appropriate) and the parameters
 		// supplied. The issue is that the bytecodes might not actually
 		// access all of the parameters supplied, so just looking at them
-		// might produce an underestimate.
+		// might produce an underestimate.		
+		
+		int thisp = method.isStatic() ? 0 : 1; 
+		int min = thisp;
 
-		int min = method.isStatic() ? 0 : 1;
-
-		for(Type p :  method.type().parameterTypes()) {
+		for(Type p :  method.type().parameterTypes()) {			
 			min += ClassFile.slotSize(p);
-		}
-
-		return Math.max(max+1,min);
+		}		
+		
+		return Math.max(max+thisp,min);
 	}
 
 	/**

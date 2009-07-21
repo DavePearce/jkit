@@ -184,7 +184,7 @@ public final class ClassFileBuilder {
 			// observe that "super" and "this" are actually aliases from a
 			// bytecode generation point of view.
 			localVarMap.put("this", maxLocals);
-			localVarMap.put("super", maxLocals++);
+			localVarMap.put("super", maxLocals++);			
 		}
 
 		// determine slot allocations for parameters
