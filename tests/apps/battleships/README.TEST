@@ -1,0 +1,14 @@
+JKIT TEST APPLICATION
+=====================
+
+Compiling
+---------
+
+jkitc `find * -name "*.java"`
+
+Test Run
+--------
+
+java GraphicalInterface
+
+(Should see battleships GUI, be able to click on bombs etc).

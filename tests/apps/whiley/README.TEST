@@ -1,0 +1,18 @@
+JKIT TEST APPLICATION
+=====================
+
+Compiling
+---------
+
+jkitc `find * -name "*.java"`
+
+Test Run
+--------
+
+> java whiley/Main tests/verification/While_1.whiley
+>
+> tests/verification/While_1.whiley:4: Loop invariant is not re-established.
+>  while(i < 10) invariant i < 1 {
+>                         ^^^^^^
+> See tests/verification/While_1.err for more information.
+

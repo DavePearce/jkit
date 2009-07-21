@@ -1,0 +1,14 @@
+JKIT TEST APPLICATION
+=====================
+
+Compiling
+---------
+
+jkitc `find * -name "*.java"`
+
+Test Run
+--------
+
+java Main
+
+(Should see green ball moving over red ball)

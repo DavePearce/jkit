@@ -1,0 +1,14 @@
+JKIT TEST APPLICATION
+=====================
+
+Compiling
+---------
+
+jkitc `find * -name "*.java"`
+
+Test Run
+--------
+
+java org/simplelisp/editor/InterpreterFrame
+
+(Should see simplelisp GUI, be able to open and run a file from examples/)
