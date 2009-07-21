@@ -1059,9 +1059,9 @@ public class JilBuilder {
 				}
 			}			
 			if(c.condition() != null) {
-				JilExpr ce_first = ce.first();
+				JilExpr ce_first = ce.first();				
 				if(ce_first instanceof JilExpr.Number) {
-					cases.add(new Pair(ce.first(),caseLab));
+					cases.add(new Pair(ce_first,caseLab));
 				} else {					
 					syntax_error("constant expression required",c.condition());
 				}
@@ -1841,7 +1841,7 @@ public class JilBuilder {
 			// It should be impossible to have more than one.
 			return si.get(0);
 		}
-	}
+	}	
 	
 	protected JilExpr constant(int constant, Type t) {
 		if(t instanceof Type.Byte) {

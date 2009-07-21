@@ -276,8 +276,9 @@ public class Constant {
 		public final float value;		
 		public Float(float v) { value=v; }
 		public boolean equals(Object o) {
-			if(o instanceof Float) {
-				return value == ((Float)o).value;
+			if(o instanceof Float) {								
+				float ov = ((Float)o).value;
+				return value == ov || (java.lang.Float.isNaN(value) && java.lang.Float.isNaN(ov));
 			} else return false;			
 		}
 		public int hashCode() { return Math.round(value); }		
@@ -294,7 +295,8 @@ public class Constant {
 		public Double(double v) { value=v; }
 		public boolean equals(Object o) {
 			if(o instanceof Double) {
-				return value == ((Double)o).value;
+				double ov = ((Double)o).value;
+				return value == ov || (java.lang.Double.isNaN(value) && java.lang.Double.isNaN(ov));				
 			} else return false;			
 		}
 		public int hashCode() { return (int) Math.round(value); }		

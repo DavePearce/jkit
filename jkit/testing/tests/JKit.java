@@ -156,7 +156,7 @@ public class JKit extends TestHarness {
 	@Test public void JLS_14_11_SwitchStatement_2() { runTest("JLS_14_11_SwitchStatement_2"); }
 	@Test public void JLS_14_11_SwitchStatement_3() { runTest("JLS_14_11_SwitchStatement_3"); }
 	// Fails due to some classpath issue.
-	@Ignore("Known Bug") @Test public void JLS_14_11_SwitchStatement_4() { runTest("JLS_14_11_SwitchStatement_4"); }
+	@Test public void JLS_14_11_SwitchStatement_4() { runTest("JLS_14_11_SwitchStatement_4"); }
 	@Test public void JLS_14_11_SwitchStatement_5() { runTest("JLS_14_11_SwitchStatement_5"); }
 	// fails because of constant used for switch case
 	@Ignore("Known Bug") @Test public void JLS_14_11_SwitchStatement_6() { runTest("JLS_14_11_SwitchStatement_6"); }

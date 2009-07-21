@@ -24,6 +24,7 @@ import jkit.java.tree.Decl.JavaMethod;
 import jkit.java.tree.Stmt.Case;
 import jkit.jil.tree.Modifier;
 import jkit.jil.tree.Type;
+import jkit.jil.tree.Attribute;
 import jkit.util.Pair;
 import jkit.util.Triple;
 
@@ -372,8 +373,11 @@ public class ConstantPropagation {
 			Type.Clazz owner = (Type.Clazz) target.attribute(Type.class);
 			// static field access, which could be a constant
 			Triple<Clazz,Clazz.Field,Type> r = types.resolveField(owner, e.name(), loader);
-			if(r.second().isConstant()) {
-				//System.out.println("CONSTANT FIELD: " + owner + "." + e.name());
+			if(r.second().isConstant()) {				
+				Value constant = buildConstant(r.second().constant(),e);				
+				if(constant != null) {
+					return constant;
+				} 
 			}
 		}
 		
@@ -517,5 +521,27 @@ public class ConstantPropagation {
 		e.setTrueBranch(doExpression(e.trueBranch(), file));
 		e.setFalseBranch(doExpression(e.falseBranch(), file));
 		return e;
-	}	
+	}
+	
+	protected Value buildConstant(Object constant, Expr src) {
+		ArrayList<Attribute> attributes = new ArrayList(src.attributes());
+		if(constant instanceof Boolean) {			
+			return new Value.Bool((Boolean) constant,attributes);
+		} else if(constant instanceof Character) {			
+			return new Value.Char((Character) constant,attributes);
+		} else if(constant instanceof Short) {			
+			return new Value.Short((Short) constant,attributes);
+		} else if(constant instanceof Integer) {
+			return new Value.Int((Integer) constant,attributes);
+		} else if(constant instanceof Long) {			
+			return new Value.Long((Long) constant,attributes);
+		} else if(constant instanceof Float) {			
+			return new Value.Float((Float) constant,attributes);
+		} else if(constant instanceof Double) {			
+			return new Value.Double((Double) constant,attributes);
+		} else if(constant instanceof String) {			
+			return new Value.String((String) constant,attributes);
+		} 
+		return null;
+	}
 }

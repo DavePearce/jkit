@@ -326,7 +326,7 @@ public abstract class Bytecode {
 				}
 			} else if(constant instanceof Float) {
 				float v = (Float) constant;
-				if(v != 0.0F && v != 1.0F && v != 2.0F) {
+				if(v != 0.0F && v != 1.0F && v != 2.0F) {					
 					Constant.addPoolItem(new Constant.Float(v),constantPool);					
 				}
 			} else if(constant instanceof Double) {
@@ -385,7 +385,7 @@ public abstract class Bytecode {
 					write_u1(out,FCONST_1);
 				} else if(v == 2.0F) {
 					write_u1(out,FCONST_2);
-				} else {
+				} else {										
 					int idx = constantPool.get(new Constant.Float(v));
 					if(idx < 255) {
 						write_u1(out,LDC);

@@ -59,7 +59,9 @@ public interface Value extends Expr {
 		public Bool(boolean value, Attribute... attributes) {
 			super(value?1:0, attributes);
 		}
-		
+		public Bool(boolean value, List<Attribute> attributes) {
+			super(value?1:0, attributes);
+		}
 		public boolean value() {
 			return value==1;
 		}
@@ -75,7 +77,9 @@ public interface Value extends Expr {
 		public Char(char value, Attribute... attributes) {
 			super(value,attributes);
 		}
-		
+		public Char(char value, List<Attribute> attributes) {
+			super(value,attributes);
+		}
 		public char value() {
 			return (char)value;
 		}
@@ -89,6 +93,9 @@ public interface Value extends Expr {
 	 */
 	public static class Byte extends Number {
 		public Byte(byte value, Attribute... attributes) {
+			super(value,attributes);
+		}
+		public Byte(byte value, List<Attribute> attributes) {
 			super(value,attributes);
 		}
 		
@@ -106,6 +113,9 @@ public interface Value extends Expr {
 		public Short(short value, Attribute... attributes) {
 			super(value,attributes);
 		}
+		public Short(short value, List<Attribute> attributes) {
+			super(value,attributes);
+		}
 		
 		public short value() {
 			return (short)value;
@@ -121,8 +131,7 @@ public interface Value extends Expr {
 	public static class Int extends Number {
 		public Int(int value, Attribute... attributes) {
 			super(value,attributes);
-		}
-		
+		}		
 		public Int(int value, List<Attribute> attributes) {
 			super(value,attributes);
 		}
@@ -214,6 +223,10 @@ public interface Value extends Expr {
 		private java.lang.String value;
 		
 		public String(java.lang.String value, Attribute... attributes) {
+			super(attributes);
+			this.value=value;
+		}
+		public String(java.lang.String value, List<Attribute> attributes) {
 			super(attributes);
 			this.value=value;
 		}
