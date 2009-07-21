@@ -292,7 +292,12 @@ public class TypeChecking {
 	}
 	
 	protected void checkReturn(Stmt.Return ret) {		
-		JavaMethod method = (JavaMethod) getEnclosingScope(JavaMethod.class);
+		JavaMethod method = (JavaMethod) getEnclosingScope(JavaMethod.class);				
+		
+		if(method instanceof JavaConstructor) {
+			return; // could do better than this.
+		}
+		
 		Type retType = (Type) method.returnType().attribute(Type.class);
 		
 		if(ret.expr() != null) { 
