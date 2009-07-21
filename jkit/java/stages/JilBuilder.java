@@ -115,7 +115,7 @@ public class JilBuilder {
 				doInterface((Decl.JavaInterface)d);
 			} else if(d instanceof Decl.JavaClass) {
 				doClass((Decl.JavaClass)d);
-			} else if(d instanceof Decl.JavaMethod) {
+			} else if(d instanceof Decl.JavaMethod) {				
 				doMethod((Decl.JavaMethod)d, parent);
 			} else if(d instanceof Decl.JavaField) {
 				doField((Decl.JavaField)d, parent);
@@ -154,13 +154,13 @@ public class JilBuilder {
 		for(Decl d : c.declarations()) {
 			if (!(d instanceof Decl.JavaField)
 					&& !(d instanceof Decl.InitialiserBlock)
-					&& !(d instanceof Decl.StaticInitialiserBlock)) {
+					&& !(d instanceof Decl.StaticInitialiserBlock)) {				
 				doDeclaration(d, skeleton);
 			} else {
 				fields.add(d);
 			}
-		}
-
+		}		
+		
 		// Note, I iterate the field declarations in reverse order to ensure
 		// that field initialisers are added to constructors in the right
 		// order.
@@ -172,10 +172,10 @@ public class JilBuilder {
 		scopes.pop();
 	}
 
-	protected void doMethod(Decl.JavaMethod d, JilClass parent) {			
+	protected void doMethod(Decl.JavaMethod d, JilClass parent) {	
 		Type.Function type = (Type.Function) d.attribute(Type.class);
 		List<JilStmt> stmts = doStatement(d.body());		
-		
+				
 		// First, off. If this is a constructor, then check whether there is an
 		// explicit super constructor call or not.  If not, then add one.
 		if (d instanceof Decl.JavaConstructor) {			
@@ -190,7 +190,7 @@ public class JilBuilder {
 		// method.				
 		String name = d instanceof Decl.JavaConstructor ? parent.name() : d.name();		
 		for (JilMethod m : parent.methods()) {			
-			if (m.name().equals(name) && m.type().equals(type)) {
+			if (m.name().equals(name) && m.type().equals(type)) {				
 				m.body().addAll(stmts);
 			}
 		}				

@@ -80,6 +80,8 @@ public class JavaCompiler implements Compiler {
 	 */
 	protected Set<String> compiling = new HashSet<String>();
 
+	protected Set<String> parsed = new HashSet<String>();
+	
 	/**
 	 * The output directory for class files.
 	 */
@@ -184,7 +186,11 @@ public class JavaCompiler implements Compiler {
 	public List<JilClass> compile(File filename) throws IOException,
 			SyntaxError {		
 		
-		parse(filename);					
+		
+		if(!parsed.contains(filename.getCanonicalPath())) {
+			// only re-parse file if not already done.
+			parse(filename);
+		}
 
 		ArrayList<JilClass> classes = new ArrayList<JilClass>();
 
@@ -209,8 +215,12 @@ public class JavaCompiler implements Compiler {
 	 */
 	public List<JilClass> compile(List<File> filenames) throws IOException,
 			SyntaxError {
+		
 		for (File f : filenames) {
-			parse(f);			
+			if(!parsed.contains(f.getCanonicalPath())) {
+				// only re-parse file if not already done.
+				parse(f);
+			}
 		}
 
 		ArrayList<JilClass> classes = new ArrayList<JilClass>();
@@ -225,7 +235,7 @@ public class JavaCompiler implements Compiler {
 	}
 	
 
-	public List<JilClass> parse(File filename) throws IOException {
+	public List<JilClass> parse(File filename) throws IOException {				
 		try {
 			// First, parse the Java source file to yield an abstract syntax
 			// tree.
@@ -247,6 +257,8 @@ public class JavaCompiler implements Compiler {
 			skeletons.addAll(buildSkeletons(filename, jfile, loader));
 			
 			compilationQueue.add(new Triple(filename,jfile,skeletons));
+			
+			parsed.add(filename.getCanonicalPath());
 			
 			return skeletons;
 		} catch (SyntaxError se) {
