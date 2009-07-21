@@ -337,6 +337,8 @@ public class ConstantPropagation {
 				return doTernOp((Expr.TernOp)e, file);
 			} else if(e instanceof Expr.Cast) {
 				return doCast((Expr.Cast)e, file);
+			} else if(e instanceof Expr.Convert) {
+				return doConvert((Expr.Convert)e, file);
 			} else if(e instanceof Expr.InstanceOf) {
 				return doInstanceOf((Expr.InstanceOf)e, file);
 			} else if(e instanceof Expr.Invoke) {
@@ -366,7 +368,7 @@ public class ConstantPropagation {
 		Expr target = doExpression(e.target(), file);				
 		e.setTarget(target);
 		
-		if(target instanceof Expr.ClassVariable) {
+		if(target instanceof Expr.ClassVariable && !e.name().equals("this")) {
 			Type.Clazz owner = (Type.Clazz) target.attribute(Type.class);
 			// static field access, which could be a constant
 			Triple<Clazz,Clazz.Field,Type> r = types.resolveField(owner, e.name(), loader);
@@ -430,6 +432,11 @@ public class ConstantPropagation {
 	}
 	
 	protected Expr doCast(Expr.Cast e, JavaFile file) {
+		e.setExpr(doExpression(e.expr(),file));
+		return e;
+	}
+	
+	protected Expr doConvert(Expr.Convert e, JavaFile file) {
 		e.setExpr(doExpression(e.expr(),file));
 		return e;
 	}
