@@ -1233,7 +1233,7 @@ public final class ClassFileBuilder {
 			String name, Type.Function funType) throws ClassNotFoundException,
 			MethodNotFoundException {						
 		
-		String fdesc = ClassFile.descriptor(funType, false);
+		String fdesc = ClassFile.descriptor(funType, false);				
 		
 		Stack<Type.Clazz> worklist = new Stack<Type.Clazz>();
 		Stack<Type.Clazz> interfaceWorklist = new Stack<Type.Clazz>();
@@ -1246,8 +1246,8 @@ public final class ClassFileBuilder {
 		
 		while (!worklist.isEmpty()) {
 			Clazz c = loader.loadClass(worklist.pop());						
-			for (Clazz.Method m : c.methods(name)) {				
-				String mdesc = ClassFile.descriptor(m.type(), false);										
+			for (Clazz.Method m : c.methods(name)) {								
+				String mdesc = ClassFile.descriptor(m.type(), false);
 				if (fdesc.equals(mdesc)) {					
 					return new Pair(outer,m);
 				}

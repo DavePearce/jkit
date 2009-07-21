@@ -378,6 +378,7 @@ public class Types {
 	public static final Type.Clazz JAVA_LANG_OBJECT = new Type.Clazz("java.lang","Object");
 	public static final Type.Clazz JAVA_LANG_CLONEABLE = new Type.Clazz("java.lang","Cloneable");
 	public static final Type.Clazz JAVA_LANG_STRING = new Type.Clazz("java.lang","String");
+	public static final Type.Clazz JAVA_LANG_ENUM = new Type.Clazz("java.lang","Enum");
 	
 	public static final Type.Clazz JAVA_LANG_BOOLEAN = new Type.Clazz("java.lang","Boolean");
 	public static final Type.Clazz JAVA_LANG_CHARACTER = new Type.Clazz("java.lang","Character");

@@ -546,8 +546,8 @@ public class EnumRewrite {
 				
 		Expr.Invoke ivk = new Expr.Invoke(enumClass,"valueOf",params,
 				new ArrayList(), loc);
-		ivk.attributes().add(Types.JAVA_LANG_OBJECT);
-		Type.Function ivkFtype = new Type.Function(Types.JAVA_LANG_OBJECT,
+		ivk.attributes().add(Types.JAVA_LANG_ENUM);
+		Type.Function ivkFtype = new Type.Function(Types.JAVA_LANG_ENUM,
 				new Type.Clazz("java.lang", "Class"), Types.JAVA_LANG_STRING);
 		ivk.attributes().add(new JilBuilder.MethodInfo(new ArrayList(),ivkFtype));
 						
