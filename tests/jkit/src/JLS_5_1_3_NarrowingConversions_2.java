@@ -4,6 +4,6 @@ public class JLS_5_1_3_NarrowingConversions_2 {
     }
 
     public static void main(String[] args) {
-	System.out.println(new Test().f());
+	System.out.println(new JLS_5_1_3_NarrowingConversions_2().f());
     }
 }
