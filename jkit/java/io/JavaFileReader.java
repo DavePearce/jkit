@@ -90,7 +90,7 @@ public class JavaFileReader {
 		JavaParser parser = new JavaParser(tokenStream);
 		try {
 			Tree tree = (Tree) parser.compilationUnit().getTree();
-			// printTree(tree,0,0);
+			//printTree(tree,0,0);
 			return tree;
 		} catch (RecognitionException e) {
 		}
@@ -246,14 +246,11 @@ public class JavaFileReader {
 		return null;
 	}
 	
-	protected ArrayList<Type.Clazz> parseImplements(Tree tree, HashSet<String> genericVariables) {
-		ArrayList<Type.Clazz> interfaces = new ArrayList();
-		if (tree.getChildCount() > 0
-				&& tree.getType() == IMPLEMENTS) {			
-			for (int i = 0; i != tree.getChildCount(); ++i) {
-				interfaces.add(parseClassType(tree.getChild(i), genericVariables));
-			}
-		}
+	protected ArrayList<Type.Clazz> parseImplements(Tree tree, HashSet<String> genericVariables) {		
+		ArrayList<Type.Clazz> interfaces = new ArrayList();	
+		for (int i = 0; i < tree.getChildCount(); ++i) {
+			interfaces.add(parseClassType(tree.getChild(i), genericVariables));
+		}		
 		return interfaces;
 	}
 	

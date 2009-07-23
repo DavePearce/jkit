@@ -281,7 +281,7 @@ enumBodyDeclarations
 	;
 	
 normalInterfaceDeclaration
-	:	'interface' Identifier typeParameters? ('extends' typeList)? interfaceBody -> ^(Identifier typeParameters?) ^(IMPLEMENTS typeList?) interfaceBody?
+	:	'interface' Identifier typeParameters? ('extends' typeList)? interfaceBody -> ^(Identifier typeParameters?) ^(EXTENDS) ^(IMPLEMENTS typeList?) interfaceBody?
 	;
 	
 typeList
@@ -334,9 +334,9 @@ fieldDeclaration
 interfaceBodyDeclaration
 	:	modifier* (
 		constantDeclaration -> ^(FIELD ^(MODIFIERS modifier*) constantDeclaration)
-		| type Identifier interfaceMethodDeclaratorRest -> ^(METHOD ^(MODIFIERS modifier*) Identifier type interfaceMethodDeclaratorRest?)
+		| type Identifier interfaceMethodDeclaratorRest -> ^(METHOD ^(MODIFIERS modifier*) ^(TYPE_PARAMETERS) Identifier type interfaceMethodDeclaratorRest?)
 		| interfaceGenericMethodDecl -> ^(METHOD ^(MODIFIERS modifier*) interfaceGenericMethodDecl)
-		| 'void' Identifier voidInterfaceMethodDeclaratorRest -> ^(METHOD ^(MODIFIERS modifier*) Identifier ^(TYPE VOID) voidInterfaceMethodDeclaratorRest?)
+		| 'void' Identifier voidInterfaceMethodDeclaratorRest -> ^(METHOD ^(MODIFIERS modifier*) ^(TYPE_PARAMETERS) Identifier ^(TYPE VOID) voidInterfaceMethodDeclaratorRest?)
 		| normalInterfaceDeclaration -> ^(INTERFACE ^(MODIFIERS modifier*) normalInterfaceDeclaration) 
       	| annotationTypeDeclaration -> ^(ANNOTATION ^(MODIFIERS modifier*) annotationTypeDeclaration)
 		| classDeclaration -> ^(CLASS ^(MODIFIERS modifier*) classDeclaration)
@@ -366,8 +366,8 @@ interfaceMethodDeclaratorRest
 	
 interfaceGenericMethodDecl
 	:	typeParameters 
-		(type Identifier interfaceMethodDeclaratorRest -> typeParameters Identifier type interfaceMethodDeclaratorRest
-		| 'void' Identifier interfaceMethodDeclaratorRest -> typeParameters Identifier ^(TYPE VOID) interfaceMethodDeclaratorRest
+		(type Identifier interfaceMethodDeclaratorRest -> ^(TYPE_PARAMETERS typeParameters) Identifier type interfaceMethodDeclaratorRest
+		| 'void' Identifier interfaceMethodDeclaratorRest -> ^(TYPE_PARAMETERS typeParameters) Identifier ^(TYPE VOID) interfaceMethodDeclaratorRest
 		)
 	;
 	

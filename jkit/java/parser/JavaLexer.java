@@ -1,4 +1,4 @@
-// $ANTLR 3.1 jkit/java/parser/Java.g 2009-07-23 15:59:30
+// $ANTLR 3.1 jkit/java/parser/Java.g 2009-07-23 16:26:13
 
 package jkit.java.parser;
 import jkit.compiler.SyntaxError;
