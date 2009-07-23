@@ -1,6 +1,6 @@
 <project name="JKit" default="build">
   <target name="compile">
-    <javac debug="true" srcdir="." includes="jkit/**" excludes="jkit/testing/**"/> 
+    <javac debug="true" srcdir="." includes="jkit/**"/> 
   </target>
 
   <target name="build" depends="compile">
@@ -9,7 +9,7 @@
       <attribute name="Built-By" value="${user.name}"/>
       <attribute name="Main-Class" value="jkit.Main"/>
     </manifest>
-    <jar destfile="lib/jkit.jar" basedir="." includes="jkit/**/*.class" excludes="jkit/testing/**/" manifest="tmp/MANIFEST.MF"/>
+    <jar destfile="lib/jkit.jar" basedir="." includes="jkit/**/*.class" manifest="tmp/MANIFEST.MF"/>
   </target>
 
   <target name="doc">
