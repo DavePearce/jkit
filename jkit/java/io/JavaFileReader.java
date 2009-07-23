@@ -44,7 +44,7 @@ import org.antlr.runtime.tree.*;
 public class JavaFileReader {
 
 	private Tree ast;
-
+		
 	/**
      * Create a JavaFileReader from a file.
      * 
@@ -57,16 +57,7 @@ public class JavaFileReader {
      * @throws IOException
      */
 	public JavaFileReader(String file) throws IOException {
-		CommonTokenStream tokenStream = new CommonTokenStream(new JavaLexer(
-				new ANTLRFileStream(file)));
-
-		JavaParser parser = new JavaParser(tokenStream);
-
-		try {
-			ast = (Tree) parser.compilationUnit().getTree();
-			 // printTree(ast, 0, -1);
-		} catch (RecognitionException e) {
-		}
+		ast = parseInputFile(new FileReader(file));
 	}
 
 	/**
@@ -77,15 +68,8 @@ public class JavaFileReader {
      * 
      * @throws IOException
      */
-	public JavaFileReader(Reader r) throws IOException {
-		CommonTokenStream tokenStream = new CommonTokenStream(new JavaLexer(
-				new ANTLRReaderStream(r)));
-
-		JavaParser parser = new JavaParser(tokenStream);
-		try {
-			ast = (Tree) parser.compilationUnit().getTree();
-		} catch (RecognitionException e) {
-		}
+	public JavaFileReader(Reader r) throws IOException {		
+		ast = parseInputFile(r);
 	}
 
 	/**
@@ -96,16 +80,21 @@ public class JavaFileReader {
      * 
      * @throws IOException
      */
-	public JavaFileReader(InputStream in) throws IOException {
-		CommonTokenStream tokenStream = new CommonTokenStream(new JavaLexer(
-				new ANTLRInputStream(in)));
-		JavaParser parser = new JavaParser(tokenStream);
-		try {
-			ast = (Tree) parser.compilationUnit().getTree();
-		} catch (RecognitionException e) {
-		}
+	public JavaFileReader(InputStream in) throws IOException {		
+		ast = parseInputFile(new InputStreamReader(in));
 	}
 
+	protected Tree parseInputFile(Reader reader) throws IOException {
+		CommonTokenStream tokenStream = new CommonTokenStream(new JavaLexer(
+				new ANTLRReaderStream(reader)));
+		JavaParser parser = new JavaParser(tokenStream);
+		try {
+			return (Tree) parser.compilationUnit().getTree();
+		} catch (RecognitionException e) {
+		}
+		return null;
+	}
+	
 	public JavaFile read() {
 		ArrayList<Decl> classes = new ArrayList<Decl>();
 		ArrayList<Pair<Boolean, String>> imports = new ArrayList<Pair<Boolean, String>>();

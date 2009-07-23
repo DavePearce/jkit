@@ -139,8 +139,6 @@ public class JKitC {
 		classPath.addAll(bootClassPath);
 		
 		try {
-
-
 			JavaCompiler compiler;
 
 			if(bytecodeOutput) {
@@ -219,7 +217,7 @@ public class JKitC {
 		}
 	}	
 
-	public ArrayList<String> buildClassPath() {
+	public static ArrayList<String> buildClassPath() {
 		// Classpath hasn't been overriden by user, so import
 		// from the environment.
 		ArrayList<String> classPath = new ArrayList<String>();
@@ -234,7 +232,7 @@ public class JKitC {
 		return classPath;
 	}
 
-	public ArrayList<String> buildBootClassPath() {
+	public static ArrayList<String> buildBootClassPath() {
 		// Boot class path hasn't been overriden by user, so employ the
 		// default option.
 		ArrayList<String> bootClassPath = new ArrayList<String>();
@@ -244,7 +242,7 @@ public class JKitC {
 		return bootClassPath;
 	}
 
-	public void outputSourceError(String fileArg, int line, int col,
+	public static void outputSourceError(String fileArg, int line, int col,
 			int width, String message) {
 		System.err.println(fileArg + ":" + line + ": " + message);
 		String l = readLine(fileArg, line);		
@@ -268,7 +266,7 @@ public class JKitC {
 		}
 	}
 
-	public String readLine(String f, int l) {
+	public static String readLine(String f, int l) {
 		try {
 			return readLine(new FileReader(f), l);
 		} catch (IOException e) {
@@ -277,7 +275,7 @@ public class JKitC {
 		}
 	}
 
-	public String readLine(Reader in, int l) {
+	public static String readLine(Reader in, int l) {
 		try {
 			LineNumberReader lin = new LineNumberReader(in);
 			String line = "";
