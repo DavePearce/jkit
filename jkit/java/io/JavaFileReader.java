@@ -384,7 +384,7 @@ public class JavaFileReader {
 		// =============================== PARSE NAME =========================
 		// ====================================================================
 		
-		String name = method.getChild(1).getText();
+		String name = method.getChild(2).getText();
 				
 		Type returnType = null;
 
@@ -393,8 +393,8 @@ public class JavaFileReader {
 		// ====================================================================		
 		
 		// if no return type, then is a constructor
-		if (method.getChild(2).getType() == TYPE) {
-			returnType = parseType(method.getChild(2), genericVariables);
+		if (method.getChild(3).getType() == TYPE) {
+			returnType = parseType(method.getChild(3), genericVariables);
 		}		
 
 		// ====================================================================
@@ -402,15 +402,15 @@ public class JavaFileReader {
 		// ====================================================================		
 	
 		ArrayList<Triple<String, List<Modifier>, Type>> params = parseParameters(
-				method.getChild(3), genericVariables);		
+				method.getChild(4), genericVariables);		
 
-		boolean varargs = hasVarArgs(method.getChild(3));
+		boolean varargs = hasVarArgs(method.getChild(4));
 				
 		// ====================================================================
 		// ============================= PARSE THROWS =========================
 		// ====================================================================		
 
-		ArrayList<Type.Clazz> exceptions = parseThrows(method.getChild(4),genericVariables);
+		ArrayList<Type.Clazz> exceptions = parseThrows(method.getChild(5),genericVariables);
 
 		// ====================================================================
 		// ============================== PARSE BODY ==========================
@@ -418,8 +418,8 @@ public class JavaFileReader {
 
 		Stmt.Block block = null;
 
-		if(method.getChildCount() > 5) {
-			block = parseBlock(method.getChild(5), genericVariables);
+		if(method.getChildCount() > 6) {
+			block = parseBlock(method.getChild(6), genericVariables);
 		}
 
 		// ====================================================================

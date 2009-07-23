@@ -182,6 +182,7 @@ tokens {
  ENUM_CONSTANT;
  ASSIGNOP;
  PARAMETERS;
+ TYPE_PARAMETERS;
 }
 
 @lexer::members {
@@ -301,10 +302,10 @@ classBodyDeclaration
 	|	'static'? block -> block
 	|	modifier* (
 	    genericMethodOrConstructorDecl -> ^(METHOD ^(MODIFIERS modifier*) genericMethodOrConstructorDecl)
-     	|	methodDeclaration -> ^(METHOD ^(MODIFIERS modifier*) methodDeclaration)
+     	|	methodDeclaration -> ^(METHOD ^(MODIFIERS modifier*) ^(TYPE_PARAMETERS) methodDeclaration)
      	|	fieldDeclaration -> ^(FIELD ^(MODIFIERS modifier*) fieldDeclaration)
-    	|	'void' Identifier voidMethodDeclaratorRest -> ^(METHOD ^(MODIFIERS modifier*) Identifier ^(TYPE VOID) voidMethodDeclaratorRest?)
-    	|	Identifier constructorDeclaratorRest -> ^(METHOD ^(MODIFIERS modifier*) Identifier ^(NONE) constructorDeclaratorRest)
+    	|	'void' Identifier voidMethodDeclaratorRest -> ^(METHOD ^(MODIFIERS modifier*) ^(TYPE_PARAMETERS) Identifier ^(TYPE VOID) voidMethodDeclaratorRest?)
+    	|	Identifier constructorDeclaratorRest -> ^(METHOD ^(MODIFIERS modifier*) ^(TYPE_PARAMETERS) Identifier ^(NONE) constructorDeclaratorRest)
     	|	normalInterfaceDeclaration -> ^(INTERFACE ^(MODIFIERS modifier*) normalInterfaceDeclaration)
       	|	annotationTypeDeclaration -> ^(ANNOTATION ^(MODIFIERS modifier*) annotationTypeDeclaration)
     	|	classDeclaration -> ^(CLASS ^(MODIFIERS modifier*) classDeclaration)
@@ -313,7 +314,7 @@ classBodyDeclaration
 	;
 	
 genericMethodOrConstructorDecl
-	:	typeParameters genericMethodOrConstructorRest
+	:	typeParameters genericMethodOrConstructorRest -> ^(TYPE_PARAMETERS typeParameters) genericMethodOrConstructorRest
 	;
 	
 genericMethodOrConstructorRest
