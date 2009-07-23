@@ -181,6 +181,7 @@ tokens {
  STATIC;
  ENUM_CONSTANT;
  ASSIGNOP;
+ PARAMETERS;
 }
 
 @lexer::members {
@@ -232,10 +233,10 @@ typeDeclaration
 	
 classOrInterfaceDeclaration
 	:	modifier* (
-		classDeclaration -> ^(CLASS ^(MODIFIERS modifier*)? classDeclaration)
-		| enumDeclaration -> ^(ENUM ^(MODIFIERS modifier*)? enumDeclaration)
-		| normalInterfaceDeclaration -> ^(INTERFACE ^(MODIFIERS modifier*)? normalInterfaceDeclaration)
-		| annotationTypeDeclaration -> ^(ANNOTATION ^(MODIFIERS modifier*)? annotationTypeDeclaration)
+		classDeclaration -> ^(CLASS ^(MODIFIERS modifier*) classDeclaration)
+		| enumDeclaration -> ^(ENUM ^(MODIFIERS modifier*) enumDeclaration)
+		| normalInterfaceDeclaration -> ^(INTERFACE ^(MODIFIERS modifier*) normalInterfaceDeclaration)
+		| annotationTypeDeclaration -> ^(ANNOTATION ^(MODIFIERS modifier*) annotationTypeDeclaration)
 		) 
 	;
 	
@@ -243,7 +244,7 @@ classDeclaration
 	:	'class' Identifier (typeParameters)?
         ('extends' type)? 
         ('implements' typeList)?
-        classBody -> ^(Identifier typeParameters?) ^(EXTENDS type)? ^(IMPLEMENTS typeList)? classBody?
+        classBody -> ^(Identifier typeParameters?) ^(EXTENDS type?) ^(IMPLEMENTS typeList?) classBody?
 	;
 
 typeParameters
@@ -259,7 +260,7 @@ bound
 	;
 
 enumDeclaration
-	:	ENUM Identifier ('implements' typeList)? enumBody -> Identifier ^(IMPLEMENTS typeList)? enumBody?
+	:	ENUM Identifier ('implements' typeList)? enumBody -> Identifier ^(IMPLEMENTS typeList?) enumBody?
 	;
 	
 enumBody
@@ -279,7 +280,7 @@ enumBodyDeclarations
 	;
 	
 normalInterfaceDeclaration
-	:	'interface' Identifier typeParameters? ('extends' typeList)? interfaceBody -> ^(Identifier typeParameters?) ^(IMPLEMENTS typeList)? interfaceBody?
+	:	'interface' Identifier typeParameters? ('extends' typeList)? interfaceBody -> ^(Identifier typeParameters?) ^(IMPLEMENTS typeList?) interfaceBody?
 	;
 	
 typeList
@@ -299,15 +300,15 @@ classBodyDeclaration
 	|	'static' block -> ^(STATIC block)
 	|	'static'? block -> block
 	|	modifier* (
-	    genericMethodOrConstructorDecl -> ^(METHOD ^(MODIFIERS modifier*)? genericMethodOrConstructorDecl)
-     	|	methodDeclaration -> ^(METHOD ^(MODIFIERS modifier*)? methodDeclaration)
-     	|	fieldDeclaration -> ^(FIELD ^(MODIFIERS modifier*)? fieldDeclaration)
-    	|	'void' Identifier voidMethodDeclaratorRest -> ^(METHOD ^(MODIFIERS modifier*)? Identifier ^(TYPE VOID) voidMethodDeclaratorRest?)
-    	|	Identifier constructorDeclaratorRest -> ^(METHOD ^(MODIFIERS modifier*)? Identifier ^(NONE) constructorDeclaratorRest)
-    	|	normalInterfaceDeclaration -> ^(INTERFACE ^(MODIFIERS modifier*)? normalInterfaceDeclaration)
-      	|	annotationTypeDeclaration -> ^(ANNOTATION ^(MODIFIERS modifier*)? annotationTypeDeclaration)
-    	|	classDeclaration -> ^(CLASS ^(MODIFIERS modifier*)? classDeclaration)
-    	|   enumDeclaration -> ^(ENUM ^(MODIFIERS modifier*)? enumDeclaration)
+	    genericMethodOrConstructorDecl -> ^(METHOD ^(MODIFIERS modifier*) genericMethodOrConstructorDecl)
+     	|	methodDeclaration -> ^(METHOD ^(MODIFIERS modifier*) methodDeclaration)
+     	|	fieldDeclaration -> ^(FIELD ^(MODIFIERS modifier*) fieldDeclaration)
+    	|	'void' Identifier voidMethodDeclaratorRest -> ^(METHOD ^(MODIFIERS modifier*) Identifier ^(TYPE VOID) voidMethodDeclaratorRest?)
+    	|	Identifier constructorDeclaratorRest -> ^(METHOD ^(MODIFIERS modifier*) Identifier ^(NONE) constructorDeclaratorRest)
+    	|	normalInterfaceDeclaration -> ^(INTERFACE ^(MODIFIERS modifier*) normalInterfaceDeclaration)
+      	|	annotationTypeDeclaration -> ^(ANNOTATION ^(MODIFIERS modifier*) annotationTypeDeclaration)
+    	|	classDeclaration -> ^(CLASS ^(MODIFIERS modifier*) classDeclaration)
+    	|   enumDeclaration -> ^(ENUM ^(MODIFIERS modifier*) enumDeclaration)
     )
 	;
 	
@@ -331,14 +332,14 @@ fieldDeclaration
 		
 interfaceBodyDeclaration
 	:	modifier* (
-		constantDeclaration -> ^(FIELD ^(MODIFIERS modifier*)? constantDeclaration)
-		| type Identifier interfaceMethodDeclaratorRest -> ^(METHOD ^(MODIFIERS modifier*)? Identifier type interfaceMethodDeclaratorRest?)
-		| interfaceGenericMethodDecl -> ^(METHOD ^(MODIFIERS modifier*)? interfaceGenericMethodDecl)
-		| 'void' Identifier voidInterfaceMethodDeclaratorRest -> ^(METHOD ^(MODIFIERS modifier*)? Identifier ^(TYPE VOID) voidInterfaceMethodDeclaratorRest?)
-		| normalInterfaceDeclaration -> ^(INTERFACE ^(MODIFIERS modifier*)? normalInterfaceDeclaration) 
-      	| annotationTypeDeclaration -> ^(ANNOTATION ^(MODIFIERS modifier*)? annotationTypeDeclaration)
-		| classDeclaration -> ^(CLASS ^(MODIFIERS modifier*)? classDeclaration)
-    	|   enumDeclaration -> ^(ENUM ^(MODIFIERS modifier*)? enumDeclaration)
+		constantDeclaration -> ^(FIELD ^(MODIFIERS modifier*) constantDeclaration)
+		| type Identifier interfaceMethodDeclaratorRest -> ^(METHOD ^(MODIFIERS modifier*) Identifier type interfaceMethodDeclaratorRest?)
+		| interfaceGenericMethodDecl -> ^(METHOD ^(MODIFIERS modifier*) interfaceGenericMethodDecl)
+		| 'void' Identifier voidInterfaceMethodDeclaratorRest -> ^(METHOD ^(MODIFIERS modifier*) Identifier ^(TYPE VOID) voidInterfaceMethodDeclaratorRest?)
+		| normalInterfaceDeclaration -> ^(INTERFACE ^(MODIFIERS modifier*) normalInterfaceDeclaration) 
+      	| annotationTypeDeclaration -> ^(ANNOTATION ^(MODIFIERS modifier*) annotationTypeDeclaration)
+		| classDeclaration -> ^(CLASS ^(MODIFIERS modifier*) classDeclaration)
+    	|   enumDeclaration -> ^(ENUM ^(MODIFIERS modifier*) enumDeclaration)
 		)
 	|	';'!
 	;	
@@ -346,20 +347,20 @@ interfaceBodyDeclaration
 methodDeclaratorRest
 	:	formalParameters 
         ('throws' typeList)?
-        (   methodBody -> formalParameters? ^(THROWS typeList)? methodBody
-        |   ';' -> formalParameters? ^(THROWS typeList)?
+        (   methodBody -> ^(PARAMETERS formalParameters?) ^(THROWS typeList?) methodBody
+        |   ';' -> ^(PARAMETERS formalParameters?) ^(THROWS typeList?)
         )
 	;
 	
 voidMethodDeclaratorRest
 	:	formalParameters ('throws' typeList)?
-        (   methodBody -> formalParameters? ^(THROWS typeList)? methodBody
-        |   ';' -> formalParameters? ^(THROWS typeList)?
+        (   methodBody -> ^(PARAMETERS formalParameters?) ^(THROWS typeList?) methodBody
+        |   ';' -> ^(PARAMETERS formalParameters?) ^(THROWS typeList?)
         )
 	;
 	
 interfaceMethodDeclaratorRest
-	:	formalParameters ('throws' typeList)? ';' -> formalParameters? ^(THROWS typeList)?
+	:	formalParameters ('throws' typeList)? ';' -> ^(PARAMETERS formalParameters?) ^(THROWS typeList?)
 	;
 	
 interfaceGenericMethodDecl
@@ -370,11 +371,11 @@ interfaceGenericMethodDecl
 	;
 	
 voidInterfaceMethodDeclaratorRest
-	:	formalParameters ('throws' typeList)? ';' -> formalParameters? ^(THROWS typeList)?
+	:	formalParameters ('throws' typeList)? ';' -> ^(PARAMETERS formalParameters?) ^(THROWS typeList?)
 	;
 	
 constructorDeclaratorRest
-	:	formalParameters ('throws' typeList)? methodBody -> formalParameters? ^(THROWS typeList)? methodBody
+	:	formalParameters ('throws' typeList)? methodBody -> ^(PARAMETERS formalParameters?) ^(THROWS typeList?) methodBody
 	;
 
 	
@@ -580,13 +581,13 @@ annotationTypeElementDeclaration
 		(
 			type 
 			(
-				annotationMethodRest ';' -> ^(METHOD ^(MODIFIERS modifier*)? type annotationMethodRest)
-				| annotationConstantRest ';' -> ^(FIELD ^(MODIFIERS modifier*)? type annotationConstantRest)
+				annotationMethodRest ';' -> ^(METHOD ^(MODIFIERS modifier*) type annotationMethodRest)
+				| annotationConstantRest ';' -> ^(FIELD ^(MODIFIERS modifier*) type annotationConstantRest)
 			)
-			| classDeclaration ';'? -> ^(CLASS ^(MODIFIERS modifier*)? classDeclaration)
-			| enumDeclaration ';'? -> ^(ENUM ^(MODIFIERS modifier*)? enumDeclaration)
-			| normalInterfaceDeclaration ';'? -> ^(INTERFACE ^(MODIFIERS modifier*)? normalInterfaceDeclaration)
-			| annotationTypeDeclaration ';'? -> ^(ANNOTATION ^(MODIFIERS modifier*)? annotationTypeDeclaration)
+			| classDeclaration ';'? -> ^(CLASS ^(MODIFIERS modifier*) classDeclaration)
+			| enumDeclaration ';'? -> ^(ENUM ^(MODIFIERS modifier*) enumDeclaration)
+			| normalInterfaceDeclaration ';'? -> ^(INTERFACE ^(MODIFIERS modifier*) normalInterfaceDeclaration)
+			| annotationTypeDeclaration ';'? -> ^(ANNOTATION ^(MODIFIERS modifier*) annotationTypeDeclaration)
 		)
 	;
 	

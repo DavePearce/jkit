@@ -89,7 +89,9 @@ public class JavaFileReader {
 				new ANTLRReaderStream(reader)));
 		JavaParser parser = new JavaParser(tokenStream);
 		try {
-			return (Tree) parser.compilationUnit().getTree();
+			Tree tree = (Tree) parser.compilationUnit().getTree();
+			// printTree(tree,0,0);
+			return tree;
 		} catch (RecognitionException e) {
 		}
 		return null;
@@ -181,48 +183,38 @@ public class JavaFileReader {
 	}
 
 	protected Decl.JavaClass parseClass(Tree decl, HashSet<String> genericVariables) {
-		
-		int idx = 0;
-		List<Modifier> modifiers = new ArrayList<Modifier>();
-		if (decl.getChild(idx).getType() == MODIFIERS) {
-			modifiers = parseModifiers(decl.getChild(0), genericVariables);
-			idx++;
-		}
-		
+				
+		// ====================================================================
+		// =========================== PARSE MODIFIERS ========================
+		// ====================================================================
+
+		List<Modifier> modifiers = parseModifiers(decl.getChild(0), genericVariables);
+				
 		genericVariables = (HashSet<String>) genericVariables.clone();
-		ArrayList<Type.Variable> typeArgs = new ArrayList<Type.Variable>();
-		for (int i = 0; i != decl.getChild(idx).getChildCount(); ++i) {
-			Type.Variable tvar = parseVariableType(decl.getChild(idx).getChild(
-					i), genericVariables); 
-			typeArgs.add(tvar);
-			genericVariables.add(tvar.variable());
-		}
 
-		String name = decl.getChild(idx++).getText();
+		// ====================================================================
+		// ======================== PARSE TYPE VARIABLES ======================
+		// ====================================================================
+		
+		ArrayList<Type.Variable> typeArgs = parseTypeVariables(decl.getChild(1),genericVariables); 
 
+		// ====================================================================
+		// ============================== PARSE NAME ==========================
+		// ====================================================================
+		
+		String name = decl.getChild(1).getText();
+		
 		// ====================================================================
 		// ====================== PARSE EXTENDS CLAUSE ========================
 		// ====================================================================
 
-		Type.Clazz superclass = null;
-		if (idx < decl.getChildCount()
-				&& decl.getChild(idx).getType() == EXTENDS) {
-			superclass = parseClassType(decl.getChild(idx++).getChild(0),
-					genericVariables);
-		}
-
+		Type.Clazz superclass = parseExtends(decl.getChild(2),genericVariables);
+		
 		// ====================================================================
 		// ===================== PARSE IMPLEMENTS CLAUSE ======================
 		// ====================================================================
 
-		ArrayList<Type.Clazz> interfaces = new ArrayList<Type.Clazz>();
-		if (idx < decl.getChildCount()
-				&& decl.getChild(idx).getType() == IMPLEMENTS) {
-			Tree ch = decl.getChild(idx++);
-			for (int i = 0; i != ch.getChildCount(); ++i) {
-				interfaces.add(parseClassType(ch.getChild(i), genericVariables));
-			}
-		}
+		ArrayList<Type.Clazz> interfaces = parseImplements(decl.getChild(3), genericVariables);
 
 		// ====================================================================
 		// ======================== PARSE DECLARATIONS ========================
@@ -230,7 +222,7 @@ public class JavaFileReader {
 
 		ArrayList<Decl> declarations = new ArrayList<Decl>();
 
-		for (int i = idx; i < decl.getChildCount(); ++i) {
+		for (int i = 4; i < decl.getChildCount(); ++i) {
 			declarations.addAll(parseDeclaration(decl.getChild(i), genericVariables));
 		}
 
@@ -246,32 +238,48 @@ public class JavaFileReader {
 		}
 	}
 
-	protected Decl.JavaEnum parseEnum(Tree decl, HashSet<String> genericVariables) {
-		int idx = 0;
-		List<Modifier> modifiers = new ArrayList<Modifier>();
-		if (decl.getChild(idx).getType() == MODIFIERS) {
-			modifiers = parseModifiers(decl.getChild(0), genericVariables);
-			idx++;
+	protected Type.Clazz parseExtends(Tree tree, HashSet<String> genericVariables) {
+		if (tree.getChildCount() > 0 && tree.getType() == EXTENDS) {
+			return parseClassType(tree.getChild(0),
+					genericVariables);
 		}
+		return null;
+	}
+	
+	protected ArrayList<Type.Clazz> parseImplements(Tree tree, HashSet<String> genericVariables) {
+		ArrayList<Type.Clazz> interfaces = new ArrayList();
+		if (tree.getChildCount() > 0
+				&& tree.getType() == IMPLEMENTS) {			
+			for (int i = 0; i != tree.getChildCount(); ++i) {
+				interfaces.add(parseClassType(tree.getChild(i), genericVariables));
+			}
+		}
+		return interfaces;
+	}
+	
+	protected Decl.JavaEnum parseEnum(Tree decl, HashSet<String> genericVariables) {		
+		// ====================================================================
+		// ========================= PARSE MODIFIERS ==========================
+		// ====================================================================
 
-		String name = decl.getChild(idx++).getText();
-
+		List<Modifier> modifiers = parseModifiers(decl.getChild(0), genericVariables);
+		
+		// ====================================================================
+		// ============================ PARSE NAME ============================
+		// ====================================================================
+		
+		String name = decl.getChild(1).getText();
+		
 		// ====================================================================
 		// ===================== PARSE IMPLEMENTS CLAUSE ======================
 		// ====================================================================
-
-		ArrayList<Type.Clazz> interfaces = new ArrayList<Type.Clazz>();
-		if (idx < decl.getChildCount()
-				&& decl.getChild(idx).getType() == IMPLEMENTS) {
-			Tree ch = decl.getChild(idx++);
-			for (int i = 0; i != ch.getChildCount(); ++i) {
-				interfaces.add(parseClassType(ch.getChild(i), genericVariables));
-			}
-		}
-
+		ArrayList<Type.Clazz> interfaces = parseImplements(decl.getChild(2), genericVariables);
+						
 		// ====================================================================
 		// ========================= PARSE CONSTANTS ==========================
 		// ====================================================================
+		
+		int idx = 3;
 		ArrayList<Decl.EnumConstant> constants = new ArrayList<Decl.EnumConstant>();
 		while (idx < decl.getChildCount()
 				&& decl.getChild(idx).getType() == ENUM_CONSTANT) {
@@ -329,13 +337,9 @@ public class JavaFileReader {
 			HashSet<String> genericVariables) {
 		// === TYPE MODIFIERS ===
 
-		List<Modifier> modifiers = new ArrayList<Modifier>();
-		int idx = 0;
-		if (decl.getChild(idx).getType() == MODIFIERS) {
-			modifiers = parseModifiers(decl.getChild(0), genericVariables);
-			idx++;
-		}
-
+		List<Modifier> modifiers = parseModifiers(decl.getChild(0), genericVariables);
+		int idx = 1;
+		
 		String name = decl.getChild(idx++).getText();
 
 		ArrayList<Triple<Type, String, Value>> methods = new ArrayList<Triple<Type, String, Value>>();
@@ -363,88 +367,65 @@ public class JavaFileReader {
 
 	protected Decl.JavaMethod parseMethod(Tree method, HashSet<String> genericVariables) {
 		genericVariables = (HashSet<String>) genericVariables.clone(); 
-		// === TYPE MODIFIERS ===
 
-		List<Modifier> modifiers = new ArrayList<Modifier>();
-		int idx = 0;
-		if (method.getChild(idx).getType() == MODIFIERS) {
-			modifiers = parseModifiers(method.getChild(0), genericVariables);
-			idx++;
-		}
+		// ====================================================================
+		// =========================== PARSE MODIFIERS ========================
+		// ====================================================================
 
-		// === TYPE ARGUMENTS ===
+		List<Modifier> modifiers = parseModifiers(method.getChild(0), genericVariables);
 
-		ArrayList<Type.Variable> typeArgs = new ArrayList<Type.Variable>();
-		while (method.getChild(idx).getType() == TYPE_PARAMETER) {
-			Type.Variable tvar = parseVariableType(method.getChild(idx++), genericVariables); 
-			typeArgs.add(tvar);
-			genericVariables.add(tvar.variable());
-		}
+		// ====================================================================
+		// ========================= PARSE TYPE VARIABLES =====================
+		// ====================================================================
 
-		String name = method.getChild(idx++).getText();
+		ArrayList<Type.Variable> typeArgs = parseTypeVariables(method.getChild(1),genericVariables);		
 
+		// ====================================================================
+		// =============================== PARSE NAME =========================
+		// ====================================================================
+		
+		String name = method.getChild(1).getText();
+				
 		Type returnType = null;
 
-		// if no return type, then is a constructor
-		if (method.getChild(idx).getType() == TYPE) {
-			returnType = parseType(method.getChild(idx), genericVariables);
-		}
-		idx = idx + 1;
-
-		// === FORMAL PARAMETERS ===
-
-		ArrayList<Triple<String, List<Modifier>, Type>> params = new ArrayList<Triple<String, List<Modifier>, Type>>();
-
-		while (idx < method.getChildCount()
-				&& method.getChild(idx).getType() == PARAMETER) {
-			Tree c = method.getChild(idx);
-			List<Modifier> pModifiers = parseModifiers(c.getChild(0), genericVariables);			
-			Type t = parseType(c.getChild(1), genericVariables);		
-			String n = c.getChild(2).getText();
-
-			for (int i = 3; i < c.getChildCount(); i = i + 2) {
-				t = new Type.Array(t);
-			}
-
-			params.add(new Triple(n, pModifiers, t));
-			idx++;
-		}
-
-		// === VAR ARGS ===
-		boolean varargs = false;
-		if (idx < method.getChildCount()
-				&& method.getChild(idx).getType() == VARARGS) {
-			Tree c = method.getChild(idx);
-			List<Modifier> pModifiers = parseModifiers(c.getChild(0), genericVariables);
-			Type t = parseType(c.getChild(1), genericVariables);
-			String n = c.getChild(2).getText();
-			params.add(new Triple(n, pModifiers, t));
-			idx++;
-			varargs = true;
-		}
+		// ====================================================================
+		// ========================== PARSE RETURN TYPE =======================
+		// ====================================================================		
 		
-		// === THROWS CLAUSE ===
+		// if no return type, then is a constructor
+		if (method.getChild(2).getType() == TYPE) {
+			returnType = parseType(method.getChild(2), genericVariables);
+		}		
 
-		ArrayList<Type.Clazz> exceptions = new ArrayList<Type.Clazz>();
+		// ====================================================================
+		// =========================== PARSE PARAMETERS =======================
+		// ====================================================================		
+	
+		ArrayList<Triple<String, List<Modifier>, Type>> params = parseParameters(
+				method.getChild(3), genericVariables);		
 
-		if (idx < method.getChildCount()
-				&& method.getChild(idx).getType() == THROWS) {
-			Tree tt = method.getChild(idx++);
-			for (int i = 0; i != tt.getChildCount(); ++i) {
-				exceptions.add(parseClassType(tt.getChild(i), genericVariables));
-			}
-		}
+		boolean varargs = hasVarArgs(method.getChild(3));
+				
+		// ====================================================================
+		// ============================= PARSE THROWS =========================
+		// ====================================================================		
 
-		// === METHOD BODY ===
+		ArrayList<Type.Clazz> exceptions = parseThrows(method.getChild(4),genericVariables);
+
+		// ====================================================================
+		// ============================== PARSE BODY ==========================
+		// ====================================================================		
 
 		Stmt.Block block = null;
 
-		if (idx < method.getChildCount()
-				&& method.getChild(idx).getType() == BLOCK) {
-			// do nothing
-			block = parseBlock(method.getChild(idx), genericVariables);
+		if(method.getChildCount() > 5) {
+			block = parseBlock(method.getChild(5), genericVariables);
 		}
 
+		// ====================================================================
+		// ========================== CREATE DECLARATION ======================
+		// ====================================================================		
+		
 		if (returnType == null) {
 			return new Decl.JavaConstructor(modifiers, name, params, varargs,
 					typeArgs, exceptions, block, new SourceLocation(method
@@ -456,19 +437,24 @@ public class JavaFileReader {
 		}
 	}
 
+	protected ArrayList<Type.Clazz> parseThrows(Tree tree,
+			HashSet<String> genericVariables) {
+		ArrayList<Type.Clazz> exceptions = new ArrayList();
+		for (int i = 0; i != tree.getChildCount(); ++i) {
+			exceptions.add(parseClassType(tree.getChild(i), genericVariables));
+		}
+		return exceptions;
+	}
+	
 	protected List<Decl.JavaField> parseField(Tree tree, HashSet<String> genericVariables) {
 		assert tree.getType() == FIELD;
 
 		ArrayList<Decl.JavaField> fields = new ArrayList<Decl.JavaField>();
 
 		// === MODIFIERS ===
-		List<Modifier> modifiers = new ArrayList<Modifier>();
-		int idx = 0;
-		if (tree.getChild(idx).getType() == MODIFIERS) {
-			modifiers = parseModifiers(tree.getChild(0), genericVariables);
-			idx++;
-		}
-
+		List<Modifier> modifiers = parseModifiers(tree.getChild(0), genericVariables);
+		int idx = 1;
+		
 		// === FIELD TYPE ===
 		Type type = parseType(tree.getChild(idx++), genericVariables);
 
@@ -1641,7 +1627,50 @@ public class JavaFileReader {
 		}
 		return mods;
 	}
+	
+	protected ArrayList<Type.Variable> parseTypeVariables(Tree child,
+			HashSet<String> genericVariables) {
+		ArrayList<Type.Variable> typeArgs = new ArrayList<Type.Variable>();
+		for (int i = 0; i != child.getChildCount(); ++i) {
+			Type.Variable tvar = parseVariableType(child.getChild(i),
+					genericVariables);
+			typeArgs.add(tvar);
+			genericVariables.add(tvar.variable());
+		}
+		return typeArgs;
+	}
 
+	protected boolean hasVarArgs(Tree paramList) {
+		for (int i = 0; i != paramList.getChildCount(); ++i) {
+			Tree c = paramList.getChild(i);
+			if (c.getType() == VARARGS) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	protected ArrayList<Triple<String, List<Modifier>, Type>> parseParameters(
+			Tree paramList, HashSet<String> genericVariables) {
+		ArrayList<Triple<String, List<Modifier>, Type>> params = new ArrayList<Triple<String, List<Modifier>, Type>>();		
+		
+		for (int i = 0; i != paramList.getChildCount(); ++i) {
+			Tree c = paramList.getChild(i);			
+			List<Modifier> pModifiers = parseModifiers(c.getChild(0),
+					genericVariables);
+			Type t = parseType(c.getChild(1), genericVariables);
+			String n = c.getChild(2).getText();
+
+			for (int j = 3; j < c.getChildCount(); j = j + 2) {
+				t = new Type.Array(t);
+			}
+
+			params.add(new Triple(n, pModifiers, t));			
+		}
+
+		return params;
+	}
+	
 	protected static Type parseType(Tree type, HashSet<String> genericVariables) {
 		assert type.getType() == TYPE;
 
