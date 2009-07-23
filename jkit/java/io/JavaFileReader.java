@@ -1581,48 +1581,52 @@ public class JavaFileReader {
 	protected List<Modifier> parseModifiers(Tree ms, HashSet<String> genericVariables) {
 		ArrayList<Modifier> mods = new ArrayList<Modifier>();
 		for (int i = 0; i != ms.getChildCount(); ++i) {
-			Tree mc = ms.getChild(i);
-			SourceLocation loc = new SourceLocation(mc.getLine(),mc.getCharPositionInLine());
-			String m = mc.getText();
-			if(m.charAt(0) <= 'p') {
-				if (m.equals("public")) {
-					mods.add(new Modifier.Public(loc));
-				} else if (m.equals("private")) {
-					mods.add(new Modifier.Private(loc));
-				} else if (m.equals("protected")) {
-					mods.add(new Modifier.Protected(loc));
-				} else if (m.equals("abstract")) {
-					mods.add(new Modifier.Abstract(loc));
-				} else if (m.equals("final")) {
-					mods.add(new Modifier.Final(loc));
-				} else if (m.equals("native")) {
-					mods.add(new Modifier.Native(loc));
-				} 
-			} else if(m.charAt(0) > 'p') {
-				if (m.equals("static")) {
-					mods.add(new Modifier.Static(loc));
-				} else if (m.equals("synchronized")) {
-					mods.add(new Modifier.Synchronized(loc));
-				} else if (m.equals("strictfp")) {
-					mods.add(new Modifier.StrictFP(loc));
-				} else if (m.equals("transient")) {
-					mods.add(new Modifier.Transient(loc));
-				} else if (m.equals("volatile")) {
-					mods.add(new Modifier.Volatile(loc));
-				} 
-			} else if (mc.getType() == ANNOTATION) {
-				String name = mc.getChild(0).getText();
-				ArrayList<Expr> arguments = new ArrayList<Expr>();
-				for (int j = 1; j != mc.getChildCount(); ++j) {
-					arguments.add(parseExpression(mc.getChild(j), genericVariables));
-				}
-				mods.add(new Modifier.Annotation(name, arguments,loc));
-			} else {
-				throw new SyntaxError("not expecting " + m, mc.getLine(), mc
-						.getCharPositionInLine());
-			}
+			Tree modifier = ms.getChild(i);						
+			mods.add(parseModifier(modifier,genericVariables));			
 		}
 		return mods;
+	}
+	
+	protected Modifier parseModifier(Tree tree, HashSet<String> genericVariables) {
+		String modifier = tree.getText();
+		SourceLocation loc = new SourceLocation(tree.getLine(),tree.getCharPositionInLine());
+		if(modifier.charAt(0) <= 'p') {
+			if (modifier.equals("public")) {
+				return new Modifier.Public(loc);
+			} else if (modifier.equals("private")) {
+				return new Modifier.Private(loc);
+			} else if (modifier.equals("protected")) {
+				return new Modifier.Protected(loc);
+			} else if (modifier.equals("abstract")) {
+				return new Modifier.Abstract(loc);
+			} else if (modifier.equals("final")) {
+				return new Modifier.Final(loc);
+			} else if (modifier.equals("native")) {
+				return new Modifier.Native(loc);
+			} 
+		} else if(modifier.charAt(0) > 'p') {
+			if (modifier.equals("static")) {
+				return new Modifier.Static(loc);
+			} else if (modifier.equals("synchronized")) {
+				return new Modifier.Synchronized(loc);
+			} else if (modifier.equals("strictfp")) {
+				return new Modifier.StrictFP(loc);
+			} else if (modifier.equals("transient")) {
+				return new Modifier.Transient(loc);
+			} else if (modifier.equals("volatile")) {
+				return new Modifier.Volatile(loc);
+			} 
+		} else if (tree.getType() == ANNOTATION) {
+			String name = tree.getChild(0).getText();
+			ArrayList<Expr> arguments = new ArrayList<Expr>();
+			for (int j = 1; j != tree.getChildCount(); ++j) {
+				arguments.add(parseExpression(tree.getChild(j), genericVariables));
+			}
+			return new Modifier.Annotation(name, arguments,loc);
+		} 
+		
+		throw new SyntaxError("not expecting " + modifier, tree.getLine(), tree
+					.getCharPositionInLine());					
 	}
 	
 	protected ArrayList<Type.Variable> parseTypeVariables(Tree child,
