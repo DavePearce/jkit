@@ -1589,8 +1589,17 @@ public class JavaFileReader {
 	
 	protected Modifier parseModifier(Tree tree, HashSet<String> genericVariables) {
 		String modifier = tree.getText();
-		SourceLocation loc = new SourceLocation(tree.getLine(),tree.getCharPositionInLine());
-		if(modifier.charAt(0) <= 'p') {
+		SourceLocation loc = new SourceLocation(tree.getLine(), tree
+				.getCharPositionInLine());
+		if (tree.getType() == ANNOTATION) {
+			String name = tree.getChild(0).getText();
+			ArrayList<Expr> arguments = new ArrayList<Expr>();
+			for (int j = 1; j != tree.getChildCount(); ++j) {
+				arguments.add(parseExpression(tree.getChild(j),
+						genericVariables));
+			}
+			return new Modifier.Annotation(name, arguments, loc);
+		} else if (modifier.charAt(0) <= 'p') {
 			if (modifier.equals("public")) {
 				return new Modifier.Public(loc);
 			} else if (modifier.equals("private")) {
@@ -1603,8 +1612,8 @@ public class JavaFileReader {
 				return new Modifier.Final(loc);
 			} else if (modifier.equals("native")) {
 				return new Modifier.Native(loc);
-			} 
-		} else if(modifier.charAt(0) > 'p') {
+			}
+		} else if (modifier.charAt(0) > 'p') {
 			if (modifier.equals("static")) {
 				return new Modifier.Static(loc);
 			} else if (modifier.equals("synchronized")) {
@@ -1615,14 +1624,7 @@ public class JavaFileReader {
 				return new Modifier.Transient(loc);
 			} else if (modifier.equals("volatile")) {
 				return new Modifier.Volatile(loc);
-			} 
-		} else if (tree.getType() == ANNOTATION) {
-			String name = tree.getChild(0).getText();
-			ArrayList<Expr> arguments = new ArrayList<Expr>();
-			for (int j = 1; j != tree.getChildCount(); ++j) {
-				arguments.add(parseExpression(tree.getChild(j), genericVariables));
 			}
-			return new Modifier.Annotation(name, arguments,loc);
 		} 
 		
 		throw new SyntaxError("not expecting " + modifier, tree.getLine(), tree
