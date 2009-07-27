@@ -70,17 +70,17 @@ public abstract class ForwardAnalysis<T extends FlowSet> {
 				JilStmt.Goto gto = (JilStmt.Goto) stmt;
 				int target = labels.get(gto.label());
 				merge(target,store,worklist);
-			} else if(stmt instanceof JilStmt.IfGoto) {
+			} else if(stmt instanceof JilStmt.IfGoto) {				
 				JilStmt.IfGoto gto = (JilStmt.IfGoto) stmt;
 				int target = labels.get(gto.label());
 				T t_store = transfer(gto.condition(),store);
-				T f_store = transfer(new JilExpr.UnOp(gto.condition(), JilExpr.UnOp.NOT,Types.T_BOOL),store);
-				merge(target,transfer(stmt,t_store),worklist);
-				merge(current+1,transfer(stmt,f_store),worklist);
-			} else if(!(stmt instanceof JilStmt.Return || stmt instanceof JilStmt.Throw)) {
+				T f_store = transfer(new JilExpr.UnOp(gto.condition(), JilExpr.UnOp.NOT,Types.T_BOOL),store);				
+				merge(target,t_store,worklist);
+				merge(current+1,f_store,worklist);
+			} else if(stmt instanceof JilStmt.Return || stmt instanceof JilStmt.Throw) {
 				// collect the final store as the one at the end of the list
 				merge(body.size(),transfer(stmt,store),worklist);			
-			} else {				
+			} else if(!(stmt instanceof JilStmt.Label)){				
 				merge(current+1,transfer(stmt,store),worklist);
 			}
 		}

@@ -98,7 +98,7 @@ public class VariableDefinitions extends ForwardAnalysis<UnionFlowSet<String>> {
 		} else if(stmt instanceof JilStmt.Unlock) {		
 			return transfer((JilStmt.Unlock) stmt,in);
 		} else {
-			syntax_error("unknown statement encountered",stmt);
+			syntax_error("unknown statement encountered (" + stmt.getClass().getName() + ")",stmt);
 			return null;
 		}		
 	}
