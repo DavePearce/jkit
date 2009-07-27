@@ -116,7 +116,7 @@ public class VariableDefinitions extends ForwardAnalysis<UnionFlowSet<String>> {
 		return undefs;
 	}
 	
-	public UnionFlowSet<String> transfer(JilExpr.Invoke stmt, UnionFlowSet<String> undefs) {
+	public UnionFlowSet<String> transfer(JilExpr.Invoke stmt, UnionFlowSet<String> undefs) {		
 		Set<String> uses = uses(stmt.target(),stmt);
 		for(JilExpr e : stmt.parameters()) {
 			uses.addAll(uses(e,stmt));

@@ -27,6 +27,7 @@ import java.util.List;
 
 import jkit.jil.tree.*;
 import jkit.jil.util.*;
+import jkit.util.Pair;
 
 public abstract class ForwardAnalysis<T extends FlowSet> {
 	
@@ -36,7 +37,7 @@ public abstract class ForwardAnalysis<T extends FlowSet> {
 	/**
 	 * Begins the Forward Analysis traversal of a method
 	 */	
-	public void start(JilMethod method, T initStore) {		
+	public void start(JilMethod method, T initStore) {				
 		HashMap<String,Integer> labels = new HashMap();
 		List<JilStmt> body = method.body();
 		
@@ -58,13 +59,20 @@ public abstract class ForwardAnalysis<T extends FlowSet> {
 		// third, iterate until a fixed point is reached!
 		while(!worklist.isEmpty()) {
 			Integer current = select(worklist);
+			
 			if(current == body.size()) {
 				continue;
 			}
-			
+									
 			JilStmt stmt = body.get(current);
 			// prestore represents store going into this point
 			T store = stores.get(current);
+									
+			// now, add any exceptional edges
+			for(Pair<Type.Clazz,String> ex : stmt.exceptions()) {
+				int target = labels.get(ex.second());
+				merge(target,store,worklist);
+			}
 			
 			if(stmt instanceof JilStmt.Goto) {
 				JilStmt.Goto gto = (JilStmt.Goto) stmt;
@@ -77,11 +85,29 @@ public abstract class ForwardAnalysis<T extends FlowSet> {
 				T f_store = transfer(new JilExpr.UnOp(gto.condition(), JilExpr.UnOp.NOT,Types.T_BOOL),store);				
 				merge(target,t_store,worklist);
 				merge(current+1,f_store,worklist);
+			} else if(stmt instanceof JilStmt.Switch) {
+				JilStmt.Switch swt = (JilStmt.Switch) stmt;
+				JilExpr defCase = new JilExpr.Bool(false);
+				for(Pair<JilExpr.Number,String> c : swt.cases()) {
+					int target = labels.get(c.second());
+					JilExpr.BinOp cond = new JilExpr.BinOp(swt.condition(), c
+							.first(), JilExpr.BinOp.EQ, Types.T_BOOL);
+					defCase = new JilExpr.BinOp(defCase, cond, JilExpr.BinOp.OR, Types.T_BOOL);
+					T t_store = transfer(cond, store);
+					merge(target,t_store,worklist);
+				}
+				// And, don't forget the default label!
+				int deftarget = labels.get(swt.defaultLabel());
+				defCase = new JilExpr.UnOp(defCase, JilExpr.UnOp.NOT,Types.T_BOOL);	
+				T d_store = transfer(defCase, store);
+				merge(deftarget,d_store,worklist);				
 			} else if(stmt instanceof JilStmt.Return || stmt instanceof JilStmt.Throw) {
 				// collect the final store as the one at the end of the list
 				merge(body.size(),transfer(stmt,store),worklist);			
 			} else if(!(stmt instanceof JilStmt.Label)){				
 				merge(current+1,transfer(stmt,store),worklist);
+			} else if(stmt instanceof JilStmt.Label) {
+				merge(current+1,store,worklist);
 			}
 		}
 	}	
@@ -97,7 +123,10 @@ public abstract class ForwardAnalysis<T extends FlowSet> {
 		T tmp = stores.get(p);		
 		if(tmp != null) {
 			T ntmp = (T) tmp.join(m);
-			if(ntmp != tmp) { worklist.add(p); }			
+			if(ntmp != tmp) {
+				stores.put(p, ntmp);				
+				worklist.add(p); 
+			}			
 		} else {
 			stores.put(p, m);
 			worklist.add(p);

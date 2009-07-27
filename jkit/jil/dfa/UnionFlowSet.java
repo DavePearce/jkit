@@ -47,12 +47,12 @@ public class UnionFlowSet<T> implements FlowSet, Cloneable {
 		return r;
 	}
 	
-	public UnionFlowSet<T> join(FlowSet _fs) {
+	public UnionFlowSet<T> join(FlowSet _fs) {		
 		if(_fs instanceof UnionFlowSet) {
-			UnionFlowSet fs = (UnionFlowSet) _fs.clone();			
-			if(fs.data.addAll(this.data)) {
+			UnionFlowSet<T> fs = (UnionFlowSet<T>) _fs.clone();			
+			if(fs.data.addAll(this.data)) {				
 				return fs;
-			} else {
+			} else {				
 				return this;
 			}			
 		}
@@ -81,5 +81,18 @@ public class UnionFlowSet<T> implements FlowSet, Cloneable {
 	
 	public boolean contains(String s) {
 		return data.contains(s);
+	}
+	
+	public String toString() {
+		String r = "{";
+		boolean firstTime=true;
+		for(T x : data) {
+			if(!firstTime) {
+				r = r + ", ";				
+			}
+			firstTime=false;
+			r = r + x;
+		}
+		return r + "}";
 	}
 }
