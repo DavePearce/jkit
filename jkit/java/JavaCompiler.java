@@ -598,7 +598,7 @@ public class JavaCompiler implements Compiler {
 	protected void variableDefinitions(File srcfile, JilClass jfile, ClassLoader loader) {
 		long start = System.currentTimeMillis();
 		new VariableDefinitions().apply(jfile);
-		logTimedMessage("[" + srcfile.getPath() + "] Eliminated Dead code",
+		logTimedMessage("[" + srcfile.getPath() + "] Definite Assignment",
 				(System.currentTimeMillis() - start));
 	}
 	
