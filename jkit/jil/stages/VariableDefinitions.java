@@ -54,9 +54,6 @@ import jkit.util.*;
  * 
  */
 public class VariableDefinitions extends ForwardAnalysis<UnionFlowSet<String>> {
-	public String description() {
-		return "Ensure variables are defined before used";
-	}
 	
 	public void apply(JilClass owner) {
 		for(JilMethod m : owner.methods()) {			
