@@ -21,134 +21,70 @@
 
 package jkit.jil.dfa;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.IdentityHashMap;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.List;
 
-import jkit.bytecode.ClassFileWriter;
-import jkit.jkil.FlowGraph;
-import jkit.jkil.FlowGraph.Expr;
-import jkit.jkil.FlowGraph.Point;
-import jkit.util.Triple;
-import jkit.util.graph.Graph;
+import jkit.jil.tree.*;
+import jkit.jil.util.*;
 
 public abstract class ForwardAnalysis<T extends FlowSet> {
 	
-	private final TreeSet<Point> worklist;
-	private final HashMap<Point, T> stores = new HashMap<Point, T>();
-	private HashMap<Point, Integer> order = new HashMap<Point, Integer>();
-	//private Graph<Point, Triple<Point, Point, Expr>> cfg;
 	
-	public ForwardAnalysis() {
-		worklist = new TreeSet<Point>(new Comparator<Point>() {
-			public int compare(Point a, Point b) {
-				int i = order.get(a);
-				int j = order.get(b);
-				
-				if(i < j)
-					return -1;
-				else if(i == j)
-					return 0;
-				return 1;
-			}
-		});
-	}
+	private final HashMap<Integer, T> stores = new HashMap<Integer, T>();	
 	
 	/**
-	 * Begins the Forward Analysis traversal of a CFG stating a defined entry point.
-	 * 
-	 * @param cfg CFG graph to traverse
-	 * @param entry Entry Point of the CFG traversal.  This can be any Point in the CFG, 
-	 * 				it does not necessarily need to be that first point in the CFG
-	 * @param store Initial FlowSet
-	 */
-	@SuppressWarnings("unchecked")
-	public void start(Graph<Point, Triple<Point, Point, JilExpr>> cfg, Point entry, T initStore) {
-		reset();
+	 * Begins the Forward Analysis traversal of a method
+	 */	
+	public void start(JilMethod method, T initStore) {		
+		HashMap<String,Integer> labels = new HashMap();
+		List<JilStmt> body = method.body();
 		
-		ArrayList<Point> order = ClassFileWriter.cfgOrder(entry, cfg);
-
-		int i = 0;
-		for(Point p : order) {
-			this.order.put(p, i++);
+		// First, build the label map
+		int pos = 0;
+		for(JilStmt s : body) {
+			if(s instanceof JilStmt.Label) {
+				JilStmt.Label lab = (JilStmt.Label) s;				
+				labels.put(lab.label(),pos);
+			}
+			pos++;
 		}
 		
-		stores.put(entry, initStore);
-		worklist.add(entry);
+		// Second, initialise the worklist
+		HashSet<Integer> worklist = new HashSet();
+		stores.put(0, initStore);
+		worklist.add(0);
 		
+		// third, iterate until a fixed point is reached!
 		while(!worklist.isEmpty()) {
-			Point current = select();
+			Integer current = select(worklist);
+			if(current == body.size()) {
+				continue;
+			}
+			
+			JilStmt stmt = body.get(current);
 			// prestore represents store going into this point
-			T preStore = stores.get(current);
-			// poststore represents store after effect of statement at this
-			// point is applied.
-			T postStore = (T) preStore.clone();
-						
-			// Get all edges emanating from the current point, and split out the
-			// exceptional edges. The latter is important since the semantics of
-			// exceptional edges is subtly different others --- they occur
-			// before the statements effect occurs. For example, this is really
-			// important in dealing with definite assignment.  Consider:
-			//
-			//  int x; 
-			//  try { x = 1 / 0; } 
-			//  catch(Exception e) {} 
-			//  x = x + 1;
-			//
-			// Here, the exceptional edge going from the statement "x=1/0"
-			// represents a flow that occurs before the assignment to x takes
-			// effect. Thus, the above has a problem because x may not be
-			// assigned before reaching the last statement.
+			T store = stores.get(current);
 			
-			Set<Triple<Point, Point, JilExpr>> flows = cfg.from(current);
-			Set<Triple<Point, Point, JilExpr>> normalEdges = new HashSet<Triple<Point, Point, JilExpr>>();
-			Set<Triple<Point, Point, JilExpr>> exceptionalEdges = new HashSet<Triple<Point, Point, JilExpr>>();
-			
-			for(Triple<Point, Point, JilExpr> t : flows) {
-				if(!(t.third() instanceof FlowGraph.Exception)) {
-					normalEdges.add(t);
-				} else {
-					exceptionalEdges.add(t);
-				}
-			}
-			
-			// At this point, we propagate our along all outgoing exceptional
-			// edges.
-			for(Triple<Point, Point, JilExpr>  e : exceptionalEdges) {							
-				merge(e.second(), preStore);
-			}
-			
-			// Now, we apply the effect of the current statement.
-			transfer(current, postStore);
-			
-			// Finally, we propagate along all outgoing edges
-			for(Triple<Point, Point, JilExpr>  e : normalEdges) {							
-				JilExpr condition = e.third();
-				if(condition == null) {
-					// this is an optimised case to avoid the clone as we know
-					// it's not necessary (since the condition is null and,
-					// hence, this is a unconditional edge).
-					merge(e.second(), postStore);
-				} else {
-					// Ok, apply the clone then.
-					T postPostStore = (T) postStore.clone();
-					transfer(current, condition, postPostStore);
-					merge(e.second(), postPostStore);
-				}
+			if(stmt instanceof JilStmt.Goto) {
+				JilStmt.Goto gto = (JilStmt.Goto) stmt;
+				int target = labels.get(gto.label());
+				merge(target,store,worklist);
+			} else if(stmt instanceof JilStmt.IfGoto) {
+				JilStmt.IfGoto gto = (JilStmt.IfGoto) stmt;
+				int target = labels.get(gto.label());
+				T t_store = transfer(gto.condition(),store);
+				T f_store = transfer(new JilExpr.UnOp(gto.condition(), JilExpr.UnOp.NOT,Types.T_BOOL),store);
+				merge(target,transfer(stmt,t_store),worklist);
+				merge(current+1,transfer(stmt,f_store),worklist);
+			} else if(!(stmt instanceof JilStmt.Return || stmt instanceof JilStmt.Throw)) {
+				// collect the final store as the one at the end of the list
+				merge(body.size(),transfer(stmt,store),worklist);			
+			} else {				
+				merge(current+1,transfer(stmt,store),worklist);
 			}
 		}
-	}
-	
-	private void reset() {
-		worklist.clear();
-		stores.clear();
-		order.clear();
-	}
+	}	
 	
 	/**
 	 * Merges a FlowSet with a certain Point and adds it to the worklist
@@ -157,10 +93,11 @@ public abstract class ForwardAnalysis<T extends FlowSet> {
 	 * @param p Destination Point for merge
 	 * @param m FlowSet to merge into point
 	 */
-	private void merge(Point p, T m) {
-		T tmp = stores.get(p);
+	private void merge(Integer p, T m, HashSet<Integer> worklist) {
+		T tmp = stores.get(p);		
 		if(tmp != null) {
-			if(tmp.join(m)) { worklist.add(p); }
+			T ntmp = (T) tmp.join(m);
+			if(ntmp != tmp) { worklist.add(p); }			
 		} else {
 			stores.put(p, m);
 			worklist.add(p);
@@ -172,9 +109,9 @@ public abstract class ForwardAnalysis<T extends FlowSet> {
 	 * 
 	 * @return Next Point from worklist, or null if worklist is empty
 	 */
-	private Point select() {
+	private Integer select(HashSet<Integer> worklist) {
 		if(!worklist.isEmpty()) {
-			Point p = worklist.iterator().next();
+			Integer p = worklist.iterator().next();
 			worklist.remove(p);
 			return p;
 		}
@@ -184,12 +121,13 @@ public abstract class ForwardAnalysis<T extends FlowSet> {
 	}
 	
 	/**
-	 * Transfer function for Code Points
+	 * Transfer function for Code Statements
 	 * 
-	 * @param p Point containing a statement that needs to be evaluated
+	 * @param e Expr to evaluate
 	 * @param m FlowSet to use in evaluation
 	 */
-	public abstract void transfer(Point p, T m);
+	
+	public abstract T transfer(JilStmt stmt, T m);
 	
 	/**
 	 * Transfer function for Code Expressions.  This is used primarily for
@@ -198,6 +136,6 @@ public abstract class ForwardAnalysis<T extends FlowSet> {
 	 * @param e Expr to evaluate
 	 * @param m FlowSet to use in evaluation
 	 */
-	public abstract void transfer(Point p, JilExpr e, T m);
+	public abstract T transfer(JilExpr e, T m);
 
 }

@@ -37,12 +37,15 @@ public class UnionFlowSet<T> extends HashSet<T> implements FlowSet, Set<T>  {
 	public UnionFlowSet() {}
 	public UnionFlowSet(Collection<? extends T> src) { super(src); }
 	
-	public boolean join(FlowSet _fs) {
+	public UnionFlowSet<T> join(FlowSet _fs) {
 		if(_fs instanceof UnionFlowSet) {
-			// there is probably a way to get rid of the unsafe cast here.
-			UnionFlowSet fs = (UnionFlowSet) _fs;
-			return this.addAll(fs);
+			UnionFlowSet fs = (UnionFlowSet) _fs.clone();			
+			if(fs.addAll(this)) {
+				return fs;
+			} else {
+				return this;
+			}			
 		}
-		return false;
+		return null;
 	}
 }
