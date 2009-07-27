@@ -174,6 +174,8 @@ public class VariableDefinitions extends ForwardAnalysis<UnionFlowSet<String>> {
 			return uses((JilExpr.UnOp) expr, s);								
 		} else if(expr instanceof JilExpr.Cast) {
 			return uses((JilExpr.Cast) expr, s);			 			
+		}  else if(expr instanceof JilExpr.Convert) {
+			return uses((JilExpr.Convert) expr, s);			 			
 		} else if(expr instanceof JilExpr.ClassVariable) {
 			return uses((JilExpr.ClassVariable) expr, s);			 			
 		} else if(expr instanceof JilExpr.Deref) {
