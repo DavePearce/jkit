@@ -1,4 +1,4 @@
-// $ANTLR 3.1 jkit/java/parser/Java.g 2009-07-23 16:26:10
+// $ANTLR 3.1 jkit/java/parser/Java.g 2009-07-27 13:31:38
 
 package jkit.java.parser;
 import jkit.compiler.SyntaxError;
@@ -451,7 +451,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: typeDeclaration, packageDeclaration, importDeclaration
+            // elements: importDeclaration, packageDeclaration, typeDeclaration
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -1155,7 +1155,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: modifier, enumDeclaration
+                    // elements: enumDeclaration, modifier
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -1208,7 +1208,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: normalInterfaceDeclaration, modifier
+                    // elements: modifier, normalInterfaceDeclaration
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -1460,7 +1460,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: typeList, type, typeParameters, classBody, Identifier
+            // elements: Identifier, typeList, type, typeParameters, classBody
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -1732,7 +1732,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: bound, Identifier
+            // elements: Identifier, bound
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -1989,7 +1989,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: enumBody, typeList, Identifier
+            // elements: typeList, enumBody, Identifier
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -2156,7 +2156,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: enumBodyDeclarations, enumConstants
+            // elements: enumConstants, enumBodyDeclarations
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -2431,7 +2431,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: annotations, arguments, classBody, Identifier
+            // elements: classBody, arguments, Identifier, annotations
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -2694,7 +2694,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: Identifier, typeParameters, typeList, interfaceBody
+            // elements: typeParameters, typeList, Identifier, interfaceBody
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -3398,7 +3398,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: voidMethodDeclaratorRest, Identifier, modifier
+                            // elements: modifier, voidMethodDeclaratorRest, Identifier
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -3476,7 +3476,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: constructorDeclaratorRest, modifier, Identifier
+                            // elements: Identifier, modifier, constructorDeclaratorRest
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -3544,7 +3544,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: modifier, normalInterfaceDeclaration
+                            // elements: normalInterfaceDeclaration, modifier
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -3597,7 +3597,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: annotationTypeDeclaration, modifier
+                            // elements: modifier, annotationTypeDeclaration
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -3650,7 +3650,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: modifier, classDeclaration
+                            // elements: classDeclaration, modifier
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -3811,7 +3811,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: typeParameters, genericMethodOrConstructorRest
+            // elements: genericMethodOrConstructorRest, typeParameters
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -3964,7 +3964,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: type, methodDeclaratorRest, Identifier
+                    // elements: methodDeclaratorRest, type, Identifier
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -4008,7 +4008,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: Identifier, methodDeclaratorRest
+                    // elements: methodDeclaratorRest, Identifier
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -4057,7 +4057,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: Identifier, constructorDeclaratorRest
+                    // elements: constructorDeclaratorRest, Identifier
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -4446,7 +4446,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: Identifier, modifier, interfaceMethodDeclaratorRest, type
+                            // elements: type, modifier, interfaceMethodDeclaratorRest, Identifier
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -4572,7 +4572,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: voidInterfaceMethodDeclaratorRest, modifier, Identifier
+                            // elements: Identifier, voidInterfaceMethodDeclaratorRest, modifier
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -4700,7 +4700,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: modifier, annotationTypeDeclaration
+                            // elements: annotationTypeDeclaration, modifier
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -4979,7 +4979,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: methodBody, typeList, formalParameters
+                    // elements: methodBody, formalParameters, typeList
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -5202,7 +5202,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: methodBody, typeList, formalParameters
+                    // elements: methodBody, formalParameters, typeList
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -5258,7 +5258,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: formalParameters, typeList
+                    // elements: typeList, formalParameters
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -5398,7 +5398,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: typeList, formalParameters
+            // elements: formalParameters, typeList
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -5546,7 +5546,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: typeParameters, type, interfaceMethodDeclaratorRest, Identifier
+                    // elements: interfaceMethodDeclaratorRest, typeParameters, type, Identifier
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -5594,7 +5594,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: interfaceMethodDeclaratorRest, typeParameters, Identifier
+                    // elements: interfaceMethodDeclaratorRest, Identifier, typeParameters
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -5726,7 +5726,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: typeList, formalParameters
+            // elements: formalParameters, typeList
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -5863,7 +5863,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: methodBody, formalParameters, typeList
+            // elements: formalParameters, methodBody, typeList
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -6083,7 +6083,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: Identifier, variableDeclaratorRest
+            // elements: variableDeclaratorRest, Identifier
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -6479,7 +6479,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: constantDeclaratorRest, Identifier
+            // elements: Identifier, constantDeclaratorRest
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -7767,7 +7767,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: 138, primitiveType
+                    // elements: primitiveType, 138
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -7871,7 +7871,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: typeArguments, Identifier
+            // elements: Identifier, typeArguments
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -8302,7 +8302,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: type, 159
+                            // elements: 159, type
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -8382,7 +8382,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: 159, type
+                            // elements: type, 159
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -8778,7 +8778,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: variableModifier, variableDeclaratorId, formalParameterDecls, type
+                    // elements: variableDeclaratorId, formalParameterDecls, type, variableModifier
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -8841,7 +8841,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: variableModifier, type, variableDeclaratorId
+                    // elements: variableDeclaratorId, type, variableModifier
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -10343,7 +10343,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: Identifier, annotationTypeBody
+            // elements: annotationTypeBody, Identifier
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -10706,7 +10706,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: type, annotationMethodRest, modifier
+                            // elements: annotationMethodRest, modifier, type
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -10908,7 +10908,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: modifier, enumDeclaration
+                    // elements: enumDeclaration, modifier
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -11896,7 +11896,7 @@ public class JavaParser extends Parser {
                     int LA104_0 = input.LA(1);
 
                     if ( (LA104_0==172) ) {
-                        int LA104_2 = input.LA(2);
+                        int LA104_1 = input.LA(2);
 
                         if ( (synpred154_Java()) ) {
                             alt104=1;
@@ -11924,7 +11924,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: statement, statement, parExpression
+                    // elements: parExpression, statement, statement
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -11985,7 +11985,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: forControl, statement
+                    // elements: statement, forControl
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -12097,7 +12097,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: statement, parExpression
+                    // elements: parExpression, statement
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -12209,7 +12209,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: block, catches, block
+                            // elements: catches, block, block
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -12258,7 +12258,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: block, catches
+                            // elements: catches, block
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -12954,7 +12954,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: formalParameter, block
+            // elements: block, formalParameter
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -13235,7 +13235,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: switchLabel, blockStatement
+            // elements: blockStatement, switchLabel
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -13707,7 +13707,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: expression, forUpdate, forInit
+                    // elements: forUpdate, expression, forInit
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -13867,7 +13867,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: variableDeclarators, variableModifier, type
+                    // elements: variableModifier, type, variableDeclarators
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -14029,7 +14029,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: expression, type, variableModifier, Identifier
+            // elements: variableModifier, type, expression, Identifier
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -14663,7 +14663,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: conditionalExpression, expression
+                    // elements: expression, conditionalExpression
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -14710,7 +14710,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: expression, conditionalExpression
+                    // elements: conditionalExpression, expression
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -14754,7 +14754,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: conditionalExpression, expression
+                    // elements: expression, conditionalExpression
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -14842,7 +14842,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: expression, conditionalExpression
+                    // elements: conditionalExpression, expression
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -14889,7 +14889,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: conditionalExpression, expression
+                    // elements: expression, conditionalExpression
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -14939,7 +14939,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: expression, conditionalExpression
+                    // elements: conditionalExpression, expression
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -14989,7 +14989,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: conditionalExpression, expression
+                    // elements: expression, conditionalExpression
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -15460,7 +15460,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: conditionalAndExpression, inclusiveOrExpression
+                    // elements: inclusiveOrExpression, conditionalAndExpression
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -16714,7 +16714,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: additiveExpression, i, additiveExpression
+                    // elements: i, additiveExpression, additiveExpression
                     // token labels: 
                     // rule labels: retval
                     // token list labels: i
@@ -17230,7 +17230,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: unaryExpression, unaryExpression, i
+                    // elements: i, unaryExpression, unaryExpression
                     // token labels: 
                     // rule labels: retval
                     // token list labels: i
@@ -17249,16 +17249,16 @@ public class JavaParser extends Parser {
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(LABINOP, "LABINOP"), root_1);
 
                         adaptor.addChild(root_1, stream_unaryExpression.nextTree());
-                        if ( !(stream_unaryExpression.hasNext()||stream_i.hasNext()) ) {
+                        if ( !(stream_i.hasNext()||stream_unaryExpression.hasNext()) ) {
                             throw new RewriteEarlyExitException();
                         }
-                        while ( stream_unaryExpression.hasNext()||stream_i.hasNext() ) {
+                        while ( stream_i.hasNext()||stream_unaryExpression.hasNext() ) {
                             adaptor.addChild(root_1, stream_i.nextNode());
                             adaptor.addChild(root_1, stream_unaryExpression.nextTree());
 
                         }
-                        stream_unaryExpression.reset();
                         stream_i.reset();
+                        stream_unaryExpression.reset();
 
                         adaptor.addChild(root_0, root_1);
                         }
@@ -17879,7 +17879,7 @@ public class JavaParser extends Parser {
                                     {
 
                                     // AST REWRITE
-                                    // elements: selector, primary
+                                    // elements: primary, selector
                                     // token labels: 
                                     // rule labels: retval
                                     // token list labels: 
@@ -18178,7 +18178,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: unaryExpressionNotPlusMinus, type
+                    // elements: type, unaryExpressionNotPlusMinus
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -18568,7 +18568,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: primitiveType, expression, 138
+                            // elements: primitiveType, 138, expression
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -18663,7 +18663,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: primitiveType, arrayInitializer, 138
+                            // elements: arrayInitializer, 138, primitiveType
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -18861,7 +18861,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: expression, 138, i
+                            // elements: i, 138, expression
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -18963,7 +18963,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: arrayInitializer, i, 138
+                            // elements: i, 138, arrayInitializer
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -19195,7 +19195,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: arguments, 160
+                            // elements: 160, arguments
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -19522,7 +19522,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: classBody, arguments
+            // elements: arguments, classBody
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -19773,7 +19773,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: superSuffix, 160
+                    // elements: 160, superSuffix
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -20119,7 +20119,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: arguments, 160
+                    // elements: 160, arguments
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -20302,7 +20302,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: Identifier, arguments
+                            // elements: arguments, Identifier
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 

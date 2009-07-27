@@ -827,13 +827,15 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		}
 	}
 	
+	public static interface Value {}
+	
 	/**
 	 * Represents a numerical constant
 	 * 
 	 * @author djp
 	 *
 	 */
-	public static class Number extends AbstractExpr implements JilExpr {
+	public static class Number extends AbstractExpr implements JilExpr,Value {
 		protected final int value;
 		private final Type.Primitive type;
 		
@@ -969,7 +971,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
      * @author djp
      * 
      */
-	public static final class Long extends AbstractExpr implements JilExpr {
+	public static final class Long extends AbstractExpr implements JilExpr,Value {
 		private final long value;
 		
 		public Long(long value, Attribute... attributes) {
@@ -997,7 +999,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
      * @author djp
      * 
      */
-	public static final class Float extends AbstractExpr implements JilExpr {
+	public static final class Float extends AbstractExpr implements JilExpr,Value {
 		private final float value;
 		
 		public Float(float value, Attribute... attributes) {
@@ -1025,7 +1027,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
      * @author djp
      * 
      */
-	public static final class Double extends AbstractExpr implements JilExpr {
+	public static final class Double extends AbstractExpr implements JilExpr,Value {
 		private final double value;
 		
 		public Double(double value, Attribute... attributes) {
@@ -1053,7 +1055,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
      * @author djp
      * 
      */
-	public static final class StringVal extends AbstractExpr implements JilExpr {
+	public static final class StringVal extends AbstractExpr implements JilExpr,Value {
 		private final java.lang.String value;
 		
 		public StringVal(java.lang.String value, Attribute... attributes) {
@@ -1081,7 +1083,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
      * @author djp
      * 
      */
-	public static final class Null extends AbstractExpr implements JilExpr {
+	public static final class Null extends AbstractExpr implements JilExpr,Value {
 		public Null(Attribute... attributes) {
 			super(attributes);
 		}
@@ -1097,7 +1099,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
      * @author djp
      * 
      */
-	public static final class Array extends AbstractExpr implements JilExpr {
+	public static final class Array extends AbstractExpr implements JilExpr,Value {
 		private final ArrayList<JilExpr> values;
 		private final Type.Array type;
 		
@@ -1138,7 +1140,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 	 * Represents a Class Constant
 	 * 
 	 */
-	public static final class Class extends AbstractExpr implements JilExpr {
+	public static final class Class extends AbstractExpr implements JilExpr,Value {
 		private final Type classType;
 		private final Type.Clazz type;
 

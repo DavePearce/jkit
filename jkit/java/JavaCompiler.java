@@ -40,8 +40,7 @@ import jkit.jil.tree.JilClass;
 import jkit.jil.tree.Type;
 import jkit.jil.tree.SourceLocation;
 import jkit.jil.tree.SyntacticElement;
-import jkit.jil.stages.BypassMethods;
-import jkit.jil.stages.DeadCodeElimination;
+import jkit.jil.stages.*;
 
 /**
  * A Java compiler is responsible for compiling Java source files into class
@@ -318,6 +317,7 @@ public class JavaCompiler implements Compiler {
 			
 			// Thitienth, add bypass methods
 			for(JilClass clazz : skeletons) {
+				variableDefinitions(filename,clazz,loader);
 				eliminateDeadCode(filename,clazz,loader);
 				addBypassMethods(filename,clazz,loader);				
 			}
@@ -587,6 +587,21 @@ public class JavaCompiler implements Compiler {
 				(System.currentTimeMillis() - start));
 	}
 
+	/**
+	 * This is the eleventh stage in the compilation pipeline --- we are now
+	 * beginning the process of code-generation. In this stage, we generate jil
+	 * code from the java source file.
+	 * 
+	 * @param jfile
+	 * @param loader
+	 */
+	protected void variableDefinitions(File srcfile, JilClass jfile, ClassLoader loader) {
+		long start = System.currentTimeMillis();
+		new VariableDefinitions().apply(jfile);
+		logTimedMessage("[" + srcfile.getPath() + "] Eliminated Dead code",
+				(System.currentTimeMillis() - start));
+	}
+	
 	/**
 	 * This is the eleven	th stage in the compilation pipeline --- we are now
 	 * beginning the process of code-generation. In this stage, we generate jil

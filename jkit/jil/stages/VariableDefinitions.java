@@ -23,10 +23,10 @@ package jkit.jil.stages;
 
 import java.util.*;
 
-import jkit.compiler.InternalException;
-import jkit.compiler.Stage;
-import jkit.util.dfa.*;
-
+import static jkit.compiler.SyntaxError.*;
+import jkit.jil.tree.*;
+import jkit.jil.dfa.*;
+import jkit.util.*;
 /**
  * This stage performs a definite assignment analysis to check that every
  * variable is always defined before being used. For example, consider the
@@ -53,199 +53,203 @@ import jkit.util.dfa.*;
  * before being used. @author djp
  * 
  */
-public class VariableDefinitions extends ForwardAnalysis<UnionFlowSet<String>>
-		implements Stage {
+public class VariableDefinitions extends ForwardAnalysis<UnionFlowSet<String>> {
 	public String description() {
 		return "Ensure variables are defined before used";
 	}
 	
 	public void apply(JilClass owner) {
 		for(JilMethod m : owner.methods()) {			
-			if(m.code() != null) {
+			if(m.body() != null) {
 				check(m,owner);
 			} 
 		}
 	}
 	
-	public void check(JilMethod method,JilClass owner) {
-		FlowGraph cfg = method.code();
-		
+	public void check(JilMethod method,JilClass owner) {			
 		// In the following dataflow analysis, a variable is in the flow set if
 		// it is undefined.
 		
-		UnionFlowSet<String> initStore = new UnionFlowSet<String>();
-		for(LocalVarDef v : cfg.localVariables()) {
-			if(!v.isParameter()) {				
-				initStore.add(v.name());
+		HashSet<String> initStore = new HashSet<String>();
+		for(Pair<String,Boolean> v : method.localVariables()) {
+			if(!v.second()) {				
+				initStore.add(v.first());
 			}
 		}
 		
-		start(cfg, cfg.entry(),initStore);
+		start(method,new UnionFlowSet<String>(initStore));
 	}
 	
-	public void transfer(Point p, UnionFlowSet<String> in) {		
-		JilStmt stmt = p.statement();
-		if(stmt instanceof Assign) {
-			transfer(p,(Assign)stmt,in);					
-		} else if(stmt instanceof Invoke) {
-			transfer(p,(Invoke)stmt,in);										
-		} else if(stmt instanceof New) {
-			transfer(p,(New) stmt,in);						
-		} else if(stmt instanceof Return) {
-			transfer(p,(Return) stmt,in);
-		} else if(stmt instanceof Throw) {
-			transfer(p,(Throw) stmt,in);
-		} else if(stmt instanceof Nop) {		
-			// do nothing
-		} else if(stmt instanceof Lock) {		
-			transfer(p,(Lock) stmt,in);
-		} else if(stmt instanceof Unlock) {		
-			transfer(p,(Unlock) stmt,in);
-		} else if(stmt != null){
-			throw new InternalException("Unknown statement encountered: " + stmt,p,null,null);
+	public UnionFlowSet<String> transfer(JilStmt stmt, UnionFlowSet<String> in) {		
+		if(stmt instanceof JilStmt.Assign) {
+			return transfer((JilStmt.Assign)stmt,in);					
+		} else if(stmt instanceof JilExpr.Invoke) {
+			return transfer((JilExpr.Invoke)stmt,in);										
+		} else if(stmt instanceof JilExpr.New) {
+			return transfer((JilExpr.New) stmt,in);						
+		} else if(stmt instanceof JilStmt.Return) {
+			return transfer((JilStmt.Return) stmt,in);
+		} else if(stmt instanceof JilStmt.Throw) {
+			return transfer((JilStmt.Throw) stmt,in);
+		} else if(stmt instanceof JilStmt.Nop) {		
+			return in;
+		} else if(stmt instanceof JilStmt.Lock) {		
+			return transfer((JilStmt.Lock) stmt,in);
+		} else if(stmt instanceof JilStmt.Unlock) {		
+			return transfer((JilStmt.Unlock) stmt,in);
+		} else {
+			syntax_error("unknown statement encountered",stmt);
+			return null;
 		}		
 	}
 	
-	public void transfer(Point p, Assign stmt, UnionFlowSet<String> undefs) {
-		Set<String> uses = uses(stmt.rhs,p,null,null);
-		if(!(stmt.lhs instanceof LocalVar)) {
-			uses.addAll(uses(stmt.lhs,p,null,null));
+	public UnionFlowSet<String> transfer(JilStmt.Assign stmt, UnionFlowSet<String> undefs) {
+		Set<String> uses = uses(stmt.rhs(),stmt);
+		if(!(stmt.lhs() instanceof JilExpr.Variable)) {
+			uses.addAll(uses(stmt.lhs(),stmt));
 		}
-		checkUses(uses,undefs,p,null,null);
-		if(stmt.lhs instanceof LocalVar) {			
-			undefs.remove(((LocalVar) stmt.lhs).name);
+		checkUses(uses,undefs,stmt);
+		if(stmt.lhs() instanceof JilExpr.Variable) {	
+			JilExpr.Variable lv = (JilExpr.Variable) stmt.lhs();
+			undefs = undefs.remove(lv.value());
 		}
+		return undefs;
 	}
 	
-	public void transfer(Point p, Invoke stmt, UnionFlowSet<String> undefs) {
-		Set<String> uses = uses(stmt.target,p,null,null);
-		for(JilExpr e : stmt.parameters) {
-			uses.addAll(uses(e,p,null,null));
+	public UnionFlowSet<String> transfer(JilExpr.Invoke stmt, UnionFlowSet<String> undefs) {
+		Set<String> uses = uses(stmt.target(),stmt);
+		for(JilExpr e : stmt.parameters()) {
+			uses.addAll(uses(e,stmt));
 		}
-		checkUses(uses,undefs,p,null,null);		
+		checkUses(uses,undefs,stmt);
+		return undefs;
 	}
 
-	public void transfer(Point p, New stmt, UnionFlowSet<String> undefs) {
+	public UnionFlowSet<String> transfer(JilExpr.New stmt, UnionFlowSet<String> undefs) {
 		Set<String> uses = new HashSet<String>();
-		for(JilExpr e : stmt.parameters) {
-			uses.addAll(uses(e,p,null,null));
+		for(JilExpr e : stmt.parameters()) {
+			uses.addAll(uses(e,stmt));
 		}
-		checkUses(uses,undefs,p,null,null);
+		checkUses(uses,undefs,stmt);
+		return undefs;
 	}
 	
-	public void transfer(Point p, Return stmt, UnionFlowSet<String> undefs) {
-		if(stmt.expr != null) {
-			Set<String> uses = uses(stmt.expr,p,null,null);		
-			checkUses(uses,undefs,p,null,null);
+	public UnionFlowSet<String> transfer(JilStmt.Return stmt, UnionFlowSet<String> undefs) {
+		if(stmt.expr() != null) {
+			Set<String> uses = uses(stmt.expr(),stmt);		
+			checkUses(uses,undefs,stmt);
 		}
+		return undefs;
 	}
 	
-	public void transfer(Point p, Throw stmt, UnionFlowSet<String> undefs) {
-		Set<String> uses = uses(stmt.expr,p,null,null);		
-		checkUses(uses,undefs,p,null,null);
+	public UnionFlowSet<String> transfer(JilStmt.Throw stmt, UnionFlowSet<String> undefs) {
+		Set<String> uses = uses(stmt.expr(),stmt);		
+		checkUses(uses,undefs,stmt);
+		return undefs;
 	}
 	
-	public void transfer(Point p, Lock stmt, UnionFlowSet<String> undefs) {
-		Set<String> uses = uses(stmt.var,p,null,null);		
-		checkUses(uses,undefs,p,null,null);
+	public UnionFlowSet<String> transfer(JilStmt.Lock stmt, UnionFlowSet<String> undefs) {
+		Set<String> uses = uses(stmt.expr(),stmt);		
+		checkUses(uses,undefs,stmt);
+		return undefs;
 	}
 	
-	public void transfer(Point p, Unlock stmt, UnionFlowSet<String> undefs) {
-		Set<String> uses = uses(stmt.var,p,null,null);		
-		checkUses(uses,undefs,p,null,null);
+	public UnionFlowSet<String> transfer(JilStmt.Unlock stmt, UnionFlowSet<String> undefs) {
+		Set<String> uses = uses(stmt.expr(),stmt);		
+		checkUses(uses,undefs,stmt);
+		return undefs;
 	}
 	
-	public void transfer(Point p, JilExpr e, UnionFlowSet<String> undefs) {				
-		checkUses(uses(e, p, null, null), undefs, p,null,null);
+	public UnionFlowSet<String> transfer(JilExpr e, UnionFlowSet<String> undefs) {				
+		checkUses(uses(e,e), undefs,e);
+		return undefs;
 	}
 	
-	public Set<String> uses(JilExpr expr, Point point, JilMethod method, JilClass owner) {
-		if(expr instanceof ArrayIndex) {
-			return uses((ArrayIndex) expr,  point, method,owner);
-		} else if(expr instanceof TernOp) {
-			return uses((TernOp) expr, point,method,owner);
-		} else if(expr instanceof BinOp) {		
-			return uses((BinOp) expr, point,method,owner);
-		} else if(expr instanceof UnOp) {		
-			return uses((UnOp) expr, point,method,owner);								
-		} else if(expr instanceof Cast) {
-			return uses((Cast) expr, point,method,owner);			 			
-		} else if(expr instanceof ClassAccess) {
-			return uses((ClassAccess) expr, point,method,owner);			 			
-		} else if(expr instanceof Deref) {
-			return uses((Deref) expr, point,method,owner);			 							
-		} else if(expr instanceof FlowGraph.Exception) {
-			return uses((FlowGraph.Exception) expr, point,method,owner);			 							
-		} else if(expr instanceof LocalVar) {
-			return uses((LocalVar) expr, point,method,owner);
-		} else if(expr instanceof InstanceOf) {
-			return uses((InstanceOf) expr, point,method,owner);
-		} else if(expr instanceof Invoke) {
-			return uses((Invoke) expr, point,method,owner);
-		} else if(expr instanceof New) {
-			return uses((New) expr, point,method,owner);
-		} else if(expr instanceof Value) {
-			return uses((Value) expr, point,method,owner);
+	public Set<String> uses(JilExpr expr, SyntacticElement s) {
+		if(expr instanceof JilExpr.ArrayIndex) {
+			return uses((JilExpr.ArrayIndex) expr,  s);
+		} else if(expr instanceof JilExpr.BinOp) {		
+			return uses((JilExpr.BinOp) expr, s);
+		} else if(expr instanceof JilExpr.UnOp) {		
+			return uses((JilExpr.UnOp) expr, s);								
+		} else if(expr instanceof JilExpr.Cast) {
+			return uses((JilExpr.Cast) expr, s);			 			
+		} else if(expr instanceof JilExpr.ClassVariable) {
+			return uses((JilExpr.ClassVariable) expr, s);			 			
+		} else if(expr instanceof JilExpr.Deref) {
+			return uses((JilExpr.Deref) expr, s);			 							
+		} else if(expr instanceof JilExpr.Variable) {
+			return uses((JilExpr.Variable) expr, s);
+		} else if(expr instanceof JilExpr.InstanceOf) {
+			return uses((JilExpr.InstanceOf) expr, s);
+		} else if(expr instanceof JilExpr.Invoke) {
+			return uses((JilExpr.Invoke) expr, s);
+		} else if(expr instanceof JilExpr.New) {
+			return uses((JilExpr.New) expr, s);
+		} else if(expr instanceof JilExpr.Value) {
+			return uses((JilExpr.Value) expr, s);
 		} else {
-			throw new InternalException("Unknown expression \"" + expr + "\" encoutered",point,method,owner);
+			syntax_error("Unknown expression \"" + expr + "\" encoutered",s);
+			return null;
 		}		
 	}
 	
-	public Set<String> uses(ArrayIndex expr, Point point, JilMethod method, JilClass owner) { 
-		Set<String> r = uses(expr.array,point,method,owner);
-		r.addAll(uses(expr.idx,point,method,owner));
+	public Set<String> uses(JilExpr.ArrayIndex expr, SyntacticElement s) { 
+		Set<String> r = uses(expr.target(),s);
+		r.addAll(uses(expr.index(),s));
 		return r;
-	}
-	public Set<String> uses(TernOp expr, Point point, JilMethod method, JilClass owner) { 
-		Set<String> r = uses(expr.cond,point,method,owner);
-		r.addAll(uses(expr.foption,point,method,owner));
-		r.addAll(uses(expr.toption,point,method,owner));
-		return r;		
-	}
-	public Set<String> uses(BinOp expr, Point point, JilMethod method, JilClass owner) {
-		Set<String> r = uses(expr.lhs,point,method,owner);
-		r.addAll(uses(expr.rhs,point,method,owner));
+	}	
+	public Set<String> uses(JilExpr.BinOp expr, SyntacticElement s) {
+		Set<String> r = uses(expr.lhs(),s);
+		r.addAll(uses(expr.rhs(),s));
 		return r; 
 	}
-	public Set<String> uses(UnOp expr, Point point, JilMethod method, JilClass owner) { 		
-		return uses(expr.expr,point,method,owner); 
+	public Set<String> uses(JilExpr.UnOp expr, SyntacticElement s) { 		
+		return uses(expr.expr(),s); 
 	}
-	public Set<String> uses(Cast expr, Point point, JilMethod method, JilClass owner) { 
-		return uses(expr.expr,point,method,owner);		
+	public Set<String> uses(JilExpr.Cast expr, SyntacticElement s) { 
+		return uses(expr.expr(),s);		
 	}
-	public Set<String> uses(ClassAccess expr, Point point, JilMethod method, JilClass owner) { 		
+	public Set<String> uses(JilExpr.Convert expr, SyntacticElement s) { 
+		return uses(expr.expr(),s);		
+	}
+	public Set<String> uses(JilExpr.ClassVariable expr, SyntacticElement s) { 		
 		return new HashSet<String>();
 	}
-	public Set<String> uses(Deref expr, Point point, JilMethod method, JilClass owner) { 		
-		return uses(expr.target,point,method,owner);
-	}
-	public Set<String> uses(FlowGraph.Exception expr, Point point, JilMethod method, JilClass owner) { 
-		return new HashSet<String>(); 
-	}
-	public Set<String> uses(LocalVar expr, Point point, JilMethod method, JilClass owner) { 
+	public Set<String> uses(JilExpr.Deref expr, SyntacticElement s) { 		
+		return uses(expr.target(),s);
+	}	
+	public Set<String> uses(JilExpr.Variable expr, SyntacticElement s) { 
 		HashSet<String> r = new HashSet<String>();
-		r.add(expr.name);
+		r.add(expr.value());
 		return r;
 	}
-	public Set<String> uses(InstanceOf expr, Point point, JilMethod method, JilClass owner) { 		
-		return uses(expr.lhs,point,method,owner);
+	public Set<String> uses(JilExpr.InstanceOf expr, SyntacticElement s) { 		
+		return uses(expr.lhs(),s);
 	}
-	public Set<String> uses(Invoke expr, Point point, JilMethod method, JilClass owner) { 
-		Set<String> r = uses(expr.target,point,method,owner);
-		for(JilExpr e : expr.parameters) {
-			r.addAll(uses(e,point,method,owner));
+	public Set<String> uses(JilExpr.Invoke expr, SyntacticElement s) { 
+		Set<String> r = uses(expr.target(),s);
+		for(JilExpr e : expr.parameters()) {
+			r.addAll(uses(e,s));
 		}
 		return r; 		
 	}
-	public Set<String> uses(New expr, Point point, JilMethod method, JilClass owner) { 
+	public Set<String> uses(JilExpr.New expr, SyntacticElement s) { 
 		Set<String> r = new HashSet<String>();
-		for(JilExpr e : expr.parameters) {
-			r.addAll(uses(e,point,method,owner));
+		for(JilExpr e : expr.parameters()) {
+			r.addAll(uses(e,s));
 		}
 		return r; 			
 	}
-	public Set<String> uses(Value expr, Point point, JilMethod method, JilClass owner) { 
-		return new HashSet<String>(); 
+	public Set<String> uses(JilExpr.Value expr, SyntacticElement s) { 
+		HashSet<String> r = new HashSet<String>();
+		if(expr instanceof JilExpr.Array) {
+			JilExpr.Array ae = (JilExpr.Array) expr;
+			for(JilExpr v : ae.values()) {
+				r.addAll(uses(v,s));
+			}
+		}
+		return r; 
 	}
 
 	/**
@@ -258,10 +262,10 @@ public class VariableDefinitions extends ForwardAnalysis<UnionFlowSet<String>>
 	 * @param method enclosing method
 	 * @param owner enclosing class
 	 */
-	private void checkUses(Set<String> uses, UnionFlowSet<String> undefs, Point point, JilMethod method, JilClass owner) {
+	private void checkUses(Set<String> uses, UnionFlowSet<String> undefs, SyntacticElement s) {
 		for(String v : uses) {			
 			if(undefs.contains(v)) {
-				throw new InternalException("Variable might not have been initialised",point,method,owner);
+				syntax_error("variable " + v + " might not have been initialised",s);
 			}
 		}
 	}

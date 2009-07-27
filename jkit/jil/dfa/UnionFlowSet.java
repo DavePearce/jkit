@@ -33,19 +33,53 @@ import java.util.*;
  * @author djp
  * 
  */
-public class UnionFlowSet<T> extends HashSet<T> implements FlowSet, Set<T>  {
+public class UnionFlowSet<T> implements FlowSet, Cloneable {
+	private HashSet<T> data = new HashSet<T>();
+	
 	public UnionFlowSet() {}
-	public UnionFlowSet(Collection<? extends T> src) { super(src); }
+	public UnionFlowSet(Collection<? extends T> src) { 
+		data.addAll(src);
+	}
+	
+	public UnionFlowSet<T> clone() {
+		UnionFlowSet<T> r = new UnionFlowSet<T>();
+		r.data.addAll(this.data);
+		return r;
+	}
 	
 	public UnionFlowSet<T> join(FlowSet _fs) {
 		if(_fs instanceof UnionFlowSet) {
 			UnionFlowSet fs = (UnionFlowSet) _fs.clone();			
-			if(fs.addAll(this)) {
+			if(fs.data.addAll(this.data)) {
 				return fs;
 			} else {
 				return this;
 			}			
 		}
 		return null;
+	}
+	
+	public UnionFlowSet<T> add(String s) {
+		if(!data.contains(s)) {
+			UnionFlowSet r = (UnionFlowSet) this.clone();			
+			r.data.add(s);
+			return r;
+		} else {
+			return this;
+		}
+	}
+	
+	public UnionFlowSet<T> remove(String s) {
+		if(data.contains(s)) {
+			UnionFlowSet r = (UnionFlowSet) this.clone();			
+			r.data.remove(s);
+			return r;
+		} else {
+			return this;
+		}
+	}
+	
+	public boolean contains(String s) {
+		return data.contains(s);
 	}
 }
