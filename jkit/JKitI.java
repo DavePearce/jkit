@@ -28,7 +28,7 @@ import jkit.bytecode.*;
 import jkit.compiler.ClassLoader;
 import jkit.compiler.SyntaxError;
 import jkit.java.*;
-import jkit.jil.stages.ClassFileBuilder;
+import jkit.jil.stages.*;
 import jkit.jil.tree.JilClass;
 
 /**
@@ -144,7 +144,7 @@ public class JKitI {
 			JavaCompiler compiler = new JavaCompiler(sourcePath, classPath, verbOutput) {
 				public void variableDefinitions(File srcfile, JilClass jfile, ClassLoader loader) {
 					super.variableDefinitions(srcfile,jfile,loader);
-					System.out.println("GOT HERE");
+					new NonNullInference().apply(jfile);
 				}
 				/**
 				 * This is the final stage in the compilation pipeline --- we must write the
