@@ -37,7 +37,8 @@ public abstract class BackwardAnalysis<T extends FlowSet> {
 	/**
 	 * Begins the Forward Analysis traversal of a method
 	 */	
-	public void start(JilMethod method, T finalStore) {				
+	public void start(JilMethod method, T finalStore) {
+		stores.clear(); // need to reset for subsequent calls
 		HashMap<String,Integer> labels = new HashMap();
 		List<JilStmt> body = method.body();
 		HashSet<Integer> worklist = new HashSet();

@@ -55,6 +55,8 @@ import jkit.util.*;
  */
 public class VariableDefinitions extends ForwardAnalysis<UnionFlowSet<String>> {
 	
+	private static final boolean debugging = false;
+	
 	public void apply(JilClass owner) {
 		for(JilMethod m : owner.methods()) {			
 			if(m.body() != null) {
@@ -67,21 +69,29 @@ public class VariableDefinitions extends ForwardAnalysis<UnionFlowSet<String>> {
 		// In the following dataflow analysis, a variable is in the flow set if
 		// it is undefined.
 		
-		System.out.println("******** " + method.name() + " ********");
+		if(debugging) {
+			System.err.println("******** " + method.name() + " " + method.type() + " ********");
+		}
 		
 		HashSet<String> initStore = new HashSet<String>();
 		for(Pair<String,Boolean> v : method.localVariables()) {
 			if(!v.second()) {				
 				initStore.add(v.first());
-			}
+			} 
+		}
+		
+		if(debugging) {
+			System.out.println("INITIAL UNDEFS: " + initStore);
 		}
 		
 		start(method,new UnionFlowSet<String>(initStore));
 	}
 	
 	public UnionFlowSet<String> transfer(JilStmt stmt, UnionFlowSet<String> in) {		
-		System.out.println("***    " + in);
-		System.out.println("*** " + stmt);
+		if(debugging) {
+			System.out.println("***    " + in);
+			System.out.println("*** " + stmt);
+		}
 		if(stmt instanceof JilStmt.Assign) {
 			return transfer((JilStmt.Assign)stmt,in);					
 		} else if(stmt instanceof JilExpr.Invoke) {
@@ -265,7 +275,7 @@ public class VariableDefinitions extends ForwardAnalysis<UnionFlowSet<String>> {
 	 * @param method enclosing method
 	 * @param owner enclosing class
 	 */
-	private void checkUses(Set<String> uses, UnionFlowSet<String> undefs, SyntacticElement s) {
+	private void checkUses(Set<String> uses, UnionFlowSet<String> undefs, SyntacticElement s) {		
 		for(String v : uses) {			
 			if(undefs.contains(v)) {
 				syntax_error("variable " + v + " might not have been initialised",s);

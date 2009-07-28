@@ -190,7 +190,11 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 		}
 		
 		public String toString() {
-			return "return " + expr.toString() + ";";
+			if(expr == null) {
+				return "return;";
+			} else {
+				return "return " + expr.toString() + ";";
+			}
 		}
 	}
 	

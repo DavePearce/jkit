@@ -98,16 +98,16 @@ public class JilFileWriter {
 		boolean firstTime=true;	
 		
 		List<Type> paramTypes = type.parameterTypes();
-		List<Pair<String,List<Modifier>>> params = m.parameters();
+		List<JilMethod.Parameter> params = m.parameters();
 		
 		for(int i = 0; i != params.size();++i) {
 			if(!firstTime) {
 				output.print(", ");
 			}
 			firstTime=false;
-			writeModifiers(params.get(i).second());			
+			writeModifiers(params.get(i).modifiers());			
 			output.print(paramTypes.get(i));
-			output.print(" " + params.get(i).first());
+			output.print(" " + params.get(i).name());
 		}
 		
 		output.println(") {");

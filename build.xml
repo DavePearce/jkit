@@ -1,6 +1,6 @@
 <project name="JKit" default="build">
   <target name="compile">
-    <javac debug="true" srcdir="." includes="jkit/**"/> 
+    <javac debug="true" srcdir="." includes="jkit/**" excludes="jkit/testing/**"/> 
   </target>
 
   <target name="build" depends="compile">

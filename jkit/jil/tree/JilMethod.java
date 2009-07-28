@@ -26,11 +26,37 @@ import jkit.util.Pair;
 import jkit.jil.util.*;
 
 public final class JilMethod extends SyntacticElementImpl implements jkit.compiler.Clazz.Method {
+	
+	public static final class Parameter extends SyntacticElementImpl {
+		private String name;
+		private final List<Modifier> modifiers;
+		
+		public Parameter(String name, List<Modifier> modifiers, Attribute... attributes) {
+			super(attributes);
+			this.name = name;
+			this.modifiers = modifiers;
+		}
+		
+		public Parameter(String name, List<Modifier> modifiers, List<Attribute> attributes) {
+			super(attributes);
+			this.name = name;
+			this.modifiers = modifiers;
+		}
+		
+		public String name() {
+			return name;
+		}
+		
+		public List<Modifier> modifiers() {
+			return modifiers;
+		}
+	}
+	
 	private String name;
 	private Type.Function type;
 	private List<Modifier> modifiers;
 	private List<Type.Clazz> exceptions;
-	private List<Pair<String, List<Modifier>>> parameters; 
+	private List<Parameter> parameters; 
 	private List<JilStmt> body = new ArrayList<JilStmt>();
 	
 	/**
@@ -49,7 +75,7 @@ public final class JilMethod extends SyntacticElementImpl implements jkit.compil
 	 * @param exceptions -
 	 *            The (non-null) list of exceptions thrown by this method.
 	 */
-	public JilMethod(String name, Type.Function type, List<Pair<String,List<Modifier>>> parameters,
+	public JilMethod(String name, Type.Function type, List<Parameter> parameters,
 			List<Modifier> modifiers, List<Type.Clazz> exceptions,
 			Attribute... attributes) {
 		super(attributes);
@@ -77,7 +103,7 @@ public final class JilMethod extends SyntacticElementImpl implements jkit.compil
      *            The (non-null) list of exceptions thrown by this method.
      */
 	public JilMethod(String name, Type.Function type,
-			List<Pair<String, List<Modifier>>> parameters,
+			List<Parameter> parameters,
 			List<Modifier> modifiers, List<Type.Clazz> exceptions,
 			List<Attribute> attributes) {
 		super(attributes);
@@ -127,7 +153,7 @@ public final class JilMethod extends SyntacticElementImpl implements jkit.compil
 	 * 
 	 * @return
 	 */
-	public List<Pair<String,List<Modifier>>> parameters() { return parameters; }
+	public List<Parameter> parameters() { return parameters; }
 	
 	/**
      * Access the modifiers contained in this field object. The returned list
@@ -359,8 +385,8 @@ public final class JilMethod extends SyntacticElementImpl implements jkit.compil
 			}
 		}
 		
-		for(Pair<String,List<Modifier>> p : parameters) {
-			vars.remove(p.first());
+		for(Parameter p : parameters) {
+			vars.remove(p.name());
 		}
 		
 		vars.remove("this"); // these are implicit

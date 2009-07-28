@@ -815,7 +815,7 @@ public class InnerClassRewrite {
 			m.setType(ntype);
 			ArrayList<Modifier> mods = new ArrayList<Modifier>();
 			mods.add(Modifier.ACC_FINAL);
-			m.parameters().add(0, new Pair("this$0",mods));
+			m.parameters().add(0, new JilMethod.Parameter("this$0",mods));
 		}
 		
 		// Second, add a field with the appropriate name.
@@ -874,7 +874,7 @@ public class InnerClassRewrite {
 			JilExpr thisVar = null;
 			ArrayList<Modifier> mods = new ArrayList<Modifier>();
 			mods.add(Modifier.ACC_FINAL);
-			ArrayList<Pair<String,List<Modifier>>> params = new ArrayList(); 
+			ArrayList<JilMethod.Parameter> params = new ArrayList(); 
 			Type.Function ft;
 			
 			modifiers.add(Modifier.ACC_STATIC);
@@ -884,7 +884,7 @@ public class InnerClassRewrite {
 				ft = new Type.Function(field.type());
 			} else {
 				thisVar = new JilExpr.Variable("thisp",clazz.type());
-				params.add(new Pair("thisp",mods));
+				params.add(new JilMethod.Parameter("thisp",mods));
 				ft = new Type.Function(field.type(),clazz.type());
 			}						
 			
@@ -929,7 +929,7 @@ public class InnerClassRewrite {
 			
 			ArrayList<Modifier> mods = new ArrayList<Modifier>();
 			mods.add(Modifier.ACC_FINAL);
-			ArrayList<Pair<String,List<Modifier>>> params = new ArrayList(); 
+			ArrayList<JilMethod.Parameter> params = new ArrayList(); 
 			
 			Type.Function ft;
 			
@@ -940,11 +940,11 @@ public class InnerClassRewrite {
 				ft = new Type.Function(field.type(),field.type());
 			} else {
 				thisVar = new JilExpr.Variable("thisp",clazz.type());
-				params.add(new Pair("thisp",mods));
+				params.add(new JilMethod.Parameter("thisp",mods));
 				ft = new Type.Function(field.type(),clazz.type(),field.type());
 			}
 			
-			params.add(new Pair("tmp",mods));									
+			params.add(new JilMethod.Parameter("tmp",mods));									
 			
 			accessor = new JilMethod("access$" + accessors.size() + "02", ft,
 					params, modifiers, new ArrayList<Type.Clazz>()); 						

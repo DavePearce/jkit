@@ -654,11 +654,11 @@ public class EnumRewrite {
 				m.setType(newType);
 
 				// second, update its parameters
-				List<Pair<String,List<Modifier>>> params = m.parameters();
+				List<JilMethod.Parameter> params = m.parameters();
 				List<Modifier> mods = new ArrayList<Modifier>();
 				mods.add(Modifier.ACC_FINAL);
-				params.add(0,new Pair("$1",mods));
-				params.add(1,new Pair("$2",new ArrayList(mods)));
+				params.add(0,new JilMethod.Parameter("$1",mods));
+				params.add(1,new JilMethod.Parameter("$2",new ArrayList(mods)));
 				
 				// third, update its modifiers
 				mods = m.modifiers();
@@ -777,11 +777,11 @@ public class EnumRewrite {
 		ec.declarations().add(m);
 		
 		// second, add a skeleton constructor
-		ArrayList<Pair<String,List<Modifier>>> nparams = new ArrayList();
+		ArrayList<JilMethod.Parameter> nparams = new ArrayList();
 		mods = new ArrayList();
 		mods.add(Modifier.ACC_FINAL);		
-		nparams.add(new Pair("$1",mods));
-		nparams.add(new Pair("$2",new ArrayList(mods)));
+		nparams.add(new JilMethod.Parameter("$1",mods));
+		nparams.add(new JilMethod.Parameter("$2",new ArrayList(mods)));
 		mods = new ArrayList();
 		mods.add(Modifier.ACC_PRIVATE);
 		JilMethod jm = new JilMethod(ec.name(), ftype, nparams, mods,

@@ -247,8 +247,9 @@ public class JKitI {
 		}
 		
 		for(JilMethod m : jclass.methods()) {
-			for(Pair<String,List<Modifier>> param : m.parameters()) {
-				
+			System.out.println("*** " + m.name() + " " + m.type());
+			for(JilMethod.Parameter p : m.parameters()) {
+				System.out.print(p.name() + " ");
 			}
 		}
 		
