@@ -152,6 +152,10 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 			return new Assign(lhs, rhs,
 					(List<Pair<Type.Clazz, String>>) exceptions(), attributes());
 		}
+		
+		public String toString() {
+			return lhs.type() + " " + lhs.toString() + " = " + rhs.toString() + ";";
+		}
 	}
 	
 	/**
@@ -183,6 +187,10 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 		public Return clone() {
 			return new Return(expr,
 					(List<Pair<Type.Clazz, String>>) exceptions(), attributes());
+		}
+		
+		public String toString() {
+			return "return " + expr.toString() + ";";
 		}
 	}
 	
@@ -219,6 +227,10 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 			return new Throw(expr,
 					(List<Pair<Type.Clazz, String>>) exceptions(),attributes());
 		}
+		
+		public String toString() {
+			return "throw " + expr.toString() + ";";
+		}
 	}
 	
 	/**
@@ -254,6 +266,10 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 		public Goto clone() {
 			return new Goto(label,
 					(List<Pair<Type.Clazz, String>>) exceptions(),attributes());
+		}
+		
+		public String toString() {
+			return "goto " + label + ";";
 		}
 	}
 	
@@ -300,6 +316,10 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 			return new IfGoto(condition, label,
 					(List<Pair<Type.Clazz, String>>) exceptions(), attributes());
 		}
+		
+		public String toString() {
+			return "if(" + condition + ") goto " + label + ";";
+		}
 	}
 	
 	public static final class Label extends AbstractStmt {
@@ -329,6 +349,10 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 			return new Label(label,
 					(List<Pair<Type.Clazz, String>>) exceptions(),attributes());
 		}
+		
+		public String toString() {
+			return label + ":";
+		}
 	}
 	
 	public static final class Nop extends AbstractStmt {
@@ -344,6 +368,9 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 		}
 		public Nop clone() {
 			return new Nop((List<Pair<Type.Clazz, String>>) exceptions(),attributes());
+		}
+		public String toString() {
+			return "nop;";
 		}
 	}
 	
@@ -374,6 +401,9 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 			return new Lock(expr,
 					(List<Pair<Type.Clazz, String>>) exceptions(),attributes());
 		}
+		public String toString() {
+			return "lock " + expr;
+		}
 	}
 	
 	public static final class Unlock extends AbstractStmt {
@@ -402,6 +432,10 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 		public Unlock clone() {
 			return new Unlock(expr,
 					(List<Pair<Type.Clazz, String>>) exceptions(),attributes());
+		}
+		
+		public String toString() {
+			return "unlock " + expr;
 		}
 	}
 	
@@ -457,6 +491,10 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 		public Switch clone() {
 			return new Switch(condition, cases, defaultLab,
 					(List<Pair<Type.Clazz, String>>) exceptions(), attributes());
+		}
+		
+		public String toString() {
+			return "switch(" + condition + ")";
 		}
 	}
 }

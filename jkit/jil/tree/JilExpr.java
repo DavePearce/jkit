@@ -102,6 +102,10 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		public Type type() {
 			return type;
 		}	
+		
+		public String toString() {
+			return value;
+		}
 	}
 	
 	/**
@@ -132,7 +136,11 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 
 		public Type.Clazz type() {
 			return type;
-		}		
+		}
+		
+		public String toString() {
+			return type.toString();
+		}
 	}
 
 	
@@ -177,6 +185,10 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		public Type type() {
 			return type;
 		}
+		
+		public String toString() {
+			return "(" + type.toString() + ")" + expr;
+		}
 	}
 
 	/**
@@ -220,6 +232,10 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		public Type.Primitive type() {
 			return type;
 		}		
+		
+		public String toString() {
+			return "[" + type.toString() + "]" + expr;
+		}
 	}
 	
 	/**
@@ -269,7 +285,11 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		
 		public Type type() {
 			return type;
-		}		
+		}
+		
+		public String toString() {
+			return "(" + lhs.toString() + " instanceof " + rhs + ")";
+		}
 	}
 
 	/**
@@ -323,7 +343,13 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		
 		public Type.Primitive type() {
 			return type;
-		}		
+		}
+		
+		public static final String[] unopstr={"!","~","-","++","--","++","--"};	
+		
+		public String toString() {
+			return unopstr[op] + "(" + expr + ")";
+		}
 	}
 
 	/**
@@ -403,6 +429,14 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		public Type.Primitive type() {
 			return type;
 		}		
+		
+		protected static final String[] binopstr = {"+", "-", "*", "/", "%", "<<",
+			">>", ">>>", "&", "|", "^", "<", "<=", ">", ">=", "==", "!=", "&&",
+			"||", "+"};
+		
+		public String toString() {
+			return "(" + lhs + binopstr[op] + rhs + ")";
+		}
 	}
 
 	/**
@@ -415,11 +449,11 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 	 * 
 	 */
 	public static class Invoke extends jkit.jil.tree.JilStmt.AbstractStmt implements JilExpr {
-		private final JilExpr target;
-		private final String name;
-		private final ArrayList<JilExpr> parameters;
-		private final Type type; 		
-		private final Type.Function funType;		
+		protected final JilExpr target;
+		protected final String name;
+		protected final ArrayList<JilExpr> parameters;
+		protected final Type type; 		
+		protected final Type.Function funType;		
 				
 		/**
 		 * Construct a method which may, or may not be polymorphic.
@@ -536,6 +570,19 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 			return new Invoke(target, name, parameters, funType, type,
 					(List<Pair<Type.Clazz, String>>) exceptions(),attributes());
 		}
+		
+		public String toString() {
+			String r = target.toString() + "." + name + "(";
+			boolean firstTime = true;
+			for(JilExpr p : parameters) {
+				if(!firstTime) {
+					r += ", ";
+				}
+				firstTime=false;
+				r += p.toString();
+			}
+			return r + ")";
+		}
 	}
 
 	/**
@@ -608,6 +655,19 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 			return new SpecialInvoke(target(), name(),
 					(List<JilExpr>) parameters(), funType(), type(),
 					(List<Pair<Type.Clazz, String>>) exceptions(),attributes());
+		}
+		
+		public String toString() {
+			String r = target.toString() + "." + name + "!(";
+			boolean firstTime = true;
+			for(JilExpr p : parameters) {
+				if(!firstTime) {
+					r += ", ";
+				}
+				firstTime=false;
+				r += p.toString();
+			}
+			return r + ")";
 		}
 	}
 		
@@ -710,6 +770,18 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 			return new New(type, parameters, funType, 
 					(List<Pair<Type.Clazz, String>>) exceptions(),attributes());
 		}
+		public String toString() {
+			String r = "new " + type + "(";
+			boolean firstTime = true;
+			for(JilExpr p : parameters) {
+				if(!firstTime) {
+					r += ", ";
+				}
+				firstTime=false;
+				r += p.toString();
+			}
+			return r + ")";
+		}
 	}
 
 	/**
@@ -775,6 +847,10 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		public boolean isStatic() {
 			return isStatic;
 		}		
+		
+		public String toString() {
+			return target + "." + name;
+		}
 	}
 
 	/**
@@ -824,6 +900,10 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		
 		public Type type() {
 			return type;
+		}
+		
+		public String toString() {
+			return array + "[" + idx + "]";
 		}
 	}
 	
@@ -884,6 +964,11 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		public boolean value() {
 			return value==1;
 		}
+		
+		public String toString() {
+			if(value==1) { return "true"; }
+			else { return "false"; }
+		}
 	}
 	
 	/**
@@ -903,6 +988,10 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		
 		public char value() {
 			return (char)value;
+		}
+		
+		public String toString() {
+			return "'" + (char)value + "'"; 
 		}
 	}
 	
@@ -924,6 +1013,10 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		public byte value() {
 			return (byte)value;
 		}
+		
+		public String toString() {
+			return value + "b"; 
+		}
 	}
 	
 	/**
@@ -942,6 +1035,10 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		
 		public short value() {
 			return (short)value;
+		}
+		
+		public String toString() {
+			return value + "s"; 
 		}
 	}
 
@@ -962,6 +1059,9 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		
 		public int value() {
 			return value;
+		}
+		public String toString() {
+			return java.lang.Integer.toString(value);			
 		}
 	}
 
@@ -991,6 +1091,9 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		public Type.Long type() {
 			return new Type.Long();
 		}
+		public String toString() {
+			return value + "l"; 
+		}
 	}
 	
 	/**
@@ -1018,6 +1121,9 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		
 		public Type.Float type() {
 			return new Type.Float();
+		}
+		public String toString() {
+			return value + "f"; 
 		}
 	}
 
@@ -1047,6 +1153,9 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		public Type.Double type() {
 			return new Type.Double();
 		}
+		public String toString() {
+			return java.lang.Double.toString(value); 
+		}
 	}
 	
 	/**
@@ -1075,6 +1184,9 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		public Type.Clazz type() {
 			return jkit.jil.util.Types.JAVA_LANG_STRING;			
 		}
+		public String toString() {
+			return "\"" + value + "\""; 
+		}
 	}		
 	
 	/**
@@ -1090,6 +1202,9 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		
 		public Type.Null type() {
 			return jkit.jil.util.Types.T_NULL;
+		}
+		public String toString() {
+			return "null"; 
 		}
 	}
 			
@@ -1133,7 +1248,20 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		
 		public Type.Array type() {
 			return type;
-		}		
+		}
+		
+		public String toString() {
+			String r = type + "{";
+			boolean firstTime=true;
+			for(JilExpr v : values) {
+				if(!firstTime) {
+					r += ", ";
+				}
+				firstTime = false;
+				r += v.toString();
+			}
+			return r + "}";
+		}
 	}	
 	
 	/**
@@ -1168,6 +1296,10 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		
 		public Type classType() {
 			return classType;
-		}		
+		}
+		
+		public String toString() {
+			return classType + ".class";
+		}
 	}
 }

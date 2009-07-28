@@ -67,6 +67,8 @@ public class VariableDefinitions extends ForwardAnalysis<UnionFlowSet<String>> {
 		// In the following dataflow analysis, a variable is in the flow set if
 		// it is undefined.
 		
+		System.out.println("******** " + method.name() + " ********");
+		
 		HashSet<String> initStore = new HashSet<String>();
 		for(Pair<String,Boolean> v : method.localVariables()) {
 			if(!v.second()) {				
@@ -78,6 +80,8 @@ public class VariableDefinitions extends ForwardAnalysis<UnionFlowSet<String>> {
 	}
 	
 	public UnionFlowSet<String> transfer(JilStmt stmt, UnionFlowSet<String> in) {		
+		System.out.println("***    " + in);
+		System.out.println("*** " + stmt);
 		if(stmt instanceof JilStmt.Assign) {
 			return transfer((JilStmt.Assign)stmt,in);					
 		} else if(stmt instanceof JilExpr.Invoke) {
@@ -97,7 +101,7 @@ public class VariableDefinitions extends ForwardAnalysis<UnionFlowSet<String>> {
 		} else {
 			syntax_error("unknown statement encountered (" + stmt.getClass().getName() + ")",stmt);
 			return null;
-		}		
+		}				
 	}
 	
 	public UnionFlowSet<String> transfer(JilStmt.Assign stmt, UnionFlowSet<String> undefs) {

@@ -24,12 +24,13 @@ package jkit;
 import java.io.*;
 import java.util.*;
 
-import jkit.bytecode.*;
+import jkit.util.*;
 import jkit.compiler.ClassLoader;
 import jkit.compiler.SyntaxError;
 import jkit.java.*;
 import jkit.jil.stages.*;
-import jkit.jil.tree.JilClass;
+import jkit.jil.tree.*;
+
 
 /**
  * The main class provides the entry point for the JKit compiler. It is
@@ -141,11 +142,21 @@ public class JKitI {
 		classPath.addAll(bootClassPath);
 		
 		try {
+			final HashMap<String,List<String>> inserts = new HashMap();
+			
 			JavaCompiler compiler = new JavaCompiler(sourcePath, classPath, verbOutput) {
 				public void variableDefinitions(File srcfile, JilClass jfile, ClassLoader loader) {
 					super.variableDefinitions(srcfile,jfile,loader);
-					new NonNullInference().apply(jfile);
+					new NonNullInference().apply(jfile);		
+					
+					// At this point, we want to compute the new inserts
+					try {
+						computeInserts(srcfile.getCanonicalPath(),jfile,inserts);
+					} catch(IOException e) {
+						throw new RuntimeException(e);
+					}
 				}
+				
 				/**
 				 * This is the final stage in the compilation pipeline --- we must write the
 				 * output file somewhere.
@@ -155,7 +166,7 @@ public class JKitI {
 				 */
 				public void writeOutputFile(String baseName, JilClass clazz, File rootdir)
 						throws IOException {
-					System.out.println("NOT DOING ANYTHING");
+					// don't do anything here
 				}
 			};
 
@@ -227,6 +238,22 @@ public class JKitI {
 		}
 	}	
 
+	public static void computeInserts(String srcfile, JilClass jclass,
+			HashMap<String, List<String>> insertMap) {
+		List<String> inserts = insertMap.get(srcfile);
+		if(inserts == null) {
+			inserts = new ArrayList();
+			insertMap.put(srcfile, inserts);
+		}
+		
+		for(JilMethod m : jclass.methods()) {
+			for(Pair<String,List<Modifier>> param : m.parameters()) {
+				
+			}
+		}
+		
+	}
+	
 	public static ArrayList<String> buildClassPath() {
 		// Classpath hasn't been overriden by user, so import
 		// from the environment.
