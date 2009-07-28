@@ -69,6 +69,16 @@ public class UnionFlowSet<T> implements FlowSet, Cloneable {
 		}
 	}
 	
+	public UnionFlowSet<T> addAll(Collection<T> s) {
+		if(!data.contains(s)) {
+			UnionFlowSet r = (UnionFlowSet) this.clone();			
+			r.data.addAll(s);
+			return r;
+		} else {
+			return this;
+		}
+	}	
+	
 	public UnionFlowSet<T> remove(String s) {
 		if(data.contains(s)) {
 			UnionFlowSet r = (UnionFlowSet) this.clone();			
