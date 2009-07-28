@@ -43,25 +43,21 @@ public abstract class BackwardAnalysis<T extends FlowSet> {
 		HashSet<Integer> worklist = new HashSet();
 		// First, build the label map
 		int pos = 0;
-		for(JilStmt s : body) {
+		for(JilStmt s : body) {			
 			if(s instanceof JilStmt.Label) {
 				JilStmt.Label lab = (JilStmt.Label) s;				
 				labels.put(lab.label(),pos);
-			} else if(s instanceof JilStmt.Return) {				
+			} else if(s instanceof JilStmt.Return) {
+				System.out.println("ADDING: " + pos);
 				worklist.add(pos);
 			} else if(s instanceof JilStmt.Throw) {
-				// I think there could be a bug here ...				
+				// I think there could be a bug here ...
+				System.out.println("ADDING: " + pos);
 				worklist.add(pos);
 			}
 			pos++;
 		}
-		
-		// Second, initialise the worklist
-		
-		
-		
-		worklist.add(0);
-		
+				
 		// third, iterate until a fixed point is reached!
 		while(!worklist.isEmpty()) {
 			Integer current = select(worklist);
