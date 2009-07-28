@@ -41,23 +41,28 @@ public abstract class BackwardAnalysis<T extends FlowSet> {
 		HashMap<String,Integer> labels = new HashMap();
 		List<JilStmt> body = method.body();
 		HashSet<Integer> worklist = new HashSet();
+		HashMap<Integer,HashSet<Integer>> preds = new HashMap();
 		// First, build the label map
 		int pos = 0;
-		for(JilStmt s : body) {			
+		for(JilStmt s : body) {						
 			if(s instanceof JilStmt.Label) {
 				JilStmt.Label lab = (JilStmt.Label) s;				
 				labels.put(lab.label(),pos);
-			} else if(s instanceof JilStmt.Return) {
-				System.out.println("ADDING: " + pos);
+			} else if(s instanceof JilStmt.Return) {				
 				worklist.add(pos);
 			} else if(s instanceof JilStmt.Throw) {
-				// I think there could be a bug here ...
-				System.out.println("ADDING: " + pos);
+				// I think there could be a bug here ...				
 				worklist.add(pos);
-			}
+			}			
 			pos++;
 		}
-				
+		
+		pos = 0;
+		for(JilStmt s : body) {
+			addPredecessors(pos,s,preds,labels);
+			pos++;
+		}
+		
 		// third, iterate until a fixed point is reached!
 		while(!worklist.isEmpty()) {
 			Integer current = select(worklist);
@@ -72,21 +77,21 @@ public abstract class BackwardAnalysis<T extends FlowSet> {
 			for(Pair<Type.Clazz,String> ex : stmt.exceptions()) {
 				int target = labels.get(ex.second());
 				T store = stores.get(target);
-				merge(current,store,worklist);
+				merge(current,store,worklist,preds);
 			}
 			
 			if(stmt instanceof JilStmt.Goto) {
 				JilStmt.Goto gto = (JilStmt.Goto) stmt;
 				int target = labels.get(gto.label());
 				T store = stores.get(target);
-				merge(current,store,worklist);
+				merge(current,store,worklist,preds);
 			} else if(stmt instanceof JilStmt.IfGoto) {				
 				JilStmt.IfGoto gto = (JilStmt.IfGoto) stmt;
 				int target = labels.get(gto.label());
 				T t_store = transfer(gto.condition(),stores.get(target));
 				T f_store = transfer(new JilExpr.UnOp(gto.condition(), JilExpr.UnOp.NOT,Types.T_BOOL),stores.get(current+1));				
 				T store = (T) t_store.join(f_store);
-				merge(current,store,worklist);				
+				merge(current,store,worklist,preds);				
 			} else if(stmt instanceof JilStmt.Switch) {
 				JilStmt.Switch swt = (JilStmt.Switch) stmt;
 				JilExpr defCase = new JilExpr.Bool(false);
@@ -96,23 +101,63 @@ public abstract class BackwardAnalysis<T extends FlowSet> {
 							.first(), JilExpr.BinOp.EQ, Types.T_BOOL);
 					defCase = new JilExpr.BinOp(defCase, cond, JilExpr.BinOp.OR, Types.T_BOOL);
 					T t_store = transfer(cond, stores.get(target));
-					merge(current,t_store,worklist);
+					merge(current,t_store,worklist,preds);
 				}
 				// And, don't forget the default label!
 				int deftarget = labels.get(swt.defaultLabel());
 				defCase = new JilExpr.UnOp(defCase, JilExpr.UnOp.NOT,Types.T_BOOL);	
 				T d_store = transfer(defCase, stores.get(deftarget));
-				merge(current,d_store,worklist);				
+				merge(current,d_store,worklist,preds);				
 			} else if(stmt instanceof JilStmt.Return || stmt instanceof JilStmt.Throw) {
 				// collect the final store as the one at the end of the list
-				merge(current,transfer(stmt,finalStore),worklist);			
+				merge(current,transfer(stmt,finalStore),worklist,preds);			
 			} else if(!(stmt instanceof JilStmt.Label)){				
-				merge(current,transfer(stmt,stores.get(current+1)),worklist);
+				merge(current,transfer(stmt,stores.get(current+1)),worklist,preds);
 			} else if(stmt instanceof JilStmt.Label) {
-				merge(current,stores.get(current+1),worklist);
+				merge(current,stores.get(current+1),worklist,preds);
 			}
 		}
 	}	
+	
+	private void addPredecessors(int pos, JilStmt stmt,
+			HashMap<Integer, HashSet<Integer>> preds,
+			HashMap<String, Integer> labels) {
+		for (Pair<Type.Clazz, String> ex : stmt.exceptions()) {
+			int target = labels.get(ex.second());
+			addPredecessor(pos, target, preds);
+		}
+
+		if (stmt instanceof JilStmt.Goto) {
+			JilStmt.Goto gto = (JilStmt.Goto) stmt;
+			int target = labels.get(gto.label());
+			addPredecessor(pos, target, preds);
+		} else if (stmt instanceof JilStmt.IfGoto) {
+			JilStmt.IfGoto gto = (JilStmt.IfGoto) stmt;
+			int target = labels.get(gto.label());
+			addPredecessor(pos, target, preds); // true case
+			addPredecessor(pos, pos + 1, preds); // false case
+		} else if (stmt instanceof JilStmt.Switch) {
+			JilStmt.Switch swt = (JilStmt.Switch) stmt;
+			for (Pair<JilExpr.Number, String> c : swt.cases()) {
+				int target = labels.get(c.second());
+				addPredecessor(pos, target, preds);
+			}
+			// And, don't forget the default label!
+			int deftarget = labels.get(swt.defaultLabel());
+			addPredecessor(pos, deftarget, preds);
+		} else if (!(stmt instanceof JilStmt.Return || stmt instanceof JilStmt.Throw)) {
+			addPredecessor(pos, pos + 1, preds);
+		}
+	}
+	
+	private void addPredecessor(int from, int to, HashMap<Integer,HashSet<Integer>> preds) {
+		HashSet<Integer> ps = preds.get(to);
+		if(ps == null) {
+			ps = new HashSet<Integer>();
+			preds.put(to, ps);
+		}
+		ps.add(from);
+	}
 	
 	/**
 	 * Merges a FlowSet with a certain Point and adds it to the worklist
@@ -121,18 +166,26 @@ public abstract class BackwardAnalysis<T extends FlowSet> {
 	 * @param p Destination Point for merge
 	 * @param m FlowSet to merge into point
 	 */
-	private void merge(Integer p, T m, HashSet<Integer> worklist) {
+	private void merge(Integer p, T m, HashSet<Integer> worklist, HashMap<Integer,HashSet<Integer>> preds) {
 		T tmp = stores.get(p);		
 		if(tmp != null) {
 			T ntmp = (T) tmp.join(m);
 			if(ntmp != tmp) {
-				stores.put(p, ntmp);				
-				worklist.add(p); 
-			}			
+				stores.put(p, ntmp);								
+			} else {
+				return; // no change.
+			}
 		} else {
-			stores.put(p, m);
-			worklist.add(p);
+			stores.put(p, m);			
 		}
+		
+		// now, determine who is before!
+		HashSet<Integer> ps = preds.get(p);
+		if(ps == null) { return; }
+		for(Integer pred : preds.get(p)) {
+			worklist.add(pred);
+		}
+		
 	}
 	
 	/**
