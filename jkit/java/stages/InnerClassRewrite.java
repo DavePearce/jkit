@@ -834,7 +834,7 @@ public class InnerClassRewrite {
 				
 		ArrayList<Modifier> mods = new ArrayList<Modifier>();
 		mods.add(Modifier.ACC_FINAL);
-		constructor.parameters().add(0, new Triple("this$0", mods, parentType));
+		constructor.parameters().add(0, new Decl.JavaParameter("this$0", mods, fromJilType(parentType)));
 		Expr.LocalVariable param = new Expr.LocalVariable("this$0", parentType, loc);
 		Expr.LocalVariable thiz = new Expr.LocalVariable("this", ownerType, loc);
 		Expr.Deref lhs = new Expr.Deref(thiz, "this$0", parentType, loc);

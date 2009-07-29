@@ -6,9 +6,19 @@ import java.util.*;
 
 import jkit.jil.dfa.*;
 import jkit.jil.tree.*;
-import jkit.util.Pair;
 
 public class NonNullInference extends BackwardAnalysis<UnionFlowSet<String>> {
+	
+	public static class Attr implements Attribute {
+		private Set<String> nonnulls; // parameters and fields which must be
+                                        // non-null on entry
+		public Attr(Set<String> nonnulls) {
+			this.nonnulls = nonnulls;
+		}
+		public Set<String> nonnulls() {
+			return nonnulls;
+		}
+	}
 	
 	public void apply(JilClass owner) {
 		for(JilMethod m : owner.methods()) {			
@@ -21,6 +31,9 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<String>> {
 	public void infer(JilMethod method,JilClass owner) {		
 		HashSet<String> finalStore = new HashSet<String>();				
 		start(method,new UnionFlowSet<String>(finalStore));
+		
+		UnionFlowSet<String> entryStore = stores.get(0);
+		method.attributes().add(new Attr(entryStore.toSet()));
 	}
 
 	public UnionFlowSet<String> transfer(JilStmt stmt, UnionFlowSet<String> in) {		

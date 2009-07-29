@@ -560,10 +560,10 @@ public class EnumRewrite {
 		
 		Stmt.Block block = new Stmt.Block(stmts, loc);
 
-		ArrayList<Triple<String, List<Modifier>, jkit.java.tree.Type>> mparams = new ArrayList();
+		ArrayList<Decl.JavaParameter> mparams = new ArrayList();
 		jkit.java.tree.Type stype = new jkit.java.tree.Type.Clazz("java.lang.String");
 		stype.attributes().add(Types.JAVA_LANG_STRING);
-		mparams.add(new Triple("key",new ArrayList(), stype));
+		mparams.add(new Decl.JavaParameter("key",new ArrayList(), stype));
 		
 		Decl.JavaMethod m = new Decl.JavaMethod(mods, "valueOf",
 				jtype, mparams, false,
@@ -685,7 +685,7 @@ public class EnumRewrite {
 	
 	protected void augmentConstructor(Decl.JavaEnum ec, Decl.JavaMethod m) {
 		SourceLocation loc = (SourceLocation) ec.attribute(SourceLocation.class);
-		List<Triple<String, List<Modifier>, jkit.java.tree.Type>> params = m.parameters();
+		List<Decl.JavaParameter> params = m.parameters();
 		
 		// First, update method type
 		Type.Function oldType = (Type.Function) m.attribute(Type.Function.class);
@@ -704,8 +704,8 @@ public class EnumRewrite {
 		stringType.attributes().add(Types.JAVA_LANG_STRING);
 		
 		// parameters must go at front of list.		
-		params.add(0,new Triple("$1",new ArrayList(),stringType));
-		params.add(1,new Triple("$2",new ArrayList(),intType));				
+		params.add(0,new Decl.JavaParameter("$1",new ArrayList(),stringType));
+		params.add(1,new Decl.JavaParameter("$2",new ArrayList(),intType));				
 						
 		// Second, add code to the constructor.
 		Type.Function ftype = new Type.Function(Types.T_VOID,Types.JAVA_LANG_STRING,Types.T_INT);
@@ -759,14 +759,14 @@ public class EnumRewrite {
 		ArrayList<Stmt> stmts = new ArrayList();
 		stmts.add(ivk);
 		Stmt.Block block = new Stmt.Block(stmts, loc);
-		ArrayList<Triple<String, List<Modifier>, jkit.java.tree.Type>> mparams = new ArrayList();
+		ArrayList<Decl.JavaParameter> mparams = new ArrayList();
 		jkit.java.tree.Type intType = new jkit.java.tree.Type.Int();
 		intType.attributes().add(Types.T_INT);
 		jkit.java.tree.Type stringType = new jkit.java.tree.Type.Clazz("java.lang.String");
 		stringType.attributes().add(Types.JAVA_LANG_STRING);
 		// parameters must go at front of list.		
-		mparams.add(0,new Triple("$1",new ArrayList(),stringType));
-		mparams.add(1,new Triple("$2",new ArrayList(),intType));
+		mparams.add(0,new Decl.JavaParameter("$1",new ArrayList(),stringType));
+		mparams.add(1,new Decl.JavaParameter("$2",new ArrayList(),intType));
 				
 		Decl.JavaConstructor m = new Decl.JavaConstructor(mods, ec.name(),
 				mparams, false, new ArrayList(), new ArrayList(), block, loc);

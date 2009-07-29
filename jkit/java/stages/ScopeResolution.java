@@ -298,11 +298,11 @@ public class ScopeResolution {
 		
 		scopes.push(myScope);
 		
-		for (Triple<String, List<Modifier>, jkit.java.tree.Type> t : d
+		for (Decl.JavaParameter t : d
 				.parameters()) {
-			Type type = (Type) t.third().attribute(Type.class);
-			Pair<Type, List<Modifier>> p = new Pair(type, t.second());
-			myScope.variables.put(t.first(), p);
+			Type type = (Type) t.type().attribute(Type.class);
+			Pair<Type, List<Modifier>> p = new Pair(type, t.modifiers());
+			myScope.variables.put(t.name(), p);
 		}		
 		
 		if (!d.isStatic()) {

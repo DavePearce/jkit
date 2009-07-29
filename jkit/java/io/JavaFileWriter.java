@@ -273,20 +273,20 @@ public class JavaFileWriter {
 		boolean firstTime=true;
 		int va_count = 1; // to detect varargs 
 		
-		for(Triple<String,List<Modifier>,Type> p : m.parameters()) {
+		for(Decl.JavaParameter p : m.parameters()) {
 			if(!firstTime) {
 				write(", ");				
 			}
 			firstTime=false;
-			writeModifiers(p.second());
-			writeType(p.third());
+			writeModifiers(p.modifiers());
+			writeType(p.type());
 			
 			if(m.isVariableArity() && va_count == m.parameters().size()) {
 				write("...");
 			}
 			
 			write(" ");
-			write(p.first());
+			write(p.name());
 			va_count++;
 		}
 		write(")");

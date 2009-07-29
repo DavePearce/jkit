@@ -646,7 +646,7 @@ public class AnonClassesRewrite {
 		// ... yes, this method is ugly.
 		
 		ArrayList<JilMethod.Parameter> jilparams = new ArrayList();
-		ArrayList<Triple<String, List<Modifier>, jkit.java.tree.Type>> javaparams = new ArrayList();
+		ArrayList<Decl.JavaParameter> javaparams = new ArrayList();
 		ArrayList<Expr> args = new ArrayList<Expr>();
 		ArrayList<Type> superParams = new ArrayList<Type>();
 		ArrayList<Modifier> mods = new ArrayList<Modifier>();
@@ -657,7 +657,7 @@ public class AnonClassesRewrite {
 			// don't include the first parameter *if* it's the parent pointer,
 			// and the super class is static.
 			jilparams.add(new JilMethod.Parameter("x$" + p, mods));
-			javaparams.add(new Triple("x$" + p, mods, fromJilType(t)));
+			javaparams.add(new Decl.JavaParameter("x$" + p, mods, fromJilType(t)));
 			if(p < trigger) {
 				superParams.add(t);
 				args.add(new Expr.LocalVariable("x$" + p, t));

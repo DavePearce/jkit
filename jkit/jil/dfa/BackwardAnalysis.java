@@ -32,14 +32,16 @@ import jkit.util.Pair;
 public abstract class BackwardAnalysis<T extends FlowSet> {
 	
 	
-	private final HashMap<Integer, T> stores = new HashMap<Integer, T>();	
+	protected final HashMap<Integer, T> stores = new HashMap<Integer, T>();	
+	protected final HashMap<String,Integer> labels = new HashMap();
 	
 	/**
 	 * Begins the Forward Analysis traversal of a method
 	 */	
 	public void start(JilMethod method, T finalStore) {
 		stores.clear(); // need to reset for subsequent calls
-		HashMap<String,Integer> labels = new HashMap();
+		labels.clear();
+		
 		List<JilStmt> body = method.body();
 		HashSet<Integer> worklist = new HashSet();
 		HashMap<Integer,HashSet<Integer>> preds = new HashMap();

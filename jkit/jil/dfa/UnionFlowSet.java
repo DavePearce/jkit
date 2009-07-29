@@ -93,6 +93,10 @@ public class UnionFlowSet<T> implements FlowSet, Cloneable {
 		return data.contains(s);
 	}
 	
+	public Set<T> toSet() {
+		return new HashSet<T>(data);
+	}
+	
 	public String toString() {
 		String r = "{";
 		boolean firstTime=true;

@@ -196,6 +196,7 @@ public class SkeletonBuilder {
 		
 		ArrayList<JilMethod.Parameter> params = new ArrayList();
 		params.add(new JilMethod.Parameter("key",new ArrayList())); // could add final modifier=		
+		
 		JilMethod valueOf = new JilMethod("valueOf", new Type.Function(
 				type,Types.JAVA_LANG_STRING), params, modifiers,
 				new ArrayList(),loc);
@@ -212,8 +213,10 @@ public class SkeletonBuilder {
 		List<Type.Clazz> exceptions = new ArrayList<Type.Clazz>();
 		List<JilMethod.Parameter> parameters = new ArrayList();
 		
-		for(Triple<String,List<Modifier>,jkit.java.tree.Type> t : d.parameters()) {
-			parameters.add(new JilMethod.Parameter(t.first(),t.second()));
+		for(Decl.JavaParameter p : d.parameters()) {
+			parameters.add(new JilMethod.Parameter(p.name(),
+					new ArrayList<Modifier>(p.modifiers()),
+					new ArrayList(p.attributes())));
 		}
 		
 		for(jkit.java.tree.Type.Clazz tc : d.exceptions()) {

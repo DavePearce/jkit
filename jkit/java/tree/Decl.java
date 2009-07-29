@@ -278,6 +278,38 @@ public interface Decl extends SyntacticElement {
 		}
 	}
 
+	public static class JavaParameter extends SyntacticElementImpl {
+		private String name;
+		private List<Modifier> modifiers;
+		private Type type;
+		
+		public JavaParameter(String name, List<Modifier> modifiers, Type type, Attribute... attributes) {
+			super(attributes);
+			this.name = name;
+			this.modifiers = modifiers;
+			this.type = type;
+		}
+		
+		public JavaParameter(String name, List<Modifier> modifiers, Type type, List<Attribute> attributes) {
+			super(attributes);
+			this.name = name;
+			this.modifiers = modifiers;
+			this.type = type;
+		}
+		
+		public String name() {
+			return name;
+		}
+		
+		public List<Modifier> modifiers() {
+			return modifiers;
+		}
+		
+		public Type type() {
+			return type;
+		}
+	}
+	
 	/**
 	 * This class stores all known information about a method, including it's
 	 * full (possibly generic) type, its name, its modifiers (e.g. public/private
@@ -290,13 +322,13 @@ public interface Decl extends SyntacticElement {
 		private List<Modifier> modifiers;
 		private String name;
 		private Type returnType;
-		private List<Triple<String,List<Modifier>,Type>> parameters;
+		private List<JavaParameter> parameters;
 		private List<Type.Variable> typeParameters;
 		private List<Type.Clazz> exceptions;
 		private Stmt.Block block;
 
 		public JavaMethod(List<Modifier> modifiers, String name, Type returnType,
-				List<Triple<String, List<Modifier>, Type>> parameters,
+				List<JavaParameter> parameters,
 				boolean varargs, List<Type.Variable> typeParameters,
 				List<Type.Clazz> exceptions, Stmt.Block block,
 				Attribute... attributes) {
@@ -331,7 +363,7 @@ public interface Decl extends SyntacticElement {
 		 * 
 		 * @return
 		 */
-		public List<Triple<String,List<Modifier>,Type>> parameters() {
+		public List<JavaParameter> parameters() {
 			return parameters;
 		}
 
@@ -476,7 +508,7 @@ public interface Decl extends SyntacticElement {
 	 */
 	public static class JavaConstructor extends JavaMethod {
 		public JavaConstructor(List<Modifier> modifiers, String name,
-				List<Triple<String, List<Modifier>, Type>> parameters, boolean varargs,
+				List<JavaParameter> parameters, boolean varargs,
 				List<Type.Variable> typeParameters,
 				List<Type.Clazz> exceptions,
 				Stmt.Block block, Attribute... attributes) {			

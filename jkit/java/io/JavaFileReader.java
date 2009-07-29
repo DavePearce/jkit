@@ -398,7 +398,7 @@ public class JavaFileReader {
 		// =========================== PARSE PARAMETERS =======================
 		// ====================================================================		
 	
-		ArrayList<Triple<String, List<Modifier>, Type>> params = parseParameters(
+		ArrayList<Decl.JavaParameter> params = parseParameters(
 				method.getChild(4), genericVariables);		
 
 		boolean varargs = hasVarArgs(method.getChild(4));
@@ -1653,12 +1653,16 @@ public class JavaFileReader {
 		return false;
 	}
 	
-	protected ArrayList<Triple<String, List<Modifier>, Type>> parseParameters(
+	protected ArrayList<Decl.JavaParameter> parseParameters(
 			Tree paramList, HashSet<String> genericVariables) {
-		ArrayList<Triple<String, List<Modifier>, Type>> params = new ArrayList<Triple<String, List<Modifier>, Type>>();		
+		ArrayList<Decl.JavaParameter> params = new ArrayList();		
 		
 		for (int i = 0; i != paramList.getChildCount(); ++i) {
 			Tree c = paramList.getChild(i);			
+			
+			SourceLocation loc = new SourceLocation(c.getLine(), c
+					.getCharPositionInLine());
+			
 			List<Modifier> pModifiers = parseModifiers(c.getChild(0),
 					genericVariables);
 			Type t = parseType(c.getChild(1), genericVariables);
@@ -1668,7 +1672,7 @@ public class JavaFileReader {
 				t = new Type.Array(t);
 			}
 
-			params.add(new Triple(n, pModifiers, t));			
+			params.add(new Decl.JavaParameter(n, pModifiers, t, loc));			
 		}
 
 		return params;

@@ -57,7 +57,7 @@ public class JKitI {
 		} else {
 			System.exit(0);
 		}
-	}
+	}		
 	
 	public boolean compile(String[] args) {
 		ArrayList<String> classPath = null;
@@ -130,10 +130,10 @@ public class JKitI {
 		// ======================================================
 
 		if (classPath == null) {
-			classPath = buildClassPath();
+			classPath = jkit.JKitC.buildClassPath();
 		}
 		if (bootClassPath == null) {
-			bootClassPath = buildBootClassPath();
+			bootClassPath = jkit.JKitC.buildBootClassPath();
 		}
 		if(sourcePath == null) {
 			sourcePath = new ArrayList<String>();
@@ -142,7 +142,7 @@ public class JKitI {
 		classPath.addAll(bootClassPath);
 		
 		try {
-			final HashMap<String,List<String>> inserts = new HashMap();
+			final HashMap<String,List<Insert>> inserts = new HashMap();
 			
 			JavaCompiler compiler = new JavaCompiler(sourcePath, classPath, verbOutput) {
 				public void variableDefinitions(File srcfile, JilClass jfile, ClassLoader loader) {
@@ -152,8 +152,7 @@ public class JKitI {
 					// At this point, we want to compute the new inserts
 					try {
 						computeInserts(srcfile.getCanonicalPath(),jfile,inserts);
-					} catch(IOException e) {
-						throw new RuntimeException(e);
+					} catch(IOException e) {					
 					}
 				}
 				
@@ -183,9 +182,11 @@ public class JKitI {
 			for(int i=fileArgsBegin;i!=args.length;++i) {
 				srcfiles.add(new File(args[i]));
 			}
-			compiler.compile(srcfiles);						
+			compiler.compile(srcfiles);	
+			
+			writeOutputFiles(srcfiles,inserts);
 		} catch (SyntaxError e) {
-			outputSourceError(e.fileName(), e.line(), e.column(), e.width(), e
+			jkit.JKitC.outputSourceError(e.fileName(), e.line(), e.column(), e.width(), e
 					.getMessage());
 			if (verbose) {
 				e.printStackTrace(System.err);
@@ -238,91 +239,83 @@ public class JKitI {
 		}
 	}	
 
-	public static void computeInserts(String srcfile, JilClass jclass,
-			HashMap<String, List<String>> insertMap) {
-		List<String> inserts = insertMap.get(srcfile);
-		if(inserts == null) {
-			inserts = new ArrayList();
-			insertMap.put(srcfile, inserts);
+	public static class Insert implements Comparable<Insert> {
+		public SourceLocation loc;
+		public String text;
+		
+		public Insert(String text, SourceLocation loc) {
+			this.text = text;
+			this.loc = loc;
 		}
 		
-		for(JilMethod m : jclass.methods()) {
-			System.out.println("*** " + m.name() + " " + m.type());
-			for(JilMethod.Parameter p : m.parameters()) {
-				System.out.print(p.name() + " ");
+		public int compareTo(Insert i) {
+			if(loc.line() < i.loc.line()) {
+				return -1;
+			} else if(loc.line() > i.loc.line()) {
+				return 1;
+			} else if(loc.column() < i.loc.column()){
+				return -1;
+			} else if(loc.column() > i.loc.column()){
+				return 1;
 			}
+			return 0;
 		}
-		
 	}
 	
-	public static ArrayList<String> buildClassPath() {
-		// Classpath hasn't been overriden by user, so import
-		// from the environment.
-		ArrayList<String> classPath = new ArrayList<String>();
-		String cp = System.getenv("CLASSPATH");
-		if (cp == null) {
-			System.err
-			.println("Warning: CLASSPATH environment variable not set");
-		} else {
-			// split classpath along appropriate separator
-			Collections.addAll(classPath, cp.split(File.pathSeparator));
+	public static void computeInserts(String filename, JilClass jclass, HashMap<String,List<Insert>> insertmap) {
+		List<Insert> inserts = insertmap.get(filename);
+		if(inserts == null) {
+			inserts = new ArrayList<Insert>();
+			insertmap.put(filename,inserts);
 		}
-		return classPath;
-	}
+		
+		for (JilMethod m : jclass.methods()) {			
+			NonNullInference.Attr attr = (NonNullInference.Attr) m
+					.attribute(NonNullInference.Attr.class);
 
-	public static ArrayList<String> buildBootClassPath() {
-		// Boot class path hasn't been overriden by user, so employ the
-		// default option.
-		ArrayList<String> bootClassPath = new ArrayList<String>();
-		String bcp = System.getProperty("sun.boot.class.path");
-		// split classpath along appropriate separator
-		Collections.addAll(bootClassPath, bcp.split(File.pathSeparator));
-		return bootClassPath;
-	}
-
-	public static void outputSourceError(String fileArg, int line, int col,
-			int width, String message) {
-		System.err.println(fileArg + ":" + line + ": " + message);
-		String l = readLine(fileArg, line);		
-		if(l != null) {
-			System.err.println(l);
-			for (int j = 0; j < Math.min(col,l.length()); ++j) {
-				if (l.charAt(j) == '\t') {
-					System.err.print("\t");
-				} else {
-					System.err.print(" ");
+			for (JilMethod.Parameter p : m.parameters()) {
+				if (attr.nonnulls().contains(p.name())) {
+					inserts.add(new Insert("@NonNull", (SourceLocation) p
+							.attribute(SourceLocation.class)));
 				}
-			}		
-			for (int j = 0; j < width; ++j)
-				System.err.print("^");
-			System.err.println("");
-		} else {
-			// We shouldn't be able to get here. But, if there is a bug in jkit
-			// itself, such that it attributes the wrong filename to the file
-			// containing the error, then we can. So, it's helpful not to throw
-			// an exception at this point ...
+			}			
+		}		
+	}
+	
+	public static void writeOutputFiles(List<File> srcfiles,
+			HashMap<String,List<Insert>> insertmap) throws IOException {
+		for(File f : srcfiles) {
+			String filename = f.getCanonicalPath();
+			List<Insert> inserts = insertmap.get(filename);
+			writeOutputFile(filename,inserts);
 		}
 	}
-
-	public static String readLine(String f, int l) {
-		try {
-			return readLine(new FileReader(f), l);
-		} catch (IOException e) {
-			// shouldn't get here.
-			return "";
-		}
-	}
-
-	public static String readLine(Reader in, int l) {
-		try {
-			LineNumberReader lin = new LineNumberReader(in);
-			String line = "";
-			while (lin.getLineNumber() < l && line != null) {
-				line = lin.readLine();
+	
+	public static void writeOutputFile(String filename, List<Insert> inserts) throws FileNotFoundException,IOException {
+		Collections.sort(inserts);
+		String outname = filename.substring(0,filename.length() - 5); // strip .java
+		outname = outname + ".jout";
+		System.out.println("Writing: " + outname);				
+		LineNumberReader in = new LineNumberReader(new FileReader(filename));
+		Writer out = new FileWriter(outname);
+		String line = "";
+		while (line != null) {
+			int lineno = in.getLineNumber();			
+			line = in.readLine();			
+			while(inserts.size() > 0 && inserts.get(0).loc.line() == lineno) {				
+				Insert i = inserts.get(0);				
+				System.out.println("PROCESSING INSERT: " + i.text + " " + i.loc);
+				String before = line.substring(0,i.loc.column());
+				String after = line.substring(i.loc.column());
+				line = before + i.text + after;
+				inserts.remove(0);
 			}
-			return line;
-		} catch (IOException e) {
-			return "";
-		}
-	}
+			
+			if(line != null) {
+				out.write(line + "\n");
+			}
+		}		
+		in.close();
+		out.close();
+	}	
 }
