@@ -127,10 +127,10 @@ public class JKitC {
 		// ======================================================
 
 		if (classPath == null) {
-			classPath = buildClassPath();
+			classPath = ClassLoader.buildClassPath();
 		}
 		if (bootClassPath == null) {
-			bootClassPath = buildBootClassPath();
+			bootClassPath = ClassLoader.buildBootClassPath();
 		}
 		if(sourcePath == null) {
 			sourcePath = new ArrayList<String>();
@@ -216,31 +216,6 @@ public class JKitC {
 			System.out.println(p[1]);
 		}
 	}	
-
-	public static ArrayList<String> buildClassPath() {
-		// Classpath hasn't been overriden by user, so import
-		// from the environment.
-		ArrayList<String> classPath = new ArrayList<String>();
-		String cp = System.getenv("CLASSPATH");
-		if (cp == null) {
-			System.err
-			.println("Warning: CLASSPATH environment variable not set");
-		} else {
-			// split classpath along appropriate separator
-			Collections.addAll(classPath, cp.split(File.pathSeparator));
-		}
-		return classPath;
-	}
-
-	public static ArrayList<String> buildBootClassPath() {
-		// Boot class path hasn't been overriden by user, so employ the
-		// default option.
-		ArrayList<String> bootClassPath = new ArrayList<String>();
-		String bcp = System.getProperty("sun.boot.class.path");
-		// split classpath along appropriate separator
-		Collections.addAll(bootClassPath, bcp.split(File.pathSeparator));
-		return bootClassPath;
-	}
 
 	public static void outputSourceError(String fileArg, int line, int col,
 			int width, String message) {

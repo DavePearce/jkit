@@ -71,14 +71,10 @@ public class JavaCompiler implements Compiler {
 	protected ArrayList<Triple<File,JavaFile,List<JilClass>>> compilationQueue = new ArrayList();
 
 	/**
-	 * The compiling set gives a full list of files which are currently being
-	 * compiled. This may be more than one if there are multiple compiles going
-	 * on in parallel. The reason for this is to prevent an infinite loop of
-	 * recursive compiles. [ALTHOUGH I THINK THERE MAYBE A BETTER WAY OF DOING
-	 * THIS]
-	 */
-	protected Set<String> compiling = new HashSet<String>();
-
+     * The parsed set gives a full list of files which have already been parsed.
+     * This may be more than one if there are multiple compiles going on in
+     * parallel.
+     */
 	protected Set<String> parsed = new HashSet<String>();
 	
 	/**
@@ -165,9 +161,9 @@ public class JavaCompiler implements Compiler {
 	 * The purpose of this method is to indicate that a source file is currently
 	 * being compiled.
 	 */
-	public boolean isCompiling(File sfile) {
+	public boolean hasParsed(File sfile) {
 		try {
-			return compiling.contains(sfile.getCanonicalPath());
+			return parsed.contains(sfile.getCanonicalPath());
 		} catch (IOException e) {
 			return false;
 		}
@@ -234,6 +230,13 @@ public class JavaCompiler implements Compiler {
 	}
 	
 
+	/**
+     * Parse the input filename, producing a set of skeletons. Each skeleton has
+     * methods and field declarations with fully qualified types, but no method
+     * bodies. Furthermore, for each inner-class and enumeration, there will be
+     * a separate skeleton created. Thus, a file which only contains one class
+     * declaration (inc anonymous classes) will only produce one skeleton.
+     */
 	public List<JilClass> parse(File filename) throws IOException {				
 		try {
 			// First, parse the Java source file to yield an abstract syntax
@@ -257,6 +260,7 @@ public class JavaCompiler implements Compiler {
 			
 			compilationQueue.add(new Triple(filename,jfile,skeletons));
 			
+			// finally, 
 			parsed.add(filename.getCanonicalPath());
 			
 			return skeletons;
@@ -279,10 +283,9 @@ public class JavaCompiler implements Compiler {
      *            File.separatorChar's to indicate directories).
      * @return
      */
-	public List<JilClass> finishcompilation(File filename, JavaFile jfile,
+	protected List<JilClass> finishcompilation(File filename, JavaFile jfile,
 			List<JilClass> skeletons) throws IOException, SyntaxError {		
-		compiling.add(filename.getCanonicalPath());
-
+		
 		try {			
 			// Fifth, perform the scope resolution itself. The aim here is, for
 			// each variable access, to determine whether it is a local
@@ -331,9 +334,7 @@ public class JavaCompiler implements Compiler {
 			for(JilClass clazz : skeletons) {				
 				String baseName = createBasename(clazz.type());
 				writeOutputFile(baseName, clazz, outdir);				
-			}
-						
-			compiling.remove(filename);
+			}									
 
 			return skeletons; // to be completed
 		} catch (SyntaxError se) {
@@ -716,19 +717,5 @@ public class JavaCompiler implements Compiler {
 			filename += c.first();
 		}
 		return filename;
-	}
-
-	/**
-	 * This method is just to factor out the code for looking up the source
-	 * location and throwing an exception based on that.
-	 * 
-	 * @param msg
-	 *            --- the error message
-	 * @param e
-	 *            --- the syntactic element causing the error
-	 */
-	protected void syntax_error(String msg, SyntacticElement e) {
-		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
-		throw new SyntaxError(msg, loc.line(), loc.column());
 	}
 }

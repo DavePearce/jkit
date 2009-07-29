@@ -369,8 +369,7 @@ public final class ClassLoader {
 					File classFile = new File(location.getPath(),filename + ".class");					
 					File srcFile = new File(location.getPath(),srcFilename + ".java");
 					
-					if (srcFile.exists()
-							&& !compiler.isCompiling(srcFile)
+					if (srcFile.exists()						
 							&& (!classFile.exists() || classFile.lastModified() < srcFile
 									.lastModified())) {
 						// Here, there is a source file, and either there is no class
@@ -403,9 +402,7 @@ public final class ClassLoader {
 						// Update our knowledge base of classes.
 						classtable.put(refName(clazz.type()), clazz);						
 						return clazz;										
-					} else if(compiler.isCompiling(srcFile)) {
-						
-					}
+					} 
 				}
 			} catch(IOException e) {
 				// could possibly report stuff back to user here.
@@ -682,5 +679,43 @@ public final class ClassLoader {
 		} else {
 			throw new RuntimeException("Unknown file type encountered: " + file);
 		}
+	}
+	
+
+	/**
+     * This method builds a default classpath, based upon the CLASSPATH
+     * environment variable.
+     * 
+     * @return
+     */
+	public static ArrayList<String> buildClassPath() {
+		// Classpath hasn't been overriden by user, so import
+		// from the environment.
+		ArrayList<String> classPath = new ArrayList<String>();
+		String cp = System.getenv("CLASSPATH");
+		if (cp == null) {
+			System.err
+			.println("Warning: CLASSPATH environment variable not set");
+		} else {
+			// split classpath along appropriate separator
+			Collections.addAll(classPath, cp.split(File.pathSeparator));
+		}
+		return classPath;
+	}
+
+	/**
+     * This method builds a default bootclasspath, based upon the
+     * sun.boot.class.path property. 
+     * 
+     * @return
+     */
+	public static ArrayList<String> buildBootClassPath() {
+		// Boot class path hasn't been overriden by user, so employ the
+		// default option.
+		ArrayList<String> bootClassPath = new ArrayList<String>();
+		String bcp = System.getProperty("sun.boot.class.path");
+		// split classpath along appropriate separator
+		Collections.addAll(bootClassPath, bcp.split(File.pathSeparator));
+		return bootClassPath;
 	}
 }

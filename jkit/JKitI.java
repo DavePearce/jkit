@@ -130,10 +130,10 @@ public class JKitI {
 		// ======================================================
 
 		if (classPath == null) {
-			classPath = jkit.JKitC.buildClassPath();
+			classPath = ClassLoader.buildClassPath();
 		}
 		if (bootClassPath == null) {
-			bootClassPath = jkit.JKitC.buildBootClassPath();
+			bootClassPath = ClassLoader.buildBootClassPath();
 		}
 		if(sourcePath == null) {
 			sourcePath = new ArrayList<String>();
