@@ -65,8 +65,6 @@ public class JKitI {
 		ArrayList<String> sourcePath = null;
 		String outputDirectory = null;		
 		boolean verbose = false;
-		boolean bytecodeOutput = false;
-		boolean jilOutput = false;			
 		
 		if (args.length == 0) {
 			// no command-line arguments provided
@@ -107,10 +105,6 @@ public class JKitI {
 					                                       .split(File.pathSeparator));
 				} else if (arg.equals("-d")) {
 					outputDirectory = args[++i];
-				} else if (arg.equals("-bytecode")) {
-					bytecodeOutput = true;
-				} else if (arg.equals("-jil")) {
-					jilOutput = true;
 				} else {
 					throw new RuntimeException("Unknown option: " + args[i]);
 				}
