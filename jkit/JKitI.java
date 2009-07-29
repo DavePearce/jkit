@@ -301,12 +301,15 @@ public class JKitI {
 		String line = "";
 		while (line != null) {
 			line = in.readLine();
-			int lineno = in.getLineNumber();								
+			int lineno = in.getLineNumber();	
+			int offset = 0;
 			while(inserts.size() > 0 && inserts.get(0).loc.line() == lineno) {				
-				Insert i = inserts.get(0);								
-				String before = line.substring(0,i.loc.column());
-				String after = line.substring(i.loc.column());
+				Insert i = inserts.get(0);		
+				int ipos = i.loc.column() + offset;
+				String before = line.substring(0,ipos);
+				String after = line.substring(ipos);
 				line = before + i.text + after;
+				offset = offset + i.text.length();
 				inserts.remove(0);
 			}
 			
