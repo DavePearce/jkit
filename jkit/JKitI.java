@@ -141,6 +141,7 @@ public class JKitI {
 			JavaCompiler compiler = new JavaCompiler(sourcePath, classPath, verbOutput) {
 				public void variableDefinitions(File srcfile, JilClass jfile, ClassLoader loader) {
 					super.variableDefinitions(srcfile,jfile,loader);
+					new StaticCallGraphBuilder().apply(jfile);
 					new NonNullInference().apply(jfile);		
 					
 					// At this point, we want to compute the new inserts

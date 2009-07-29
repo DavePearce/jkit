@@ -59,7 +59,7 @@ public class UnionFlowSet<T> implements FlowSet, Cloneable {
 		return null;
 	}
 	
-	public UnionFlowSet<T> add(String s) {
+	public UnionFlowSet<T> add(T s) {
 		if(!data.contains(s)) {
 			UnionFlowSet r = (UnionFlowSet) this.clone();			
 			r.data.add(s);
@@ -79,7 +79,7 @@ public class UnionFlowSet<T> implements FlowSet, Cloneable {
 		}
 	}	
 	
-	public UnionFlowSet<T> remove(String s) {
+	public UnionFlowSet<T> remove(T s) {
 		if(data.contains(s)) {
 			UnionFlowSet r = (UnionFlowSet) this.clone();			
 			r.data.remove(s);
@@ -89,7 +89,7 @@ public class UnionFlowSet<T> implements FlowSet, Cloneable {
 		}
 	}
 	
-	public boolean contains(String s) {
+	public boolean contains(T s) {
 		return data.contains(s);
 	}
 	

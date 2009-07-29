@@ -907,7 +907,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		}
 	}
 	
-	public static interface Value {}
+	public static interface Value extends JilExpr {}
 	
 	/**
 	 * Represents a numerical constant

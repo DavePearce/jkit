@@ -7,15 +7,60 @@ import java.util.*;
 import jkit.jil.dfa.*;
 import jkit.jil.tree.*;
 
-public class NonNullInference extends BackwardAnalysis<UnionFlowSet<String>> {
+public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInference.Location>> {
+	
+	public static class Location {
+		private List<String> names;
+		
+		public Location(List<String> names) {
+			this.names = names;
+		}
+		
+		public Location(String... names) {
+			this.names = Arrays.asList(names);
+		}
+		
+		public List<String> names() {
+			return names;
+		}
+		
+		public void append(String n) {
+			names.add(n);
+		}
+		
+		public boolean equals(Object o) {
+			if(o instanceof Location) {
+				Location l = (Location) o;
+				return l.names.equals(names);
+			}
+			return false;
+		}
+		
+		public int hashCode() {
+			return names.hashCode();
+		}
+		
+		public String toString() {
+			String r = "";
+			boolean firstTime=true;
+			for(String s : names) {
+				if(!firstTime) {
+					r += ".";
+				}
+				firstTime=false;
+				r += s;
+			}
+			return r;
+		}
+	}
 	
 	public static class Attr implements Attribute {
-		private Set<String> nonnulls; // parameters and fields which must be
+		private Set<Location> nonnulls; // parameters and fields which must be
                                         // non-null on entry
-		public Attr(Set<String> nonnulls) {
+		public Attr(Set<Location> nonnulls) {
 			this.nonnulls = nonnulls;
 		}
-		public Set<String> nonnulls() {
+		public Set<Location> nonnulls() {
 			return nonnulls;
 		}
 	}
@@ -28,19 +73,18 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<String>> {
 		}
 	}
 	
-	public void infer(JilMethod method,JilClass owner) {		
-		HashSet<String> finalStore = new HashSet<String>();				
-		start(method,new UnionFlowSet<String>(finalStore));
+	public void infer(JilMethod method,JilClass owner) {						
+		start(method,new UnionFlowSet<Location>(new HashSet()));
 		
-		UnionFlowSet<String> entryStore = stores.get(0);
+		UnionFlowSet<Location> entryStore = stores.get(0);
 		
 		// System.out.println("METHOD: " + owner.type() + "." + method.name() + " " + method.type() + ": " + entryStore);
 		
 		method.attributes().add(new Attr(entryStore.toSet()));
 	}
 
-	public UnionFlowSet<String> transfer(JilStmt stmt, UnionFlowSet<String> in) {		
-		UnionFlowSet<String> r;
+	public UnionFlowSet<Location> transfer(JilStmt stmt, UnionFlowSet<Location> in) {		
+		UnionFlowSet<Location> r;
 		if(stmt instanceof JilStmt.Assign) {
 			r = transfer((JilStmt.Assign)stmt,in);					
 		} else if(stmt instanceof JilExpr.Invoke) {
@@ -65,10 +109,11 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<String>> {
 		return r;
 	}
 	
-	public UnionFlowSet<String> transfer(JilStmt.Assign stmt, UnionFlowSet<String> nonnulls) {				
+	public UnionFlowSet<Location> transfer(JilStmt.Assign stmt, UnionFlowSet<Location> nonnulls) {				
 		
-		String lhsName = derefName(stmt.lhs());
-		String rhsName = derefName(stmt.rhs());
+		Location lhsName = derefName(stmt.lhs());
+		Location rhsName = derefName(stmt.rhs());
+		
 		if(nonnulls.contains(lhsName)) {
 			nonnulls = nonnulls.remove(lhsName);
 			nonnulls = nonnulls.add(rhsName);
@@ -79,7 +124,7 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<String>> {
 		return nonnulls;
 	}
 	
-	public UnionFlowSet<String> transfer(JilExpr.Invoke stmt, UnionFlowSet<String> nonnulls) {				
+	public UnionFlowSet<Location> transfer(JilExpr.Invoke stmt, UnionFlowSet<Location> nonnulls) {				
 		JilExpr target = stmt.target();
 		
 		nonnulls = nonnulls.addAll(derefs(target));
@@ -91,32 +136,32 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<String>> {
 		return nonnulls;
 	}
 
-	public UnionFlowSet<String> transfer(JilExpr.New stmt, UnionFlowSet<String> nonnulls) {
+	public UnionFlowSet<Location> transfer(JilExpr.New stmt, UnionFlowSet<Location> nonnulls) {
 		return nonnulls;
 	}
 	
-	public UnionFlowSet<String> transfer(JilStmt.Return stmt, UnionFlowSet<String> nonnulls) {
+	public UnionFlowSet<Location> transfer(JilStmt.Return stmt, UnionFlowSet<Location> nonnulls) {
 		return nonnulls;
 	}
 	
-	public UnionFlowSet<String> transfer(JilStmt.Throw stmt, UnionFlowSet<String> nonnulls) {
+	public UnionFlowSet<Location> transfer(JilStmt.Throw stmt, UnionFlowSet<Location> nonnulls) {
 		nonnulls = addDeref(stmt.expr(),nonnulls);						
 		return nonnulls;
 	}
 	
-	public UnionFlowSet<String> transfer(JilStmt.Lock stmt, UnionFlowSet<String> nonnulls) {
+	public UnionFlowSet<Location> transfer(JilStmt.Lock stmt, UnionFlowSet<Location> nonnulls) {
 		return nonnulls;
 	}
 	
-	public UnionFlowSet<String> transfer(JilStmt.Unlock stmt, UnionFlowSet<String> nonnulls) {
+	public UnionFlowSet<Location> transfer(JilStmt.Unlock stmt, UnionFlowSet<Location> nonnulls) {
 		return nonnulls;
 	}
 	
-	public UnionFlowSet<String> transfer(JilExpr e, UnionFlowSet<String> nonnulls) {				
+	public UnionFlowSet<Location> transfer(JilExpr e, UnionFlowSet<Location> nonnulls) {				
 		return nonnulls;
 	}
 	
-	public Set<String> derefs(JilExpr expr) {
+	public Set<Location> derefs(JilExpr expr) {
 		if(expr instanceof JilExpr.ArrayIndex) {
 			return derefs((JilExpr.ArrayIndex) expr);
 		} else if(expr instanceof JilExpr.BinOp) {		
@@ -147,56 +192,56 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<String>> {
 		}		
 	}
 	
-	public Set<String> derefs(JilExpr.ArrayIndex expr) { 
-		Set<String> r = derefs(expr.target());
+	public Set<Location> derefs(JilExpr.ArrayIndex expr) { 
+		Set<Location> r = derefs(expr.target());
 		r.addAll(derefs(expr.index()));
 		return r;
 	}	
-	public Set<String> derefs(JilExpr.BinOp expr) {
-		Set<String> r = derefs(expr.lhs());
+	public Set<Location> derefs(JilExpr.BinOp expr) {
+		Set<Location> r = derefs(expr.lhs());
 		r.addAll(derefs(expr.rhs()));
 		return r; 
 	}
-	public Set<String> derefs(JilExpr.UnOp expr) { 		
+	public Set<Location> derefs(JilExpr.UnOp expr) { 		
 		return derefs(expr.expr()); 
 	}
-	public Set<String> derefs(JilExpr.Cast expr) { 
+	public Set<Location> derefs(JilExpr.Cast expr) { 
 		return derefs(expr.expr());		
 	}
-	public Set<String> derefs(JilExpr.Convert expr) { 
+	public Set<Location> derefs(JilExpr.Convert expr) { 
 		return derefs(expr.expr());		
 	}
-	public Set<String> derefs(JilExpr.ClassVariable expr) { 		
-		return new HashSet<String>();
+	public Set<Location> derefs(JilExpr.ClassVariable expr) { 		
+		return new HashSet<Location>();
 	}
-	public Set<String> derefs(JilExpr.Deref expr) { 		
-		Set<String> derefs = derefs(expr.target());				
+	public Set<Location> derefs(JilExpr.Deref expr) { 		
+		Set<Location> derefs = derefs(expr.target());				
 		addDeref(expr.target(),derefs);		
 		return derefs; 
 	}	
-	public Set<String> derefs(JilExpr.Variable expr) { 
-		return new HashSet<String>();		
+	public Set<Location> derefs(JilExpr.Variable expr) { 
+		return new HashSet<Location>();		
 	}
-	public Set<String> derefs(JilExpr.InstanceOf expr) { 		
+	public Set<Location> derefs(JilExpr.InstanceOf expr) { 		
 		return derefs(expr.lhs());
 	}
-	public Set<String> derefs(JilExpr.Invoke expr) { 
-		Set<String> r = derefs(expr.target());
+	public Set<Location> derefs(JilExpr.Invoke expr) { 
+		Set<Location> r = derefs(expr.target());
 		for(JilExpr e : expr.parameters()) {
 			r.addAll(derefs(e));
 		}
 		addDeref(expr.target(),r);	
 		return r; 		
 	}
-	public Set<String> derefs(JilExpr.New expr) { 
-		Set<String> r = new HashSet<String>();
+	public Set<Location> derefs(JilExpr.New expr) { 
+		Set<Location> r = new HashSet<Location>();
 		for(JilExpr e : expr.parameters()) {
 			r.addAll(derefs(e));
 		}
 		return r; 			
 	}
-	public Set<String> derefs(JilExpr.Value expr) { 
-		HashSet<String> r = new HashSet<String>();
+	public Set<Location> derefs(JilExpr.Value expr) { 
+		HashSet<Location> r = new HashSet<Location>();
 		if(expr instanceof JilExpr.Array) {
 			JilExpr.Array ae = (JilExpr.Array) expr;
 			for(JilExpr v : ae.values()) {
@@ -206,32 +251,34 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<String>> {
 		return r; 
 	}
 	
-	protected void addDeref(JilExpr deref, Collection<String> nonnulls) {
-		String dn = derefName(deref);
+	protected void addDeref(JilExpr deref, Collection<Location> nonnulls) {
+		Location dn = derefName(deref);
 		if(dn != null) {
 			nonnulls.add(dn);
 		}
 	}
 	
-	protected UnionFlowSet<String> addDeref(JilExpr deref,UnionFlowSet<String> nonnulls) {
-		String dn = derefName(deref);
+	protected UnionFlowSet<Location> addDeref(JilExpr deref,UnionFlowSet<Location> nonnulls) {
+		Location dn = derefName(deref);
 		if(dn != null) {
 			nonnulls = nonnulls.add(dn);
 		}
 		return nonnulls;
 	}
 	
-	protected String derefName(JilExpr deref) {
+	protected Location derefName(JilExpr deref) {
 		if(deref instanceof JilExpr.Variable) {
 			JilExpr.Variable v = (JilExpr.Variable) deref;
-			return v.value();
+			return new Location(v.value());
 		} else if(deref instanceof JilExpr.Deref) {
 			JilExpr.Deref d = (JilExpr.Deref) deref;
-			return d.target().type().toString() + "$" + d.name();
+			Location l = derefName(d.target());
+			l.append(d.name());
+			return l;
 		} else if(deref instanceof JilExpr.ClassVariable) {
 			return null; // no deref implied here 
 		} else {
-			return "?" + deref.getClass().getName();
+			return new Location("?" + deref.getClass().getName());
 		}
 	}
 }
