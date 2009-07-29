@@ -221,7 +221,7 @@ public class JilBuilder {
 							.attributes());
 					// add them at the beginning to get the right ordering.
 					staticInit.body().add(0,ae);
-					staticInit.body().addAll(0,tmp.second());
+					staticInit.body().addAll(0,tmp.second());					
 				} 
 			} else {
 				// This is a non-static field with an initialiser. Therefore, we
@@ -274,7 +274,7 @@ public class JilBuilder {
 		
 		JilMethod m = createStaticInitialiser(parent);
 		// Again, add at beginning to ensure the right order.
-		m.body().addAll(0,stmts);
+		m.body().addAll(0,stmts);				
 	}
 	
 	protected List<JilStmt> doStatement(Stmt e) {
@@ -1842,6 +1842,7 @@ public class JilBuilder {
 			JilMethod r = new JilMethod("<clinit>", new Type.Function(
 					Types.T_VOID), new ArrayList(), mods,
 					new ArrayList<Type.Clazz>());
+			r.body().add(new JilStmt.Return(null));
 			parent.methods().add(r);
 			return r;
 		} else {

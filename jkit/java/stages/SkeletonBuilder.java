@@ -36,9 +36,7 @@ import jkit.jil.tree.JilClass;
 import jkit.jil.tree.JilField;
 import jkit.jil.tree.JilConstant;
 import jkit.jil.tree.JilMethod;
-import jkit.jil.tree.Modifier;
-import jkit.jil.tree.SourceLocation;
-import jkit.jil.tree.Type;
+import jkit.jil.tree.*;
 import jkit.jil.util.Types;
 import jkit.util.*;
 
@@ -214,9 +212,13 @@ public class SkeletonBuilder {
 		List<JilMethod.Parameter> parameters = new ArrayList();
 		
 		for(Decl.JavaParameter p : d.parameters()) {
+			
+			// Determine sourcelocation as best possible, since ANTLR front-end
+            // does very bad job of this.
+			ArrayList<Attribute> attrs = new ArrayList(p.attributes()); 
 			parameters.add(new JilMethod.Parameter(p.name(),
 					new ArrayList<Modifier>(p.modifiers()),
-					new ArrayList(p.attributes())));
+					attrs));
 		}
 		
 		for(jkit.java.tree.Type.Clazz tc : d.exceptions()) {

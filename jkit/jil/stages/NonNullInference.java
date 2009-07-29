@@ -33,6 +33,9 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<String>> {
 		start(method,new UnionFlowSet<String>(finalStore));
 		
 		UnionFlowSet<String> entryStore = stores.get(0);
+		
+		// System.out.println("METHOD: " + owner.type() + "." + method.name() + " " + method.type() + ": " + entryStore);
+		
 		method.attributes().add(new Attr(entryStore.toSet()));
 	}
 
@@ -58,7 +61,7 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<String>> {
 			syntax_error("unknown statement encountered (" + stmt.getClass().getName() + ")",stmt);
 			return null;
 		}		
-		System.out.println("BEFORE: " + stmt + " " + r);
+		// System.out.println("BEFORE: " + stmt + " " + r);
 		return r;
 	}
 	

@@ -275,8 +275,8 @@ public class JKitI {
 
 			for (JilMethod.Parameter p : m.parameters()) {
 				if (attr.nonnulls().contains(p.name())) {
-					inserts.add(new Insert("@NonNull", (SourceLocation) p
-							.attribute(SourceLocation.class)));
+					SourceLocation loc = (SourceLocation) p.attribute(SourceLocation.class);
+					inserts.add(new Insert("@NonNull ",  loc));
 				}
 			}			
 		}		
@@ -300,11 +300,10 @@ public class JKitI {
 		Writer out = new FileWriter(outname);
 		String line = "";
 		while (line != null) {
-			int lineno = in.getLineNumber();			
-			line = in.readLine();			
+			line = in.readLine();
+			int lineno = in.getLineNumber();								
 			while(inserts.size() > 0 && inserts.get(0).loc.line() == lineno) {				
-				Insert i = inserts.get(0);				
-				System.out.println("PROCESSING INSERT: " + i.text + " " + i.loc);
+				Insert i = inserts.get(0);								
 				String before = line.substring(0,i.loc.column());
 				String after = line.substring(i.loc.column());
 				line = before + i.text + after;

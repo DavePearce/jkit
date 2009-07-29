@@ -93,7 +93,7 @@ public abstract class BackwardAnalysis<T extends FlowSet> {
 				int target = labels.get(gto.label());
 				T t_store = transfer(gto.condition(),stores.get(target));
 				T f_store = transfer(new JilExpr.UnOp(gto.condition(), JilExpr.UnOp.NOT,Types.T_BOOL),stores.get(current+1));				
-				T store = (T) t_store.join(f_store);
+				T store = join(t_store,f_store);				
 				merge(current,store,worklist,preds);				
 			} else if(stmt instanceof JilStmt.Switch) {
 				JilStmt.Switch swt = (JilStmt.Switch) stmt;
@@ -160,6 +160,15 @@ public abstract class BackwardAnalysis<T extends FlowSet> {
 			preds.put(to, ps);
 		}
 		ps.add(from);
+	}
+	
+	private T join(T s1, T s2) {
+		if(s1 == null) {
+			return s2; 
+		} else if(s2 == null) {
+			return s1;
+		}
+		return (T) s1.join(s2);
 	}
 	
 	/**

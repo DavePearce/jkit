@@ -1659,13 +1659,19 @@ public class JavaFileReader {
 		
 		for (int i = 0; i != paramList.getChildCount(); ++i) {
 			Tree c = paramList.getChild(i);			
-			
-			SourceLocation loc = new SourceLocation(c.getLine(), c
-					.getCharPositionInLine());
-			
+														
 			List<Modifier> pModifiers = parseModifiers(c.getChild(0),
 					genericVariables);
 			Type t = parseType(c.getChild(1), genericVariables);
+			
+			SourceLocation loc;
+			
+			if(pModifiers.isEmpty()) {
+				loc = (SourceLocation) t.attribute(SourceLocation.class);
+			} else {			
+				loc = (SourceLocation) pModifiers.get(0).attribute(SourceLocation.class);
+			}
+			
 			String n = c.getChild(2).getText();
 
 			for (int j = 3; j < c.getChildCount(); j = j + 2) {
