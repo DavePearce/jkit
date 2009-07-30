@@ -4,86 +4,78 @@ import static jkit.compiler.SyntaxError.syntax_error;
 
 import java.util.*;
 
+import jkit.util.*;
+import jkit.util.graph.*;
 import jkit.jil.dfa.*;
 import jkit.jil.tree.*;
+import jkit.jil.stages.StaticCallGraphBuilder.*;
 
 public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInference.Location>> {
+		
+	private final Graph<Node,Edge> callGraph;
+	private final HashSet<Node> worklist = new HashSet();
+	private final HashMap<Node,UnionFlowSet<Location>> preStores = new HashMap();
+	private final HashMap<Node,UnionFlowSet<Location>> postStores = new HashMap();
 	
-	public static class Location {
-		private List<String> names;
+	public NonNullInference(Graph<Node,Edge> callGraph) {
+		this.callGraph = callGraph;
+	}
+			
+	public void apply(List<JilClass> classes) {
+		worklist.clear();
+		preStores.clear();
+		postStores.clear();
 		
-		public Location(List<String> names) {
-			this.names = names;
-		}
+		HashMap<Node,JilMethod> methodMap = new HashMap();
 		
-		public Location(String... names) {
-			this.names = new ArrayList<String>();
-			for(String n : names) {
-				this.names.add(n);
+		// First, initialise the worklist
+		for(JilClass owner : classes) {
+			for(JilMethod method : owner.methods()) {			
+				if(method.body() != null) {
+					Node node = new Node(owner.type(), method.name(), method
+							.type());
+					worklist.add(node);
+					methodMap.put(node,method);
+				} 
 			}
 		}
 		
-		public List<String> names() {
-			return names;
-		}
-		
-		public void append(String n) {			
-			names.add(n);
-		}
-		
-		public boolean equals(Object o) {
-			if(o instanceof Location) {
-				Location l = (Location) o;
-				return l.names.equals(names);
+		// Second, iterate until a fixed point is reached
+		while(!worklist.isEmpty()) {
+			Node n = worklist.iterator().next();
+			worklist.remove(n);
+			JilMethod m = methodMap.get(n);
+			if(m != null) {
+				// m may be null if this method is not contained in the initial
+                // set of classes considered.
+				infer(m,n);
 			}
-			return false;
+		}
+	}
+	
+	public void infer(JilMethod method, Node myNode) {
+		UnionFlowSet<Location> postStore = postStores.get(myNode);
+		if(postStore == null) {
+			postStore = new UnionFlowSet<Location>(new HashSet());
+			postStores.put(myNode, postStore);
 		}
 		
-		public int hashCode() {
-			return names.hashCode();
-		}
+		start(method,postStore);
 		
-		public String toString() {
-			String r = "";
-			boolean firstTime=true;
-			for(String s : names) {
-				if(!firstTime) {
-					r += ".";
-				}
-				firstTime=false;
-				r += s;
+		UnionFlowSet<Location> preStore = stores.get(0);
+		UnionFlowSet<Location> oldPreStore = preStores.get(myNode);		
+		if(oldPreStore != null) {
+			preStore = preStore.join(oldPreStore);
+		} 
+		
+		if(preStore != oldPreStore) {
+			preStores.put(myNode, preStore);
+			// now, add predecessors to worklist
+			for(Edge e : callGraph.to(myNode)) {
+				System.out.println("ADDING TO WORKLIST: " + e.first());
+				worklist.add(e.first());
 			}
-			return r;
 		}
-	}
-	
-	public static class Attr implements Attribute {
-		private Set<Location> nonnulls; // parameters and fields which must be
-                                        // non-null on entry
-		public Attr(Set<Location> nonnulls) {
-			this.nonnulls = nonnulls;
-		}
-		public Set<Location> nonnulls() {
-			return nonnulls;
-		}
-	}
-	
-	public void apply(JilClass owner) {
-		for(JilMethod m : owner.methods()) {			
-			if(m.body() != null) {
-				infer(m,owner);
-			} 
-		}
-	}
-	
-	public void infer(JilMethod method,JilClass owner) {						
-		start(method,new UnionFlowSet<Location>(new HashSet()));
-		
-		UnionFlowSet<Location> entryStore = stores.get(0);
-		
-		// System.out.println("METHOD: " + owner.type() + "." + method.name() + " " + method.type() + ": " + entryStore);
-		
-		method.attributes().add(new Attr(entryStore.toSet()));
 	}
 
 	public UnionFlowSet<Location> transfer(JilStmt stmt, UnionFlowSet<Location> in) {		
@@ -282,6 +274,65 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInfer
 			return null; // no deref implied here 
 		} else {
 			return new Location("?" + deref.getClass().getName());
+		}
+	}
+	
+	public static class Location {
+		private List<String> names;
+		
+		public Location(List<String> names) {
+			this.names = names;
+		}
+		
+		public Location(String... names) {
+			this.names = new ArrayList<String>();
+			for(String n : names) {
+				this.names.add(n);
+			}
+		}
+		
+		public List<String> names() {
+			return names;
+		}
+		
+		public void append(String n) {			
+			names.add(n);
+		}
+		
+		public boolean equals(Object o) {
+			if(o instanceof Location) {
+				Location l = (Location) o;
+				return l.names.equals(names);
+			}
+			return false;
+		}
+		
+		public int hashCode() {
+			return names.hashCode();
+		}
+		
+		public String toString() {
+			String r = "";
+			boolean firstTime=true;
+			for(String s : names) {
+				if(!firstTime) {
+					r += ".";
+				}
+				firstTime=false;
+				r += s;
+			}
+			return r;
+		}
+	}
+	
+	public static class Attr implements Attribute {
+		private Set<Location> nonnulls; // parameters and fields which must be
+                                        // non-null on entry
+		public Attr(Set<Location> nonnulls) {
+			this.nonnulls = nonnulls;
+		}
+		public Set<Location> nonnulls() {
+			return nonnulls;
 		}
 	}
 }

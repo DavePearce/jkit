@@ -62,16 +62,22 @@ public class StaticCallGraphBuilder {
 		}
 	}
 	
-	/**
-     * This represents the call graph. Each node in the call graph is identified
-     * by a triple (O,N,T), where O=owner, N=name and T=type.  
-     */
-	private Graph<Node,Edge> callGraph = new DirectedAdjacencyList();
+	private Graph<Node,Edge> callGraph;
 	
-	public void apply(JilClass owner) {
-		// First, we identify all the problem cases.
-		for (JilMethod method : owner.methods()) {
-			build(method,owner);
+	/**
+     * Access the constructed call graph. Each node in the call graph is
+     * identified by a triple (O,N,T), where O=owner, N=name and T=type.
+     */	
+	public Graph<Node,Edge> callGraph() {
+		return callGraph;
+	}
+	
+	public void apply(List<JilClass> classes) {
+		callGraph = new DirectedAdjacencyList();
+		for(JilClass owner : classes) {
+			for (JilMethod method : owner.methods()) {
+				build(method,owner);
+			}
 		}
 	}
 	

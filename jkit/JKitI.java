@@ -113,7 +113,7 @@ public class JKitI {
 			}
 		}
 
-		OutputStream verbOutput = null;
+		PrintStream verbOutput = null;
 		
 		if(verbose) {
 			verbOutput = System.err;
@@ -137,28 +137,8 @@ public class JKitI {
 		
 		try {
 			final HashMap<String,List<Insert>> inserts = new HashMap();
-			final StaticCallGraphBuilder cgBuilder = new StaticCallGraphBuilder();
 			
-			JavaCompiler compiler = new JavaCompiler(sourcePath, classPath, verbOutput) {
-				public void variableDefinitions(File srcfile, JilClass jfile, ClassLoader loader) {
-					super.variableDefinitions(srcfile,jfile,loader);
-					cgBuilder.apply(jfile);
-					new NonNullInference().apply(jfile);		
-					
-					// At this point, we want to compute the new inserts
-					try {
-						computeInserts(srcfile.getCanonicalPath(),jfile,inserts);
-					} catch(IOException e) {					
-					}
-				}
-				
-				/**
-				 * This is the final stage in the compilation pipeline --- we must write the
-				 * output file somewhere.
-				 * 
-				 * @param jfile
-				 * @param loader
-				 */
+			JavaCompiler compiler = new JavaCompiler(sourcePath, classPath, verbOutput) {				
 				public void writeOutputFile(String baseName, JilClass clazz, File rootdir)
 						throws IOException {
 					// don't do anything here
@@ -169,18 +149,23 @@ public class JKitI {
 				compiler.setOutputDirectory(new File(outputDirectory));
 			}
 
-			// ======================================================
-			// ============== Third, load skeletons ================
-			// ======================================================		
-
-
 			List<File> srcfiles = new ArrayList<File>();
 			for(int i=fileArgsBegin;i!=args.length;++i) {
 				srcfiles.add(new File(args[i]));
 			}
-			compiler.compile(srcfiles);	
 			
-			writeOutputFiles(srcfiles,inserts);
+			List<JilClass> classes = compiler.compile(srcfiles);	
+			
+			long time = System.currentTimeMillis();
+			StaticCallGraphBuilder cgBuilder = new StaticCallGraphBuilder();									
+			cgBuilder.apply(classes);							
+			verbOutput.println("Constructed static call graph ...[" + (System.currentTimeMillis()-time) + "ms]");
+			time = System.currentTimeMillis();
+			
+			NonNullInference nni = new NonNullInference(cgBuilder.callGraph());			
+			nni.apply(classes);
+												
+			// writeOutputFiles(srcfiles,inserts);
 		} catch (SyntaxError e) {
 			jkit.JKitC.outputSourceError(e.fileName(), e.line(), e.column(), e.width(), e
 					.getMessage());
