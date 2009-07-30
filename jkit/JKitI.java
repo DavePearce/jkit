@@ -152,8 +152,8 @@ public class JKitI {
 			HashMap<String,List<JilClass>> files = new HashMap();
 			for(int i=fileArgsBegin;i!=args.length;++i) {
 				File srcfile = new File(args[i]); 
-				List<JilClass> tmp = compiler.compile(srcfile);
-				classes.addAll(tmp);
+				List<JilClass> tmp = compiler.compile(srcfile);				
+				classes.addAll(tmp);				
 				files.put(srcfile.getPath(), tmp);
 			}						
 			
@@ -168,8 +168,9 @@ public class JKitI {
 			
 			final HashMap<String,List<Insert>> inserts = new HashMap();
 						
-			for(Map.Entry<String,List<JilClass>> file : files.entrySet()) {
+			for(Map.Entry<String,List<JilClass>> file : files.entrySet()) {				
 				List<JilClass> jilclasses = file.getValue();
+				
 				for(JilClass jclass : jilclasses) {
 					computeInserts(file.getKey(),jclass,inserts,nni);
 				}
@@ -255,6 +256,9 @@ public class JKitI {
 	
 	public static void computeInserts(String filename, JilClass jclass,
 			HashMap<String, List<Insert>> insertmap, NonNullInference nni) {
+		
+		System.out.println("Building inserts for: " + filename);
+		
 		List<Insert> inserts = insertmap.get(filename);
 		if(inserts == null) {
 			inserts = new ArrayList<Insert>();
@@ -279,7 +283,7 @@ public class JKitI {
 	public static void writeOutputFiles(Set<String> srcfiles,
 			HashMap<String,List<Insert>> insertmap) throws IOException {
 		for(String filename : srcfiles) {			
-			List<Insert> inserts = insertmap.get(filename);
+			List<Insert> inserts = insertmap.get(filename);			
 			writeOutputFile(filename,inserts);
 		}
 	}

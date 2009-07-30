@@ -179,23 +179,11 @@ public class JavaCompiler implements Compiler {
      * @return
      */
 	public List<JilClass> compile(File filename) throws IOException,
-			SyntaxError {		
-		
-		
-		if(!parsed.contains(filename.getCanonicalPath())) {
-			// only re-parse file if not already done.
-			parse(filename);
-		}
-
-		ArrayList<JilClass> classes = new ArrayList<JilClass>();
-
-		while (!compilationQueue.isEmpty()) {
-			Triple<File,JavaFile,List<JilClass>> e = compilationQueue.get(0);
-			compilationQueue.remove(0);
-			classes.addAll(finishcompilation(e.first(),e.second(),e.third()));
-		}
-
-		return classes;
+			SyntaxError {						
+		Pair<JavaFile,List<JilClass>> p = innerParse(filename);		
+		compilationQueue.remove(new Triple(filename,p.first(),p.second()));
+		finishcompilation(filename,p.first(),p.second());		
+		return p.second();
 	}
 	
 	/**
@@ -211,25 +199,30 @@ public class JavaCompiler implements Compiler {
 	public List<JilClass> compile(List<File> filenames) throws IOException,
 			SyntaxError {
 		
-		for (File f : filenames) {
-			if(!parsed.contains(f.getCanonicalPath())) {
-				// only re-parse file if not already done.
-				parse(f);
-			}
-		}
-
 		ArrayList<JilClass> classes = new ArrayList<JilClass>();
-
-		while (!compilationQueue.isEmpty()) {
-			Triple<File,JavaFile,List<JilClass>> e = compilationQueue.get(0);
-			compilationQueue.remove(0);
-			classes.addAll(finishcompilation(e.first(),e.second(),e.third()));
-		}
+		
+		for (File f : filenames) {
+			classes.addAll(compile(f));
+		}		
 
 		return classes;
 	}
 	
+	public List<JilClass> flushCompilationQueue() throws IOException {
+		ArrayList<JilClass> classes = new ArrayList<JilClass>();
+		while (!compilationQueue.isEmpty()) {
+			Triple<File,JavaFile,List<JilClass>> e = compilationQueue.get(0);			
+			compilationQueue.remove(0);
+			finishcompilation(e.first(),e.second(),e.third());
+			classes.addAll(e.third());
+		}
+		return classes;
+	}	
 
+	public List<JilClass> parse(File filename) throws IOException {
+		return innerParse(filename).second();
+	}
+	
 	/**
      * Parse the input filename, producing a set of skeletons. Each skeleton has
      * methods and field declarations with fully qualified types, but no method
@@ -237,7 +230,15 @@ public class JavaCompiler implements Compiler {
      * a separate skeleton created. Thus, a file which only contains one class
      * declaration (inc anonymous classes) will only produce one skeleton.
      */
-	public List<JilClass> parse(File filename) throws IOException {				
+	protected Pair<JavaFile,List<JilClass>> innerParse(File filename) throws IOException {				
+		String str_filename = filename.getCanonicalPath();
+		if(parsed.contains(str_filename)) {
+			for(Triple<File,JavaFile,List<JilClass>> item : compilationQueue) {
+				if(filename.equals(item.first())) {
+					return new Pair(item.second(),item.third());
+				}				
+			}
+		}
 		try {
 			// First, parse the Java source file to yield an abstract syntax
 			// tree.
@@ -261,9 +262,9 @@ public class JavaCompiler implements Compiler {
 			compilationQueue.add(new Triple(filename,jfile,skeletons));
 			
 			// finally, 
-			parsed.add(filename.getCanonicalPath());
+			parsed.add(str_filename);
 			
-			return skeletons;
+			return new Pair(jfile,skeletons);
 		} catch (SyntaxError se) {
 			if (se.fileName() == null) {
 				throw new SyntaxError(se.msg(), filename.getPath(), se.line(),
@@ -283,7 +284,7 @@ public class JavaCompiler implements Compiler {
      *            File.separatorChar's to indicate directories).
      * @return
      */
-	protected List<JilClass> finishcompilation(File filename, JavaFile jfile,
+	protected void finishcompilation(File filename, JavaFile jfile,
 			List<JilClass> skeletons) throws IOException, SyntaxError {		
 		
 		try {			
@@ -335,8 +336,6 @@ public class JavaCompiler implements Compiler {
 				String baseName = createBasename(clazz.type());
 				writeOutputFile(baseName, clazz, outdir);				
 			}									
-
-			return skeletons; // to be completed
 		} catch (SyntaxError se) {
 			if (se.fileName() == null) {
 				throw new SyntaxError(se.msg(), filename.getPath(), se.line(),

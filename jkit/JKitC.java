@@ -162,7 +162,8 @@ public class JKitC {
 			for(int i=fileArgsBegin;i!=args.length;++i) {
 				srcfiles.add(new File(args[i]));
 			}
-			compiler.compile(srcfiles);						
+			compiler.compile(srcfiles);		
+			compiler.flushCompilationQueue();
 		} catch (SyntaxError e) {
 			outputSourceError(e.fileName(), e.line(), e.column(), e.width(), e
 					.getMessage());
