@@ -28,6 +28,7 @@ import jkit.compiler.ClassLoader;
 import jkit.compiler.FieldNotFoundException;
 import jkit.compiler.MethodNotFoundException;
 import jkit.compiler.Clazz;
+import jkit.jil.tree.JilMethod;
 import jkit.jil.tree.Type;
 import jkit.jil.util.*;
 import jkit.util.Pair;
@@ -862,7 +863,13 @@ public class TypeSystem {
 		
 		return st;
 	}
-	
+		
+	public static class BindError extends RuntimeException {
+		public BindError(String m) {
+			super(m);
+		}
+	}				
+		
 	/**
 	 * The aim of this method is to identify the super types of t1. For example,
 	 * if:
@@ -947,11 +954,74 @@ public class TypeSystem {
 		}
 	}
 	
-	public static class BindError extends RuntimeException {
-		public BindError(String m) {
-			super(m);
+	/**
+	 * The aim of this method is to identify the methods which override the given method
+	 * 
+	 * @param loader
+	 *            --- ClassLoader. Needed for loading classes to allow traversal
+	 *            of the class heirarchy
+	 * @return
+	 * @throws ClassNotFoundException
+	 */
+	public ArrayList<Triple<Clazz,Clazz.Method,Type.Function>> listOverrides(Type.Clazz owner, String name,
+			Type.Function funType, ClassLoader loader)
+			throws ClassNotFoundException {
+		
+		ArrayList<Triple<Clazz,Clazz.Method,Type.Function>> methods = new ArrayList();
+
+		LinkedList<Type.Clazz> worklist = new LinkedList();
+		worklist.add((Type.Clazz) owner);
+
+		while (!worklist.isEmpty()) {
+			Type.Clazz type = worklist.removeFirst(); // to ensure BFS
+                                                        // traversal
+			
+			Clazz c = loader.loadClass(type);
+
+			// The current type we're visiting is not a match. Therefore, we
+			// need to explore its supertypes as well. A key issue
+			// in doing this, is that we must preserve the appropriate types
+			// according to the class declaration in question. For example,
+			// suppose we're checking:
+			// 
+			// subtype(List<String>,ArrayList<String>)
+			// 
+			// then, we'll start with ArrayList<String> and we'll want to move
+			// that here to be List<String>. The key issue is what determines
+			// how we decide what the appropriate generic parameters for List
+			// should be. To do that, we must look at the declaration for class
+			// ArrayList, where we'll notice something like this:
+			//
+			// <pre>
+			// class ArrayList<T> implements List<T> { ... }
+			// </pre>
+			// 
+			// We need to use this template --- namely that the first generic
+			// parameter of ArrayList maps to the first of List --- in order to
+			// determine the proper supertype for ArrayList<String>. This is
+			// what the binding / substitution stuff is for.
+			Map<String, Type.Reference> binding = bind(type, c.type(), loader);
+			
+			if(!type.equals(owner)) {
+				for(Clazz.Method m : c.methods(name)) {
+					Type.Function mtype = Types.substitute(m.type(),binding);
+					if(mtype.equals(funType)) {
+						methods.add(new Triple(c,m,mtype));
+					}
+				}
+			}
+			
+			if (c.superClass() != null) {
+				worklist.add((Type.Clazz) Types.substitute(c.superClass(),
+						binding));
+			}
+			for (Type.Clazz t : c.interfaces()) {
+				worklist.add((Type.Clazz) Types.substitute(t, binding));
+			}
 		}
-	}				
+
+		return methods;		
+	}
 	
 	/**
      * This method checks whether the two types in question have the same base

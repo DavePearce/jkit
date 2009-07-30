@@ -197,7 +197,8 @@ public final class BypassMethods {
 			// no return type
 			JilStmt ivk = new JilExpr.Invoke(new JilExpr.Variable("this", owner.type()),
 					name, funParams, to, ftype.returnType());
-			body.add(ivk);
+			body.add(ivk);			
+			body.add(new JilStmt.Return(null));
 		} else {
 			JilExpr ivk = new JilExpr.Invoke(new JilExpr.Variable("this", owner.type()),
 					name, funParams, to, ftype.returnType());

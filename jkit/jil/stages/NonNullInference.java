@@ -6,6 +6,9 @@ import java.util.*;
 
 import jkit.util.*;
 import jkit.util.graph.*;
+import jkit.compiler.ClassLoader;
+import jkit.compiler.Clazz;
+import jkit.java.stages.TypeSystem;
 import jkit.jil.dfa.*;
 import jkit.jil.tree.*;
 import jkit.jil.stages.StaticCallGraphBuilder.*;
@@ -13,13 +16,17 @@ import jkit.jil.stages.StaticCallGraphBuilder.*;
 public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInference.Location>> {
 	private final static UnionFlowSet<Location> emptyStore = new UnionFlowSet<Location>();
 			
+	private final ClassLoader loader;
+	private final TypeSystem types;
 	private final Graph<Node,Edge> callGraph;
 	private final HashSet<Node> worklist = new HashSet();
 	private final HashMap<Node,UnionFlowSet<Location>> preStores = new HashMap();
 	private final HashMap<Node,UnionFlowSet<Location>> postStores = new HashMap();
 	
-	public NonNullInference(Graph<Node,Edge> callGraph) {
+	public NonNullInference(Graph<Node,Edge> callGraph, TypeSystem types, ClassLoader loader) {
 		this.callGraph = callGraph;
+		this.loader = loader;
+		this.types = types;
 	}
 	
 	public boolean isReturnNonNull(Node n, int index) {
@@ -60,21 +67,24 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInfer
 				}
 			}
 		}
-		
-		// Second, iterate until a fixed point is reached
-		while(!worklist.isEmpty()) {
-			Node n = worklist.iterator().next();
-			worklist.remove(n);
-			JilMethod m = methodMap.get(n);
-			if(m != null) {
-				// m may be null if this method is not contained in the initial
-                // set of classes considered.
-				infer(m,n);
+		try {
+			// Second, iterate until a fixed point is reached
+			while(!worklist.isEmpty()) {
+				Node n = worklist.iterator().next();
+				worklist.remove(n);
+				JilMethod m = methodMap.get(n);
+				if(m != null) {
+					// m may be null if this method is not contained in the initial
+					// set of classes considered.
+					infer(m,n);
+				}
 			}
+		} catch(ClassNotFoundException e) {
+			throw new RuntimeException("Problem in NonNullTypeInference!");
 		}
 	}
 	
-	public void infer(JilMethod method, Node myNode) {
+	public void infer(JilMethod method, Node myNode) throws ClassNotFoundException {
 		UnionFlowSet<Location> postStore = postStores.get(myNode);
 		if(postStore == null) {
 			postStore = emptyStore;
@@ -98,10 +108,33 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInfer
 		
 		if(!preStore.equals(oldPreStore)) {			
 			preStores.put(myNode, preStore);
-			// now, add predecessors to worklist
+			// First, add my direct predecessors
 			for(Edge e : callGraph.to(myNode)) {				
 				worklist.add(e.first());
 			}
+			
+			// now, we need to account for contra-variance of parameters. This
+            // is done by traversing the hierarchy to find methods which are
+            // overridden by this.			
+			List<Triple<Clazz,Clazz.Method,Type.Function>> overrides = types.listOverrides(myNode.owner(),
+					myNode.name(), myNode.type(), loader);
+			
+			for(Triple<Clazz,Clazz.Method,Type.Function> or : overrides) {
+				Node orNode = new Node(or.first().type(),myNode.name(),or.third());
+				
+				oldPreStore = preStores.get(orNode);		
+				if(oldPreStore != null) {
+					oldPreStore = preStore.join(oldPreStore);
+				} else {
+					oldPreStore = preStore;
+				}
+				
+				preStores.put(orNode, oldPreStore);
+				// First, add my direct predecessors
+				for(Edge e : callGraph.to(orNode)) {				
+					worklist.add(e.first());
+				}	
+			}			
 		}
 	}
 

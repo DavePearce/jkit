@@ -28,6 +28,7 @@ import jkit.util.*;
 import jkit.compiler.ClassLoader;
 import jkit.compiler.SyntaxError;
 import jkit.java.*;
+import jkit.java.stages.TypeSystem;
 import jkit.jil.stages.*;
 import jkit.jil.tree.*;
 import jkit.jil.stages.StaticCallGraphBuilder.*;
@@ -165,7 +166,7 @@ public class JKitI {
 			}
 			time = System.currentTimeMillis();
 			
-			NonNullInference nni = new NonNullInference(cgBuilder.callGraph());			
+			NonNullInference nni = new NonNullInference(cgBuilder.callGraph(), new TypeSystem(), compiler.getClassLoader());			
 			nni.apply(classes);
 			
 			final HashMap<String,List<Insert>> inserts = new HashMap();
