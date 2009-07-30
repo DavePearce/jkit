@@ -11,7 +11,8 @@ import jkit.jil.tree.*;
 import jkit.jil.stages.StaticCallGraphBuilder.*;
 
 public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInference.Location>> {
-		
+	private final static UnionFlowSet<Location> emptyStore = new UnionFlowSet<Location>();
+			
 	private final Graph<Node,Edge> callGraph;
 	private final HashSet<Node> worklist = new HashSet();
 	private final HashMap<Node,UnionFlowSet<Location>> preStores = new HashMap();
@@ -76,17 +77,16 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInfer
 	public void infer(JilMethod method, Node myNode) {
 		UnionFlowSet<Location> postStore = postStores.get(myNode);
 		if(postStore == null) {
-			postStore = new UnionFlowSet<Location>(new HashSet());
+			postStore = emptyStore;
 			postStores.put(myNode, postStore);
 		}
 		
-		start(method,postStore,new UnionFlowSet<Location>());
+		start(method,postStore,emptyStore);
 		
-		UnionFlowSet<Location> preStore = new UnionFlowSet<Location>();
+		UnionFlowSet<Location> preStore = emptyStore;
 		
 		// Now, transform the preStore into the normal form, where parameters
-        // are dictated by $1, $2, etc.		
-		System.out.println(myNode + "STORES: " + stores.size());
+        // are dictated by $1, $2, etc.				
 		for(Location loc : stores.get(0)) {			
 			preStore = preStore.add(normaliseParam(loc,method));
 		}
@@ -96,7 +96,7 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInfer
 			preStore = preStore.join(oldPreStore);
 		} 
 		
-		if(preStore != oldPreStore) {
+		if(preStore != oldPreStore) {			
 			preStores.put(myNode, preStore);
 			// now, add predecessors to worklist
 			for(Edge e : callGraph.to(myNode)) {				
