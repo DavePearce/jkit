@@ -43,7 +43,7 @@ public class StaticCallGraphBuilder {
 		}
 		
 		public String toString() {
-			return first() + "." + second() + type();
+			return first() + "." + second() + ":" + type();
 		}
 	}
 	
