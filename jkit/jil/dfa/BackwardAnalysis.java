@@ -30,15 +30,14 @@ import jkit.jil.util.*;
 import jkit.util.Pair;
 
 public abstract class BackwardAnalysis<T extends FlowSet> {
-	
-	
+		
 	protected final HashMap<Integer, T> stores = new HashMap<Integer, T>();	
 	protected final HashMap<String,Integer> labels = new HashMap();
 	
 	/**
 	 * Begins the Forward Analysis traversal of a method
 	 */	
-	public void start(JilMethod method, T finalStore) {
+	public void start(JilMethod method, T finalStore, T emptyStore) {
 		stores.clear(); // need to reset for subsequent calls
 		labels.clear();
 		
@@ -56,7 +55,8 @@ public abstract class BackwardAnalysis<T extends FlowSet> {
 			} else if(s instanceof JilStmt.Throw) {
 				// I think there could be a bug here ...				
 				worklist.add(pos);
-			}			
+			}						
+			stores.put(pos, emptyStore);
 			pos++;
 		}
 		
@@ -120,7 +120,7 @@ public abstract class BackwardAnalysis<T extends FlowSet> {
 				merge(current,stores.get(current+1),worklist,preds);
 			}
 		}
-	}	
+	}			
 	
 	private void addPredecessors(int pos, JilStmt stmt,
 			HashMap<Integer, HashSet<Integer>> preds,

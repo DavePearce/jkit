@@ -78,7 +78,7 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInfer
 			postStores.put(myNode, postStore);
 		}
 		
-		start(method,postStore);
+		start(method,postStore, new UnionFlowSet<Location>());
 		
 		UnionFlowSet<Location> preStore = new UnionFlowSet<Location>();
 		
@@ -143,10 +143,11 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInfer
 		return nonnulls;
 	}
 	
-	public UnionFlowSet<Location> transfer(JilExpr.Invoke stmt, UnionFlowSet<Location> nonnulls) {				
+	public UnionFlowSet<Location> transfer(JilExpr.Invoke stmt, UnionFlowSet<Location> nonnulls) {						
 		JilExpr target = stmt.target();
 		
 		List<? extends JilExpr> params = stmt.parameters();
+		
 		nonnulls = nonnulls.addAll(derefs(target));
 		for(JilExpr p : params) {			
 			nonnulls = nonnulls.addAll(derefs(p));
@@ -328,6 +329,9 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInfer
 		} else if(deref instanceof JilExpr.Deref) {
 			JilExpr.Deref d = (JilExpr.Deref) deref;
 			Location l = derefName(d.target());
+			if(l == null) {
+				return new Location(d.name());
+			}
 			l.append(d.name());
 			return l;
 		} else if(deref instanceof JilExpr.ClassVariable) {

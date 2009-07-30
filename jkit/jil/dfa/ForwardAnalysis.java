@@ -38,7 +38,7 @@ public abstract class ForwardAnalysis<T extends FlowSet> {
 	/**
 	 * Begins the Forward Analysis traversal of a method
 	 */	
-	public void start(JilMethod method, T initStore) {	
+	public void start(JilMethod method, T startStore, T emptyStore) {	
 		stores.clear(); // need to reset for subsequent calls
 		labels.clear();
 		
@@ -52,11 +52,12 @@ public abstract class ForwardAnalysis<T extends FlowSet> {
 				labels.put(lab.label(),pos);
 			}
 			pos++;
+			stores.put(pos,emptyStore);
 		}
 		
 		// Second, initialise the worklist
 		HashSet<Integer> worklist = new HashSet();
-		stores.put(0, initStore);
+		stores.put(0, startStore);
 		worklist.add(0);
 		
 		// third, iterate until a fixed point is reached!

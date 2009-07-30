@@ -84,7 +84,7 @@ public class VariableDefinitions extends ForwardAnalysis<UnionFlowSet<String>> {
 			System.out.println("INITIAL UNDEFS: " + initStore);
 		}
 		
-		start(method,new UnionFlowSet<String>(initStore));
+		start(method,new UnionFlowSet<String>(initStore),new UnionFlowSet<String>());
 	}
 	
 	public UnionFlowSet<String> transfer(JilStmt stmt, UnionFlowSet<String> in) {		
