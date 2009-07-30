@@ -51,8 +51,7 @@ public abstract class ForwardAnalysis<T extends FlowSet> {
 				JilStmt.Label lab = (JilStmt.Label) s;				
 				labels.put(lab.label(),pos);
 			}
-			pos++;
-			stores.put(pos,emptyStore);
+			pos++;			
 		}
 		
 		// Second, initialise the worklist
@@ -71,6 +70,10 @@ public abstract class ForwardAnalysis<T extends FlowSet> {
 			JilStmt stmt = body.get(current);
 			// prestore represents store going into this point
 			T store = stores.get(current);
+			
+			if(store == null) {
+				store = emptyStore;
+			}
 									
 			// now, add any exceptional edges
 			for(Pair<Type.Clazz,String> ex : stmt.exceptions()) {

@@ -84,19 +84,19 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInfer
 		start(method,postStore,emptyStore);
 		
 		UnionFlowSet<Location> preStore = emptyStore;
-		
+						
 		// Now, transform the preStore into the normal form, where parameters
         // are dictated by $1, $2, etc.				
 		for(Location loc : stores.get(0)) {			
 			preStore = preStore.add(normaliseParam(loc,method));
 		}
-				
+		
 		UnionFlowSet<Location> oldPreStore = preStores.get(myNode);		
 		if(oldPreStore != null) {
 			preStore = preStore.join(oldPreStore);
 		} 
 		
-		if(preStore != oldPreStore) {			
+		if(!preStore.equals(oldPreStore)) {			
 			preStores.put(myNode, preStore);
 			// now, add predecessors to worklist
 			for(Edge e : callGraph.to(myNode)) {				
@@ -168,7 +168,7 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInfer
 				}		
 			}
 		}
-		
+						
 		return nonnulls;
 	}
 

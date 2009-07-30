@@ -67,35 +67,48 @@ public class UnionFlowSet<T> implements FlowSet, Cloneable, Iterable<T> {
 	public UnionFlowSet<T> add(T s) {
 		if(!data.contains(s)) {
 			UnionFlowSet r = (UnionFlowSet) this.clone();			
-			r.data.add(s);
-			return r;
-		} else {
-			return this;
+			if(r.data.add(s)) {
+				return r;
+			}
 		}
+		return this;		
 	}
 	
 	public UnionFlowSet<T> addAll(Collection<T> s) {
 		if(!data.contains(s)) {
 			UnionFlowSet r = (UnionFlowSet) this.clone();			
-			r.data.addAll(s);
-			return r;
-		} else {
-			return this;
-		}
+			if(r.data.addAll(s)) {
+				return r;	
+			}			
+		} 
+		return this;		
 	}	
 	
 	public UnionFlowSet<T> remove(T s) {
 		if(data.contains(s)) {
 			UnionFlowSet r = (UnionFlowSet) this.clone();			
-			r.data.remove(s);
-			return r;
-		} else {
-			return this;
-		}
+			if(r.data.remove(s)) {
+				return r;	
+			}			
+		} 
+		
+		return this;		
 	}
 	
 	public boolean contains(T s) {
 		return data.contains(s);
+	}
+	
+	public int hashCode() {
+		return data.hashCode();
+	}
+	
+	public boolean equals(Object o) {
+		if(o instanceof UnionFlowSet) {
+			UnionFlowSet ufs = (UnionFlowSet) o;
+			return data.equals(ufs.data);
+		}
+		return false;
 	}
 	
 	public int size() {

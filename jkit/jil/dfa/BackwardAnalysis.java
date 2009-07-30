@@ -55,8 +55,7 @@ public abstract class BackwardAnalysis<T extends FlowSet> {
 			} else if(s instanceof JilStmt.Throw) {
 				// I think there could be a bug here ...				
 				worklist.add(pos);
-			}						
-			stores.put(pos, emptyStore);
+			}									
 			pos++;
 		}
 		
@@ -79,20 +78,20 @@ public abstract class BackwardAnalysis<T extends FlowSet> {
 			// now, add any exceptional edges
 			for(Pair<Type.Clazz,String> ex : stmt.exceptions()) {
 				int target = labels.get(ex.second());
-				T store = stores.get(target);
+				T store = get_store(target,emptyStore);
 				merge(current,store,worklist,preds);
 			}
 			
 			if(stmt instanceof JilStmt.Goto) {
 				JilStmt.Goto gto = (JilStmt.Goto) stmt;
 				int target = labels.get(gto.label());
-				T store = stores.get(target);
+				T store = get_store(target,emptyStore);
 				merge(current,store,worklist,preds);
 			} else if(stmt instanceof JilStmt.IfGoto) {				
 				JilStmt.IfGoto gto = (JilStmt.IfGoto) stmt;
 				int target = labels.get(gto.label());
-				T t_store = transfer(gto.condition(),stores.get(target));
-				T f_store = transfer(new JilExpr.UnOp(gto.condition(), JilExpr.UnOp.NOT,Types.T_BOOL),stores.get(current+1));				
+				T t_store = transfer(gto.condition(),get_store(target,emptyStore));
+				T f_store = transfer(new JilExpr.UnOp(gto.condition(), JilExpr.UnOp.NOT,Types.T_BOOL),get_store(current+1,emptyStore));				
 				T store = join(t_store,f_store);				
 				merge(current,store,worklist,preds);				
 			} else if(stmt instanceof JilStmt.Switch) {
@@ -103,21 +102,21 @@ public abstract class BackwardAnalysis<T extends FlowSet> {
 					JilExpr.BinOp cond = new JilExpr.BinOp(swt.condition(), c
 							.first(), JilExpr.BinOp.EQ, Types.T_BOOL);
 					defCase = new JilExpr.BinOp(defCase, cond, JilExpr.BinOp.OR, Types.T_BOOL);
-					T t_store = transfer(cond, stores.get(target));
+					T t_store = transfer(cond, get_store(target,emptyStore));
 					merge(current,t_store,worklist,preds);
 				}
 				// And, don't forget the default label!
 				int deftarget = labels.get(swt.defaultLabel());
 				defCase = new JilExpr.UnOp(defCase, JilExpr.UnOp.NOT,Types.T_BOOL);	
-				T d_store = transfer(defCase, stores.get(deftarget));
+				T d_store = transfer(defCase, get_store(deftarget,emptyStore));
 				merge(current,d_store,worklist,preds);				
 			} else if(stmt instanceof JilStmt.Return || stmt instanceof JilStmt.Throw) {
 				// collect the final store as the one at the end of the list
 				merge(current,transfer(stmt,finalStore),worklist,preds);			
 			} else if(!(stmt instanceof JilStmt.Label)){				
-				merge(current,transfer(stmt,stores.get(current+1)),worklist,preds);
+				merge(current,transfer(stmt,get_store(current+1,emptyStore)),worklist,preds);
 			} else if(stmt instanceof JilStmt.Label) {
-				merge(current,stores.get(current+1),worklist,preds);
+				merge(current,get_store(current+1,emptyStore),worklist,preds);
 			}
 		}
 	}			
@@ -150,6 +149,15 @@ public abstract class BackwardAnalysis<T extends FlowSet> {
 			addPredecessor(pos, deftarget, preds);
 		} else if (!(stmt instanceof JilStmt.Return || stmt instanceof JilStmt.Throw)) {
 			addPredecessor(pos, pos + 1, preds);
+		}
+	}
+	
+	public T get_store(int index, T emptyStore) {
+		T tmp = stores.get(index);
+		if(tmp == null) {
+			return emptyStore;
+		} else {
+			return tmp;
 		}
 	}
 	
