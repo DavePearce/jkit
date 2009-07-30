@@ -157,8 +157,6 @@ public class StaticCallGraphBuilder {
 		Node targetNode = new Node((Type.Clazz) target.type(), expr.name(),
 				expr.funType());
 		
-		System.out.println("ADDING EDGE: " + myNode + "--> " + targetNode);
-		
 		// Add the call graph edge!
 		callGraph.add(new Edge(myNode,targetNode));
 	}

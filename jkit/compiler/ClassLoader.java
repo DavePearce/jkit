@@ -377,10 +377,6 @@ public final class ClassLoader {
 						// Therefore, we need to (re)compile the source file.
 						List<? extends Clazz> cs = compiler.parse(srcFile);
 																	
-						compiler.logTimedMessage("Compiled " + srcFile, System
-								.currentTimeMillis()
-								- time);
-						
 						for(Clazz c : cs) {											
 							if(refName(c.type()).equals(name)) {
 								return c;

@@ -17,14 +17,17 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInfer
 		}
 		
 		public Location(String... names) {
-			this.names = Arrays.asList(names);
+			this.names = new ArrayList<String>();
+			for(String n : names) {
+				this.names.add(n);
+			}
 		}
 		
 		public List<String> names() {
 			return names;
 		}
 		
-		public void append(String n) {
+		public void append(String n) {			
 			names.add(n);
 		}
 		
