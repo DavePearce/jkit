@@ -21,10 +21,7 @@
 
 package jkit.java;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.List;
 
 import jkit.bytecode.BytecodeFileWriter;
@@ -48,7 +45,7 @@ public class BytecodeCompiler extends JavaCompiler {
 	 * @param logout
 	 *            A stream where log messages are sent
 	 */
-	public BytecodeCompiler(List<String> classpath, OutputStream logout) {
+	public BytecodeCompiler(List<String> classpath, PrintStream logout) {
 		super(classpath,logout);		
 	}
 	
@@ -61,7 +58,7 @@ public class BytecodeCompiler extends JavaCompiler {
 	 *            A stream where log messages are sent
 	 */
 	public BytecodeCompiler(List<String> sourcepath, List<String> classpath,
-			OutputStream logout) {
+			PrintStream logout) {
 		super(sourcepath,classpath,logout);
 	}
 	

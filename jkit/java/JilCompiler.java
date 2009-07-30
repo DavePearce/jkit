@@ -21,10 +21,7 @@
 
 package jkit.java;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.List;
 
 import jkit.jil.tree.JilClass;
@@ -46,7 +43,7 @@ public class JilCompiler extends JavaCompiler {
 	 * @param logout
 	 *            A stream where log messages are sent
 	 */
-	public JilCompiler(List<String> classpath, OutputStream logout) {
+	public JilCompiler(List<String> classpath, PrintStream logout) {
 		super(classpath,logout);		
 	}
 	
@@ -59,7 +56,7 @@ public class JilCompiler extends JavaCompiler {
 	 *            A stream where log messages are sent
 	 */
 	public JilCompiler(List<String> sourcepath, List<String> classpath,
-			OutputStream logout) {
+			PrintStream logout) {
 		super(sourcepath,classpath,logout);
 	}
 	

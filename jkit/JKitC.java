@@ -116,7 +116,7 @@ public class JKitC {
 			}
 		}
 
-		OutputStream verbOutput = null;
+		PrintStream verbOutput = null;
 		
 		if(verbose) {
 			verbOutput = System.err;

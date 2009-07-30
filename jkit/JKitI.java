@@ -147,7 +147,7 @@ public class JKitI {
 			if (outputDirectory != null) {
 				compiler.setOutputDirectory(new File(outputDirectory));
 			}
-
+			
 			ArrayList<JilClass> classes = new ArrayList<JilClass>();
 			HashMap<String,List<JilClass>> files = new HashMap();
 			for(int i=fileArgsBegin;i!=args.length;++i) {
@@ -159,8 +159,10 @@ public class JKitI {
 			
 			long time = System.currentTimeMillis();
 			StaticCallGraphBuilder cgBuilder = new StaticCallGraphBuilder();									
-			cgBuilder.apply(classes);							
-			verbOutput.println("Constructed static call graph ...[" + (System.currentTimeMillis()-time) + "ms]");
+			cgBuilder.apply(classes);		
+			if(verbose) {
+				verbOutput.println("Constructed static call graph ...[" + (System.currentTimeMillis()-time) + "ms]");
+			}
 			time = System.currentTimeMillis();
 			
 			NonNullInference nni = new NonNullInference(cgBuilder.callGraph());			

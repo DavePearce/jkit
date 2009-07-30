@@ -117,12 +117,12 @@ public class JavaCompiler implements Compiler {
 	 * @param logout
 	 *            A stream where log messages are sent
 	 */
-	public JavaCompiler(List<String> classpath, OutputStream logout) {
+	public JavaCompiler(List<String> classpath, PrintStream logout) {
 		this.loader = new ClassLoader(classpath, this);
 		this.builder = new ClassFileBuilder(loader,49);
 		this.optimiser = new BytecodeOptimiser();
 		if(logout != null) {
-			this.logout = new PrintStream(logout);
+			this.logout = logout;
 		}
 	}
 
@@ -135,12 +135,12 @@ public class JavaCompiler implements Compiler {
 	 *            A stream where log messages are sent
 	 */
 	public JavaCompiler(List<String> sourcepath, List<String> classpath,
-			OutputStream logout) {
+			PrintStream logout) {
 		this.loader = new ClassLoader(sourcepath, classpath, this);
 		this.builder = new ClassFileBuilder(loader,49);
 		this.optimiser = new BytecodeOptimiser();
 		if(logout != null) {
-			this.logout = new PrintStream(logout);
+			this.logout = logout;
 		}
 	}
 
@@ -193,6 +193,7 @@ public class JavaCompiler implements Compiler {
 			}			
 			index = index + 1;
 		}
+		
 		compilationQueue.remove(new Triple(filename,p.first(),p.second()));
 		
 		finishcompilation(filename,p.first(),p.second());		
