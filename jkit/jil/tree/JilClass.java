@@ -23,7 +23,7 @@ package jkit.jil.tree;
 
 import java.util.*;
 
-public final class JilClass extends SyntacticElementImpl implements jkit.compiler.Clazz {
+public final class JilClass extends SyntacticElementImpl implements jkit.compiler.Clazz {	
 	private List<Modifier> modifiers;
 	private Type.Clazz type;
 	private Type.Clazz superClass; // maybe null if no supertype (i.e. this is java.lang.Object)

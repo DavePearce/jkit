@@ -30,6 +30,7 @@ import jkit.compiler.SyntaxError;
 import jkit.java.*;
 import jkit.jil.stages.*;
 import jkit.jil.tree.*;
+import jkit.jil.stages.StaticCallGraphBuilder.*;
 
 
 /**
@@ -136,8 +137,6 @@ public class JKitI {
 		classPath.addAll(bootClassPath);
 		
 		try {
-			final HashMap<String,List<Insert>> inserts = new HashMap();
-			
 			JavaCompiler compiler = new JavaCompiler(sourcePath, classPath, verbOutput) {				
 				public void writeOutputFile(String baseName, JilClass clazz, File rootdir)
 						throws IOException {
@@ -149,12 +148,14 @@ public class JKitI {
 				compiler.setOutputDirectory(new File(outputDirectory));
 			}
 
-			List<File> srcfiles = new ArrayList<File>();
+			ArrayList<JilClass> classes = new ArrayList<JilClass>();
+			HashMap<String,List<JilClass>> files = new HashMap();
 			for(int i=fileArgsBegin;i!=args.length;++i) {
-				srcfiles.add(new File(args[i]));
-			}
-			
-			List<JilClass> classes = compiler.compile(srcfiles);	
+				File srcfile = new File(args[i]); 
+				List<JilClass> tmp = compiler.compile(srcfile);
+				classes.addAll(tmp);
+				files.put(srcfile.getPath(), tmp);
+			}						
 			
 			long time = System.currentTimeMillis();
 			StaticCallGraphBuilder cgBuilder = new StaticCallGraphBuilder();									
@@ -164,8 +165,17 @@ public class JKitI {
 			
 			NonNullInference nni = new NonNullInference(cgBuilder.callGraph());			
 			nni.apply(classes);
-												
-			// writeOutputFiles(srcfiles,inserts);
+			
+			final HashMap<String,List<Insert>> inserts = new HashMap();
+						
+			for(Map.Entry<String,List<JilClass>> file : files.entrySet()) {
+				List<JilClass> jilclasses = file.getValue();
+				for(JilClass jclass : jilclasses) {
+					computeInserts(file.getKey(),jclass,inserts,nni);
+				}
+			}
+			
+			writeOutputFiles(files.keySet(),inserts);
 		} catch (SyntaxError e) {
 			jkit.JKitC.outputSourceError(e.fileName(), e.line(), e.column(), e.width(), e
 					.getMessage());
@@ -243,30 +253,32 @@ public class JKitI {
 		}
 	}
 	
-	public static void computeInserts(String filename, JilClass jclass, HashMap<String,List<Insert>> insertmap) {
+	public static void computeInserts(String filename, JilClass jclass,
+			HashMap<String, List<Insert>> insertmap, NonNullInference nni) {
 		List<Insert> inserts = insertmap.get(filename);
 		if(inserts == null) {
 			inserts = new ArrayList<Insert>();
 			insertmap.put(filename,inserts);
 		}
 		
-		for (JilMethod m : jclass.methods()) {			
-			NonNullInference.Attr attr = (NonNullInference.Attr) m
-					.attribute(NonNullInference.Attr.class);
-
-			for (JilMethod.Parameter p : m.parameters()) {
-				if (attr.nonnulls().contains(p.name())) {
+		for (JilMethod m : jclass.methods()) {
+			Node node = new Node(jclass.type(),m.name(),m.type());
+			int index = 0;
+			for (JilMethod.Parameter p : m.parameters()) {				
+				if(nni.isParameterNonNull(node,index)) {					
 					SourceLocation loc = (SourceLocation) p.attribute(SourceLocation.class);
 					inserts.add(new Insert("@NonNull ",  loc));
 				}
-			}			
+				index = index + 1;
+			}
+			
+			// now deal with the return type ... hmmm.
 		}		
 	}
 	
-	public static void writeOutputFiles(List<File> srcfiles,
+	public static void writeOutputFiles(Set<String> srcfiles,
 			HashMap<String,List<Insert>> insertmap) throws IOException {
-		for(File f : srcfiles) {
-			String filename = f.getCanonicalPath();
+		for(String filename : srcfiles) {			
 			List<Insert> inserts = insertmap.get(filename);
 			writeOutputFile(filename,inserts);
 		}

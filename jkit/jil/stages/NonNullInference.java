@@ -20,7 +20,25 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInfer
 	public NonNullInference(Graph<Node,Edge> callGraph) {
 		this.callGraph = callGraph;
 	}
-			
+	
+	public boolean isReturnNonNull(Node n, int index) {
+		UnionFlowSet<Location> prestore = preStores.get(n);
+		if(prestore != null && prestore.contains(new Location("$"))) {
+			return true;			
+		}
+		return false;
+	}
+	
+	public boolean isParameterNonNull(Node n, int index) {
+		UnionFlowSet<Location> prestore = preStores.get(n);
+		if(prestore != null) {
+			if(prestore.contains(new Location("$" + index))) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public void apply(List<JilClass> classes) {
 		worklist.clear();
 		preStores.clear();
@@ -62,7 +80,14 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInfer
 		
 		start(method,postStore);
 		
-		UnionFlowSet<Location> preStore = stores.get(0);
+		UnionFlowSet<Location> preStore = new UnionFlowSet<Location>();
+		
+		// Now, transform the preStore into the normal form, where parameters
+        // are dictated by $1, $2, etc.		
+		for(Location loc : stores.get(0)) {			
+			preStore = preStore.add(normaliseParam(loc,method));
+		}
+				
 		UnionFlowSet<Location> oldPreStore = preStores.get(myNode);		
 		if(oldPreStore != null) {
 			preStore = preStore.join(oldPreStore);
@@ -71,8 +96,7 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInfer
 		if(preStore != oldPreStore) {
 			preStores.put(myNode, preStore);
 			// now, add predecessors to worklist
-			for(Edge e : callGraph.to(myNode)) {
-				System.out.println("ADDING TO WORKLIST: " + e.first());
+			for(Edge e : callGraph.to(myNode)) {				
 				worklist.add(e.first());
 			}
 		}
@@ -122,20 +146,37 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInfer
 	public UnionFlowSet<Location> transfer(JilExpr.Invoke stmt, UnionFlowSet<Location> nonnulls) {				
 		JilExpr target = stmt.target();
 		
+		List<? extends JilExpr> params = stmt.parameters();
 		nonnulls = nonnulls.addAll(derefs(target));
-		for(JilExpr p : stmt.parameters()) {			
+		for(JilExpr p : params) {			
 			nonnulls = nonnulls.addAll(derefs(p));
 		}
 		nonnulls = addDeref(target,nonnulls);				
 		
+		if(target.type() instanceof Type.Clazz) {		
+			Node targetNode = new Node((Type.Clazz) target.type(),stmt.name(),stmt.funType());			
+			UnionFlowSet<Location> preStore = preStores.get(targetNode);			
+			if(preStore != null) {
+				for(int i=0;i!=params.size();++i) {
+					if(preStore.contains(new Location("$" + i))) {												
+						nonnulls = addDeref(params.get(i),nonnulls);
+					}					
+				}		
+			}
+		}
+		
 		return nonnulls;
 	}
 
-	public UnionFlowSet<Location> transfer(JilExpr.New stmt, UnionFlowSet<Location> nonnulls) {
+	public UnionFlowSet<Location> transfer(JilExpr.New stmt, UnionFlowSet<Location> nonnulls) {		
 		return nonnulls;
 	}
 	
 	public UnionFlowSet<Location> transfer(JilStmt.Return stmt, UnionFlowSet<Location> nonnulls) {
+		if(nonnulls.contains(new Location("$")) && stmt.expr() != null) {
+			nonnulls = addDeref(stmt.expr(),nonnulls);
+		} 
+		
 		return nonnulls;
 	}
 	
@@ -145,10 +186,12 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInfer
 	}
 	
 	public UnionFlowSet<Location> transfer(JilStmt.Lock stmt, UnionFlowSet<Location> nonnulls) {
+		nonnulls = addDeref(stmt.expr(),nonnulls);
 		return nonnulls;
 	}
 	
 	public UnionFlowSet<Location> transfer(JilStmt.Unlock stmt, UnionFlowSet<Location> nonnulls) {
+		nonnulls = addDeref(stmt.expr(),nonnulls);
 		return nonnulls;
 	}
 	
@@ -220,14 +263,31 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInfer
 	public Set<Location> derefs(JilExpr.InstanceOf expr) { 		
 		return derefs(expr.lhs());
 	}
-	public Set<Location> derefs(JilExpr.Invoke expr) { 
-		Set<Location> r = derefs(expr.target());
+	public Set<Location> derefs(JilExpr.Invoke expr) { 		
+		JilExpr target = expr.target();
+		List<? extends JilExpr> params = expr.parameters();
+		
+		Set<Location> derefs = derefs(target);
 		for(JilExpr e : expr.parameters()) {
-			r.addAll(derefs(e));
+			derefs.addAll(derefs(e));
 		}
-		addDeref(expr.target(),r);	
-		return r; 		
+		addDeref(expr.target(),derefs);
+		
+		if(target.type() instanceof Type.Clazz) {		
+			Node targetNode = new Node((Type.Clazz) target.type(),expr.name(),expr.funType());
+			UnionFlowSet<Location> preStore = preStores.get(targetNode);
+			if(preStore != null) {
+				for(int i=0;i!=params.size();++i) {
+					if(preStore.contains(new Location("$" + i))) {												
+						addDeref(params.get(i),derefs);
+					}					
+				}		
+			}
+		}
+	
+		return derefs; 		
 	}
+	
 	public Set<Location> derefs(JilExpr.New expr) { 
 		Set<Location> r = new HashSet<Location>();
 		for(JilExpr e : expr.parameters()) {
@@ -275,6 +335,20 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInfer
 		} else {
 			return new Location("?" + deref.getClass().getName());
 		}
+	}
+	
+	protected Location normaliseParam(Location loc, JilMethod m) {
+		int index = 0;
+		for(JilMethod.Parameter p : m.parameters()) {
+			String pname = p.name();
+			if(loc.names.get(0).equals(pname)) {
+				Location nloc = new Location(new ArrayList<String>(loc.names()));
+				nloc.names.set(0,"$" + index);
+				return nloc;
+			}
+			index = index + 1;
+		}
+		return loc;
 	}
 	
 	public static class Location {

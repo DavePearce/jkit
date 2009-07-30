@@ -33,7 +33,7 @@ import java.util.*;
  * @author djp
  * 
  */
-public class UnionFlowSet<T> implements FlowSet, Cloneable {
+public class UnionFlowSet<T> implements FlowSet, Cloneable, Iterable<T> {
 	private HashSet<T> data = new HashSet<T>();
 	
 	public UnionFlowSet() {}
@@ -45,6 +45,10 @@ public class UnionFlowSet<T> implements FlowSet, Cloneable {
 		UnionFlowSet<T> r = new UnionFlowSet<T>();
 		r.data.addAll(this.data);
 		return r;
+	}
+	
+	public Iterator<T> iterator() {
+		return data.iterator();
 	}
 	
 	public UnionFlowSet<T> join(FlowSet _fs) {		
