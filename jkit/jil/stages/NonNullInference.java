@@ -48,13 +48,15 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInfer
 		
 		// First, initialise the worklist
 		for(JilClass owner : classes) {
-			for(JilMethod method : owner.methods()) {			
-				if(method.body() != null) {
-					Node node = new Node(owner.type(), method.name(), method
-							.type());
-					worklist.add(node);
-					methodMap.put(node,method);
-				} 
+			if(!owner.isInterface()) {
+				for(JilMethod method : owner.methods()) {			
+					if(!method.isAbstract()) {
+						Node node = new Node(owner.type(), method.name(), method
+								.type());
+						worklist.add(node);
+						methodMap.put(node,method);
+					} 
+				}
 			}
 		}
 		
@@ -78,12 +80,13 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInfer
 			postStores.put(myNode, postStore);
 		}
 		
-		start(method,postStore, new UnionFlowSet<Location>());
+		start(method,postStore,new UnionFlowSet<Location>());
 		
 		UnionFlowSet<Location> preStore = new UnionFlowSet<Location>();
 		
 		// Now, transform the preStore into the normal form, where parameters
         // are dictated by $1, $2, etc.		
+		System.out.println(myNode + "STORES: " + stores.size());
 		for(Location loc : stores.get(0)) {			
 			preStore = preStore.add(normaliseParam(loc,method));
 		}
