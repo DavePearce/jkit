@@ -39,7 +39,7 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInfer
 	
 	public boolean isParameterNonNull(Node n, int index) {
 		UnionFlowSet<Location> prestore = preStores.get(n);
-		if(prestore != null) {
+		if(prestore != null) {		
 			if(prestore.contains(new Location("$" + index))) {
 				return true;
 			}
@@ -102,20 +102,22 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInfer
 		}
 		
 		UnionFlowSet<Location> oldPreStore = preStores.get(myNode);		
-		if(oldPreStore != null) {
-			preStore = preStore.join(oldPreStore);
+		if(oldPreStore != null) {			
+			preStore = preStore.join(oldPreStore);			
 		} 
 		
 		if(!preStore.equals(oldPreStore)) {			
 			preStores.put(myNode, preStore);
-			// First, add my direct predecessors
+			
+			// First, add my direct predecessors back to the worklist, since
+            // these may be affected by my change of status.
 			for(Edge e : callGraph.to(myNode)) {				
 				worklist.add(e.first());
 			}
 			
-			// now, we need to account for contra-variance of parameters. This
-            // is done by traversing the hierarchy to find methods which are
-            // overridden by this.			
+			// Second, account for contra-variance of parameters. This
+			// is done by traversing the hierarchy to find methods which are
+			// overridden by this.
 			List<Triple<Clazz,Clazz.Method,Type.Function>> overrides = types.listOverrides(myNode.owner(),
 					myNode.name(), myNode.type(), loader);
 			
@@ -131,7 +133,8 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInfer
 				
 				preStores.put(orNode, oldPreStore);
 				// First, add my direct predecessors
-				for(Edge e : callGraph.to(orNode)) {				
+				for(Edge e : callGraph.to(orNode)) {
+					//System.out.println("VISITING: " + e.first());
 					worklist.add(e.first());
 				}	
 			}			

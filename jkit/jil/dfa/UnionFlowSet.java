@@ -53,11 +53,12 @@ public class UnionFlowSet<T> implements FlowSet, Cloneable, Iterable<T> {
 	
 	public UnionFlowSet<T> join(FlowSet _fs) {		
 		if(_fs instanceof UnionFlowSet) {
-			UnionFlowSet<T> fs = (UnionFlowSet<T>) _fs.clone();
+			UnionFlowSet<T> fs = (UnionFlowSet<T>) _fs;
+			UnionFlowSet<T> tmp = (UnionFlowSet<T>) clone();
 									
-			if(fs.data.addAll(this.data)) {				
+			if(tmp.data.addAll(fs.data)) {				
 				return fs;
-			} else {			
+			} else {				
 				return this;
 			}			
 		}

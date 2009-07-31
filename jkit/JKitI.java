@@ -271,8 +271,9 @@ public class JKitI {
 		for (JilMethod m : jclass.methods()) {
 			Node node = new Node(jclass.type(),m.name(),m.type());
 			int index = 0;
-			for (JilMethod.Parameter p : m.parameters()) {				
-				if(nni.isParameterNonNull(node,index)) {					
+		
+			for (JilMethod.Parameter p : m.parameters()) {													
+				if(nni.isParameterNonNull(node,index)) {															
 					SourceLocation loc = (SourceLocation) p.attribute(SourceLocation.class);
 					inserts.add(new Insert("@NonNull ",  loc));
 				}

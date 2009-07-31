@@ -44,7 +44,7 @@ public class StaticCallGraphBuilder {
 		
 		public String toString() {
 			return first() + "." + second() + ":" + type();
-		}
+		}		
 	}
 	
 	public static class Edge extends Pair<Node,Node> {
