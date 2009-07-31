@@ -72,10 +72,13 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInfer
 			while(!worklist.isEmpty()) {
 				Node n = worklist.iterator().next();
 				worklist.remove(n);
+				
 				JilMethod m = methodMap.get(n);
+				
 				if(m != null) {
 					// m may be null if this method is not contained in the initial
-					// set of classes considered.
+					// set of classes considered, or it's an interface or
+                    // abstract class.
 					infer(m,n);
 				}
 			}
@@ -123,12 +126,10 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInfer
 			
 			for(Triple<Clazz,Clazz.Method,Type.Function> or : overrides) {
 				Node orNode = new Node(or.first().type(),myNode.name(),or.second().type());
-				
-				System.out.println("VISITING: " + orNode);
-				
+								
 				oldPreStore = preStores.get(orNode);		
 				if(oldPreStore != null) {
-					oldPreStore = preStore.join(oldPreStore);
+					oldPreStore = oldPreStore.join(preStore);
 				} else {
 					oldPreStore = preStore;
 				}
