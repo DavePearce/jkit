@@ -236,8 +236,8 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInfer
 		return nonnulls;
 	}
 	
-	public UnionFlowSet<Location> transfer(JilExpr e, UnionFlowSet<Location> nonnulls) {				
-		return nonnulls;
+	public UnionFlowSet<Location> transfer(JilExpr e, UnionFlowSet<Location> nonnulls) {		
+		return nonnulls.addAll(derefs(e));
 	}
 	
 	public Set<Location> derefs(JilExpr expr) {

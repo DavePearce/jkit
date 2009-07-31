@@ -265,7 +265,7 @@ public class JKitI {
 			inserts = new ArrayList<Insert>();
 			insertmap.put(filename,inserts);
 		}
-		int count = 0;
+		
 		for (JilMethod m : jclass.methods()) {
 			Node node = new Node(jclass.type(),m.name(),m.type());
 			int index = 0;
@@ -274,15 +274,12 @@ public class JKitI {
 				if(nni.isParameterNonNull(node,index)) {															
 					SourceLocation loc = (SourceLocation) p.attribute(SourceLocation.class);
 					inserts.add(new Insert("@NonNull ",  loc));
-					count++;
 				}
 				index = index + 1;
 			}
 			
 			// now deal with the return type ... hmmm.
 		}
-		
-		System.out.println("Built " + count + " inserts for: " + filename);				
 	}
 	
 	public static void writeOutputFiles(Set<String> srcfiles,
