@@ -122,7 +122,9 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInfer
 					myNode.name(), myNode.type(), loader);
 			
 			for(Triple<Clazz,Clazz.Method,Type.Function> or : overrides) {
-				Node orNode = new Node(or.first().type(),myNode.name(),or.third());
+				Node orNode = new Node(or.first().type(),myNode.name(),or.second().type());
+				
+				System.out.println("VISITING: " + orNode);
 				
 				oldPreStore = preStores.get(orNode);		
 				if(oldPreStore != null) {
@@ -133,8 +135,7 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInfer
 				
 				preStores.put(orNode, oldPreStore);
 				// First, add my direct predecessors
-				for(Edge e : callGraph.to(orNode)) {
-					//System.out.println("VISITING: " + e.first());
+				for(Edge e : callGraph.to(orNode)) {					
 					worklist.add(e.first());
 				}	
 			}			
