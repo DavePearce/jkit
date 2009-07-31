@@ -121,8 +121,9 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInfer
 			// Second, account for contra-variance of parameters. This
 			// is done by traversing the hierarchy to find methods which are
 			// overridden by this.
-			List<Triple<Clazz,Clazz.Method,Type.Function>> overrides = types.listOverrides(myNode.owner(),
-					myNode.name(), myNode.type(), loader);
+			List<Triple<Clazz, Clazz.Method, Type.Function>> overrides = types
+					.listOverrides(myNode.owner(), myNode.name(),
+							myNode.type(), loader);
 			
 			for(Triple<Clazz,Clazz.Method,Type.Function> or : overrides) {
 				Node orNode = new Node(or.first().type(),myNode.name(),or.second().type());
@@ -238,7 +239,22 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInfer
 	}
 	
 	public UnionFlowSet<Location> transfer(JilExpr e, UnionFlowSet<Location> nonnulls) {		
-		return nonnulls.addAll(derefs(e));
+		System.out.println("CONDITION: " + e);
+		if(e instanceof JilExpr.BinOp) {
+			
+		} else if(e instanceof JilExpr.InstanceOf) {
+			JilExpr.InstanceOf ie = (JilExpr.InstanceOf) e;
+			nonnulls = nonnulls.addAll(derefs(e));
+			Location lhs = derefName(ie.lhs());
+			nonnulls = nonnulls.remove(lhs);
+			System.out.println("REMOVING: " + lhs);
+		} else {		
+			// simple case
+			nonnulls = nonnulls.addAll(derefs(e));			
+		}
+		
+		
+		return nonnulls;
 	}
 	
 	public Set<Location> derefs(JilExpr expr) {
