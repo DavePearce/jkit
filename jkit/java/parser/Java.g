@@ -187,6 +187,14 @@ tokens {
 
 @lexer::members {
 protected boolean enumIsKeyword = true;
+	public void displayRecognitionError(String[] tokenNames,
+                                        RecognitionException e) {
+      String text = "?";
+      if(e.token != null) {
+       text = e.token.getText();
+      }
+	  throw new SyntaxError("error on \"" + text +"\"",e.line,e.charPositionInLine,text.length());
+    } 
 }
 @lexer::header {
 package jkit.java.parser;
@@ -200,14 +208,14 @@ import jkit.compiler.SyntaxError;
 @rulecatch { 
  catch(RecognitionException e) {  
   throw new SyntaxError("error on \"" + e.token.getText()+"\"",e.line,e.charPositionInLine,e.token.getText().length());
- }
+ } 
 }
 
 @members {
     public void displayRecognitionError(String[] tokenNames,
                                         RecognitionException e) {
 	  throw new SyntaxError("error on \"" + e.token.getText()+"\"",e.line,e.charPositionInLine,e.token.getText().length());
-    }
+    }    	
 }
 
 // starting point for parsing a java file
