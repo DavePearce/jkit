@@ -89,9 +89,10 @@ public abstract class BackwardAnalysis<T extends FlowSet> {
 				merge(current,store,worklist,preds);
 			} else if(stmt instanceof JilStmt.IfGoto) {				
 				JilStmt.IfGoto gto = (JilStmt.IfGoto) stmt;
-				JilExpr notCondition = Exprs.eliminateNot(new JilExpr.UnOp(gto.condition(), JilExpr.UnOp.NOT,Types.T_BOOL));
+				JilExpr condition = Exprs.eliminateNot(gto.condition());				
+				JilExpr notCondition = Exprs.eliminateNot(new JilExpr.UnOp(gto.condition(), JilExpr.UnOp.NOT,Types.T_BOOL));				
 				int target = labels.get(gto.label());
-				T t_store = transfer(gto.condition(),get_store(target,emptyStore));
+				T t_store = transfer(condition,get_store(target,emptyStore));
 				T f_store = transfer(notCondition,get_store(current+1,emptyStore));				
 				T store = join(t_store,f_store);				
 				merge(current,store,worklist,preds);				

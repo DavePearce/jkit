@@ -65,6 +65,20 @@ public class UnionFlowSet<T> implements FlowSet, Cloneable, Iterable<T> {
 		return null;
 	}
 	
+	public UnionFlowSet<T> intersect(FlowSet _fs) {		
+		if(_fs instanceof UnionFlowSet) {
+			UnionFlowSet<T> fs = (UnionFlowSet<T>) _fs;
+			UnionFlowSet<T> tmp = new UnionFlowSet<T>();
+			for(T i : data) {
+				if(fs.contains(i)) {
+					tmp.data.add(i);
+				}
+			}
+			return tmp;
+		}
+		return null;
+	}
+	
 	public UnionFlowSet<T> add(T s) {
 		if(!data.contains(s)) {
 			UnionFlowSet r = (UnionFlowSet) this.clone();			

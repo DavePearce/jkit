@@ -141,8 +141,17 @@ public class Exprs {
      * Note that, in the case of !(X instanceof Y), or !f(...), no rewrite 
      * is possible, so the original expression is simply returned.
      */
-	public static JilExpr eliminateNot(UnOp e) {
-		assert e.op() == UnOp.NOT;
+	public static JilExpr eliminateNot(JilExpr _e) {
+		if(!(_e instanceof JilExpr.UnOp)) {
+			return _e;
+		} 
+		
+		UnOp e = (UnOp) _e;
+		
+		if(e.op() != UnOp.NOT) {
+			return e;
+		}
+		
 		
 		if(e.expr() instanceof UnOp) {
 			UnOp e2 = (UnOp) e.expr();

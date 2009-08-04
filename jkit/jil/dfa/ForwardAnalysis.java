@@ -87,9 +87,10 @@ public abstract class ForwardAnalysis<T extends FlowSet> {
 				merge(target,store,worklist);
 			} else if(stmt instanceof JilStmt.IfGoto) {				
 				JilStmt.IfGoto gto = (JilStmt.IfGoto) stmt;
+				JilExpr condition = Exprs.eliminateNot(gto.condition());
 				JilExpr notCondition = Exprs.eliminateNot(new JilExpr.UnOp(gto.condition(), JilExpr.UnOp.NOT,Types.T_BOOL));
 				int target = labels.get(gto.label());
-				T t_store = transfer(gto.condition(),store);
+				T t_store = transfer(condition,store);
 				T f_store = transfer(notCondition,store);				
 				merge(target,t_store,worklist);
 				merge(current+1,f_store,worklist);

@@ -238,23 +238,31 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInfer
 		return nonnulls;
 	}
 	
-	public UnionFlowSet<Location> transfer(JilExpr e, UnionFlowSet<Location> nonnulls) {		
-		System.out.println("CONDITION: " + e);
-		if(e instanceof JilExpr.BinOp) {
-			
-		} else if(e instanceof JilExpr.InstanceOf) {
+	public UnionFlowSet<Location> transfer(JilExpr e, UnionFlowSet<Location> nonnulls) {				
+		if (e instanceof JilExpr.InstanceOf) {
 			JilExpr.InstanceOf ie = (JilExpr.InstanceOf) e;
 			nonnulls = nonnulls.addAll(derefs(e));
 			Location lhs = derefName(ie.lhs());
-			nonnulls = nonnulls.remove(lhs);
-			System.out.println("REMOVING: " + lhs);
-		} else {		
+			return nonnulls.remove(lhs);
+		} else if (e instanceof JilExpr.BinOp) {
+			JilExpr.BinOp bop = (JilExpr.BinOp) e;
+			switch (bop.op()) {
+				case JilExpr.BinOp.NEQ :
+					if (bop.lhs() instanceof JilExpr.Null) {
+						Location rhs = derefName(bop.rhs());
+						return nonnulls.remove(rhs);
+					} else if (bop.rhs() instanceof JilExpr.Null) {
+						Location lhs = derefName(bop.lhs());
+						return nonnulls.remove(lhs);
+					}
+					break;
+				case JilExpr.BinOp.LAND :
+					return transfer(bop.lhs(), nonnulls).intersect(
+							transfer(bop.rhs(), nonnulls));
+			}
+		} 
 			// simple case
-			nonnulls = nonnulls.addAll(derefs(e));			
-		}
-		
-		
-		return nonnulls;
+		return nonnulls.addAll(derefs(e));					
 	}
 	
 	public Set<Location> derefs(JilExpr expr) {
