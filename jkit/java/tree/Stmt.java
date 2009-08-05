@@ -267,7 +267,7 @@ public interface Stmt extends SyntacticElement {
 		}
 	}
 
-	public static class Assert extends SyntacticElementImpl implements Stmt {
+	public static class Assert extends SyntacticElementImpl implements Simple {
 		private Expr expr;
 
 		public Assert(Expr expr, Attribute... attributes) {
