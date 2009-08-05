@@ -667,7 +667,7 @@ public interface Stmt extends SyntacticElement {
 	 * @author djp
 	 * 
 	 */
-	public static class PrePostIncDec extends UnOp implements Expr,Stmt {
+	public static class PrePostIncDec extends UnOp implements Expr,Simple {
 		public PrePostIncDec(int op, Expr expr, Attribute... attributes) {
 			super(op,expr,attributes);
 		}

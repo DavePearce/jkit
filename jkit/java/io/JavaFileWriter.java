@@ -24,6 +24,7 @@ package jkit.java.io;
 import java.io.*;
 import java.util.*;
 
+import static jkit.compiler.SyntaxError.*;
 import jkit.java.tree.Decl;
 import jkit.java.tree.Expr;
 import jkit.java.tree.Stmt;
@@ -381,15 +382,16 @@ public class JavaFileWriter {
 			writeDoWhile((Stmt.DoWhile) e);
 		} else if(e instanceof Stmt.Switch) {
 			writeSwitch((Stmt.Switch) e);
+		} else if(e instanceof Stmt.PrePostIncDec) {
+			writePrePost((Stmt.PrePostIncDec)e);
 		} else if(e instanceof Expr.Invoke) {
 			writeInvoke((Expr.Invoke) e);
 		} else if(e instanceof Expr.New) {
 			writeNew((Expr.New) e);
-		} else if(e instanceof Decl.JavaClass) {
+		} else if(e instanceof Decl.JavaClass) {		
 			writeClass((Decl.JavaClass)e);
 		} else {
-			throw new RuntimeException("Invalid statement encountered: "
-					+ e.getClass());
+			syntax_error("Invalid statement encountered: ",e);
 		}
 	}
 	
@@ -632,6 +634,29 @@ public class JavaFileWriter {
 		write("}");
 	}
 	
+	protected void writePrePost(Stmt.PrePostIncDec s) {
+		switch(s.op()) {
+			case Stmt.PrePostIncDec.POSTDEC:
+				writeExpression(s.expr());
+				write("--");
+				break;
+			case Stmt.PrePostIncDec.POSTINC:
+				writeExpression(s.expr());
+				write("++");
+				break;
+			case Stmt.PrePostIncDec.PREDEC:
+				write("--");
+				writeExpression(s.expr());				
+				break;
+			case Stmt.PrePostIncDec.PREINC:
+				write("++");
+				writeExpression(s.expr());
+				break;
+			default:
+				syntax_error("Invalid pre/post inc/dec expression encountered: ",s);
+		}		
+	}
+	
 	protected void writeExpression(Expr e) {
 		
 		if(e instanceof Value.Bool) {
@@ -694,8 +719,7 @@ public class JavaFileWriter {
 			writeAssignment((Stmt.Assignment) e);
 			write(")");
 		} else {
-			throw new RuntimeException("Invalid expression encountered: "
-					+ e.getClass());
+			syntax_error("Invalid expression encountered: ",e);
 		}
 	}
 	
@@ -763,9 +787,10 @@ public class JavaFileWriter {
 						writeField((Decl.JavaField) d);
 					} else if(d instanceof Decl.JavaMethod) {
 						writeMethod((Decl.JavaMethod) d);
-					} else {					
-						throw new RuntimeException(
-						"Support required for methods in anonymous inner classes");
+					} else {
+						syntax_error(
+								"Support required for methods in anonymous inner classes",
+								d);
 					}
 				}
 				write(" } ");
