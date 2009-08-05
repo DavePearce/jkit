@@ -344,11 +344,11 @@ public class JavaFileReader {
 		for (; idx < decl.getChildCount(); ++idx) {
 			Tree child = decl.getChild(idx);
 			if (child.getType() == METHOD) {
-				Type t = parseType(child.getChild(0), genericVariables);
-				String n = child.getChild(1).getText();
+				Type t = parseType(child.getChild(1), genericVariables);
+				String n = child.getChild(2).getText();
 				Value v = null;
-				if (child.getChildCount() > 2) {
-					v = (Value) parseExpression(child.getChild(2), genericVariables);
+				if (child.getChildCount() > 3) {
+					v = (Value) parseExpression(child.getChild(3), genericVariables);
 				}
 
 				methods.add(new Triple(t, n, v));
