@@ -780,16 +780,24 @@ public class JavaFileWriter {
 
 			if(e.declarations().size() > 0) {
 				write(" { ");
-				for(Decl d : e.declarations()) {				
-					if(d instanceof Decl.JavaClass) {
+				for(Decl d : e.declarations()) {									
+					if(d instanceof Decl.JavaEnum) {
+						writeEnum((Decl.JavaEnum) d);
+					} else if(d instanceof Decl.JavaClass) {
 						writeClass((Decl.JavaClass) d);
 					} else if(d instanceof Decl.JavaField) {
 						writeField((Decl.JavaField) d);
 					} else if(d instanceof Decl.JavaMethod) {
 						writeMethod((Decl.JavaMethod) d);
-					} else {
+					} else if(d instanceof Decl.StaticInitialiserBlock) {
+						writeStaticInitialiserBlock((Decl.StaticInitialiserBlock)d);
+					} else if(d instanceof Decl.InitialiserBlock) {
+						writeInitialiserBlock((Decl.InitialiserBlock)d);
+					} else if(d instanceof Decl.AnnotationInterface) {
+						writeAnnotationInterface((Decl.AnnotationInterface)d);
+					} else {						
 						syntax_error(
-								"Support required for methods in anonymous inner classes",
+								"unknown declaration encountered",
 								d);
 					}
 				}
