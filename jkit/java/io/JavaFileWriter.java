@@ -356,6 +356,8 @@ public class JavaFileWriter {
 			writeBlock((Stmt.Block)e);
 		} else if(e instanceof Stmt.VarDef) {
 			writeVarDef((Stmt.VarDef) e);
+		} else if(e instanceof Stmt.AssignmentOp) {
+			writeAssignmentOp((Stmt.AssignmentOp) e);
 		} else if(e instanceof Stmt.Assignment) {
 			writeAssignment((Stmt.Assignment) e);
 		} else if(e instanceof Stmt.Return) {
@@ -476,10 +478,18 @@ public class JavaFileWriter {
 		}
 	}
 	
-	protected void writeAssignment(Stmt.Assignment def) {
-		
+	protected void writeAssignment(Stmt.Assignment def) {			
 		writeExpression(def.lhs());
 		write(" = ");
+		writeExpression(def.rhs());		
+	}
+	
+	protected void writeAssignmentOp(Stmt.AssignmentOp def) {			
+		
+		writeExpression(def.lhs());
+		write(" ");
+		write(binopstr[def.op()]);
+		write("= ");
 		writeExpression(def.rhs());		
 	}
 	
@@ -580,8 +590,28 @@ public class JavaFileWriter {
 		write("; ");
 		
 		if(stmt.increment() != null) {
-			writeStatement(stmt.increment());
+			if(stmt.increment() instanceof Stmt.Block) {
+				// we have to do something special here, since we don't want to
+                // print a block in the normal way.
+				Stmt.Block block = (Stmt.Block) stmt.increment();
+				boolean firstTime=true;
+				for(Stmt s : block.statements()) {						
+					if(s instanceof Stmt.Simple) {
+						if(!firstTime) {
+							write(",");
+						}
+						firstTime=false;
+						writeStatement(s);
+					} else {
+						syntax_error("Impossible statement encountered",s);
+					}
+				}
+				
+			} else {
+				writeStatement(stmt.increment());
+			}
 		}
+						
 		write(")");
 		
 		if(stmt.body() != null) {
@@ -713,6 +743,11 @@ public class JavaFileWriter {
 			writeArrayIndex((Expr.ArrayIndex) e);
 		} else if(e instanceof Expr.Deref) {
 			writeDeref((Expr.Deref) e);
+		} else if(e instanceof Stmt.AssignmentOp) {
+			// force brackets
+			write("(");
+			writeAssignmentOp((Stmt.AssignmentOp) e);
+			write(")");
 		} else if(e instanceof Stmt.Assignment) {
 			// force brackets
 			write("(");

@@ -90,7 +90,7 @@ public class JavaFileReader {
 		JavaParser parser = new JavaParser(tokenStream);
 		try {
 			Tree tree = (Tree) parser.compilationUnit().getTree();
-			//printTree(tree,0,0);
+			// printTree(tree,0,0);
 			return tree;
 		} catch (RecognitionException e) {
 		}
@@ -1743,8 +1743,8 @@ public class JavaFileReader {
 				r = new Type.Float(loc);
 			} else if (ct.equals("double")) {
 				r = new Type.Double(loc);
-			} else if(genericVariables.contains(ct)) {
-				return new Type.Variable(ct,null,loc);
+			} else if(genericVariables.contains(ct)) {				
+				r = new Type.Variable(ct,null,loc);
 			} else {
 
 				// === NON-PRIMITIVE TYPES ===
