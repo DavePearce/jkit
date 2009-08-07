@@ -1402,7 +1402,7 @@ public class JavaFileReader {
      * too large whereas javac simply wraps. Hence, we need our own
      * implementation.
      */
-	protected static long parseLongVal(String in, int radix) {
+	protected long parseLongVal(String in, int radix) {
 		char[] c = in.toCharArray();
 		long out = 0;
 		for (int i = 0; i < c.length; i++) {
@@ -1684,7 +1684,7 @@ public class JavaFileReader {
 		return params;
 	}
 	
-	protected static Type parseType(Tree type, HashSet<String> genericVariables) {
+	protected Type parseType(Tree type, HashSet<String> genericVariables) {
 		assert type.getType() == TYPE;
 
 		SourceLocation loc = new SourceLocation(type.getLine(), type
@@ -1778,7 +1778,7 @@ public class JavaFileReader {
 		}
 	}
 
-	protected static Type.Reference parseClassVarType(Tree type, HashSet<String> genericVariables) {
+	protected Type.Reference parseClassVarType(Tree type, HashSet<String> genericVariables) {
 		if(type.getChildCount() == 1 && genericVariables.contains(type.getChild(0).getText())) {
 			SourceLocation loc = new SourceLocation(type.getLine(), type
 					.getCharPositionInLine());
@@ -1790,7 +1790,7 @@ public class JavaFileReader {
 		}
 	}
 	
-	protected static Type.Clazz parseClassType(Tree type, HashSet<String> genericVariables) {
+	protected Type.Clazz parseClassType(Tree type, HashSet<String> genericVariables) {
 		assert type.getType() == TYPE;
 		
 		// === COMPONENTS ===
@@ -1825,7 +1825,7 @@ public class JavaFileReader {
 				type.getLine(), type.getCharPositionInLine()));
 	}
 
-	protected static Type.Variable parseVariableType(Tree type, HashSet<String> genericVariables) {
+	protected Type.Variable parseVariableType(Tree type, HashSet<String> genericVariables) {
 		Tree child = type.getChild(0);
 		String text = child.getText();
 		List<Type.Reference> lowerBounds = new ArrayList<Type.Reference>();
@@ -1852,7 +1852,7 @@ public class JavaFileReader {
 		}
 	}
 
-	public static void printTree(Tree ast, int n, int line) {
+	public void printTree(Tree ast, int n, int line) {
 		if (ast.getLine() != line) {
 			System.out.print("(line " + ast.getLine() + ")\t");
 		} else {
