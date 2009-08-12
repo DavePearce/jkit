@@ -118,6 +118,8 @@ public class JKit extends TestHarness {
 	
 	@Test public void JLS_8_3_2_FieldInit_2() { runTest("JLS_8_3_2_FieldInit_2"); }
 	
+	@Ignore("Known Bug") @Test public void JLS_8_4_MethodDeclarations_1() { compileFailTest("JLS_8_4_MethodDeclarations_1"); }
+	
 	@Test public void JLS_8_4_4_GenericMethods_1() { runTest("JLS_8_4_4_GenericMethods_1"); }
 	@Test public void JLS_8_4_4_GenericMethods_2() { runTest("JLS_8_4_4_GenericMethods_2"); }
 	@Ignore("Known Bug") @Test public void JLS_8_4_4_GenericMethods_3() { runTest("JLS_8_4_4_GenericMethods_3"); }
