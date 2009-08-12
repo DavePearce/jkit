@@ -112,6 +112,7 @@ public class JKit extends TestHarness {
 	@Test public void JLS_8_1_3_InnerClasses_13() { runTest("JLS_8_1_3_InnerClasses_13"); }
 	@Test public void JLS_8_1_3_InnerClasses_14() { runTest("JLS_8_1_3_InnerClasses_14"); }
 	@Test public void JLS_8_1_3_InnerClasses_15() { runTest("JLS_8_1_3_InnerClasses_15"); }
+	@Ignore("Known Bug") @Test public void JLS_8_1_3_InnerClasses_16() { compileFailTest("JLS_8_1_3_InnerClasses_16"); }
 	
 	@Ignore("Known Bug") @Test public void JLS_8_1_1_3_StrictClasses_1() { runTest("JLS_8_1_1_3_StrictClasses_1"); }
 	
@@ -125,6 +126,7 @@ public class JKit extends TestHarness {
 	@Test public void JLS_8_7_StaticInitializers_2() { runTest("JLS_8_7_StaticInitializers_2"); }
 
 	@Test public void JLS_8_8_7_1_ConstructorInvocations_1() { runTest("JLS_8_8_7_1_ConstructorInvocations_1"); }
+	@Ignore("Known Bug") @Test public void JLS_8_8_7_1_ConstructorInvocations_2() { compileFailTest("JLS_8_8_7_1_ConstructorInvocations_2"); }
 	@Test public void JLS_8_8_7_2_Super_1() { runTest("JLS_8_8_7_2_Super_1"); }
 	@Test public void JLS_8_8_7_2_Super_2() { runTest("JLS_8_8_7_2_Super_2"); }
 	@Test public void JLS_8_8_7_2_Super_3() { runTest("JLS_8_8_7_2_Super_3"); }

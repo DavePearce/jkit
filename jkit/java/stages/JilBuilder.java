@@ -129,9 +129,7 @@ public class JilBuilder {
 			}
 		} catch(Exception ex) {
 			internal_error(d,ex);
-		}
-						
-		
+		}							
 	}
 	
 	protected void doInterface(Decl.JavaInterface d) throws ClassNotFoundException {
@@ -1481,7 +1479,7 @@ public class JilBuilder {
 				// Now, to deal with this i'm going to be a little conservative
 				// and use a temporary variable. In some cases, it may be
 				// possible to avoid the temporary variable, but for simplicity
-				// I don't do this yet.
+				// I don't do this yet.  [NOTE, IT's HARD TO AVOID THE TMP]
 				JilExpr.Variable tmpVar = new JilExpr.Variable(getTempVar(),
 						lhs.first().type(), e.attributes());
 				r.add(new JilStmt.Assign(tmpVar,lhs.first(),e.attributes()));
