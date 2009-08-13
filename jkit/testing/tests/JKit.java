@@ -113,6 +113,7 @@ public class JKit extends TestHarness {
 	@Test public void JLS_8_1_3_InnerClasses_14() { runTest("JLS_8_1_3_InnerClasses_14"); }
 	@Test public void JLS_8_1_3_InnerClasses_15() { runTest("JLS_8_1_3_InnerClasses_15"); }
 	@Ignore("Known Bug") @Test public void JLS_8_1_3_InnerClasses_16() { compileFailTest("JLS_8_1_3_InnerClasses_16"); }
+	@Ignore("Known Bug") @Test public void JLS_8_1_3_InnerClasses_17() { runTest("JLS_8_1_3_InnerClasses_17"); }
 	
 	@Ignore("Known Bug") @Test public void JLS_8_1_1_3_StrictClasses_1() { runTest("JLS_8_1_1_3_StrictClasses_1"); }
 	
@@ -134,7 +135,6 @@ public class JKit extends TestHarness {
 	@Test public void JLS_8_8_7_2_Super_3() { runTest("JLS_8_8_7_2_Super_3"); }
 	@Test public void JLS_8_8_7_2_Super_4() { runTest("JLS_8_8_7_2_Super_4"); }	
 	
-	// Fails because no support for enums as yet!
 	@Test public void JLS_8_9_Enums_1() { runTest("JLS_8_9_Enums_1"); }
 	@Test public void JLS_8_9_Enums_2() { runTest("JLS_8_9_Enums_2"); }
 	@Test public void JLS_8_9_Enums_3() { runTest("JLS_8_9_Enums_3"); }
