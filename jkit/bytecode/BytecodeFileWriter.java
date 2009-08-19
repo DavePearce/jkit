@@ -102,7 +102,7 @@ public class BytecodeFileWriter {
 			HashMap<Constant.Info, Integer> poolMap) throws IOException {
 		output.print("  ");
 		writeModifiers(f.modifiers());
-		output.print(f.type());
+		writeTypeWithoutBounds(f.type());		
 		output.println(" " + f.name() + ";");
 		for(Attribute a : f.attributes()) {
 			a.print(output,poolMap,loader);
@@ -114,9 +114,25 @@ public class BytecodeFileWriter {
 		output.print("  ");
 		writeModifiers(method.modifiers());
 		Type.Function type = method.type(); 
-		output.print(type.returnType() + " " + method.name());
-		output.print("(");
+		
+		List<Type.Variable> typeArgs = type.typeArguments();
 		boolean firstTime=true;
+		if(typeArgs.size() > 0) {
+			output.print("<");
+			for(Type.Variable tv : typeArgs) {
+				if(!firstTime) {
+					output.print(", ");
+				}
+				firstTime=false;
+				output.print(tv);
+			}
+			output.print("> ");
+		}
+		
+		writeTypeWithoutBounds(type.returnType());
+		output.print(" " + method.name());
+		output.print("(");		
+		firstTime=true;
 		
 		List<Type> paramTypes = type.parameterTypes();				
 		
@@ -125,7 +141,7 @@ public class BytecodeFileWriter {
 				output.print(", ");
 			}
 			firstTime=false;					
-			output.print(paramTypes.get(i));
+			writeTypeWithoutBounds(paramTypes.get(i));
 		}
 		
 		output.println(");");
@@ -136,6 +152,15 @@ public class BytecodeFileWriter {
 	}	
 	protected void writeModifiers(List<Modifier> modifiers) {	
 		writeModifiers(modifiers,output);
+	}
+	
+	protected void writeTypeWithoutBounds(Type t) {
+		if(t instanceof Type.Variable) {
+			Type.Variable v = (Type.Variable) t;
+			output.write(v.variable());
+		} else {
+			output.write(t.toString());
+		}
 	}
 	
 	static void writeModifiers(List<Modifier> modifiers, PrintWriter output) {

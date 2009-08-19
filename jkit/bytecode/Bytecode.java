@@ -723,9 +723,9 @@ public abstract class Bytecode {
 		
 		public String toString() {
 			if(mode == STATIC) {
-				return "putstatic " + owner + "." + name + ":" + type;
+				return "putstatic " + owner + "." + name + ":" + ClassFile.descriptor(type,false);
 			} else {
-				return "putfield " + owner + "." + name + ":" + type;
+				return "putfield " + owner + "." + name + ":" + ClassFile.descriptor(type,false);
 			}
 		}
 		
@@ -789,9 +789,9 @@ public abstract class Bytecode {
 		
 		public String toString() {
 			if(mode == STATIC) {
-				return "getstatic " + owner + "." + name + ":" + type;
+				return "getstatic " + owner + "." + name + ":" + ClassFile.descriptor(type,false);
 			} else {
-				return "getfield " + owner + "." + name + ":" + type;
+				return "getfield " + owner + "." + name + ":" + ClassFile.descriptor(type,false);
 			}
 		}
 		
@@ -885,13 +885,13 @@ public abstract class Bytecode {
 		
 		public String toString() {		
 			if(mode == STATIC) {
-				return "invokestatic " + owner + "." + name + " " + type;
+				return "invokestatic " + owner + "." + name + " " + ClassFile.descriptor(type,false);
 			} else if(mode == VIRTUAL) {
-				return "invokevirtual " + owner + "." + name + " " + type;
+				return "invokevirtual " + owner + "." + name + " " + ClassFile.descriptor(type,false);
 			} else if(mode == SPECIAL) {
-				return "invokespecial " + owner + "." + name + " " + type;
+				return "invokespecial " + owner + "." + name + " " + ClassFile.descriptor(type,false);
 			} else {
-				return "invokeinterface " + owner + "." + name + " " + type;
+				return "invokeinterface " + owner + "." + name + " " + ClassFile.descriptor(type,false);
 			}
 		}
 		
@@ -1804,7 +1804,7 @@ public abstract class Bytecode {
 		}
 		
 		public String toString() {						
-			return "checkcast " + type;					
+			return "checkcast " + ClassFile.descriptor(type,false);					
 		}
 		
 		public boolean equals(Object o) {
