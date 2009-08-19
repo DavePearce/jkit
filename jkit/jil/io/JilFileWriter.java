@@ -58,7 +58,7 @@ public class JilFileWriter {
 				if(!firstTime) {
 					output.print(", ");
 				}
-				firstTime=false;
+				firstTime=false;				
 				output.print(i);
 			}			
 		}				
@@ -85,28 +85,46 @@ public class JilFileWriter {
 	public void write(JilField f) {
 		output.print("  ");
 		writeModifiers(f.modifiers());
-		output.print(f.type());
+		writeTypeWithoutBounds(f.type());
 		output.println(" " + f.name() + ";");		
 	}
 	
 	public void write(JilMethod m) {
 		output.print("  ");
 		writeModifiers(m.modifiers());
-		Type.Function type = m.type(); 
-		output.print(type.returnType() + " " + m.name());
+		Type.Function type = m.type();
+		
+		boolean firstTime=true;
+		List<Type.Variable> typeArgs = type.typeArguments();
+		
+		if(typeArgs.size() > 0) {
+			output.print("<");
+			for(Type.Variable tv : typeArgs) {
+				if(!firstTime) {
+					output.print(", ");
+				}
+				firstTime=false;
+				output.print(tv);
+			}
+			output.print("> ");
+		}
+		
+		writeTypeWithoutBounds(type.returnType());
+		output.print(" " + m.name());
 		output.print("(");
-		boolean firstTime=true;	
+			
 		
 		List<Type> paramTypes = type.parameterTypes();
 		List<JilMethod.Parameter> params = m.parameters();
 		
+		firstTime=true;
 		for(int i = 0; i != params.size();++i) {
 			if(!firstTime) {
 				output.print(", ");
 			}
 			firstTime=false;
-			writeModifiers(params.get(i).modifiers());			
-			output.print(paramTypes.get(i));
+			writeModifiers(params.get(i).modifiers());
+			writeTypeWithoutBounds(paramTypes.get(i));			
 			output.print(" " + params.get(i).name());
 		}
 		
@@ -377,7 +395,9 @@ public class JilFileWriter {
 	}
 	
 	protected void write(JilExpr.Cast e) {
-		output.print("(" + e.type() + ") ");
+		output.print("(");
+		writeTypeWithoutBounds(e.type());
+		output.print(") ");
 		writeExpressionWithBracketsIfNecessary(e.expr());				
 	}
 	
@@ -466,6 +486,15 @@ public class JilFileWriter {
 			output.write(")");
 		} else {
 			write(e);
+		}
+	}
+	
+	protected void writeTypeWithoutBounds(Type t) {
+		if(t instanceof Type.Variable) {
+			Type.Variable v = (Type.Variable) t;
+			output.write(v.variable());
+		} else {
+			output.write(t.toString());
 		}
 	}
 	
