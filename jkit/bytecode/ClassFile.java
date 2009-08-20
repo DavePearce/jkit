@@ -720,7 +720,25 @@ public class ClassFile implements Clazz {
 			return r + ";";
 		} else if(t instanceof Type.Function) {
 			Type.Function ft = (Type.Function) t;
-			String r = "(";
+			String r = "";
+			
+			List<Type.Variable> typeArgs = ft.typeArguments();
+			if(!typeArgs.isEmpty() && generic) {				
+				r += "<";
+				for(Type.Variable v : typeArgs) {
+					r += v.variable() + ":";
+					if(v.lowerBound() != null) {
+						
+						// I think there's a bug here if the lowerbound is an
+                        // interface. The reason is that we need an extra ":".
+						
+						r += descriptor(v.lowerBound(),generic);
+					}
+				}
+				r += ">";
+			}
+			
+			r += "(";
 
 			for (Type pt : ft.parameterTypes()) {				
 				r += descriptor(pt,generic);

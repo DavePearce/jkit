@@ -53,7 +53,7 @@ public class MethodSignature implements Attribute {
 		writer.write_u2(constantPool.get(new Constant.Utf8("Signature")));
 		writer.write_u4(2);
 		writer.write_u2(constantPool.get(new Constant.Utf8(ClassFile
-				.descriptor(type, true))));
+				.descriptor(type, true))));		
 	}
 	
 	public void addPoolItems(Set<Constant.Info> constantPool, ClassLoader loader) {
