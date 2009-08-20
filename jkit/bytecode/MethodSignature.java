@@ -22,10 +22,10 @@
 package jkit.bytecode;
 
 import java.io.*;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import jkit.compiler.ClassLoader;
+import jkit.compiler.*;
 import jkit.jil.tree.*;
 
 /**
@@ -52,20 +52,67 @@ public class MethodSignature implements Attribute {
 			throws IOException {
 		writer.write_u2(constantPool.get(new Constant.Utf8("Signature")));
 		writer.write_u4(2);
-		writer.write_u2(constantPool.get(new Constant.Utf8(ClassFile
-				.descriptor(type, true))));		
+		writer.write_u2(constantPool.get(new Constant.Utf8(descriptor(loader))));		
 	}
 	
 	public void addPoolItems(Set<Constant.Info> constantPool, ClassLoader loader) {
 		Constant.addPoolItem(
-				new Constant.Utf8(ClassFile.descriptor(type, true)),
+				new Constant.Utf8(descriptor(loader)),
 				constantPool);
 	}
 	
 	public void print(PrintWriter output,
 			Map<Constant.Info, Integer> constantPool, ClassLoader loader) {
 		output.println("Signature: "
-				+ constantPool.get(new Constant.Utf8(ClassFile.descriptor(type,
-						true))));
+				+ constantPool.get(new Constant.Utf8(descriptor(loader))));
+	}
+	
+	private String descriptor(ClassLoader loader) {		
+
+		String r = "";
+
+		List<Type.Variable> typeArgs = type.typeArguments();
+		if(!typeArgs.isEmpty()) {				
+			r += "<";
+			for(Type.Variable v : typeArgs) {
+				Type lb = v.lowerBound();
+								
+				r += v.variable() + ":";
+			
+				if(lb != null) {
+
+					// The following check is needed to deal with the case
+					// where the type bounds are only interfaces. In this
+					// case, there must be an extra colon indicating the
+					// absence of super class. It's actually really annoying
+					// since it couples this code with ClassTable ... grrr.
+
+					try {
+						Clazz tmp = loader.loadClass((Type.Clazz) lb);
+						if (tmp.isInterface()) {
+							r += ":";
+						}
+						r += ClassFile.descriptor(lb, true);
+					} catch (ClassNotFoundException ce) {
+						throw new RuntimeException("Type bound " + lb
+								+ " not found");									
+					}
+					// I think there's a bug here if the lowerbound is an
+					// interface. The reason is that we need an extra ":".
+
+					r += ClassFile.descriptor(v.lowerBound(),true);
+				}
+			}
+			r += ">";
+		}
+
+		r += "(";
+
+		for (Type pt : type.parameterTypes()) {				
+			r += ClassFile.descriptor(pt,true);
+		}
+
+		r = r + ")" + ClassFile.descriptor(type.returnType(),true);
+		return r;		
 	}
 }

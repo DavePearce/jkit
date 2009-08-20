@@ -719,34 +719,21 @@ public class ClassFile implements Clazz {
 			}
 			return r + ";";
 		} else if(t instanceof Type.Function) {
+			// For simplicity, this code does not support generic function
+            // types. The reason for this is that, to do so, requires access to
+            // the ClassLoader. Instead, generic method signatures are supported
+            // only by the MethodSignature class.
+			
 			Type.Function ft = (Type.Function) t;
-			String r = "";
-			
-			List<Type.Variable> typeArgs = ft.typeArguments();
-			if(!typeArgs.isEmpty() && generic) {				
-				r += "<";
-				for(Type.Variable v : typeArgs) {
-					r += v.variable() + ":";
-					if(v.lowerBound() != null) {
-						
-						// I think there's a bug here if the lowerbound is an
-                        // interface. The reason is that we need an extra ":".
-						
-						r += descriptor(v.lowerBound(),generic);
-					}
-				}
-				r += ">";
-			}
-			
-			r += "(";
+			String r = "(";
 
 			for (Type pt : ft.parameterTypes()) {				
-				r += descriptor(pt,generic);
+				r += ClassFile.descriptor(pt,generic);
 			}
-			
-			r = r + ")" + descriptor(ft.returnType(),generic);
-			return r;
-		} else if(t instanceof Type.Variable) {
+
+			r = r + ")" + ClassFile.descriptor(ft.returnType(),generic);
+			return r;			
+		} if(t instanceof Type.Variable) {		
 			if(generic) {
 				Type.Variable tv = (Type.Variable) t;
 				return "T" + tv.variable() + ";";
