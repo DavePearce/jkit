@@ -124,8 +124,7 @@ public final class BypassMethods {
 			Type ftReturnType = stripGenerics(ft.returnType());
 			Type mtReturnType = stripGenerics(mt.returnType());
 			
-			boolean isMatch = ft.returnType() instanceof Type.Variable
-					&& (!ftReturnType.equals(mtReturnType));
+			boolean isMatch = !ftReturnType.equals(mtReturnType);
 			
 			for (int i = 0; i != ftParamTypes.size(); ++i) {
 				Type fp = ftParamTypes.get(i);
