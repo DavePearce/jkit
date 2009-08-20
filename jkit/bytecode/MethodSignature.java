@@ -96,11 +96,7 @@ public class MethodSignature implements Attribute {
 					} catch (ClassNotFoundException ce) {
 						throw new RuntimeException("Type bound " + lb
 								+ " not found");									
-					}
-					// I think there's a bug here if the lowerbound is an
-					// interface. The reason is that we need an extra ":".
-
-					r += ClassFile.descriptor(v.lowerBound(),true);
+					}				
 				}
 			}
 			r += ">";
