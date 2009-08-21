@@ -453,7 +453,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitTopLevel(this); }
 
-        public Kind getKind() { return Kind.COMPILATION_UNIT; }
+        public Tree.Kind getKind() { return Tree.Kind.COMPILATION_UNIT; }
         public List<JCAnnotation> getPackageAnnotations() {
             return packageAnnotations;
         }
@@ -509,7 +509,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         public boolean isStatic() { return staticImport; }
         public JCTree getQualifiedIdentifier() { return qualid; }
 
-        public Kind getKind() { return Kind.IMPORT; }
+        public Tree.Kind getKind() { return Tree.Kind.IMPORT; }
         @Override
         public <R,D> R accept(TreeVisitor<R,D> v, D d) {
             return v.visitImport(this, d);
@@ -584,7 +584,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitClassDef(this); }
 
-        public Kind getKind() { return Kind.CLASS; }
+        public Tree.Kind getKind() { return Tree.Kind.CLASS; }
         public JCModifiers getModifiers() { return mods; }
         public Name getSimpleName() { return name; }
         public List<JCTypeParameter> getTypeParameters() {
@@ -652,7 +652,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitMethodDef(this); }
 
-        public Kind getKind() { return Kind.METHOD; }
+        public Tree.Kind getKind() { return Tree.Kind.METHOD; }
         public JCModifiers getModifiers() { return mods; }
         public Name getName() { return name; }
         public JCTree getReturnType() { return restype; }
@@ -708,7 +708,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitVarDef(this); }
 
-        public Kind getKind() { return Kind.VARIABLE; }
+        public Tree.Kind getKind() { return Tree.Kind.VARIABLE; }
         public JCModifiers getModifiers() { return mods; }
         public Name getName() { return name; }
         public JCTree getType() { return vartype; }
@@ -735,7 +735,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitSkip(this); }
 
-        public Kind getKind() { return Kind.EMPTY_STATEMENT; }
+        public Tree.Kind getKind() { return Tree.Kind.EMPTY_STATEMENT; }
         @Override
         public <R,D> R accept(TreeVisitor<R,D> v, D d) {
             return v.visitEmptyStatement(this, d);
@@ -764,7 +764,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitBlock(this); }
 
-        public Kind getKind() { return Kind.BLOCK; }
+        public Tree.Kind getKind() { return Tree.Kind.BLOCK; }
         public List<JCStatement> getStatements() {
             return stats;
         }
@@ -793,7 +793,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitDoLoop(this); }
 
-        public Kind getKind() { return Kind.DO_WHILE_LOOP; }
+        public Tree.Kind getKind() { return Tree.Kind.DO_WHILE_LOOP; }
         public JCExpression getCondition() { return cond; }
         public JCStatement getStatement() { return body; }
         @Override
@@ -820,7 +820,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitWhileLoop(this); }
 
-        public Kind getKind() { return Kind.WHILE_LOOP; }
+        public Tree.Kind getKind() { return Tree.Kind.WHILE_LOOP; }
         public JCExpression getCondition() { return cond; }
         public JCStatement getStatement() { return body; }
         @Override
@@ -855,7 +855,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitForLoop(this); }
 
-        public Kind getKind() { return Kind.FOR_LOOP; }
+        public Tree.Kind getKind() { return Tree.Kind.FOR_LOOP; }
         public JCExpression getCondition() { return cond; }
         public JCStatement getStatement() { return body; }
         public List<JCStatement> getInitializer() {
@@ -890,7 +890,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitForeachLoop(this); }
 
-        public Kind getKind() { return Kind.ENHANCED_FOR_LOOP; }
+        public Tree.Kind getKind() { return Tree.Kind.ENHANCED_FOR_LOOP; }
         public JCVariableDecl getVariable() { return var; }
         public JCExpression getExpression() { return expr; }
         public JCStatement getStatement() { return body; }
@@ -916,7 +916,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         }
         @Override
         public void accept(Visitor v) { v.visitLabelled(this); }
-        public Kind getKind() { return Kind.LABELED_STATEMENT; }
+        public Tree.Kind getKind() { return Tree.Kind.LABELED_STATEMENT; }
         public Name getLabel() { return label; }
         public JCStatement getStatement() { return body; }
         @Override
@@ -942,7 +942,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitSwitch(this); }
 
-        public Kind getKind() { return Kind.SWITCH; }
+        public Tree.Kind getKind() { return Tree.Kind.SWITCH; }
         public JCExpression getExpression() { return selector; }
         public List<JCCase> getCases() { return cases; }
         @Override
@@ -968,7 +968,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitCase(this); }
 
-        public Kind getKind() { return Kind.CASE; }
+        public Tree.Kind getKind() { return Tree.Kind.CASE; }
         public JCExpression getExpression() { return pat; }
         public List<JCStatement> getStatements() { return stats; }
         @Override
@@ -994,7 +994,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitSynchronized(this); }
 
-        public Kind getKind() { return Kind.SYNCHRONIZED; }
+        public Tree.Kind getKind() { return Tree.Kind.SYNCHRONIZED; }
         public JCExpression getExpression() { return lock; }
         public JCBlock getBlock() { return body; }
         @Override
@@ -1022,7 +1022,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitTry(this); }
 
-        public Kind getKind() { return Kind.TRY; }
+        public Tree.Kind getKind() { return Tree.Kind.TRY; }
         public JCBlock getBlock() { return body; }
         public List<JCCatch> getCatches() {
             return catchers;
@@ -1051,7 +1051,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitCatch(this); }
 
-        public Kind getKind() { return Kind.CATCH; }
+        public Tree.Kind getKind() { return Tree.Kind.CATCH; }
         public JCVariableDecl getParameter() { return param; }
         public JCBlock getBlock() { return body; }
         @Override
@@ -1082,7 +1082,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitConditional(this); }
 
-        public Kind getKind() { return Kind.CONDITIONAL_EXPRESSION; }
+        public Tree.Kind getKind() { return Tree.Kind.CONDITIONAL_EXPRESSION; }
         public JCExpression getCondition() { return cond; }
         public JCExpression getTrueExpression() { return truepart; }
         public JCExpression getFalseExpression() { return falsepart; }
@@ -1114,7 +1114,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitIf(this); }
 
-        public Kind getKind() { return Kind.IF; }
+        public Tree.Kind getKind() { return Tree.Kind.IF; }
         public JCExpression getCondition() { return cond; }
         public JCStatement getThenStatement() { return thenpart; }
         public JCStatement getElseStatement() { return elsepart; }
@@ -1141,7 +1141,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitExec(this); }
 
-        public Kind getKind() { return Kind.EXPRESSION_STATEMENT; }
+        public Tree.Kind getKind() { return Tree.Kind.EXPRESSION_STATEMENT; }
         public JCExpression getExpression() { return expr; }
         @Override
         public <R,D> R accept(TreeVisitor<R,D> v, D d) {
@@ -1166,7 +1166,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitBreak(this); }
 
-        public Kind getKind() { return Kind.BREAK; }
+        public Tree.Kind getKind() { return Tree.Kind.BREAK; }
         public Name getLabel() { return label; }
         @Override
         public <R,D> R accept(TreeVisitor<R,D> v, D d) {
@@ -1191,7 +1191,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitContinue(this); }
 
-        public Kind getKind() { return Kind.CONTINUE; }
+        public Tree.Kind getKind() { return Tree.Kind.CONTINUE; }
         public Name getLabel() { return label; }
         @Override
         public <R,D> R accept(TreeVisitor<R,D> v, D d) {
@@ -1214,7 +1214,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitReturn(this); }
 
-        public Kind getKind() { return Kind.RETURN; }
+        public Tree.Kind getKind() { return Tree.Kind.RETURN; }
         public JCExpression getExpression() { return expr; }
         @Override
         public <R,D> R accept(TreeVisitor<R,D> v, D d) {
@@ -1237,7 +1237,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitThrow(this); }
 
-        public Kind getKind() { return Kind.THROW; }
+        public Tree.Kind getKind() { return Tree.Kind.THROW; }
         public JCExpression getExpression() { return expr; }
         @Override
         public <R,D> R accept(TreeVisitor<R,D> v, D d) {
@@ -1262,7 +1262,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitAssert(this); }
 
-        public Kind getKind() { return Kind.ASSERT; }
+        public Tree.Kind getKind() { return Tree.Kind.ASSERT; }
         public JCExpression getCondition() { return cond; }
         public JCExpression getDetail() { return detail; }
         @Override
@@ -1295,7 +1295,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitApply(this); }
 
-        public Kind getKind() { return Kind.METHOD_INVOCATION; }
+        public Tree.Kind getKind() { return Tree.Kind.METHOD_INVOCATION; }
         public List<JCExpression> getTypeArguments() {
             return typeargs;
         }
@@ -1345,7 +1345,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitNewClass(this); }
 
-        public Kind getKind() { return Kind.NEW_CLASS; }
+        public Tree.Kind getKind() { return Tree.Kind.NEW_CLASS; }
         public JCExpression getEnclosingExpression() { // expr.new C< ... > ( ... )
             return encl;
         }
@@ -1385,7 +1385,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitNewArray(this); }
 
-        public Kind getKind() { return Kind.NEW_ARRAY; }
+        public Tree.Kind getKind() { return Tree.Kind.NEW_ARRAY; }
         public JCExpression getType() { return elemtype; }
         public List<JCExpression> getDimensions() {
             return dims;
@@ -1414,7 +1414,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitParens(this); }
 
-        public Kind getKind() { return Kind.PARENTHESIZED; }
+        public Tree.Kind getKind() { return Tree.Kind.PARENTHESIZED; }
         public JCExpression getExpression() { return expr; }
         @Override
         public <R,D> R accept(TreeVisitor<R,D> v, D d) {
@@ -1439,7 +1439,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitAssign(this); }
 
-        public Kind getKind() { return Kind.ASSIGNMENT; }
+        public Tree.Kind getKind() { return Tree.Kind.ASSIGNMENT; }
         public JCExpression getVariable() { return lhs; }
         public JCExpression getExpression() { return rhs; }
         @Override
@@ -1469,7 +1469,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitAssignop(this); }
 
-        public Kind getKind() { return TreeInfo.tagToKind(getTag()); }
+        public Tree.Kind getKind() { return TreeInfo.tagToKind(getTag()); }
         public JCExpression getVariable() { return lhs; }
         public JCExpression getExpression() { return rhs; }
         public Symbol getOperator() {
@@ -1499,7 +1499,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitUnary(this); }
 
-        public Kind getKind() { return TreeInfo.tagToKind(getTag()); }
+        public Tree.Kind getKind() { return TreeInfo.tagToKind(getTag()); }
         public JCExpression getExpression() { return arg; }
         public Symbol getOperator() {
 	    return operator;
@@ -1538,7 +1538,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitBinary(this); }
 
-        public Kind getKind() { return TreeInfo.tagToKind(getTag()); }
+        public Tree.Kind getKind() { return TreeInfo.tagToKind(getTag()); }
         public JCExpression getLeftOperand() { return lhs; }
         public JCExpression getRightOperand() { return rhs; }
         public Symbol getOperator() {
@@ -1567,7 +1567,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitTypeCast(this); }
 
-        public Kind getKind() { return Kind.TYPE_CAST; }
+        public Tree.Kind getKind() { return Tree.Kind.TYPE_CAST; }
         public JCTree getType() { return clazz; }
         public JCExpression getExpression() { return expr; }
         @Override
@@ -1593,7 +1593,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitTypeTest(this); }
 
-        public Kind getKind() { return Kind.INSTANCE_OF; }
+        public Tree.Kind getKind() { return Tree.Kind.INSTANCE_OF; }
         public JCTree getType() { return clazz; }
         public JCExpression getExpression() { return expr; }
         @Override
@@ -1619,7 +1619,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitIndexed(this); }
 
-        public Kind getKind() { return Kind.ARRAY_ACCESS; }
+        public Tree.Kind getKind() { return Tree.Kind.ARRAY_ACCESS; }
         public JCExpression getExpression() { return indexed; }
         public JCExpression getIndex() { return index; }
         @Override
@@ -1650,7 +1650,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitSelect(this); }
 
-        public Kind getKind() { return Kind.MEMBER_SELECT; }
+        public Tree.Kind getKind() { return Tree.Kind.MEMBER_SELECT; }
         public JCExpression getExpression() { return selected; }
         @Override
         public <R,D> R accept(TreeVisitor<R,D> v, D d) {
@@ -1678,7 +1678,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitIdent(this); }
 
-        public Kind getKind() { return Kind.IDENTIFIER; }
+        public Tree.Kind getKind() { return Tree.Kind.IDENTIFIER; }
         public Name getName() { return name; }
         @Override
         public <R,D> R accept(TreeVisitor<R,D> v, D d) {
@@ -1703,24 +1703,24 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitLiteral(this); }
 
-        public Kind getKind() {
+        public Tree.Kind getKind() {
             switch (typetag) {
             case TypeTags.INT:
-                return Kind.INT_LITERAL;
+                return Tree.Kind.INT_LITERAL;
             case TypeTags.LONG:
-                return Kind.LONG_LITERAL;
+                return Tree.Kind.LONG_LITERAL;
             case TypeTags.FLOAT:
-                return Kind.FLOAT_LITERAL;
+                return Tree.Kind.FLOAT_LITERAL;
             case TypeTags.DOUBLE:
-                return Kind.DOUBLE_LITERAL;
+                return Tree.Kind.DOUBLE_LITERAL;
             case TypeTags.BOOLEAN:
-                return Kind.BOOLEAN_LITERAL;
+                return Tree.Kind.BOOLEAN_LITERAL;
             case TypeTags.CHAR:
-                return Kind.CHAR_LITERAL;
+                return Tree.Kind.CHAR_LITERAL;
             case TypeTags.CLASS:
-                return Kind.STRING_LITERAL;
+                return Tree.Kind.STRING_LITERAL;
    	    case TypeTags.BOT: 
-		return Kind.NULL_LITERAL;
+		return Tree.Kind.NULL_LITERAL;
             default:
                 throw new AssertionError("unknown literal kind " + this);
             }
@@ -1768,7 +1768,8 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitTypeIdent(this); }
 
-        public Kind getKind() { return Kind.PRIMITIVE_TYPE; }
+        public Tree.Kind getKind() { return Tree.Kind.PRIMITIVE_TYPE; }
+
         public TypeKind getPrimitiveTypeKind() {
             switch (typetag) {
             case TypeTags.BOOLEAN:
@@ -1814,7 +1815,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitTypeArray(this); }
 
-        public Kind getKind() { return Kind.ARRAY_TYPE; }
+        public Tree.Kind getKind() { return Tree.Kind.ARRAY_TYPE; }
         public JCTree getType() { return elemtype; }
         @Override
         public <R,D> R accept(TreeVisitor<R,D> v, D d) {
@@ -1839,7 +1840,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitTypeApply(this); }
 
-        public Kind getKind() { return Kind.PARAMETERIZED_TYPE; }
+        public Tree.Kind getKind() { return Tree.Kind.PARAMETERIZED_TYPE; }
         public JCTree getType() { return clazz; }
         public List<JCExpression> getTypeArguments() {
             return arguments;
@@ -1869,7 +1870,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitTypeParameter(this); }
 
-        public Kind getKind() { return Kind.TYPE_PARAMETER; }
+        public Tree.Kind getKind() { return Tree.Kind.TYPE_PARAMETER; }
         public Name getName() { return name; }
         public List<JCExpression> getBounds() {
             return bounds;
@@ -1895,14 +1896,14 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitWildcard(this); }
 
-        public Kind getKind() {
+        public Tree.Kind getKind() {
             switch (kind.kind) {
             case UNBOUND:
-                return Kind.UNBOUNDED_WILDCARD;
+                return Tree.Kind.UNBOUNDED_WILDCARD;
             case EXTENDS:
-                return Kind.EXTENDS_WILDCARD;
+                return Tree.Kind.EXTENDS_WILDCARD;
             case SUPER:
-                return Kind.SUPER_WILDCARD;
+                return Tree.Kind.SUPER_WILDCARD;
             default:
                 throw new AssertionError("Unknown wildcard bound " + kind);
             }
@@ -1926,7 +1927,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitTypeBoundKind(this); }
 
-        public Kind getKind() {
+        public Tree.Kind getKind() {
             throw new AssertionError("TypeBoundKind is not part of a public API");
         }
         @Override
@@ -1949,7 +1950,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitAnnotation(this); }
 
-        public Kind getKind() { return Kind.ANNOTATION; }
+        public Tree.Kind getKind() { return Tree.Kind.ANNOTATION; }
         public JCTree getAnnotationType() { return annotationType; }
         public List<JCExpression> getArguments() {
             return args;
@@ -1974,7 +1975,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitModifiers(this); }
 
-        public Kind getKind() { return Kind.MODIFIERS; }
+        public Tree.Kind getKind() { return Tree.Kind.MODIFIERS; }
         public Set<Modifier> getFlags() {
             return Flags.asModifierSet(flags);
         }
@@ -2000,7 +2001,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitErroneous(this); }
 
-        public Kind getKind() { return Kind.ERRONEOUS; }
+        public Tree.Kind getKind() { return Tree.Kind.ERRONEOUS; }
 
         public List<? extends JCTree> getErrorTrees() {
             return errs;
@@ -2027,7 +2028,7 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
         @Override
         public void accept(Visitor v) { v.visitLetExpr(this); }
 
-        public Kind getKind() {
+        public Tree.Kind getKind() {
             throw new AssertionError("LetExpr is not part of a public API");
         }
         @Override
