@@ -33,7 +33,6 @@ import jkit.java.io.JavaFileWriter;
 import jkit.bytecode.*;
 import jkit.java.stages.*;
 import jkit.util.*;
-import jkit.jil.*;
 import jkit.jil.io.*;
 import jkit.jil.stages.ClassFileBuilder;
 import jkit.jil.tree.JilClass;
@@ -672,8 +671,7 @@ public class JavaCompiler implements Compiler {
 		start = System.currentTimeMillis();
 		
 		// this is where the bytecode optimisation would occur.
-		int numRewrites = optimiser.optimise(cfile);
-		
+		int numRewrites = optimiser.optimise(cfile);		
 		logTimedMessage("[" + outputFile.getPath() + "] Bytecode optimisation completed (" + numRewrites + " rewrites)",
 				(System.currentTimeMillis() - start));	
 		

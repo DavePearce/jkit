@@ -415,9 +415,6 @@ public final class BytecodeOptimiser {
 		if(b1 instanceof Load && b1.equals(b2)) {
 			Load l1 = (Load) b1;
 			return new Code.Rewrite(i, 2, l1,new Dup(l1.type));
-		} else if(b1 instanceof GetField && b1.equals(b2)) {
-			GetField l1 = (GetField) b1;
-			return new Code.Rewrite(i, 2, l1,new Dup(l1.type));
 		} else if(b1 instanceof LoadConst && b1.equals(b2)) {
 			LoadConst lc1 = (LoadConst) b1;
 			Object constant = lc1.constant;
