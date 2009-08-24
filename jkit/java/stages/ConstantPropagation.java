@@ -521,7 +521,7 @@ public class ConstantPropagation {
 	}
 	
 	protected Value buildConstant(Object constant, Expr src) {
-		ArrayList<Attribute> attributes = new ArrayList(src.attributes());
+		List<Attribute> attributes = src.attributes();
 		if(constant instanceof Boolean) {			
 			return new Value.Bool((Boolean) constant,attributes);
 		} else if(constant instanceof Character) {			

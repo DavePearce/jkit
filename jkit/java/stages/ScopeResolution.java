@@ -662,12 +662,12 @@ public class ScopeResolution {
 			Expr.UnresolvedVariable uv = (Expr.UnresolvedVariable) target;
 			if(loader.isPackage(uv.value() + "." + e.name())) {
 				return new Expr.UnresolvedVariable(uv.value() + "." + e.name(),
-						new ArrayList(e.attributes()));
+						e.attributes());
 			} else {				
 				// Ok, need to sanity test that this is indeed a class.
 				jkit.compiler.Clazz c = loader.loadClass(new Type.Clazz(uv
 						.value(), e.name()));
-				Expr r = new Expr.ClassVariable(uv.value() + "." + e.name(),new ArrayList(e.attributes()));
+				Expr r = new Expr.ClassVariable(uv.value() + "." + e.name(),e.attributes());
 				r.attributes().add(c.type());
 				return r;				
 			}
@@ -696,7 +696,7 @@ public class ScopeResolution {
 					Type.Clazz c = loader.resolve(cv.type().replace('.','$') + "$" + e.name(),
 							imports);
 					Expr r = new Expr.ClassVariable(cv.type() + "." + e.name(),
-							new ArrayList(e.attributes()));					
+							e.attributes());					
 					r.attributes().add(c);
 					return r;
 				} catch(ClassNotFoundException cne) {
@@ -812,13 +812,13 @@ public class ScopeResolution {
 						// Ok, we have found the relevant method in question.
 						if(isThis && !isStatic) {
 							target = new Expr.LocalVariable("this",
-									new ArrayList(e.attributes()));			
+									e.attributes());			
 							target.attributes().add(cs.type);
 						} else if(!isStatic) {
 							Expr.ClassVariable cv = new Expr.ClassVariable(cs.type.toString());
 							cv.attributes().add(cs.type);
 							target = new Expr.Deref(cv, "this",
-									new ArrayList(e.attributes()));								
+									e.attributes());								
 						} else {															
 							target = new Expr.ClassVariable(cs.type.toString());
 							target.attributes().add(cs.type);
@@ -845,7 +845,7 @@ public class ScopeResolution {
 
 						if(s.third().equals(e.name())) {
 							target = new Expr.ClassVariable(s.first() + "."
-									+ s.second(), new ArrayList(e.attributes()));
+									+ s.second(), e.attributes());
 							target.attributes().add(tc);									
 						} else if(s.third().equals("*")) {					
 							// NOTE: there is a bug here, in the case of a static
@@ -858,7 +858,7 @@ public class ScopeResolution {
 							Clazz c = loader.loadClass(tc);
 							if(c.methods(e.name()) != null) {
 								target = new Expr.ClassVariable(s.first() + "."
-										+ s.second(), new ArrayList(e.attributes()));
+										+ s.second(), e.attributes());
 								target.attributes().add(tc);												
 							}
 						}
@@ -985,7 +985,7 @@ public class ScopeResolution {
 					// Ok, this variable access corresponds to a field load.					
 					if(isThis && !isStatic && !r.second().isStatic()) {												
 						Expr thisvar = new Expr.LocalVariable("this",
-								new ArrayList(e.attributes()));
+								e.attributes());
 						thisvar.attributes().add(cs.type);
 						return new Expr.Deref(thisvar, e.value(), e
 							.attributes());
@@ -994,7 +994,7 @@ public class ScopeResolution {
 						Expr.ClassVariable cv = new Expr.ClassVariable(cs.type.toString());
 						cv.attributes().add(cs.type);
 						return new Expr.Deref(new Expr.Deref(cv, "this",
-								new ArrayList(e.attributes())), e.value(), e
+								e.attributes()), e.value(), e
 								.attributes());
 					} else {						
 						// Create a class access variable. A key issue we need
@@ -1021,7 +1021,7 @@ public class ScopeResolution {
 				if(isThis) {			
 					Type t = (Type) s.variables.get(e.value()).first();					
 					r = new Expr.LocalVariable(e.value(),
-							new ArrayList(e.attributes()));
+							e.attributes());
 					r.attributes().add(s.variables.get(e.value()).first());
 					return r;
 				} else {
@@ -1057,17 +1057,17 @@ public class ScopeResolution {
 				
 				if(s.third().equals(e.value())) {
 					Expr cv = new Expr.ClassVariable(s.first() + "."
-							+ s.second(), new ArrayList(e.attributes()));
+							+ s.second(), e.attributes());
 					cv.attributes().add(tc);
-					return new Expr.Deref(cv,e.value(),new ArrayList(e.attributes()));				
+					return new Expr.Deref(cv,e.value(),e.attributes());				
 				} else if(s.third().equals("*")) {					
 					try {
 						types.resolveField(tc, e.value(), loader);
 					
 						Expr cv = new Expr.ClassVariable(s.first() + "."
-								+ s.second(), new ArrayList(e.attributes()));
+								+ s.second(), e.attributes());
 						cv.attributes().add(tc);
-						return new Expr.Deref(cv,e.value(),new ArrayList(e.attributes()));						
+						return new Expr.Deref(cv,e.value(),e.attributes());						
 					} catch(FieldNotFoundException fnfe) {
 						// no field so continue
 					}
@@ -1083,7 +1083,7 @@ public class ScopeResolution {
 					
 		try {						
 			Type.Clazz c = loader.resolve(e.value(), imports);
-			Expr r = new Expr.ClassVariable(e.value(),new ArrayList(e.attributes()));
+			Expr r = new Expr.ClassVariable(e.value(),e.attributes());
 			r.attributes().add(c);
 			return r;
 		} catch(ClassNotFoundException ex) {			

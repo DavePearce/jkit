@@ -1372,11 +1372,11 @@ public class JilBuilder {
 		
 		if(type instanceof Type.Clazz) {
 			return new Pair<JilExpr, List<JilStmt>>(new JilExpr.Class(
-					classType, type, new ArrayList(e.attributes())),
+					classType, type, e.attributes()),
 					new ArrayList<JilStmt>());
 		} else {
 			return new Pair<JilExpr, List<JilStmt>>(new JilExpr.Class(
-					classType, JAVA_LANG_OBJECT, new ArrayList(e.attributes())),
+					classType, JAVA_LANG_OBJECT, e.attributes()),
 					new ArrayList<JilStmt>());
 		}
 	}
@@ -1412,36 +1412,36 @@ public class JilBuilder {
 		{				
 			JilExpr lhs = r.first();
 			JilExpr rhs = new JilExpr.BinOp(lhs, constant(1,lhs.type()), JilExpr.BinOp.SUB,
-					type, new ArrayList(e.attributes()));
-			stmts.add(new JilStmt.Assign(lhs,rhs,new ArrayList(e.attributes())));
+					type, e.attributes());
+			stmts.add(new JilStmt.Assign(lhs,rhs,e.attributes()));
 			return new Pair<JilExpr, List<JilStmt>>(r.first(),stmts);		
 		}
 		case Expr.UnOp.PREINC:
 		{
 			JilExpr lhs = r.first();
 			JilExpr rhs = new JilExpr.BinOp(lhs, constant(1,lhs.type()), JilExpr.BinOp.ADD,
-					type, new ArrayList(e.attributes()));
-			stmts.add(new JilStmt.Assign(lhs,rhs,new ArrayList(e.attributes())));
+					type, e.attributes());
+			stmts.add(new JilStmt.Assign(lhs,rhs,e.attributes()));
 			return new Pair<JilExpr, List<JilStmt>>(lhs,stmts);
 		}
 		case Expr.UnOp.POSTINC:
 		{
 			JilExpr lhs = r.first();	
 			JilExpr.Variable tmp = new JilExpr.Variable(getTempVar(),type,new ArrayList(lhs.attributes()));			
-			stmts.add(new JilStmt.Assign(tmp,lhs,new ArrayList(e.attributes())));			
+			stmts.add(new JilStmt.Assign(tmp,lhs,e.attributes()));			
 			JilExpr rhs = new JilExpr.BinOp(lhs, constant(1,lhs.type()), JilExpr.BinOp.ADD,
 					type, e.attributes());
-			stmts.add(new JilStmt.Assign(lhs,rhs,new ArrayList(e.attributes())));
+			stmts.add(new JilStmt.Assign(lhs,rhs,e.attributes()));
 			return new Pair<JilExpr, List<JilStmt>>(tmp,stmts);		
 		}
 		case Expr.UnOp.POSTDEC:
 		{
 			JilExpr lhs = r.first();
 			JilExpr.Variable tmp = new JilExpr.Variable(getTempVar(),type,new ArrayList(lhs.attributes()));			
-			stmts.add(new JilStmt.Assign(tmp,lhs,new ArrayList(e.attributes())));			
+			stmts.add(new JilStmt.Assign(tmp,lhs,e.attributes()));			
 			JilExpr rhs = new JilExpr.BinOp(lhs, constant(1,lhs.type()), JilExpr.BinOp.SUB,
-					type, new ArrayList(e.attributes()));
-			stmts.add(new JilStmt.Assign(lhs,rhs,new ArrayList(e.attributes())));
+					type, e.attributes());
+			stmts.add(new JilStmt.Assign(lhs,rhs,e.attributes()));
 			return new Pair<JilExpr, List<JilStmt>>(tmp,stmts);
 		}
 		default:
