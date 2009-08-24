@@ -110,7 +110,7 @@ public class SkeletonBuilder {
 	}
 	
 	protected void doClass(Decl.JavaClass c, JilClass skeleton) throws ClassNotFoundException {
-		Type.Clazz type = (Type.Clazz) c.attribute(Type.class);
+		Type.Clazz type = c.attribute(Type.Clazz.class);
 	
 		skeleton = (JilClass) loader.loadClass(type);		
 		
@@ -122,12 +122,12 @@ public class SkeletonBuilder {
 			// Observe, after type resolution, this will give the correct
 			// superclass type. However, prior to type resolution it will just
 			// return null.
-			superClass = (Type.Clazz) c.superclass().attribute(Type.class);
+			superClass = c.superclass().attribute(Type.Clazz.class);
 		}
 
 		ArrayList<Type.Clazz> interfaces = new ArrayList();
 		for (jkit.java.tree.Type.Clazz i : c.interfaces()) {
-			Type.Clazz t = (Type.Clazz) i.attribute(Type.class);
+			Type.Clazz t = i.attribute(Type.Clazz.class);
 			if (t != null) {
 				interfaces.add(t);
 			}
@@ -151,8 +151,7 @@ public class SkeletonBuilder {
 			
 			// if we get here, then no constructor has been provided.
 			// Therefore, must add the default constructor.
-			SourceLocation loc = (SourceLocation) c
-					.attribute(SourceLocation.class);
+			SourceLocation loc = c.attribute(SourceLocation.class);
 			Decl.JavaConstructor m = createDefaultConstructor(skeleton.name(), loc);
 			c.declarations().add(m);
 
@@ -165,8 +164,8 @@ public class SkeletonBuilder {
 		// What we need to do here is add the appropriate public interface for
         // enumerations. This simplifies the pipeline later on, by ensuring that
         // code which trys to access this interface will compile.
-		Type.Clazz type = (Type.Clazz) ec.attribute(Type.class);
-		SourceLocation loc = (SourceLocation) ec.attribute(SourceLocation.class);
+		Type.Clazz type = ec.attribute(Type.Clazz.class);
+		SourceLocation loc = ec.attribute(SourceLocation.class);
 		
 		// First, add the public fields that represent the enum constants. 
 		for(Decl.EnumConstant enc : ec.constants()) {
@@ -207,7 +206,7 @@ public class SkeletonBuilder {
 	}
 	
 	protected void doMethod(Decl.JavaMethod d, JilClass skeleton) {		
-		Type.Function type = (Type.Function) d.attribute(Type.class);
+		Type.Function type = d.attribute(Type.Function.class);
 		List<Type.Clazz> exceptions = new ArrayList<Type.Clazz>();
 		List<JilMethod.Parameter> parameters = new ArrayList();
 		
@@ -222,7 +221,7 @@ public class SkeletonBuilder {
 		}
 		
 		for(jkit.java.tree.Type.Clazz tc : d.exceptions()) {
-			exceptions.add((Type.Clazz)tc.attribute(Type.class));
+			exceptions.add(tc.attribute(Type.Clazz.class));
 		}				
 		
 		String name = d.name();
@@ -242,7 +241,7 @@ public class SkeletonBuilder {
 	}
 
 	protected void doField(Decl.JavaField f, JilClass skeleton) {				
-		Type t = (Type) f.type().attribute(Type.class);	
+		Type t = f.type().attribute(Type.class);	
 		
 		if(skeleton.isInterface()) {
 			if(f.isConstant()) {
@@ -524,7 +523,7 @@ public class SkeletonBuilder {
 			// anonymous classes are not discovered during skeleton discovery,
 			// the class loader will not know about them.
 			
-			Type.Clazz superType = (Type.Clazz) e.type().attribute(Type.class);
+			Type.Clazz superType = e.type().attribute(Type.Clazz.class);
 			
 			
 				Clazz superClazz = (Clazz) loader.loadClass(superType);

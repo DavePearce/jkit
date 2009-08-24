@@ -264,7 +264,7 @@ public class ScopeResolution {
 	}
 	
 	protected void doClass(JavaClass c, JavaFile file) {
-		Type.Clazz myType = (Type.Clazz) c.attribute(Type.class);
+		Type.Clazz myType = c.attribute(Type.Clazz.class);
 		Type.Clazz superType = null;
 		
 		if(c.superclass() == null) {
@@ -275,7 +275,7 @@ public class ScopeResolution {
 				superType = JAVA_LANG_OBJECT;
 			} 
 		} else {
-			superType = (Type.Clazz) c.superclass().attribute(Type.class);
+			superType = c.superclass().attribute(Type.Clazz.class);
 		}
 		
 		// Create an appropriate import declaration for this class.
@@ -300,7 +300,7 @@ public class ScopeResolution {
 		
 		for (Decl.JavaParameter t : d
 				.parameters()) {
-			Type type = (Type) t.type().attribute(Type.class);
+			Type type = t.type().attribute(Type.class);
 			Pair<Type, List<Modifier>> p = new Pair(type, t.modifiers());
 			myScope.variables.put(t.name(), p);
 		}		
@@ -487,7 +487,7 @@ public class ScopeResolution {
 	protected void doVarDef(Stmt.VarDef def, JavaFile file) {
 		List<Triple<String, Integer, Expr>> defs = def.definitions();
 		Scope enclosingScope = findEnclosingScope();
-		Type t = (Type) def.type().attribute(Type.class);
+		Type t = def.type().attribute(Type.class);
 		
 		for(int i=0;i!=defs.size();++i) {
 			Triple<String, Integer, Expr> d = defs.get(i);
@@ -566,7 +566,7 @@ public class ScopeResolution {
 		Scope myScope = new Scope();
 		scopes.push(myScope);				
 		
-		myScope.variables.put(stmt.var(), new Pair((Type) stmt.type()
+		myScope.variables.put(stmt.var(), new Pair(stmt.type()
 				.attribute(Type.class), stmt.modifiers()));
 		
 		stmt.setSource(doExpression(stmt.source(), file));
@@ -676,7 +676,7 @@ public class ScopeResolution {
 			// ClassVariable, then does it actually contain the field given, or is
 			// it an inner class?						
 			Expr.ClassVariable cv = (Expr.ClassVariable) target;
-			Type.Clazz type = (Type.Clazz) target.attribute(Type.class);
+			Type.Clazz type = target.attribute(Type.Clazz.class);
 			
 			try {
 				// First, deal with special case of "this" field. This is
@@ -734,7 +734,7 @@ public class ScopeResolution {
 			// correspond to non-local accesses.
 			
 			ClassScope cs = (ClassScope) findEnclosingScope(ClassScope.class);
-			Type.Clazz superType = (Type.Clazz) e.type().attribute(Type.class);
+			Type.Clazz superType = e.type().attribute(Type.Clazz.class);
 			ArrayList<Pair<String, List<Type.Reference>>> ncomponents = new ArrayList(
 					cs.type.components());
 			ncomponents.add(new Pair(Integer.toString(++anonymousClassCount),

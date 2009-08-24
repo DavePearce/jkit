@@ -165,7 +165,7 @@ public class InnerClassRewrite {
 	}
 	
 	protected void doClass(JavaClass c) throws ClassNotFoundException {
-		Type.Clazz type = (Type.Clazz) c.attribute(Type.class);
+		Type.Clazz type = c.attribute(Type.Clazz.class);
 		enclosingClasses.add(type);		
 		
 		for(Decl d : c.declarations()) {
@@ -300,7 +300,7 @@ public class InnerClassRewrite {
 	
 	protected void doVarDef(Stmt.VarDef def) {
 		List<Triple<String, Integer, Expr>> defs = def.definitions();		
-		Type t = (Type) def.type().attribute(Type.class);
+		Type t = def.type().attribute(Type.class);
 		
 		for(int i=0;i!=defs.size();++i) {
 			Triple<String, Integer, Expr> d = defs.get(i);
@@ -322,7 +322,7 @@ public class InnerClassRewrite {
 		// second, so the left-hand side.		
 		if(def.lhs() instanceof Expr.Deref) {
 			Expr.Deref e = (Expr.Deref) def.lhs();			
-			Type tmp = (Type) e.target().attribute(Type.class);
+			Type tmp = e.target().attribute(Type.class);
 			
 			if(!(tmp instanceof Type.Reference) || tmp instanceof Type.Array) {
 				// don't need to do anything in this case			
@@ -519,7 +519,7 @@ public class InnerClassRewrite {
 	protected Expr doDeref(Expr.Deref e) throws ClassNotFoundException,FieldNotFoundException {		
 		e.setTarget(doExpression(e.target()));
 		
-		Type tmp = (Type) e.target().attribute(Type.class);
+		Type tmp = e.target().attribute(Type.class);
 		
 		if(!(tmp instanceof Type.Reference) || tmp instanceof Type.Array) {
 			// don't need to do anything in this case			
@@ -580,8 +580,8 @@ public class InnerClassRewrite {
 	
 	protected Expr doNew(Expr.New e) throws ClassNotFoundException {
 		// Second, recurse through any parameters supplied ...
-		SourceLocation loc = (SourceLocation) e.type().attribute(SourceLocation.class);
-		Type type = (Type) e.type().attribute(Type.class);
+		SourceLocation loc = e.type().attribute(SourceLocation.class);
+		Type type = e.type().attribute(Type.class);
 		List<Expr> parameters = e.parameters();
 		for(int i=0;i!=parameters.size();++i) {
 			Expr p = parameters.get(i);
@@ -591,7 +591,7 @@ public class InnerClassRewrite {
 		doExpression(e.context());		
 		
 		if(e.declarations().size() > 0) {	
-			Type.Clazz clazz = (Type.Clazz) e.type().attribute(Type.Clazz.class);
+			Type.Clazz clazz = e.type().attribute(Type.Clazz.class);
 			enclosingClasses.add(clazz);
 			
 			for(Decl d : e.declarations()) {
@@ -624,8 +624,7 @@ public class InnerClassRewrite {
 					}
 
 					// Second, update the function type.
-					JilBuilder.MethodInfo mi = (JilBuilder.MethodInfo) e
-					.attribute(JilBuilder.MethodInfo.class); 
+					JilBuilder.MethodInfo mi = e.attribute(JilBuilder.MethodInfo.class); 
 					Type.Function mt = mi.type;
 					ArrayList<Type> nparamtypes = new ArrayList<Type>(mt.parameterTypes());	
 					nparamtypes.add(0,parentType);
@@ -795,7 +794,7 @@ public class InnerClassRewrite {
 	protected void addParentPtr(JavaClass owner, JilClass oc, Type.Clazz ownerType,
 			Type.Clazz parentType)
 			throws ClassNotFoundException {
-		SourceLocation loc = (SourceLocation) owner.attribute(SourceLocation.class);				
+		SourceLocation loc = owner.attribute(SourceLocation.class);				
 		
 		// First, update the source code for constructors			
 		for(Decl o : owner.declarations()) {
@@ -842,8 +841,7 @@ public class InnerClassRewrite {
 		constructor.body().statements().add(0, assign);		
 		
 		// Now, update the inferred jil type for this method.
-		Type.Function type = (Type.Function) constructor
-				.attribute(Type.Function.class);
+		Type.Function type = constructor.attribute(Type.Function.class);
 		
 		ArrayList<Type> nparams = new ArrayList<Type>(type.parameterTypes());
 		nparams.add(0,parentType);

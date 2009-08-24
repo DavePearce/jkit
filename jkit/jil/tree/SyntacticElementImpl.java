@@ -48,10 +48,10 @@ public class SyntacticElementImpl  implements SyntacticElement {
 	
 	public List<Attribute> attributes() { return attributes; }
 	
-	public Attribute attribute(Class c) {
-		for(Attribute a : attributes) {
-			if(c.isInstance(a)) {
-				return a;
+	public <T extends Attribute> T attribute(Class<T> c) {
+		for (Attribute a : attributes) {
+			if (c.isInstance(a)) {
+				return (T) a;
 			}
 		}
 		return null;

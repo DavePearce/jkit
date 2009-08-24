@@ -46,5 +46,5 @@ public interface SyntacticElement {
      * @param c
      * @return
      */
-	public Attribute attribute(Class c);
+	public <T extends Attribute> T attribute(Class<T> c);
 }

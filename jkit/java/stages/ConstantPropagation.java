@@ -370,7 +370,7 @@ public class ConstantPropagation {
 		e.setTarget(target);
 		
 		if(target instanceof Expr.ClassVariable && !e.name().equals("this")) {			
-			Type.Clazz owner = (Type.Clazz) target.attribute(Type.class);
+			Type.Clazz owner = target.attribute(Type.Clazz.class);
 			// static field access, which could be a constant
 			Triple<Clazz,Clazz.Field,Type> r = types.resolveField(owner, e.name(), loader);			
 			if(r.second().isConstant()) {								

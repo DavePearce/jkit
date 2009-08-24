@@ -115,10 +115,10 @@ public class TypeChecking {
 	protected void checkField(JavaField d) {
 		checkExpression(d.initialiser());
 		
-		Type lhs_t = (Type) d.type().attribute(Type.class);
+		Type lhs_t = d.type().attribute(Type.class);
 		
 		if(d.initialiser() != null) {
-			Type rhs_t = (Type) d.initialiser().attribute(Type.class);
+			Type rhs_t = d.initialiser().attribute(Type.class);
 
 			try {			
 				if (!types.subtype(lhs_t, rhs_t, loader)) {
@@ -198,7 +198,7 @@ public class TypeChecking {
 		checkExpression(block.expr());
 		checkBlock(block);
 		
-		Type e_t = (Type) block.expr().attribute(Type.class);
+		Type e_t = block.expr().attribute(Type.class);
 		
 		if (!(e_t instanceof Type.Reference)) {
 			syntax_error("required reference type, found type "
@@ -214,7 +214,7 @@ public class TypeChecking {
 			checkBlock(cb);
 			try {
 				if (!types.subtype(Types.JAVA_LANG_THROWABLE,
-						(Type.Clazz) cb.type().attribute(Type.class), loader)) {
+						cb.type().attribute(Type.class), loader)) {
 					syntax_error(
 							"required subtype of java.lang.Throwable, found type "
 							+ cb.type(), cb);
@@ -228,7 +228,7 @@ public class TypeChecking {
 	protected void checkVarDef(Stmt.VarDef def) {
 		// Observe that we cannot use the declared type here, rather we have to
         // use the resolved type!
-		Type t = (Type) def.type().attribute(Type.class);
+		Type t = def.type().attribute(Type.class);
 		
 		for(Triple<String, Integer, Expr> d : def.definitions()) {								
 			if(d.third() != null) {
@@ -239,7 +239,7 @@ public class TypeChecking {
 					nt = new Type.Array(nt);
 				}
 
-				Type i_t = (Type) d.third().attribute(Type.class);
+				Type i_t = d.third().attribute(Type.class);
 				try {
 					if (!types.subtype(nt, i_t, loader)) {
 						syntax_error("required type " + nt + ", found type " + i_t, def);
@@ -255,8 +255,8 @@ public class TypeChecking {
 		checkExpression(def.lhs());	
 		checkExpression(def.rhs());					
 		
-		Type lhs_t = (Type) def.lhs().attribute(Type.class);
-		Type rhs_t = (Type) def.rhs().attribute(Type.class);
+		Type lhs_t = def.lhs().attribute(Type.class);
+		Type rhs_t = def.rhs().attribute(Type.class);
 		
 		try {			
 			if (!types.subtype(lhs_t, rhs_t, loader)) {
@@ -272,8 +272,8 @@ public class TypeChecking {
 		checkExpression(def.lhs());	
 		checkExpression(def.rhs());					
 				
-		Type lhs_t = (Type) def.lhs().attribute(Type.class);
-		Type rhs_t = (Type) def.rhs().attribute(Type.class);
+		Type lhs_t = def.lhs().attribute(Type.class);
+		Type rhs_t = def.rhs().attribute(Type.class);
 		
 		try {	
 			if(def.op() == Expr.BinOp.CONCAT) {
@@ -298,12 +298,12 @@ public class TypeChecking {
 			return; // could do better than this.
 		}
 		
-		Type retType = (Type) method.returnType().attribute(Type.class);
+		Type retType = method.returnType().attribute(Type.class);
 		
 		if(ret.expr() != null) { 
 			checkExpression(ret.expr());						
 			
-			Type ret_t = (Type) ret.expr().attribute(Type.class);
+			Type ret_t = ret.expr().attribute(Type.class);
 			try {
 				if(ret_t.equals(new Type.Void())) {
 					syntax_error(
@@ -348,7 +348,7 @@ public class TypeChecking {
 		checkStatement(stmt.falseStatement());		
 		
 		if(stmt.condition() != null) {
-			Type c_t = (Type) stmt.condition().attribute(Type.class);
+			Type c_t = stmt.condition().attribute(Type.class);
 
 			if(!(c_t instanceof Type.Bool)) {
 				syntax_error("required type boolean, found " + c_t, stmt);								
@@ -361,7 +361,7 @@ public class TypeChecking {
 		checkStatement(stmt.body());
 
 		if(stmt.condition() != null) {
-			Type c_t = (Type) stmt.condition().attribute(Type.class);
+			Type c_t = stmt.condition().attribute(Type.class);
 
 			if (!(c_t instanceof Type.Bool)) {
 				syntax_error("required type boolean, found " + c_t, stmt);
@@ -374,7 +374,7 @@ public class TypeChecking {
 		checkStatement(stmt.body());
 
 		if(stmt.condition() != null) {
-			Type c_t = (Type) stmt.condition().attribute(Type.class);
+			Type c_t = stmt.condition().attribute(Type.class);
 
 			if (!(c_t instanceof Type.Bool)) {
 				syntax_error("required type boolean, found " + c_t, stmt);			
@@ -389,7 +389,7 @@ public class TypeChecking {
 		checkStatement(stmt.body());
 
 		if(stmt.condition() != null) {
-			Type c_t = (Type) stmt.condition().attribute(Type.class);
+			Type c_t = stmt.condition().attribute(Type.class);
 
 			if (!(c_t instanceof Type.Bool)) {
 				syntax_error("required type boolean, found " + c_t, stmt);			
@@ -403,7 +403,7 @@ public class TypeChecking {
 
 		// need to check that the static type of the source expression
 		// implements java.lang.iterable
-		Type s_t = (Type) stmt.source().attribute(Type.class);
+		Type s_t = stmt.source().attribute(Type.class);
 		try {
 			if (!(s_t instanceof Type.Array)
 					&& !types.subtype(new Type.Clazz("java.lang", "Iterable"),
@@ -418,7 +418,7 @@ public class TypeChecking {
 	protected void checkSwitch(Stmt.Switch sw) {
 		checkExpression(sw.condition());
 		
-		Type condT = (Type) sw.condition().attribute(Type.class);
+		Type condT = sw.condition().attribute(Type.class);
 		
 		if(!(condT instanceof Type.Int)) {
 			syntax_error("found type " + condT + ", required int",sw);
@@ -507,13 +507,13 @@ public class TypeChecking {
 		checkExpression(e.index());
 		checkExpression(e.target());
 		
-		Type i_t = (Type) e.index().attribute(Type.class);
+		Type i_t = e.index().attribute(Type.class);
 		
 		if(!(i_t instanceof Type.Int)) {
 			syntax_error("required type int, found type " + i_t, e);
 		}
 		
-		Type t_t = (Type) e.target().attribute(Type.class);		
+		Type t_t = e.target().attribute(Type.class);		
 		if(!(t_t instanceof Type.Array)) {			
 			syntax_error("array required, but " + t_t + " found", e);
 		}
@@ -536,8 +536,8 @@ public class TypeChecking {
 	protected void checkInstanceOf(Expr.InstanceOf e) throws ClassNotFoundException {		
 		checkExpression(e.lhs());
 		
-		Type lhs_t = (Type) e.lhs().attribute(Type.class);
-		Type rhs_t = (Type) e.rhs().attribute(Type.class);
+		Type lhs_t = e.lhs().attribute(Type.class);
+		Type rhs_t = e.rhs().attribute(Type.class);
 
 		if(lhs_t instanceof Type.Primitive) {
 			syntax_error("required reference type, found " + lhs_t , e);			
@@ -550,8 +550,8 @@ public class TypeChecking {
 	}
 	
 	protected void checkCast(Expr.Cast e) {
-		Type e_t = (Type) e.expr().attribute(Type.class);
-		Type c_t = (Type) e.type().attribute(Type.class);
+		Type e_t = e.expr().attribute(Type.class);
+		Type c_t = e.type().attribute(Type.class);
 		try {
 			if(e_t instanceof Type.Clazz && c_t instanceof Type.Clazz) {
 				Clazz c_c = loader.loadClass((Type.Clazz) c_t);
@@ -589,9 +589,8 @@ public class TypeChecking {
 	}
 	
 	protected void checkConvert(Expr.Convert e) {
-		Type rhs_t = (Type) e.expr().attribute(Type.class);
-		Type c_t = (Type) e.type().attribute(Type.class);
-		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
+		Type rhs_t = e.expr().attribute(Type.class);
+		Type c_t = (Type) e.type().attribute(Type.class);		
 		try {
 			if(!types.subtype(c_t,rhs_t, loader)) {
 				if(rhs_t instanceof Type.Primitive) {
@@ -676,7 +675,7 @@ public class TypeChecking {
 	protected void checkUnOp(Expr.UnOp uop) {		
 		checkExpression(uop.expr());
 		
-		Type e_t = (Type) uop.expr().attribute(Type.class);
+		Type e_t = uop.expr().attribute(Type.class);
 		
 		switch(uop.op()) {
 			case UnOp.NEG:
@@ -711,10 +710,9 @@ public class TypeChecking {
 		checkExpression(e.lhs());
 		checkExpression(e.rhs());
 		
-		Type lhs_t = (Type) e.lhs().attribute(Type.class);
-		Type rhs_t = (Type) e.rhs().attribute(Type.class);
-		Type e_t = (Type) e.attribute(Type.class);
-		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
+		Type lhs_t = e.lhs().attribute(Type.class);
+		Type rhs_t = e.rhs().attribute(Type.class);
+		Type e_t = e.attribute(Type.class);		
 
 		if ((lhs_t instanceof Type.Primitive || rhs_t instanceof Type.Primitive)
 				&& !lhs_t.equals(rhs_t)) {
@@ -814,7 +812,7 @@ public class TypeChecking {
 		checkExpression(e.trueBranch());
 		checkExpression(e.falseBranch());
 		
-		Type c_t = (Type) e.condition().attribute(Type.class);
+		Type c_t = e.condition().attribute(Type.class);
 
 		if (!(c_t instanceof Type.Bool)) {
 			syntax_error("required type boolean, found " + c_t, e);

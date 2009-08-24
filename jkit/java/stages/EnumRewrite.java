@@ -84,7 +84,7 @@ public class EnumRewrite {
 	}
 	
 	protected void doEnum(Decl.JavaEnum ec) throws ClassNotFoundException, MethodNotFoundException {	
-		Type.Clazz type = (Type.Clazz) ec.attribute(Type.Clazz.class);		
+		Type.Clazz type = ec.attribute(Type.Clazz.class);		
 		JilClass skeleton = (JilClass) loader.loadClass(type);
 
 		// First, add the $VALUES field
@@ -479,8 +479,7 @@ public class EnumRewrite {
 	}
 	
 	protected Decl.JavaMethod createValuesMethod(Decl.JavaEnum ec, Type.Clazz type) {
-		SourceLocation loc = (SourceLocation) ec
-				.attribute(SourceLocation.class);
+		SourceLocation loc = ec.attribute(SourceLocation.class);
 		
 		Type.Function ftype = new Type.Function(new Type.Array(type));
 		ArrayList<Modifier> mods = new ArrayList<Modifier>();
@@ -521,8 +520,7 @@ public class EnumRewrite {
 	}
 	
 	protected Decl.JavaMethod createValueOfMethod(Decl.JavaEnum ec, Type.Clazz type) {
-		SourceLocation loc = (SourceLocation) ec
-				.attribute(SourceLocation.class);
+		SourceLocation loc = ec.attribute(SourceLocation.class);
 		
 		jkit.java.tree.Type jtype = new jkit.java.tree.Type.Clazz(ec.name(), loc);  
 		Type.Function ftype = new Type.Function(type,Types.JAVA_LANG_STRING);
@@ -577,8 +575,7 @@ public class EnumRewrite {
 	protected Decl.StaticInitialiserBlock createStaticInitialiser(
 			Decl.JavaEnum ec, Type.Clazz type, JilClass skeleton)
 			throws ClassNotFoundException, MethodNotFoundException {
-		SourceLocation loc = (SourceLocation) ec
-				.attribute(SourceLocation.class);
+		SourceLocation loc = ec.attribute(SourceLocation.class);
 		jkit.java.tree.Type.Clazz ecType = new jkit.java.tree.Type.Clazz(ec.name(), loc);
 		jkit.java.tree.Type.Array aecType = new jkit.java.tree.Type.Array(ecType);
 		Type aType = new Type.Array(type);
@@ -613,7 +610,7 @@ public class EnumRewrite {
 			paramTypes.add(Types.T_INT);
 			
 			for(Expr e : c.arguments()) {
-				Type t = (Type) e.attribute(Type.class);												
+				Type t = e.attribute(Type.class);												
 				paramTypes.add(t);
 			}
 			
@@ -684,11 +681,11 @@ public class EnumRewrite {
 	}
 	
 	protected void augmentConstructor(Decl.JavaEnum ec, Decl.JavaMethod m) {
-		SourceLocation loc = (SourceLocation) ec.attribute(SourceLocation.class);
+		SourceLocation loc = ec.attribute(SourceLocation.class);
 		List<Decl.JavaParameter> params = m.parameters();
 		
 		// First, update method type
-		Type.Function oldType = (Type.Function) m.attribute(Type.Function.class);
+		Type.Function oldType = m.attribute(Type.Function.class);
 		m.attributes().remove(oldType);
 		ArrayList<Type> nparams = new ArrayList<Type>();
 		nparams.add(Types.JAVA_LANG_STRING);
@@ -733,7 +730,7 @@ public class EnumRewrite {
 	}
 	
 	protected void createDefaultConstructor(Decl.JavaEnum ec, JilClass skeleton) {		
-		SourceLocation loc = (SourceLocation) ec.attribute(SourceLocation.class);
+		SourceLocation loc = ec.attribute(SourceLocation.class);
 		Type.Function ftype = new Type.Function(Types.T_VOID,Types.JAVA_LANG_STRING,Types.T_INT);
 		
 		// First, create a source code constructor.

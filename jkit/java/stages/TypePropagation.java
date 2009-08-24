@@ -121,7 +121,7 @@ public class TypePropagation {
 	}
 	
 	protected void doClass(JavaClass c) {
-		Type.Clazz type = (Type.Clazz) c.attribute(Type.Clazz.class);
+		Type.Clazz type = c.attribute(Type.Clazz.class);
 		scopes.push(type);
 		
 		for(Decl d : c.declarations()) {
@@ -137,15 +137,14 @@ public class TypePropagation {
 
 	protected void doField(JavaField d) {
 		Expr init = d.initialiser();
-		Type type = (Type) d.type().attribute(Type.class);
+		Type type = d.type().attribute(Type.class);
 		
 		// special case for dealing with array values.
 		// perform type inference (if necesssary)
 		if(init != null) {
 			if(isUnknownConstant(init)) {			
 				Expr c = unknownConstantInference(init, type,
-						(SourceLocation) init
-						.attribute(SourceLocation.class));
+						init.attribute(SourceLocation.class));
 				d.setInitialiser(implicitCast(c,type));
 			} else if(init instanceof Value.Array) {
 				doArrayVal(type,(Value.Array) init);
@@ -250,7 +249,7 @@ public class TypePropagation {
 	}
 	
 	protected void doVarDef(Stmt.VarDef def, JavaMethod m) {
-		Type t = (Type) def.type().attribute(Type.class);
+		Type t = def.type().attribute(Type.class);
 		
 		List<Triple<String, Integer, Expr>> defs = def.definitions();
 		for(int i=0;i!=defs.size();++i) {
@@ -266,8 +265,7 @@ public class TypePropagation {
 			if(d.third() != null) {
 				if(isUnknownConstant(d.third())) {
 					Expr c = unknownConstantInference(d.third(), nt,
-							(SourceLocation) d.third
-							.attribute(SourceLocation.class));
+							d.third.attribute(SourceLocation.class));
 					defs.set(i, new Triple(d.first(), d.second(), implicitCast(c,nt)));
 				} else if(d.third() instanceof Value.Array) {
 					doArrayVal(nt,(Value.Array) d.third());
@@ -285,13 +283,12 @@ public class TypePropagation {
 		doExpression(def.lhs());	
 		doExpression(def.rhs());			
 
-		Type lhs_t = (Type) def.lhs().attribute(Type.class);												
+		Type lhs_t = def.lhs().attribute(Type.class);												
 		
 		// perform type inference (if necesssary)
 		if(isUnknownConstant(def.rhs())) {			
 			Expr c = unknownConstantInference(def.rhs(), lhs_t,
-					(SourceLocation) def.rhs()
-							.attribute(SourceLocation.class));
+					def.rhs().attribute(SourceLocation.class));
 			
 			def.setRhs(c);			
 		} 
@@ -315,9 +312,9 @@ public class TypePropagation {
 		Expr exp = ret.expr();
 		if(exp != null) {			
 			if(isUnknownConstant(exp)) {
-				SourceLocation loc = (SourceLocation) exp.attribute(SourceLocation.class);					
-				exp = unknownConstantInference(exp, (Type) m.returnType()
-						.attribute(Type.class), loc);
+				SourceLocation loc = exp.attribute(SourceLocation.class);					
+				exp = unknownConstantInference(exp, m.returnType().attribute(
+						Type.class), loc);
 			} else {
 				// We need to do an implict cast here to account for autoboxing, and
 				// other conversions. For example, a method declared to return
@@ -325,7 +322,7 @@ public class TypePropagation {
 				// return.
 				doExpression(exp);
 
-				exp = implicitCast(exp, (Type) m.returnType()
+				exp = implicitCast(exp, m.returnType()
 						.attribute(Type.class));
 			}
 			ret.setExpr(exp);
@@ -460,7 +457,7 @@ public class TypePropagation {
 			FieldNotFoundException {		
 		doExpression(e.target());	
 		
-		Type tmp = (Type) e.target().attribute(Type.class);
+		Type tmp = e.target().attribute(Type.class);
 		
 		if(!(tmp instanceof Type.Reference)) {
 			syntax_error("cannot dereference type: " + tmp,e);
@@ -499,7 +496,7 @@ public class TypePropagation {
 		
 		e.setIndex(implicitCast(e.index(),T_INT));
 				
-		Type target_t = (Type) e.target().attribute(Type.class);
+		Type target_t = e.target().attribute(Type.class);
 		
 		if(target_t instanceof Type.Array) {
 			Type.Array at = (Type.Array) target_t;
@@ -512,7 +509,7 @@ public class TypePropagation {
 	
 	protected void doNew(Expr.New e) throws ClassNotFoundException,MethodNotFoundException {
 		// First, figure out the type being created.		
-		Type type = (Type) e.type().attribute(Type.class);		
+		Type type = e.type().attribute(Type.class);		
 		
 		doExpression(e.context());
 		
@@ -521,7 +518,7 @@ public class TypePropagation {
 		
 		for(Expr p : e.parameters()) {
 			doExpression(p);
-			parameterTypes.add((Type) p.attribute(Type.class));
+			parameterTypes.add(p.attribute(Type.class));
 		}
 		
 		if(type instanceof Type.Clazz) {
@@ -619,7 +616,7 @@ public class TypePropagation {
 		
 		for(Expr p : e.parameters()) {
 			doExpression(p);
-			parameterTypes.add((Type) p.attribute(Type.class));
+			parameterTypes.add(p.attribute(Type.class));
 		}
 		
 		// Now, to determine the return type of this method, we need to lookup
@@ -629,7 +626,7 @@ public class TypePropagation {
 		Type.Reference receiver = null;
 		String e_name = e.name();
 					
-		Type rt = (Type) e.target().attribute(Type.class);
+		Type rt = e.target().attribute(Type.class);
 
 		if(rt instanceof Type.Variable) {
 			// in this situation, we're trying to dereference a generic
@@ -645,7 +642,7 @@ public class TypePropagation {
 		} else if(rt instanceof Type.Array) {			
 			receiver = JAVA_LANG_OBJECT;			
 		} else {
-			receiver = (Type.Clazz) e.target().attribute(Type.class);
+			receiver = e.target().attribute(Type.Clazz.class);
 		}
 
 		if(e.name().equals("super") || e.name().equals("this")) {				
@@ -703,7 +700,7 @@ public class TypePropagation {
 	}
 	
 	protected void doCast(Expr.Cast e) {
-		Type ct = (Type) e.type().attribute(Type.class);
+		Type ct = e.type().attribute(Type.class);
 		doExpression(e.expr());
 		// the implicit cast is required to deal with boxing/unboxing (amongst
 		// other things?)
@@ -744,7 +741,7 @@ public class TypePropagation {
 	}
 	
 	protected void doTypedArrayVal(Value.TypedArray e) {		
-		Type _type = (Type) e.type().attribute(Type.class);
+		Type _type = e.type().attribute(Type.class);
 		if(!(_type instanceof Type.Array)) {
 			syntax_error("cannot assign array value to type " + _type,e);
 		}		
@@ -757,7 +754,7 @@ public class TypePropagation {
 				doArrayVal(ta,(Value.Array)v);
 			} else if (isUnknownConstant(v)) {
 				v = unknownConstantInference(v, type.element(),
-						(SourceLocation) v.attribute(SourceLocation.class));				
+						v.attribute(SourceLocation.class));				
 			} else {
 				doExpression(v);				
 			}			
@@ -803,7 +800,7 @@ public class TypePropagation {
 				doArrayVal(ta.element(),(Value.Array)v);
 			} else if(isUnknownConstant(v)) {			
 				v = unknownConstantInference(v, lhs.element(),
-						(SourceLocation) v.attribute(SourceLocation.class));										
+						v.attribute(SourceLocation.class));										
 			} else {
 				doExpression(v);				
 			}					
@@ -824,7 +821,7 @@ public class TypePropagation {
 		// corresponds to an instance of java.lang.Class<String>. Therefore, we
 		// need to construct a type representing java.lang.Class<X> here.
 		
-		Type t = (Type) e.value().attribute(Type.class);			
+		Type t = e.value().attribute(Type.class);			
 		
 		if(t instanceof Type.Clazz) {
 			Type.Clazz c = (Type.Clazz) t;
@@ -861,7 +858,7 @@ public class TypePropagation {
 	
 	protected void doUnOp(Expr.UnOp e) {		
 		doExpression(e.expr());
-		Type expr_t = (Type) e.expr().attribute(Type.class);
+		Type expr_t = e.expr().attribute(Type.class);
 		
 		if (e.op() == Expr.UnOp.INV || e.op() == Expr.UnOp.NEG) {
 			expr_t = unaryNumericPromotion(expr_t, e.expr());
@@ -876,8 +873,8 @@ public class TypePropagation {
 		doExpression(e.lhs());
 		doExpression(e.rhs());
 		
-		Type lhs_t = (Type) e.lhs().attribute(Type.class);
-		Type rhs_t = (Type) e.rhs().attribute(Type.class);
+		Type lhs_t = e.lhs().attribute(Type.class);
+		Type rhs_t = e.rhs().attribute(Type.class);
 		
 		switch(e.op()) {
 			case Expr.BinOp.EQ:
@@ -983,8 +980,8 @@ public class TypePropagation {
 		doExpression(e.falseBranch());
 		doExpression(e.trueBranch());
 		
-		Type lhs_t = (Type) e.trueBranch().attribute(Type.class);
-		Type rhs_t = (Type) e.falseBranch().attribute(Type.class);
+		Type lhs_t = e.trueBranch().attribute(Type.class);
+		Type rhs_t = e.falseBranch().attribute(Type.class);
 		
 		/*
 		 * See JLS Section 15.25 for more details on the rules that apply here. 
@@ -1159,7 +1156,7 @@ public class TypePropagation {
 	 */
 	public static Expr implicitCast(Expr e, Type t) {
 		if(e == null) { return null; }
-		Type e_t = (Type) e.attribute(Type.class);
+		Type e_t = e.attribute(Type.class);
 		// insert implicit casts for primitive types.
 		if (!e_t.equals(t)
 				&& (t instanceof Type.Primitive && e_t instanceof Type.Primitive)) {			

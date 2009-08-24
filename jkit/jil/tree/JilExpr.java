@@ -43,10 +43,10 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 			this.attributes = new ArrayList(attributes);			
 		}
 				
-		public Attribute attribute(java.lang.Class ac) {
+		public <T extends Attribute> T attribute(java.lang.Class<T> ac) {
 			for(Attribute a : attributes) {
 				if(a.getClass().equals(ac)) {
-					return a;
+					return (T) a;
 				}
 			}
 			return null;

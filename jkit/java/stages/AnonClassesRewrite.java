@@ -276,7 +276,7 @@ public class AnonClassesRewrite {
 	}
 	
 	protected void doMethodLocalClass(Decl.JavaClass mlclass) throws ClassNotFoundException {
-		Type.Clazz type = (Type.Clazz) mlclass.attribute(Type.class);
+		Type.Clazz type = mlclass.attribute(Type.Clazz.class);
 		HashMap<String,Type> params = new HashMap();		
 		nonLocals.push(params);
 		anonClasses.push(type);
@@ -389,7 +389,7 @@ public class AnonClassesRewrite {
 	}
 	
 	protected Expr doNew(Expr.New e) throws ClassNotFoundException {				
-		Type.Clazz parent = (Type.Clazz) e.type().attribute(Type.Clazz.class);
+		Type.Clazz parent = e.type().attribute(Type.Clazz.class);
 		e.setContext(doExpression(e.context()));
 			
 		for(int i = 0;i!=e.parameters().size();++i) {
@@ -407,8 +407,7 @@ public class AnonClassesRewrite {
 						
 			Clazz parentClass = (Clazz) loader.loadClass(parent);
 			JilClass anonClass = (JilClass) loader.loadClass(aType);
-			SourceLocation loc = (SourceLocation) e
-			.attribute(SourceLocation.class);
+			SourceLocation loc = e.attribute(SourceLocation.class);
 			Decl.JavaClass ac = buildAnonClass(anonClass, loc);
 
 			HashMap<String,Type> params = new HashMap();
@@ -428,8 +427,7 @@ public class AnonClassesRewrite {
 			e.type().attributes().remove(parent);
 			e.type().attributes().add(aType);
 
-			JilBuilder.MethodInfo mi = (JilBuilder.MethodInfo) e
-			.attribute(JilBuilder.MethodInfo.class);
+			JilBuilder.MethodInfo mi = e.attribute(JilBuilder.MethodInfo.class);
 
 			// Second, determine non-local variables
 			if (params.size() > 0) {
@@ -536,10 +534,10 @@ public class AnonClassesRewrite {
 	}
 
 	protected Expr doNonLocalVariable(Expr.NonLocalVariable e) {
-		Type t = (Type) e.attribute(Type.class);		
+		Type t = e.attribute(Type.class);		
 		nonLocals.peek().put(e.value(),t);
 		
-		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
+		SourceLocation loc = e.attribute(SourceLocation.class);
 		
 		Expr.LocalVariable thiz = new Expr.LocalVariable("this",anonClasses.peek(),loc);
 		return new Expr.Deref(thiz,"val$" + e.value(),t,loc);
@@ -600,8 +598,8 @@ public class AnonClassesRewrite {
 	protected void augmentConstructor(Decl.JavaConstructor m, JilClass owner,
 			HashMap<String, Type> nonlocalParams) {
 
-		Type.Function oftype = (Type.Function) m.attribute(Type.Function.class);
-		SourceLocation loc = (SourceLocation) m.attribute(SourceLocation.class);
+		Type.Function oftype = m.attribute(Type.Function.class);
+		SourceLocation loc = m.attribute(SourceLocation.class);
 		
 		// First, find the skeleton constructor
 		JilMethod skeletonMethod = null;
@@ -702,8 +700,7 @@ public class AnonClassesRewrite {
 	}
 	
 	protected Type.Clazz anonClassType(String name) {
-		Type.Clazz parent = (Type.Clazz) context.peek().attribute(
-				Type.Clazz.class);
+		Type.Clazz parent = context.peek().attribute(Type.Clazz.class);
 
 		ArrayList<Pair<String, List<Type.Reference>>> ncomponents = new ArrayList(
 				parent.components());

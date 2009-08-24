@@ -137,7 +137,7 @@ public class JilBuilder {
 	}
 	
 	protected void doClass(Decl.JavaClass c) throws ClassNotFoundException {
-		Type.Clazz type = (Type.Clazz) c.attribute(Type.class);
+		Type.Clazz type = c.attribute(Type.Clazz.class);
 		scopes.push(new ClassScope(type));		
 		// We, need to update the skeleton so that any methods and fields
 		// discovered below this are attributed to this class!			
@@ -171,7 +171,7 @@ public class JilBuilder {
 	}
 
 	protected void doMethod(Decl.JavaMethod d, JilClass parent) {	
-		Type.Function type = (Type.Function) d.attribute(Type.class);
+		Type.Function type = d.attribute(Type.Function.class);
 		
 		List<JilStmt> stmts = doStatement(d.body());		
 		
@@ -203,7 +203,7 @@ public class JilBuilder {
 
 	protected void doField(Decl.JavaField d, JilClass parent) {		
 		Pair<JilExpr,List<JilStmt>> tmp = doExpression(d.initialiser());
-		Type fieldT = (Type) d.type().attribute(Type.class);
+		Type fieldT = d.type().attribute(Type.class);
 		boolean isStatic = d.isStatic();			
 		
 		if(tmp != null) {
@@ -382,8 +382,7 @@ public class JilBuilder {
 			String handlerLab = "tryhandler" + i++;
 			for(int j=0;j!=r.size();++j) {
 				JilStmt s = r.get(j);
-				Type.Clazz ct = (Type.Clazz) cb.type().attribute(
-						Type.Clazz.class);
+				Type.Clazz ct = cb.type().attribute(Type.Clazz.class);
 				if(!(s instanceof JilStmt.Goto || s instanceof JilStmt.Label)) {
 					// This is very pedantic. Almost certainly, we could rule out
 					// certain kinds of exception branches. However, it's difficult
@@ -402,7 +401,7 @@ public class JilBuilder {
 
 		for(Stmt.CatchBlock cb : block.handlers()) {
 			String handlerLab = "tryhandler" + tryhandler_label++;
-			Type.Clazz ct = (Type.Clazz) cb.type().attribute(Type.Clazz.class);
+			Type.Clazz ct = cb.type().attribute(Type.Clazz.class);
 			r.add(new JilStmt.Label(handlerLab,cb.attributes()));
 			r.add(new JilStmt.Assign(new JilExpr.Variable(cb.variable(), ct, cb
 					.attributes()), new JilExpr.Variable("$", ct,
@@ -582,7 +581,7 @@ public class JilBuilder {
 	}
 	
 	protected List<JilStmt> doVarDef(Stmt.VarDef def) {		
-		Type type = (Type) def.type().attribute(Type.class);
+		Type type = def.type().attribute(Type.class);
 		List<Triple<String, Integer, Expr>> defs = def.definitions();
 		ArrayList<JilStmt> r = new ArrayList<JilStmt>();
 		for(int i=0;i!=defs.size();++i) {
@@ -948,8 +947,8 @@ public class JilBuilder {
 		ArrayList<JilStmt> stmts = new ArrayList<JilStmt>();
 		
 		Pair<JilExpr,List<JilStmt>> src = doExpression(stmt.source());
-		JilExpr.Variable loopVar = new JilExpr.Variable(stmt.var(), (Type) stmt
-				.type().attribute(Type.class), stmt.attributes());
+		JilExpr.Variable loopVar = new JilExpr.Variable(stmt.var(), stmt.type()
+				.attribute(Type.class), stmt.attributes());
 		
 		Type srcType = src.first().type();				
 		
@@ -1158,8 +1157,8 @@ public class JilBuilder {
 	protected Pair<JilExpr, List<JilStmt>> doDeref(Expr.Deref e)
 			throws ClassNotFoundException, FieldNotFoundException {
 		Pair<JilExpr,List<JilStmt>> target = doExpression(e.target());
-		Type type = (Type) e.attribute(Type.class);
-		Type.Reference _targetT = (Type.Reference) e.target().attribute(Type.class);
+		Type type = e.attribute(Type.class);
+		Type.Reference _targetT = e.target().attribute(Type.Reference.class);
 		
 		if(_targetT instanceof Type.Clazz) {
 			Type.Clazz targetT = (Type.Clazz) _targetT;
@@ -1199,7 +1198,7 @@ public class JilBuilder {
 	protected Pair<JilExpr,List<JilStmt>> doArrayIndex(Expr.ArrayIndex e) {
 		Pair<JilExpr,List<JilStmt>> target = doExpression(e.target());
 		Pair<JilExpr,List<JilStmt>> index = doExpression(e.index());
-		Type type = (Type) e.attribute(Type.class);
+		Type type = e.attribute(Type.class);
 		
 		List<JilStmt> r = target.second();
 		
@@ -1222,10 +1221,9 @@ public class JilBuilder {
 	protected Pair<JilExpr,List<JilStmt>> doNew(Expr.New e) {
 		// Second, recurse through any parameters supplied ...
 		ArrayList<JilStmt> r = new ArrayList();	
-		Type.Reference type = (Type.Reference) e.type().attribute(Type.class);
+		Type.Reference type = e.type().attribute(Type.Reference.class);
 		
-		MethodInfo mi = (MethodInfo) e
-				.attribute(MethodInfo.class);			
+		MethodInfo mi = e.attribute(MethodInfo.class);			
 		
 		Pair<JilExpr,List<JilStmt>> context = doExpression(e.context());
 		Pair<List<JilExpr>,List<JilStmt>> params = doExpressionList(e.parameters());
@@ -1251,8 +1249,8 @@ public class JilBuilder {
 	
 	protected Pair<JilExpr,List<JilStmt>> doInvoke(Expr.Invoke e) {
 		ArrayList<JilStmt> r = new ArrayList();
-		Type type = (Type) e.attribute(Type.class);				
-		MethodInfo mi = (MethodInfo) e.attribute(MethodInfo.class);				
+		Type type = e.attribute(Type.class);				
+		MethodInfo mi = e.attribute(MethodInfo.class);				
 		
 		Pair<JilExpr,List<JilStmt>> target = doExpression(e.target());
 		r.addAll(target.second());
@@ -1289,22 +1287,22 @@ public class JilBuilder {
 	
 	protected Pair<JilExpr,List<JilStmt>> doInstanceOf(Expr.InstanceOf e) {
 		Pair<JilExpr,List<JilStmt>> lhs = doExpression(e.lhs());
-		Type type = (Type) e.attribute(Type.class);
-		Type.Reference rhs = (Type.Reference) e.rhs().attribute(Type.class);
+		Type type = e.attribute(Type.class);
+		Type.Reference rhs = e.rhs().attribute(Type.Reference.class);
 		return new Pair<JilExpr, List<JilStmt>>(new JilExpr.InstanceOf(lhs.first(), rhs,
 				type, e.attributes()), lhs.second());
 	}
 	
 	protected Pair<JilExpr,List<JilStmt>> doCast(Expr.Cast e) {
 		Pair<JilExpr,List<JilStmt>> expr = doExpression(e.expr());		
-		Type type = (Type) e.attribute(Type.class);
+		Type type = e.attribute(Type.class);
 		return new Pair<JilExpr, List<JilStmt>>(new JilExpr.Cast(expr.first(),
 				type, e.attributes()), expr.second());		
 	}
 	
 	protected Pair<JilExpr,List<JilStmt>> doConvert(Expr.Convert e) {
 		Pair<JilExpr,List<JilStmt>> expr = doExpression(e.expr());		
-		Type.Primitive type = (Type.Primitive) e.attribute(Type.class);
+		Type.Primitive type = e.attribute(Type.Primitive.class);
 		return new Pair<JilExpr, List<JilStmt>>(new JilExpr.Convert(type, expr.first(),
 				e.attributes()), expr.second());		
 	}
@@ -1352,7 +1350,7 @@ public class JilBuilder {
 	
 	protected Pair<JilExpr,List<JilStmt>> doTypedArrayVal(Value.TypedArray e) {
 		ArrayList<JilStmt> r = new ArrayList<JilStmt>();
-		Type.Array type = (Type.Array) e.attribute(Type.class);		
+		Type.Array type = e.attribute(Type.Array.class);		
 		Pair<List<JilExpr>,List<JilStmt>> exprs = doExpressionList(e.values());
 		r.addAll(exprs.second());		
 		return new Pair<JilExpr, List<JilStmt>>(new JilExpr.Array(
@@ -1361,7 +1359,7 @@ public class JilBuilder {
 	
 	protected Pair<JilExpr,List<JilStmt>> doArrayVal(Value.Array e) {
 		ArrayList<JilStmt> r = new ArrayList<JilStmt>();		
-		Type.Array type = (Type.Array) e.attribute(Type.class);
+		Type.Array type = e.attribute(Type.Array.class);
 		Pair<List<JilExpr>,List<JilStmt>> exprs = doExpressionList(e.values());
 		r.addAll(exprs.second());
 		return new Pair<JilExpr, List<JilStmt>>(new JilExpr.Array(
@@ -1369,8 +1367,8 @@ public class JilBuilder {
 	}
 	
 	protected Pair<JilExpr,List<JilStmt>> doClassVal(Value.Class e) {
-		Type classType = (Type) e.value().attribute(Type.class);	
-		Type.Clazz type = (Type.Clazz) e.attribute(Type.Clazz.class);
+		Type classType = e.value().attribute(Type.class);	
+		Type.Clazz type = e.attribute(Type.Clazz.class);
 		
 		if(type instanceof Type.Clazz) {
 			return new Pair<JilExpr, List<JilStmt>>(new JilExpr.Class(
@@ -1385,7 +1383,7 @@ public class JilBuilder {
 		
 	protected Pair<JilExpr, List<JilStmt>> doLocalVariable(
 			Expr.LocalVariable e) {
-		Type type = (Type) e.attribute(Type.class);
+		Type type = e.attribute(Type.class);
 		return new Pair<JilExpr, List<JilStmt>>(new JilExpr.Variable(e.value(), type, e
 				.attributes()), new ArrayList<JilStmt>());
 	}
@@ -1399,14 +1397,14 @@ public class JilBuilder {
 	}
 	
 	protected Pair<JilExpr,List<JilStmt>> doClassVariable(Expr.ClassVariable e) {
-		Type.Clazz type = (Type.Clazz) e.attribute(Type.class);
+		Type.Clazz type = e.attribute(Type.Clazz.class);
 		return new Pair<JilExpr, List<JilStmt>>(new JilExpr.ClassVariable(type, e.attributes()),
 				new ArrayList<JilStmt>());
 	}
 	
 	protected Pair<JilExpr,List<JilStmt>> doUnOp(Expr.UnOp e) {		
 		Pair<JilExpr, List<JilStmt>> r = doExpression(e.expr());		
-		Type.Primitive type = (Type.Primitive) e.attribute(Type.class);
+		Type.Primitive type = e.attribute(Type.Primitive.class);
 		List<JilStmt> stmts = r.second();
 
 		switch (e.op()) {
@@ -1462,7 +1460,7 @@ public class JilBuilder {
 		Pair<JilExpr,List<JilStmt>> lhs = doExpression(e.lhs());
 		Pair<JilExpr,List<JilStmt>> rhs = doExpression(e.rhs());
 
-		Type type = (Type) e.attribute(Type.class);
+		Type type = e.attribute(Type.class);
 
 		if(type instanceof Type.Primitive) {
 			Type.Primitive ptype = (Type.Primitive) type;
@@ -1566,7 +1564,7 @@ public class JilBuilder {
 	protected Pair<JilExpr,List<JilStmt>> doTernOp(Expr.TernOp e) {
 		String trueLab = "$ternoptrue" + ternop_label;
 		String exitLab = "$ternopexit" + ternop_label++;
-		Type r_t = (Type) e.attribute(Type.class);
+		Type r_t = e.attribute(Type.class);
 		Pair<JilExpr,List<JilStmt>> cond = doExpression(e.condition());
 		Pair<JilExpr,List<JilStmt>> tbranch = doExpression(e.trueBranch());
 		Pair<JilExpr,List<JilStmt>> fbranch = doExpression(e.falseBranch());
@@ -1670,7 +1668,7 @@ public class JilBuilder {
 			}
 
 			// check declared exceptions
-			MethodInfo mi = (MethodInfo) stmt.attribute(MethodInfo.class);
+			MethodInfo mi = stmt.attribute(MethodInfo.class);
 			for(Type.Clazz ex : mi.exceptions) {
 				if (types.subtype(exception, ex, loader)) {
 					return true;
@@ -1693,7 +1691,7 @@ public class JilBuilder {
 				return true;			
 			} else if(!(ivk.type() instanceof Type.Array)) {
 				// check declared exceptions
-				MethodInfo mi = (MethodInfo) ivk.attribute(MethodInfo.class);
+				MethodInfo mi = ivk.attribute(MethodInfo.class);
 				for(Type.Clazz ex : mi.exceptions) {
 					if (types.subtype(exception, ex, loader)) {
 						return true;
