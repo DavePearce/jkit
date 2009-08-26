@@ -24,6 +24,7 @@ package jkit.java.stages;
 import java.util.*;
 
 import jkit.compiler.ClassLoader;
+import jkit.compiler.Clazz;
 import static jkit.compiler.SyntaxError.*;
 import static jkit.jil.util.Types.*;
 import jkit.java.io.JavaFile;
@@ -227,7 +228,7 @@ public class TypeResolution {
 		if(c.superclass() != null) {
 			Type.Clazz superType = (Type.Clazz) substituteTypeVars(resolve(c.superclass()));
 			c.superclass().attributes().add(superType);
-			imports.addFirst(computeImportDecl(superType));
+			imports.addAll(0,computeRecursiveImportDecls(superType));
 			
 		}		
 
@@ -235,7 +236,7 @@ public class TypeResolution {
 		for(jkit.java.tree.Type.Clazz i : c.interfaces()) {
 			Type.Clazz interType = (Type.Clazz) substituteTypeVars(resolve(i)); 
 			i.attributes().add(interType);
-			imports.addFirst(computeImportDecl(interType));
+			imports.addAll(0,computeRecursiveImportDecls(interType));
 		}			 						
 		
 		// 3) resolve types in my other declarations (e.g. fields, methods,inner
@@ -949,12 +950,24 @@ public class TypeResolution {
 		return decl + clazz + ".*";
 	}
 	
-	protected String computeImportDecl(Type.Clazz parentType) {
-		String decl = parentType.pkg();
-		if(!decl.equals("")) { decl = decl + "."; }
-		for(Pair<String,List<Type.Reference>> p : parentType.components()) {
-			decl = decl + p.first() + ".";
-		}
-		return decl + "*";
+	protected List<String> computeRecursiveImportDecls(Type.Clazz parentType) {
+		ArrayList<String> decls = new ArrayList<String>();
+				
+		try {
+			for(Type.Reference st : types.listSupertypes(parentType, loader)) {			
+				Clazz c = loader.loadClass((Type.Clazz) st);
+				Type.Clazz type = c.type();
+				String decl = type.pkg();
+				if(!decl.equals("")) { decl = decl + "."; }
+				for(Pair<String,List<Type.Reference>> p : type.components()) {
+					decl = decl + p.first() + ".";
+				}
+				decls.add(decl + "*");
+			}		
+		} catch(ClassNotFoundException cne) {
+			// silently give up for now.
+		} 
+		
+		return decls;
 	}
 }
