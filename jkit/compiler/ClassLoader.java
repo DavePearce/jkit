@@ -198,16 +198,17 @@ public final class ClassLoader {
 	 */
 	public Type.Clazz resolve(String className, List<String> imports)
 			throws ClassNotFoundException {		
+		
 		if(className.contains(".")) {
 			throw new IllegalArgumentException("className cannot contain \".\"");
 		}						
 		
+		// Observe, the manner in which we go through imports reflects the way
+		// javac operates.
+		
 		for (String imp : imports) {			
 			Type.Clazz ref = null;
-			if (imp.endsWith(".*")) {
-				// try and resolve the class
-				ref = resolveClassName(imp.substring(0, imp.length() - 2),className);												
-			} else {
+			if (!imp.endsWith(".*")) {				
 				// The aim of this piece of code is to replicate the way javac
 				// works.
 				String impName = imp.substring(imp.lastIndexOf('.') + 1, imp
@@ -225,6 +226,15 @@ public final class ClassLoader {
 					tmp = tmp.substring(0,Math.max(0,tmp.lastIndexOf('.')));
 				}
 			}
+			if(ref != null) { return ref; }
+		}
+		
+		for (String imp : imports) {			
+			Type.Clazz ref = null;
+			if (imp.endsWith(".*")) {
+				// try and resolve the class
+				ref = resolveClassName(imp.substring(0, imp.length() - 2),className);												
+			} 
 			if(ref != null) { return ref; }
 		}
 		throw new ClassNotFoundException(className);
