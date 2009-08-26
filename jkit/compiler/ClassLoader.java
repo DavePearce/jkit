@@ -200,9 +200,10 @@ public final class ClassLoader {
 			throws ClassNotFoundException {		
 		if(className.contains(".")) {
 			throw new IllegalArgumentException("className cannot contain \".\"");
-		}		
+		}						
 		
-		for (String imp : imports) {						
+		for (String imp : imports) {
+			System.out.println("Trying: " + imp);
 			Type.Clazz ref = null;
 			if (imp.endsWith(".*")) {
 				// try and resolve the class

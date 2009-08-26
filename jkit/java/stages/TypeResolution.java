@@ -225,7 +225,10 @@ public class TypeResolution {
 		
 		// 1) resolve types in my declared super class.
 		if(c.superclass() != null) {
-			c.superclass().attributes().add(substituteTypeVars(resolve(c.superclass())));
+			Type.Clazz superType = (Type.Clazz) substituteTypeVars(resolve(c.superclass()));
+			c.superclass().attributes().add(superType);
+			imports.addFirst(computeImportDecl(superType));
+			
 		}		
 
 		// 2) resolve types in my declared interfaces
@@ -795,7 +798,7 @@ public class TypeResolution {
 								name, nvars));
 			}
 		}
-		
+				
 		// now, some sanity checking.
 		if(className.equals("")) {
 			syntax_error("unable to find class " + pkg,ct);
@@ -942,5 +945,14 @@ public class TypeResolution {
 			decl = decl + p.first() + ".";
 		}
 		return decl + clazz + ".*";
+	}
+	
+	protected String computeImportDecl(Type.Clazz parentType) {
+		String decl = parentType.pkg();
+		if(!decl.equals("")) { decl = decl + "."; }
+		for(Pair<String,List<Type.Reference>> p : parentType.components()) {
+			decl = decl + p.first() + ".";
+		}
+		return decl + "*";
 	}
 }
