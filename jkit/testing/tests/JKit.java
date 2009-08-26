@@ -83,6 +83,7 @@ public class JKit extends TestHarness {
 	@Test public void JLS_7_5_3_StaticImport_2() { runTest("JLS_7_5_3_StaticImport_2"); }
 	@Test public void JLS_7_5_3_StaticImport_3() { runTest("JLS_7_5_3_StaticImport_3"); }
 	@Test public void JLS_7_5_3_StaticImport_4() { runTest("JLS_7_5_3_StaticImport_4"); }
+	@Test public void JLS_7_5_3_StaticImport_5() { runTest("JLS_7_5_3_StaticImport_5"); }
 	
 	@Test public void JLS_8_1_2_GenericTypes_1() { runTest("JLS_8_1_2_GenericTypes_1"); }	
 	@Test public void JLS_8_1_2_GenericTypes_2() { runTest("JLS_8_1_2_GenericTypes_2"); }

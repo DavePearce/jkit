@@ -125,10 +125,7 @@ public class TypeResolution {
 	public void apply(JavaFile file) { 		
 		imports.add(file.pkg() + ".*");	
 		for(Pair<Boolean,String> i : file.imports()) {
-			if(!i.first()) {
-				// ignore static imports
-				imports.add(1,i.second());
-			}
+			imports.add(1,i.second());			
 		}											
 		imports.add("java.lang.*");
 		
