@@ -233,7 +233,9 @@ public class TypeResolution {
 
 		// 2) resolve types in my declared interfaces
 		for(jkit.java.tree.Type.Clazz i : c.interfaces()) {
-			i.attributes().add(substituteTypeVars(resolve(i)));
+			Type.Clazz interType = (Type.Clazz) substituteTypeVars(resolve(i)); 
+			i.attributes().add(interType);
+			imports.addFirst(computeImportDecl(interType));
 		}			 						
 		
 		// 3) resolve types in my other declarations (e.g. fields, methods,inner

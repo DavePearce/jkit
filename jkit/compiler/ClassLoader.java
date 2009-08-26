@@ -202,8 +202,7 @@ public final class ClassLoader {
 			throw new IllegalArgumentException("className cannot contain \".\"");
 		}						
 		
-		for (String imp : imports) {
-			System.out.println("Trying: " + imp);
+		for (String imp : imports) {			
 			Type.Clazz ref = null;
 			if (imp.endsWith(".*")) {
 				// try and resolve the class
