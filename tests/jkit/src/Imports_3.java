@@ -1,4 +1,5 @@
 import java.lang.String;
+import pkg.*;
 
 public class Imports_3 {
     public static void main(String[] args) {
