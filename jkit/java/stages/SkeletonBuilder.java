@@ -243,8 +243,14 @@ public class SkeletonBuilder {
 	protected void doField(Decl.JavaField f, JilClass skeleton) {				
 		Type t = f.type().attribute(Type.class);	
 		
-		if(skeleton.isInterface()) {
+		if(skeleton.isInterface()) {			
+			Object constant;
 			if(f.isConstant()) {
+				constant = f.constant();
+			} else {
+				constant = determineConstantValue(f.initialiser(),skeleton);	
+			}			
+			if(constant != null) {
 				ArrayList<Modifier> mods = new ArrayList(f.modifiers());
 				if(!f.isProtected()) {
 					mods.add(Modifier.ACC_PUBLIC);
@@ -256,9 +262,9 @@ public class SkeletonBuilder {
 					mods.add(Modifier.ACC_STATIC);
 				}
 				skeleton.fields().add(
-						new JilConstant(f.name(), t, f.constant(), mods,
+						new JilConstant(f.name(), t, constant, mods,
 								new ArrayList(f.attributes())));
-			} else {
+			} else {			
 				syntax_error("invalid constant initialiser",f);
 			}
 		} else if(f.isConstant() && f.isStatic() && f.isFinal()) {			
@@ -638,6 +644,60 @@ public class SkeletonBuilder {
 		doExpression(e.falseBranch(), skeleton);
 		doExpression(e.trueBranch(), skeleton);		
 	}	
+	
+	/*
+     * The purpose of this method is to try an determine the constant value of a
+     * field initialiser.
+     */
+	protected Object determineConstantValue(Expr e, JilClass skeleton) {
+		if(e instanceof Expr.UnresolvedVariable) {
+			Expr.UnresolvedVariable v = (Expr.UnresolvedVariable) e;
+			String name = v.value();
+			JilField f = (JilField) skeleton.field(name);
+			if(f != null && f.isConstant()) {
+				return f.constant();
+			} 
+			
+			// need to look somewhere else?
+		} else if(e instanceof Value.Bool) {
+			return ((Value.Bool) e).value();
+		} else if(e instanceof Value.Int) {
+			return ((Value.Int) e).value();
+		} else if(e instanceof Value.Float) {
+			return ((Value.Float) e).value();
+		} else if(e instanceof Value.Double) {
+			return ((Value.Double) e).value();
+		} else if(e instanceof Expr.BinOp) {
+			return eval((Expr.BinOp) e,skeleton);			
+		}
+		return null;
+	}
+	
+	protected Object eval(Expr.BinOp bop, JilClass skeleton) {
+
+		// this code needs substantial work yet.
+		
+		Object lval = determineConstantValue(bop.lhs(),skeleton);
+		Object rval = determineConstantValue(bop.rhs(),skeleton);
+		
+		if(lval instanceof Integer && rval instanceof Integer) {
+			int l = (Integer) lval;
+			int r = (Integer) rval;
+			
+			switch(bop.op()) {
+				case Expr.BinOp.ADD:
+					return l+r;
+				case Expr.BinOp.SUB:
+					return l-r;
+				case Expr.BinOp.MUL:
+					return l*r;
+				case Expr.BinOp.DIV:
+					return l/r;
+			}
+		}
+		
+		return null;
+	}
 	
 	protected Decl.JavaConstructor createDefaultConstructor(String name,
 			SourceLocation loc) {
