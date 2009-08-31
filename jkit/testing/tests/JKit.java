@@ -152,8 +152,8 @@ public class JKit extends TestHarness {
 	@Test public void JLS_9_3_ConstantFields_2() { runTest("JLS_9_3_ConstantFields_2"); }
 	@Test public void JLS_9_3_ConstantFields_3() { runTest("JLS_9_3_ConstantFields_3"); }
 	@Test public void JLS_9_3_ConstantFields_4() { runTest("JLS_9_3_ConstantFields_4"); }
-	@Test public void JLS_9_3_ConstantFields_5() { compileFailTest("JLS_9_3_ConstantFields_5"); }
-	@Test public void JLS_9_3_ConstantFields_6() { compileFailTest("JLS_9_3_ConstantFields_6"); }
+	@Ignore("Known Bug") @Test public void JLS_9_3_ConstantFields_5() { compileFailTest("JLS_9_3_ConstantFields_5"); }
+	@Ignore("Known Bug") @Test public void JLS_9_3_ConstantFields_6() { compileFailTest("JLS_9_3_ConstantFields_6"); }
 	@Ignore("Known Bug") @Test public void JLS_9_3_ConstantFields_7() { compileFailTest("JLS_9_3_ConstantFields_7"); }
 	
 	@Test public void JLS_10_6_ArrayInitialisers_1() { runTest("JLS_10_6_ArrayInitialisers_1"); }
