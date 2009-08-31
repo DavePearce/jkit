@@ -693,6 +693,26 @@ public class SkeletonBuilder {
 					return l*r;
 				case Expr.BinOp.DIV:
 					return l/r;
+				case Expr.BinOp.MOD:
+					return l%r;
+				case Expr.BinOp.SHL:
+					return l<<r;
+				case Expr.BinOp.SHR:
+					return l>>r;
+				case Expr.BinOp.USHR:
+					return l>>>r;					
+				case Expr.BinOp.LT:
+					return l<r;
+				case Expr.BinOp.LTEQ:
+					return l<=r;
+				case Expr.BinOp.GT:
+					return l>r;
+				case Expr.BinOp.GTEQ:
+					return l>=r;
+				case Expr.BinOp.EQ:
+					return l==r;
+				case Expr.BinOp.NEQ:
+					return l!=r;									
 			}
 		}
 		
