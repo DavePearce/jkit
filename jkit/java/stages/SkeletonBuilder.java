@@ -249,33 +249,37 @@ public class SkeletonBuilder {
 				constant = f.constant();
 			} else {
 				constant = determineConstantValue(f.initialiser(),skeleton);	
-			}			
-			if(constant != null) {
-				ArrayList<Modifier> mods = new ArrayList(f.modifiers());
-				if(!f.isProtected()) {
-					mods.add(Modifier.ACC_PUBLIC);
-				} 
-				if(!f.isFinal()) {
-					mods.add(Modifier.ACC_FINAL);
-				}
-				if(!f.isStatic()) {
-					mods.add(Modifier.ACC_STATIC);
-				}
+			}	
+			ArrayList<Modifier> mods = new ArrayList(f.modifiers());
+			if(!f.isProtected()) {
+				mods.add(Modifier.ACC_PUBLIC);
+			} 
+			if(!f.isFinal()) {
+				mods.add(Modifier.ACC_FINAL);
+			}
+			if(!f.isStatic()) {
+				mods.add(Modifier.ACC_STATIC);
+			}
+			if(constant != null) {			
 				skeleton.fields().add(
-						new JilConstant(f.name(), t, constant, mods,
-								new ArrayList(f.attributes())));
-			} else {			
-				syntax_error("invalid constant initialiser",f);
+						new JilConstant(f.name(), t, constant, mods, f
+								.attributes()));
+			} else {
+				// in this case, we don't have a genuinely constant field.
+                // However, for some seriously perverse reason, Java treats
+                // these as static final fields.
+				skeleton.fields().add(
+						new JilField(f.name(), t, mods, f
+								.attributes()));
 			}
 		} else if(f.isConstant() && f.isStatic() && f.isFinal()) {			
 			// Ok, this is actually a constant field.
 			skeleton.fields().add(
-					new JilConstant(f.name(), t, f.constant(), f.modifiers(),
-							new ArrayList(f.attributes())));
+					new JilConstant(f.name(), t, f.constant(), f.modifiers(), f
+							.attributes()));
 		} else {
 			skeleton.fields().add(
-					new JilField(f.name(), t, f.modifiers(), new ArrayList(f
-							.attributes())));
+					new JilField(f.name(), t, f.modifiers(), f.attributes()));
 		}
 
 		doExpression(f.initialiser(), skeleton);		
