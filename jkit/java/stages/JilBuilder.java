@@ -1826,7 +1826,7 @@ public class JilBuilder {
 	protected Scope findEnclosingScope(Class c) {
 		for(int i=scopes.size()-1;i>=0;--i) {
 			Scope s = scopes.get(i);
-			if(s.getClass().equals(c)) {
+			if(c.isInstance(s)) {
 				return s;
 			}
 		}
