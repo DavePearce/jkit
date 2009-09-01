@@ -21,6 +21,8 @@
 
 package jkit.jil.dfa;
 
+import static jkit.compiler.SyntaxError.internal_error;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -74,51 +76,55 @@ public abstract class BackwardAnalysis<T extends FlowSet> {
 			}
 									
 			JilStmt stmt = body.get(current);
-									
-			// now, add any exceptional edges
-			for(Pair<Type.Clazz,String> ex : stmt.exceptions()) {
-				int target = labels.get(ex.second());
-				T store = get_store(target,emptyStore);
-				merge(current,store,worklist,preds);
-			}
-			
-			if(stmt instanceof JilStmt.Goto) {
-				JilStmt.Goto gto = (JilStmt.Goto) stmt;
-				int target = labels.get(gto.label());
-				T store = get_store(target,emptyStore);
-				merge(current,store,worklist,preds);
-			} else if(stmt instanceof JilStmt.IfGoto) {				
-				JilStmt.IfGoto gto = (JilStmt.IfGoto) stmt;
-				JilExpr condition = Exprs.eliminateNot(gto.condition());				
-				JilExpr notCondition = Exprs.eliminateNot(new JilExpr.UnOp(gto.condition(), JilExpr.UnOp.NOT,Types.T_BOOL));				
-				int target = labels.get(gto.label());
-				T t_store = transfer(condition,get_store(target,emptyStore));
-				T f_store = transfer(notCondition,get_store(current+1,emptyStore));				
-				T store = join(t_store,f_store);				
-				merge(current,store,worklist,preds);				
-			} else if(stmt instanceof JilStmt.Switch) {
-				JilStmt.Switch swt = (JilStmt.Switch) stmt;
-				JilExpr defCase = new JilExpr.Bool(false);
-				for(Pair<JilExpr.Number,String> c : swt.cases()) {
-					int target = labels.get(c.second());
-					JilExpr.BinOp cond = new JilExpr.BinOp(swt.condition(), c
-							.first(), JilExpr.BinOp.EQ, Types.T_BOOL);
-					defCase = new JilExpr.BinOp(defCase, cond, JilExpr.BinOp.OR, Types.T_BOOL);
-					T t_store = transfer(cond, get_store(target,emptyStore));
-					merge(current,t_store,worklist,preds);
+							
+			try {
+				// now, add any exceptional edges
+				for(Pair<Type.Clazz,String> ex : stmt.exceptions()) {
+					int target = labels.get(ex.second());
+					T store = get_store(target,emptyStore);
+					merge(current,store,worklist,preds);
 				}
-				// And, don't forget the default label!
-				int deftarget = labels.get(swt.defaultLabel());
-				defCase = new JilExpr.UnOp(defCase, JilExpr.UnOp.NOT,Types.T_BOOL);	
-				T d_store = transfer(defCase, get_store(deftarget,emptyStore));
-				merge(current,d_store,worklist,preds);				
-			} else if(stmt instanceof JilStmt.Return || stmt instanceof JilStmt.Throw) {
-				// collect the final store as the one at the end of the list
-				merge(current,transfer(stmt,finalStore),worklist,preds);			
-			} else if(!(stmt instanceof JilStmt.Label)){				
-				merge(current,transfer(stmt,get_store(current+1,emptyStore)),worklist,preds);
-			} else if(stmt instanceof JilStmt.Label) {
-				merge(current,get_store(current+1,emptyStore),worklist,preds);
+
+				if(stmt instanceof JilStmt.Goto) {
+					JilStmt.Goto gto = (JilStmt.Goto) stmt;
+					int target = labels.get(gto.label());
+					T store = get_store(target,emptyStore);
+					merge(current,store,worklist,preds);
+				} else if(stmt instanceof JilStmt.IfGoto) {				
+					JilStmt.IfGoto gto = (JilStmt.IfGoto) stmt;
+					JilExpr condition = Exprs.eliminateNot(gto.condition());				
+					JilExpr notCondition = Exprs.eliminateNot(new JilExpr.UnOp(gto.condition(), JilExpr.UnOp.NOT,Types.T_BOOL));				
+					int target = labels.get(gto.label());
+					T t_store = transfer(condition,get_store(target,emptyStore));
+					T f_store = transfer(notCondition,get_store(current+1,emptyStore));				
+					T store = join(t_store,f_store);				
+					merge(current,store,worklist,preds);				
+				} else if(stmt instanceof JilStmt.Switch) {
+					JilStmt.Switch swt = (JilStmt.Switch) stmt;
+					JilExpr defCase = new JilExpr.Bool(false);
+					for(Pair<JilExpr.Number,String> c : swt.cases()) {
+						int target = labels.get(c.second());
+						JilExpr.BinOp cond = new JilExpr.BinOp(swt.condition(), c
+								.first(), JilExpr.BinOp.EQ, Types.T_BOOL);
+						defCase = new JilExpr.BinOp(defCase, cond, JilExpr.BinOp.OR, Types.T_BOOL);
+						T t_store = transfer(cond, get_store(target,emptyStore));
+						merge(current,t_store,worklist,preds);
+					}
+					// And, don't forget the default label!
+					int deftarget = labels.get(swt.defaultLabel());
+					defCase = new JilExpr.UnOp(defCase, JilExpr.UnOp.NOT,Types.T_BOOL);	
+					T d_store = transfer(defCase, get_store(deftarget,emptyStore));
+					merge(current,d_store,worklist,preds);				
+				} else if(stmt instanceof JilStmt.Return || stmt instanceof JilStmt.Throw) {
+					// collect the final store as the one at the end of the list
+					merge(current,transfer(stmt,finalStore),worklist,preds);			
+				} else if(!(stmt instanceof JilStmt.Label)){				
+					merge(current,transfer(stmt,get_store(current+1,emptyStore)),worklist,preds);
+				} else if(stmt instanceof JilStmt.Label) {
+					merge(current,get_store(current+1,emptyStore),worklist,preds);
+				}
+			} catch(Exception e) {
+				internal_error(e.getMessage(),stmt);
 			}
 		}
 	}			

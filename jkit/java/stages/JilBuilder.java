@@ -78,12 +78,18 @@ public class JilBuilder {
 		}
 	}
 	
-	private static class LoopScope extends Scope {
-		public String continueLab;
+	private static class SwitchScope extends Scope {
 		public String exitLab;
-		public LoopScope(String cl, String el) {
-			continueLab = cl;
+		public SwitchScope(String el) {			
 			exitLab = el;
+		}
+	}
+	
+	private static class LoopScope extends SwitchScope {
+		public String continueLab;		
+		public LoopScope(String cl, String el) {
+			super(el);
+			continueLab = cl;			
 		}
 	}
 	
@@ -746,7 +752,10 @@ public class JilBuilder {
 		ArrayList<JilStmt> r = new ArrayList<JilStmt>();
 		
 		if(brk.label() == null) {
-			LoopScope ls = (LoopScope) findEnclosingScope(LoopScope.class);
+			SwitchScope ls = (SwitchScope) findEnclosingScope(SwitchScope.class);
+			if(ls == null) {
+				syntax_error("break used outside of loop or switch",brk);
+			}
 			r.add(new JilStmt.Goto(ls.exitLab,brk.attributes()));
 		} else {
 			String label = brk.label();
@@ -776,6 +785,11 @@ public class JilBuilder {
 		
 		if(brk.label() == null) {
 			LoopScope ls = (LoopScope) findEnclosingScope(LoopScope.class);
+			
+			if(ls == null) {
+				syntax_error("continue used outside loop",brk);				
+			}
+			
 			r.add(new JilStmt.Goto(ls.continueLab,brk.attributes()));
 		} else {
 			String label = brk.label();
@@ -1060,13 +1074,11 @@ public class JilBuilder {
 			Pair<JilExpr,List<JilStmt>> ce = doExpression(c.condition());
 			String caseLab = "switchcase" + switchcase_label++;
 			caseStmts.add(new JilStmt.Label(caseLab));
-			for(Stmt s : c.statements()) {
-				if(s instanceof Stmt.Break) {
-					caseStmts.add(new JilStmt.Goto(switchExitLab));
-				} else {
-					caseStmts.addAll(doStatement(s));
-				}
+			scopes.push(new SwitchScope(switchExitLab));
+			for(Stmt s : c.statements()) {				
+				caseStmts.addAll(doStatement(s));				
 			}			
+			scopes.pop();
 			if(c.condition() != null) {
 				JilExpr ce_first = ce.first();				
 				if(ce_first instanceof JilExpr.Number) {
