@@ -84,7 +84,7 @@ public class JavaCCGlobals {
       System.out.print(" Version " + ver);
     }
     System.out.println(")");
-    //System.out.println("Copyright © 2002 Sun Microsystems, Inc. All rights reserved. Use is subject to license terms.");
+    //System.out.println("Copyright (C) 2002 Sun Microsystems, Inc. All rights reserved. Use is subject to license terms.");
   }
 
   /**
