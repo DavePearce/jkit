@@ -202,10 +202,7 @@ public class SkeletonBuilder {
 				skeletons.add(encskel);
 				loader.register(encskel);
 
-				for (Decl d : enc.declarations()) {
-					if(d instanceof Decl.JavaMethod) {
-						Decl.JavaMethod m = (Decl.JavaMethod) d;						
-					}
+				for (Decl d : enc.declarations()) {					
 					doDeclaration(d, encskel);
 				}
 			}

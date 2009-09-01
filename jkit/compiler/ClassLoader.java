@@ -386,14 +386,14 @@ public final class ClassLoader {
 						// file, or the class file is older than the source file.
 						// Therefore, we need to (re)compile the source file.
 						List<? extends Clazz> cs = compiler.parse(srcFile);
-																	
-						for(Clazz c : cs) {											
+						
+						for(Clazz c : cs) {													
 							if(refName(c.type()).equals(name)) {
 								return c;
 							}
 						}
 						throw new RuntimeException(
-								"internal failure (unreachable code reached!)");
+								"unreachable code reached!");
 					} else if(classFile.exists()) {
 						// Here, there is no sourcefile, but there is a classfile.
 						// So, no need to compile --- just load the class file!

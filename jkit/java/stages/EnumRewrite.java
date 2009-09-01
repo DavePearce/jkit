@@ -599,9 +599,10 @@ public class EnumRewrite {
 		int extraClassCount = 0;
 		for (Decl.EnumConstant c : ec.constants()) {
 			Type.Clazz mytype = type;
+			jkit.java.tree.Type.Clazz myecType = new jkit.java.tree.Type.Clazz(ec.name(), loc);
 			
 			if(c.declarations().size() > 0) {
-				String name = Integer.toString(++extraClassCount);
+				String name = Integer.toString(++extraClassCount);				
 				ArrayList<Pair<String, List<Type.Reference>>> ncomponents = new ArrayList(
 						type.components());
 				ncomponents.add(new Pair(name, new ArrayList()));
@@ -609,14 +610,15 @@ public class EnumRewrite {
 						ncomponents);							
 			}
 			
-			arguments = new ArrayList();						
-			
+			arguments = new ArrayList();									
 			arguments.add(new Value.String(c.name(),Types.JAVA_LANG_STRING));
 			arguments.add(new Value.Int(i,Types.T_INT));
 			arguments.addAll(c.arguments());
-			Expr.New nuw = new Expr.New(ecType, null, arguments,
+			
+			myecType.attributes().add(mytype);
+			Expr.New nuw = new Expr.New(myecType, null, arguments,
 					new ArrayList(), loc,mytype);
-			nuw.type().attributes().add(mytype);
+			
 			ArrayList<Type> paramTypes = new ArrayList<Type>();
 			paramTypes.add(Types.JAVA_LANG_STRING);
 			paramTypes.add(Types.T_INT);
@@ -628,10 +630,11 @@ public class EnumRewrite {
 			
 			// At this point, we have to resolve the constructor.
 			Type.Function ftype = types.resolveMethod(mytype,
-					type.lastComponent().first(), paramTypes, loader).second()
+					mytype.lastComponent().first(), paramTypes, loader).second()
 					.type();
 			
-			nuw.attributes().add(new JilBuilder.MethodInfo(new ArrayList(),ftype));			
+			nuw.attributes().add(new JilBuilder.MethodInfo(new ArrayList(),ftype));		
+						
 			Expr.Deref deref = new Expr.Deref(thisClass, "$VALUES",
 					aType);									
 			Expr index = new Value.Int(i++, Types.T_INT);			
@@ -639,7 +642,7 @@ public class EnumRewrite {
 			
 			Expr.Deref fderef = new Expr.Deref(thisClass, c.name(), type);			
 			stmts.add(new Stmt.Assignment(fderef, nuw));
-			stmts.add(new Stmt.Assignment(array, fderef));			
+			stmts.add(new Stmt.Assignment(array, fderef));						
 		}
 
 		Decl.StaticInitialiserBlock blk = new Decl.StaticInitialiserBlock(stmts,loc);
