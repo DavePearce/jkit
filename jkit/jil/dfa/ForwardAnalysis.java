@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import static jkit.compiler.SyntaxError.*;
 import jkit.jil.tree.*;
 import jkit.jil.util.*;
 import jkit.util.Pair;
@@ -68,55 +69,60 @@ public abstract class ForwardAnalysis<T extends FlowSet> {
 			}
 									
 			JilStmt stmt = body.get(current);
-			// prestore represents store going into this point
-			T store = stores.get(current);
 			
-			if(store == null) {
-				store = emptyStore;
-			}
-									
-			// now, add any exceptional edges
-			for(Pair<Type.Clazz,String> ex : stmt.exceptions()) {
-				int target = labels.get(ex.second());
-				merge(target,store,worklist);
-			}
-			
-			if(stmt instanceof JilStmt.Goto) {
-				JilStmt.Goto gto = (JilStmt.Goto) stmt;
-				int target = labels.get(gto.label());
-				merge(target,store,worklist);
-			} else if(stmt instanceof JilStmt.IfGoto) {				
-				JilStmt.IfGoto gto = (JilStmt.IfGoto) stmt;
-				JilExpr condition = Exprs.eliminateNot(gto.condition());
-				JilExpr notCondition = Exprs.eliminateNot(new JilExpr.UnOp(gto.condition(), JilExpr.UnOp.NOT,Types.T_BOOL));
-				int target = labels.get(gto.label());
-				T t_store = transfer(condition,store);
-				T f_store = transfer(notCondition,store);				
-				merge(target,t_store,worklist);
-				merge(current+1,f_store,worklist);
-			} else if(stmt instanceof JilStmt.Switch) {
-				JilStmt.Switch swt = (JilStmt.Switch) stmt;
-				JilExpr defCase = new JilExpr.Bool(false);
-				for(Pair<JilExpr.Number,String> c : swt.cases()) {
-					int target = labels.get(c.second());
-					JilExpr.BinOp cond = new JilExpr.BinOp(swt.condition(), c
-							.first(), JilExpr.BinOp.EQ, Types.T_BOOL);
-					defCase = new JilExpr.BinOp(defCase, cond, JilExpr.BinOp.OR, Types.T_BOOL);
-					T t_store = transfer(cond, store);
-					merge(target,t_store,worklist);
+			try {
+				// prestore represents store going into this point
+				T store = stores.get(current);
+
+				if(store == null) {
+					store = emptyStore;
 				}
-				// And, don't forget the default label!
-				int deftarget = labels.get(swt.defaultLabel());
-				defCase = new JilExpr.UnOp(defCase, JilExpr.UnOp.NOT,Types.T_BOOL);	
-				T d_store = transfer(defCase, store);
-				merge(deftarget,d_store,worklist);				
-			} else if(stmt instanceof JilStmt.Return || stmt instanceof JilStmt.Throw) {
-				// collect the final store as the one at the end of the list
-				merge(body.size(),transfer(stmt,store),worklist);			
-			} else if(!(stmt instanceof JilStmt.Label)){				
-				merge(current+1,transfer(stmt,store),worklist);
-			} else if(stmt instanceof JilStmt.Label) {
-				merge(current+1,store,worklist);
+
+				// now, add any exceptional edges
+				for(Pair<Type.Clazz,String> ex : stmt.exceptions()) {
+					int target = labels.get(ex.second());
+					merge(target,store,worklist);
+				}
+
+				if(stmt instanceof JilStmt.Goto) {
+					JilStmt.Goto gto = (JilStmt.Goto) stmt;
+					int target = labels.get(gto.label());
+					merge(target,store,worklist);
+				} else if(stmt instanceof JilStmt.IfGoto) {				
+					JilStmt.IfGoto gto = (JilStmt.IfGoto) stmt;
+					JilExpr condition = Exprs.eliminateNot(gto.condition());
+					JilExpr notCondition = Exprs.eliminateNot(new JilExpr.UnOp(gto.condition(), JilExpr.UnOp.NOT,Types.T_BOOL));
+					int target = labels.get(gto.label());
+					T t_store = transfer(condition,store);
+					T f_store = transfer(notCondition,store);				
+					merge(target,t_store,worklist);
+					merge(current+1,f_store,worklist);
+				} else if(stmt instanceof JilStmt.Switch) {
+					JilStmt.Switch swt = (JilStmt.Switch) stmt;
+					JilExpr defCase = new JilExpr.Bool(false);
+					for(Pair<JilExpr.Number,String> c : swt.cases()) {
+						int target = labels.get(c.second());
+						JilExpr.BinOp cond = new JilExpr.BinOp(swt.condition(), c
+								.first(), JilExpr.BinOp.EQ, Types.T_BOOL);
+						defCase = new JilExpr.BinOp(defCase, cond, JilExpr.BinOp.OR, Types.T_BOOL);
+						T t_store = transfer(cond, store);
+						merge(target,t_store,worklist);
+					}
+					// And, don't forget the default label!
+					int deftarget = labels.get(swt.defaultLabel());
+					defCase = new JilExpr.UnOp(defCase, JilExpr.UnOp.NOT,Types.T_BOOL);	
+					T d_store = transfer(defCase, store);
+					merge(deftarget,d_store,worklist);				
+				} else if(stmt instanceof JilStmt.Return || stmt instanceof JilStmt.Throw) {
+					// collect the final store as the one at the end of the list
+					merge(body.size(),transfer(stmt,store),worklist);			
+				} else if(!(stmt instanceof JilStmt.Label)){				
+					merge(current+1,transfer(stmt,store),worklist);
+				} else if(stmt instanceof JilStmt.Label) {
+					merge(current+1,store,worklist);
+				}
+			} catch(Exception e) {
+				internal_error(e.getMessage(),stmt);
 			}
 		}
 	}	
