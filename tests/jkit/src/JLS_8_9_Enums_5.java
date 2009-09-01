@@ -1,5 +1,3 @@
-import tmp.*;
-
 public class JLS_8_9_Enums_5 {
 
     public enum XY {
