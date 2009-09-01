@@ -898,7 +898,8 @@ public class JilBuilder {
 		Pair<JilExpr, List<JilStmt>> cond = doExpression(stmt.condition());
 		r.addAll(cond.second());
 		r.add(new JilStmt.IfGoto(cond.first(), headerLab, stmt.attributes()));
-						
+		r.add(new JilStmt.Label(exitLab, stmt
+				.attributes()));				
 		return r;		
 	}
 	
