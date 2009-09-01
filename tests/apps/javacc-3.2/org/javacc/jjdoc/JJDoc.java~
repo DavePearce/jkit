@@ -95,8 +95,8 @@ public class JJDoc extends JavaCCGlobals {
 
   private static void emitTokenProductions(Generator gen, Vector prods) {
 //     gen.tokensStart();
-    for (Enumeration enum = prods.elements(); enum.hasMoreElements();) {
-      TokenProduction tp = (TokenProduction)enum.nextElement();
+    for (Enumeration _enum = prods.elements(); _enum.hasMoreElements();) {
+      TokenProduction tp = (TokenProduction)_enum.nextElement();
 //       emitTopLevelSpecialTokens(ostr, tp.firstToken);
 
 //       if (tp.isExplicit) {
@@ -140,8 +140,8 @@ public class JJDoc extends JavaCCGlobals {
   
   private static void emitNormalProductions(Generator gen, Vector prods) {
     gen.nonterminalsStart();
-    for (Enumeration enum = prods.elements(); enum.hasMoreElements();) {
-      NormalProduction np = (NormalProduction)enum.nextElement();
+    for (Enumeration _enum = prods.elements(); _enum.hasMoreElements();) {
+      NormalProduction np = (NormalProduction)_enum.nextElement();
 
       emitTopLevelSpecialTokens(np.firstToken, gen);
 
@@ -205,11 +205,11 @@ public class JJDoc extends JavaCCGlobals {
   }
 
   private static void emitExpansionChoice(Choice c, Generator gen) {
-    for (java.util.Enumeration enum = c.choices.elements();
-	 enum.hasMoreElements();) {
-      Expansion e = (Expansion)(enum.nextElement());
+    for (java.util.Enumeration _enum = c.choices.elements();
+	 _enum.hasMoreElements();) {
+      Expansion e = (Expansion)(_enum.nextElement());
       emitExpansionTree(e, gen);
-      if (enum.hasMoreElements()) {
+      if (_enum.hasMoreElements()) {
 	gen.text(" | ");
       }
     }
@@ -239,9 +239,9 @@ public class JJDoc extends JavaCCGlobals {
 
   private static void emitExpansionSequence(Sequence s, Generator gen) {
     boolean firstUnit = true;
-    for (java.util.Enumeration enum = s.units.elements();
-	 enum.hasMoreElements();) {
-      Expansion e = (Expansion)enum.nextElement();
+    for (java.util.Enumeration _enum = s.units.elements();
+	 _enum.hasMoreElements();) {
+      Expansion e = (Expansion)_enum.nextElement();
 
       if (e instanceof Lookahead || e instanceof Action) {
 	continue;
@@ -317,9 +317,9 @@ public class JJDoc extends JavaCCGlobals {
 	gen.text("~");
       }
       gen.text("[");
-      for (java.util.Enumeration enum = cl.descriptors.elements();
-	   enum.hasMoreElements();) {
-	Object o = enum.nextElement();
+      for (java.util.Enumeration _enum = cl.descriptors.elements();
+	   _enum.hasMoreElements();) {
+	Object o = _enum.nextElement();
 	if (o instanceof SingleCharacter) {
 	  gen.text("\"");
 	  char s[] = { ((SingleCharacter)o).ch };
@@ -336,7 +336,7 @@ public class JJDoc extends JavaCCGlobals {
 	} else {
 	  System.out.println("Oops: unknown character list element type.");
 	}
-	if (enum.hasMoreElements()) {
+	if (_enum.hasMoreElements()) {
 	  gen.text(",");
 	}
       }
@@ -344,11 +344,11 @@ public class JJDoc extends JavaCCGlobals {
 
     } else if (re instanceof RChoice) {
       RChoice c = (RChoice)re;
-      for (java.util.Enumeration enum = c.choices.elements();
-	   enum.hasMoreElements();) {
-	RegularExpression sub = (RegularExpression)(enum.nextElement());
+      for (java.util.Enumeration _enum = c.choices.elements();
+	   _enum.hasMoreElements();) {
+	RegularExpression sub = (RegularExpression)(_enum.nextElement());
 	emitRE(sub, gen);
-	if (enum.hasMoreElements()) {
+	if (_enum.hasMoreElements()) {
 	  gen.text(" | ");
 	}
       }
@@ -368,9 +368,9 @@ public class JJDoc extends JavaCCGlobals {
 
     } else if (re instanceof RSequence) {
       RSequence s = (RSequence)re;
-      for (java.util.Enumeration enum = s.units.elements();
-	   enum.hasMoreElements();) {
-	RegularExpression sub = (RegularExpression)(enum.nextElement());
+      for (java.util.Enumeration _enum = s.units.elements();
+	   _enum.hasMoreElements();) {
+	RegularExpression sub = (RegularExpression)(_enum.nextElement());
 	boolean needParens = false;
 	if (sub instanceof RChoice) {
 	  needParens = true;
@@ -382,7 +382,7 @@ public class JJDoc extends JavaCCGlobals {
 	if (needParens) {
 	  gen.text(")");
 	}
- 	if (enum.hasMoreElements()) {
+ 	if (_enum.hasMoreElements()) {
 	  gen.text(" ");
 	}
       }
@@ -416,8 +416,8 @@ public class JJDoc extends JavaCCGlobals {
   private static String v2s(Vector v, boolean newLine) {
     String s = "";
     boolean firstToken = true;
-    for (Enumeration enum = v.elements(); enum.hasMoreElements();) {
-      Token tok = (Token)enum.nextElement();
+    for (Enumeration _enum = v.elements(); _enum.hasMoreElements();) {
+      Token tok = (Token)_enum.nextElement();
       Token stok = getPrecedingSpecialToken(tok);
       
       if (firstToken) {

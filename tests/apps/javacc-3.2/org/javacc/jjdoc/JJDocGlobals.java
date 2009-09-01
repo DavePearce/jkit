@@ -1,6 +1,6 @@
 
 /*
- * Copyright © 2002 Sun Microsystems, Inc., 4150 Network Circle, Santa Clara,
+ * Copyright (c) 2002 Sun Microsystems, Inc., 4150 Network Circle, Santa Clara,
  * California 95054, U.S.A. All rights reserved.  Sun Microsystems, Inc. has
  * intellectual property rights relating to technology embodied in the product
  * that is described in this document. In particular, and without limitation,
