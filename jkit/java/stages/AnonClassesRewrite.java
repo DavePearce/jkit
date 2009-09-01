@@ -33,6 +33,7 @@ import jkit.java.tree.Decl;
 import jkit.java.tree.Expr;
 import jkit.java.tree.Stmt;
 import jkit.java.tree.Value;
+import jkit.java.tree.Decl.JavaEnum;
 import jkit.java.tree.Decl.JavaClass;
 import jkit.java.tree.Decl.JavaField;
 import jkit.java.tree.Decl.JavaInterface;
@@ -65,26 +66,78 @@ public class AnonClassesRewrite {
 	}
 	
 	protected void doDeclaration(Decl d) {
-		if(d instanceof JavaInterface) {
-			doInterface((JavaInterface)d);
-		} else if(d instanceof JavaClass) {
-			doClass((JavaClass)d);
-		} else if(d instanceof JavaMethod) {
-			doMethod((JavaMethod)d);
-		} else if(d instanceof JavaField) {
-			doField((JavaField)d);
-		} else if (d instanceof Decl.InitialiserBlock) {
-			doInitialiserBlock((Decl.InitialiserBlock) d);
-		} else if (d instanceof Decl.StaticInitialiserBlock) {
-			doStaticInitialiserBlock((Decl.StaticInitialiserBlock) d);
-		} else {
-			internal_error("unknown declaration \"" + d
-					+ "\" encountered",d);			
+		try {
+			if(d instanceof JavaInterface) {
+				doInterface((JavaInterface)d);
+			} else if(d instanceof JavaEnum) {
+				doEnum((JavaEnum)d);
+			} else if(d instanceof JavaClass) {
+				doClass((JavaClass)d);
+			} else if(d instanceof JavaMethod) {
+				doMethod((JavaMethod)d);
+			} else if(d instanceof JavaField) {
+				doField((JavaField)d);
+			} else if (d instanceof Decl.InitialiserBlock) {
+				doInitialiserBlock((Decl.InitialiserBlock) d);
+			} else if (d instanceof Decl.StaticInitialiserBlock) {
+				doStaticInitialiserBlock((Decl.StaticInitialiserBlock) d);
+			} else {
+				internal_error("unknown declaration \"" + d
+						+ "\" encountered",d);			
+			}
+		} catch(Exception ex) {
+			internal_error(d,ex);
 		}
 	}
 	
 	protected void doInterface(JavaInterface d) {
 		doClass(d);
+	}
+	
+	protected void doEnum(JavaEnum en) throws ClassNotFoundException {
+		doClass(en);
+		
+		Type.Clazz type = en.attribute(Type.Clazz.class);
+		
+		// Deal with any complex enumeration constants that require     
+		// their own classes. Essentially, these are treated just like anonymous
+        // inner classes.
+		int extraClassCount = 0;
+		for(Decl.EnumConstant enc : en.constants()) {			
+			if(enc.declarations().size() > 0) {
+				String name = Integer.toString(++extraClassCount);
+				ArrayList<Pair<String, List<Type.Reference>>> ncomponents = new ArrayList(
+						type.components());
+				ncomponents.add(new Pair(name, new ArrayList()));
+				Type.Clazz aType = new Type.Clazz(type.pkg(),
+						ncomponents);
+								
+				Clazz parentClass = loader.loadClass(type);
+				JilClass anonClass = (JilClass) loader.loadClass(aType);
+				SourceLocation loc = enc.attribute(SourceLocation.class);
+				Decl.JavaClass ac = buildAnonClass(anonClass, loc);
+				
+				anonClasses.push(aType);			
+				context.push(ac);
+				// break down any anonymous classes held internally to this
+				// anonymous class.
+				for(Decl d : enc.declarations()) {
+					doDeclaration(d);
+				}
+				context.pop();
+				anonClasses.pop();				
+
+				// Third, create an appropriate constructor.
+				Decl.JavaMethod constructor = buildEnumConstantConstructor(name,
+						parentClass, anonClass, loc);								
+				
+				// Finally, create an appropriate java class
+				ac.declarations().add(constructor);
+				ac.declarations().addAll(enc.declarations());								
+
+				context.peek().declarations().add(ac);						
+			}
+		}		
 	}
 	
 	protected void doClass(JavaClass c) {					
@@ -695,6 +748,51 @@ public class AnonClassesRewrite {
 		// finally, update skeleton accordingly.
 		anonClass.methods().add(new JilMethod(name, type, jilparams,
 				new ArrayList<Modifier>(), exceptions));
+						
+		return mc;
+	}
+	
+	
+	protected Decl.JavaConstructor buildEnumConstantConstructor(String name,			
+			Clazz parentClass, JilClass anonClass, SourceLocation loc) {
+		
+		Type.Function type = new Type.Function(Types.T_VOID,Types.JAVA_LANG_STRING,Types.T_INT);
+		
+		// ... yes, this method is ugly.
+		
+		ArrayList<JilMethod.Parameter> jilparams = new ArrayList();
+		ArrayList<Decl.JavaParameter> javaparams = new ArrayList();
+		ArrayList<Expr> args = new ArrayList<Expr>();
+		ArrayList<Type> superParams = new ArrayList<Type>();
+		ArrayList<Modifier> mods = new ArrayList<Modifier>();
+		mods.add(Modifier.ACC_FINAL);
+		
+		ArrayList<Stmt> stmts = new ArrayList<Stmt>();
+		
+		int p = 0;
+		for (Type t : type.parameterTypes()) {
+			jilparams.add(new JilMethod.Parameter("x$" + p, mods));
+			javaparams.add(new Decl.JavaParameter("x$" + p, mods, fromJilType(t)));
+			superParams.add(t);
+			args.add(new Expr.LocalVariable("x$" + p, t));			
+			p = p + 1;
+		}	
+		
+		Expr.LocalVariable target = new Expr.LocalVariable("super",parentClass.type());		
+		Expr.Invoke ivk = new Expr.Invoke(target, "super", args,
+				new ArrayList(), loc, new JilBuilder.MethodInfo(new ArrayList(),
+						new Type.Function(type.returnType(),superParams)),type.returnType());
+		stmts.add(ivk);
+		
+		Stmt.Block block = new Stmt.Block(stmts,loc);
+		
+		Decl.JavaConstructor mc = new Decl.JavaConstructor(mods, name,
+				javaparams, false, new ArrayList(), new ArrayList(), block,
+				loc, type);
+		
+		// finally, update skeleton accordingly.
+		anonClass.methods().add(new JilMethod(name, type, jilparams,
+				new ArrayList<Modifier>(), new ArrayList()));
 						
 		return mc;
 	}

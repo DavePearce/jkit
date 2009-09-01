@@ -172,6 +172,11 @@ public class TypeResolution {
 			for(Expr e : c.arguments()) {
 				doExpression(e);
 			}
+			for(Decl d : c.declarations()) {
+				// THERE'S PROBABLY A BUG HERE, SINCE THE CLASS SCOPE IS NOT ON
+                // STACK AT THIS POINT.
+				doDeclaration(d);
+			}
 		}
 	}
 	

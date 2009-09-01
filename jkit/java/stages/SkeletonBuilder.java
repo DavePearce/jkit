@@ -55,7 +55,7 @@ import jkit.util.*;
  */
 
 public class SkeletonBuilder {
-	private int anonymousClassCount = 0;
+	private int anonymousClassCount = 0;	
 	private JavaFile file;
 	private ArrayList<JilClass> skeletons;
 	private ClassLoader loader = null;
@@ -167,18 +167,47 @@ public class SkeletonBuilder {
 		Type.Clazz type = ec.attribute(Type.Clazz.class);
 		SourceLocation loc = ec.attribute(SourceLocation.class);
 		
-		// First, add the public fields that represent the enum constants. 
-		for(Decl.EnumConstant enc : ec.constants()) {
-			if(enc.declarations().size() > 0) {
-				syntax_error("No support for ENUMS that have methods",enc);
-			} else {
-				List<Modifier> modifiers = new ArrayList<Modifier>();
-				modifiers.add(Modifier.ACC_PUBLIC);
+		// First, add the public fields that represent the enum constants.
+		int extraClassCount = 0;
+		for(Decl.EnumConstant enc : ec.constants()) {			
+			ArrayList<Modifier> modifiers = new ArrayList<Modifier>();
+			modifiers.add(Modifier.ACC_PUBLIC);
+			modifiers.add(Modifier.ACC_STATIC);
+			modifiers.add(Modifier.ACC_FINAL);
+			skeleton.fields().add(
+					new JilField(enc.name(), type, modifiers,
+							new ArrayList(enc.attributes())));
+			
+			// Now, check to see if we need an extra class to deal with this
+            // enumeration constant. This can happen if the enum constant
+            // declares a method, or possibly a field. The procedure is very
+            // similar to that for anonymous inner classes.
+			if(enc.declarations().size() > 0) {				
+				String name = Integer.toString(++extraClassCount);
+
+				ArrayList<Pair<String, List<Type.Reference>>> ncomponents = new ArrayList(
+						type.components());
+				ncomponents.add(new Pair(name, new ArrayList()));
+				Type.Clazz myType = new Type.Clazz(skeleton.type().pkg(),
+						ncomponents);
+
+				modifiers = new ArrayList<Modifier>();
 				modifiers.add(Modifier.ACC_STATIC);
 				modifiers.add(Modifier.ACC_FINAL);
-				skeleton.fields().add(
-						new JilField(enc.name(), type, modifiers,
-								new ArrayList(enc.attributes())));
+				JilClass encskel = new JilClass(myType, modifiers, type,
+						new ArrayList<Type.Clazz>(),
+						new ArrayList<Type.Clazz>(), new ArrayList<JilField>(),
+						new ArrayList<JilMethod>(), enc.attributes());
+
+				skeletons.add(encskel);
+				loader.register(encskel);
+
+				for (Decl d : enc.declarations()) {
+					if(d instanceof Decl.JavaMethod) {
+						Decl.JavaMethod m = (Decl.JavaMethod) d;						
+					}
+					doDeclaration(d, encskel);
+				}
 			}
 		}
 		
@@ -536,7 +565,7 @@ public class SkeletonBuilder {
 			Type.Clazz superType = e.type().attribute(Type.Clazz.class);
 			
 			
-				Clazz superClazz = (Clazz) loader.loadClass(superType);
+			Clazz superClazz = (Clazz) loader.loadClass(superType);
 			String name = Integer.toString(++anonymousClassCount);
 
 			ArrayList<Pair<String, List<Type.Reference>>> ncomponents = new ArrayList(

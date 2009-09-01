@@ -123,9 +123,22 @@ public class SkeletonDiscovery {
 	protected List<JilClass> doEnum(Decl.JavaEnum d) {
 		List<JilClass> cs = doClass(d);
 		List<Modifier> modifiers = cs.get(cs.size() - 1).modifiers();
-		modifiers.add(Modifier.ACC_ENUM);
-		modifiers.add(Modifier.ACC_FINAL);
+		modifiers.add(Modifier.ACC_ENUM);		
 		modifiers.add(Modifier.ACC_STATIC);
+		
+		boolean failed = false;
+		for(Decl.EnumConstant c : d.constants()) {
+			if(c.declarations().size() > 0) {
+				modifiers.add(Modifier.ACC_ABSTRACT);
+				failed=true;
+				break;
+			}
+		}
+		
+		if(!failed) {
+			modifiers.add(Modifier.ACC_FINAL);
+		}
+		
 		return cs;		
 	}
 	

@@ -111,9 +111,9 @@ public class EnumRewrite {
 			augmentConstructors(ec,skeleton);
 		}
 		
-		// Finally, create the static initialiser
+		// Now, create the static initialiser
 		Decl.StaticInitialiserBlock init = createStaticInitialiser(ec,type,skeleton);
-		ec.declarations().add(init);
+		ec.declarations().add(init);		
 	}
 	
 	protected void doInterface(JavaInterface d) {
@@ -596,15 +596,27 @@ public class EnumRewrite {
 		
 		// Second, add the enum constants to the array
 		int i=0;
+		int extraClassCount = 0;
 		for (Decl.EnumConstant c : ec.constants()) {
+			Type.Clazz mytype = type;
+			
+			if(c.declarations().size() > 0) {
+				String name = Integer.toString(++extraClassCount);
+				ArrayList<Pair<String, List<Type.Reference>>> ncomponents = new ArrayList(
+						type.components());
+				ncomponents.add(new Pair(name, new ArrayList()));
+				mytype = new Type.Clazz(type.pkg(),
+						ncomponents);							
+			}
+			
 			arguments = new ArrayList();						
 			
 			arguments.add(new Value.String(c.name(),Types.JAVA_LANG_STRING));
 			arguments.add(new Value.Int(i,Types.T_INT));
 			arguments.addAll(c.arguments());
 			Expr.New nuw = new Expr.New(ecType, null, arguments,
-					new ArrayList(), loc,type);
-			nuw.type().attributes().add(type);
+					new ArrayList(), loc,mytype);
+			nuw.type().attributes().add(mytype);
 			ArrayList<Type> paramTypes = new ArrayList<Type>();
 			paramTypes.add(Types.JAVA_LANG_STRING);
 			paramTypes.add(Types.T_INT);
@@ -615,7 +627,7 @@ public class EnumRewrite {
 			}
 			
 			// At this point, we have to resolve the constructor.
-			Type.Function ftype = types.resolveMethod(type,
+			Type.Function ftype = types.resolveMethod(mytype,
 					type.lastComponent().first(), paramTypes, loader).second()
 					.type();
 			

@@ -113,6 +113,8 @@ public class JilBuilder {
 		try {
 			if(d instanceof Decl.JavaInterface) {
 				doInterface((Decl.JavaInterface)d);
+			} else if(d instanceof Decl.JavaEnum) {
+				doEnum((Decl.JavaEnum)d);
 			} else if(d instanceof Decl.JavaClass) {
 				doClass((Decl.JavaClass)d);
 			} else if(d instanceof Decl.JavaMethod) {				
@@ -134,6 +136,10 @@ public class JilBuilder {
 	
 	protected void doInterface(Decl.JavaInterface d) throws ClassNotFoundException {
 		doClass(d);
+	}
+	
+	protected void doEnum(Decl.JavaEnum en) throws ClassNotFoundException {
+		doClass(en);		
 	}
 	
 	protected void doClass(Decl.JavaClass c) throws ClassNotFoundException {
@@ -172,7 +178,6 @@ public class JilBuilder {
 
 	protected void doMethod(Decl.JavaMethod d, JilClass parent) {	
 		Type.Function type = d.attribute(Type.Function.class);
-		
 		List<JilStmt> stmts = doStatement(d.body());		
 		
 		// simple hack here, for case when no return statement is provided.
