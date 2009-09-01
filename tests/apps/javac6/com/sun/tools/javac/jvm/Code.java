@@ -1313,7 +1313,7 @@ public class Code {
     
     StackMapFrame getInitialFrame() {
         StackMapFrame frame = new StackMapFrame();
-        List<Type> arg_types = ((MethodType)meth.externalType(types)).argtypes;
+        List<Type> arg_types = ((Type.MethodType)meth.externalType(types)).argtypes;
         int len = arg_types.length();
         int count = 0;
         if (!meth.isStatic()) {
