@@ -910,7 +910,7 @@ public class JilBuilder {
 	protected List<JilStmt> doFor(Stmt.For stmt) {
 		String headerLab = "forheader" + forheader_label++;
 		String exitLab = "forexit" + forexit_label++;
-		String incLab = "forinc" + forinc_label;
+		String incLab = "forinc" + forinc_label++;
 		
 		ArrayList<JilStmt> r = new ArrayList<JilStmt>();
 		
