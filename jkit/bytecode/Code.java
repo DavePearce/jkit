@@ -181,49 +181,67 @@ public class Code implements Attribute {
 
 		HashMap<String, Integer> labelOffsets = new HashMap<String, Integer>();			
 
-		int offset = 0;
-
 		// The insnOffsets is used to map the statement index to the
 		// corresponding bytecodes. This is used in determining the start and
 		// end offsets for the exception handlers
 
 		int[] insnOffsets = new int[bytecodes.size()];
-		int omi = 0;
+		
+		boolean guestimate = true;
+		
+		while(guestimate) {
+			guestimate = false;
+			// With this loop, we have to iterate until we reach a fixed point
+			// regarding the label offsets. The basic issue is that, increasing
+			// the size of a branch may result in other branches we've already
+			// passed requiring their sizes be increased. I believe that this
+			// loop is always guaranteed to terminate but, frankly, I haven't
+			// spent a lot of time really thinking about it.
+			int omi = 0;
+			int offset = 0;
+			
+			
+			for (Bytecode b : bytecodes) {
+				insnOffsets[omi++] = offset;
+				if (b instanceof Bytecode.Label) {
+					Bytecode.Label l = (Bytecode.Label) b;
+					if(labelOffsets.containsKey(l.name)) {
+						int old = labelOffsets.get(l.name);
+						if(old != offset) {							
+							guestimate = true;
+						}
+					} 
+					labelOffsets.put(l.name, offset);
+				} else if (b instanceof Bytecode.Branch) {
+					Bytecode.Branch br = (Bytecode.Branch) b;
+					if(labelOffsets.containsKey(br.label))  {
+						offset += b.toBytes(offset, labelOffsets, constantPool).length;
+					} else {
+						// In this case, we can't determine the offset of the
+						// label, since we may not have passed it yet!
+						// Therefore, for now, I assume that the bytecode requires 3
+						// bytes (which is true, except for goto_w).
 
-		for (Bytecode b : bytecodes) {
-			insnOffsets[omi++] = offset;
-			if (b instanceof Bytecode.Label) {
-				Bytecode.Label l = (Bytecode.Label) b;
-				labelOffsets.put(l.name, offset);
-			} else if (b instanceof Bytecode.Branch) {
-				// In this case, we can't determine the offset of the
-				// label, since we may not have passed it yet!
-				// Therefore, for now, I assume that the bytecode requires 3
-				// bytes (which is true, except for goto_w).
-				offset += 3;
-			} else if (b instanceof Bytecode.Switch) {
-				// calculate switch statement size
-				offset += ((Bytecode.Switch) b).getSize(offset);
-			} else {
-				offset += b.toBytes(offset, labelOffsets, constantPool).length;
+						offset += 3;						
+						guestimate = true;
+					}
+				} else if (b instanceof Bytecode.Switch) {
+					// calculate switch statement size
+					offset += ((Bytecode.Switch) b).getSize(offset);
+				} else {
+					offset += b.toBytes(offset, labelOffsets, constantPool).length;
+				}
 			}
 		}
 
 		// === CREATE BYTECODE BYTES ===
 
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		offset = 0;
+		int offset = 0;
 		for (Bytecode b : bytecodes) {
 			byte[] bs = b.toBytes(offset, labelOffsets, constantPool);
 			bout.write(bs);
-			offset += bs.length;
-			if (b instanceof Bytecode.Branch && bs.length > 3) {
-				// In this situation the size of the branch is bigger than
-				// originally calculated in the second sweep. For now, I just
-				// abort in this somewhat unlikely event.
-				throw new RuntimeException(
-				"Internal failure --- branch too big!");
-			}
+			offset += bs.length;			
 		}
 
 		// === WRITE CODE ATTRIBUTE ===

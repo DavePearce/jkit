@@ -1164,8 +1164,30 @@ public abstract class Bytecode {
 				}
 				write_i2(out,target);
 			} else {
-				throw new RuntimeException("Conditional branch target too far away");
+				// In this case, we cannot perform a direct conditional branch.
+				// Instead, we simply fake it by using a wide GOTO
+				
+				// first, invert comparison
+				int c = cond;
+				if((c % 2) == 0) {
+					// even, so increment
+					c++;
+				} else {
+					// odd, so decrement
+					c--;
+				}
+				if(cond < NULL) {
+					write_u1(out,IFEQ + c);
+				} else {
+					write_u1(out,IFNULL + (c-NULL));
+				}
+				write_i2(out, 8);
+				
+				// now do the big jump
+				write_u1(out,GOTO_W);
+				write_i4(out,target);				
 			}
+			
 			return out.toByteArray();
 		}
 		public String toString() {
@@ -1312,8 +1334,28 @@ public abstract class Bytecode {
 				}
 				write_i2(out, target);
 			} else {
-				throw new RuntimeException(
-						"Conditional branch target too far away");
+				// In this case, we cannot perform a direct conditional branch.
+				// Instead, we simply fake it by using a wide GOTO
+				
+				// first, invert comparison
+				int c = cond;
+				if((c % 2) == 0) {
+					// even, so increment
+					c++;
+				} else {
+					// odd, so decrement
+					c--;
+				}
+				if (type instanceof Type.Primitive) {
+					write_u1(out, IF_ICMPEQ + c);
+				} else {
+					write_u1(out, IF_ACMPEQ + c);
+				}
+				write_i2(out, 8);
+				
+				// now do the big jump
+				write_u1(out,GOTO_W);
+				write_i4(out,target);				
 			}
 			return out.toByteArray();
 		}
