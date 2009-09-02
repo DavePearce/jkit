@@ -1350,23 +1350,27 @@ public abstract class Bytecode {
 		public final int type;
 		
 		public Switch(String def, List<Pair<Integer, String>> cases) {
-			assert cases.size() > 0;
-			
 			this.defaultLabel = def;
 			this.cases = cases;
 			
-			int lo = cases.get(0).first();
-			int hi = cases.get(cases.size()-1).first();
-			
-			int tableSize = 4+4*(hi-lo+1);
-			int lookupSize = 8*(cases.size());
-			
-			if (tableSize < lookupSize) {
-				this.type = TABLESWITCH;
-			}
-			else {
+			if(cases.size() > 0) {
+				int lo = cases.get(0).first();
+				int hi = cases.get(cases.size()-1).first();
+				int tableSize = 4+4*(hi-lo+1);
+				int lookupSize = 8*(cases.size());
+				
+				if (tableSize < lookupSize) {
+					this.type = TABLESWITCH;
+				}
+				else {
+					this.type = LOOKUPSWITCH;
+				}	
+			} else {
+				// yes, whilst this case may seem completely perverse, it is
+				// indeed possible to have a switch statement with no cases.
+				// I have seen some real code which does this!
 				this.type = LOOKUPSWITCH;
-			}
+			}						
 		}
 		
 		public int stackDiff() {
