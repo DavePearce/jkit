@@ -207,9 +207,9 @@ public class Code implements Attribute {
 				insnOffsets[i] = offset;
 				if (b instanceof Bytecode.Label) {
 					Bytecode.Label l = (Bytecode.Label) b;
-					if(labelOffsets.containsKey(l.name)) {
+					if(labelOffsets.containsKey(l.name)) {						
 						int old = labelOffsets.get(l.name);
-						if(old != offset) {							
+						if(old != offset) {										
 							guestimate=true;
 						}
 					} 
@@ -231,7 +231,7 @@ public class Code implements Attribute {
 						// label, since we may not have passed it yet!
 						// Therefore, for now, I assume that the bytecode requires 3
 						// bytes (which is true, except for goto_w).
-						offset += 3;						
+						offset += 3;											
 						guestimate = true;
 					}
 				} else if (b instanceof Bytecode.Switch) {
@@ -239,11 +239,7 @@ public class Code implements Attribute {
 					offset += ((Bytecode.Switch) b).getSize(offset);
 				} else {
 					offset += b.toBytes(offset, labelOffsets, constantPool).length;
-				}
-				
-				if((i+1) < insnOffsets.length && offset < insnOffsets[i+1]) {
-					System.out.println("******* " + offset + " lowered from " + insnOffsets[i+1] + ": " + b);
-				}
+				}				
 			}						
 		}
 

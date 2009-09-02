@@ -940,8 +940,7 @@ public class JilBuilder {
 		scopes.pop();
 				
 		if(stmt.increment() != null) {
-			r.add(new JilStmt.Label(incLab));
-			forinc_label++;
+			r.add(new JilStmt.Label(incLab));			
 			r.addAll(doStatement(stmt.increment()));
 		}
 		
@@ -962,7 +961,7 @@ public class JilBuilder {
 		String headerLab = "forallheader" + forallheader_label++;
 		String exitLab = "forallexit" + forallexit_label++;
 		String iterLab = "foralliter" + foralliter_label++;
-		String incLab = "forallinc" + forallinc_label;
+		String incLab = "forallinc" + forallinc_label++;
 		
 		ArrayList<JilStmt> stmts = new ArrayList<JilStmt>();
 		
