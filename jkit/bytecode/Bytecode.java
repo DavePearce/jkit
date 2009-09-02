@@ -1185,7 +1185,7 @@ public abstract class Bytecode {
 				
 				// now do the big jump
 				write_u1(out,GOTO_W);
-				write_i4(out,target);				
+				write_i4(out,target-3);				
 			}
 			
 			return out.toByteArray();
@@ -1355,7 +1355,7 @@ public abstract class Bytecode {
 				
 				// now do the big jump
 				write_u1(out,GOTO_W);
-				write_i4(out,target);				
+				write_i4(out,target-3);				
 			}
 			return out.toByteArray();
 		}
