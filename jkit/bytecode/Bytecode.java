@@ -1350,6 +1350,7 @@ public abstract class Bytecode {
 		public final int type;
 		
 		public Switch(String def, List<Pair<Integer, String>> cases) {
+			assert cases.size() > 0;
 			
 			this.defaultLabel = def;
 			this.cases = cases;

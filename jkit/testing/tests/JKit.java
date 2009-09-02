@@ -182,6 +182,7 @@ public class JKit extends TestHarness {
 	@Ignore("Known Bug") @Test public void JLS_14_11_SwitchStatement_7() { compileFailTest("JLS_14_11_SwitchStatement_7"); }
 	@Test public void JLS_14_11_SwitchStatement_8() { runTest("JLS_14_11_SwitchStatement_8"); }
 	@Test public void JLS_14_11_SwitchStatement_9() { runTest("JLS_14_11_SwitchStatement_9"); }
+	@Test public void JLS_14_11_SwitchStatement_10() { runTest("JLS_14_11_SwitchStatement_10"); }
 	
 	@Test public void JLS_14_12_WhileStatement_1() { runTest("JLS_14_12_WhileStatement_1"); }
 	@Test public void JLS_14_12_DoWhileStatement_1() { runTest("JLS_14_12_DoWhileStatement_1"); }
