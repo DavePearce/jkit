@@ -1073,9 +1073,20 @@ public abstract class Bytecode {
      */
 	public static abstract class Branch extends Bytecode {
 		public final String label;
+		public final boolean islong;
+		
 		public Branch(String label) {
 			this.label = label;
+			this.islong = false;
 		}
+		
+		public Branch(String label, boolean islong) {
+			this.label = label;
+			this.islong = islong;
+		}
+		
+		// The purpose of this method is to force a branch to be long.
+		public abstract Branch fixLong();
 	}
 	
 	/**
@@ -1083,6 +1094,7 @@ public abstract class Bytecode {
 	 */
 	public static class Goto extends Branch {
 		public Goto(String label) { super(label); }
+		public Goto(String label, boolean islong) { super(label,islong); }
 		
 		public int stackDiff() {
 			return 0;
@@ -1096,7 +1108,7 @@ public abstract class Bytecode {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			// here, need to figure out how far away we're going
 			int target = labelOffsets.get(label) - offset;
-			if(-32768 <= target && target <= 32767) {
+			if(-32768 <= target && target <= 32767 && !islong) {
 				write_u1(out,GOTO);
 				write_i2(out,target);
 			} else {
@@ -1105,6 +1117,12 @@ public abstract class Bytecode {
 			}
 			return out.toByteArray();
 		}
+		
+		public Goto fixLong() {
+			return new Goto(label,true);
+		}
+		
+		
 		public String toString() {
 			return "goto " + label;
 		}
@@ -1112,7 +1130,7 @@ public abstract class Bytecode {
 		public boolean equals(Object o) {
 			if (o instanceof Goto) {
 				Goto b = (Goto) o;
-				return label.equals(b.label);
+				return label.equals(b.label) && islong == b.islong;
 			}
 			return false;
 		}
@@ -1144,6 +1162,12 @@ public abstract class Bytecode {
 			this.cond=cond;
 		}
 		
+		public If(int cond, String label, boolean islong) { 			 
+			super(label,islong);
+			assert cond >=0 && cond <= LE;			
+			this.cond=cond;
+		}
+		
 		public int stackDiff() {
 			return -1;
 		}
@@ -1156,7 +1180,7 @@ public abstract class Bytecode {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			// here, need to figure out how far away we're going
 			int target = labelOffsets.get(label) - offset;
-			if(-32768 <= target && target <= 32767) {
+			if(-32768 <= target && target <= 32767 && !islong) {
 				if(cond < NULL) {
 					write_u1(out,IFEQ + cond);
 				} else {
@@ -1190,6 +1214,11 @@ public abstract class Bytecode {
 			
 			return out.toByteArray();
 		}
+		
+		public If fixLong() {
+			return new If(cond,label,true);
+		}
+		
 		public String toString() {
 			return "if" + str[cond] + " " + label;
 		}
@@ -1197,7 +1226,7 @@ public abstract class Bytecode {
 		public boolean equals(Object o) {
 			if (o instanceof If) {
 				If b = (If) o;
-				return label.equals(b.label) && cond == b.cond;
+				return label.equals(b.label) && cond == b.cond && islong == b.islong;
 			}
 			return false;
 		}
@@ -1315,6 +1344,15 @@ public abstract class Bytecode {
 			this.type = type;
 		}
 		
+		public IfCmp(int cond, Type type, String label, boolean islong) { 			 
+			super(label,islong);		
+			assert type instanceof Type.Int || type instanceof Type.Reference;
+			assert cond >=0 && ((type instanceof Type.Int && cond <= LE)
+					|| (type instanceof Type.Reference && cond <= NE));
+			this.cond = cond;
+			this.type = type;
+		}
+		
 		public int stackDiff() {
 			return 1-(2*ClassFile.slotSize(type));
 		}
@@ -1326,7 +1364,7 @@ public abstract class Bytecode {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			// here, need to figure out how far away we're going
 			int target = labelOffsets.get(label) - offset;
-			if (-32768 <= target && target <= 32767) {
+			if (-32768 <= target && target <= 32767 && !islong) {
 				if (type instanceof Type.Primitive) {
 					write_u1(out, IF_ICMPEQ + cond);
 				} else {
@@ -1357,7 +1395,12 @@ public abstract class Bytecode {
 				write_u1(out,GOTO_W);
 				write_i4(out,target-3);				
 			}
+			
 			return out.toByteArray();
+		}
+		
+		public IfCmp fixLong() {
+			return new IfCmp(cond,type,label,true);
 		}
 		
 		public String toString() {
@@ -1372,7 +1415,7 @@ public abstract class Bytecode {
 			if (o instanceof IfCmp) {
 				IfCmp b = (IfCmp) o;
 				return cond == b.cond && type.equals(b.type)
-						&& label.equals(b.label);
+						&& label.equals(b.label) && islong == b.islong;
 			}
 			return false;
 		}
@@ -1386,11 +1429,10 @@ public abstract class Bytecode {
 	 * This represents the bytecodes tableswitch and lookupswitch
 	 */
 	public static class Switch extends Bytecode {
-		
 		public final String defaultLabel;
 		public final List<Pair<Integer, String>> cases;
 		public final int type;
-		
+				
 		public Switch(String def, List<Pair<Integer, String>> cases) {
 			this.defaultLabel = def;
 			this.cases = cases;
@@ -1398,6 +1440,15 @@ public abstract class Bytecode {
 			if(cases.size() > 0) {
 				int lo = cases.get(0).first();
 				int hi = cases.get(cases.size()-1).first();
+				
+				if(hi < lo) {
+					// There is some kind of bug here.
+					for(Pair<Integer,String> c : cases) {
+						System.out.println("GOT: " + c.first());
+					}					
+					throw new RuntimeException("MAJOR PROBLEM(2): " + cases.size() + ": " + (hi-lo));
+				}
+				
 				int tableSize = 4+4*(hi-lo+1);
 				int lookupSize = 8*(cases.size());
 				
@@ -1419,16 +1470,18 @@ public abstract class Bytecode {
 			return -1;
 		}
 		
-		public int getSize(int offset) {
+		public int getSize(int offset) {			
 			int padding = 3 - (offset%4);
+			int len = 1 + padding + 4; 			
 			if (type == LOOKUPSWITCH) {
-				return 1 + padding + 4 + 4 + cases.size() * 8;
-			}
-			else {
+				len += 4 + cases.size() * 8;				
+			} else {
 				int lo = cases.get(0).first();
 				int hi = cases.get(cases.size()-1).first();
-				return 1 + padding + 4 + 8 + 4 * (hi-lo+1);
+				len += 8 + 4 * (hi-lo+1);				
 			}
+			
+			return len;
 		}
 		
 		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  

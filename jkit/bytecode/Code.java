@@ -38,14 +38,14 @@ import jkit.jil.util.*;
  */
 public class Code implements Attribute {
 
-	protected List<Bytecode> bytecodes;
-	protected List<Handler> handlers;
+	protected ArrayList<Bytecode> bytecodes;
+	protected ArrayList<Handler> handlers;
 	protected Method method; // enclosing method
 
-	public Code(List<Bytecode> bytecodes,
-			List<Handler> handlers, Method method) {			
-		this.bytecodes = bytecodes;
-		this.handlers = handlers;
+	public Code(Collection<Bytecode> bytecodes,
+			Collection<Handler> handlers, Method method) {			
+		this.bytecodes = new ArrayList<Bytecode>(bytecodes);
+		this.handlers = new ArrayList<Handler>(handlers);
 		this.method = method;
 	}
 
@@ -194,44 +194,57 @@ public class Code implements Attribute {
 			// With this loop, we have to iterate until we reach a fixed point
 			// regarding the label offsets. The basic issue is that, increasing
 			// the size of a branch may result in other branches we've already
-			// passed requiring their sizes be increased. I believe that this
-			// loop is always guaranteed to terminate but, frankly, I haven't
-			// spent a lot of time really thinking about it.
-			int omi = 0;
-			int offset = 0;
+			// passed requiring their sizes be increased. This can happen
+			// because switch statements adjust their size depending on their
+			// offset and include padding appropriately. To resolve this, I
+			// simply ensure that once a branch looks like it needs to be long,
+			// then it's fixed as being long. This may, in very unusual cases,
+			// be sub-optimal, but at least it ensures termination!
+			int offset = 0;							
 			
-			
-			for (Bytecode b : bytecodes) {
-				insnOffsets[omi++] = offset;
+			for (int i=0;i!=bytecodes.size();++i) {
+				Bytecode b = bytecodes.get(i);
+				insnOffsets[i] = offset;
 				if (b instanceof Bytecode.Label) {
 					Bytecode.Label l = (Bytecode.Label) b;
 					if(labelOffsets.containsKey(l.name)) {
 						int old = labelOffsets.get(l.name);
 						if(old != offset) {							
-							guestimate = true;
+							guestimate=true;
 						}
 					} 
-					labelOffsets.put(l.name, offset);
+					
+					labelOffsets.put(l.name, offset);					
 				} else if (b instanceof Bytecode.Branch) {
 					Bytecode.Branch br = (Bytecode.Branch) b;
 					if(labelOffsets.containsKey(br.label))  {
-						offset += b.toBytes(offset, labelOffsets, constantPool).length;
+						int len = br.toBytes(offset, labelOffsets, constantPool).length;
+						offset += len;
+						
+						if(len > 3 && !br.islong) {
+							// Now, this branch looks like it needs to be long,
+							// so fix it so it's always long.
+							bytecodes.set(i,br.fixLong());
+						}
 					} else {
 						// In this case, we can't determine the offset of the
 						// label, since we may not have passed it yet!
 						// Therefore, for now, I assume that the bytecode requires 3
 						// bytes (which is true, except for goto_w).
-
 						offset += 3;						
 						guestimate = true;
 					}
 				} else if (b instanceof Bytecode.Switch) {
-					// calculate switch statement size
+					// calculate switch statement size					
 					offset += ((Bytecode.Switch) b).getSize(offset);
 				} else {
 					offset += b.toBytes(offset, labelOffsets, constantPool).length;
 				}
-			}
+				
+				if((i+1) < insnOffsets.length && offset < insnOffsets[i+1]) {
+					System.out.println("******* " + offset + " lowered from " + insnOffsets[i+1] + ": " + b);
+				}
+			}						
 		}
 
 		// === CREATE BYTECODE BYTES ===
