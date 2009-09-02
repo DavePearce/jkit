@@ -22,9 +22,7 @@
 package jkit.bytecode;
 
 import java.io.ByteArrayOutputStream;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import jkit.bytecode.Constant;
 import jkit.jil.tree.Type;
@@ -1425,6 +1423,12 @@ public abstract class Bytecode {
 		}
 	}
 	
+	public static final Comparator<Pair<Integer, String>> switchcomp = new Comparator<Pair<Integer, String>>() {
+		public int compare(Pair<Integer, String> p1, Pair<Integer, String> p2) {
+			return p1.first().compareTo(p2.first());
+		}
+	};
+	
 	/**
 	 * This represents the bytecodes tableswitch and lookupswitch
 	 */
@@ -1437,17 +1441,11 @@ public abstract class Bytecode {
 			this.defaultLabel = def;
 			this.cases = cases;
 			
+			Collections.sort(cases, switchcomp);			
+			
 			if(cases.size() > 0) {
 				int lo = cases.get(0).first();
 				int hi = cases.get(cases.size()-1).first();
-				
-				if(hi < lo) {
-					// There is some kind of bug here.
-					for(Pair<Integer,String> c : cases) {
-						System.out.println("GOT: " + c.first());
-					}					
-					throw new RuntimeException("MAJOR PROBLEM(2): " + cases.size() + ": " + (hi-lo));
-				}
 				
 				int tableSize = 4+4*(hi-lo+1);
 				int lookupSize = 8*(cases.size());
@@ -1526,12 +1524,11 @@ public abstract class Bytecode {
 		}
 		
 		public String toString() {
-			String out = "lookupswitch {\n";
+			String out = "lookupswitch \n";
 			out += "\tdefault\t: "+defaultLabel+"\n";
 			for (Pair<Integer, String> c: cases) {
 				out += "\t"+c.first()+"\t: "+c.second()+"\n"; 
-			}
-			out += "}";
+			}			
 			return out;
 		}
 		
