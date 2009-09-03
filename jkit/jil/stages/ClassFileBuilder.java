@@ -137,12 +137,12 @@ public final class ClassFileBuilder {
 			
 			if(!m.isAbstract() && !clazz.isInterface()) {
 				ArrayList<Bytecode> bytecodes = new ArrayList<Bytecode>();
-				ArrayList<Code.Handler> handlers = new ArrayList<Code.Handler>();
-
+				ArrayList<Code.Handler> handlers = new ArrayList<Code.Handler>();				
+				
 				translateCode(clazz, m, bytecodes, handlers);
 				
 				Code codeAttr = new Code(bytecodes,handlers,cfm);
-				cfm.attributes().add(codeAttr);
+				cfm.attributes().add(codeAttr);								
 			}
 						
 			if (Types.isGeneric(m.type())) {				
