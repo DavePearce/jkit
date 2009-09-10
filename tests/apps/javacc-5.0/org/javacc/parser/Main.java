@@ -118,7 +118,7 @@ public final class Main {
     } else {
       System.out.println("(type \"javacc\" with no arguments for help)");
     }
-    /*
+
     if (Options.isOption(args[args.length-1])) {
       System.out.println("Last argument \"" + args[args.length-1] + "\" is not a filename.");
       return 1;
@@ -149,12 +149,13 @@ public final class Main {
       System.out.println("File " + args[args.length-1] + " not found.");
       return 1;
     }
-    */
+
     try {
-      System.out.println("Reading from file " + args[args.length-1] + " . . .");
-      JavaCCGlobals.fileName = JavaCCGlobals.origFileName = args[args.length-1];
-      JavaCCGlobals.jjtreeGenerated = JavaCCGlobals.isGeneratedBy("JJTree", args[args.length-1]);
-      JavaCCGlobals.toolNames = JavaCCGlobals.getToolNames(args[args.length-1]);
+	System.out.println("Reading from file " + args[args.length-1] + " . . .");
+	// following file is a problem.
+	JavaCCGlobals.fileName = JavaCCGlobals.origFileName = args[args.length-1];
+	JavaCCGlobals.jjtreeGenerated = JavaCCGlobals.isGeneratedBy("JJTree", args[args.length-1]);
+	JavaCCGlobals.toolNames = JavaCCGlobals.getToolNames(args[args.length-1]);
       parser.javacc_input();
       JavaCCGlobals.createOutputDir(Options.getOutputDirectory());
 
