@@ -55,7 +55,10 @@ public class LineNumberTable implements Code.Rewriteable,Attribute {
 	public void print(PrintWriter output,
 			Map<Constant.Info, Integer> constantPool, ClassLoader loader)
 			throws IOException {
-		
-	}
-	
+		output.println("LineNumberTable:");
+		for(Entry e : entries) {
+			output.print("\t");
+			output.print("line " + e.line + ": " + e.start_pc);			
+		}
+	}	
 }

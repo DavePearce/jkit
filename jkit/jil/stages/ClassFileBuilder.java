@@ -138,11 +138,12 @@ public final class ClassFileBuilder {
 			if(!m.isAbstract() && !clazz.isInterface()) {
 				ArrayList<Bytecode> bytecodes = new ArrayList<Bytecode>();
 				ArrayList<Code.Handler> handlers = new ArrayList<Code.Handler>();				
+				ArrayList<LineNumberTable.Entry> lines = new ArrayList<LineNumberTable.Entry>();
 				
-				translateCode(clazz, m, bytecodes, handlers);
-				
-				Code codeAttr = new Code(bytecodes,handlers,cfm);
-				cfm.attributes().add(codeAttr);								
+				translateCode(clazz, m, bytecodes, handlers, lines);
+								
+				cfm.attributes().add(new Code(bytecodes,handlers,cfm));							
+				cfm.attributes().add(new LineNumberTable(lines));
 			}
 						
 			if (Types.isGeneric(m.type())) {				
@@ -172,7 +173,8 @@ public final class ClassFileBuilder {
 	 *             to access a Class which cannot be found.
 	 */
 	protected void translateCode(JilClass clazz, JilMethod method,
-			ArrayList<Bytecode> bytecodes, ArrayList<Code.Handler> handlers) {
+			ArrayList<Bytecode> bytecodes, ArrayList<Code.Handler> handlers,
+			ArrayList<LineNumberTable.Entry> lines) {
 		// === CREATE TYPE ENVIRONMENT ===
 
 		// create the local variable slot mapping
