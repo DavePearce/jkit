@@ -60,7 +60,7 @@ public final class JilClass extends SyntacticElementImpl implements jkit.compile
 	public JilClass(Type.Clazz type, List<Modifier> modifiers,
 			Type.Clazz superClass, List<Type.Clazz> interfaces,
 			List<Type.Clazz> inners, List<JilField> fields,
-			List<JilMethod> methods, Attribute... attributes) {
+			List<JilMethod> methods, SyntacticAttribute... attributes) {
 		super(attributes);
 		this.type = type;
 		this.modifiers = modifiers;
@@ -98,7 +98,7 @@ public final class JilClass extends SyntacticElementImpl implements jkit.compile
      */
 	public JilClass(Type.Clazz type, List<Modifier> modifiers,
 			Type.Clazz superClass, List<Type.Clazz> interfaces, List<Type.Clazz> inners,
-			List<JilField> fields, List<JilMethod> methods, List<Attribute> attributes) {		
+			List<JilField> fields, List<JilMethod> methods, List<SyntacticAttribute> attributes) {		
 		super(attributes);
 		this.type = type;
 		this.modifiers = modifiers;

@@ -24,7 +24,7 @@ package jkit.java.tree;
 import java.util.List;
 
 import jkit.jil.*;
-import jkit.jil.tree.Attribute;
+import jkit.jil.tree.SyntacticAttribute;
 import jkit.jil.tree.SyntacticElementImpl;
 
 public interface Value extends Expr {
@@ -38,12 +38,12 @@ public interface Value extends Expr {
 	public static class Number extends SyntacticElementImpl implements Value {
 		protected int value;
 		
-		public Number(int value, Attribute... attributes) {
+		public Number(int value, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.value = value;
 		}
 		
-		public Number(int value, List<Attribute> attributes) {
+		public Number(int value, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.value = value;
 		}
@@ -56,10 +56,10 @@ public interface Value extends Expr {
 	 *
 	 */
 	public static class Bool extends Number {
-		public Bool(boolean value, Attribute... attributes) {
+		public Bool(boolean value, SyntacticAttribute... attributes) {
 			super(value?1:0, attributes);
 		}
-		public Bool(boolean value, List<Attribute> attributes) {
+		public Bool(boolean value, List<SyntacticAttribute> attributes) {
 			super(value?1:0, attributes);
 		}
 		public boolean value() {
@@ -74,10 +74,10 @@ public interface Value extends Expr {
 	 *
 	 */
 	public static class Char extends Number {
-		public Char(char value, Attribute... attributes) {
+		public Char(char value, SyntacticAttribute... attributes) {
 			super(value,attributes);
 		}
-		public Char(char value, List<Attribute> attributes) {
+		public Char(char value, List<SyntacticAttribute> attributes) {
 			super(value,attributes);
 		}
 		public char value() {
@@ -92,10 +92,10 @@ public interface Value extends Expr {
 	 *
 	 */
 	public static class Byte extends Number {
-		public Byte(byte value, Attribute... attributes) {
+		public Byte(byte value, SyntacticAttribute... attributes) {
 			super(value,attributes);
 		}
-		public Byte(byte value, List<Attribute> attributes) {
+		public Byte(byte value, List<SyntacticAttribute> attributes) {
 			super(value,attributes);
 		}
 		
@@ -110,10 +110,10 @@ public interface Value extends Expr {
 	 *
 	 */
 	public static class Short extends Number {
-		public Short(short value, Attribute... attributes) {
+		public Short(short value, SyntacticAttribute... attributes) {
 			super(value,attributes);
 		}
-		public Short(short value, List<Attribute> attributes) {
+		public Short(short value, List<SyntacticAttribute> attributes) {
 			super(value,attributes);
 		}
 		
@@ -129,10 +129,10 @@ public interface Value extends Expr {
      * 
      */	
 	public static class Int extends Number {
-		public Int(int value, Attribute... attributes) {
+		public Int(int value, SyntacticAttribute... attributes) {
 			super(value,attributes);
 		}		
-		public Int(int value, List<Attribute> attributes) {
+		public Int(int value, List<SyntacticAttribute> attributes) {
 			super(value,attributes);
 		}
 		
@@ -150,12 +150,12 @@ public interface Value extends Expr {
 	public static class Long extends SyntacticElementImpl implements Value {
 		private long value;
 		
-		public Long(long value, Attribute... attributes) {
+		public Long(long value, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.value=value;
 		}
 		
-		public Long(long value, List<Attribute> attributes) {
+		public Long(long value, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.value=value;
 		}
@@ -174,12 +174,12 @@ public interface Value extends Expr {
 	public static class Float extends SyntacticElementImpl implements Value {
 		private float value;
 		
-		public Float(float value, Attribute... attributes) {
+		public Float(float value, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.value=value;
 		}
 		
-		public Float(float value, List<Attribute> attributes) {
+		public Float(float value, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.value=value;
 		}
@@ -198,12 +198,12 @@ public interface Value extends Expr {
 	public static class Double extends SyntacticElementImpl implements Value {
 		private double value;
 		
-		public Double(double value, Attribute... attributes) {
+		public Double(double value, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.value=value;
 		}
 		
-		public Double(double value, List<Attribute> attributes) {
+		public Double(double value, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.value=value;
 		}
@@ -222,11 +222,11 @@ public interface Value extends Expr {
 	public static class String extends SyntacticElementImpl implements Value {
 		private java.lang.String value;
 		
-		public String(java.lang.String value, Attribute... attributes) {
+		public String(java.lang.String value, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.value=value;
 		}
-		public String(java.lang.String value, List<Attribute> attributes) {
+		public String(java.lang.String value, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.value=value;
 		}
@@ -243,7 +243,7 @@ public interface Value extends Expr {
      * 
      */
 	public static class Null extends SyntacticElementImpl implements Value {
-		public Null(Attribute... attributes) {
+		public Null(SyntacticAttribute... attributes) {
 			super(attributes);
 		}
 	}
@@ -257,7 +257,7 @@ public interface Value extends Expr {
 	public static class Array extends SyntacticElementImpl implements Value {
 		private List<Expr> values;
 		
-		public Array(List<Expr> values, Attribute... attributes) {
+		public Array(List<Expr> values, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.values = values;
 		}
@@ -282,7 +282,7 @@ public interface Value extends Expr {
 		private Type type;
 
 		public TypedArray(Type type, List<Expr> values,
-				Attribute... attributes) {
+				SyntacticAttribute... attributes) {
 			super(values,attributes);
 			this.type = type;
 		}
@@ -299,7 +299,7 @@ public interface Value extends Expr {
 	public static class Class extends SyntacticElementImpl implements Value {
 		private Type type;
 
-		public Class(Type type, Attribute... attributes) {
+		public Class(Type type, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.type = type;
 		}

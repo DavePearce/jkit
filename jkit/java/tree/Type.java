@@ -23,7 +23,7 @@ package jkit.java.tree;
 
 import java.util.*;
 
-import jkit.jil.tree.Attribute;
+import jkit.jil.tree.SyntacticAttribute;
 import jkit.jil.tree.SyntacticElementImpl;
 import jkit.util.Pair;
 
@@ -52,7 +52,7 @@ import jkit.util.Pair;
  */
 public class Type extends SyntacticElementImpl {		
 	
-	public Type(Attribute... attributes) {
+	public Type(SyntacticAttribute... attributes) {
 		super(attributes);
 	}
 	
@@ -60,7 +60,7 @@ public class Type extends SyntacticElementImpl {
      * The Primitive type abstracts all the primitive types.
      */
 	public static class Primitive extends Type {
-		public Primitive(Attribute... attributes) {
+		public Primitive(SyntacticAttribute... attributes) {
 			super(attributes);			
 		}
 	}
@@ -73,7 +73,7 @@ public class Type extends SyntacticElementImpl {
      * 
      */
 	public static class Void extends Primitive {		
-		public Void(Attribute... attributes) {
+		public Void(SyntacticAttribute... attributes) {
 			super(attributes);
 		}
 	}
@@ -84,7 +84,7 @@ public class Type extends SyntacticElementImpl {
 	 *
 	 */
 	public static class Bool extends Primitive {		
-		public Bool(Attribute... attributes) {
+		public Bool(SyntacticAttribute... attributes) {
 			super(attributes);
 		}
 	}
@@ -96,7 +96,7 @@ public class Type extends SyntacticElementImpl {
 	 *
 	 */
 	public static class Byte extends Primitive {
-		public Byte(Attribute... attributes) {
+		public Byte(SyntacticAttribute... attributes) {
 			super(attributes);
 		}
 	}
@@ -107,7 +107,7 @@ public class Type extends SyntacticElementImpl {
 	 *
 	 */
 	public static class Char extends Primitive {
-		public Char(Attribute... attributes) {
+		public Char(SyntacticAttribute... attributes) {
 			super(attributes);
 		}
 	}
@@ -118,7 +118,7 @@ public class Type extends SyntacticElementImpl {
 	 *
 	 */
 	public static class Short extends Primitive {
-		public Short(Attribute... attributes) {
+		public Short(SyntacticAttribute... attributes) {
 			super(attributes);
 		}
 	}
@@ -129,7 +129,7 @@ public class Type extends SyntacticElementImpl {
 	 *
 	 */
 	public static class Int extends Primitive {
-		public Int(Attribute... attributes) {
+		public Int(SyntacticAttribute... attributes) {
 			super(attributes);
 		}
 	}
@@ -140,7 +140,7 @@ public class Type extends SyntacticElementImpl {
 	 *
 	 */
 	public static class Long extends Primitive {
-		public Long(Attribute... attributes) {
+		public Long(SyntacticAttribute... attributes) {
 			super(attributes);
 		}
 	}
@@ -151,7 +151,7 @@ public class Type extends SyntacticElementImpl {
 	 *
 	 */
 	public static class Float extends Primitive {
-		public Float(Attribute... attributes) {
+		public Float(SyntacticAttribute... attributes) {
 			super(attributes);
 		}
 	}
@@ -162,7 +162,7 @@ public class Type extends SyntacticElementImpl {
 	 *
 	 */
 	public static class Double extends Primitive {
-		public Double(Attribute... attributes) {
+		public Double(SyntacticAttribute... attributes) {
 			super(attributes);
 		}
 	}
@@ -173,7 +173,7 @@ public class Type extends SyntacticElementImpl {
      * types, array types, variable and wildcard types.
      */
 	public static class Reference extends Type {
-		public Reference(Attribute... attributes) {
+		public Reference(SyntacticAttribute... attributes) {
 			super(attributes);
 		}
 	}
@@ -187,7 +187,7 @@ public class Type extends SyntacticElementImpl {
      */
 	public static class Array extends Reference {
 		private Type element;
-		public Array(Type element, Attribute... attributes) {
+		public Array(Type element, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.element = element;
 		}
@@ -204,12 +204,12 @@ public class Type extends SyntacticElementImpl {
 		private List<Pair<String, List<Type.Reference>>> components;
 
 		public Clazz(List<Pair<String, List<Type.Reference>>> components,
-				Attribute... attributes) {
+				SyntacticAttribute... attributes) {
 			super(attributes);
 			this.components = components;
 		}
 
-		public Clazz(String str, Attribute... attributes) {
+		public Clazz(String str, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.components = new ArrayList<Pair<String, List<Type.Reference>>>();
 			this.components.add(new Pair(str, new ArrayList()));
@@ -251,7 +251,7 @@ public class Type extends SyntacticElementImpl {
 		private Reference lowerBound;
 		private Reference upperBound;
 
-		public Wildcard(Reference lowerBound, Reference upperBound, Attribute... attributes) {
+		public Wildcard(Reference lowerBound, Reference upperBound, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.lowerBound = lowerBound;
 			this.upperBound = upperBound;
@@ -290,7 +290,7 @@ public class Type extends SyntacticElementImpl {
 		private Reference lowerBound;
 
 		public Variable(String variable, Reference lowerBound,
-				Attribute... attributes) {
+				SyntacticAttribute... attributes) {
 			super(attributes);
 			this.variable = variable;
 			this.lowerBound = lowerBound;
@@ -327,7 +327,7 @@ public class Type extends SyntacticElementImpl {
 		private List<Type.Reference> bounds;
 		
 		public Intersection(List<Type.Reference> bounds,
-				Attribute... attributes) {
+				SyntacticAttribute... attributes) {
 			super(attributes);
 			this.bounds = bounds;
 		}

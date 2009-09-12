@@ -26,7 +26,7 @@ import java.util.List;
 import jkit.java.tree.Expr.UnOp;
 import jkit.java.tree.Type.Clazz;
 import jkit.jil.*;
-import jkit.jil.tree.Attribute;
+import jkit.jil.tree.SyntacticAttribute;
 import jkit.jil.tree.Modifier;
 import jkit.jil.tree.SyntacticElement;
 import jkit.jil.tree.SyntacticElementImpl;
@@ -65,7 +65,7 @@ public interface Stmt extends SyntacticElement {
 	public static class Block extends SyntacticElementImpl implements Stmt {
 		private List<Stmt> statements;
 
-		public Block(List<Stmt> statements, Attribute... attributes) {
+		public Block(List<Stmt> statements, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.statements = statements;
 		}
@@ -91,7 +91,7 @@ public interface Stmt extends SyntacticElement {
 		private Expr expr;
 
 		public SynchronisedBlock(Expr expr, List<Stmt> statements,
-				Attribute... attributes) {
+				SyntacticAttribute... attributes) {
 			super(statements, attributes);
 			this.expr = expr;
 		}
@@ -116,7 +116,7 @@ public interface Stmt extends SyntacticElement {
 		private String variable;
 
 		public CatchBlock(Type.Clazz type, String variable,
-				List<Stmt> statements, Attribute... attributes) {
+				List<Stmt> statements, SyntacticAttribute... attributes) {
 			super(statements, attributes);
 			this.type = type;
 			this.variable = variable;
@@ -150,7 +150,7 @@ public interface Stmt extends SyntacticElement {
 		private Block finallyBlk;
 
 		public TryCatchBlock(List<CatchBlock> handlers, Block finallyBlk,
-				List<Stmt> statements, Attribute... attributes) {
+				List<Stmt> statements, SyntacticAttribute... attributes) {
 			super(statements, attributes);
 			this.handlers = handlers;
 			this.finallyBlk = finallyBlk;
@@ -169,7 +169,7 @@ public interface Stmt extends SyntacticElement {
 		private String label;
 		private Stmt statement;
 
-		public Label(String label, Stmt statement, Attribute... attributes) {
+		public Label(String label, Stmt statement, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.label = label;
 			this.statement = statement;
@@ -192,7 +192,7 @@ public interface Stmt extends SyntacticElement {
 		private Expr lhs, rhs;
 
 		public Assignment(Expr lhs, Expr rhs,
-				Attribute... attributes) {
+				SyntacticAttribute... attributes) {
 			super(attributes);
 			this.lhs = lhs;
 			this.rhs = rhs;
@@ -219,7 +219,7 @@ public interface Stmt extends SyntacticElement {
 		private int op;		
 
 		public AssignmentOp(int op, Expr lhs, Expr rhs,
-				Attribute... attributes) {
+				SyntacticAttribute... attributes) {
 			super(lhs,rhs,attributes);
 			this.op = op;			
 		}
@@ -236,7 +236,7 @@ public interface Stmt extends SyntacticElement {
 	public static class Return extends SyntacticElementImpl implements Simple {
 		private Expr expr;
 
-		public Return(Expr expr, Attribute... attributes) {
+		public Return(Expr expr, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.expr = expr;
 		}
@@ -253,7 +253,7 @@ public interface Stmt extends SyntacticElement {
 	public static class Throw extends SyntacticElementImpl implements Simple {
 		private Expr expr;
 
-		public Throw(Expr expr, Attribute... attributes) {
+		public Throw(Expr expr, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.expr = expr;
 		}
@@ -270,7 +270,7 @@ public interface Stmt extends SyntacticElement {
 	public static class Assert extends SyntacticElementImpl implements Simple {
 		private Expr expr;
 
-		public Assert(Expr expr, Attribute... attributes) {
+		public Assert(Expr expr, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.expr = expr;
 		}
@@ -287,7 +287,7 @@ public interface Stmt extends SyntacticElement {
 	public static class Break extends SyntacticElementImpl implements Simple {
 		private String label;
 
-		public Break(String label, Attribute... attributes) {
+		public Break(String label, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.label = label;
 		}
@@ -304,7 +304,7 @@ public interface Stmt extends SyntacticElement {
 	public static class Continue extends SyntacticElementImpl implements Simple {
 		private String label;
 
-		public Continue(String label, Attribute... attributes) {
+		public Continue(String label, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.label = label;
 		}
@@ -324,7 +324,7 @@ public interface Stmt extends SyntacticElement {
 		private Stmt falseStatement;
 
 		public If(Expr condition, Stmt trueStatement,
-				Stmt falseStatement, Attribute... attributes) {
+				Stmt falseStatement, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.condition = condition;
 			this.trueStatement = trueStatement;
@@ -360,7 +360,7 @@ public interface Stmt extends SyntacticElement {
 		private Expr condition;
 		private Stmt body;
 
-		public While(Expr condition, Stmt body, Attribute... attributes) {
+		public While(Expr condition, Stmt body, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.condition = condition;
 			this.body = body;
@@ -387,7 +387,7 @@ public interface Stmt extends SyntacticElement {
 		private Expr condition;
 		private Stmt body;
 
-		public DoWhile(Expr condition, Stmt body, Attribute... attributes) {
+		public DoWhile(Expr condition, Stmt body, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.condition = condition;
 			this.body = body;
@@ -417,7 +417,7 @@ public interface Stmt extends SyntacticElement {
 		private Stmt body;
 
 		public For(Stmt initialiser, Expr condition, Stmt increment,
-				Stmt body, Attribute... attributes) {
+				Stmt body, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.initialiser = initialiser;
 			this.condition = condition;
@@ -466,7 +466,7 @@ public interface Stmt extends SyntacticElement {
 		private Stmt body;
 
 		public ForEach(List<Modifier> modifiers, String var, Type type,
-				Expr source, Stmt body, Attribute... attributes) {
+				Expr source, Stmt body, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.modifiers = modifiers;
 			this.var = var;
@@ -563,7 +563,7 @@ public interface Stmt extends SyntacticElement {
 
 		public VarDef(List<Modifier> modifiers, Type type,
 				List<Triple<String, Integer, Expr>> definitions,
-				Attribute... attributes) {
+				SyntacticAttribute... attributes) {
 			super(attributes);
 			this.modifiers = modifiers;
 			this.definitions = definitions;
@@ -610,7 +610,7 @@ public interface Stmt extends SyntacticElement {
 		private List<Stmt> statements;
 
 		public Case(Expr condition, List<Stmt> statements,
-				Attribute... attributes) {
+				SyntacticAttribute... attributes) {
 			super(attributes);
 			this.condition = condition;
 			this.statements = statements;
@@ -630,7 +630,7 @@ public interface Stmt extends SyntacticElement {
 	}
 
 	public static class DefaultCase extends Case {
-		public DefaultCase(List<Stmt> statements, Attribute... attributes) {
+		public DefaultCase(List<Stmt> statements, SyntacticAttribute... attributes) {
 			super(null, statements, attributes);
 		}
 	}
@@ -640,7 +640,7 @@ public interface Stmt extends SyntacticElement {
 		private List<Case> cases;
 
 		public Switch(Expr condition, List<Case> cases,
-				Attribute... attributes) {
+				SyntacticAttribute... attributes) {
 			super(attributes);
 			this.condition = condition;
 			this.cases = cases;
@@ -668,10 +668,10 @@ public interface Stmt extends SyntacticElement {
 	 * 
 	 */
 	public static class PrePostIncDec extends UnOp implements Expr,Simple {
-		public PrePostIncDec(int op, Expr expr, Attribute... attributes) {
+		public PrePostIncDec(int op, Expr expr, SyntacticAttribute... attributes) {
 			super(op,expr,attributes);
 		}
-		public PrePostIncDec(int op, Expr expr, List<Attribute> attributes) {
+		public PrePostIncDec(int op, Expr expr, List<SyntacticAttribute> attributes) {
 			super(op,expr,attributes);
 		}
 	}

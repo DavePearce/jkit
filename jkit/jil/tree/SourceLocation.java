@@ -21,7 +21,7 @@
 
 package jkit.jil.tree;
 
-import jkit.jil.tree.Attribute;
+import jkit.jil.tree.SyntacticAttribute;
 
 /**
  * A Source Location identifies a position within an originating source file.
@@ -30,7 +30,7 @@ import jkit.jil.tree.Attribute;
  * @author djp
  * 
  */
-public final class SourceLocation implements Attribute {
+public final class SourceLocation implements SyntacticAttribute {
 	private int line;
 	private int column;	
 

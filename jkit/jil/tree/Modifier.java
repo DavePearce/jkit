@@ -55,113 +55,113 @@ public interface Modifier extends SyntacticElement {
 	public static final Modifier ACC_BRIDGE = new Bridge();
 
 	public final static class Public extends SyntacticElementImpl implements Modifier {
-		public Public(Attribute... attributes) {
+		public Public(SyntacticAttribute... attributes) {
 			super(attributes);
 		}
 	}
 
 	public final static class Protected extends SyntacticElementImpl implements
 			Modifier {
-		public Protected(Attribute... attributes) {
+		public Protected(SyntacticAttribute... attributes) {
 			super(attributes);
 		}
 	}
 
 	public final static class Private extends SyntacticElementImpl implements
 			Modifier {
-		public Private(Attribute... attributes) {
+		public Private(SyntacticAttribute... attributes) {
 			super(attributes);
 		}
 	}
 
 	public final static class StrictFP extends SyntacticElementImpl implements
 			Modifier {
-		public StrictFP(Attribute... attributes) {
+		public StrictFP(SyntacticAttribute... attributes) {
 			super(attributes);
 		}
 	}
 
 	public final static class Static extends SyntacticElementImpl implements Modifier {
-		public Static(Attribute... attributes) {
+		public Static(SyntacticAttribute... attributes) {
 			super(attributes);
 		}
 	}
 
 	public final static class Abstract extends SyntacticElementImpl implements
 			Modifier {
-		public Abstract(Attribute... attributes) {
+		public Abstract(SyntacticAttribute... attributes) {
 			super(attributes);
 		}
 	}
 
 	public final static class Final extends SyntacticElementImpl implements Modifier {
-		public Final(Attribute... attributes) {
+		public Final(SyntacticAttribute... attributes) {
 			super(attributes);
 		}
 	}
 
 	public final static class Native extends SyntacticElementImpl implements Modifier {
-		public Native(Attribute... attributes) {
+		public Native(SyntacticAttribute... attributes) {
 			super(attributes);
 		}
 	}
 
 	public final static class Synchronized extends SyntacticElementImpl implements
 			Modifier {
-		public Synchronized(Attribute... attributes) {
+		public Synchronized(SyntacticAttribute... attributes) {
 			super(attributes);
 		}
 	}
 
 	public final static class Transient extends SyntacticElementImpl implements
 			Modifier {
-		public Transient(Attribute... attributes) {
+		public Transient(SyntacticAttribute... attributes) {
 			super(attributes);
 		}
 	}
 
 	public final static class Volatile extends SyntacticElementImpl implements
 			Modifier {
-		public Volatile(Attribute... attributes) {
+		public Volatile(SyntacticAttribute... attributes) {
 			super(attributes);
 		}
 	}
 
 	public final static class Interface extends SyntacticElementImpl implements
 			Modifier {
-		public Interface(Attribute... attributes) {
+		public Interface(SyntacticAttribute... attributes) {
 			super(attributes);
 		}
 	}
 
 	public final static class Synthetic extends SyntacticElementImpl implements
 			Modifier {
-		public Synthetic(Attribute... attributes) {
+		public Synthetic(SyntacticAttribute... attributes) {
 			super(attributes);
 		}
 	}
 	
 	public final static class AnnotationT extends SyntacticElementImpl implements
 			Modifier {
-		public AnnotationT(Attribute... attributes) {
+		public AnnotationT(SyntacticAttribute... attributes) {
 			super(attributes);
 		}
 	}
 	
 	public final static class Enum extends SyntacticElementImpl implements Modifier {
-		public Enum(Attribute... attributes) {
+		public Enum(SyntacticAttribute... attributes) {
 			super(attributes);
 		}
 	}
 	
 	public final static class Super extends SyntacticElementImpl implements Modifier {
-		public Super(Attribute... attributes) {
+		public Super(SyntacticAttribute... attributes) {
 			super(attributes);
 		}
 	}
 	
 	public final static class Bridge extends SyntacticElementImpl implements Modifier {
-		public Bridge(Attribute... attributes) {
+		public Bridge(SyntacticAttribute... attributes) {
 			super(attributes);
 		}
 	}
@@ -173,7 +173,7 @@ public interface Modifier extends SyntacticElement {
 	 */
 	public final static class VarArgs extends SyntacticElementImpl implements
 			Modifier {
-		public VarArgs(Attribute... attributes) {
+		public VarArgs(SyntacticAttribute... attributes) {
 			super(attributes);
 		}
 	}
@@ -192,7 +192,7 @@ public interface Modifier extends SyntacticElement {
 		private List<Expr> arguments;
 
 		public Annotation(String name, List<Expr> arguments,
-				Attribute... attributes) {
+				SyntacticAttribute... attributes) {
 			super(attributes);
 			this.name = name;
 			this.arguments = arguments;

@@ -28,6 +28,6 @@ package jkit.jil.tree;
  * @author djp
  * 
  */
-public interface Attribute {
+public interface SyntacticAttribute {
 	
 }

@@ -26,7 +26,7 @@ import java.util.List;
 
 import jkit.java.tree.Type.Clazz;
 import jkit.java.tree.Type.Variable;
-import jkit.jil.tree.Attribute;
+import jkit.jil.tree.SyntacticAttribute;
 import jkit.jil.tree.Modifier;
 import jkit.jil.tree.SyntacticElement;
 import jkit.jil.tree.SyntacticElementImpl;
@@ -45,7 +45,7 @@ public interface Decl extends SyntacticElement {
 		public JavaClass(List<Modifier> modifiers, String name,
 				List<Type.Variable> typeParameters, Type.Clazz superclass,
 				List<Type.Clazz> interfaces, List<Decl> declarations,
-				Attribute... attributes) {
+				SyntacticAttribute... attributes) {
 			super(attributes);
 			this.modifiers = modifiers;
 			this.name = name;
@@ -205,7 +205,7 @@ public interface Decl extends SyntacticElement {
 		public JavaInterface(List<Modifier> modifiers, String name,
 				List<Type.Variable> typeParameters, Type.Clazz superclass,
 				List<Type.Clazz> interfaces, List<Decl> declarations,
-				Attribute... attributes) {
+				SyntacticAttribute... attributes) {
 			super(modifiers, name, typeParameters, superclass, interfaces,
 					declarations, attributes);
 		}
@@ -216,7 +216,7 @@ public interface Decl extends SyntacticElement {
 
 		public JavaEnum(List<Modifier> modifiers, String name,
 				List<Type.Clazz> interfaces, List<EnumConstant> constants,
-				List<Decl> declarations, Attribute... attributes) {
+				List<Decl> declarations, SyntacticAttribute... attributes) {
 			super(modifiers, name, new ArrayList<Type.Variable>(), null,
 					interfaces, declarations, attributes);
 			this.constants = constants;
@@ -233,7 +233,7 @@ public interface Decl extends SyntacticElement {
 		private List<Decl> declarations;
 
 		public EnumConstant(String name, List<Expr> arguments,
-				List<Decl> declarations, Attribute... attributes) {
+				List<Decl> declarations, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.name = name;
 			this.arguments = arguments;
@@ -260,7 +260,7 @@ public interface Decl extends SyntacticElement {
 
 		public AnnotationInterface(List<Modifier> modifiers, String name,
 				List<Triple<Type, String, Value>> methods,
-				Attribute... attributes) {
+				SyntacticAttribute... attributes) {
 			super(attributes);
 			this.modifiers = modifiers;
 			this.name = name;
@@ -283,14 +283,14 @@ public interface Decl extends SyntacticElement {
 		private List<Modifier> modifiers;
 		private Type type;
 		
-		public JavaParameter(String name, List<Modifier> modifiers, Type type, Attribute... attributes) {
+		public JavaParameter(String name, List<Modifier> modifiers, Type type, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.name = name;
 			this.modifiers = modifiers;
 			this.type = type;
 		}
 		
-		public JavaParameter(String name, List<Modifier> modifiers, Type type, List<Attribute> attributes) {
+		public JavaParameter(String name, List<Modifier> modifiers, Type type, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.name = name;
 			this.modifiers = modifiers;
@@ -331,7 +331,7 @@ public interface Decl extends SyntacticElement {
 				List<JavaParameter> parameters,
 				boolean varargs, List<Type.Variable> typeParameters,
 				List<Type.Clazz> exceptions, Stmt.Block block,
-				Attribute... attributes) {
+				SyntacticAttribute... attributes) {
 			super(attributes);
 			this.modifiers = modifiers;
 			this.returnType = returnType;
@@ -511,7 +511,7 @@ public interface Decl extends SyntacticElement {
 				List<JavaParameter> parameters, boolean varargs,
 				List<Type.Variable> typeParameters,
 				List<Type.Clazz> exceptions,
-				Stmt.Block block, Attribute... attributes) {			
+				Stmt.Block block, SyntacticAttribute... attributes) {			
 			super(modifiers, name, null, parameters, varargs, typeParameters,
 					exceptions, block,attributes);
 		}
@@ -524,7 +524,7 @@ public interface Decl extends SyntacticElement {
 		private Expr initialiser;
 
 		public JavaField(List<Modifier> modifiers, String name, Type type,
-				Expr initialiser, Attribute... attributes) {
+				Expr initialiser, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.modifiers = modifiers;
 			this.name = name;
@@ -691,12 +691,12 @@ public interface Decl extends SyntacticElement {
 	}
 
 	public static class InitialiserBlock extends Stmt.Block implements Decl {
-		public InitialiserBlock(List<Stmt> statements, Attribute... attributes) {
+		public InitialiserBlock(List<Stmt> statements, SyntacticAttribute... attributes) {
 			super(statements,attributes);
 		}
 	}
 	public static class StaticInitialiserBlock extends Stmt.Block implements Decl {
-		public StaticInitialiserBlock(List<Stmt> statements, Attribute... attributes) {
+		public StaticInitialiserBlock(List<Stmt> statements, SyntacticAttribute... attributes) {
 			super(statements,attributes);
 		}
 	}

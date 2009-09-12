@@ -30,21 +30,21 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 	public Type type();
 	
 	public static class AbstractExpr {
-		private final ArrayList<Attribute> attributes;
+		private final ArrayList<SyntacticAttribute> attributes;
 		
-		public AbstractExpr(Attribute... attributes) {
+		public AbstractExpr(SyntacticAttribute... attributes) {
 			this.attributes = new ArrayList();
-			for(Attribute a : attributes) {
+			for(SyntacticAttribute a : attributes) {
 				this.attributes.add(a);
 			}
 		}
 		
-		public AbstractExpr(List<Attribute> attributes) {
+		public AbstractExpr(List<SyntacticAttribute> attributes) {
 			this.attributes = new ArrayList(attributes);			
 		}
 				
-		public <T extends Attribute> T attribute(java.lang.Class<T> ac) {
-			for(Attribute a : attributes) {
+		public <T extends SyntacticAttribute> T attribute(java.lang.Class<T> ac) {
+			for(SyntacticAttribute a : attributes) {
 				if(a.getClass().equals(ac)) {
 					return (T) a;
 				}
@@ -52,9 +52,9 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 			return null;
 		}
 		
-		public List<Attribute> attributes() {
+		public List<SyntacticAttribute> attributes() {
 			// this is to prevent any kind of aliasing issues.
-			return new CopyOnWriteArrayList<Attribute>(attributes);
+			return new CopyOnWriteArrayList<SyntacticAttribute>(attributes);
 		}
 	}
 	
@@ -71,7 +71,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		private final String value;
 		private final Type type;
 
-		public Variable(String value, Type type, Attribute... attributes) {
+		public Variable(String value, Type type, SyntacticAttribute... attributes) {
 			super(attributes);
 			if(value == null) {
 				throw new IllegalArgumentException("supplied variable cannot be null");
@@ -83,7 +83,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 			this.type = type;
 		}
 		
-		public Variable(String value, Type type, List<Attribute> attributes) {
+		public Variable(String value, Type type, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			if(value == null) {
 				throw new IllegalArgumentException("supplied variable cannot be null");
@@ -118,7 +118,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 			implements JilExpr {		
 		private final Type.Clazz type;
 
-		public ClassVariable(Type.Clazz type, Attribute... attributes) {
+		public ClassVariable(Type.Clazz type, SyntacticAttribute... attributes) {
 			super(attributes);			
 			if(type == null) {
 				throw new IllegalArgumentException("supplied type cannot be null");
@@ -126,7 +126,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 			this.type = type;
 		}
 
-		public ClassVariable(Type.Clazz type, List<Attribute> attributes) {
+		public ClassVariable(Type.Clazz type, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			if(type == null) {
 				throw new IllegalArgumentException("supplied type cannot be null");
@@ -154,7 +154,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		private final JilExpr expr;
 		private final Type type;
 
-		public Cast(JilExpr expr, Type type, Attribute... attributes) {
+		public Cast(JilExpr expr, Type type, SyntacticAttribute... attributes) {
 			super(attributes);
 			if(expr == null) {
 				throw new IllegalArgumentException("supplied expression cannot be null");
@@ -166,7 +166,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 			this.type = type;
 		}
 
-		public Cast(JilExpr expr, Type type, List<Attribute> attributes) {
+		public Cast(JilExpr expr, Type type, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			if(expr == null) {
 				throw new IllegalArgumentException("supplied expression cannot be null");
@@ -201,7 +201,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		private final JilExpr expr;
 		private final Type.Primitive type;
 
-		public Convert(Type.Primitive type, JilExpr expr, Attribute... attributes) {
+		public Convert(Type.Primitive type, JilExpr expr, SyntacticAttribute... attributes) {
 			super(attributes);
 			if(expr == null) {
 				throw new IllegalArgumentException("supplied expression cannot be null");
@@ -213,7 +213,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 			this.type = type;
 		}
 
-		public Convert(Type.Primitive type, JilExpr expr, List<Attribute> attributes) {
+		public Convert(Type.Primitive type, JilExpr expr, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			if(expr == null) {
 				throw new IllegalArgumentException("supplied expression cannot be null");
@@ -249,7 +249,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		private final Type.Reference rhs;
 		private final Type type;
 
-		public InstanceOf(JilExpr lhs, Type.Reference rhs, Type type, Attribute... attributes) {
+		public InstanceOf(JilExpr lhs, Type.Reference rhs, Type type, SyntacticAttribute... attributes) {
 			super(attributes);
 			if(lhs == null) {
 				throw new IllegalArgumentException("supplied expression cannot be null");
@@ -262,7 +262,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 			this.type = type;
 		}
 
-		public InstanceOf(JilExpr lhs, Type.Reference rhs, Type type, List<Attribute> attributes) {
+		public InstanceOf(JilExpr lhs, Type.Reference rhs, Type type, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			if(lhs == null) {
 				throw new IllegalArgumentException("supplied expression cannot be null");
@@ -307,7 +307,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		private final int op;
 		private final Type.Primitive type;
 		
-		public UnOp(JilExpr expr, int op, Type.Primitive type, Attribute... attributes) {
+		public UnOp(JilExpr expr, int op, Type.Primitive type, SyntacticAttribute... attributes) {
 			super(attributes);
 			if(expr == null) {
 				throw new IllegalArgumentException("supplied expression cannot be null");
@@ -320,7 +320,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 			this.type = type;
 		}
 
-		public UnOp(JilExpr expr, int op, Type.Primitive type, List<Attribute> attributes) {
+		public UnOp(JilExpr expr, int op, Type.Primitive type, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			if(expr == null) {
 				throw new IllegalArgumentException("supplied expression cannot be null");
@@ -386,7 +386,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		private final int op;
 		private final Type.Primitive type;
 
-		public BinOp(JilExpr lhs, JilExpr rhs, int op, Type.Primitive type, Attribute... attributes) {
+		public BinOp(JilExpr lhs, JilExpr rhs, int op, Type.Primitive type, SyntacticAttribute... attributes) {
 			super(attributes);
 			if(lhs == null || rhs == null) {
 				throw new IllegalArgumentException("supplied expression(s) cannot be null");
@@ -400,7 +400,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 			this.type = type;
 		}
 
-		public BinOp(JilExpr lhs, JilExpr rhs, int op, Type.Primitive type, List<Attribute> attributes) {
+		public BinOp(JilExpr lhs, JilExpr rhs, int op, Type.Primitive type, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			if(lhs == null || rhs == null) {
 				throw new IllegalArgumentException("supplied expression(s) cannot be null");
@@ -472,7 +472,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		 *            case of generics.
 		 */
 		public Invoke(JilExpr target, String name, List<JilExpr> parameters,
-				Type.Function funType, Type type, Attribute... attributes) {
+				Type.Function funType, Type type, SyntacticAttribute... attributes) {
 			super(attributes);
 			if(target == null) {
 				throw new IllegalArgumentException("supplied expression(s) cannot be null");
@@ -507,7 +507,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		 *            case of generics.
 		 */
 		public Invoke(JilExpr target, String name, List<JilExpr> parameters,
-				Type.Function funType, Type type, List<Attribute> attributes) {
+				Type.Function funType, Type type, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			if(target == null) {
 				throw new IllegalArgumentException("supplied expression(s) cannot be null");
@@ -528,7 +528,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		public Invoke(JilExpr target, String name, List<JilExpr> parameters,
 				Type.Function funType, Type type,
 				List<Pair<Type.Clazz, String>> exceptions,
-				List<Attribute> attributes) {
+				List<SyntacticAttribute> attributes) {
 			super(exceptions, attributes);
 			if(target == null) {
 				throw new IllegalArgumentException("supplied expression(s) cannot be null");
@@ -618,7 +618,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		 *            case of generics.
 		 */
 		public SpecialInvoke(JilExpr target, String name, List<JilExpr> parameters,
-				Type.Function funType, Type type, Attribute... attributes) {
+				Type.Function funType, Type type, SyntacticAttribute... attributes) {
 			super(target,name,parameters,funType,type,attributes);
 		}
 		
@@ -639,14 +639,14 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		 *            case of generics.
 		 */
 		public SpecialInvoke(JilExpr target, String name, List<JilExpr> parameters,
-				Type.Function funType, Type type, List<Attribute> attributes) {
+				Type.Function funType, Type type, List<SyntacticAttribute> attributes) {
 			super(target,name,parameters,funType,type,attributes);			
 		}
 		
 		public SpecialInvoke(JilExpr target, String name,
 				List<JilExpr> parameters, Type.Function funType, Type type,
 				List<Pair<Type.Clazz, String>> exceptions,
-				List<Attribute> attributes) {
+				List<SyntacticAttribute> attributes) {
 			super(target,name,parameters,funType,type,exceptions,attributes);			
 		}
 		
@@ -701,7 +701,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		 *            here.
 		 */
 		public New(Type.Reference type, List<JilExpr> parameters,
-				Type.Function funType, Attribute... attributes) {
+				Type.Function funType, SyntacticAttribute... attributes) {
 			super(attributes);			
 			if(parameters == null || parameters.contains(null)) {
 				throw new IllegalArgumentException("supplied parameter(s) cannot be null");
@@ -725,7 +725,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		 *            Should be an empty (i.e. non-null) list .
 		 */
 		public New(Type.Reference type, List<JilExpr> parameters,
-				Type.Function funType, List<Attribute> attributes) {
+				Type.Function funType, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			if(parameters == null || parameters.contains(null)) {
 				throw new IllegalArgumentException("supplied parameter(s) cannot be null");
@@ -741,7 +741,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		public New(Type.Reference type, List<JilExpr> parameters,
 				Type.Function funType,
 				List<Pair<Type.Clazz, String>> exceptions,
-				List<Attribute> attributes) {
+				List<SyntacticAttribute> attributes) {
 			super(exceptions,attributes);
 			if(parameters == null || parameters.contains(null)) {
 				throw new IllegalArgumentException("supplied parameter(s) cannot be null");
@@ -797,7 +797,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		private final boolean isStatic;
 		
 		public Deref(JilExpr lhs, String rhs, boolean isStatic, Type type,
-				Attribute... attributes) {
+				SyntacticAttribute... attributes) {
 			super(attributes);
 			if(lhs == null) {
 				throw new IllegalArgumentException("supplied expression cannot be null");
@@ -815,7 +815,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		}
 
 		public Deref(JilExpr lhs, String rhs, boolean isStatic, Type type, 
-				List<Attribute> attributes) {
+				List<SyntacticAttribute> attributes) {
 			super(attributes);
 			if(lhs == null) {
 				throw new IllegalArgumentException("supplied expression cannot be null");
@@ -864,7 +864,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		private final JilExpr idx;
 		private final Type type;
 
-		public ArrayIndex(JilExpr array, JilExpr idx, Type type, Attribute... attributes) {
+		public ArrayIndex(JilExpr array, JilExpr idx, Type type, SyntacticAttribute... attributes) {
 			super(attributes);
 			if(array == null || idx == null) {
 				throw new IllegalArgumentException("supplied expression(s) cannot be null");
@@ -877,7 +877,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 			this.type = type;
 		}
 
-		public ArrayIndex(JilExpr array, JilExpr idx, Type type, List<Attribute> attributes) {
+		public ArrayIndex(JilExpr array, JilExpr idx, Type type, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			if(array == null || idx == null) {
 				throw new IllegalArgumentException("supplied expression(s) cannot be null");
@@ -919,7 +919,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		protected final int value;
 		private final Type.Primitive type;
 		
-		public Number(int value, Type.Primitive type, Attribute... attributes) {
+		public Number(int value, Type.Primitive type, SyntacticAttribute... attributes) {
 			super(attributes);					
 			if(type == null) {
 				throw new IllegalArgumentException("supplied type cannot be null");
@@ -928,7 +928,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 			this.type = type;
 		}
 		
-		public Number(int value, Type.Primitive type, List<Attribute> attributes) {
+		public Number(int value, Type.Primitive type, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			if(type == null) {
 				throw new IllegalArgumentException("supplied type cannot be null");
@@ -953,11 +953,11 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 	 *
 	 */
 	public static final class Bool extends Number {
-		public Bool(boolean value, Attribute... attributes) {
+		public Bool(boolean value, SyntacticAttribute... attributes) {
 			super(value?1:0, new Type.Bool(), attributes);
 		}
 		
-		public Bool(boolean value, List<Attribute> attributes) {
+		public Bool(boolean value, List<SyntacticAttribute> attributes) {
 			super(value?1:0, new Type.Bool(), attributes);
 		}
 		
@@ -978,11 +978,11 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 	 *
 	 */
 	public static final class Char extends Number {
-		public Char(char value, Attribute... attributes) {
+		public Char(char value, SyntacticAttribute... attributes) {
 			super(value,new Type.Char(),attributes);
 		}
 		
-		public Char(char value, List<Attribute> attributes) {
+		public Char(char value, List<SyntacticAttribute> attributes) {
 			super(value,new Type.Char(),attributes);
 		}
 		
@@ -1002,11 +1002,11 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 	 *
 	 */
 	public static final class Byte extends Number {
-		public Byte(byte value, Attribute... attributes) {
+		public Byte(byte value, SyntacticAttribute... attributes) {
 			super(value,new Type.Byte(), attributes);
 		}
 		
-		public Byte(byte value, List<Attribute> attributes) {
+		public Byte(byte value, List<SyntacticAttribute> attributes) {
 			super(value,new Type.Byte(), attributes);
 		}
 		
@@ -1025,11 +1025,11 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 	 *
 	 */
 	public static final class Short extends Number {
-		public Short(short value, Attribute... attributes) {
+		public Short(short value, SyntacticAttribute... attributes) {
 			super(value, new Type.Short(), attributes);
 		}
 		
-		public Short(short value, List<Attribute> attributes) {
+		public Short(short value, List<SyntacticAttribute> attributes) {
 			super(value, new Type.Short(), attributes);
 		}
 		
@@ -1049,11 +1049,11 @@ public interface JilExpr extends SyntacticElement,Cloneable {
      * 
      */	
 	public static final class Int extends Number {
-		public Int(int value, Attribute... attributes) {
+		public Int(int value, SyntacticAttribute... attributes) {
 			super(value,new Type.Int(), attributes);
 		}
 		
-		public Int(int value, List<Attribute> attributes) {
+		public Int(int value, List<SyntacticAttribute> attributes) {
 			super(value,new Type.Int(), attributes);
 		}
 		
@@ -1074,12 +1074,12 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 	public static final class Long extends AbstractExpr implements JilExpr,Value {
 		private final long value;
 		
-		public Long(long value, Attribute... attributes) {
+		public Long(long value, SyntacticAttribute... attributes) {
 			super(attributes);			
 			this.value=value;
 		}
 		
-		public Long(long value, List<Attribute> attributes) {
+		public Long(long value, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.value=value;
 		}
@@ -1105,12 +1105,12 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 	public static final class Float extends AbstractExpr implements JilExpr,Value {
 		private final float value;
 		
-		public Float(float value, Attribute... attributes) {
+		public Float(float value, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.value=value;
 		}
 		
-		public Float(float value, List<Attribute> attributes) {
+		public Float(float value, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.value=value;
 		}
@@ -1136,12 +1136,12 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 	public static final class Double extends AbstractExpr implements JilExpr,Value {
 		private final double value;
 		
-		public Double(double value, Attribute... attributes) {
+		public Double(double value, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.value=value;
 		}
 		
-		public Double(double value, List<Attribute> attributes) {
+		public Double(double value, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.value=value;
 		}
@@ -1167,12 +1167,12 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 	public static final class StringVal extends AbstractExpr implements JilExpr,Value {
 		private final java.lang.String value;
 		
-		public StringVal(java.lang.String value, Attribute... attributes) {
+		public StringVal(java.lang.String value, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.value=value;
 		}
 		
-		public StringVal(java.lang.String value, List<Attribute> attributes) {
+		public StringVal(java.lang.String value, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.value = value;
 		}
@@ -1196,7 +1196,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
      * 
      */
 	public static final class Null extends AbstractExpr implements JilExpr,Value {
-		public Null(Attribute... attributes) {
+		public Null(SyntacticAttribute... attributes) {
 			super(attributes);
 		}
 		
@@ -1218,7 +1218,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		private final ArrayList<JilExpr> values;
 		private final Type.Array type;
 		
-		public Array(List<JilExpr> values, Type.Array type, Attribute... attributes) {
+		public Array(List<JilExpr> values, Type.Array type, SyntacticAttribute... attributes) {
 			super(attributes);
 			if(values == null || values.contains(null)) {
 				throw new IllegalArgumentException("supplied expression(s) cannot be null");
@@ -1230,7 +1230,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 			this.type = type;
 		}
 		
-		public Array(List<JilExpr> values, Type.Array type, List<Attribute> attributes) {
+		public Array(List<JilExpr> values, Type.Array type, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			if(values == null || values.contains(null)) {
 				throw new IllegalArgumentException("supplied expression(s) cannot be null");
@@ -1272,7 +1272,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 		private final Type classType;
 		private final Type.Clazz type;
 
-		public Class(Type classType, Type.Clazz type, Attribute... attributes) {
+		public Class(Type classType, Type.Clazz type, SyntacticAttribute... attributes) {
 			super(attributes);
 			if(classType == null || type == null) {
 				throw new IllegalArgumentException("supplied type(s) cannot be null");
@@ -1281,7 +1281,7 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 			this.classType = classType;
 		}
 
-		public Class(Type classType, Type.Clazz type, List<Attribute> attributes) {
+		public Class(Type classType, Type.Clazz type, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			if(classType == null || type == null) {
 				throw new IllegalArgumentException("supplied type(s) cannot be null");

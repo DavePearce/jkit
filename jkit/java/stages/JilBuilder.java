@@ -59,7 +59,7 @@ public class JilBuilder {
 	 * @author djp
 	 * 
 	 */
-	public static class MethodInfo implements Attribute {
+	public static class MethodInfo implements SyntacticAttribute {
 		public final ArrayList<Type.Clazz> exceptions;
 		public Type.Function type;
 
@@ -544,7 +544,7 @@ public class JilBuilder {
 					target = target + "$copy" + copy_label;
 				} 
 				nblock.add(new JilStmt.Goto(target, nexceptions,
-						new ArrayList<Attribute>(stmt.attributes())));
+						new ArrayList<SyntacticAttribute>(stmt.attributes())));
 			} else if(stmt instanceof JilStmt.IfGoto) {
 				JilStmt.IfGoto igto = (JilStmt.IfGoto) stmt;
 				String target = igto.label();
@@ -553,7 +553,7 @@ public class JilBuilder {
 				} 
 				nblock.add(new JilStmt.IfGoto(igto.condition(), target,
 						nexceptions,
-						new ArrayList<Attribute>(stmt.attributes())));
+						new ArrayList<SyntacticAttribute>(stmt.attributes())));
 			} else if(stmt instanceof JilStmt.Switch) {
 				JilStmt.Switch swt = (JilStmt.Switch) stmt;
 				ArrayList<Pair<JilExpr.Number,String>> ncases = new ArrayList();
@@ -570,7 +570,7 @@ public class JilBuilder {
 					deftarget = deftarget + "$copy" + copy_label;
 				} 	
 				nblock.add(new JilStmt.Switch(swt.condition(), ncases,
-						deftarget, new ArrayList<Attribute>(swt.attributes())));
+						deftarget, new ArrayList<SyntacticAttribute>(swt.attributes())));
 			} else if(stmt instanceof JilStmt.Label) {			
 				JilStmt.Label lab = (JilStmt.Label) stmt;
 				String target = lab.label();
@@ -578,7 +578,7 @@ public class JilBuilder {
 					target = target + "$copy" + copy_label;
 				} 
 				nblock.add(new JilStmt.Label(target,
-						new ArrayList<Attribute>(stmt.attributes())));
+						new ArrayList<SyntacticAttribute>(stmt.attributes())));
 			} else {
 				// there is a bug relating to switch statements.
 				JilStmt nstmt = stmt.clearAddExceptions(nexceptions);

@@ -45,24 +45,24 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 	
 	public static abstract class AbstractStmt implements
 			JilStmt,SyntacticElement{
-		private final ArrayList<Attribute> attributes;
+		private final ArrayList<SyntacticAttribute> attributes;
 		private final ArrayList<Pair<Type.Clazz, String>> exceptions;
 
-		public AbstractStmt(Attribute... attributes) {
+		public AbstractStmt(SyntacticAttribute... attributes) {
 			this.attributes = new ArrayList();
-			for(Attribute a : attributes) {
+			for(SyntacticAttribute a : attributes) {
 				this.attributes.add(a);
 			}
 			this.exceptions = new ArrayList();
 		}
 		
-		public AbstractStmt(List<Attribute> attributes) {
+		public AbstractStmt(List<SyntacticAttribute> attributes) {
 			this.attributes = new ArrayList(attributes);			
 			this.exceptions = new ArrayList();
 		}
 		
 		public AbstractStmt(List<Pair<Type.Clazz, String>> exceptions,
-				List<Attribute> attributes) {
+				List<SyntacticAttribute> attributes) {
 			this.attributes = new ArrayList(attributes);
 			this.exceptions = new ArrayList(exceptions);
 		}
@@ -92,8 +92,8 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 			return r;
 		}
 
-		public <T extends Attribute> T attribute(java.lang.Class<T> ac) {
-			for (Attribute a : attributes) {
+		public <T extends SyntacticAttribute> T attribute(java.lang.Class<T> ac) {
+			for (SyntacticAttribute a : attributes) {
 				if (a.getClass().equals(ac)) {
 					return (T) a;
 				}
@@ -101,9 +101,9 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 			return null;
 		}
 		
-		public List<Attribute> attributes() {
+		public List<SyntacticAttribute> attributes() {
 			// this is to prevent any kind of aliasing issues.
-			return new CopyOnWriteArrayList<Attribute>(attributes);
+			return new CopyOnWriteArrayList<SyntacticAttribute>(attributes);
 		}
 		
 		public abstract AbstractStmt clone();
@@ -119,14 +119,14 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 		private final JilExpr lhs, rhs;
 
 		public Assign(JilExpr lhs, JilExpr rhs,
-				Attribute... attributes) {
+				SyntacticAttribute... attributes) {
 			super(attributes);
 			this.lhs = lhs;
 			this.rhs = rhs;
 		}
 
 		public Assign(JilExpr lhs, JilExpr rhs,
-				List<Attribute> attributes) {
+				List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.lhs = lhs;
 			this.rhs = rhs;
@@ -134,7 +134,7 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 		
 		public Assign(JilExpr lhs, JilExpr rhs,
 				List<Pair<Type.Clazz, String>> exceptions,
-				List<Attribute> attributes) {
+				List<SyntacticAttribute> attributes) {
 			super(exceptions,attributes);
 			this.lhs = lhs;
 			this.rhs = rhs;
@@ -164,18 +164,18 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 	public static final class Return extends AbstractStmt {
 		private final JilExpr expr;
 
-		public Return(JilExpr expr, Attribute... attributes) {
+		public Return(JilExpr expr, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.expr = expr;
 		}
 		
-		public Return(JilExpr expr, List<Attribute> attributes) {
+		public Return(JilExpr expr, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.expr = expr;
 		}
 
 		public Return(JilExpr expr, List<Pair<Type.Clazz, String>> exceptions,
-				List<Attribute> attributes) {
+				List<SyntacticAttribute> attributes) {
 			super(exceptions,attributes);
 			this.expr = expr;
 		}
@@ -207,18 +207,18 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 	public static final class Throw extends AbstractStmt {
 		private final JilExpr expr;
 
-		public Throw(JilExpr expr, Attribute... attributes) {
+		public Throw(JilExpr expr, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.expr = expr;
 		}
 
-		public Throw(JilExpr expr, List<Attribute> attributes) {
+		public Throw(JilExpr expr, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.expr = expr;
 		}
 		
 		public Throw(JilExpr expr, List<Pair<Type.Clazz, String>> exceptions,
-				List<Attribute> attributes) {
+				List<SyntacticAttribute> attributes) {
 			super(exceptions,attributes);
 			this.expr = expr;
 		}
@@ -246,18 +246,18 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 	public static final class Goto extends AbstractStmt {
 		private final String label;
 
-		public Goto(String label, Attribute... attributes) {
+		public Goto(String label, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.label = label;
 		}
 
-		public Goto(String label, List<Attribute> attributes) {
+		public Goto(String label, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.label = label;
 		}
 		
 		public Goto(String label, List<Pair<Type.Clazz, String>> exceptions,
-				List<Attribute> attributes) {
+				List<SyntacticAttribute> attributes) {
 			super(exceptions,attributes);
 			this.label = label;
 		}
@@ -287,13 +287,13 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 		private final JilExpr condition;
 		private final String label;
 
-		public IfGoto(JilExpr condition, String label, Attribute... attributes) {
+		public IfGoto(JilExpr condition, String label, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.condition = condition;
 			this.label = label;
 		}
 
-		public IfGoto(JilExpr condition, String label, List<Attribute> attributes) {
+		public IfGoto(JilExpr condition, String label, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.condition = condition;
 			this.label = label;
@@ -301,7 +301,7 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 		
 		public IfGoto(JilExpr condition, String label,
 				List<Pair<Type.Clazz, String>> exceptions,
-				List<Attribute> attributes) {
+				List<SyntacticAttribute> attributes) {
 			super(exceptions,attributes);
 			this.condition = condition;
 			this.label = label;
@@ -329,18 +329,18 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 	public static final class Label extends AbstractStmt {
 		private String label;
 
-		public Label(String label, Attribute... attributes) {
+		public Label(String label, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.label = label;
 		}
 
-		public Label(String label, List<Attribute> attributes) {
+		public Label(String label, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.label = label;
 		}
 		
 		public Label(String label, List<Pair<Type.Clazz, String>> exceptions,
-				List<Attribute> attributes) {
+				List<SyntacticAttribute> attributes) {
 			super(exceptions,attributes);
 			this.label = label;
 		}
@@ -360,14 +360,14 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 	}
 	
 	public static final class Nop extends AbstractStmt {
-		public Nop(Attribute... attributes) {
+		public Nop(SyntacticAttribute... attributes) {
 			super(attributes);
 		}
-		public Nop(List<Attribute> attributes) {
+		public Nop(List<SyntacticAttribute> attributes) {
 			super(attributes);
 		}
 		public Nop(List<Pair<Type.Clazz, String>> exceptions,
-				List<Attribute> attributes) {
+				List<SyntacticAttribute> attributes) {
 			super(exceptions,attributes);
 		}
 		public Nop clone() {
@@ -381,18 +381,18 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 	public static final class Lock extends AbstractStmt {
 		private final JilExpr expr;
 
-		public Lock(JilExpr expr, Attribute... attributes) {
+		public Lock(JilExpr expr, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.expr = expr;
 		}
 
-		public Lock(JilExpr expr, List<Attribute> attributes) {
+		public Lock(JilExpr expr, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.expr = expr;
 		}
 		
 		public Lock(JilExpr expr, List<Pair<Type.Clazz, String>> exceptions,
-				List<Attribute> attributes) {
+				List<SyntacticAttribute> attributes) {
 			super(exceptions,attributes);
 			this.expr = expr;
 		}
@@ -413,18 +413,18 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 	public static final class Unlock extends AbstractStmt {
 		private final JilExpr expr;
 
-		public Unlock(JilExpr expr, Attribute... attributes) {
+		public Unlock(JilExpr expr, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.expr = expr;
 		}
 
-		public Unlock(JilExpr expr, List<Attribute> attributes) {
+		public Unlock(JilExpr expr, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.expr = expr;
 		}
 		
 		public Unlock(JilExpr expr, List<Pair<Type.Clazz, String>> exceptions,
-				List<Attribute> attributes) {
+				List<SyntacticAttribute> attributes) {
 			super(exceptions,attributes);
 			this.expr = expr;
 		}
@@ -449,7 +449,7 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 		private final String defaultLab;
 		
 		public Switch(JilExpr condition, List<Pair<JilExpr.Number, String>> cases,
-				String defaultLab, Attribute... attributes) {
+				String defaultLab, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.condition = condition;
 			this.cases = new ArrayList(cases);
@@ -457,7 +457,7 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 		}
 
 		public Switch(JilExpr condition, List<Pair<JilExpr.Number, String>> cases,
-				String defaultLab, List<Attribute> attributes) {
+				String defaultLab, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.condition = condition;
 			this.cases = new ArrayList(cases);
@@ -467,7 +467,7 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 		public Switch(JilExpr condition, List<Pair<JilExpr.Number, String>> cases,
 				String defaultLab,
 				List<Pair<Type.Clazz, String>> exceptions,
-				List<Attribute> attributes) {
+				List<SyntacticAttribute> attributes) {
 			super(exceptions,attributes);
 			this.condition = condition;
 			this.cases = new ArrayList(cases);

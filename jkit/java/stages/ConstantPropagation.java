@@ -24,7 +24,7 @@ import jkit.java.tree.Decl.JavaMethod;
 import jkit.java.tree.Stmt.Case;
 import jkit.jil.tree.Modifier;
 import jkit.jil.tree.Type;
-import jkit.jil.tree.Attribute;
+import jkit.jil.tree.SyntacticAttribute;
 import jkit.util.Pair;
 import jkit.util.Triple;
 
@@ -521,7 +521,7 @@ public class ConstantPropagation {
 	}
 	
 	protected Value buildConstant(Object constant, Expr src) {
-		List<Attribute> attributes = src.attributes();
+		List<SyntacticAttribute> attributes = src.attributes();
 		if(constant instanceof Boolean) {			
 			return new Value.Bool((Boolean) constant,attributes);
 		} else if(constant instanceof Character) {			

@@ -25,31 +25,31 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class SyntacticElementImpl  implements SyntacticElement {
-	protected ArrayList<Attribute> attributes;
+	protected ArrayList<SyntacticAttribute> attributes;
 	
 	public SyntacticElementImpl() {
-		attributes = new ArrayList<Attribute>();
+		attributes = new ArrayList<SyntacticAttribute>();
 	}
 	
-	public SyntacticElementImpl(Attribute x) {
-		attributes = new ArrayList<Attribute>();
+	public SyntacticElementImpl(SyntacticAttribute x) {
+		attributes = new ArrayList<SyntacticAttribute>();
 		attributes.add(x);
 	}
 	
-	public SyntacticElementImpl(List<Attribute> attributes) {
+	public SyntacticElementImpl(List<SyntacticAttribute> attributes) {
 		// the following is really necessary to get rid of annoying aliasing
 		// problems.
-		this.attributes = new ArrayList<Attribute>(attributes);			
+		this.attributes = new ArrayList<SyntacticAttribute>(attributes);			
 	}
 	
-	public SyntacticElementImpl(Attribute[] attributes) {
-		this.attributes = new ArrayList<Attribute>(Arrays.asList(attributes));			
+	public SyntacticElementImpl(SyntacticAttribute[] attributes) {
+		this.attributes = new ArrayList<SyntacticAttribute>(Arrays.asList(attributes));			
 	}
 	
-	public List<Attribute> attributes() { return attributes; }
+	public List<SyntacticAttribute> attributes() { return attributes; }
 	
-	public <T extends Attribute> T attribute(Class<T> c) {
-		for (Attribute a : attributes) {
+	public <T extends SyntacticAttribute> T attribute(Class<T> c) {
+		for (SyntacticAttribute a : attributes) {
 			if (c.isInstance(a)) {
 				return (T) a;
 			}

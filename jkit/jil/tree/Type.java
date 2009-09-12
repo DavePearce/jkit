@@ -35,7 +35,7 @@ import jkit.util.Pair;
  * <code>Type.Reference</code> represents general reference types, such as
  * <code>java.lang.String</code>.
  */
-public interface Type extends Attribute, Comparable<Type> {
+public interface Type extends SyntacticAttribute, Comparable<Type> {
 	
 	/**
 	 * <p>
@@ -729,7 +729,7 @@ public interface Type extends Attribute, Comparable<Type> {
 		private final Type.Reference lowerBound;
 
 		public Variable(String variable, Type.Reference lowerBound,
-				Attribute... attributes) {
+				SyntacticAttribute... attributes) {
 			super(attributes);
 			if(lowerBound == null) {
 				throw new IllegalArgumentException("Type.Variable lowerBound cannot be null");
@@ -812,7 +812,7 @@ public interface Type extends Attribute, Comparable<Type> {
 		private final ArrayList<Type.Reference> bounds;
 		
 		public Intersection(List<Type.Reference> bounds,
-				Attribute... attributes) {
+				SyntacticAttribute... attributes) {
 			super(attributes);
 			if (bounds == null) {
 				throw new IllegalArgumentException(

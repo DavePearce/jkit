@@ -37,7 +37,7 @@ public class JilField extends SyntacticElementImpl implements jkit.compiler.Claz
      * @param modifiers - Any modifiers of the field (e.g. public, static, etc)
      */
 	public JilField(String name, Type type, List<Modifier> modifiers,
-			Attribute... attributes) {
+			SyntacticAttribute... attributes) {
 		super(attributes);
 		this.name = name;
 		this.type = type;
@@ -52,7 +52,7 @@ public class JilField extends SyntacticElementImpl implements jkit.compiler.Claz
      * @param modifiers - Any modifiers of the field (e.g. public, static, etc)
      */
 	public JilField(String name, Type type, List<Modifier> modifiers,
-			List<Attribute> attributes) {
+			List<SyntacticAttribute> attributes) {
 		super(attributes);
 		this.name = name;
 		this.type = type;

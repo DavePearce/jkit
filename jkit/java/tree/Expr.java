@@ -23,7 +23,7 @@ package jkit.java.tree;
 
 import java.util.List;
 
-import jkit.jil.tree.Attribute;
+import jkit.jil.tree.SyntacticAttribute;
 import jkit.jil.tree.SyntacticElement;
 import jkit.jil.tree.SyntacticElementImpl;
 
@@ -43,12 +43,12 @@ public interface Expr extends SyntacticElement {
 	public static class UnresolvedVariable extends SyntacticElementImpl implements Expr {
 		private String value;
 
-		public UnresolvedVariable(String value, Attribute... attributes) {
+		public UnresolvedVariable(String value, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.value = value;
 		}
 		
-		public UnresolvedVariable(String value, List<Attribute> attributes) {
+		public UnresolvedVariable(String value, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.value = value;
 		}
@@ -70,12 +70,12 @@ public interface Expr extends SyntacticElement {
 	public static class LocalVariable extends SyntacticElementImpl implements Expr {
 		private String value;
 
-		public LocalVariable(String value, Attribute... attributes) {
+		public LocalVariable(String value, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.value = value;
 		}
 		
-		public LocalVariable(String value, List<Attribute> attributes) {
+		public LocalVariable(String value, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.value = value;
 		}
@@ -111,12 +111,12 @@ public interface Expr extends SyntacticElement {
 	public static class NonLocalVariable extends SyntacticElementImpl implements Expr {
 		private String value;
 
-		public NonLocalVariable(String value, Attribute... attributes) {
+		public NonLocalVariable(String value, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.value = value;
 		}
 		
-		public NonLocalVariable(String value, List<Attribute> attributes) {
+		public NonLocalVariable(String value, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.value = value;
 		}
@@ -135,12 +135,12 @@ public interface Expr extends SyntacticElement {
 	public static class ClassVariable extends SyntacticElementImpl implements Expr {
 		private String type;
 
-		public ClassVariable(String type, Attribute... attributes) {
+		public ClassVariable(String type, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.type = type;
 		}
 		
-		public ClassVariable(String type, List<Attribute> attributes) {
+		public ClassVariable(String type, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.type = type;
 		}
@@ -161,13 +161,13 @@ public interface Expr extends SyntacticElement {
 		protected Expr expr;
 		protected Type type;
 
-		public Cast(Type type, Expr expr, Attribute... attributes) {
+		public Cast(Type type, Expr expr, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.expr = expr;
 			this.type = type;
 		}
 
-		public Cast(Type type, Expr expr, List<Attribute> attributes) {
+		public Cast(Type type, Expr expr, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.expr = expr;
 			this.type = type;
@@ -200,7 +200,7 @@ public interface Expr extends SyntacticElement {
 		protected Expr expr;
 		protected Type.Primitive type;
 
-		public Convert(Type.Primitive type, Expr expr, Attribute... attributes) {
+		public Convert(Type.Primitive type, Expr expr, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.expr = expr;
 			this.type = type;
@@ -233,13 +233,13 @@ public interface Expr extends SyntacticElement {
 		protected Expr lhs;
 		protected Type rhs;
 
-		public InstanceOf(Expr lhs, Type rhs, Attribute... attributes) {
+		public InstanceOf(Expr lhs, Type rhs, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.lhs = lhs;
 			this.rhs = rhs;
 		}
 
-		public InstanceOf(Expr lhs, Type rhs, List<Attribute> attributes) {
+		public InstanceOf(Expr lhs, Type rhs, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.lhs = lhs;
 			this.rhs = rhs;
@@ -280,13 +280,13 @@ public interface Expr extends SyntacticElement {
 		protected Expr expr;
 		protected int op;
 
-		public UnOp(int op, Expr expr, Attribute... attributes) {
+		public UnOp(int op, Expr expr, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.expr = expr;
 			this.op = op;
 		}
 
-		public UnOp(int op, Expr expr, List<Attribute> attributes) {
+		public UnOp(int op, Expr expr, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.expr = expr;
 			this.op = op;
@@ -344,14 +344,14 @@ public interface Expr extends SyntacticElement {
 		protected Expr rhs;
 		protected int op;
 
-		public BinOp(int op, Expr lhs, Expr rhs, Attribute... attributes) {
+		public BinOp(int op, Expr lhs, Expr rhs, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.lhs = lhs;
 			this.rhs = rhs;
 			this.op = op;
 		}
 
-		public BinOp(int op, Expr lhs, Expr rhs, List<Attribute> attributes) {
+		public BinOp(int op, Expr lhs, Expr rhs, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.lhs = lhs;
 			this.rhs = rhs;
@@ -390,7 +390,7 @@ public interface Expr extends SyntacticElement {
 		protected Expr foption;
 
 		public TernOp(Expr con, Expr tOption, Expr fOption,
-				Attribute... attributes) {
+				SyntacticAttribute... attributes) {
 			super(attributes);
 			cond = con;
 			toption = tOption;
@@ -398,7 +398,7 @@ public interface Expr extends SyntacticElement {
 		}
 
 		public TernOp(Expr con, Expr tOption, Expr fOption,
-				List<Attribute> attributes) {
+				List<SyntacticAttribute> attributes) {
 			super(attributes);
 			cond = con;
 			toption = tOption;
@@ -457,7 +457,7 @@ public interface Expr extends SyntacticElement {
 		 *            The parameters of the method
 		 */
 		public Invoke(Expr target, String name, List<Expr> parameters,
-				List<Type> typeParameters, Attribute... attributes) {
+				List<Type> typeParameters, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.target = target;
 			this.name = name;
@@ -476,7 +476,7 @@ public interface Expr extends SyntacticElement {
 		 *            The parameters of the method
 		 */
 		public Invoke(Expr target, String name, List<Expr> parameters,
-				List<Type> typeParameters, List<Attribute> attributes) {
+				List<Type> typeParameters, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.target = target;
 			this.name = name;
@@ -546,7 +546,7 @@ public interface Expr extends SyntacticElement {
 		 *            list.
 		 */
 		public New(Type type, Expr context, List<Expr> parameters,
-				List<Decl> declarations, Attribute... attributes) {
+				List<Decl> declarations, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.type = type;
 			this.context = context;
@@ -575,7 +575,7 @@ public interface Expr extends SyntacticElement {
 		 *            list.
 		 */
 		public New(Type type, Expr context, List<Expr> parameters,
-				List<Decl> declarations, List<Attribute> attributes) {
+				List<Decl> declarations, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.type = type;
 			this.context = context;
@@ -626,13 +626,13 @@ public interface Expr extends SyntacticElement {
 		private Expr target;
 		private String name;
 
-		public Deref(Expr lhs, String rhs, Attribute... attributes) {
+		public Deref(Expr lhs, String rhs, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.target = lhs;
 			this.name = rhs;
 		}
 
-		public Deref(Expr lhs, String rhs, List<Attribute> attributes) {
+		public Deref(Expr lhs, String rhs, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.target = lhs;
 			this.name = rhs;
@@ -665,13 +665,13 @@ public interface Expr extends SyntacticElement {
 		private Expr array;
 		private Expr idx;
 
-		public ArrayIndex(Expr array, Expr idx, Attribute... attributes) {
+		public ArrayIndex(Expr array, Expr idx, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.array = array;
 			this.idx = idx;
 		}
 
-		public ArrayIndex(Expr array, Expr idx, List<Attribute> attributes) {
+		public ArrayIndex(Expr array, Expr idx, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.array = array;
 			this.idx = idx;

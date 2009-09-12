@@ -49,7 +49,7 @@ public final class JilConstant extends JilField {
 	 */
 	public JilConstant(String name, Type type, Object initialiser,
 			List<Modifier> modifiers,
-			Attribute... attributes) {
+			SyntacticAttribute... attributes) {
 		super(name,type,modifiers,attributes);
 		this.initialiser = initialiser;
 	}
@@ -69,7 +69,7 @@ public final class JilConstant extends JilField {
 	 */
 	public JilConstant(String name, Type type, Object initialiser,
 			List<Modifier> modifiers,
-			List<Attribute> attributes) {
+			List<SyntacticAttribute> attributes) {
 		super(name,type,modifiers,attributes);
 		this.initialiser = initialiser;
 	}

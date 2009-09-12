@@ -37,7 +37,7 @@ public interface SyntacticElement {
      * 
      * @return
      */
-	public List<Attribute> attributes();
+	public List<SyntacticAttribute> attributes();
 	
 	/**
      * Get the first attribute of the given class type. This is useful
@@ -46,5 +46,5 @@ public interface SyntacticElement {
      * @param c
      * @return
      */
-	public <T extends Attribute> T attribute(Class<T> c);
+	public <T extends SyntacticAttribute> T attribute(Class<T> c);
 }

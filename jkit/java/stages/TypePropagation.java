@@ -40,7 +40,7 @@ import jkit.java.tree.Value;
 import jkit.java.tree.Decl.*;
 import jkit.java.tree.Stmt.Case;
 import jkit.util.*;
-import jkit.jil.tree.Attribute;
+import jkit.jil.tree.SyntacticAttribute;
 import jkit.jil.tree.JilMethod;
 import jkit.jil.tree.Modifier;
 import jkit.jil.tree.SourceLocation;
