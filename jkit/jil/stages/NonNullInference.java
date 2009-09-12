@@ -468,7 +468,7 @@ public class NonNullInference extends BackwardAnalysis<UnionFlowSet<NonNullInfer
 		}
 	}
 	
-	public static class Attr implements Attribute {
+	public static class Attr implements SyntacticAttribute {
 		private Set<Location> nonnulls; // parameters and fields which must be
                                         // non-null on entry
 		public Attr(Set<Location> nonnulls) {
