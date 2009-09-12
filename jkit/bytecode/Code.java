@@ -40,6 +40,7 @@ public class Code implements Attribute {
 
 	protected ArrayList<Bytecode> bytecodes;
 	protected ArrayList<Handler> handlers;
+	protected ArrayList<Attribute> attributes;
 	protected Method method; // enclosing method
 
 	public Code(Collection<Bytecode> bytecodes,
@@ -47,10 +48,15 @@ public class Code implements Attribute {
 		this.bytecodes = new ArrayList<Bytecode>(bytecodes);
 		this.handlers = new ArrayList<Handler>(handlers);
 		this.method = method;
+		this.attributes = new ArrayList<Attribute>();
 	}
 
 	public String name() { return "Code"; }
 
+	public List<Attribute> attributes() {
+		return attributes;
+	}
+	
 	/**
 	 * Determine the maximum number of local variable slots required for
 	 * this method.
@@ -138,6 +144,10 @@ public class Code implements Attribute {
 				Constant.addPoolItem(Constant.buildClass(h.exception), constantPool);
 			}
 		}
+		
+		for(Attribute a : attributes) {
+			a.addPoolItems(constantPool, loader);			
+		}		
 	}
 	
 	/**
@@ -252,25 +262,34 @@ public class Code implements Attribute {
 			bout.write(bs);
 			offset += bs.length;			
 		}
-
+		byte[] bytecodebytes = bout.toByteArray();
+		
+		// === CREATE ATTRIBUTE BYTES
+		bout = new ByteArrayOutputStream();
+		BinaryOutputStream attrbout = new BinaryOutputStream(bout); 
+		for(Attribute a : attributes) {
+			a.write(attrbout, constantPool, loader);
+		}
+		byte[] attrbytes = bout.toByteArray();
+		
 		// === WRITE CODE ATTRIBUTE ===
-		byte[] bytes = bout.toByteArray();
+		
 
 		writer.write_u2(constantPool.get(new Constant.Utf8("Code")));
 		// need to figure out exception_table length
 		int exception_table_length = handlers().size() * 8;
 		// need to figure out attribute_table length
-		int attribute_table_length = 0;
+		int attribute_table_length = attrbytes.length;
 		// write attribute length
-		writer.write_u4(bytes.length + exception_table_length + attribute_table_length
+		writer.write_u4(bytecodebytes.length + exception_table_length + attribute_table_length
 				+ 12);
 		// now write data
 		writer.write_u2(maxStack());
 		writer.write_u2(maxLocals());
-		writer.write_u4(bytes.length);
+		writer.write_u4(bytecodebytes.length);
 		// write bytecode instructions
-		for (int i = 0; i != bytes.length; ++i) {
-			writer.write_u1(bytes[i]);
+		for (int i = 0; i != bytecodebytes.length; ++i) {
+			writer.write_u1(bytecodebytes[i]);
 		}
 
 		// write exception handlers
@@ -287,7 +306,9 @@ public class Code implements Attribute {
 						.buildClass(h.exception)));
 			}
 		}
-		writer.write_u2(0); // no attributes for now
+				
+		writer.write_u2(attributes.size()); // no attributes for now
+		writer.write(attrbytes);		
 	}
 	
 	/**

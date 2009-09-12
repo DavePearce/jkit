@@ -1531,24 +1531,26 @@ public class JilBuilder {
 						
 		stmts.add(new JilStmt.Assign(new JilExpr.Variable(builderLab, builder),
 				new JilExpr.New(builder, new ArrayList<JilExpr>(),
-						new Type.Function(T_VOID), bop.attributes())));					
+						new Type.Function(T_VOID), bop.attributes()), bop
+						.attributes()));					
 		
 		Type lhs_t = lhs.first().type(); 
-		if(lhs_t instanceof Type.Primitive || isString(lhs_t)) {
+		if (lhs_t instanceof Type.Primitive || isString(lhs_t)) {
 			ArrayList<JilExpr> params = new ArrayList<JilExpr>();
 			params.add(lhs.first());
-			stmts.add(new JilExpr.Invoke(new JilExpr.Variable(builderLab, builder), "append",
-					params, new Type.Function(new Type.Clazz("java.lang",
-					"StringBuilder"), lhs.first().type()), new Type.Clazz(
-							"java.lang", "StringBuilder")));
+			stmts.add(new JilExpr.Invoke(new JilExpr.Variable(builderLab,
+					builder), "append", params, new Type.Function(
+					new Type.Clazz("java.lang", "StringBuilder"), lhs.first()
+							.type()), new Type.Clazz("java.lang",
+					"StringBuilder"), bop.attributes()));
 		} else {
 			ArrayList<JilExpr> params = new ArrayList<JilExpr>();
 			params.add(lhs.first());
-			stmts.add(new JilExpr.Invoke(new JilExpr.Variable(builderLab, builder),
-					"append", params, new Type.Function(new Type.Clazz(
-							"java.lang", "StringBuilder"),
+			stmts.add(new JilExpr.Invoke(new JilExpr.Variable(builderLab,
+					builder), "append", params, new Type.Function(
+					new Type.Clazz("java.lang", "StringBuilder"),
 					JAVA_LANG_OBJECT), new Type.Clazz("java.lang",
-					"StringBuilder")));	
+					"StringBuilder"), bop.attributes()));
 		}
 
 		// Now, do the right hand side
@@ -1557,21 +1559,24 @@ public class JilBuilder {
 		if(rhs_t instanceof Type.Primitive || isString(rhs_t)) {
 			ArrayList<JilExpr> params = new ArrayList<JilExpr>();
 			params.add(rhs.first());
-			r = new JilExpr.Invoke(new JilExpr.Variable(builderLab, builder), "append",
-					params, new Type.Function(new Type.Clazz("java.lang",
-					"StringBuilder"), rhs_t), new Type.Clazz(
-							"java.lang", "StringBuilder"));
+			r = new JilExpr.Invoke(new JilExpr.Variable(builderLab, builder),
+					"append", params, new Type.Function(new Type.Clazz(
+							"java.lang", "StringBuilder"), rhs_t),
+					new Type.Clazz("java.lang", "StringBuilder"), bop
+							.attributes());
 		} else {
 			ArrayList<JilExpr> params = new ArrayList<JilExpr>();
 			params.add(rhs.first());
 			r = new JilExpr.Invoke(new JilExpr.Variable(builderLab, builder),
 					"append", params, new Type.Function(new Type.Clazz(
 							"java.lang", "StringBuilder"), JAVA_LANG_OBJECT),
-					new Type.Clazz("java.lang", "StringBuilder"));
+					new Type.Clazz("java.lang", "StringBuilder"), bop
+							.attributes());
 		}
 
 		r = new JilExpr.Invoke(r, "toString", new ArrayList<JilExpr>(),
-				new Type.Function(JAVA_LANG_STRING), JAVA_LANG_STRING);
+				new Type.Function(JAVA_LANG_STRING), JAVA_LANG_STRING, bop
+						.attributes());
 		
 		return new Pair<JilExpr,List<JilStmt>>(r,stmts);
 	}

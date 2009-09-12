@@ -9,7 +9,7 @@ import jkit.compiler.ClassLoader;
 public class LineNumberTable implements Code.Rewriteable,Attribute {
 	private ArrayList<Entry> entries;
 	
-	public final class Entry {
+	public static final class Entry {
 		public final int start_pc;
 		public final int line;
 		
@@ -55,10 +55,10 @@ public class LineNumberTable implements Code.Rewriteable,Attribute {
 	public void print(PrintWriter output,
 			Map<Constant.Info, Integer> constantPool, ClassLoader loader)
 			throws IOException {
-		output.println("LineNumberTable:");
+		output.println("  LineNumberTable:");
 		for(Entry e : entries) {
-			output.print("\t");
-			output.print("line " + e.line + ": " + e.start_pc);			
+			output.print("   ");
+			output.println("line " + e.line + ": " + e.start_pc);			
 		}
 	}	
 }

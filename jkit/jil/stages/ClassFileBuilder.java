@@ -141,9 +141,11 @@ public final class ClassFileBuilder {
 				ArrayList<LineNumberTable.Entry> lines = new ArrayList<LineNumberTable.Entry>();
 				
 				translateCode(clazz, m, bytecodes, handlers, lines);
-								
-				cfm.attributes().add(new Code(bytecodes,handlers,cfm));							
-				cfm.attributes().add(new LineNumberTable(lines));
+				Code code = new Code(bytecodes,handlers,cfm);
+				if(!lines.isEmpty()) {
+					code.attributes().add(new LineNumberTable(lines));
+				}
+				cfm.attributes().add(code);									
 			}
 						
 			if (Types.isGeneric(m.type())) {				
@@ -212,7 +214,11 @@ public final class ClassFileBuilder {
 
 		// === TRANSLATE BYTECODES ===		
 		for(JilStmt s : method.body()) {
+			SourceLocation loc = s.attribute(SourceLocation.class);
 			int start = bytecodes.size();
+			if(loc != null) {				
+				lines.add(new LineNumberTable.Entry(start,loc.line()));
+			}
 			translateStatement(s,localVarMap,bytecodes);
 			// add exception handlers (if present)
 			for(Pair<Type.Clazz,String> c : s.exceptions()) {
