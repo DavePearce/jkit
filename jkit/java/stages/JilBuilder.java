@@ -1523,8 +1523,7 @@ public class JilBuilder {
 		Pair<JilExpr,List<JilStmt>> lhs = doExpression(bop.lhs());
 		Pair<JilExpr,List<JilStmt>> rhs = doExpression(bop.rhs());
 		
-		List<JilStmt> stmts = lhs.second();
-		stmts.addAll(lhs.second());
+		List<JilStmt> stmts = lhs.second();		
 		stmts.addAll(rhs.second());
 		
 		Type.Clazz builder = new Type.Clazz("java.lang",
