@@ -25,6 +25,7 @@ import java.util.*;
 
 import jkit.jil.util.Types;
 import jkit.bytecode.Bytecode.*;
+import jkit.bytecode.attributes.Code;
 import jkit.jil.tree.Type;
 
 /**

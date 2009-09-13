@@ -28,6 +28,12 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
+import jkit.bytecode.attributes.ClassSignature;
+import jkit.bytecode.attributes.ConstantValue;
+import jkit.bytecode.attributes.Exceptions;
+import jkit.bytecode.attributes.FieldSignature;
+import jkit.bytecode.attributes.InnerClasses;
+import jkit.bytecode.attributes.MethodSignature;
 import jkit.jil.tree.Modifier;
 import jkit.jil.tree.Type;
 import jkit.jil.util.*;
@@ -252,7 +258,7 @@ public final class ClassFileReader {
 			m.setType(type);
 		}
 		
-		List<Type.Clazz> interfaces = s.interfaces;
+		List<Type.Clazz> interfaces = s.interfaces();
 		for (int i = 0; i != interfaces.size(); ++i) {
 			Type.Clazz type = (Type.Clazz) Types.substitute(interfaces.get(i),
 					binding);

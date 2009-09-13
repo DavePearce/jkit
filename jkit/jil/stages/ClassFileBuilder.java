@@ -25,6 +25,14 @@ import java.util.*;
 
 import jkit.bytecode.*;
 import jkit.bytecode.Bytecode.*;
+import jkit.bytecode.attributes.ClassSignature;
+import jkit.bytecode.attributes.Code;
+import jkit.bytecode.attributes.ConstantValue;
+import jkit.bytecode.attributes.Exceptions;
+import jkit.bytecode.attributes.FieldSignature;
+import jkit.bytecode.attributes.InnerClasses;
+import jkit.bytecode.attributes.LineNumberTable;
+import jkit.bytecode.attributes.MethodSignature;
 import jkit.compiler.Clazz;
 import jkit.compiler.ClassLoader;
 import jkit.compiler.FieldNotFoundException;

@@ -163,7 +163,7 @@ public class BytecodeFileWriter {
 		}
 	}
 	
-	static void writeModifiers(List<Modifier> modifiers, PrintWriter output) {
+	public static void writeModifiers(List<Modifier> modifiers, PrintWriter output) {
 		for (Modifier x : modifiers) {			
 			if (x instanceof Modifier.Private) {
 				output.write("private ");

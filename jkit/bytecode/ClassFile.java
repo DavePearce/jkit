@@ -23,6 +23,8 @@ package jkit.bytecode;
 
 import java.util.*;
 
+import jkit.bytecode.attributes.ConstantValue;
+import jkit.bytecode.attributes.Exceptions;
 import jkit.compiler.Clazz;
 import jkit.compiler.ClassLoader;
 import jkit.jil.tree.*;
