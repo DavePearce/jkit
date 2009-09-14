@@ -29,6 +29,7 @@ import java.util.Stack;
 import jkit.compiler.ClassLoader;
 import jkit.compiler.SyntacticElement;
 import static jkit.compiler.SyntaxError.*;
+import jkit.bytecode.attributes.SourceFile;
 import jkit.java.io.JavaFile;
 import jkit.java.tree.Decl;
 import jkit.java.tree.Expr;
@@ -211,7 +212,7 @@ public class SkeletonDiscovery {
 		 * Now, construct the skeleton for this class!
 		 */
 		skeletons.add(new JilClass(type, modifiers, null, new ArrayList(),
-				inners, new ArrayList(), new ArrayList()));
+				inners, new ArrayList(), new ArrayList(), new SourceFile("dummy")));
 						
 		return skeletons;
 	}

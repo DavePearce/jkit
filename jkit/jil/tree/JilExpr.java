@@ -56,6 +56,16 @@ public interface JilExpr extends SyntacticElement,Cloneable {
 			return null;
 		}
 		
+		public <T extends SyntacticAttribute> List<T> attributes(java.lang.Class<T> ac) {
+			ArrayList<T> r = new ArrayList();
+			for(SyntacticAttribute a : attributes) {
+				if(a.getClass().equals(ac)) {
+					r.add((T) a);
+				}
+			}
+			return r;
+		}
+		
 		public List<SyntacticAttribute> attributes() {
 			// this is to prevent any kind of aliasing issues.
 			return new CopyOnWriteArrayList<SyntacticAttribute>(attributes);

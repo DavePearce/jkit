@@ -26,6 +26,7 @@ import java.util.*;
 import static jkit.compiler.SyntaxError.*;
 import jkit.compiler.*;
 import jkit.compiler.ClassLoader;
+import jkit.bytecode.attributes.SourceFile;
 import jkit.java.io.JavaFile;
 import jkit.java.tree.Decl;
 import jkit.java.tree.Expr;
@@ -193,7 +194,7 @@ public class SkeletonBuilder {
 				JilClass encskel = new JilClass(myType, modifiers, type,
 						new ArrayList<Type.Clazz>(),
 						new ArrayList<Type.Clazz>(), new ArrayList<JilField>(),
-						new ArrayList<JilMethod>(), enc.attributes());
+						new ArrayList<JilMethod>(), addSrcFile(enc.attributes()));
 
 				skeletons.add(encskel);
 				loader.register(encskel);
@@ -582,14 +583,14 @@ public class SkeletonBuilder {
 				skeleton = new JilClass(myType, modifiers, new Type.Clazz(
 						"java.lang", "Object"), interfaces,
 						new ArrayList<Type.Clazz>(), new ArrayList<JilField>(),
-						new ArrayList<JilMethod>(), e.attributes());
+						new ArrayList<JilMethod>(), addSrcFile(e.attributes()));
 			} else {
 				// In this case, we're extending directly from a super
-				// class.
+				// class.				
 				skeleton = new JilClass(myType, modifiers, superType,
 						new ArrayList<Type.Clazz>(),
 						new ArrayList<Type.Clazz>(), new ArrayList<JilField>(),
-						new ArrayList<JilMethod>(), e.attributes());
+						new ArrayList<JilMethod>(), addSrcFile(e.attributes()));
 			}
 
 			skeletons.add(skeleton);
@@ -743,6 +744,12 @@ public class SkeletonBuilder {
 		}
 		
 		return null;
+	}
+	
+	protected List<SyntacticAttribute> addSrcFile(List<SyntacticAttribute> attributes) {
+		attributes = new ArrayList<SyntacticAttribute>(attributes);
+		attributes.add(new SourceFile("dummy"));
+		return attributes;
 	}
 	
 	protected Decl.JavaConstructor createDefaultConstructor(String name,

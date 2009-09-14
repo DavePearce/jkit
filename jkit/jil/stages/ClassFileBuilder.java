@@ -55,7 +55,8 @@ public final class ClassFileBuilder {
 	
 	public ClassFile build(jkit.jil.tree.JilClass clazz) {				
 		ClassFile cfile = new ClassFile(version, clazz.type(), clazz
-				.superClass(), clazz.interfaces(), clazz.modifiers());		
+				.superClass(), clazz.interfaces(), clazz.modifiers(), clazz
+				.attributes(BytecodeAttribute.class));				
 		
 		if (needClassSignature(clazz)) {
 			cfile.attributes().add(

@@ -41,7 +41,7 @@ public class ClassFile implements Clazz {
 	protected ArrayList<Method> methods;	
 	
 	public ClassFile(int version, Type.Clazz type, Type.Clazz superClazz,
-			List<Type.Clazz> interfaces, List<Modifier> modifiers) {
+			List<Type.Clazz> interfaces, List<Modifier> modifiers, BytecodeAttribute... attributes) {
 		this.version = version;
 		this.type = type;
 		this.superClazz = superClazz;
@@ -50,8 +50,23 @@ public class ClassFile implements Clazz {
 		this.fields = new ArrayList<Field>();
 		this.methods = new ArrayList<Method>();
 		this.attributes = new ArrayList<BytecodeAttribute>();
+		for(BytecodeAttribute a : attributes) {
+			this.attributes.add(a);
+		}		
 	}
-		
+	
+	public ClassFile(int version, Type.Clazz type, Type.Clazz superClazz,
+			List<Type.Clazz> interfaces, List<Modifier> modifiers, Collection<BytecodeAttribute> attributes) {
+		this.version = version;
+		this.type = type;
+		this.superClazz = superClazz;
+		this.interfaces = interfaces;		
+		this.modifiers = modifiers;
+		this.fields = new ArrayList<Field>();
+		this.methods = new ArrayList<Method>();
+		this.attributes = new ArrayList<BytecodeAttribute>(attributes);
+	}
+	
 	public Type.Clazz type() {
 		return type;
 	}
