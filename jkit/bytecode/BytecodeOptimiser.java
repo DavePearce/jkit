@@ -122,7 +122,7 @@ public final class BytecodeOptimiser {
 		ArrayList<Code.Rewriteable> rewritables = new ArrayList<Code.Rewriteable>();
 		Code code = null;
 		
-		for(Attribute attr : method.attributes) {
+		for(BytecodeAttribute attr : method.attributes) {
 			if(attr instanceof Code) {
 				code = (Code) attr;				
 			} else if(attr instanceof Code.Rewriteable) {

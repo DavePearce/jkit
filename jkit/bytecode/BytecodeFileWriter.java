@@ -74,7 +74,7 @@ public class BytecodeFileWriter {
 		
 		output.println();
 		
-		for(Attribute a : cfile.attributes()) {
+		for(BytecodeAttribute a : cfile.attributes()) {
 			a.print(output,poolMap,loader);
 		}
 		
@@ -104,7 +104,7 @@ public class BytecodeFileWriter {
 		writeModifiers(f.modifiers());
 		writeTypeWithoutBounds(f.type());		
 		output.println(" " + f.name() + ";");
-		for(Attribute a : f.attributes()) {
+		for(BytecodeAttribute a : f.attributes()) {
 			a.print(output,poolMap,loader);
 		}
 	}
@@ -146,7 +146,7 @@ public class BytecodeFileWriter {
 		
 		output.println(");");
 		
-		for(Attribute a : method.attributes()) {
+		for(BytecodeAttribute a : method.attributes()) {
 			a.print(output,poolMap,loader);
 		}					
 	}	

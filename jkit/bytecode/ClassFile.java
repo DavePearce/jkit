@@ -36,7 +36,7 @@ public class ClassFile implements Clazz {
 	protected Type.Clazz superClazz;
 	protected List<Type.Clazz> interfaces;	
 	protected List<Modifier> modifiers;
-	protected ArrayList<Attribute> attributes;
+	protected ArrayList<BytecodeAttribute> attributes;
 	protected ArrayList<Field> fields;
 	protected ArrayList<Method> methods;	
 	
@@ -49,7 +49,7 @@ public class ClassFile implements Clazz {
 		this.modifiers = modifiers;
 		this.fields = new ArrayList<Field>();
 		this.methods = new ArrayList<Method>();
-		this.attributes = new ArrayList<Attribute>();
+		this.attributes = new ArrayList<BytecodeAttribute>();
 	}
 		
 	public Type.Clazz type() {
@@ -78,7 +78,7 @@ public class ClassFile implements Clazz {
 		return new ArrayList<Type.Clazz>();
 	}
 	
-	public List<Attribute> attributes() {
+	public List<BytecodeAttribute> attributes() {
 		return attributes;
 	}
 	
@@ -249,13 +249,13 @@ public class ClassFile implements Clazz {
 		protected String name;
 		protected Type type;
 		protected List<Modifier> modifiers;
-		protected ArrayList<Attribute> attributes;
+		protected ArrayList<BytecodeAttribute> attributes;
 		
 		public Field(String name, Type type, List<Modifier> modifiers) {
 			this.name = name;
 			this.type = type;
 			this.modifiers = modifiers;
-			this.attributes = new ArrayList<Attribute>();
+			this.attributes = new ArrayList<BytecodeAttribute>();
 		}
 		
 		public String name() {
@@ -278,7 +278,7 @@ public class ClassFile implements Clazz {
 			return modifiers;
 		}
 		
-		public List<Attribute> attributes() {
+		public List<BytecodeAttribute> attributes() {
 			return attributes;
 		}
 		
@@ -372,7 +372,7 @@ public class ClassFile implements Clazz {
 		}
 		
 		public boolean isConstant() {
-			for(Attribute a : attributes) {
+			for(BytecodeAttribute a : attributes) {
 				if(a instanceof ConstantValue) {
 					return true;
 				}
@@ -381,7 +381,7 @@ public class ClassFile implements Clazz {
 		}
 		
 		public Object constant() {
-			for(Attribute a : attributes) {
+			for(BytecodeAttribute a : attributes) {
 				if(a instanceof ConstantValue) {
 					ConstantValue x = (ConstantValue) a;
 					return x.constant();
@@ -395,14 +395,14 @@ public class ClassFile implements Clazz {
 		protected String name;
 		protected Type.Function type;
 		protected List<Modifier> modifiers;
-		protected ArrayList<Attribute> attributes;		
+		protected ArrayList<BytecodeAttribute> attributes;		
 
 		public Method(String name, Type.Function type,
 				List<Modifier> modifiers) {
 			this.name = name;
 			this.type = type;
 			this.modifiers = modifiers;			
-			attributes = new ArrayList<Attribute>();
+			attributes = new ArrayList<BytecodeAttribute>();
 		}
 
 		public String name() {
@@ -422,7 +422,7 @@ public class ClassFile implements Clazz {
 		}		
 		
 		public List<Type.Clazz> exceptions() {
-			for(Attribute a : attributes) {
+			for(BytecodeAttribute a : attributes) {
 				if(a instanceof Exceptions) {
 					return ((Exceptions)a).exceptions();
 				}
@@ -430,8 +430,8 @@ public class ClassFile implements Clazz {
 			return new ArrayList();
 		}
 		
-		public Attribute attribute(Class c) {
-			for(Attribute a : attributes) {
+		public BytecodeAttribute attribute(Class c) {
+			for(BytecodeAttribute a : attributes) {
 				if(c.isInstance(a)) {
 					return a;
 				}
@@ -439,7 +439,7 @@ public class ClassFile implements Clazz {
 			return null;
 		}
 
-		public List<Attribute> attributes() {
+		public List<BytecodeAttribute> attributes() {
 			return attributes;
 		}
 		
@@ -591,7 +591,7 @@ public class ClassFile implements Clazz {
 			Constant.addPoolItem(
 					new Constant.Utf8(descriptor(f.type(), false)),
 					constantPool);
-			for(Attribute a : f.attributes()) {
+			for(BytecodeAttribute a : f.attributes()) {
 				a.addPoolItems(constantPool,loader);
 			}
 		}
@@ -602,12 +602,12 @@ public class ClassFile implements Clazz {
 			Constant.addPoolItem(new Constant.Utf8(descriptor(m.type(),
 					false)), constantPool);
 
-			for(Attribute a : m.attributes()) {
+			for(BytecodeAttribute a : m.attributes()) {
 				a.addPoolItems(constantPool,loader);
 			}			
 		}
 		
-		for(Attribute a : attributes) {
+		for(BytecodeAttribute a : attributes) {
 			a.addPoolItems(constantPool,loader);
 		}
 		

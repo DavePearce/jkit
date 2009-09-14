@@ -89,7 +89,7 @@ public class ClassFileWriter {
 		}
 
 		output.write_u2(cfile.attributes.size());
-		for(Attribute a : cfile.attributes()) {
+		for(BytecodeAttribute a : cfile.attributes()) {
 			a.write(output, poolMap, loader);
 		}
 		
@@ -106,7 +106,7 @@ public class ClassFileWriter {
 		// Write number of attributes
 		output.write_u2(f.attributes().size());
 
-		for (Attribute a : f.attributes()) {
+		for (BytecodeAttribute a : f.attributes()) {
 			a.write(output, constantPool, loader);
 		}
 	}
@@ -121,7 +121,7 @@ public class ClassFileWriter {
 		
 		output.write_u2(m.attributes.size());
 
-		for (Attribute a : m.attributes) {
+		for (BytecodeAttribute a : m.attributes) {
 			a.write(output, constantPool, loader);
 		}
 	}

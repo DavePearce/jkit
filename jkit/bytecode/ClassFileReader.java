@@ -170,7 +170,7 @@ public final class ClassFileReader {
 		Type.Clazz superType = superClass == null ? null
 				: parseClassDescriptor("L" + superClass + ";");
 		
-		ArrayList<Attribute> attributes = parseAttributes(index, CLASS_CONTEXT, type);		
+		ArrayList<BytecodeAttribute> attributes = parseAttributes(index, CLASS_CONTEXT, type);		
 		
 		// now, try and figure out the full type of this class
 		
@@ -178,7 +178,7 @@ public final class ClassFileReader {
 		
 		List<Modifier> lmodifiers = parseClassModifiers(modifiers);
 		
-		for(Attribute a : attributes) {
+		for(BytecodeAttribute a : attributes) {
 			if(a instanceof ClassSignature) { 
 				s = (ClassSignature) a;
 				type = s.type();								
@@ -318,7 +318,7 @@ public final class ClassFileReader {
 		
 		// parse attributes
 		int acount = read_u2(offset+6);
-		ArrayList<Attribute> attributes = new ArrayList<Attribute>();
+		ArrayList<BytecodeAttribute> attributes = new ArrayList<BytecodeAttribute>();
 		int index = offset + 8;
 		for(int j=0;j!=acount;++j) {
 			int len = read_i4(index+2);
@@ -328,7 +328,7 @@ public final class ClassFileReader {
 		
 		Type type = parseDescriptor(desc);
 		
-		for(Attribute at : attributes) {
+		for(BytecodeAttribute at : attributes) {
 			if(at instanceof FieldSignature) {
 				type = ((FieldSignature) at).type();
 			} 
@@ -378,7 +378,7 @@ public final class ClassFileReader {
 		
 		// parse attributes
 		int acount = read_u2(offset+6);
-		ArrayList<Attribute> attributes = new ArrayList<Attribute>();
+		ArrayList<BytecodeAttribute> attributes = new ArrayList<BytecodeAttribute>();
 		int index = offset + 8;
 		for(int j=0;j!=acount;++j) {
 			int len = read_i4(index+2);
@@ -391,7 +391,7 @@ public final class ClassFileReader {
         // we use the desc type, unless there is a 
 		// signature attribute, since this provides
 		// additional generic information
-		for(Attribute at : attributes) {
+		for(BytecodeAttribute at : attributes) {
 			if(at instanceof MethodSignature) {				
 					type = (Type.Function) ((MethodSignature) at).type();
 				} 
@@ -411,9 +411,9 @@ public final class ClassFileReader {
 	 * parse any attributes associated with this field.
 	 * @return
 	 */
-	protected ArrayList<Attribute> parseAttributes(int attributes, int context, Type.Clazz type) {
+	protected ArrayList<BytecodeAttribute> parseAttributes(int attributes, int context, Type.Clazz type) {
 		int acount = read_u2(attributes);
-		ArrayList<Attribute> r = new ArrayList<Attribute>();
+		ArrayList<BytecodeAttribute> r = new ArrayList<BytecodeAttribute>();
 		int index = attributes + 2;
 		for(int j=0;j!=acount;++j) {
 			int len = read_i4(index+2);
@@ -423,7 +423,7 @@ public final class ClassFileReader {
 		return r;
 	}
 	
-	protected Attribute parseAttribute(int offset, int context, Type.Clazz type) {
+	protected BytecodeAttribute parseAttribute(int offset, int context, Type.Clazz type) {
 		String name = getString(read_u2(offset));
 		
 		if(name.equals("Code")) {
@@ -457,7 +457,7 @@ public final class ClassFileReader {
 		for(int i=0;i!=len;++i) {
 			bs[i] = bytes[offset+i];
 		}
-		return new Attribute.Unknown(name,bs);
+		return new BytecodeAttribute.Unknown(name,bs);
 	}
 	
 	protected Exceptions parseExceptions(int offset, String name) {
