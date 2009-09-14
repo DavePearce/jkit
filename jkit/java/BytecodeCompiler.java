@@ -73,7 +73,7 @@ public class BytecodeCompiler extends JavaCompiler {
 			throws IOException {
 		long start = System.currentTimeMillis();
 		
-		File outputFile = new File(rootdir, baseName + ".bytecode");		
+		File outputFile = new File(rootdir, baseName + ".class");		
 		
 		// now, ensure output directory and package directories exist.
 		if(outputFile.getParentFile() != null) {
@@ -81,20 +81,22 @@ public class BytecodeCompiler extends JavaCompiler {
 		}
 
 		OutputStream out = new FileOutputStream(outputFile);		
-		ClassFile cfile = new ClassFileBuilder(loader,49).build(clazz);
+		ClassFile cfile = builder.build(clazz);
 		
 		logTimedMessage("[" + outputFile.getPath() + "] Bytecode generation completed",
 				(System.currentTimeMillis() - start));	
 		
+		if(bytecodeOptimisationFlag) {
+			start = System.currentTimeMillis();
+
+			// this is where the bytecode optimisation would occur.
+			int numRewrites = optimiser.optimise(cfile);		
+			logTimedMessage("[" + outputFile.getPath() + "] Bytecode optimisation completed (" + numRewrites + " rewrites)",
+					(System.currentTimeMillis() - start));	
+		}
+		
 		start = System.currentTimeMillis();
-		
-		// this is where the bytecode optimisation would occur.
-		
-		logTimedMessage("[" + outputFile.getPath() + "] Bytecode optimisation completed",
-				(System.currentTimeMillis() - start));	
-		
-		start = System.currentTimeMillis();
-		
+				
 		new BytecodeFileWriter(out,loader).write(cfile);		
 		
 		logTimedMessage("[" + outputFile.getPath() + "] Wrote " + outputFile.getPath(),

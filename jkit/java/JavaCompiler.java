@@ -99,6 +99,7 @@ public class JavaCompiler implements Compiler {
 	protected final ClassFileBuilder builder;
 	
 	protected final BytecodeOptimiser optimiser;
+	protected boolean bytecodeOptimisationFlag = true;
 	
 	/**
 	 * @param classpath
@@ -156,6 +157,14 @@ public class JavaCompiler implements Compiler {
 		this.outputDirectory = outputDirectory;
 	}
 
+	/**
+	 * Enable/disable bytecode optimisation in the compiler.
+	 * @param level
+	 */
+	public void setBytecodeOptimisation(boolean flag) {
+		bytecodeOptimisationFlag = flag;
+	}
+	
 	/**
 	 * The purpose of this method is to indicate that a source file is currently
 	 * being compiled.
@@ -669,12 +678,14 @@ public class JavaCompiler implements Compiler {
 		logTimedMessage("[" + outputFile.getPath() + "] Bytecode generation completed",
 				(System.currentTimeMillis() - start));	
 		
-		start = System.currentTimeMillis();
-		
-		// this is where the bytecode optimisation would occur.
-		int numRewrites = optimiser.optimise(cfile);		
-		logTimedMessage("[" + outputFile.getPath() + "] Bytecode optimisation completed (" + numRewrites + " rewrites)",
-				(System.currentTimeMillis() - start));	
+		if(bytecodeOptimisationFlag) {
+			start = System.currentTimeMillis();
+
+			// this is where the bytecode optimisation would occur.
+			int numRewrites = optimiser.optimise(cfile);		
+			logTimedMessage("[" + outputFile.getPath() + "] Bytecode optimisation completed (" + numRewrites + " rewrites)",
+					(System.currentTimeMillis() - start));	
+		}
 		
 		start = System.currentTimeMillis();
 		

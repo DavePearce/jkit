@@ -150,7 +150,7 @@ public class JKit extends TestHarness {
 	@Ignore("Known Bug") @Test public void JLS_8_9_Enums_5() { runTest("JLS_8_9_Enums_5"); }
 	@Test public void JLS_8_9_Enums_6() { runTest("JLS_8_9_Enums_6"); }
 	
-	@Test public void JLS_9_3_Fields_1() { runTest("JLS_9_3_ConstantFields_1"); }
+	@Test public void JLS_9_3_ConstantFields_1() { runTest("JLS_9_3_ConstantFields_1"); }
 	@Test public void JLS_9_3_ConstantFields_2() { runTest("JLS_9_3_ConstantFields_2"); }
 	@Test public void JLS_9_3_ConstantFields_3() { runTest("JLS_9_3_ConstantFields_3"); }
 	@Test public void JLS_9_3_ConstantFields_4() { runTest("JLS_9_3_ConstantFields_4"); }
@@ -231,6 +231,8 @@ public class JKit extends TestHarness {
 	@Test public void JLS_15_9_5_AnonymousClasses_11() { runTest("JLS_15_9_5_AnonymousClasses_11"); }
 	@Test public void JLS_15_9_5_AnonymousClasses_12() { runTest("JLS_15_9_5_AnonymousClasses_12"); }
 	@Test public void JLS_15_9_5_AnonymousClasses_13() { runTest("JLS_15_9_5_AnonymousClasses_13"); }
+	
+	@Test public void JLS_15_11_FieldAccess_1() { runTest("JLS_15_11_FieldAccess_1"); }
 	@Ignore("Known Bug") @Test public void JLS_15_12_Resolution_1() { compileFailTest("JLS_15_12_Resolution_1"); }
 	@Ignore("Known Bug") @Test public void JLS_15_12_InvocationExpressions_1() { compileFailTest("JLS_15_12_InvocationExpressions_1"); }
 	@Test public void JLS_15_12_VarArgs_1() { runTest("JLS_15_12_VarArgs_1"); }

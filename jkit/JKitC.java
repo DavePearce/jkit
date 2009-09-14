@@ -63,7 +63,8 @@ public class JKitC {
 		String outputDirectory = null;		
 		boolean verbose = false;
 		boolean bytecodeOutput = false;
-		boolean jilOutput = false;			
+		boolean jilOutput = false;		
+		boolean bytecodeOptimisation = true;
 		
 		if (args.length == 0) {
 			// no command-line arguments provided
@@ -108,6 +109,8 @@ public class JKitC {
 					bytecodeOutput = true;
 				} else if (arg.equals("-jil")) {
 					jilOutput = true;
+				} else if (arg.equals("-noopt")) {
+					bytecodeOptimisation = false;
 				} else {
 					throw new RuntimeException("Unknown option: " + args[i]);
 				}
@@ -149,6 +152,8 @@ public class JKitC {
 				compiler = new JavaCompiler(sourcePath, classPath, verbOutput);
 			}
 
+			compiler.setBytecodeOptimisation(bytecodeOptimisation);
+			
 			if (outputDirectory != null) {
 				compiler.setOutputDirectory(new File(outputDirectory));
 			}
