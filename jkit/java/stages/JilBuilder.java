@@ -633,19 +633,31 @@ public class JilBuilder {
 			r.add(new JilStmt.Assign(lhs.first(), rhs.first(), def
 					.attributes()));
 			return new Pair(lhs.first(), r);
-		} else if(lhs.first() instanceof JilExpr.Deref) {
+		} else if(lhs.first() instanceof JilExpr.Deref) {			
 			JilExpr.Deref deref1 = (JilExpr.Deref) lhs.first(); 
 
-			JilExpr tmpVar = new JilExpr.Variable(getTempVar(), deref1.target()
-					.type(), def.attributes());
-			r.add(new JilStmt.Assign(tmpVar, deref1.target(), def.attributes()));
-			r.addAll(rhs.second());
-			JilExpr.Deref deref2 = new JilExpr.Deref(tmpVar, deref1.name(),
-					deref1.isStatic(), deref1.type(), deref1.attributes()); 
-			r
-			.add(new JilStmt.Assign(deref2, rhs.first(), def
-					.attributes()));
-			return new Pair(deref2, r);
+			if(deref1.target() instanceof JilExpr.ClassVariable) {
+				// Slightly awkward case, since this corresponds to a static
+                // class access and, hence, there are no possible side-effects.
+                // However, we cannot assign the target to a tmp variable, since
+                // it will not compile down to anything in practice.
+				r.addAll(rhs.second());
+				r.add(new JilStmt.Assign(lhs.first(), rhs.first(), def
+								.attributes()));
+				return new Pair(lhs.first(), r);
+			} else {
+
+				JilExpr tmpVar = new JilExpr.Variable(getTempVar(), deref1.target()
+						.type(), def.attributes());
+				r.add(new JilStmt.Assign(tmpVar, deref1.target(), def.attributes()));
+				r.addAll(rhs.second());
+				JilExpr.Deref deref2 = new JilExpr.Deref(tmpVar, deref1.name(),
+						deref1.isStatic(), deref1.type(), deref1.attributes()); 
+				r
+				.add(new JilStmt.Assign(deref2, rhs.first(), def
+						.attributes()));
+				return new Pair(deref2, r);
+			}
 		} else if(lhs.first() instanceof JilExpr.ArrayIndex) {
 			JilExpr.ArrayIndex aindex1 = (JilExpr.ArrayIndex) lhs.first();
 
@@ -685,17 +697,29 @@ public class JilBuilder {
 							.attributes()));
 			return new Pair(lhs.first(), r);
 		} else if(lhs.first() instanceof JilExpr.Deref) {
+			
 			JilExpr.Deref deref1 = (JilExpr.Deref) lhs.first(); 
 
-			JilExpr tmpVar = new JilExpr.Variable(getTempVar(), deref1.target()
-					.type(), def.attributes());
-			r.add(new JilStmt.Assign(tmpVar, deref1.target(), def.attributes()));
-			r.addAll(rhs.second());
-			JilExpr.Deref deref2 = new JilExpr.Deref(tmpVar, deref1.name(),
-					deref1.isStatic(), deref1.type(), deref1.attributes()); 
-			r.add(new JilStmt.Assign(deref2, rhs.first(), def
-							.attributes()));
-			return new Pair(deref2, r);
+			if(deref1.target() instanceof JilExpr.ClassVariable) {
+				// Slightly awkward case, since this corresponds to a static
+                // class access and, hence, there are no possible side-effects.
+                // However, we cannot assign the target to a tmp variable, since
+                // it will not compile down to anything in practice.
+				r.addAll(rhs.second());
+				r.add(new JilStmt.Assign(lhs.first(), rhs.first(), def
+								.attributes()));
+				return new Pair(lhs.first(), r);
+			} else {
+				JilExpr tmpVar = new JilExpr.Variable(getTempVar(), deref1.target()
+						.type(), def.attributes());
+				r.add(new JilStmt.Assign(tmpVar, deref1.target(), def.attributes()));
+				r.addAll(rhs.second());
+				JilExpr.Deref deref2 = new JilExpr.Deref(tmpVar, deref1.name(),
+						deref1.isStatic(), deref1.type(), deref1.attributes()); 
+				r.add(new JilStmt.Assign(deref2, rhs.first(), def
+						.attributes()));
+				return new Pair(deref2, r);
+			}			
 		} else if(lhs.first() instanceof JilExpr.ArrayIndex) {
 			JilExpr.ArrayIndex aindex1 = (JilExpr.ArrayIndex) lhs.first();
 
