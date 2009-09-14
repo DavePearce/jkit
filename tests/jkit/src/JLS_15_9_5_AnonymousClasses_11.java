@@ -18,8 +18,14 @@ public class JLS_15_9_5_AnonymousClasses_11 {
 		new Thread(new Runnable(){
 			public void run(){
 			    System.out.println(s);
+			    s = null;
 			}
 		    }).start();
+
+		while(s != null) {
+		    // busy wait ... yeah, ugly I know.
+		}
+
 		System.out.println("FINISHED");
 	    }
 	}.actionPerformed(null);
