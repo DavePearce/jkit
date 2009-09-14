@@ -8,6 +8,7 @@ import jkit.util.*;
 import jkit.util.graph.*;
 import jkit.compiler.ClassLoader;
 import jkit.compiler.Clazz;
+import jkit.compiler.SyntacticAttribute;
 import jkit.java.stages.TypeSystem;
 import jkit.jil.dfa.*;
 import jkit.jil.tree.*;

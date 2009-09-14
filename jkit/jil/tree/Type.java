@@ -23,6 +23,8 @@ package jkit.jil.tree;
 
 import java.util.*;
 
+import jkit.compiler.SyntacticAttribute;
+import jkit.compiler.SyntacticElementImpl;
 import jkit.util.Pair;
 
 /**

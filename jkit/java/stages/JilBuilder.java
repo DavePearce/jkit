@@ -29,6 +29,7 @@ import static jkit.jil.util.Exprs.*;
 import static jkit.jil.util.Types.*;
 import jkit.compiler.ClassLoader;
 import jkit.compiler.Clazz;
+import jkit.compiler.SyntacticAttribute;
 import jkit.java.io.JavaFile;
 import jkit.java.tree.*;
 import jkit.jil.tree.*;

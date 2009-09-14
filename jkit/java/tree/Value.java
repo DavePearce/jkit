@@ -23,9 +23,9 @@ package jkit.java.tree;
 
 import java.util.List;
 
+import jkit.compiler.SyntacticAttribute;
+import jkit.compiler.SyntacticElementImpl;
 import jkit.jil.*;
-import jkit.jil.tree.SyntacticAttribute;
-import jkit.jil.tree.SyntacticElementImpl;
 
 public interface Value extends Expr {
 	

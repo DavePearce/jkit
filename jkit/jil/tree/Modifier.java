@@ -23,6 +23,9 @@ package jkit.jil.tree;
 
 import java.util.List;
 
+import jkit.compiler.SyntacticAttribute;
+import jkit.compiler.SyntacticElement;
+import jkit.compiler.SyntacticElementImpl;
 import jkit.java.tree.Expr;
 
 /**

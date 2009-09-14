@@ -22,7 +22,6 @@
 package jkit.compiler;
 
 import jkit.jil.tree.SourceLocation;
-import jkit.jil.tree.SyntacticElement;
 
 /**
  * This exception is thrown when a syntax error occurs in the parser. 

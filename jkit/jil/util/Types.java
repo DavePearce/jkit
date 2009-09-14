@@ -24,8 +24,8 @@ package jkit.jil.util;
 import java.util.*;
 
 import static jkit.compiler.SyntaxError.*;
+import jkit.compiler.SyntacticElement;
 import jkit.java.stages.TypeSystem.BindError;
-import jkit.jil.tree.SyntacticElement;
 import jkit.jil.tree.Type;
 import jkit.util.Pair;
 

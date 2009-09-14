@@ -24,12 +24,12 @@ package jkit.java.tree;
 import java.util.ArrayList;
 import java.util.List;
 
+import jkit.compiler.SyntacticAttribute;
+import jkit.compiler.SyntacticElement;
+import jkit.compiler.SyntacticElementImpl;
 import jkit.java.tree.Type.Clazz;
 import jkit.java.tree.Type.Variable;
-import jkit.jil.tree.SyntacticAttribute;
 import jkit.jil.tree.Modifier;
-import jkit.jil.tree.SyntacticElement;
-import jkit.jil.tree.SyntacticElementImpl;
 import jkit.util.Triple;
 
 public interface Decl extends SyntacticElement {

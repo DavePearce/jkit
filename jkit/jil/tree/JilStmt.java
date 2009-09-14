@@ -24,6 +24,8 @@ package jkit.jil.tree;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import jkit.compiler.SyntacticAttribute;
+import jkit.compiler.SyntacticElement;
 import jkit.util.*;
 
 public interface JilStmt extends SyntacticElement, Cloneable {

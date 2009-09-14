@@ -23,6 +23,9 @@ package jkit.jil.tree;
 
 import java.util.*;
 
+import jkit.compiler.SyntacticAttribute;
+import jkit.compiler.SyntacticElementImpl;
+
 
 public class JilField extends SyntacticElementImpl implements jkit.compiler.Clazz.Field {
 	private String name;

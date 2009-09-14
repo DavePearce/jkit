@@ -23,6 +23,8 @@ package jkit.jil.tree;
 
 import java.util.*;
 
+import jkit.compiler.SyntacticAttribute;
+
 /**
  * A JilConstant represents a constant field. It requires an initialiser field
  * which will be converted into a ConstantValue attribute (see JVM Spec,

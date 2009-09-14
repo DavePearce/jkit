@@ -23,6 +23,8 @@ package jkit.jil.tree;
 
 import java.util.*;
 import jkit.util.Pair;
+import jkit.compiler.SyntacticAttribute;
+import jkit.compiler.SyntacticElementImpl;
 import jkit.jil.util.*;
 
 public final class JilMethod extends SyntacticElementImpl implements jkit.compiler.Clazz.Method {

@@ -21,7 +21,7 @@
 
 package jkit.jil.tree;
 
-import jkit.jil.tree.SyntacticAttribute;
+import jkit.compiler.SyntacticAttribute;
 
 /**
  * A Source Location identifies a position within an originating source file.

@@ -25,6 +25,7 @@ import java.io.*;
 import java.util.*;
 
 import jkit.compiler.Compiler;
+import jkit.compiler.SyntacticElement;
 import jkit.compiler.SyntaxError;
 import jkit.compiler.ClassLoader;
 import jkit.java.io.JavaFile;
@@ -38,7 +39,6 @@ import jkit.jil.stages.ClassFileBuilder;
 import jkit.jil.tree.JilClass;
 import jkit.jil.tree.Type;
 import jkit.jil.tree.SourceLocation;
-import jkit.jil.tree.SyntacticElement;
 import jkit.jil.stages.*;
 
 /**

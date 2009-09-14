@@ -24,6 +24,7 @@ package jkit.jil.stages;
 import java.util.*;
 
 import static jkit.compiler.SyntaxError.*;
+import jkit.compiler.SyntacticElement;
 import jkit.jil.tree.*;
 import jkit.jil.dfa.*;
 import jkit.util.*;

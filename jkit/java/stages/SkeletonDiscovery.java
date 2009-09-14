@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Stack;
 
 import jkit.compiler.ClassLoader;
+import jkit.compiler.SyntacticElement;
 import static jkit.compiler.SyntaxError.*;
 import jkit.java.io.JavaFile;
 import jkit.java.tree.Decl;
@@ -36,7 +37,6 @@ import jkit.java.tree.Stmt.Case;
 import jkit.java.tree.Stmt;
 import jkit.jil.tree.JilClass;
 import jkit.jil.tree.SourceLocation;
-import jkit.jil.tree.SyntacticElement;
 import jkit.jil.tree.Type;
 import jkit.jil.tree.Modifier;
 import jkit.util.Pair;

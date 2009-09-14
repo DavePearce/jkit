@@ -25,6 +25,7 @@ import java.util.*;
 
 import jkit.compiler.ClassLoader;
 import jkit.compiler.FieldNotFoundException;
+import jkit.compiler.SyntacticElement;
 import static jkit.compiler.SyntaxError.*;
 import static jkit.jil.util.Types.*;
 import jkit.compiler.Clazz;
@@ -40,7 +41,6 @@ import jkit.java.tree.Decl.JavaMethod;
 import jkit.java.tree.Stmt.Case;
 import jkit.jil.tree.Modifier;
 import jkit.jil.tree.SourceLocation;
-import jkit.jil.tree.SyntacticElement;
 import jkit.jil.tree.Type;
 import jkit.util.Pair;
 import jkit.util.Triple;

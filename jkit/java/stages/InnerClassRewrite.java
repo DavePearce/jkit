@@ -360,7 +360,7 @@ public class InnerClassRewrite {
 									+ c.getClass().getName(), e);
 						}
 
-						ArrayList<jkit.jil.tree.SyntacticAttribute> attributes = new ArrayList(e.attributes());
+						ArrayList<jkit.compiler.SyntacticAttribute> attributes = new ArrayList(e.attributes());
 						Clazz.Method accessor = createWriteAccessor(f, (jkit.jil.tree.JilClass) c);
 						attributes.add(new JilBuilder.MethodInfo(accessor.exceptions(),accessor.type()));						
 						ArrayList<Expr> params = new ArrayList<Expr>();							
@@ -557,7 +557,7 @@ public class InnerClassRewrite {
 								+ c.getClass().getName(), e);
 					}
 
-					ArrayList<jkit.jil.tree.SyntacticAttribute> attributes = new ArrayList(e.attributes());
+					ArrayList<jkit.compiler.SyntacticAttribute> attributes = new ArrayList(e.attributes());
 					Clazz.Method accessor = createReadAccessor(f, (jkit.jil.tree.JilClass) c);
 					attributes.add(new JilBuilder.MethodInfo(accessor.exceptions(),accessor.type()));						
 					ArrayList<Expr> params = new ArrayList<Expr>();

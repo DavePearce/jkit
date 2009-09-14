@@ -23,6 +23,9 @@ package jkit.jil.tree;
 
 import java.util.*;
 
+import jkit.compiler.SyntacticAttribute;
+import jkit.compiler.SyntacticElementImpl;
+
 public final class JilClass extends SyntacticElementImpl implements jkit.compiler.Clazz {	
 	private List<Modifier> modifiers;
 	private Type.Clazz type;

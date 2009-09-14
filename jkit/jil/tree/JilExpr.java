@@ -23,6 +23,10 @@ package jkit.jil.tree;
 
 import java.util.*;
 import java.util.concurrent.*;
+
+import jkit.compiler.SyntacticAttribute;
+import jkit.compiler.SyntacticElement;
+import jkit.compiler.SyntacticElementImpl;
 import jkit.util.Pair;
 
 public interface JilExpr extends SyntacticElement,Cloneable {
