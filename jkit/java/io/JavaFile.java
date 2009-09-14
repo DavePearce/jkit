@@ -27,6 +27,7 @@ import jkit.java.tree.Decl;
 import jkit.util.*;
 
 public class JavaFile {
+	private String filename;
 	private String pkg;
 	private List<Pair<Boolean,String> > imports;
 	private List<Decl> declarations; 
@@ -61,7 +62,15 @@ public class JavaFile {
 	public List<Decl> declarations() { 
 		return declarations;
 	}	
-		
+	
+	public String filename() {
+		return filename; 
+	}
+	
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
+	
 	// ====================================================
 	// MODIFIERS
 	// ====================================================

@@ -418,6 +418,7 @@ public class JavaCompiler implements Compiler {
 				
 		JavaFileReader reader = new JavaFileReader(srcFile.getPath());
 		JavaFile jfile = reader.read();
+		jfile.setFilename(srcFile.getPath());
 		logTimedMessage("[" + srcFile.getPath() + "] Parsing completed ",
 				(System.currentTimeMillis() - start));
 		

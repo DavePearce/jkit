@@ -50,11 +50,9 @@ import jkit.util.*;
  * @author djp
  * 
  */
-
 public class SkeletonBuilder {
 	private int anonymousClassCount = 0;	
 	private JavaFile file;
-	private String filename;
 	private ArrayList<JilClass> skeletons;
 	private ClassLoader loader = null;
 	private final Stack<Decl> context = new Stack();
@@ -112,10 +110,6 @@ public class SkeletonBuilder {
 	
 		skeleton = (JilClass) loader.loadClass(type);		
 	
-		if(!skeleton.isInnerClass() && skeleton.isPublic()) {
-			filename = skeleton.name() + ".java";
-		}
-		
 		// Next, we need to update as much information about the skeleton as
 		// we can.
 		Type.Clazz superClass = new Type.Clazz("java.lang", "Object");
@@ -753,7 +747,7 @@ public class SkeletonBuilder {
 	
 	protected List<SyntacticAttribute> addSrcFile(List<SyntacticAttribute> attributes) {
 		attributes = new ArrayList<SyntacticAttribute>(attributes);
-		attributes.add(new SourceFile(filename));
+		attributes.add(new SourceFile(file.filename()));
 		return attributes;
 	}
 	
