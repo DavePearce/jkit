@@ -61,6 +61,7 @@ import jkit.util.Triple;
 public class SkeletonDiscovery {		
 	
 	private JavaFile file;
+	private String filename;
 	
 	private static class Scope {}
 	private static class MethodScope extends Scope {
@@ -187,7 +188,9 @@ public class SkeletonDiscovery {
 					modifiers.add(Modifier.ACC_STATIC);
 				}
 			}
-		} 
+		} else if(c.isPublic()){
+			filename = c.name() + ".java";
+		}
 		
 		components.add(new Pair(name, new ArrayList()));
 		Type.Clazz type = new Type.Clazz(file.pkg(),components);	
@@ -212,7 +215,7 @@ public class SkeletonDiscovery {
 		 * Now, construct the skeleton for this class!
 		 */
 		skeletons.add(new JilClass(type, modifiers, null, new ArrayList(),
-				inners, new ArrayList(), new ArrayList(), new SourceFile("dummy")));
+				inners, new ArrayList(), new ArrayList(), new SourceFile(filename)));
 						
 		return skeletons;
 	}
