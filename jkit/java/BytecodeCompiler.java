@@ -73,7 +73,7 @@ public class BytecodeCompiler extends JavaCompiler {
 			throws IOException {
 		long start = System.currentTimeMillis();
 		
-		File outputFile = new File(rootdir, baseName + ".class");		
+		File outputFile = new File(rootdir, baseName + ".bytecode");		
 		
 		// now, ensure output directory and package directories exist.
 		if(outputFile.getParentFile() != null) {
