@@ -1181,9 +1181,11 @@ public final class ClassFileBuilder {
 		Type srcType = cast.expr().type();
 		// Now, do implicit conversions
 		if (type instanceof Type.Primitive
-				&& srcType instanceof Type.Primitive) {
-			bytecodes.add(new Bytecode.Conversion((Type.Primitive) srcType,
+				&& srcType instanceof Type.Primitive) {			
+			if(!type.equals(srcType)) {
+				bytecodes.add(new Bytecode.Conversion((Type.Primitive) srcType,
 					(Type.Primitive) cast.type()));
+			}			
 		} else if (type instanceof Type.Array || type instanceof Type.Clazz) {
 			bytecodes.add(new Bytecode.CheckCast(cast.type()));
 		} else if (type instanceof Type.Variable) {
