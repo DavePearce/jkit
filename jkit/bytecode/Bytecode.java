@@ -939,7 +939,13 @@ public abstract class Bytecode {
 				}
 			} else if(from instanceof Type.Long) {
 				// l2i, l2f, l2d
-				if(to instanceof Type.Int) {
+				if(to instanceof Type.Char) {
+					return;
+				} else if(to instanceof Type.Byte) {
+					return;				
+				} else if(to instanceof Type.Short) {
+					return;				
+				} else if(to instanceof Type.Int) {
 					return;
 				} else if(to instanceof Type.Float) {
 					return;
@@ -948,7 +954,13 @@ public abstract class Bytecode {
 				}
 			} else if(from instanceof Type.Float) {
 				// f2i, f2l, f2d
-				if(to instanceof Type.Int) {
+				if(to instanceof Type.Char) {
+					return;
+				} else if(to instanceof Type.Byte) {
+					return;				
+				} else if(to instanceof Type.Short) {
+					return;				
+				} else if(to instanceof Type.Int) {
 					return;
 				} else if(to instanceof Type.Long) {
 					return;
@@ -957,7 +969,13 @@ public abstract class Bytecode {
 				}
 			} else if(from instanceof Type.Double) {
 				// d2i, d2l, d2f
-				if(to instanceof Type.Int) {
+				if(to instanceof Type.Char) {
+					return;
+				} else if(to instanceof Type.Byte) {
+					return;				
+				} else if(to instanceof Type.Short) {
+					return;				
+				} else if(to instanceof Type.Int) {
 					return;
 				} else if(to instanceof Type.Long) {
 					return;
@@ -1004,7 +1022,7 @@ public abstract class Bytecode {
 				} else if(to instanceof Type.Short) {
 					write_u1(out,L2I);
 					write_u1(out,I2S);				
-				} if(to instanceof Type.Int) {
+				} else if(to instanceof Type.Int) {
 					write_u1(out,L2I);
 				} else if(to instanceof Type.Float) {
 					write_u1(out,L2F);
@@ -1022,7 +1040,7 @@ public abstract class Bytecode {
 				} else if(to instanceof Type.Short) {
 					write_u1(out,F2I);
 					write_u1(out,I2S);				
-				} if(to instanceof Type.Int) {
+				} else if(to instanceof Type.Int) {
 					write_u1(out,F2I);
 				} else if(to instanceof Type.Long) {
 					write_u1(out,F2L);
@@ -1071,7 +1089,13 @@ public abstract class Bytecode {
 				}
 			} else if(from instanceof Type.Long) {
 				// l2i, l2f, l2d
-				if(to instanceof Type.Int) {
+				if(to instanceof Type.Char) {					
+					return "l2i ; i2c";
+				} else if(to instanceof Type.Byte) {					
+					return "l2i ; i2b";
+				} else if(to instanceof Type.Short) {
+					return "l2i ; i2s";				
+				} else if(to instanceof Type.Int) {
 					return "l2i";
 				} else if(to instanceof Type.Float) {
 					return "l2f";
@@ -1080,7 +1104,13 @@ public abstract class Bytecode {
 				}
 			} else if(from instanceof Type.Float) {
 				// f2i, f2l, f2d
-				if(to instanceof Type.Int) {
+				if(to instanceof Type.Char) {					
+					return "f2i ; i2c";
+				} else if(to instanceof Type.Byte) {					
+					return "f2i ; i2b";
+				} else if(to instanceof Type.Short) {
+					return "f2i ; i2s";				
+				} else if(to instanceof Type.Int) {
 					return "f2i";
 				} else if(to instanceof Type.Long) {
 					return "f2l";
@@ -1089,7 +1119,13 @@ public abstract class Bytecode {
 				}
 			} else if(from instanceof Type.Double) {
 				// d2i, d2l, d2f
-				if(to instanceof Type.Int) {
+				if(to instanceof Type.Char) {					
+					return "d2i ; i2c";
+				} else if(to instanceof Type.Byte) {					
+					return "d2i ; i2b";
+				} else if(to instanceof Type.Short) {
+					return "d2i ; i2s";				
+				} else if(to instanceof Type.Int) {
 					return "d2i";
 				} else if(to instanceof Type.Long) {
 					return "d2l";
