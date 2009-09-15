@@ -61,6 +61,7 @@ public class JKit extends TestHarness {
 	@Test public void Imports_3() { runTest("Imports_3"); }
 			
 	@Test public void JLS_3_3_UnicodeEscapes_1() { runTest("JLS_3_3_UnicodeEscapes_1"); }
+	@Test public void JLS_3_10_1_IntegerLiterals_1() { runTest("JLS_3_10_1_IntegerLiterals_1"); }
 	@Test public void JLS_3_10_4_CharacterLiterals_1() { runTest("JLS_3_10_4_CharacterLiterals_1"); }
 	
 	@Test public void JLS_4_3_2_GetClass_1() { runTest("JLS_4_3_2_GetClass_1"); }
