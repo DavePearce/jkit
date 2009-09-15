@@ -919,6 +919,54 @@ public abstract class Bytecode {
 		public Conversion(Type.Primitive from, Type.Primitive to) {			
 			this.from = from;
 			this.to = to;
+			
+			// Now, sanity check this conversion operator
+			if(from instanceof Type.Int || from instanceof Type.Short
+					|| from instanceof Type.Byte || from instanceof Type.Char) {
+				// i2l, i2f, i2d, i2c, i2b, i2s
+				if(to instanceof Type.Long) {
+					return;
+				} else if(to instanceof Type.Float) {
+					return;
+				} else if(to instanceof Type.Double) {
+					return;
+				} else if(to instanceof Type.Char && !(from instanceof Type.Char)) {
+					return;
+				} else if(to instanceof Type.Short && !(from instanceof Type.Short)) {
+					return;
+				} else if(to instanceof Type.Byte && !(from instanceof Type.Byte)) {
+					return;
+				}
+			} else if(from instanceof Type.Long) {
+				// l2i, l2f, l2d
+				if(to instanceof Type.Int) {
+					return;
+				} else if(to instanceof Type.Float) {
+					return;
+				} else if(to instanceof Type.Double) {
+					return;
+				}
+			} else if(from instanceof Type.Float) {
+				// f2i, f2l, f2d
+				if(to instanceof Type.Int) {
+					return;
+				} else if(to instanceof Type.Long) {
+					return;
+				} else if(to instanceof Type.Double) {
+					return;
+				}
+			} else if(from instanceof Type.Double) {
+				// d2i, d2l, d2f
+				if(to instanceof Type.Int) {
+					return;
+				} else if(to instanceof Type.Long) {
+					return;
+				} else if(to instanceof Type.Float) {
+					return;
+				}
+			}			
+			
+			throw new IllegalArgumentException("no valid conversion from " + from + " into " + to);	
 		}	
 		
 		public int stackDiff() {
@@ -928,7 +976,8 @@ public abstract class Bytecode {
 		public byte[] toBytes(int offset, Map<String, Integer> labelOffsets,
 				Map<Constant.Info, Integer> constantPool) {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			if (from instanceof Type.Int || from instanceof Type.Short
+			
+			if (from instanceof Type.Int || from instanceof Type.Short					
 					|| from instanceof Type.Byte || from instanceof Type.Char) {
 				// i2l, i2f, i2d, i2c, i2b, i2s
 				if(to instanceof Type.Long) {
@@ -1047,8 +1096,10 @@ public abstract class Bytecode {
 				} else if(to instanceof Type.Float) {
 					return "d2f";
 				}
-			}
-			throw new RuntimeException("Invalid conversion operator!");
+			}			
+			
+			// following should be unreachable
+			throw new RuntimeException("Invalid conversion operator (" + from + "=>" + to + ")");					
 		}
 		
 		public boolean equals(Object o) {
