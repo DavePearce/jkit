@@ -233,7 +233,7 @@ public abstract class Bytecode {
 		}
 		
 		public int stackDiff() {
-			return ClassFile.slotSize(type)-2;
+			return ClassFile.slotSize(type.element())-2;
 		}
 		
 		public String toString() { return typeArrayChar(type.element()) + "aload"; }
@@ -259,8 +259,8 @@ public abstract class Bytecode {
 		
 		public ArrayStore(Type.Array type) { this.type = type; }
 		
-		public int stackDiff() {
-			return -2 - ClassFile.slotSize(type);
+		public int stackDiff() {			
+			return -(2 + ClassFile.slotSize(type.element()));
 		}
 		
 		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  Map<Constant.Info,Integer> constantPool) {
