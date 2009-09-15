@@ -1372,11 +1372,15 @@ public class JavaFileReader {
 	protected Expr parseIntVal(Tree expr) {
 		int radix = 10;
 		String value = expr.getChild(0).getText();
+		
 		if (value.startsWith("0x")) {
 			// HEX value
 			radix = 16;
 			value = value.substring(2);
-		}
+		} else if(value.startsWith("0")) {
+			radix = 8; // octal
+		}			
+		
 		char lc = value.charAt(value.length() - 1);
 
 		long val = parseLongVal(value.substring(0, value.length() - 1), radix);
@@ -1394,6 +1398,7 @@ public class JavaFileReader {
 		}
 
 		val = parseLongVal(value, radix);
+		
 		return new Value.Int((int) val, loc);
 	}
 
