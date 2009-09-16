@@ -189,21 +189,8 @@ public class JavaCompiler implements Compiler {
 	public List<JilClass> compile(File filename) throws IOException,
 			SyntaxError {						
 		Pair<JavaFile,List<JilClass>> p = innerParse(filename);		
-		
-		// Look to see if we're already on the compilation queue. If so, remove
-        // us!
-		String str_filename = filename.getCanonicalPath();
-		int index = 0;
-		for(Triple<File,JavaFile,List<JilClass>> item : compilationQueue) {				
-			if(str_filename.equals(item.first().getCanonicalPath())) {					
-				compilationQueue.remove(index);
-				break;
-			}			
-			index = index + 1;
-		}
-		
-		compilationQueue.remove(new Triple(filename,p.first(),p.second()));
-		
+						
+		removeCompilationQueue(filename);		
 		finishcompilation(filename,p.first(),p.second());		
 		return p.second();
 	}
@@ -222,9 +209,18 @@ public class JavaCompiler implements Compiler {
 			SyntaxError {		
 		ArrayList<JilClass> classes = new ArrayList<JilClass>();
 		
-		for (File f : filenames) {
-			classes.addAll(compile(f));
-		}		
+		ArrayList<Triple<File,JavaFile,List<JilClass>>> units = new ArrayList();
+		
+		for(File f : filenames) {
+			Pair<JavaFile,List<JilClass>> u = innerParse(f);
+			classes.addAll(u.second());
+			units.add(new Triple(f,u.first(),u.second()));			
+		}
+		
+		for(Triple<File,JavaFile,List<JilClass>> u : units) {			
+			removeCompilationQueue(u.first());		
+			finishcompilation(u.first(),u.second(),u.third());
+		}
 
 		return classes;
 	}
@@ -240,6 +236,27 @@ public class JavaCompiler implements Compiler {
 		return classes;
 	}	
 
+	/**
+	 * Remove a file from the compilation queue.
+	 * @param file
+	 * @return
+	 */
+	public boolean removeCompilationQueue(File file) throws IOException {
+		// Convert the file into a canonical path. The reason for this is this
+        // file may have originally been loaded onto the compilation queue under
+        // a different name.
+		String str_filename = file.getCanonicalPath();
+		int index = 0;
+		for(Triple<File,JavaFile,List<JilClass>> item : compilationQueue) {				
+			if(str_filename.equals(item.first().getCanonicalPath())) {					
+				compilationQueue.remove(index);
+				return true;				
+			}			
+			index = index + 1;
+		}
+		return false;
+	}
+	
 	public List<JilClass> parse(File filename) throws IOException {
 		return innerParse(filename).second();
 	}
@@ -253,6 +270,7 @@ public class JavaCompiler implements Compiler {
      */
 	protected Pair<JavaFile,List<JilClass>> innerParse(File filename) throws IOException {				
 		String str_filename = filename.getCanonicalPath();
+		
 		if(parsed.contains(str_filename)) {			
 			for(Triple<File,JavaFile,List<JilClass>> item : compilationQueue) {				
 				if(str_filename.equals(item.first().getCanonicalPath())) {					
@@ -260,6 +278,7 @@ public class JavaCompiler implements Compiler {
 				}				
 			}
 		}
+		
 		try {
 			// First, parse the Java source file to yield an abstract syntax
 			// tree.
