@@ -5,13 +5,13 @@ import static jkit.compiler.SyntaxError.*;
 import jkit.jil.tree.*;
 
 public class DestructiveVisitor {
-	public void apply(JilClass owner) {		
+	protected void apply(JilClass owner) {		
 		for (JilMethod m : owner.methods()) {
 			apply(m);
 		}			
 	}
 	
-	public void apply(JilMethod m) {
+	protected void apply(JilMethod m) {
 		List<JilStmt> m_body = m.body();
 		for(int i=0;i!=m_body.size();++i) {
 			JilStmt s = m_body.get(i);
@@ -20,7 +20,7 @@ public class DestructiveVisitor {
 		}
 	}
 	
-	public JilStmt apply(JilStmt stmt) {
+	protected JilStmt apply(JilStmt stmt) {
 		if(stmt instanceof JilStmt.Assign) {
 			return apply((JilStmt.Assign)stmt);					
 		} else if(stmt instanceof JilExpr.Invoke) {
@@ -47,13 +47,13 @@ public class DestructiveVisitor {
 		}		
 	}
 	
-	public JilStmt apply(JilStmt.Assign stmt) {
+	protected JilStmt apply(JilStmt.Assign stmt) {
 		JilExpr lhs = apply(stmt.lhs());
 		JilExpr rhs = apply(stmt.rhs());
 		return new JilStmt.Assign(lhs,rhs,stmt.exceptions(),stmt.attributes());
 	}
 		
-	public JilStmt apply(JilStmt.Return stmt) {
+	protected JilStmt apply(JilStmt.Return stmt) {
 		JilExpr expr = stmt.expr();
 		if(expr != null) {
 			expr = apply(expr);
@@ -61,32 +61,32 @@ public class DestructiveVisitor {
 		return new JilStmt.Return(expr,stmt.exceptions(),stmt.attributes());
 	}
 		
-	public JilStmt apply(JilStmt.Throw stmt) {		
+	protected JilStmt apply(JilStmt.Throw stmt) {		
 		return new JilStmt.Throw(apply(stmt.expr()), stmt.exceptions(), stmt
 				.attributes());		
 	}
 	
-	public JilStmt apply(JilStmt.Nop stmt) {
+	protected JilStmt apply(JilStmt.Nop stmt) {
 		return stmt;
 	}		
 	
-	public JilStmt apply(JilStmt.Lock stmt) {
+	protected JilStmt apply(JilStmt.Lock stmt) {
 		return new JilStmt.Lock(apply(stmt.expr()), stmt.exceptions(), stmt
 				.attributes());
 				
 	}
 	
-	public JilStmt apply(JilStmt.Unlock stmt) {
+	protected JilStmt apply(JilStmt.Unlock stmt) {
 		return new JilStmt.Unlock(apply(stmt.expr()), stmt.exceptions(), stmt
 				.attributes());
 	}
 	
-	public JilStmt apply(JilStmt.IfGoto stmt) {
+	protected JilStmt apply(JilStmt.IfGoto stmt) {
 		return new JilStmt.IfGoto(apply(stmt.condition()), stmt.label(), stmt
 				.exceptions(), stmt.attributes());		
 	}
 	
-	public JilExpr apply(JilExpr expr) {
+	protected JilExpr apply(JilExpr expr) {
 		if(expr instanceof JilExpr.ArrayIndex) {
 			return apply((JilExpr.ArrayIndex) expr);
 		} else if(expr instanceof JilExpr.BinOp) {		
@@ -117,47 +117,47 @@ public class DestructiveVisitor {
 		}				
 	}
 	
-	public JilExpr apply(JilExpr.ArrayIndex expr) {
+	protected JilExpr apply(JilExpr.ArrayIndex expr) {
 		return new JilExpr.ArrayIndex(apply(expr.target()),
 				apply(expr.index()), expr.type(), expr.attributes());
 	}
 	
-	public JilExpr apply(JilExpr.BinOp expr) {
+	protected JilExpr apply(JilExpr.BinOp expr) {
 		return new JilExpr.BinOp(apply(expr.lhs()), apply(expr.rhs()), expr
 				.op(), expr.type(), expr.attributes());		
 	}
 	
-	public JilExpr apply(JilExpr.UnOp expr) {
+	protected JilExpr apply(JilExpr.UnOp expr) {
 		return new JilExpr.UnOp(apply(expr.expr()), expr
 				.op(), expr.type(), expr.attributes());
 	}
 	
-	public JilExpr apply(JilExpr.Cast expr) {
+	protected JilExpr apply(JilExpr.Cast expr) {
 		return new JilExpr.Cast(apply(expr.expr()), expr.type(), expr.attributes());
 	}
 	
-	public JilExpr apply(JilExpr.Convert expr) {
+	protected JilExpr apply(JilExpr.Convert expr) {
 		return new JilExpr.Convert(expr.type(), apply(expr.expr()), expr.attributes());
 	}
 	
-	public JilExpr apply(JilExpr.ClassVariable expr) {
+	protected JilExpr apply(JilExpr.ClassVariable expr) {
 		return expr;
 	}
 	
-	public JilExpr apply(JilExpr.Deref expr) {
+	protected JilExpr apply(JilExpr.Deref expr) {
 		return new JilExpr.Deref(apply(expr.target()), expr.name(), expr
 				.isStatic(), expr.type(), expr.attributes());
 	}
 	
-	public JilExpr apply(JilExpr.Variable expr) {
+	protected JilExpr apply(JilExpr.Variable expr) {
 		return expr;
 	}
 	
-	public JilExpr apply(JilExpr.InstanceOf expr) {
+	protected JilExpr apply(JilExpr.InstanceOf expr) {
 		return new JilExpr.InstanceOf(apply(expr.lhs()), expr.rhs(), expr.type(), expr.attributes());		
 	}
 	
-	public JilExpr.Invoke apply(JilExpr.Invoke stmt) {
+	protected JilExpr.Invoke apply(JilExpr.Invoke stmt) {
 		ArrayList<JilExpr> params = new ArrayList<JilExpr>();
 		for(JilExpr p : stmt.parameters()) {
 			params.add(apply(p));
@@ -169,7 +169,7 @@ public class DestructiveVisitor {
 				stmt.type(), stmt.exceptions(), stmt.attributes());
 	}
 	
-	public JilExpr.New apply(JilExpr.New stmt) {
+	protected JilExpr.New apply(JilExpr.New stmt) {
 		ArrayList<JilExpr> params = new ArrayList<JilExpr>();
 		for(JilExpr p : stmt.parameters()) {
 			params.add(apply(p));
@@ -179,7 +179,7 @@ public class DestructiveVisitor {
 				stmt.exceptions(), stmt.attributes());		
 	}
 	
-	public JilExpr apply(JilExpr.Value expr) {
+	protected JilExpr apply(JilExpr.Value expr) {
 		return expr;
 	}
 }
