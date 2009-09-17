@@ -70,7 +70,7 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 		}
 		
 		
-		public List<? extends Pair<Type.Clazz, String>> exceptions() {
+		public List<Pair<Type.Clazz, String>> exceptions() {
 			return exceptions;
 		}			
 		
