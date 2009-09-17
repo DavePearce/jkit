@@ -89,5 +89,16 @@ public class DirectedAdjacencyList<T,P extends Pair<T,T> > extends HashSet<P> im
 		return tx == null ? new HashSet<P>() : tx;		
 	}
 	
+	public Set<T> domain() {
+		HashSet<T> dom = new HashSet<T>();
+		
+		for(P p : this) {
+			dom.add(p.first());
+			dom.add(p.second());
+		}
+		
+		return dom;
+	}
+	
 	public static final long serialVersionUID = 1l;
 }
