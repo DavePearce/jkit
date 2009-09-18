@@ -200,6 +200,15 @@ public class DestructiveVisitor {
 	}
 	
 	protected JilExpr apply(JilExpr.Value expr) {
-		return expr;
+		if(expr instanceof JilExpr.Array) {
+			JilExpr.Array a = (JilExpr.Array) expr;
+			ArrayList<JilExpr> values = new ArrayList<JilExpr>();
+			for(JilExpr e : a.values()) {
+				values.add(apply(e));
+			}
+			return new JilExpr.Array(values,a.type(),a.attributes());
+		} else {
+			return expr;
+		}
 	}
 }
