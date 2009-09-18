@@ -171,8 +171,13 @@ public class DestructiveVisitor {
 		
 		JilExpr target = apply(stmt.target());
 		
-		return new JilExpr.Invoke(target, stmt.name(), params, stmt.funType(),
-				stmt.type(), stmt.exceptions(), stmt.attributes());
+		if(stmt instanceof JilExpr.SpecialInvoke) {
+			return new JilExpr.SpecialInvoke(target, stmt.name(), params, stmt.funType(),
+					stmt.type(), stmt.exceptions(), stmt.attributes());
+		} else {
+			return new JilExpr.Invoke(target, stmt.name(), params, stmt.funType(),
+					stmt.type(), stmt.exceptions(), stmt.attributes());			
+		}
 	}
 	
 	protected JilExpr.New apply(JilExpr.New stmt) {
