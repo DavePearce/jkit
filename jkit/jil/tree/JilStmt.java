@@ -490,7 +490,7 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 			return condition;
 		}		
 		
-		public List<? extends Pair<JilExpr.Number,String>> cases() {
+		public List<Pair<JilExpr.Number,String>> cases() {
 			return cases;
 		}		
 		

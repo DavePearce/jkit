@@ -41,6 +41,8 @@ public class DestructiveVisitor {
 			return stmt;
 		} else if(stmt instanceof JilStmt.IfGoto) {		
 			return apply((JilStmt.IfGoto)stmt);
+		} else if(stmt instanceof JilStmt.Switch) {		
+			return apply((JilStmt.Switch)stmt);
 		} else if(stmt instanceof JilStmt.Label) {		
 			return apply((JilStmt.Label) stmt);
 		} else {
@@ -89,6 +91,13 @@ public class DestructiveVisitor {
 	
 	protected JilStmt apply(JilStmt.IfGoto stmt) {
 		return new JilStmt.IfGoto(apply(stmt.condition()), stmt.label(), stmt
+				.exceptions(), stmt.attributes());		
+	}
+	
+	protected JilStmt apply(JilStmt.Switch stmt) {
+		JilExpr condition = apply(stmt.condition());
+		
+		return new JilStmt.Switch(condition,stmt.cases(),stmt.defaultLabel(), stmt
 				.exceptions(), stmt.attributes());		
 	}
 	
