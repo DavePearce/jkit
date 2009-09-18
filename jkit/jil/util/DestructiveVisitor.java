@@ -41,6 +41,8 @@ public class DestructiveVisitor {
 			return stmt;
 		} else if(stmt instanceof JilStmt.IfGoto) {		
 			return apply((JilStmt.IfGoto)stmt);
+		} else if(stmt instanceof JilStmt.Label) {		
+			return apply((JilStmt.Label) stmt);
 		} else {
 			syntax_error("unknown statement encountered (" + stmt.getClass().getName() + ")",stmt);
 			return null;
@@ -69,6 +71,10 @@ public class DestructiveVisitor {
 	protected JilStmt apply(JilStmt.Nop stmt) {
 		return stmt;
 	}		
+	
+	protected JilStmt apply(JilStmt.Label stmt) {
+		return stmt;
+	}
 	
 	protected JilStmt apply(JilStmt.Lock stmt) {
 		return new JilStmt.Lock(apply(stmt.expr()), stmt.exceptions(), stmt
