@@ -19,11 +19,17 @@
 //
 // (C) David James Pearce, 2009. 
 
-package jkit.bytecode;
+package jkit.bytecode.attributes;
 
 import java.io.*;
 import java.util.*;
 
+import jkit.bytecode.BytecodeAttribute;
+import jkit.bytecode.BinaryOutputStream;
+import jkit.bytecode.ClassFile;
+import jkit.bytecode.Constant;
+import jkit.bytecode.Constant.Info;
+import jkit.bytecode.Constant.Utf8;
 import jkit.compiler.ClassLoader;
 import jkit.compiler.*;
 import jkit.jil.tree.*;
@@ -32,7 +38,7 @@ import jkit.jil.tree.*;
  * This is for method and/or field signatures
  * @author djp 
  */
-public class MethodSignature implements Attribute {
+public class MethodSignature implements BytecodeAttribute {
 	protected Type.Function type;
 	
 	public MethodSignature(Type.Function type) {

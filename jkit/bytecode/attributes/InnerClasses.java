@@ -19,7 +19,7 @@
 //
 // (C) David James Pearce, 2009. 
 
-package jkit.bytecode;
+package jkit.bytecode.attributes;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -28,13 +28,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import jkit.bytecode.BytecodeAttribute;
+import jkit.bytecode.BinaryOutputStream;
+import jkit.bytecode.BytecodeFileWriter;
+import jkit.bytecode.ClassFileReader;
+import jkit.bytecode.Constant;
+import jkit.bytecode.Constant.Info;
+import jkit.bytecode.Constant.Utf8;
 import jkit.compiler.ClassLoader;
 import jkit.jil.tree.JilClass;
 import jkit.jil.tree.Modifier;
 import jkit.jil.tree.Type;
 import jkit.util.Triple;
 
-public class InnerClasses implements Attribute {
+public class InnerClasses implements BytecodeAttribute {
 	protected List<Triple<Type.Clazz,Type.Clazz,List<Modifier>>> inners;	
 	protected Type.Clazz type;
 	
@@ -55,11 +62,11 @@ public class InnerClasses implements Attribute {
 		this.inners = inners;		
 	}
 	
-	protected List<Triple<Type.Clazz,Type.Clazz,List<Modifier>>> inners() {
+	public List<Triple<Type.Clazz,Type.Clazz,List<Modifier>>> inners() {
 		return inners;
 	}
 	
-	protected Type.Clazz type() {
+	public Type.Clazz type() {
 		return type;
 	}
 	

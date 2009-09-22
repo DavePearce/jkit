@@ -24,8 +24,9 @@ package jkit.bytecode;
 import java.util.*;
 import java.io.*;
 import jkit.compiler.ClassLoader;
+import jkit.compiler.*;
 
-public interface Attribute {
+public interface BytecodeAttribute extends SyntacticAttribute {
 	public String name();
 	
 	/**
@@ -64,7 +65,7 @@ public interface Attribute {
 	 * 
 	 * @author djp	 
 	 */
-	public static class Unknown implements Attribute {
+	public static class Unknown implements BytecodeAttribute {
 		private byte[] bytes;
 		private String name;
 		

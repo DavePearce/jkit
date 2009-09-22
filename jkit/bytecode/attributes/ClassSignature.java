@@ -19,7 +19,7 @@
 //
 // (C) David James Pearce, 2009. 
 
-package jkit.bytecode;
+package jkit.bytecode.attributes;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -27,12 +27,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import jkit.bytecode.BytecodeAttribute;
+import jkit.bytecode.BinaryOutputStream;
+import jkit.bytecode.ClassFile;
+import jkit.bytecode.Constant;
+import jkit.bytecode.Constant.Info;
+import jkit.bytecode.Constant.Utf8;
 import jkit.compiler.Clazz;
 import jkit.compiler.ClassLoader;
 import jkit.jil.tree.*;
 import jkit.util.Pair;
 
-public class ClassSignature implements Attribute {
+public class ClassSignature implements BytecodeAttribute {
 	protected Type.Clazz type;
 	protected Type.Clazz superClazz;
 	protected List<Type.Clazz> interfaces;

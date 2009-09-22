@@ -19,17 +19,21 @@
 //
 // (C) David James Pearce, 2009. 
 
-package jkit.bytecode;
+package jkit.bytecode.attributes;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
 
-import jkit.bytecode.Code.Rewrite;
+import jkit.bytecode.BytecodeAttribute;
+import jkit.bytecode.BinaryOutputStream;
+import jkit.bytecode.Constant;
+import jkit.bytecode.Constant.Info;
+import jkit.bytecode.Constant.Utf8;
 import jkit.compiler.ClassLoader;
 import jkit.jil.tree.Type;
 
-public class Exceptions implements Attribute {
+public class Exceptions implements BytecodeAttribute {
 	protected List<Type.Clazz> exceptions;
 	
 	public Exceptions(List<Type.Clazz> exceptions) {

@@ -1,12 +1,17 @@
-package jkit.bytecode;
+package jkit.bytecode.attributes;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
 
+import jkit.bytecode.BytecodeAttribute;
+import jkit.bytecode.BinaryOutputStream;
+import jkit.bytecode.Constant;
+import jkit.bytecode.Constant.Info;
+import jkit.bytecode.Constant.Utf8;
 import jkit.compiler.ClassLoader;
 
-public class LineNumberTable implements Code.Rewriteable,Attribute {
+public class LineNumberTable implements Code.Rewriteable,BytecodeAttribute {
 	private ArrayList<Entry> entries;
 	
 	public static final class Entry {

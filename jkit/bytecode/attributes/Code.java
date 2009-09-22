@@ -19,7 +19,7 @@
 //
 // (C) David James Pearce, 2009. 
 
-package jkit.bytecode;
+package jkit.bytecode.attributes;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -27,7 +27,20 @@ import java.io.PrintWriter;
 import java.util.*;
 
 import jkit.compiler.ClassLoader;
+import jkit.bytecode.BytecodeAttribute;
+import jkit.bytecode.BinaryOutputStream;
+import jkit.bytecode.Bytecode;
+import jkit.bytecode.ClassFile;
+import jkit.bytecode.Constant;
+import jkit.bytecode.Bytecode.Branch;
+import jkit.bytecode.Bytecode.Iinc;
+import jkit.bytecode.Bytecode.Label;
+import jkit.bytecode.Bytecode.Load;
+import jkit.bytecode.Bytecode.Store;
+import jkit.bytecode.Bytecode.Switch;
 import jkit.bytecode.ClassFile.Method;
+import jkit.bytecode.Constant.Info;
+import jkit.bytecode.Constant.Utf8;
 import jkit.jil.tree.Type;
 import jkit.jil.util.*;
 
@@ -36,11 +49,11 @@ import jkit.jil.util.*;
  * 
  * @author djp
  */
-public class Code implements Attribute {
+public class Code implements BytecodeAttribute {
 
 	protected ArrayList<Bytecode> bytecodes;
 	protected ArrayList<Handler> handlers;
-	protected ArrayList<Attribute> attributes;
+	protected ArrayList<BytecodeAttribute> attributes;
 	protected Method method; // enclosing method
 
 	public Code(Collection<Bytecode> bytecodes,
@@ -48,12 +61,12 @@ public class Code implements Attribute {
 		this.bytecodes = new ArrayList<Bytecode>(bytecodes);
 		this.handlers = new ArrayList<Handler>(handlers);
 		this.method = method;
-		this.attributes = new ArrayList<Attribute>();
+		this.attributes = new ArrayList<BytecodeAttribute>();
 	}
 
 	public String name() { return "Code"; }
 
-	public List<Attribute> attributes() {
+	public List<BytecodeAttribute> attributes() {
 		return attributes;
 	}
 	
@@ -117,8 +130,9 @@ public class Code implements Attribute {
 				// hence we must account for this.
 				current = current + 1;
 			}			
-			current = current + b.stackDiff();
-			max = Math.max(current,max);
+									
+			current = current + b.stackDiff();			
+			max = Math.max(current,max);			
 			idx = idx + 1;
 		}
 		return max;
@@ -145,7 +159,7 @@ public class Code implements Attribute {
 			}
 		}
 		
-		for(Attribute a : attributes) {
+		for(BytecodeAttribute a : attributes) {
 			a.addPoolItems(constantPool, loader);			
 		}		
 	}
@@ -267,7 +281,7 @@ public class Code implements Attribute {
 		// === CREATE ATTRIBUTE BYTES
 		bout = new ByteArrayOutputStream();
 		BinaryOutputStream attrbout = new BinaryOutputStream(bout); 
-		for(Attribute a : attributes) {
+		for(BytecodeAttribute a : attributes) {
 			a.write(attrbout, constantPool, loader);
 		}
 		byte[] attrbytes = bout.toByteArray();

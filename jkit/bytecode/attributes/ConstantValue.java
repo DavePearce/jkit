@@ -19,15 +19,18 @@
 //
 // (C) David James Pearce, 2009. 
 
-package jkit.bytecode;
+package jkit.bytecode.attributes;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
 import java.util.Set;
+
+import jkit.bytecode.*;
+import jkit.bytecode.Constant;
 import jkit.compiler.ClassLoader;
 
-public class ConstantValue implements Attribute {	
+public class ConstantValue implements BytecodeAttribute {	
 	private Object constant;
 	
 	/**
