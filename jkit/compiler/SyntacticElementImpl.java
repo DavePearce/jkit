@@ -19,10 +19,11 @@
 //
 // (C) David James Pearce, 2009. 
 
-package jkit.jil.tree;
+package jkit.compiler;
 
 import java.util.*;
 import java.util.concurrent.*;
+
 
 public class SyntacticElementImpl  implements SyntacticElement {
 	protected ArrayList<SyntacticAttribute> attributes;
@@ -47,6 +48,16 @@ public class SyntacticElementImpl  implements SyntacticElement {
 	}
 	
 	public List<SyntacticAttribute> attributes() { return attributes; }
+	
+	public <T extends SyntacticAttribute> List<T> attributes(Class<T> c) {
+		ArrayList<T> r = new ArrayList<T>();
+		for (SyntacticAttribute a : attributes) {
+			if (c.isInstance(a)) {
+				r.add((T) a);
+			}
+		}
+		return r;
+	}
 	
 	public <T extends SyntacticAttribute> T attribute(Class<T> c) {
 		for (SyntacticAttribute a : attributes) {

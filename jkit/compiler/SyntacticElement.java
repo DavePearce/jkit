@@ -19,15 +19,41 @@
 //
 // (C) David James Pearce, 2009. 
 
-package jkit.jil.tree;
+package jkit.compiler;
+
+import java.util.List;
+
 
 /**
- * An attribute is simply a piece of information that we may wish to
- * attached to a syntactic element,
+ * A Syntactic Element represents any part of the file for which is relevant
+ * to the syntactic structure of the file, and in particular parts we may
+ * wish to add information too (e.g. line numbers, types, etc).
  * 
  * @author djp
  * 
  */
-public interface SyntacticAttribute {
+public interface SyntacticElement {
+	/**
+     * Get the list of attributes associated with this syntactice element.
+     * 
+     * @return
+     */
+	public List<SyntacticAttribute> attributes();
 	
+	/**
+     * Get the first attribute of the given class type. This is useful
+     * short-hand.
+     * 
+     * @param c
+     * @return
+     */
+	public <T extends SyntacticAttribute> T attribute(Class<T> c);
+	
+	/**
+     * Get all attributes of the given class type. 
+     * 
+     * @param c
+     * @return
+     */
+	public <T extends SyntacticAttribute> List<T> attributes(Class<T> c);
 }
