@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
-import jkit.jil.stages.NonNullInference.Location;
 import jkit.jil.tree.*;
 
 import jkit.util.*;
