@@ -372,11 +372,20 @@ public class JilBuilder {
 		}
 		return r;
 	}
+
 	
 	protected List<JilStmt> doSynchronisedBlock(Stmt.SynchronisedBlock block) {
 		ArrayList<JilStmt> r = new ArrayList<JilStmt>();
+		Pair<JilExpr,List<JilStmt>> p = doExpression(block.expr());
+		
+		r.addAll(p.second());
+		JilExpr target = p.first();
+		JilExpr tmpVar = new JilExpr.Variable(getTempVar(), target.type(), target
+				.attributes());
+		r.add(new JilStmt.Assign(tmpVar, target, target.attributes()));
+		r.add(new JilStmt.Lock(tmpVar,block.attributes()));
 		r.addAll(doBlock(block));
-		doExpression(block.expr());
+		r.add(new JilStmt.Unlock(tmpVar,block.attributes()));
 		// need to add synch enter and leave here ?
 		return r;
 	}

@@ -162,6 +162,10 @@ public class JilFileWriter {
 			output.println(";");
 		} else if(s instanceof JilStmt.Switch) {
 			write((JilStmt.Switch)s);
+		} else if(s instanceof JilStmt.Lock) {
+			write((JilStmt.Lock)s);
+		} else if(s instanceof JilStmt.Unlock) {
+			write((JilStmt.Unlock)s);
 		} else {
 			throw new RuntimeException("Invalid statement encountered: "
 					+ s.getClass());
@@ -233,6 +237,22 @@ public class JilFileWriter {
 		}
 		output.println("    default: goto " + s.defaultLabel() + ";");		
 		output.println("    }");
+	}
+	
+	protected void write(JilStmt.Lock s) {
+		output.print("    lock");
+		output.print(" ");
+		write(s.expr());		
+		write(s.exceptions());
+		output.println(";");
+	}
+	
+	protected void write(JilStmt.Unlock s) {
+		output.print("    unlock");
+		output.print(" ");
+		write(s.expr());		
+		write(s.exceptions());
+		output.println(";");
 	}
 	
 	protected void write(List<? extends Pair<Type.Clazz,String>> exceptions) {		
