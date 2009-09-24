@@ -49,4 +49,11 @@ public interface Graph<T,P extends Pair<T,T> > extends Set<P> {
      * @return
      */
 	public Set<P> to(T x);
+	
+	/**
+	 * Get the domain of the nodes.
+	 * 
+	 * @return
+	 */
+	public Set<T> domain();
 }
