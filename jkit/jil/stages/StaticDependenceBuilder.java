@@ -24,8 +24,8 @@ import jkit.util.graph.*;
  */
 public class StaticDependenceBuilder {
 	
-	public static class Method extends Triple<Type.Clazz, String, Type.Function> {
-		public Method(Type.Clazz owner, String name, Type.Function type) {
+	public static class MethodCall extends Triple<Type.Clazz, String, Type.Function> {
+		public MethodCall(Type.Clazz owner, String name, Type.Function type) {
 			super(owner, name, type);
 		}
 
@@ -46,8 +46,8 @@ public class StaticDependenceBuilder {
 		}		
 	}
 	
-	public static class Field extends Pair<Type.Clazz, String> {
-		public Field(Type.Clazz owner, String name) {
+	public static class FieldAccess extends Pair<Type.Clazz, String> {
+		public FieldAccess(Type.Clazz owner, String name) {
 			super(owner, name);
 		}
 
@@ -64,14 +64,14 @@ public class StaticDependenceBuilder {
 		}		
 	}
 	
-	public static class Invocation extends Pair<Method,Method> {
-		public Invocation(Method from, Method to) {
+	public static class Invocation extends Pair<MethodCall,MethodCall> {
+		public Invocation(MethodCall from, MethodCall to) {
 			super(from,to);
 		}
-		public Method from() {
+		public MethodCall from() {
 			return first();
 		}
-		public Method to() {
+		public MethodCall to() {
 			return second();
 		}
 		public String toString() {
@@ -79,13 +79,13 @@ public class StaticDependenceBuilder {
 		}
 	}
 	
-	private Graph<Method,Invocation> callGraph;
+	private Graph<MethodCall,Invocation> callGraph;
 	
 	/**
      * Access the constructed call graph. Each node in the call graph is
      * identified by a triple (O,N,T), where O=owner, N=name and T=type.
      */	
-	public Graph<Method,Invocation> callGraph() {
+	public Graph<MethodCall,Invocation> callGraph() {
 		return callGraph;
 	}
 	
@@ -99,7 +99,7 @@ public class StaticDependenceBuilder {
 	}
 	
 	protected void build(JilMethod method, JilClass owner) {
-		Method myNode = new Method(owner.type(), method.name(), method.type());
+		MethodCall myNode = new MethodCall(owner.type(), method.name(), method.type());
 		List<JilStmt> body = method.body();
 		
 		// first, initialiser label map		
@@ -110,7 +110,7 @@ public class StaticDependenceBuilder {
 		}
 	}
 	
-	protected void addCallGraphEdges(JilExpr expr, Method myNode) {
+	protected void addCallGraphEdges(JilExpr expr, MethodCall myNode) {
 		if(expr instanceof JilExpr.ArrayIndex) {
 			addCallGraphEdges((JilExpr.ArrayIndex) expr, myNode);
 		} else if(expr instanceof JilExpr.BinOp) {		
@@ -138,36 +138,36 @@ public class StaticDependenceBuilder {
 		}
 	}
 	
-	public void addCallGraphEdges(JilExpr.ArrayIndex expr, Method myNode) { 
+	public void addCallGraphEdges(JilExpr.ArrayIndex expr, MethodCall myNode) { 
 		addCallGraphEdges(expr.target(), myNode);
 		addCallGraphEdges(expr.index(), myNode);		
 	}	
-	public void addCallGraphEdges(JilExpr.BinOp expr, Method myNode) {
+	public void addCallGraphEdges(JilExpr.BinOp expr, MethodCall myNode) {
 		addCallGraphEdges(expr.lhs(), myNode);
 		addCallGraphEdges(expr.rhs(), myNode);		
 	}
-	public void addCallGraphEdges(JilExpr.UnOp expr, Method myNode) { 		
+	public void addCallGraphEdges(JilExpr.UnOp expr, MethodCall myNode) { 		
 		addCallGraphEdges(expr.expr(), myNode); 
 	}
-	public void addCallGraphEdges(JilExpr.Cast expr, Method myNode) { 
+	public void addCallGraphEdges(JilExpr.Cast expr, MethodCall myNode) { 
 		addCallGraphEdges(expr.expr(), myNode);		
 	}
-	public void addCallGraphEdges(JilExpr.Convert expr, Method myNode) { 
+	public void addCallGraphEdges(JilExpr.Convert expr, MethodCall myNode) { 
 		addCallGraphEdges(expr.expr(), myNode);		
 	}
-	public void addCallGraphEdges(JilExpr.ClassVariable expr, Method myNode) { 		
+	public void addCallGraphEdges(JilExpr.ClassVariable expr, MethodCall myNode) { 		
 		// do nothing!
 	}
-	public void addCallGraphEdges(JilExpr.Deref expr, Method myNode) { 		
+	public void addCallGraphEdges(JilExpr.Deref expr, MethodCall myNode) { 		
 		addCallGraphEdges(expr.target(), myNode);						
 	}	
-	public void addCallGraphEdges(JilExpr.Variable expr, Method myNode) { 
+	public void addCallGraphEdges(JilExpr.Variable expr, MethodCall myNode) { 
 		// do nothing!
 	}
-	public void addCallGraphEdges(JilExpr.InstanceOf expr, Method myNode) { 		
+	public void addCallGraphEdges(JilExpr.InstanceOf expr, MethodCall myNode) { 		
 		addCallGraphEdges(expr.lhs(), myNode);
 	}
-	public void addCallGraphEdges(JilExpr.Invoke expr, Method myNode) { 
+	public void addCallGraphEdges(JilExpr.Invoke expr, MethodCall myNode) { 
 		JilExpr target = expr.target();
 		addCallGraphEdges(target, myNode);
 		for(JilExpr e : expr.parameters()) {
@@ -177,14 +177,14 @@ public class StaticDependenceBuilder {
 		// Interesting issue here if target is not a class. Could be an array,
         // for example.
 		
-		Method targetNode = new Method((Type.Clazz) target.type(), expr.name(),
+		MethodCall targetNode = new MethodCall((Type.Clazz) target.type(), expr.name(),
 				expr.funType());
 		
 		// Add the call graph edge!
 		callGraph.add(new Invocation(myNode,targetNode));
 	}
 
-	public void addCallGraphEdges(JilExpr.New expr, Method myNode) { 		
+	public void addCallGraphEdges(JilExpr.New expr, MethodCall myNode) { 		
 		for(JilExpr e : expr.parameters()) {
 			addCallGraphEdges(e, myNode);
 		}
@@ -192,14 +192,14 @@ public class StaticDependenceBuilder {
 		// Interesting issue here if target is not a class. Could be an array,
         // for example.
 		Type.Clazz type = (Type.Clazz) expr.type();
-		Method targetNode = new Method(type, type.lastComponent().first(), expr
+		MethodCall targetNode = new MethodCall(type, type.lastComponent().first(), expr
 				.funType());
 		
 		// Add the call graph edge!
 		callGraph.add(new Invocation(myNode,targetNode));
 	}
 	
-	public void addCallGraphEdges(JilExpr.Value expr, Method myNode) { 		
+	public void addCallGraphEdges(JilExpr.Value expr, MethodCall myNode) { 		
 		if(expr instanceof JilExpr.Array) {
 			JilExpr.Array ae = (JilExpr.Array) expr;
 			for(JilExpr v : ae.values()) {
