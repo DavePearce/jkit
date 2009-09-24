@@ -746,8 +746,9 @@ public class AnonClassesRewrite {
 				loc, type);
 		
 		// finally, update skeleton accordingly.
-		anonClass.methods().add(new JilMethod(name, type, jilparams,
-				new ArrayList<Modifier>(), exceptions));
+		anonClass.methods().add(
+				new JilMethod(name, type, jilparams, new ArrayList<Modifier>(),
+						exceptions));
 						
 		return mc;
 	}
@@ -791,8 +792,9 @@ public class AnonClassesRewrite {
 				loc, type);
 		
 		// finally, update skeleton accordingly.
-		anonClass.methods().add(new JilMethod(name, type, jilparams,
-				new ArrayList<Modifier>(), new ArrayList()));
+		anonClass.methods().add(
+				new JilMethod(name, type, jilparams, new ArrayList<Modifier>(),
+						new ArrayList()));
 						
 		return mc;
 	}

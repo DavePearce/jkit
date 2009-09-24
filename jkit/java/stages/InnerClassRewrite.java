@@ -887,8 +887,7 @@ public class InnerClassRewrite {
 			}						
 			
 			accessor = new JilMethod("access$" + accessors.size() + "00",
-					ft, params,
-					modifiers, new ArrayList<Type.Clazz>()); 
+					ft, params, modifiers, new ArrayList<Type.Clazz>()); 
 			
 			JilExpr expr = new JilExpr.Deref(thisVar, field.name(), field
 					.isStatic(), field.type());

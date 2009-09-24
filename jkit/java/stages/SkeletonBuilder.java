@@ -210,17 +210,15 @@ public class SkeletonBuilder {
 		modifiers.add(Modifier.ACC_PUBLIC);
 		modifiers.add(Modifier.ACC_STATIC);
 		JilMethod values = new JilMethod("values", new Type.Function(
-				new Type.Array(type)), new ArrayList(), modifiers,
-				new ArrayList(),loc);
+				new Type.Array(type)), new ArrayList(), modifiers, new ArrayList(), loc);
 		
 		ArrayList<JilMethod.Parameter> params = new ArrayList();
 		params.add(new JilMethod.Parameter("key",new ArrayList())); // could add final modifier=		
 		
-		JilMethod valueOf = new JilMethod("valueOf", new Type.Function(
-				type,Types.JAVA_LANG_STRING), params, modifiers,
-				new ArrayList(),loc);
-		
-		
+		JilMethod valueOf = new JilMethod("valueOf", new Type.Function(type,
+				Types.JAVA_LANG_STRING), params,
+				modifiers, new ArrayList(), loc);
+				
 		skeleton.methods().add(values);
 		skeleton.methods().add(valueOf);		
 		

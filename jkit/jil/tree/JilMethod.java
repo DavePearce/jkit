@@ -52,13 +52,13 @@ public final class JilMethod extends SyntacticElementImpl implements jkit.compil
 		public List<Modifier> modifiers() {
 			return modifiers;
 		}
-	}
+	}	
 	
 	private String name;
 	private Type.Function type;
 	private List<Modifier> modifiers;
 	private List<Type.Clazz> exceptions;
-	private List<Parameter> parameters; 
+	private List<Parameter> parameters; 	
 	private List<JilStmt> body = new ArrayList<JilStmt>();
 	
 	/**
@@ -77,9 +77,9 @@ public final class JilMethod extends SyntacticElementImpl implements jkit.compil
 	 * @param exceptions -
 	 *            The (non-null) list of exceptions thrown by this method.
 	 */
-	public JilMethod(String name, Type.Function type, List<Parameter> parameters,
-			List<Modifier> modifiers, List<Type.Clazz> exceptions,
-			SyntacticAttribute... attributes) {
+	public JilMethod(String name, Type.Function type,
+			List<Parameter> parameters, List<Modifier> modifiers,
+			List<Type.Clazz> exceptions, SyntacticAttribute... attributes) {
 		super(attributes);
 		this.name = name;
 		this.type = type;
@@ -89,23 +89,23 @@ public final class JilMethod extends SyntacticElementImpl implements jkit.compil
 	}
 	
 	/**
-     * Construct an object representing a field of a JVM class.
-     * 
-     * @param name -
-     *            The name of the method.
-     * @param type -
-     *            The (fully generic) function type of this method.
-     * @param parameters -
+	 * Construct an object representing a field of a JVM class.
+	 * 
+	 * @param name -
+	 *            The name of the method.
+	 * @param type -
+	 *            The (fully generic) function type of this method.
+	 * @param parameters -
 	 *            The names of the parameter variables, in order of their
 	 *            appearance. It must hold that parameters.size() ==
 	 *            type.parameterTypes().size().
-     * @param modifiers -
-     *            Any modifiers of the method (e.g. public, static, etc)
-     * @param exceptions -
-     *            The (non-null) list of exceptions thrown by this method.
-     */
+	 * @param modifiers -
+	 *            Any modifiers of the method (e.g. public, static, etc)
+	 * @param exceptions -
+	 *            The (non-null) list of exceptions thrown by this method.
+	 */
 	public JilMethod(String name, Type.Function type,
-			List<Parameter> parameters,
+			List<Parameter> parameters,			
 			List<Modifier> modifiers, List<Type.Clazz> exceptions,
 			List<SyntacticAttribute> attributes) {
 		super(attributes);
@@ -155,7 +155,7 @@ public final class JilMethod extends SyntacticElementImpl implements jkit.compil
 	 * 
 	 * @return
 	 */
-	public List<Parameter> parameters() { return parameters; }
+	public List<Parameter> parameters() { return parameters; }	
 	
 	/**
      * Access the modifiers contained in this field object. The returned list

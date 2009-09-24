@@ -797,7 +797,7 @@ public class EnumRewrite {
 		mods = new ArrayList();
 		mods.add(Modifier.ACC_PRIVATE);
 		JilMethod jm = new JilMethod(ec.name(), ftype, nparams, mods,
-				new ArrayList(),loc);
+				new ArrayList(), loc);
 		
 		skeleton.methods().add(jm);
 	}
