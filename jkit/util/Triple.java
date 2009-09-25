@@ -39,6 +39,7 @@ public class Triple<FIRST,SECOND,THIRD> extends Pair<FIRST,SECOND> {
 	}		
 	
 	public THIRD third() { return third; }
+	
 	public int hashCode() {		
 		int phc = super.hashCode();
 		int thc = third == null ? 0 : third.hashCode();
