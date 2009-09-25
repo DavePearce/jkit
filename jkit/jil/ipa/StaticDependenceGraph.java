@@ -86,6 +86,8 @@ public class StaticDependenceGraph {
 			
 		} else if(stmt instanceof JilStmt.Label) {		
 			
+		} else if(stmt instanceof JilStmt.Goto) {		
+			
 		} else if(stmt instanceof JilStmt.Lock) {		
 			addCallGraphEdges((JilStmt.Lock) stmt, myNode);
 		} else if(stmt instanceof JilStmt.Unlock) {		
