@@ -12,7 +12,7 @@ import jkit.util.Triple;
  * @author djp
  * 
  */
-public class Tags {
+public class Tag {
 	
 	public static class Method extends Triple<Type.Clazz, String, Type.Function> {
 		public Method(Type.Clazz owner, String name, Type.Function type) {
