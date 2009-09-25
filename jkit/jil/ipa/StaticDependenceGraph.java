@@ -1,5 +1,7 @@
 package jkit.jil.ipa;
 
+import static jkit.compiler.SyntaxError.syntax_error;
+
 import java.util.List;
 
 import jkit.jil.tree.*;
@@ -59,12 +61,67 @@ public class StaticDependenceGraph {
 		Tag.Method myNode = new Tag.Method(owner.type(), method.name(), method.type());
 		List<JilStmt> body = method.body();
 		
-		// first, initialiser label map		
+		// first, initialise label map		
 		for(JilStmt s : body) {
-			if(s instanceof JilExpr.Invoke) {
-				addCallGraphEdges((JilExpr.Invoke)s, myNode);				
-			}			
+			addCallGraphEdges(s, myNode);			 			
 		}
+	}
+	
+	protected void addCallGraphEdges(JilStmt stmt, Tag.Method myNode) {
+		if(stmt instanceof JilStmt.IfGoto) {
+			addCallGraphEdges((JilStmt.IfGoto)stmt,myNode);					
+		} else if(stmt instanceof JilStmt.Switch) {
+			addCallGraphEdges((JilStmt.Switch)stmt,myNode);					
+		} else if(stmt instanceof JilStmt.Assign) {
+			addCallGraphEdges((JilStmt.Assign)stmt,myNode);					
+		} else if(stmt instanceof JilExpr.Invoke) {
+			addCallGraphEdges((JilExpr.Invoke)stmt,myNode);										
+		} else if(stmt instanceof JilExpr.New) {
+			addCallGraphEdges((JilExpr.New) stmt,myNode);						
+		} else if(stmt instanceof JilStmt.Return) {
+			addCallGraphEdges((JilStmt.Return) stmt,myNode);
+		} else if(stmt instanceof JilStmt.Throw) {
+			addCallGraphEdges((JilStmt.Throw) stmt,myNode);
+		} else if(stmt instanceof JilStmt.Nop) {		
+			
+		} else if(stmt instanceof JilStmt.Lock) {		
+			addCallGraphEdges((JilStmt.Lock) stmt, myNode);
+		} else if(stmt instanceof JilStmt.Unlock) {		
+			addCallGraphEdges((JilStmt.Unlock) stmt, myNode);
+		} else {
+			syntax_error("unknown statement encountered (" + stmt.getClass().getName() + ")",stmt);			
+		}		
+	}
+	
+	protected void addCallGraphEdges(JilStmt.IfGoto stmt, Tag.Method myNode) {		
+		addCallGraphEdges(stmt.condition(),myNode);			
+	}
+	
+	protected void addCallGraphEdges(JilStmt.Switch stmt, Tag.Method myNode) {		
+		addCallGraphEdges(stmt.condition(),myNode);			
+	}
+	
+	protected void addCallGraphEdges(JilStmt.Assign stmt, Tag.Method myNode) {
+		addCallGraphEdges(stmt.lhs(),myNode);
+		addCallGraphEdges(stmt.rhs(),myNode);
+	}
+	
+	protected void addCallGraphEdges(JilStmt.Return stmt, Tag.Method myNode) {
+		if(stmt.expr() != null) {
+			addCallGraphEdges(stmt.expr(),myNode);
+		}		
+	}
+	
+	protected void addCallGraphEdges(JilStmt.Throw stmt, Tag.Method myNode) {		
+		addCallGraphEdges(stmt.expr(),myNode);			
+	}
+	
+	protected void addCallGraphEdges(JilStmt.Lock stmt, Tag.Method myNode) {		
+		addCallGraphEdges(stmt.expr(),myNode);			
+	}
+	
+	protected void addCallGraphEdges(JilStmt.Unlock stmt, Tag.Method myNode) {		
+		addCallGraphEdges(stmt.expr(),myNode);			
 	}
 	
 	protected void addCallGraphEdges(JilExpr expr, Tag.Method myNode) {
