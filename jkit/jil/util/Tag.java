@@ -14,12 +14,12 @@ import jkit.util.Triple;
  */
 public class Tag {
 	
-	public static class Method extends Triple<Type.Clazz, String, Type.Function> {
-		public Method(Type.Clazz owner, String name, Type.Function type) {
+	public static class Method extends Triple<Type.Reference, String, Type.Function> {
+		public Method(Type.Reference owner, String name, Type.Function type) {
 			super(owner, name, type);
 		}
 
-		public Type.Clazz owner() {
+		public Type.Reference owner() {
 			return first();
 		}
 
@@ -36,12 +36,12 @@ public class Tag {
 		}		
 	}
 	
-	public static class Field extends Pair<Type.Clazz, String> {
-		public Field(Type.Clazz owner, String name) {
+	public static class Field extends Pair<Type.Reference, String> {
+		public Field(Type.Reference owner, String name) {
 			super(owner, name);
 		}
 
-		public Type.Clazz owner() {
+		public Type.Reference owner() {
 			return first();
 		}
 
