@@ -19,7 +19,7 @@ import jkit.util.graph.*;
  * @author djp
  * 
  */
-public class StaticDependenceBuilder {
+public class StaticDependenceGraph {
 	
 	public static class Invocation extends Pair<Tag.Method,Tag.Method> {
 		public Invocation(Tag.Method from, Tag.Method to) {
