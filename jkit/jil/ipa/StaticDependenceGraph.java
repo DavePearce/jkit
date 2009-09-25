@@ -208,13 +208,15 @@ public class StaticDependenceGraph {
 		}
 
 		// Interesting issue here if target is not a class. Could be an array,
-        // for example.
-		Type.Clazz type = (Type.Clazz) expr.type();
-		Tag.Method targetNode = new Tag.Method(type, type.lastComponent().first(), expr
+        // for example.		
+		if(expr.type() instanceof Type.Clazz) {
+			Type.Clazz type = (Type.Clazz) expr.type();
+			Tag.Method targetNode = new Tag.Method(type, type.lastComponent().first(), expr
 				.funType());
 		
-		// Add the call graph edge!
-		callGraph.add(new Invocation(myNode,targetNode));
+			// Add the call graph edge!
+			callGraph.add(new Invocation(myNode,targetNode));
+		}
 	}
 	
 	public void addCallGraphEdges(JilExpr.Value expr, Tag.Method myNode) { 		
