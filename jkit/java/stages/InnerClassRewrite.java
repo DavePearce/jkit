@@ -814,12 +814,14 @@ public class InnerClassRewrite {
 			m.setType(ntype);
 			ArrayList<Modifier> mods = new ArrayList<Modifier>();
 			mods.add(Modifier.ACC_FINAL);
+			mods.add(Modifier.ACC_SYNTHETIC);
 			m.parameters().add(0, new JilMethod.Parameter("this$0",mods));
 		}
 		
 		// Second, add a field with the appropriate name.
 		ArrayList<Modifier> modifiers = new ArrayList<Modifier>();
 		modifiers.add(Modifier.ACC_FINAL);
+		modifiers.add(Modifier.ACC_SYNTHETIC);
 		// note: parent pointers must have package access.
 		
 		JilField field = new JilField("this$0",
@@ -876,6 +878,7 @@ public class InnerClassRewrite {
 			Type.Function ft;
 			
 			modifiers.add(Modifier.ACC_STATIC);
+			modifiers.add(Modifier.ACC_SYNTHETIC);
 			
 			if(field.isStatic()) {
 				thisVar = new JilExpr.ClassVariable(clazz.type());				
@@ -931,6 +934,7 @@ public class InnerClassRewrite {
 			Type.Function ft;
 			
 			modifiers.add(Modifier.ACC_STATIC);
+			modifiers.add(Modifier.ACC_SYNTHETIC);
 			
 			if(field.isStatic()) {				
 				thisVar = new JilExpr.ClassVariable(clazz.type());

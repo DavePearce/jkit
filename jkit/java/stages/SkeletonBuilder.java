@@ -753,7 +753,8 @@ public class SkeletonBuilder {
 			SourceLocation loc) {
 
 		ArrayList<Modifier> mods = new ArrayList<Modifier>();
-		mods.add(Modifier.ACC_PUBLIC);		
+		mods.add(Modifier.ACC_PUBLIC);
+		mods.add(Modifier.ACC_SYNTHETIC);		
 		Expr.Invoke ivk = new Expr.Invoke(null, "super", new ArrayList(),
 				new ArrayList(), loc);
 		ArrayList<Stmt> stmts = new ArrayList();

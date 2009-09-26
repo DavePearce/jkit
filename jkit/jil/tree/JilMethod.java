@@ -52,6 +52,19 @@ public final class JilMethod extends SyntacticElementImpl implements jkit.compil
 		public List<Modifier> modifiers() {
 			return modifiers;
 		}
+		
+
+		/**
+		 * Check whether this method is synthetic
+		 */
+		public boolean isSynthetic() {
+			for (Modifier m : modifiers) {
+				if (m instanceof Modifier.Synthetic) {
+					return true;
+				}
+			}
+			return false;
+		}
 	}	
 	
 	private String name;

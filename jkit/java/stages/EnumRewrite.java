@@ -751,6 +751,7 @@ public class EnumRewrite {
 		// First, create a source code constructor.
 		ArrayList<Modifier> mods = new ArrayList<Modifier>();
 		mods.add(Modifier.ACC_PRIVATE);
+		mods.add(Modifier.ACC_SYNTHETIC);
 		
 		Expr.LocalVariable p1 = new Expr.LocalVariable("$1");
 		p1.attributes().add(Types.JAVA_LANG_STRING);
@@ -796,6 +797,7 @@ public class EnumRewrite {
 		nparams.add(new JilMethod.Parameter("$2",new ArrayList(mods)));
 		mods = new ArrayList();
 		mods.add(Modifier.ACC_PRIVATE);
+		mods.add(Modifier.ACC_SYNTHETIC);
 		JilMethod jm = new JilMethod(ec.name(), ftype, nparams, mods,
 				new ArrayList(), loc);
 		
