@@ -191,11 +191,8 @@ public class StaticDependenceGraph {
 		for(JilExpr e : expr.parameters()) {
 			addCallGraphEdges(e, myNode);
 		}		
-		
-		// Interesting issue here if target is not a class. Could be an array,
-        // for example.
-		
-		Tag.Method targetNode = new Tag.Method((Type.Clazz) target.type(), expr.name(),
+			
+		Tag.Method targetNode = new Tag.Method((Type.Reference) target.type(), expr.name(),
 				expr.funType());
 		
 		// Add the call graph edge!
