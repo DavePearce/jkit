@@ -281,6 +281,18 @@ public final class JilMethod extends SyntacticElementImpl implements jkit.compil
 	}
 
 	/**
+	 * Check whether this method is synthetic
+	 */
+	public boolean isSynthetic() {
+		for (Modifier m : modifiers) {
+			if (m instanceof Modifier.Synthetic) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
 	 * Check whether this method has varargs
 	 */
 	public boolean isVariableArity() {

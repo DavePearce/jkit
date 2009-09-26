@@ -356,6 +356,18 @@ public final class JilClass extends SyntacticElementImpl implements jkit.compile
 	}		
 	
 	/**
+	 * Check whether this method is synthetic
+	 */
+	public boolean isSynthetic() {
+		for (Modifier m : modifiers) {
+			if (m instanceof Modifier.Synthetic) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
 	 * Check whether or not this is an inner class.
 	 * @return
 	 */

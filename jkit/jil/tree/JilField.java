@@ -178,6 +178,18 @@ public class JilField extends SyntacticElementImpl implements jkit.compiler.Claz
 		return false;
 	}
 	
+	/**
+	 * Check whether this method is synthetic
+	 */
+	public boolean isSynthetic() {
+		for (Modifier m : modifiers) {
+			if (m instanceof Modifier.Synthetic) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public boolean isConstant() {
 		return false;
 	}
