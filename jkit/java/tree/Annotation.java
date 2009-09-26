@@ -5,6 +5,7 @@ import java.util.List;
 import jkit.compiler.SyntacticAttribute;
 import jkit.compiler.SyntacticElementImpl;
 import jkit.jil.tree.Modifier;
+import jkit.java.tree.*;
 
 /**
  * An annotation represents a user-defined modifier. For example,
@@ -15,18 +16,18 @@ import jkit.jil.tree.Modifier;
  * 
  */
 public final class Annotation extends SyntacticElementImpl implements Modifier {
-	private String name;
+	private Type.Clazz type;
 	private List<Expr> arguments;
 
-	public Annotation(String name, List<Expr> arguments,
+	public Annotation(Type.Clazz type, List<Expr> arguments,
 			SyntacticAttribute... attributes) {
 		super(attributes);
-		this.name = name;
+		this.type = type;
 		this.arguments = arguments;
 	}
 
-	public String name() {
-		return name;
+	public Type.Clazz type() {
+		return type;
 	}
 
 	public List<Expr> arguments() {

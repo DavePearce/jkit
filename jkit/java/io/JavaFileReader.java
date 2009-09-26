@@ -1605,7 +1605,7 @@ public class JavaFileReader {
 						genericVariables));
 			}
 							
-			return new Annotation(name, arguments, loc);			
+			return new Annotation(new Type.Clazz(name), arguments, loc);			
 		} else if (modifier.charAt(0) <= 'p') {
 			if (modifier.equals("public")) {
 				return new Modifier.Public(loc);

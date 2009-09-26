@@ -1163,7 +1163,7 @@ public class JavaFileWriter {
 			else if(x instanceof Annotation){
 				Annotation a = (Annotation) x;
 				write("@");
-				write(a.name());
+				write(a.type().toString());
 				
 				if(a.arguments().size() > 0) {
 					write("(");

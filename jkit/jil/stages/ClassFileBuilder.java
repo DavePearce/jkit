@@ -48,7 +48,7 @@ public final class ClassFileBuilder {
 	
 	public ClassFile build(jkit.jil.tree.JilClass clazz) {				
 		ClassFile cfile = new ClassFile(version, clazz.type(), clazz
-				.superClass(), clazz.interfaces(), clazz.modifiers(), clazz
+				.superClass(), clazz.interfaces(), filterModifiers(clazz.modifiers()), clazz
 				.attributes(BytecodeAttribute.class));				
 		
 		if (needClassSignature(clazz)) {
@@ -77,7 +77,7 @@ public final class ClassFileBuilder {
 				Type.Clazz ref = new Type.Clazz(inner.pkg(),ncomponents);
 				try {
 					Clazz ic = loader.loadClass(ref);
-					inners.add(new Triple(ic.type(),inner,clazz.modifiers()));
+					inners.add(new Triple(ic.type(),inner,filterModifiers(clazz.modifiers())));
 				} catch(ClassNotFoundException e) {
 					// this is a problem, but for now we'll just ignore it
 				}
@@ -86,7 +86,7 @@ public final class ClassFileBuilder {
 			for(Type.Clazz tc : clazz.inners()) {
 				try {
 					Clazz ic = loader.loadClass(tc);
-					inners.add(new Triple(inner,ic.type(),ic.modifiers()));
+					inners.add(new Triple(inner,ic.type(),filterModifiers(ic.modifiers())));
 				} catch(ClassNotFoundException e) {
 					// this is a problem, but for now we'll just ignore it
 				}
@@ -98,7 +98,7 @@ public final class ClassFileBuilder {
 	
 	protected void buildFields(JilClass clazz, ClassFile cfile) {
 		for (JilField f : clazz.fields()) {
-			ClassFile.Field cf = new ClassFile.Field(f.name(), f.type(), f.modifiers()); 
+			ClassFile.Field cf = new ClassFile.Field(f.name(), f.type(), filterModifiers(f.modifiers())); 
 			cfile.fields().add(cf);
 			if(Types.isGeneric(f.type())) {
 				cf.attributes().add(new FieldSignature(f.type()));
@@ -118,8 +118,8 @@ public final class ClassFileBuilder {
 				// name.
 				m_name = "<init>";
 			}
-			ClassFile.Method cfm = new ClassFile.Method(m_name, m.type(), m
-					.modifiers());
+			ClassFile.Method cfm = new ClassFile.Method(m_name, m.type(), filterModifiers(m
+					.modifiers()));
 			
 			if (clazz.isInterface() && !cfm.isPublic()) {
 				// interfaces cannot have non-public methods in the bytecode.
@@ -153,6 +153,11 @@ public final class ClassFileBuilder {
 			if (Types.isGeneric(m.type())) {				
 				cfm.attributes().add(new MethodSignature(m.type()));
 			}			
+			
+			List<Modifier.Annotation> annotations = filterAnnotations(m.modifiers());
+			if(annotations.size() > 0) {				
+				cfm.attributes().add(new RuntimeVisibleAnnotations(annotations));
+			}
 			
 			cfile.methods().add(cfm);
 		}
@@ -1349,4 +1354,24 @@ public final class ClassFileBuilder {
 		}
 		return false;
 	}		
+	
+	protected ArrayList<Modifier> filterModifiers(List<Modifier> modifiers) { 
+		ArrayList<Modifier> r = new ArrayList();
+		for(Modifier m : modifiers) {
+			if(!(m instanceof Modifier.Annotation)) {
+				r.add(m);
+			}
+		}
+		return r;
+	}
+	
+	protected ArrayList<Modifier.Annotation> filterAnnotations(List<Modifier> modifiers) { 
+		ArrayList<Modifier.Annotation> r = new ArrayList();
+		for(Modifier m : modifiers) {
+			if(m instanceof Modifier.Annotation) {
+				r.add((Modifier.Annotation) m);
+			}
+		}
+		return r;
+	}
 }

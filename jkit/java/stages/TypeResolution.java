@@ -39,6 +39,7 @@ import jkit.java.tree.Decl.JavaField;
 import jkit.java.tree.Decl.JavaInterface;
 import jkit.java.tree.Decl.JavaMethod;
 import jkit.java.tree.Stmt.Case;
+import jkit.java.tree.Annotation;
 import jkit.jil.tree.Modifier;
 import jkit.jil.tree.SourceLocation;
 import jkit.jil.tree.Type;
@@ -194,6 +195,8 @@ public class TypeResolution {
 		
 		imports.addFirst(computeImportDecl(parentType,c.name()));
 		
+		resolve(c.modifiers());
+		
 		// Second, create my scope.				
 		ClassScope myScope = new ClassScope();
 		scopes.push(myScope);
@@ -264,7 +267,10 @@ public class TypeResolution {
 			v.attributes().add(tv);
 		}		
 		
-		// First, resolve return type and parameter types. 
+		// First, resolve any annotations present
+		resolve(d.modifiers());
+		
+		// Second, resolve return type and parameter types. 
 		for(jkit.java.tree.Type.Clazz e : d.exceptions()) {
 			e.attributes().add(substituteTypeVars(resolve(e)));
 		}		
@@ -309,6 +315,7 @@ public class TypeResolution {
 	}
 	
 	protected void doField(JavaField d) throws ClassNotFoundException {
+		resolve(d.modifiers());
 		doExpression(d.initialiser());				
 		d.type().attributes().add(substituteTypeVars(resolve(d.type())));				
 	}
@@ -845,6 +852,18 @@ public class TypeResolution {
 		return new jkit.jil.tree.Type.Clazz(r.pkg(),ncomponents);					
 	}
 	
+
+	protected void resolve(List<Modifier> modifiers)
+			throws ClassNotFoundException {
+		for (int i = 0; i != modifiers.size(); ++i) {
+			Modifier m = modifiers.get(i);
+			if (m instanceof Annotation) {
+				Annotation a = (Annotation) m;
+				a.type().attributes().add(resolve(a.type()));
+			}
+		}
+	}
+	
 	/**
 	 * The aim of this method is to substitute occurrences of type variables for
 	 * their "full" generic type. For example, consider this code:
@@ -971,5 +990,5 @@ public class TypeResolution {
 		} 
 		
 		return decls;
-	}
+	}	
 }

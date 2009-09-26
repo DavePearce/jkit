@@ -200,6 +200,20 @@ public interface Modifier extends SyntacticElement {
 		private Type.Clazz type;
 		private List<JilExpr> arguments;
 
+		public Annotation(Type.Clazz type,
+				SyntacticAttribute... attributes) {
+			super(attributes);
+			this.type = type;
+			this.arguments = new ArrayList<JilExpr>();
+		}
+		
+		public Annotation(Type.Clazz type,
+				List<SyntacticAttribute> attributes) {
+			super(attributes);
+			this.type = type;
+			this.arguments = new ArrayList<JilExpr>();
+		}
+		
 		public Annotation(Type.Clazz type, Collection<JilExpr> arguments,
 				SyntacticAttribute... attributes) {
 			super(attributes);
@@ -207,6 +221,13 @@ public interface Modifier extends SyntacticElement {
 			this.arguments = new ArrayList<JilExpr>(arguments);
 		}
 
+		public Annotation(Type.Clazz type, Collection<JilExpr> arguments,
+				List<SyntacticAttribute> attributes) {
+			super(attributes);
+			this.type = type;
+			this.arguments = new ArrayList<JilExpr>(arguments);
+		}
+		
 		public Type.Clazz type() {
 			return type;
 		}

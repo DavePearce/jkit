@@ -156,6 +156,8 @@ public class JilBuilder {
 		// discovered below this are attributed to this class!			
 		JilClass skeleton = (JilClass) loader.loadClass(type);
 
+		doModifiers(skeleton.modifiers());
+		
 		// I do fields after everything else, so as to simplify the process
 		// of adding field initialisers to constructors. This is because it
 		// means I can be sure that the constructor has been otherwise
@@ -186,7 +188,7 @@ public class JilBuilder {
 	protected void doMethod(Decl.JavaMethod d, JilClass parent) {	
 		Type.Function type = d.attribute(Type.Function.class);
 		List<JilStmt> stmts = doStatement(d.body());		
-		
+				
 		// simple hack here, for case when no return statement is provided.
 		if (type.returnType() instanceof Type.Void
 				&& (stmts.size() == 0 || !(stmts.get(stmts.size() - 1) instanceof JilStmt.Return))) {			
@@ -207,7 +209,8 @@ public class JilBuilder {
 		// method.				
 		String name = d instanceof Decl.JavaConstructor ? parent.name() : d.name();		
 		for (JilMethod m : parent.methods()) {			
-			if (m.name().equals(name) && m.type().equals(type)) {				
+			if (m.name().equals(name) && m.type().equals(type)) {		
+				doModifiers(m.modifiers());
 				m.body().addAll(stmts);
 			}
 		}				
@@ -217,6 +220,8 @@ public class JilBuilder {
 		Pair<JilExpr,List<JilStmt>> tmp = doExpression(d.initialiser());
 		Type fieldT = d.type().attribute(Type.class);
 		boolean isStatic = d.isStatic();			
+		
+		doModifiers(parent.field(d.name()).modifiers());
 		
 		if(tmp != null) {
 			if(d.isStatic()) {				
@@ -1663,6 +1668,17 @@ public class JilBuilder {
 			}
 		}				
 		return new Pair<List<JilExpr>,List<JilStmt>>(nexprs,nstmts);
+	}
+	
+	public void doModifiers(List<Modifier> modifiers) {		
+		for(int i=0;i!=modifiers.size();++i) {
+			Modifier m = modifiers.get(i);
+			if(m instanceof Annotation) {
+				Annotation a = (Annotation) m;
+				Type.Clazz t = a.type().attribute(Type.Clazz.class);
+				modifiers.set(i,new Modifier.Annotation(t, a.attributes()));
+			} 
+		}		
 	}
 	
 	/**
