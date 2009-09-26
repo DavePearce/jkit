@@ -270,6 +270,18 @@ public final class JilMethod extends SyntacticElementImpl implements jkit.compil
 	}
 
 	/**
+	 * Check whether this method is pure
+	 */
+	public boolean isPure() {
+		for (Modifier m : modifiers) {
+			if (m instanceof Modifier.Pure) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
 	 * Check whether this method is native
 	 */
 	public boolean isNative() {

@@ -173,6 +173,11 @@ public interface Clazz {
 	public boolean isSynchronized();
 	
 	/**
+	 * Check whether this method is synthetic
+	 */
+	public boolean isSynthetic();
+	
+	/**
 	 * Check whether or not this is an inner class.
 	 * @return
 	 */
@@ -241,6 +246,12 @@ public interface Clazz {
 		 * Check whether this field is private
 		 */
 		public boolean isPrivate();
+		
+
+		/**
+		 * Check whether this field is synthetic
+		 */
+		public boolean isSynthetic();
 		
 		/**
 		 * Check whether this field is a constant or not.
@@ -332,10 +343,19 @@ public interface Clazz {
 		public boolean isNative();
 
 		/**
+		 * Check whether this method is pure
+		 */
+		public boolean isPure();
+		
+		/**
 		 * Check whether this method is synchronized
 		 */
 		public boolean isSynchronized();
-
+		
+		/**
+		 * Check whether this method is synthetic
+		 */
+		public boolean isSynthetic();
 		/**
 		 * Check whether this method has varargs
 		 */

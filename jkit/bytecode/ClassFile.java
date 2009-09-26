@@ -251,7 +251,19 @@ public class ClassFile implements Clazz {
 		}
 		return false;
 	}		
-		
+	
+	/**
+	 * Check whether this method is synthetic
+	 */
+	public boolean isSynthetic() {
+		for (Modifier m : modifiers) {
+			if (m instanceof Modifier.Synthetic) {
+				return true;
+			}
+		}
+		return false;
+	}	
+	
 	/**
 	 * Check whether or not this is an inner class.
 	 * @return
@@ -385,6 +397,18 @@ public class ClassFile implements Clazz {
 			}
 			return false;
 		}
+		
+		/**
+		 * Check whether this method is synthetic
+		 */
+		public boolean isSynthetic() {
+			for (Modifier m : modifiers) {
+				if (m instanceof Modifier.Synthetic) {
+					return true;
+				}
+			}
+			return false;
+		}	
 		
 		public boolean isConstant() {
 			for(BytecodeAttribute a : attributes) {
@@ -543,6 +567,18 @@ public class ClassFile implements Clazz {
 		}
 
 		/**
+		 * Check whether this method is pure
+		 */
+		public boolean isPure() {
+			for (Modifier m : modifiers) {
+				if (m instanceof Modifier.Pure) {
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		/**
 		 * Check whether this method is native
 		 */
 		public boolean isNative() {
@@ -565,6 +601,18 @@ public class ClassFile implements Clazz {
 			}
 			return false;
 		}
+		
+		/**
+		 * Check whether this method is synthetic
+		 */
+		public boolean isSynthetic() {
+			for (Modifier m : modifiers) {
+				if (m instanceof Modifier.Synthetic) {
+					return true;
+				}
+			}
+			return false;
+		}	
 		
 		/**
 		 * Check whether this method has varargs
