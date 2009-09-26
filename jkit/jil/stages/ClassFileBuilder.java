@@ -154,10 +154,6 @@ public final class ClassFileBuilder {
 				cfm.attributes().add(new MethodSignature(m.type()));
 			}			
 			
-			if(cfm.isPure()) {
-				cfm.attributes().add(new PureMethod());
-			}
-			
 			cfile.methods().add(cfm);
 		}
 	}
