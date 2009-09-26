@@ -274,8 +274,13 @@ public final class JilMethod extends SyntacticElementImpl implements jkit.compil
 	 */
 	public boolean isPure() {
 		for (Modifier m : modifiers) {
-			if (m instanceof Modifier.Pure) {
-				return true;
+			if (m instanceof Modifier.Annotation) {
+				Modifier.Annotation a = (Modifier.Annotation) m;
+				Type.Clazz t = a.type();
+				if (t.pkg().equals("jkit.java.anotations")
+						&& t.lastComponent().first().equals("Pure")) {
+					return true;
+				}
 			}
 		}
 		return false;

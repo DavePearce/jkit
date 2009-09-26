@@ -50,8 +50,7 @@ public interface Modifier extends SyntacticElement {
 	public static final Modifier ACC_ENUM = new Enum();
 	public static final Modifier ACC_TRANSIENT = new Transient();
 	public static final Modifier ACC_STATIC = new Static();
-	public static final Modifier ACC_VARARGS = new VarArgs();
-	public static final Modifier ACC_PURE = new Pure();
+	public static final Modifier ACC_VARARGS = new VarArgs();	
 	public static final Modifier ACC_VOLATILE = new Volatile();
 	public static final Modifier ACC_STRICT = new StrictFP();
 	public static final Modifier ACC_FINAL = new Final();
@@ -167,13 +166,7 @@ public interface Modifier extends SyntacticElement {
 		public Bridge(SyntacticAttribute... attributes) {
 			super(attributes);
 		}
-	}
-	
-	public final static class Pure extends SyntacticElementImpl implements Modifier {
-		public Pure(SyntacticAttribute... attributes) {
-			super(attributes);
-		}
-	}
+	}	
 	
 	/**
 	 * A varargs modifier is used to indicate that a method has variable-length
