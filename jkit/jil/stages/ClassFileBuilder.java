@@ -57,6 +57,11 @@ public final class ClassFileBuilder {
 							.interfaces()));
 		}
 		
+		List<Modifier.Annotation> annotations = filterAnnotations(clazz.modifiers());
+		if(annotations.size() > 0) {				
+			cfile.attributes().add(new RuntimeVisibleAnnotations(annotations));
+		}
+		
 		buildInnerClasses(clazz,cfile);
 		buildFields(clazz,cfile);
 		buildMethods(clazz,cfile);		
@@ -106,6 +111,10 @@ public final class ClassFileBuilder {
 			if(f instanceof JilConstant) {
 				JilConstant c = (JilConstant) f;
 				cf.attributes().add(new ConstantValue(c.constant()));
+			}
+			List<Modifier.Annotation> annotations = filterAnnotations(f.modifiers());
+			if(annotations.size() > 0) {				
+				cf.attributes().add(new RuntimeVisibleAnnotations(annotations));
 			}
 		}
 	}
