@@ -383,17 +383,22 @@ public final class ClassFileReader {
 				
 		Type.Function type = parseMethodDescriptor(desc);			
 		
+		List<Modifier> mods = parseMethodModifiers(modifiers); 
+		
         // we use the desc type, unless there is a 
 		// signature attribute, since this provides
 		// additional generic information
 		for(BytecodeAttribute at : attributes) {
-			if(at instanceof MethodSignature) {				
-					type = (Type.Function) ((MethodSignature) at).type();
-				} 
+			if (at instanceof MethodSignature) {
+				type = (Type.Function) ((MethodSignature) at).type();
+			} else if(at instanceof RuntimeVisibleAnnotations) {
+				RuntimeVisibleAnnotations rva = (RuntimeVisibleAnnotations) at;
+				mods.addAll(rva.annotations());
+			}
 		}								
 		
 		ClassFile.Method cm = new ClassFile.Method(name, type,
-				parseMethodModifiers(modifiers));
+				mods);
 		cm.attributes.addAll(attributes);
 		return cm;
 	}
@@ -425,7 +430,6 @@ public final class ClassFileReader {
 			// for now, do nothing.
 			// return parseCode(offset,name);
 		} else if(name.equals("RuntimeVisibleAnnotations")) {
-			// ignore these for now
 			return parseRuntimeVisibleAnnotations(offset,name);
 		} else if(name.equals("RuntimeVisibleParameterAnnotations")) {
 			// ignore these for now			

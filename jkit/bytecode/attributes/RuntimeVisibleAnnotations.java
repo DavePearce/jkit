@@ -19,6 +19,10 @@ public class RuntimeVisibleAnnotations implements BytecodeAttribute {
 		return "RuntimeVisibleAnnotations";
 	}
 	
+	public List<Modifier.Annotation> annotations() {
+		return annotations;
+	}
+	
 	public void write(BinaryOutputStream writer,
 			Map<Constant.Info, Integer> constantPool, ClassLoader loader)
 			throws IOException {		
