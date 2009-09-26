@@ -28,12 +28,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
-import jkit.bytecode.attributes.ClassSignature;
-import jkit.bytecode.attributes.ConstantValue;
-import jkit.bytecode.attributes.Exceptions;
-import jkit.bytecode.attributes.FieldSignature;
-import jkit.bytecode.attributes.InnerClasses;
-import jkit.bytecode.attributes.MethodSignature;
+import jkit.bytecode.attributes.*;
 import jkit.jil.tree.Modifier;
 import jkit.jil.tree.Type;
 import jkit.jil.util.*;
@@ -431,7 +426,7 @@ public final class ClassFileReader {
 			// return parseCode(offset,name);
 		} else if(name.equals("RuntimeVisibleAnnotations")) {
 			// ignore these for now
-			// return parseAnnotations(offset,name);
+			return parseRuntimeVisibleAnnotations(offset,name);
 		} else if(name.equals("RuntimeVisibleParameterAnnotations")) {
 			// ignore these for now			
 			// return parseParameterAnnotations(offset,name);
@@ -1369,20 +1364,21 @@ public final class ClassFileReader {
 	 *	
 	 * For the moment, I'm also ignore annotations. Again, this needs to be
 	 * brought back into play at some point
-	 *
-	protected Attribute.Annotations parseAnnotations(int offset, String name) {
+	 */
+	protected RuntimeVisibleAnnotations parseRuntimeVisibleAnnotations(int offset, String name) {
 		int index = offset+6;
 		int na = read_u2(index);
 		index += 2;
-		Annotation[] r = new Annotation[na];
+		ArrayList<Modifier.Annotation> r = new ArrayList();
 		for(int k=0;k!=na;k++) {
-			Annotation a = parseAnnotation(index); 
-			r[k] = a;
+			Modifier.Annotation a = parseAnnotation(index); 			
+			r.add(a);
 			index+=annotationLength(index);
 		}
-		return new Attribute.Annotations(name,r);
+		return new RuntimeVisibleAnnotations(r);
 	}
 	
+	/*
 	protected Attribute.ParameterAnnotations parseParameterAnnotations(int offset, String name) {		
 		int index = offset+6;
 		int np = read_u1(index++);				
@@ -1398,6 +1394,7 @@ public final class ClassFileReader {
 		}
 		return new Attribute.ParameterAnnotations(name,r);
 	}
+	*/
 	
 	protected static final char BYTE = 'B';
 	protected static final char CHAR = 'C';
@@ -1429,9 +1426,9 @@ public final class ClassFileReader {
 		public String getConstName() {
 			return getString(const_name);
 		}
-	}
+	};
 	
-	 int annotationLength(int offset) {
+	protected int annotationLength(int offset) {
 		int length=0;
 		int type = read_u2(offset);						
 		int npairs = read_u2(offset+2);
@@ -1461,9 +1458,9 @@ public final class ClassFileReader {
 			}
 		}
 		return length;
-	}
+	}	
 	
-	 Annotation parseAnnotation(int offset) {
+	 Modifier.Annotation parseAnnotation(int offset) {
 		int type = read_u2(offset);		
 		Pair[] pairs = new Pair[read_u2(offset + 2)];
 		
@@ -1496,36 +1493,16 @@ public final class ClassFileReader {
 			case CLASS:
 				snd = getString(offset + 3);
 				offset += 5;
-				break;				
-			case ANNOTATION:
-				snd = null; // FIXME new Annotation(offset + 2 + 1, ci);
-				offset += 3 + ((Annotation) snd).length();
-				break;				
-			case ARRAY:
-				Pair[] array = new Pair[read_u2(offset + 2 + 1)];
-				int l = 5;
-				for (int j = 0; j < array.length; j++) {
-					array[j] = new Pair(offset + l, ci);
-					l += array[j].length;
-				}
-				length = l;
-				value = array;
-				break;				
+				break;															
 			default:				
 			}
-			pairs[j] = new Pair.Impl(fst,snd);							
+			pairs[j] = new Pair(fst,snd);							
 		}
 		
-		String name = getString(type);
-		return new Annotation(name.substring(1,name.length()-1),pairs);
+		String desc = getString(type);
+		// ignore pairs for now!
+		return new Modifier.Annotation((Type.Clazz) parseDescriptor(desc));
 	}
-
-	* ===========================================================
-	* END PARSE ANNOTATIONS 
-	* ===========================================================
-	*/
-
-
 	
     // ============================================================
 	// OTHER HELPER METHODS
