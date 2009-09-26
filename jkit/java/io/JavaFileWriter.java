@@ -30,6 +30,7 @@ import jkit.java.tree.Expr;
 import jkit.java.tree.Stmt;
 import jkit.java.tree.Type;
 import jkit.java.tree.Value;
+import jkit.java.tree.Annotation;
 import jkit.jil.*;
 import jkit.jil.tree.Modifier;
 import jkit.util.*; 
@@ -1159,8 +1160,8 @@ public class JavaFileWriter {
 			else if(x instanceof Modifier.Synchronized) { write("synchronized "); }
 			else if(x instanceof Modifier.Transient) { write("transient "); }
 			else if(x instanceof Modifier.Volatile) { write("volatile "); }
-			else if(x instanceof Modifier.Annotation){
-				Modifier.Annotation a = (Modifier.Annotation) x;
+			else if(x instanceof Annotation){
+				Annotation a = (Annotation) x;
 				write("@");
 				write(a.name());
 				

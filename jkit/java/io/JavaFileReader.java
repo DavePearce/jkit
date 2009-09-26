@@ -32,6 +32,7 @@ import jkit.java.tree.Stmt;
 import jkit.java.tree.Type;
 import jkit.java.tree.Value;
 import jkit.java.tree.Decl.*;
+import jkit.java.tree.Annotation;
 import jkit.util.Pair;
 import jkit.util.Triple;
 import jkit.jil.*;
@@ -1603,15 +1604,8 @@ public class JavaFileReader {
 				arguments.add(parseExpression(tree.getChild(j),
 						genericVariables));
 			}
-			
-			if(name.equals("@Pure")) {
-				// Ok, this is a bit of a hack. Really I need to do some kind of
-				// type resolution to be sure this refers to
-				// jkit.java.annotations.Pure.
-				return new Modifier.Pure(loc);
-			} else {			
-				return new Modifier.Annotation(name, arguments, loc);
-			}
+							
+			return new Annotation(name, arguments, loc);			
 		} else if (modifier.charAt(0) <= 'p') {
 			if (modifier.equals("public")) {
 				return new Modifier.Public(loc);

@@ -491,7 +491,7 @@ public class JilFileWriter {
 			else if (x instanceof Modifier.Annotation) {
 				Modifier.Annotation a = (Modifier.Annotation) x;
 				output.write("@");
-				output.write(a.name());
+				output.write(a.type().toString());
 			} else {				
 				output.write("unknown ");				
 			}

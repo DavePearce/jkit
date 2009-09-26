@@ -21,12 +21,11 @@
 
 package jkit.jil.tree;
 
-import java.util.List;
+import java.util.*;
 
 import jkit.compiler.SyntacticAttribute;
 import jkit.compiler.SyntacticElement;
 import jkit.compiler.SyntacticElementImpl;
-import jkit.java.tree.Expr;
 
 /**
  * A modifier represents a flag (e.g. public/final/static) which can be used in
@@ -198,21 +197,21 @@ public interface Modifier extends SyntacticElement {
 	 */
 	public final static class Annotation extends SyntacticElementImpl implements
 			Modifier {
-		private String name;
-		private List<Expr> arguments;
+		private Type.Clazz type;
+		private List<JilExpr> arguments;
 
-		public Annotation(String name, List<Expr> arguments,
+		public Annotation(Type.Clazz type, Collection<JilExpr> arguments,
 				SyntacticAttribute... attributes) {
 			super(attributes);
-			this.name = name;
-			this.arguments = arguments;
+			this.type = type;
+			this.arguments = new ArrayList<JilExpr>(arguments);
 		}
 
-		public String name() {
-			return name;
+		public Type.Clazz type() {
+			return type;
 		}
 
-		public List<Expr> arguments() {
+		public List<JilExpr> arguments() {
 			return arguments;
 		}
 	}
