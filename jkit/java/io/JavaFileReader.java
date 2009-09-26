@@ -1603,7 +1603,13 @@ public class JavaFileReader {
 				arguments.add(parseExpression(tree.getChild(j),
 						genericVariables));
 			}
-			return new Modifier.Annotation(name, arguments, loc);
+			
+			if(name.equals("@Pure")) {
+				// Ok, this is a bit of a hack.
+				return new Modifier.Pure(loc);
+			} else {			
+				return new Modifier.Annotation(name, arguments, loc);
+			}
 		} else if (modifier.charAt(0) <= 'p') {
 			if (modifier.equals("public")) {
 				return new Modifier.Public(loc);
