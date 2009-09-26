@@ -1605,7 +1605,9 @@ public class JavaFileReader {
 			}
 			
 			if(name.equals("@Pure")) {
-				// Ok, this is a bit of a hack.
+				// Ok, this is a bit of a hack. Really I need to do some kind of
+				// type resolution to be sure this refers to
+				// jkit.java.annotations.Pure.
 				return new Modifier.Pure(loc);
 			} else {			
 				return new Modifier.Annotation(name, arguments, loc);
