@@ -1,4 +1,4 @@
-// $ANTLR 3.1 jkit/java/parser/Java.g 2009-08-05 08:51:15
+// $ANTLR 3.1 jkit/java/parser/Java.g 2009-09-28 20:36:43
 
 package jkit.java.parser;
 import jkit.compiler.SyntaxError;
@@ -10,207 +10,207 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class JavaLexer extends Lexer {
-    public static final int T__197=197;
-    public static final int T__139=139;
-    public static final int SYNCHRONIZED=78;
-    public static final int T__174=174;
-    public static final int HexDigit=108;
-    public static final int T__196=196;
-    public static final int T__144=144;
-    public static final int T__122=122;
-    public static final int METHOD=15;
-    public static final int T__137=137;
-    public static final int T__140=140;
-    public static final int IMPORT=6;
     public static final int PACKAGE=5;
-    public static final int CONTINUE=41;
-    public static final int Letter=115;
-    public static final int T__138=138;
-    public static final int T__173=173;
-    public static final int ASSERT=33;
-    public static final int T__198=198;
-    public static final int T__142=142;
-    public static final int T__176=176;
-    public static final int FloatTypeSuffix=111;
-    public static final int T__135=135;
-    public static final int EXTENDS=12;
-    public static final int POSTDEC=69;
-    public static final int ARRAYVAL=88;
-    public static final int SUPER=23;
-    public static final int IntegerTypeSuffix=109;
-    public static final int ARGUMENTS=93;
-    public static final int T__156=156;
-    public static final int WS=117;
-    public static final int NONE=95;
-    public static final int PARAMETERS=99;
+    public static final int SHR=57;
     public static final int T__159=159;
-    public static final int T__177=177;
     public static final int T__158=158;
-    public static final int FIELD=14;
-    public static final int POSTINC=66;
-    public static final int LAND=46;
-    public static final int STATIC=96;
-    public static final int CATCH=85;
-    public static final int MUL=62;
-    public static final int T__157=157;
-    public static final int UnicodeEscape=113;
-    public static final int T__201=201;
-    public static final int MODIFIERS=11;
-    public static final int CONDEXPR=87;
-    public static final int T__143=143;
-    public static final int XOR=48;
-    public static final int T__193=193;
-    public static final int T__141=141;
-    public static final int ADD=59;
-    public static final int FOREACH=83;
-    public static final int TYPE=18;
-    public static final int SHL=56;
-    public static final int LOR=44;
-    public static final int OctalLiteral=106;
-    public static final int T__167=167;
-    public static final int SELECTOR=73;
-    public static final int T__194=194;
-    public static final int CAST=72;
-    public static final int THROWS=21;
-    public static final int LABEL=82;
     public static final int MOD=63;
-    public static final int T__191=191;
-    public static final int OR=45;
-    public static final int DOWHILE=37;
-    public static final int BLOCK=31;
-    public static final int T__192=192;
-    public static final int EscapeSequence=112;
-    public static final int T__202=202;
-    public static final int INSTANCEOF=51;
-    public static final int TYPE_PARAMETERS=100;
-    public static final int FloatingPointLiteral=102;
-    public static final int NEQ=50;
-    public static final int T__175=175;
-    public static final int WHILE=36;
-    public static final int INVOKE=74;
-    public static final int COMMENT=118;
-    public static final int T__172=172;
-    public static final int T__199=199;
-    public static final int GTEQ=53;
-    public static final int LABINOP=94;
-    public static final int UNIT=4;
-    public static final int JavaIDDigit=116;
-    public static final int T__170=170;
-    public static final int RETURN=38;
-    public static final int T__136=136;
-    public static final int IF=34;
-    public static final int T__171=171;
-    public static final int GETCLASS=77;
-    public static final int FOR=35;
-    public static final int T__189=189;
-    public static final int DEFAULT=91;
-    public static final int OctalEscape=114;
-    public static final int STRINGVAL=28;
-    public static final int T__134=134;
-    public static final int T__195=195;
-    public static final int NEG=65;
+    public static final int SHL=56;
+    public static final int PREDEC=68;
     public static final int DEREF=64;
-    public static final int SUB=60;
-    public static final int NOT=70;
-    public static final int TRY=84;
-    public static final int T__162=162;
     public static final int T__160=160;
+    public static final int NOT=70;
+    public static final int T__167=167;
+    public static final int T__168=168;
+    public static final int EOF=-1;
+    public static final int T__165=165;
+    public static final int T__166=166;
+    public static final int T__163=163;
+    public static final int T__164=164;
+    public static final int T__161=161;
+    public static final int TYPE=18;
+    public static final int T__162=162;
+    public static final int IMPORT=6;
+    public static final int T__148=148;
+    public static final int T__147=147;
+    public static final int T__149=149;
+    public static final int RETURN=38;
+    public static final int EQ=49;
+    public static final int TYPE_PARAMETERS=100;
+    public static final int T__154=154;
+    public static final int T__155=155;
+    public static final int T__156=156;
+    public static final int T__157=157;
+    public static final int T__150=150;
+    public static final int T__151=151;
+    public static final int T__152=152;
+    public static final int T__153=153;
+    public static final int T__139=139;
+    public static final int T__138=138;
+    public static final int T__137=137;
+    public static final int T__136=136;
+    public static final int IntegerTypeSuffix=109;
+    public static final int STATIC=96;
+    public static final int INV=71;
+    public static final int STATIC_IMPORT=7;
+    public static final int T__141=141;
+    public static final int T__142=142;
+    public static final int T__140=140;
+    public static final int T__145=145;
+    public static final int T__146=146;
+    public static final int T__143=143;
+    public static final int T__144=144;
+    public static final int T__126=126;
+    public static final int T__125=125;
+    public static final int T__128=128;
+    public static final int T__127=127;
+    public static final int WS=117;
+    public static final int T__129=129;
+    public static final int FloatingPointLiteral=102;
+    public static final int NONE=95;
+    public static final int FLOATVAL=25;
+    public static final int JavaIDDigit=116;
+    public static final int GT=55;
+    public static final int POSTINC=66;
+    public static final int INVOKE=74;
+    public static final int INIT=79;
+    public static final int T__130=130;
+    public static final int LAND=46;
+    public static final int T__131=131;
+    public static final int T__132=132;
+    public static final int T__133=133;
+    public static final int T__134=134;
+    public static final int T__135=135;
+    public static final int PARAMETERS=99;
+    public static final int ANNOTATION=22;
+    public static final int LTEQ=52;
+    public static final int T__124=124;
     public static final int T__123=123;
     public static final int STEP=81;
-    public static final int T__145=145;
-    public static final int T__187=187;
-    public static final int INTVAL=24;
-    public static final int SHR=57;
-    public static final int PREDEC=68;
-    public static final int ARRAYINIT=92;
-    public static final int STATIC_IMPORT=7;
-    public static final int T__186=186;
-    public static final int AND=47;
-    public static final int T__181=181;
-    public static final int T__128=128;
-    public static final int NULLVAL=30;
-    public static final int PREINC=67;
-    public static final int T__161=161;
-    public static final int FINALLY=86;
-    public static final int T__168=168;
-    public static final int T__203=203;
-    public static final int T__150=150;
-    public static final int Identifier=101;
-    public static final int ENUM_CONSTANT=97;
-    public static final int T__182=182;
-    public static final int EQ=49;
-    public static final int NEW=76;
-    public static final int BOOLVAL=29;
-    public static final int LT=54;
-    public static final int T__165=165;
-    public static final int T__130=130;
-    public static final int T__151=151;
-    public static final int LINE_COMMENT=119;
-    public static final int CASE=90;
-    public static final int INTERFACE=9;
-    public static final int HexLiteral=105;
-    public static final int CHARVAL=27;
-    public static final int INV=71;
-    public static final int T__125=125;
-    public static final int T__149=149;
-    public static final int LTEQ=52;
-    public static final int DecimalLiteral=107;
-    public static final int T__166=166;
-    public static final int BREAK=40;
-    public static final int T__132=132;
-    public static final int ANNOTATION=22;
-    public static final int DIV=61;
-    public static final int T__190=190;
-    public static final int T__131=131;
-    public static final int T__124=124;
-    public static final int T__169=169;
-    public static final int THROW=39;
-    public static final int T__126=126;
-    public static final int T__148=148;
-    public static final int INIT=79;
-    public static final int T__188=188;
-    public static final int T__200=200;
-    public static final int VARDEF=32;
-    public static final int DOUBLEVAL=26;
-    public static final int TYPE_PARAMETER=20;
-    public static final int ARRAYINDEX=75;
-    public static final int ASSIGN=42;
-    public static final int T__127=127;
-    public static final int VOID=19;
-    public static final int T__183=183;
-    public static final int T__133=133;
-    public static final int FLOATVAL=25;
-    public static final int VARARGS=17;
-    public static final int T__164=164;
-    public static final int T__120=120;
-    public static final int USHR=58;
-    public static final int ENUM=10;
-    public static final int T__163=163;
-    public static final int Exponent=110;
-    public static final int T__153=153;
-    public static final int IMPLEMENTS=13;
-    public static final int SWITCH=89;
-    public static final int T__185=185;
-    public static final int CharacterLiteral=103;
-    public static final int T__178=178;
-    public static final int GT=55;
-    public static final int StringLiteral=104;
-    public static final int ASSIGNOP=98;
-    public static final int T__129=129;
-    public static final int T__180=180;
-    public static final int T__152=152;
+    public static final int T__122=122;
+    public static final int SUB=60;
     public static final int T__121=121;
-    public static final int VAR=43;
-    public static final int CLASS=8;
-    public static final int T__147=147;
-    public static final int T__179=179;
-    public static final int EOF=-1;
-    public static final int T__154=154;
+    public static final int T__120=120;
+    public static final int ASSIGNOP=98;
+    public static final int HexDigit=108;
+    public static final int T__202=202;
+    public static final int T__203=203;
+    public static final int SELECTOR=73;
+    public static final int IMPLEMENTS=13;
+    public static final int ARRAYINIT=92;
+    public static final int PREINC=67;
+    public static final int ADD=59;
+    public static final int HexLiteral=105;
+    public static final int INSTANCEOF=51;
+    public static final int StringLiteral=104;
+    public static final int ENUM=10;
+    public static final int BLOCK=31;
+    public static final int INTERFACE=9;
+    public static final int DIV=61;
+    public static final int OctalEscape=114;
+    public static final int LOR=44;
+    public static final int CAST=72;
+    public static final int LT=54;
+    public static final int BOOLVAL=29;
+    public static final int WHILE=36;
+    public static final int FloatTypeSuffix=111;
+    public static final int OctalLiteral=106;
+    public static final int CASE=90;
+    public static final int NEW=76;
+    public static final int BREAK=40;
+    public static final int Identifier=101;
     public static final int PARAMETER=16;
-    public static final int T__184=184;
-    public static final int T__155=155;
+    public static final int VAR=43;
+    public static final int VOID=19;
+    public static final int SUPER=23;
+    public static final int COMMENT=118;
+    public static final int VARDEF=32;
+    public static final int ENUM_CONSTANT=97;
+    public static final int GETCLASS=77;
+    public static final int ARGUMENTS=93;
+    public static final int LINE_COMMENT=119;
+    public static final int SWITCH=89;
+    public static final int THROWS=21;
+    public static final int ARRAYVAL=88;
+    public static final int ASSERT=33;
+    public static final int MUL=62;
+    public static final int TRY=84;
+    public static final int CONDEXPR=87;
+    public static final int UNIT=4;
+    public static final int T__200=200;
+    public static final int NULLVAL=30;
+    public static final int T__201=201;
+    public static final int INTVAL=24;
+    public static final int OR=45;
     public static final int TEST=80;
-    public static final int T__146=146;
+    public static final int FIELD=14;
+    public static final int FOREACH=83;
+    public static final int CATCH=85;
+    public static final int Letter=115;
+    public static final int EscapeSequence=112;
+    public static final int THROW=39;
+    public static final int POSTDEC=69;
+    public static final int CLASS=8;
+    public static final int VARARGS=17;
+    public static final int STRINGVAL=28;
+    public static final int CharacterLiteral=103;
+    public static final int Exponent=110;
+    public static final int FOR=35;
+    public static final int AND=47;
+    public static final int IF=34;
+    public static final int MODIFIERS=11;
+    public static final int T__199=199;
+    public static final int T__198=198;
+    public static final int T__197=197;
+    public static final int SYNCHRONIZED=78;
+    public static final int T__196=196;
+    public static final int T__195=195;
+    public static final int T__194=194;
+    public static final int T__193=193;
+    public static final int CONTINUE=41;
+    public static final int T__192=192;
+    public static final int T__191=191;
+    public static final int T__190=190;
+    public static final int ARRAYINDEX=75;
+    public static final int T__184=184;
+    public static final int T__183=183;
+    public static final int T__186=186;
+    public static final int T__185=185;
+    public static final int T__188=188;
+    public static final int XOR=48;
+    public static final int T__187=187;
+    public static final int T__189=189;
+    public static final int CHARVAL=27;
+    public static final int T__180=180;
+    public static final int T__182=182;
+    public static final int DEFAULT=91;
+    public static final int T__181=181;
+    public static final int DOUBLEVAL=26;
+    public static final int GTEQ=53;
+    public static final int DecimalLiteral=107;
+    public static final int LABINOP=94;
+    public static final int T__175=175;
+    public static final int T__174=174;
+    public static final int T__173=173;
+    public static final int T__172=172;
+    public static final int NEQ=50;
+    public static final int T__179=179;
+    public static final int TYPE_PARAMETER=20;
+    public static final int T__178=178;
+    public static final int T__177=177;
+    public static final int FINALLY=86;
+    public static final int T__176=176;
+    public static final int LABEL=82;
+    public static final int UnicodeEscape=113;
+    public static final int T__171=171;
+    public static final int T__170=170;
+    public static final int NEG=65;
+    public static final int ASSIGN=42;
+    public static final int EXTENDS=12;
+    public static final int T__169=169;
+    public static final int METHOD=15;
+    public static final int USHR=58;
+    public static final int DOWHILE=37;
 
     protected boolean enumIsKeyword = true;
     	public void displayRecognitionError(String[] tokenNames,
@@ -4002,12 +4002,13 @@ public class JavaLexer extends Lexer {
     static final String DFA18_maxS =
         "\1\71\1\146\1\uffff\1\71\2\uffff\1\71\1\146\2\uffff";
     static final String DFA18_acceptS =
-        "\2\uffff\1\2\1\uffff\1\4\1\1\2\uffff\1\3\1\5";
+        "\2\uffff\1\2\1\uffff\1\1\1\4\2\uffff\1\3\1\5";
     static final String DFA18_specialS =
         "\12\uffff}>";
     static final String[] DFA18_transitionS = {
             "\1\2\1\uffff\12\1",
-            "\1\5\1\uffff\12\1\12\uffff\1\4\1\3\1\4\35\uffff\1\4\1\3\1\4",
+            "\1\4\1\uffff\12\1\12\uffff\1\5\1\3\1\5\35\uffff\1\5\1\3\1"+
+            "\5",
             "",
             "\1\6\1\uffff\1\6\2\uffff\12\7",
             "",
@@ -4134,21 +4135,21 @@ public class JavaLexer extends Lexer {
         "\2\uffff\1\ufaff\2\uffff\1\ufaff\1\uffff\1\ufaff\1\145\3\uffff\1"+
         "\144\1\ufaff\1\uffff";
     static final String DFA29_acceptS =
-        "\2\uffff\1\2\3\uffff\1\6\2\uffff\1\12\1\13\1\14\1\uffff\1\16\1\17"+
-        "\2\uffff\1\23\1\24\7\uffff\1\50\1\52\1\53\1\60\1\63\7\uffff\1\110"+
-        "\1\uffff\1\122\2\uffff\1\131\1\132\1\134\1\135\13\uffff\1\54\1\130"+
-        "\1\5\7\uffff\1\105\1\112\1\15\3\uffff\1\115\1\25\21\uffff\1\120"+
-        "\1\102\1\121\1\103\1\136\1\137\1\104\1\106\1\111\1\113\1\107\1\114"+
-        "\1\116\1\123\1\125\1\uffff\1\126\10\uffff\1\64\42\uffff\1\70\3\uffff"+
-        "\1\127\7\uffff\1\44\24\uffff\1\71\5\uffff\1\66\2\uffff\1\124\27"+
-        "\uffff\1\41\2\uffff\1\101\1\uffff\1\65\1\133\1\21\3\uffff\1\56\6"+
-        "\uffff\1\55\1\uffff\1\42\1\uffff\1\45\17\uffff\1\43\1\51\1\uffff"+
-        "\1\7\1\uffff\1\100\3\uffff\1\75\4\uffff\1\32\1\46\1\57\2\uffff\1"+
-        "\76\2\uffff\1\67\2\uffff\1\26\2\uffff\1\3\3\uffff\1\4\2\uffff\1"+
-        "\73\3\uffff\1\22\2\uffff\1\62\1\uffff\1\33\1\uffff\1\47\1\uffff"+
-        "\1\74\1\1\1\uffff\1\30\6\uffff\1\10\3\uffff\1\72\1\40\1\61\4\uffff"+
-        "\1\37\1\uffff\1\77\1\36\1\uffff\1\31\1\27\1\uffff\1\20\2\uffff\1"+
-        "\35\1\11\1\117\2\uffff\1\34";
+        "\2\uffff\1\2\3\uffff\1\6\2\uffff\1\12\1\13\1\14\1\uffff\1\16\1"+
+        "\17\2\uffff\1\23\1\24\7\uffff\1\50\1\52\1\53\1\60\1\63\7\uffff\1"+
+        "\110\1\uffff\1\122\2\uffff\1\131\1\132\1\134\1\135\13\uffff\1\54"+
+        "\1\130\1\5\7\uffff\1\105\1\112\1\15\3\uffff\1\115\1\25\21\uffff"+
+        "\1\120\1\102\1\121\1\103\1\136\1\137\1\104\1\106\1\111\1\113\1\107"+
+        "\1\114\1\116\1\123\1\125\1\uffff\1\126\10\uffff\1\64\42\uffff\1"+
+        "\70\3\uffff\1\127\7\uffff\1\44\24\uffff\1\71\5\uffff\1\66\2\uffff"+
+        "\1\124\27\uffff\1\41\2\uffff\1\101\1\uffff\1\65\1\133\1\21\3\uffff"+
+        "\1\56\6\uffff\1\55\1\uffff\1\42\1\uffff\1\45\17\uffff\1\43\1\51"+
+        "\1\uffff\1\7\1\uffff\1\100\3\uffff\1\75\4\uffff\1\32\1\46\1\57\2"+
+        "\uffff\1\76\2\uffff\1\67\2\uffff\1\26\2\uffff\1\3\3\uffff\1\4\2"+
+        "\uffff\1\73\3\uffff\1\22\2\uffff\1\62\1\uffff\1\33\1\uffff\1\47"+
+        "\1\uffff\1\74\1\1\1\uffff\1\30\6\uffff\1\10\3\uffff\1\72\1\40\1"+
+        "\61\4\uffff\1\37\1\uffff\1\77\1\36\1\uffff\1\31\1\27\1\uffff\1\20"+
+        "\2\uffff\1\35\1\11\1\117\2\uffff\1\34";
     static final String DFA29_specialS =
         "\u0157\uffff}>";
     static final String[] DFA29_transitionS = {
@@ -4200,8 +4201,8 @@ public class JavaLexer extends Lexer {
             "",
             "\1\151",
             "",
-            "\1\73\1\uffff\10\154\2\73\12\uffff\3\73\21\uffff\1\153\13\uffff"+
-            "\3\73\21\uffff\1\153",
+            "\1\73\1\uffff\10\154\2\73\12\uffff\3\73\21\uffff\1\153\13"+
+            "\uffff\3\73\21\uffff\1\153",
             "\1\73\1\uffff\12\156\12\uffff\3\73\35\uffff\3\73",
             "",
             "",
@@ -4282,9 +4283,9 @@ public class JavaLexer extends Lexer {
             "\1\u00a0",
             "\1\u00a1",
             "\1\u00a3\2\uffff\1\u00a2",
-            "\1\55\13\uffff\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\4\55"+
-            "\1\u00a4\25\55\105\uffff\27\55\1\uffff\37\55\1\uffff\u1f08\55"+
-            "\u1040\uffff\u0150\55\u0170\uffff\u0080\55\u0080\uffff\u092e"+
+            "\1\55\13\uffff\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\4"+
+            "\55\1\u00a4\25\55\105\uffff\27\55\1\uffff\37\55\1\uffff\u1f08"+
+            "\55\u1040\uffff\u0150\55\u0170\uffff\u0080\55\u0080\uffff\u092e"+
             "\55\u10d2\uffff\u5200\55\u5900\uffff\u0200\55",
             "\1\u00a6",
             "",

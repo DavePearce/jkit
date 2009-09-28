@@ -547,7 +547,7 @@ annotations
 	;
 
 annotation
-	:	'@' annotationName ('(' elementValuePairs? ')')? -> ^(ANNOTATION annotationName elementValuePairs?)
+	:	lc='@' annotationName ('(' elementValuePairs? ')')? -> ^(ANNOTATION[$lc] annotationName elementValuePairs?)
 	;
 	
 annotationName
