@@ -360,7 +360,7 @@ public class JavaFileReader {
 				modifiers,
 				name,
 				methods,
-				new SourceLocation(decl.getLine(), decl.getCharPositionInLine()));
+				new SourceLocation(decl.getLine(), decl.getCharPositionInLine()-1));
 	}
 
 	protected Decl.JavaMethod parseMethod(Tree method, HashSet<String> genericVariables) {
