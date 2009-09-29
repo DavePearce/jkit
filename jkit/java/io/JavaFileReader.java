@@ -1567,7 +1567,7 @@ public class JavaFileReader {
 		Tree aval = expr.getChild(1);
 		List<Expr> values = parseExpressionList(0, aval
 				.getChildCount(), aval, genericVariables);
-		
+			
 		return new Value.TypedArray(type, values, new SourceLocation(expr
 				.getLine(), expr.getCharPositionInLine()));
 	}

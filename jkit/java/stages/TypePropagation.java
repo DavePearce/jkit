@@ -746,11 +746,11 @@ public class TypePropagation {
 			syntax_error("cannot assign array value to type " + _type,e);
 		}		
 		Type.Array type = (Type.Array) _type;
-		
+						
 		for(int i=0;i!=e.values().size();++i) {
 			Expr v = e.values().get(i);
 			if(v instanceof Value.Array) {
-				Type.Array ta = (Type.Array) type;
+				Type.Array ta = (Type.Array) type.element();
 				doArrayVal(ta,(Value.Array)v);
 			} else if (isUnknownConstant(v)) {
 				v = unknownConstantInference(v, type.element(),
@@ -796,7 +796,7 @@ public class TypePropagation {
 		for(int i=0;i!=e.values().size();++i) {
 			Expr v = e.values().get(i);
 			if(lhs.element() instanceof Type.Array) {
-				Type.Array ta = (Type.Array) lhs;
+				Type.Array ta = (Type.Array) lhs;				
 				doArrayVal(ta.element(),(Value.Array)v);
 			} else if(isUnknownConstant(v)) {			
 				v = unknownConstantInference(v, lhs.element(),
