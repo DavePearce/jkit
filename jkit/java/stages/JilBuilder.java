@@ -197,7 +197,7 @@ public class JilBuilder {
 		
 		// First, off. If this is a constructor, then check whether there is an
 		// explicit super constructor call or not.  If not, then add one.
-		if (d instanceof Decl.JavaConstructor) {			
+		if (d instanceof Decl.JavaConstructor && !parent.type().equals(JAVA_LANG_OBJECT)) {			
 			if(findSuperCall(stmts) == -1) {							
 				stmts.add(0, new JilExpr.SpecialInvoke(new JilExpr.Variable("super", parent
 						.superClass()), "super", new ArrayList<JilExpr>(),

@@ -35,6 +35,7 @@ import jkit.java.tree.Value;
 import jkit.java.tree.Stmt.Case;
 import jkit.jil.tree.*;
 import jkit.jil.util.Types;
+import static jkit.jil.util.Types.*;
 import jkit.util.*;
 
 /**
@@ -112,13 +113,16 @@ public class SkeletonBuilder {
 	
 		// Next, we need to update as much information about the skeleton as
 		// we can.
-		Type.Clazz superClass = new Type.Clazz("java.lang", "Object");
+		Type.Clazz superClass = JAVA_LANG_OBJECT;
 
 		if (c.superclass() != null) {
 			// Observe, after type resolution, this will give the correct
 			// superclass type. However, prior to type resolution it will just
 			// return null.
 			superClass = c.superclass().attribute(Type.Clazz.class);
+		} else if(skeleton.type().equals(JAVA_LANG_OBJECT)) {
+			// special case required for odd situation when we're compiling java.lang.Object
+			superClass = null;
 		}
 
 		ArrayList<Type.Clazz> interfaces = new ArrayList();
@@ -148,7 +152,7 @@ public class SkeletonBuilder {
 			// if we get here, then no constructor has been provided.
 			// Therefore, must add the default constructor.
 			SourceLocation loc = c.attribute(SourceLocation.class);
-			Decl.JavaConstructor m = createDefaultConstructor(skeleton.name(), loc);
+			Decl.JavaConstructor m = createDefaultConstructor(skeleton, loc);
 			c.declarations().add(m);
 
 			// Finally, add the constructor to the skeleton.
@@ -749,19 +753,23 @@ public class SkeletonBuilder {
 		return attributes;
 	}
 	
-	protected Decl.JavaConstructor createDefaultConstructor(String name,
+	protected Decl.JavaConstructor createDefaultConstructor(JilClass skeleton,
 			SourceLocation loc) {
-
+				
 		ArrayList<Modifier> mods = new ArrayList<Modifier>();
 		mods.add(Modifier.ACC_PUBLIC);
-		mods.add(Modifier.ACC_SYNTHETIC);		
-		Expr.Invoke ivk = new Expr.Invoke(null, "super", new ArrayList(),
-				new ArrayList(), loc);
+		mods.add(Modifier.ACC_SYNTHETIC);
 		ArrayList<Stmt> stmts = new ArrayList();
-		stmts.add(ivk);
+		
+		if(!skeleton.type().equals(JAVA_LANG_OBJECT)) {		
+			Expr.Invoke ivk = new Expr.Invoke(null, "super", new ArrayList(),
+					new ArrayList(), loc);		
+			stmts.add(ivk);
+		}
+		
 		Stmt.Block block = new Stmt.Block(stmts, loc);
 
-		Decl.JavaConstructor m = new Decl.JavaConstructor(mods, name,
+		Decl.JavaConstructor m = new Decl.JavaConstructor(mods, skeleton.name(),
 				new ArrayList(), false, new ArrayList(), new ArrayList(),
 				block, loc);
 

@@ -509,7 +509,7 @@ public class JavaCompiler implements Compiler {
 	 * local variable in an enclosing scope (e.g. for anonymous inner classes).
 	 */
 	protected void resolveScopes(File srcfile, JavaFile jfile, ClassLoader loader) {
-		long start = System.currentTimeMillis();
+		long start = System.currentTimeMillis();		
 		new ScopeResolution(loader, new TypeSystem()).apply(jfile);
 		logTimedMessage("[" + srcfile.getPath()
 				+ "] Scope resolution completed", (System

@@ -621,11 +621,11 @@ public class TypePropagation {
 		
 		// Now, to determine the return type of this method, we need to lookup
 		// the method in the class hierarchy. This lookup procedure is seriously
-		// non-trivial, and is implemented in the TypeSystem module.
+		// non-trivial, and is implemented in the Typeam module.
 			
 		Type.Reference receiver = null;
 		String e_name = e.name();
-					
+						
 		Type rt = e.target().attribute(Type.class);
 
 		if(rt instanceof Type.Variable) {
@@ -646,7 +646,7 @@ public class TypePropagation {
 		}
 
 		if(e.name().equals("super") || e.name().equals("this")) {				
-			Type.Clazz r = (Type.Clazz) rt;				
+			Type.Clazz r = (Type.Clazz) rt;			
 			e_name = r.components().get(r.components().size() - 1).first();
 			receiver = r;
 		} 				

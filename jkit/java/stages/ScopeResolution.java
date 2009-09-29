@@ -242,14 +242,14 @@ public class ScopeResolution {
 				doInterface((JavaInterface)d, file);
 			} else if(d instanceof JavaClass) {
 				doClass((JavaClass)d, file);
-			} else if(d instanceof JavaMethod) {
-				doMethod((JavaMethod)d, file);
-			} else if(d instanceof JavaField) {
-				doField((JavaField)d, file);
-			} else if (d instanceof Decl.InitialiserBlock) {
-				doInitialiserBlock((Decl.InitialiserBlock) d, file);
-			} else if (d instanceof Decl.StaticInitialiserBlock) {
-				doStaticInitialiserBlock((Decl.StaticInitialiserBlock) d, file);
+			} else if(d instanceof JavaMethod) {				
+				doMethod((JavaMethod)d, file);				
+			} else if(d instanceof JavaField) {				
+				doField((JavaField)d, file);				
+			} else if (d instanceof Decl.InitialiserBlock) {				
+				doInitialiserBlock((Decl.InitialiserBlock) d, file);				
+			} else if (d instanceof Decl.StaticInitialiserBlock) {				
+				doStaticInitialiserBlock((Decl.StaticInitialiserBlock) d, file);				
 			} else {
 				syntax_error("internal failure (unknown declaration \"" + d
 						+ "\" encountered)",d);
@@ -277,16 +277,16 @@ public class ScopeResolution {
 		} else {
 			superType = c.superclass().attribute(Type.Clazz.class);
 		}
-		
+			
 		// Create an appropriate import declaration for this class.
 		imports.addFirst(computeImportDecl(myType));
-				
+			
 		// And, push on a scope representing this class definition.
 		ClassScope myScope = new ClassScope(myType,superType,c.isStatic()); 
 		scopes.add(myScope);				
 		
-		for(Decl d : c.declarations()) {
-			doDeclaration(d, file);
+		for(Decl d : c.declarations()) {			
+			doDeclaration(d, file);			
 		}
 		
 		imports.removeFirst();
@@ -319,10 +319,10 @@ public class ScopeResolution {
 				myScope.variables.put("super",new Pair(cs.superType,new ArrayList()));
 			}			
 		}
-						
+		
 		// Now, explore the method body for any other things to resolve.
 		doStatement(d.body(), file);
-		
+						
 		scopes.pop(); // leaving scope
 	}
 
@@ -436,7 +436,7 @@ public class ScopeResolution {
 			}	
 		} catch(Exception ex) {
 			internal_error(e,ex);
-		}
+		}				
 	}
 	
 	protected void doBlock(Stmt.Block block, JavaFile file) {
@@ -511,8 +511,8 @@ public class ScopeResolution {
 		return def;
 	}
 	
-	protected void doReturn(Stmt.Return ret, JavaFile file) {
-		ret.setExpr(doExpression(ret.expr(), file));
+	protected void doReturn(Stmt.Return ret, JavaFile file) {		
+		ret.setExpr(doExpression(ret.expr(), file));		
 	}
 	
 	protected void doThrow(Stmt.Throw ret, JavaFile file) {
@@ -756,19 +756,19 @@ public class ScopeResolution {
 		return e;
 	}
 	
-	protected Expr doInvoke(Expr.Invoke e, JavaFile file) throws ClassNotFoundException {				
+	protected Expr doInvoke(Expr.Invoke e, JavaFile file) throws ClassNotFoundException {						
 		Expr target = doExpression(e.target(), file);
 		
 		if(target == null && e.name().equals("super")) {
 			// Special case. We're invoking the super constructor. There's not
-			// much we can do here.
+			// much we can do here.			
 			Type.Clazz thisType = ((ClassScope) findEnclosingScope(ClassScope.class)).type;			
 			Type superType = getSuperClass(thisType);
 			target = new Expr.LocalVariable("super",superType);
 
 		} else if(target == null && e.name().equals("this")) {
 			// Special case. We're invoking the super constructor. There's not
-			// much we can do here.
+			// much we can do here.		
 			Type thisType = ((ClassScope) findEnclosingScope(ClassScope.class)).type;
 			target = new Expr.LocalVariable("this",thisType);			
 		} else if(target == null) {					
@@ -796,7 +796,7 @@ public class ScopeResolution {
 			// public void test(int x) {}
 			// public void f(String y) { test(y); }
 			// }}
-			// </pre>						
+			// </pre>												
 			
 			for(int i=scopes.size()-1;i>=0;--i) {
 				Scope s = scopes.get(i);
@@ -879,7 +879,7 @@ public class ScopeResolution {
 			Expr p = parameters.get(i);
 			parameters.set(i, doExpression(p, file));
 		}				
-		
+						
 		return e;
 	}
 	
@@ -955,6 +955,7 @@ public class ScopeResolution {
 	
 	protected Expr doUnresolvedVariable(Expr.UnresolvedVariable e, JavaFile file)
 			throws ClassNotFoundException {
+						
 		// This method is really the heart of the whole operation defined in
 		// this class. It is at this point that we have encountered a variable
 		// and we now need to determine what it's scope is. To do this, we
@@ -979,6 +980,7 @@ public class ScopeResolution {
 				ClassScope cs = (ClassScope) s;		
 				
 				try {
+					
 					Triple<Clazz, Clazz.Field, Type> r = types
 							.resolveField(cs.type, e.value(), loader);
 					
@@ -1016,7 +1018,7 @@ public class ScopeResolution {
 				}
 				isThis = false;
 				isStatic = cs.isStatic; 
-			} else if(s.variables.containsKey(e.value())) {
+			} else if(s.variables.containsKey(e.value())) {				
 				Expr r;
 				if(isThis) {			
 					Type t = (Type) s.variables.get(e.value()).first();					
@@ -1048,6 +1050,7 @@ public class ScopeResolution {
 				isStatic = ((FieldScope)s).isStatic;
 			}
 		}		
+						
 		// At this stage, we need to check for any static imports.
 		for(Pair<Boolean,String> p : file.imports()) {
 			if(p.first()) {
@@ -1073,7 +1076,7 @@ public class ScopeResolution {
 					}
 				}
 			}
-		}
+		}				
 		
 		// If we get here, then this variable access is either a syntax error,
 		// or a static class access. For example, in "System.out" we initially
@@ -1081,7 +1084,7 @@ public class ScopeResolution {
 		// this to be a ClassVariable. So, we check whether or not it actually
 		// could represent a class.
 					
-		try {						
+		try {			
 			Type.Clazz c = loader.resolve(e.value(), imports);
 			Expr r = new Expr.ClassVariable(e.value(),e.attributes());
 			r.attributes().add(c);
@@ -1096,7 +1099,7 @@ public class ScopeResolution {
 						e);
 				return null; // so very dead!!!
 			}		
-		}
+		}				
 	}
 
 	protected Expr doUnOp(Expr.UnOp e, JavaFile file) {		

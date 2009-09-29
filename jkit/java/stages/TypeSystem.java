@@ -1473,10 +1473,10 @@ public class TypeSystem {
 				return new Triple<Clazz, Clazz.Field, Type>(c, f, fieldT);
 			}
 			// no match yet, so traverse super class and interfaces
-			if (c.superClass() != null) {
+			if (c.superClass() != null) {				
 				worklist.add((Type.Clazz) substitute(c.superClass(),binding));
 			}
-			for (Type.Reference t : c.interfaces()) {
+			for (Type.Reference t : c.interfaces()) {				
 				worklist.add((Type.Clazz) substitute(t,binding));
 			}
 		}
