@@ -70,13 +70,18 @@ public class IntersectionFlowSet<T> implements FlowSet, Cloneable, Iterable<T> {
 	}
 	
 	public IntersectionFlowSet<T> intersect(IntersectionFlowSet fs) {						
-		IntersectionFlowSet<T> tmp = new IntersectionFlowSet<T>();
-		for(T i : data) {
+		IntersectionFlowSet<T> tmp = new IntersectionFlowSet<T>();		
+		for(T i : data) {			
 			if(fs.contains(i)) {
 				tmp.data.add(i);
-			}
+			} 
 		}
-		return tmp;		
+		
+		if(tmp.size() == size()) {
+			return this;
+		} else {		
+			return tmp;
+		}
 	}
 	
 	public IntersectionFlowSet<T> add(T s) {
