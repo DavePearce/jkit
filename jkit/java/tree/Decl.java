@@ -208,6 +208,7 @@ public interface Decl extends SyntacticElement {
 				SyntacticAttribute... attributes) {
 			super(modifiers, name, typeParameters, superclass, interfaces,
 					declarations, attributes);
+			modifiers.add(new Modifier.Interface());
 		}
 	}
 

@@ -211,9 +211,7 @@ public class TypeResolution {
 			// contains those generic types explicitly declared here, but not
 			// hose of its parent. So, I strip off those components of the
 			// parent here. Note, that this is necessary in order to deal with
-			// some icky type binding stuff.
-			
-			System.out.println("UPDATING COMPONENTS : " + c.name());
+			// some icky type binding stuff.						
 			
 			for(int i=0;i!=components.size();++i) {
 				Pair<String,List<Type.Reference>> p = components.get(i);
@@ -243,8 +241,6 @@ public class TypeResolution {
 		components.add(new Pair(name,typevars));
 		Type.Clazz myType = new Type.Clazz(parentType.pkg(),components);		
 		c.attributes().add(myType); // record the type
-		
-		System.out.println("SETTING TYPE : " + myType);
 		
 		myScope.type = myType;		
 		
