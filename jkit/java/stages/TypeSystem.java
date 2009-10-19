@@ -999,7 +999,7 @@ public class TypeSystem {
 			// We need to use this template --- namely that the first generic
 			// parameter of ArrayList maps to the first of List --- in order to
 			// determine the proper supertype for ArrayList<String>. This is
-			// what the binding / substitution stuff is for.									
+			// what the binding / substitution stuff is for.												
 			Map<String, Type.Reference> binding = bind(type, c.type(), loader);									
 			
 			if(!type.equals(owner)) {

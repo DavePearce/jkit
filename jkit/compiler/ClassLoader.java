@@ -371,7 +371,7 @@ public final class ClassLoader {
 					ClassFileReader r = new ClassFileReader(jf.getInputStream(je));
 					compiler.logTimedMessage("Loaded " + location + ":"
 							+ jarname, System.currentTimeMillis() - time);
-					Clazz clazz = r.readClass();
+					Clazz clazz = r.readClass();					
 					// Update our knowledge base of classes.					
 					classtable.put(refName(clazz.type()), clazz);					
 					return clazz;

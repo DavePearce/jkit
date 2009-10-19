@@ -213,6 +213,8 @@ public class TypeResolution {
 			// parent here. Note, that this is necessary in order to deal with
 			// some icky type binding stuff.
 			
+			System.out.println("UPDATING COMPONENTS : " + c.name());
+			
 			for(int i=0;i!=components.size();++i) {
 				Pair<String,List<Type.Reference>> p = components.get(i);
 				components.set(i,new Pair(p.first(),new ArrayList()));
@@ -239,8 +241,10 @@ public class TypeResolution {
 		}
 				
 		components.add(new Pair(name,typevars));
-		Type.Clazz myType = new Type.Clazz(parentType.pkg(),components);
+		Type.Clazz myType = new Type.Clazz(parentType.pkg(),components);		
 		c.attributes().add(myType); // record the type
+		
+		System.out.println("SETTING TYPE : " + myType);
 		
 		myScope.type = myType;		
 		

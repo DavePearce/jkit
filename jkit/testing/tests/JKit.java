@@ -57,6 +57,7 @@ public class JKit extends TestHarness {
 	@Test public void TypeBounds_8() { runTest("TypeBounds_8"); }
 	@Ignore("Known Bug") @Test public void TypeBounds_9() { compileFailTest("TypeBounds_9"); }
 	@Ignore("Known Bug") @Test public void TypeBounds_10() { compileFailTest("TypeBounds_10"); }
+	@Test public void TypeBounds_11() { runTest("TypeBounds_11"); }
 	
 	@Test public void WhileLoop_1() { runTest("WhileLoop_1"); }
 

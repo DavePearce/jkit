@@ -131,8 +131,8 @@ public class SkeletonBuilder {
 			if (t != null) {
 				interfaces.add(t);
 			}
-		}
-
+		}		
+		
 		skeleton.setType(type);
 		skeleton.setSuperClass(superClass);
 		skeleton.setInterfaces(interfaces);
