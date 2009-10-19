@@ -21,8 +21,9 @@
 
 package jkit.testing.tests;
 
+import jkit.testing.TestHarness;
 import org.junit.*;
-import jkit.testing.*;
+
 
 public class JKit extends TestHarness {
 	public JKit() {
@@ -53,6 +54,7 @@ public class JKit extends TestHarness {
 	@Ignore("Known Bug") @Test public void TypeBounds_6() { compileFailTest("TypeBounds_6"); }	
 	
 	@Test public void TypeBounds_7() { runTest("TypeBounds_7"); }
+	@Test public void TypeBounds_8() { runTest("TypeBounds_8"); }
 	
 	@Test public void WhileLoop_1() { runTest("WhileLoop_1"); }
 

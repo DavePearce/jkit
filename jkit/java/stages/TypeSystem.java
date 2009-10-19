@@ -1000,11 +1000,18 @@ public class TypeSystem {
 			// parameter of ArrayList maps to the first of List --- in order to
 			// determine the proper supertype for ArrayList<String>. This is
 			// what the binding / substitution stuff is for.
+			
+			System.out.println("BINDING TYPE: " + type + " WITH " + c.type());
+			
 			Map<String, Type.Reference> binding = bind(type, c.type(), loader);
+						
+			System.out.println("BINDING: " + binding);
 			
 			if(!type.equals(owner)) {
 				for(Clazz.Method m : c.methods(name)) {
+					System.out.println("METHOD TYPE (BEFORE): " + m.type());
 					Type.Function mtype = Types.substitute(m.type(),binding);
+					System.out.println("METHOD TYPE (AFTER): " + mtype);
 					if(mtype.equals(funType)) {
 						methods.add(new Triple(c,m,mtype));
 					}
@@ -1016,8 +1023,10 @@ public class TypeSystem {
 						binding));
 			}
 			for (Type.Clazz t : c.interfaces()) {
+				System.out.println("LOOKING AT INTERFACE: " + t);
 				worklist.add((Type.Clazz) Types.substitute(t, binding));
 			}
+			System.out.println("WORKLIST SIZE = " + worklist.size());
 		}
 
 		return methods;		
