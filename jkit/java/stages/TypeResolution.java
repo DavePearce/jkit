@@ -202,8 +202,23 @@ public class TypeResolution {
 		scopes.push(myScope);
 		
 		// Third, build my fully qualified type!
+		
 		List<Pair<String, List<Type.Reference>>> components = new ArrayList(
 				parentType.components());
+		
+		if(c.isStatic() || c.isInterface()) {
+			// In the case of a static class, the fully qualified type only
+			// contains those generic types explicitly declared here, but not
+			// hose of its parent. So, I strip off those components of the
+			// parent here. Note, that this is necessary in order to deal with
+			// some icky type binding stuff.
+			
+			for(int i=0;i!=components.size();++i) {
+				Pair<String,List<Type.Reference>> p = components.get(i);
+				components.set(i,new Pair(p.first(),new ArrayList()));
+			}
+		} 
+		
 		ArrayList<Type.Reference> typevars = new ArrayList<Type.Reference>();
 		for (jkit.java.tree.Type.Variable v : c.typeParameters()) {
 			Type.Variable tv = (Type.Variable) substituteTypeVars(resolve(v));
