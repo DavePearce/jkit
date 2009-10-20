@@ -634,6 +634,7 @@ public class JilBuilder {
 		ArrayList<JilStmt> r = new ArrayList<JilStmt>();
 		
 		Pair<JilExpr,List<JilStmt>> lhs = doExpression(def.lhs());
+		
 		Pair<JilExpr, List<JilStmt>> rhs = doExpression(new Expr.BinOp(
 				def.op(), def.lhs(), def.rhs(), def.attributes()));
 		
@@ -673,12 +674,15 @@ public class JilBuilder {
 				return new Pair(deref2, r);
 			}
 		} else if(lhs.first() instanceof JilExpr.ArrayIndex) {
+			
 			JilExpr.ArrayIndex aindex1 = (JilExpr.ArrayIndex) lhs.first();
-
+			r.addAll(lhs.second());			
+			
 			JilExpr targetVar = new JilExpr.Variable(getTempVar(), aindex1
-					.target().type(), def.attributes());
+					.target().type(), def.attributes());											
 			JilExpr indexVar = new JilExpr.Variable(getTempVar(), aindex1
 					.index().type(), def.attributes());
+			
 			r.add(new JilStmt.Assign(targetVar, aindex1.target(), def
 					.attributes()));
 			r.add(new JilStmt.Assign(indexVar, aindex1.index(), def
