@@ -749,7 +749,8 @@ public class TypePropagation {
 						
 		for(int i=0;i!=e.values().size();++i) {
 			Expr v = e.values().get(i);
-			if(v instanceof Value.Array) {
+			if (v instanceof Value.Array
+					&& type.element() instanceof Type.Array) {
 				Type.Array ta = (Type.Array) type.element();
 				doArrayVal(ta,(Value.Array)v);
 			} else if (isUnknownConstant(v)) {
