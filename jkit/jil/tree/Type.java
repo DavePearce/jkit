@@ -713,7 +713,7 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 				ls.addAll(lowerBound.usedVariables());
 			}
 			if(upperBound != null) {
-				ls.addAll(lowerBound.usedVariables());
+				ls.addAll(upperBound.usedVariables());
 			}
 			return ls;
 		}
