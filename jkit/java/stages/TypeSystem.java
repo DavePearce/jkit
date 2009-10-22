@@ -847,18 +847,43 @@ public class TypeSystem {
 		// intersection type to deal with the possibility of multiple possible
 		// subtypes.
 		
-		Type.Reference st = null;
+		
+		ArrayList<Type.Reference> candidates = new ArrayList<Type.Reference>();
 		
 		for(Type.Reference t1s : t1supertypes) {
-			for(Type.Reference t2s : t2supertypes) {				
+			outer: for(Type.Reference t2s : t2supertypes) {
 				if(t1s.equals(t2s)) {
-					if(st == null) {
-						st = t1s;
-					} else if(subtype(st,t1s,loader)) {
-						st = t1s;
+					candidates.add(t1s);
+				} else if(t1s instanceof Type.Clazz && t2s instanceof Type.Clazz) {
+					Type.Clazz t1c = (Type.Clazz) t1s;
+					Type.Clazz t2c = (Type.Clazz) t2s;
+					
+					if (t1c.pkg().equals(t2c.pkg())
+							&& t1c.components().size() == t2c.components()
+									.size()) {
+						List<Pair<String,List<Type.Reference>>> t1c_components = t1c.components();
+						List<Pair<String,List<Type.Reference>>> t2c_components = t2c.components();
+						for(int i=0;i!=t1c_components.size();++i) {
+							String n1 = t1c_components.get(i).first();
+							String n2 = t2c_components.get(i).first();
+							if(!n1.equals(n2)) {
+								continue outer;
+							}
+						}
+						candidates.add(t1s);
+						candidates.add(t2s);
 					}
-				}
+				}  
 			}
+		}
+		
+		Type.Reference st = null;
+		for(Type.Reference c : candidates) {
+			if(subtype(c,t1,loader) && subtype(c,t2,loader)) {
+				if(st == null || subtype(st,c,loader)) {
+					st = c;
+				} 
+			}			
 		}		
 		
 		return st;

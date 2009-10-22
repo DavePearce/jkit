@@ -1062,10 +1062,11 @@ public class TypePropagation {
 		} else if(lhs_t instanceof Type.Reference && rhs_t instanceof Type.Reference) {
 			// At this point, we have some class types and we need to determine
 			// their greatest lower bound.
-			Type rt;			
+			Type rt;	
+									
 			if(lhs_t instanceof Type.Clazz && rhs_t instanceof Type.Clazz) {								
 				rt = types.greatestSupertype((Type.Clazz) lhs_t,
-						(Type.Clazz) rhs_t, loader);					
+						(Type.Clazz) rhs_t, loader);				
 			} else if(lhs_t instanceof Type.Clazz || rhs_t instanceof Type.Clazz) {
 				rt = JAVA_LANG_OBJECT;
 			} else if(lhs_t.equals(rhs_t)) {
