@@ -104,7 +104,7 @@ public class TypeSystem {
 			} else {
 				return JAVA_LANG_OBJECT.equals(t1);
 			}
-		} else if(t1 instanceof Type.Variable && t2 instanceof Type.Variable) {
+		} else if (t1 instanceof Type.Variable && t2 instanceof Type.Variable) {
 			return t1.equals(t2);
 		}
 		
@@ -266,11 +266,15 @@ public class TypeSystem {
 		}
 		if (t2 == null) {
 			throw new IllegalArgumentException("t2 cannot be null");
-		}
-
+		}		
+		
 		if(t1 instanceof Type.Clazz && isJavaLangObject((Type.Clazz)t1)) {
 			return true;
-		} else if(t2.lowerBound() != null){
+		} else if(t1 instanceof Type.Wildcard) {
+			Type.Wildcard tw1 = (Type.Wildcard) t1;
+			return tw1.lowerBound() == null
+					|| subtype(tw1.lowerBound(), t2.lowerBound(), loader);
+		} else if(t2.lowerBound() != null){			
 			return subtype(t1,t2.lowerBound(),loader);
 		}
 
@@ -1287,8 +1291,8 @@ public class TypeSystem {
 			Type.Reference receiver, String name,
 			List<Type> concreteParameterTypes, boolean autoboxing,
 			boolean varargs, ClassLoader loader) throws ClassNotFoundException {				
-		
-		if(receiver instanceof Type.Clazz) {
+				
+		if(receiver instanceof Type.Clazz) {			
 			return resolveMethod((Type.Clazz) receiver, name,
 					concreteParameterTypes, autoboxing, varargs, loader);
 		} else if(receiver instanceof Type.Intersection) {
@@ -1300,10 +1304,9 @@ public class TypeSystem {
 					return r;
 				}
 			}
-		} else {
-			// interesting question as to what we should do if there's an array
-			// here.
-		}
+		} else if(receiver instanceof Type.Wildcard) {
+			
+		} 
 		
 		// failure
 		return null;		
