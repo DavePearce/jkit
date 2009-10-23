@@ -200,9 +200,7 @@ public final class ClassFileReader {
 		cfile.attributes().addAll(attributes);
 		cfile.methods().addAll(methods);
 		cfile.fields().addAll(fields);
-		
-		
-		
+						
 		return 	cfile;			 		
 	}
 	

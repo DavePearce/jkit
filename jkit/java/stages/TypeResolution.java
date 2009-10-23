@@ -271,11 +271,10 @@ public class TypeResolution {
 	protected void doMethod(JavaMethod d) throws ClassNotFoundException {
 		Scope myScope = new MethodScope();		
 		scopes.push(myScope);
-		
-		
+				
 		// Add my generic variables (sorry, a bit yucky)
 		ArrayList<Type.Variable> typeVars = new ArrayList<Type.Variable>();
-		for (jkit.java.tree.Type.Variable v : d.typeParameters()) {
+		for (jkit.java.tree.Type.Variable v : d.typeParameters()) {			
 			Type.Variable tv = (Type.Variable) substituteTypeVars(resolve(v));
 			myScope.typeVars.put(v.variable(), tv);
 			typeVars.add(tv);
@@ -306,7 +305,7 @@ public class TypeResolution {
 		for (int i = 0; i != paramLength; ++i) {
 			Decl.JavaParameter p = d
 					.parameters().get(i);
-			Type pt = substituteTypeVars(resolve(p.type()));
+			Type pt = substituteTypeVars(resolve(p.type()));						
 			p.type().attributes().add(pt);
 			parameterTypes.add(pt);
 		}
