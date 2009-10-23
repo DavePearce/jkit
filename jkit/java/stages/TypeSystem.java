@@ -521,18 +521,15 @@ public class TypeSystem {
 		// =====================================================================
 		// Ok, we've reached a type variable, so we can now bind this with
 		// what we already have.
-		ArrayList<BindConstraint> constraints = new ArrayList<BindConstraint>();		
-		if (!(concrete instanceof Type.Variable)
-				|| !((Type.Variable) concrete).variable().equals(template
-						.variable())) {
-			// The above condition simple prevents redundant constraints of the
-			// form "T = T".			
-			constraints.add(new EqualityConstraint(template.variable(),concrete));
-			if (template.lowerBound() != null
-					&& !subtype(template.lowerBound(),concrete, loader)) {				
-				throw new BindError("cannot instantiate \"" + template
-						+ "\" with \"" + concrete + "\"");
-			}
+		ArrayList<BindConstraint> constraints = new ArrayList<BindConstraint>();
+		
+		// The above condition simple prevents redundant constraints of the
+		// form "T = T".			
+		constraints.add(new EqualityConstraint(template.variable(),concrete));
+		if (template.lowerBound() != null
+				&& !subtype(template.lowerBound(),concrete, loader)) {				
+			throw new BindError("cannot instantiate \"" + template
+					+ "\" with \"" + concrete + "\"");
 		}				
 		
 		return constraints;
@@ -753,7 +750,7 @@ public class TypeSystem {
 		
 		for(int i=0;i!=constraints.size();++i) {
 			if(constraints.get(i) instanceof EqualityConstraint) {
-				EqualityConstraint c = (EqualityConstraint) constraints.get(i);				
+				EqualityConstraint c = (EqualityConstraint) constraints.get(i);
 				Type.Reference oldVal = binding.get(c.var);
 				if(oldVal != null && !oldVal.equals(c.type)) {
 					throw new BindError("cannot bind " + c.var
@@ -799,7 +796,7 @@ public class TypeSystem {
 		// Finally, apply all upper bound constraints 
 		for(int i=0;i!=constraints.size();++i) {
 			if(constraints.get(i) instanceof UpperBoundConstraint) {
-				UpperBoundConstraint c = (UpperBoundConstraint) constraints.get(i);				
+				UpperBoundConstraint c = (UpperBoundConstraint) constraints.get(i);					
 				Type.Reference oldVal = binding.get(c.var);
 				if(oldVal != null) {
 					if (!subtype(oldVal, c.upperBound, loader)) {	
@@ -1328,8 +1325,9 @@ public class TypeSystem {
 			Type.Clazz type = worklist.remove(0);
 			Clazz c = loader.loadClass(type);			
 			List<? extends Clazz.Method> methods = c.methods(name);
-			Map<String,Type.Reference> binding = bind(type, c.type(), loader);
 			
+			Map<String,Type.Reference> binding = bind(type, c.type(), loader);
+									
 			for (Clazz.Method m : methods) {
 				// try to rule out as many impossible candidates as possible
 				Type.Function m_type = m.type();				
