@@ -733,9 +733,11 @@ public final class ClassFileBuilder {
 				// it from
 				// the stack
 				bytecodes.add(new Bytecode.Pop(retT));
-			} else if ((retT instanceof Type.Variable || Types
-					.isGenericArray(retT))
+			} else if ((retT instanceof Type.Variable 
+					|| retT instanceof Type.Wildcard
+					|| Types.isGenericArray(retT))
 					&& !(stmt.type() instanceof Type.Variable)
+					&& !(stmt.type() instanceof Type.Wildcard)
 					&& !stmt.type().equals(
 							new Type.Clazz("java.lang", "Object"))) {
 				// Here, the actual return type is a (generic) type

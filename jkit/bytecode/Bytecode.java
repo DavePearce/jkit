@@ -1931,10 +1931,12 @@ public abstract class Bytecode {
 		/**
 		 * Check a reference on the stack has the given type.
 		 * 
-		 * @param type --- must be either Type.Array or Type.Reference 
+		 * @param type --- must be either Type.Array or Type.Clazz 
 		 */
 		public CheckCast(Type type) {
-			assert type instanceof Type.Reference || type instanceof Type.Array;			
+			if(!(type instanceof Type.Clazz) && !(type instanceof Type.Array)) {
+				throw new IllegalArgumentException("checkcast cannot accept " + type);
+			}
 			this.type = type; 
 		}
 		
@@ -1943,20 +1945,9 @@ public abstract class Bytecode {
 		}
 		
 		public void addPoolItems(Set<Constant.Info> constantPool) {
-			if (type instanceof Type.Wildcard) {
-				Type.Wildcard tw = (Type.Wildcard) type;
-				if (tw.lowerBound() == null) {
-					Constant.addPoolItem(Constant.buildClass(new Type.Clazz(
-							"java.lang", "Object")), constantPool);
-				} else {
-					Constant.addPoolItem(Constant.buildClass(tw.lowerBound()),
-							constantPool);
-				}
-			} else if (type instanceof Type.Reference) {
-				Constant.addPoolItem(
+			Constant.addPoolItem(
 						Constant.buildClass((Type.Reference) type),
 						constantPool);
-			} 
 		}
 		
 		public byte[] toBytes(int offset, Map<String,Integer> labelOffsets,  
@@ -1965,21 +1956,8 @@ public abstract class Bytecode {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();			
 			int idx;
 			
-			if(type instanceof Type.Wildcard) {
-				Type.Wildcard tw = (Type.Wildcard) type;
-				if(tw.lowerBound() == null) {
-					idx = constantPool.get(Constant
-							.buildClass(new Type.Clazz("java.lang","Object")));
-				} else {
-					idx = constantPool.get(Constant
-							.buildClass(tw.lowerBound()));
-				}
-			} else if (type instanceof Type.Reference) {
-				idx = constantPool.get(Constant
+			idx = constantPool.get(Constant
 						.buildClass((Type.Reference) type));
-			} else {
-				throw new RuntimeException("Unhandled constant type: " + type);
-			}
 			
 			write_u1(out,CHECKCAST);
 			write_u2(out,idx);
