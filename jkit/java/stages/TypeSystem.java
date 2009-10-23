@@ -521,11 +521,9 @@ public class TypeSystem {
 		// =====================================================================
 		// Ok, we've reached a type variable, so we can now bind this with
 		// what we already have.
-		ArrayList<BindConstraint> constraints = new ArrayList<BindConstraint>();
-		
-		// The above condition simple prevents redundant constraints of the
-		// form "T = T".			
+		ArrayList<BindConstraint> constraints = new ArrayList<BindConstraint>();		
 		constraints.add(new EqualityConstraint(template.variable(),concrete));
+	
 		if (template.lowerBound() != null
 				&& !subtype(template.lowerBound(),concrete, loader)) {				
 			throw new BindError("cannot instantiate \"" + template

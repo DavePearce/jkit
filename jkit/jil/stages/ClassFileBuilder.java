@@ -736,8 +736,6 @@ public final class ClassFileBuilder {
 			} else if ((retT instanceof Type.Variable 
 					|| retT instanceof Type.Wildcard
 					|| Types.isGenericArray(retT))
-					&& !(stmt.type() instanceof Type.Variable)
-					&& !(stmt.type() instanceof Type.Wildcard)
 					&& !stmt.type().equals(
 							new Type.Clazz("java.lang", "Object"))) {
 				// Here, the actual return type is a (generic) type
@@ -748,7 +746,28 @@ public final class ClassFileBuilder {
 				// Object and we need to cast it to whatever it needs to be
 				// (e.g. String). Note, if the value substituted for T is
 				// actually Object, then we just do nothing!
-				bytecodes.add(new Bytecode.CheckCast(stmt.type()));
+				
+				retT = stmt.type();
+				while(retT instanceof Type.Variable || retT instanceof Type.Wildcard) {
+					if(retT instanceof Type.Variable) {
+						Type.Variable vt = (Type.Variable) retT;
+						
+						if(vt.lowerBound() == null) {
+							return; // no return value cast is required.
+						} else {
+							retT = vt.lowerBound(); // keep search for a concrete type!
+						}
+						
+					} else if(retT instanceof Type.Wildcard) {
+						Type.Wildcard wt = (Type.Wildcard) retT;
+						if(wt.lowerBound() == null) {
+							return; // no return value cast is required.
+						} else {							
+							retT = wt.lowerBound(); // keep search for a concrete type!
+						}
+					} 			
+				}
+				bytecodes.add(new Bytecode.CheckCast(retT));
 			}
 		}	
 	}
