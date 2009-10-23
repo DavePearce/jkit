@@ -522,7 +522,7 @@ public class TypeSystem {
 		// Ok, we've reached a type variable, so we can now bind this with
 		// what we already have.
 		ArrayList<BindConstraint> constraints = new ArrayList<BindConstraint>();
-		
+						
 		constraints.add(new EqualityConstraint(template.variable(),concrete));
 	
 		if (template.lowerBound() != null
@@ -603,6 +603,7 @@ public class TypeSystem {
 			throw new IllegalArgumentException("loader cannot be null");
 		}
 		// =====================================================================
+		
 		concrete = reduce(template, concrete, loader);		
 		
 		ArrayList<BindConstraint> constraints = new ArrayList<BindConstraint>();
@@ -640,7 +641,31 @@ public class TypeSystem {
 					} else {
 						Type.Reference cr = cs.get(j);
 						Type.Reference tr = ts.get(j);
-
+						
+						if(cr instanceof Type.Clazz && tr instanceof Type.Clazz) {
+							// At this point, we need to check the classes
+							// actually match.
+							Type.Clazz cc = (Type.Clazz) cr;
+							Type.Clazz tc = (Type.Clazz) tr;
+							List<Pair<String,List<Type.Reference>>> cc_components = cc.components();
+							List<Pair<String,List<Type.Reference>>> tc_components = tc.components();
+							
+							if(cc_components.size() != tc_components.size()) {
+								throw new BindError("cannot bind " + concrete
+										+ " to " + template);
+							}
+							
+							for(int k=0;k!=cc_components.size();++k) {
+								String a = cc_components.get(k).first();
+								String b = tc_components.get(k).first();
+								if(!a.equals(b)) {
+									throw new BindError("cannot bind " + concrete
+											+ " to " + template);
+								}
+							}
+							
+						}
+						
 						constraints.addAll(innerBind(cr, tr,
 								loader));
 					}
@@ -679,7 +704,7 @@ public class TypeSystem {
 		}
 		if(loader == null) {
 			throw new IllegalArgumentException("loader cannot be null");
-		}	
+		}					
 		
 		// Note, I ignore the return type when performing a binding. The reason
 		// for this, is that the concrete return type is (always?) taken
@@ -1327,11 +1352,11 @@ public class TypeSystem {
 			Clazz c = loader.loadClass(type);			
 			List<? extends Clazz.Method> methods = c.methods(name);						
 			
-			Map<String,Type.Reference> binding = bind(type, c.type(), loader);
-									
+			Map<String,Type.Reference> binding = bind(type, c.type(), loader);		
+			
 			for (Clazz.Method m : methods) {
 				// try to rule out as many impossible candidates as possible
-				Type.Function m_type = m.type();				
+				Type.Function m_type = m.type();												
 				
 				if (m_type.parameterTypes().size() == concreteParameterTypes
 						.size()
@@ -1346,11 +1371,15 @@ public class TypeSystem {
 					Type.Function concreteFunctionType = new Type.Function(mt.returnType(),
 							concreteParameterTypes, new ArrayList<Type.Variable>());										
 					
+					try {
 					mt = (Type.Function) substitute(mt, bind(
 							concreteFunctionType, mt, m.isVariableArity(),
-							loader));																
-					
-					mts.add(new Triple<Clazz, Clazz.Method, Type.Function>(c, m, mt));					 				
+							loader));				
+					mts.add(new Triple<Clazz, Clazz.Method, Type.Function>(c, m, mt));
+					} catch(BindError e) {
+						// don't need to do anything. This just indicates that
+						// the current method is not a candidate.
+					}										 			
 				}
 			}
 
