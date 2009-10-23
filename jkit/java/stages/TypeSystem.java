@@ -521,7 +521,8 @@ public class TypeSystem {
 		// =====================================================================
 		// Ok, we've reached a type variable, so we can now bind this with
 		// what we already have.
-		ArrayList<BindConstraint> constraints = new ArrayList<BindConstraint>();		
+		ArrayList<BindConstraint> constraints = new ArrayList<BindConstraint>();
+		
 		constraints.add(new EqualityConstraint(template.variable(),concrete));
 	
 		if (template.lowerBound() != null
@@ -680,10 +681,12 @@ public class TypeSystem {
 			throw new IllegalArgumentException("loader cannot be null");
 		}	
 		
-		// first, do return type
-		
-		ArrayList<BindConstraint> constraints = innerBind(concrete.returnType(),
-				template.returnType(), loader);		
+		// Note, I ignore the return type when performing a binding. The reason
+		// for this, is that the concrete return type is (always?) taken
+		// directly from the template's return type. Thus binding something on
+		// itself results in constraints of the form T = T, which can break
+		// things.
+		ArrayList<BindConstraint> constraints = new ArrayList<BindConstraint>();
 		
 		// second, do type parameters
 		
@@ -1322,7 +1325,7 @@ public class TypeSystem {
 		while (!worklist.isEmpty()) {
 			Type.Clazz type = worklist.remove(0);
 			Clazz c = loader.loadClass(type);			
-			List<? extends Clazz.Method> methods = c.methods(name);
+			List<? extends Clazz.Method> methods = c.methods(name);						
 			
 			Map<String,Type.Reference> binding = bind(type, c.type(), loader);
 									
@@ -1341,7 +1344,7 @@ public class TypeSystem {
 					
 					// Second, substitute method type parameters
 					Type.Function concreteFunctionType = new Type.Function(mt.returnType(),
-							concreteParameterTypes, new ArrayList<Type.Variable>());
+							concreteParameterTypes, new ArrayList<Type.Variable>());										
 					
 					mt = (Type.Function) substitute(mt, bind(
 							concreteFunctionType, mt, m.isVariableArity(),
