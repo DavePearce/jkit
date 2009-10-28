@@ -23,6 +23,7 @@ package jkit.java.tree;
 
 import java.util.*;
 
+import static jkit.compiler.SyntaxError.*;
 import jkit.compiler.SyntacticAttribute;
 import jkit.compiler.SyntacticElementImpl;
 import jkit.util.Pair;
@@ -353,8 +354,13 @@ public class Type extends SyntacticElementImpl {
 			return fromJilType((jkit.jil.tree.Type.Array)t);
 		} else if(t instanceof jkit.jil.tree.Type.Clazz) {
 			return fromJilType((jkit.jil.tree.Type.Clazz)t);
+		} else if(t instanceof jkit.jil.tree.Type.Variable) {
+			return fromJilType((jkit.jil.tree.Type.Variable)t);
+		} else if(t instanceof jkit.jil.tree.Type.Wildcard) {
+			return fromJilType((jkit.jil.tree.Type.Wildcard)t);
 		}
-		throw new RuntimeException("Need to finish fromJilType off!");
+		
+		return null;
 	}
 	
 	public static jkit.java.tree.Type.Primitive fromJilType(
@@ -383,6 +389,18 @@ public class Type extends SyntacticElementImpl {
 	public static jkit.java.tree.Type.Array fromJilType(
 			jkit.jil.tree.Type.Array at) {
 		return new jkit.java.tree.Type.Array(fromJilType(at.element()), at);
+	}
+	
+	public static jkit.java.tree.Type.Variable fromJilType(
+			jkit.jil.tree.Type.Variable v) {
+		return new jkit.java.tree.Type.Variable(v.variable(), (jkit.java.tree.Type.Reference) fromJilType(v.lowerBound()));
+	}
+	
+	public static jkit.java.tree.Type.Wildcard fromJilType(
+			jkit.jil.tree.Type.Wildcard v) {
+		return new jkit.java.tree.Type.Wildcard(
+				(jkit.java.tree.Type.Reference) fromJilType(v.lowerBound()),
+				(jkit.java.tree.Type.Reference) fromJilType(v.upperBound()));
 	}
 	
 	public static jkit.java.tree.Type.Clazz fromJilType(
