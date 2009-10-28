@@ -296,6 +296,7 @@ public class JKit extends TestHarness {
 	@Test public void JLS_15_25_ConditionalOperator_2() { runTest("JLS_15_25_ConditionalOperator_2"); }
 	@Test public void JLS_15_25_ConditionalOperator_3() { runTest("JLS_15_25_ConditionalOperator_3"); }
 	@Test public void JLS_15_25_ConditionalOperator_4() { runTest("JLS_15_25_ConditionalOperator_4"); }
+	@Test public void JLS_15_25_ConditionalOperator_5() { runTest("JLS_15_25_ConditionalOperator_5"); }
 	@Test public void JLS_15_26_2_CompoundAssignmentOperators_1() { runTest("JLS_15_26_2_CompoundAssignmentOperators_1"); }	
 	@Ignore("Known Bug") @Test public void JLS_15_26_2_CompoundAssignmentOperators_2() { runTest("JLS_15_26_2_CompoundAssignmentOperators_2"); }
 
