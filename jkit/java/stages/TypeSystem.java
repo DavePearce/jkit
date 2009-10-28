@@ -87,6 +87,8 @@ public class TypeSystem {
 			return subtype((Type.Reference) t1, (Type.Intersection) t2, loader);
 		} else if(t1 instanceof Type.Reference && t2 instanceof Type.Wildcard) {			
 			return subtype((Type.Reference) t1, (Type.Wildcard) t2, loader);
+		}  else if(t1 instanceof Type.Wildcard && t2 instanceof Type.Reference) {			
+			return subtype((Type.Wildcard) t1, (Type.Reference) t2, loader);
 		} else if(t1 instanceof Type.Clazz && t2 instanceof Type.Clazz) {			
 			return subtype((Type.Clazz) t1, (Type.Clazz) t2, loader);
 		} else if(t1 instanceof Type.Primitive && t2 instanceof Type.Primitive) {
@@ -278,6 +280,25 @@ public class TypeSystem {
 			return subtype(t1,t2.lowerBound(),loader);
 		}
 
+		return false;
+	}
+	
+	public boolean subtype(Type.Wildcard t1, Type.Reference t2,
+			ClassLoader loader) throws ClassNotFoundException {
+		if (loader == null) {
+			throw new IllegalArgumentException("loader cannot be null");
+		}
+		if (t1 == null) {
+			throw new IllegalArgumentException("t1 cannot be null");
+		}
+		if (t2 == null) {
+			throw new IllegalArgumentException("t2 cannot be null");
+		}		
+		
+		if(t1.upperBound() != null) {			
+			return subtype(t1.upperBound(),t2,loader);
+		}
+		
 		return false;
 	}
 	
@@ -1375,6 +1396,7 @@ public class TypeSystem {
 					mt = (Type.Function) substitute(mt, bind(
 							concreteFunctionType, mt, m.isVariableArity(),
 							loader));				
+															
 					mts.add(new Triple<Clazz, Clazz.Method, Type.Function>(c, m, mt));
 					} catch(BindError e) {
 						// don't need to do anything. This just indicates that
@@ -1428,8 +1450,10 @@ public class TypeSystem {
 					Type p1 = mps[j];
 					Type p2 = params[j];
 
+					
+					
 					if (!(autoboxing && boxSubtype(p1, p2, loader))
-							&& !subtype(p1, p2, loader)) {
+							&& !subtype(p1, p2, loader)) {																	
 						continue outer;
 					}
 					
