@@ -1641,9 +1641,10 @@ public class JavaFileReader {
 	protected ArrayList<Type.Variable> parseTypeVariables(Tree child,
 			HashSet<String> genericVariables) {
 		ArrayList<Type.Variable> typeArgs = new ArrayList<Type.Variable>();
-		for (int i = 0; i != child.getChildCount(); ++i) {
+		for (int i = 0; i != child.getChildCount(); ++i) {									
 			Type.Variable tvar = parseVariableType(child.getChild(i),
 					genericVariables);
+									
 			typeArgs.add(tvar);
 			genericVariables.add(tvar.variable());
 		}
@@ -1835,6 +1836,10 @@ public class JavaFileReader {
 	protected Type.Variable parseVariableType(Tree type, HashSet<String> genericVariables) {
 		Tree child = type.getChild(0);
 		String text = child.getText();
+		
+		genericVariables = (HashSet) genericVariables.clone();
+		genericVariables.add(text); // needed for recursive type bounds
+		
 		List<Type.Reference> lowerBounds = new ArrayList<Type.Reference>();
 
 		if (child.getChildCount() > 0 && child.getChild(0).getType() == EXTENDS) {

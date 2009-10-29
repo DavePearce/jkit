@@ -789,7 +789,7 @@ public class TypeResolution {
 		String className = "";
 		String pkg = "";
 		MethodScope methodScope = getEnclosingScope(MethodScope.class);
-				
+		
 		boolean firstTime = true;
 		for (int i = 0; i != ct.components().size(); ++i) {
 			String tmp = ct.components().get(i).first();
