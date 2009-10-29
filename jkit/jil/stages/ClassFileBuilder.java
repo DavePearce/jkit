@@ -699,7 +699,7 @@ public final class ClassFileBuilder {
 		}
 
 		Type retT = m.type().returnType();
-
+		
 		if (!(retT instanceof Type.Void)) {
 			// Need to account for space occupied by return type!
 			if (!needReturnValue) {
@@ -710,8 +710,6 @@ public final class ClassFileBuilder {
 			} else if ((retT instanceof Type.Variable
 					|| retT instanceof Type.Wildcard || Types
 					.isGenericArray(retT))
-					// there is a bug here I guess relating to concrete lower bounds.
-					&& (stmt.type() instanceof Type.Clazz || stmt.type() instanceof Type.Array)
 					&& !stmt.type().equals(Types.JAVA_LANG_OBJECT)) {
 				
 				// Here, the actual return type is a (generic) type
@@ -722,8 +720,43 @@ public final class ClassFileBuilder {
 				// Object and we need to cast it to whatever it needs to be
 				// (e.g. String). Note, if the value substituted for T is
 				// actually Object, then we just do nothing!
-								
-				bytecodes.add(new Bytecode.CheckCast(stmt.type()));
+				
+				HashSet<Type.Reference> ctypes = new HashSet<Type.Reference>();
+				Stack<Type.Reference> stack = new Stack<Type.Reference>();
+				stack.push((Type.Reference) stmt.type());
+				
+				// The following strategy is suboptimal. It will introduce casts
+                // that aren't actually necessary. To resolve this, I think we
+                // need some kind of inference further up stream to eliminate
+                // intersection types.
+				
+				while(!stack.isEmpty()) {
+					Type.Reference r = stack.pop();
+					if(r instanceof Type.Clazz || r instanceof Type.Array) {
+						ctypes.add(r);
+					} else if(r instanceof Type.Variable) {
+						Type.Variable tv = (Type.Variable) r;
+						if(tv.lowerBound() != null) {
+							stack.add(tv.lowerBound());
+						} else {
+							ctypes.add(Types.JAVA_LANG_OBJECT);
+						}
+					} else if(r instanceof Type.Wildcard) {
+						Type.Wildcard tv = (Type.Wildcard) r;
+						if(tv.lowerBound() != null) {
+							stack.add(tv.lowerBound());
+						} else {
+							ctypes.add(Types.JAVA_LANG_OBJECT);
+						}
+					} else if(r instanceof Type.Intersection) {
+						Type.Intersection ti = (Type.Intersection) r;
+						stack.addAll(ti.bounds());
+					}
+				}
+				
+				for(Type.Reference t : ctypes) {				
+					bytecodes.add(new Bytecode.CheckCast(t));
+				}
 			}
 		}	
 	}
