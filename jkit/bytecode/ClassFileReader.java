@@ -708,7 +708,7 @@ public final class ClassFileReader {
 			pos = rt.second();
 		}
 		Type.Reference lb = null;
-		if(lowerBounds.size() > 1) {
+		if(lowerBounds.size() > 1) {			
 			lb = new Type.Intersection(lowerBounds);
 		} else if(lowerBounds.size() == 1) {
 			lb = lowerBounds.get(0);

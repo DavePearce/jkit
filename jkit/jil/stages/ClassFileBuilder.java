@@ -609,35 +609,7 @@ public final class ClassFileBuilder {
 			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes,
 			boolean needReturnValue) throws ClassNotFoundException, MethodNotFoundException {
 		
-		Type.Reference _targetT = (Type.Reference) stmt.target().type();
-		
-		if(_targetT instanceof Type.Array) {			
-			translateInvokeHelper(new Type.Clazz("java.lang", "Object"), stmt,
-					varmap, bytecodes, needReturnValue);
-		} else if(_targetT instanceof Type.Variable) {			
-			Type.Variable targetT = (Type.Variable) _targetT;
-			
-			if (targetT.lowerBound() instanceof Type.Clazz) {
-				translateInvokeHelper((Type.Clazz) targetT.lowerBound(), stmt,
-						varmap, bytecodes, needReturnValue);
-			} else if(targetT.lowerBound() instanceof Type.Intersection) {
-				// there is a somewhat awkward problem here. not sure how to
-				// deal with it exactly.
-				translateInvokeHelper(new Type.Clazz("java.lang", "Object"),
-						stmt, varmap, bytecodes, needReturnValue);
-			} else {
-				translateInvokeHelper(new Type.Clazz("java.lang", "Object"),
-						stmt, varmap, bytecodes, needReturnValue);
-			}
-		} else if(_targetT instanceof Type.Clazz) {
-			translateInvokeHelper((Type.Clazz) _targetT, stmt, varmap,
-					bytecodes, needReturnValue);
-		}
-	}
-	
-	protected void translateInvokeHelper(Type.Clazz targetT,
-			JilExpr.Invoke stmt, HashMap<String, Integer> varmap,
-			ArrayList<Bytecode> bytecodes, boolean needReturnValue) throws ClassNotFoundException, MethodNotFoundException {
+		Type.Reference targetT = (Type.Reference) stmt.target().type();
 
 		if (stmt.name().equals("super") || stmt.name().equals("this")) {
 			// catch explicit super constructor call.
@@ -645,16 +617,18 @@ public final class ClassFileBuilder {
 			for (JilExpr p : stmt.parameters()) {
 				translateExpression(p, varmap, bytecodes);
 			}
-			bytecodes.add(new Bytecode.Invoke(targetT, "<init>",
+			bytecodes.add(new Bytecode.Invoke((Type.Clazz) targetT, "<init>",
 					stmt.funType(), Bytecode.SPECIAL));
 			return;
-		} 
-					
+		} 								
+
+		
 		Pair<Clazz,Clazz.Method> cm = determineMethod(targetT, stmt.name(), stmt
 				.funType());
+				
 		Clazz c = cm.first();
 		Clazz.Method m = cm.second();
-
+				
 		if (!m.isStatic()) {
 			// must be non-static invocation
 			translateExpression(stmt.target(), varmap, bytecodes);
@@ -710,17 +684,17 @@ public final class ClassFileBuilder {
 		}
 
 		if (stmt instanceof JilExpr.SpecialInvoke) {
-			bytecodes.add(new Bytecode.Invoke(targetT, stmt.name(), stmt
+			bytecodes.add(new Bytecode.Invoke(c.type(), stmt.name(), stmt
 					.funType(), Bytecode.SPECIAL));
 		} else if (m.isStatic()) {
 			// STATIC
-			bytecodes.add(new Bytecode.Invoke(targetT, stmt.name(), stmt
+			bytecodes.add(new Bytecode.Invoke(c.type(), stmt.name(), stmt
 					.funType(), Bytecode.STATIC));
 		} else if (c.isInterface()) {
-			bytecodes.add(new Bytecode.Invoke(targetT, stmt.name(), stmt
+			bytecodes.add(new Bytecode.Invoke(c.type(), stmt.name(), stmt
 					.funType(), Bytecode.INTERFACE));
 		} else {
-			bytecodes.add(new Bytecode.Invoke(targetT, stmt.name(), stmt
+			bytecodes.add(new Bytecode.Invoke(c.type(), stmt.name(), stmt
 					.funType(), Bytecode.VIRTUAL));
 		}
 
@@ -733,11 +707,13 @@ public final class ClassFileBuilder {
 				// it from
 				// the stack
 				bytecodes.add(new Bytecode.Pop(retT));
-			} else if ((retT instanceof Type.Variable 
-					|| retT instanceof Type.Wildcard
-					|| Types.isGenericArray(retT))
-					&& !stmt.type().equals(
-							new Type.Clazz("java.lang", "Object"))) {
+			} else if ((retT instanceof Type.Variable
+					|| retT instanceof Type.Wildcard || Types
+					.isGenericArray(retT))
+					// there is a bug here I guess relating to concrete lower bounds.
+					&& (stmt.type() instanceof Type.Clazz || stmt.type() instanceof Type.Array)
+					&& !stmt.type().equals(Types.JAVA_LANG_OBJECT)) {
+				
 				// Here, the actual return type is a (generic) type
 				// variable (e.g. T or T[]), and we're expecting it to
 				// return a real value (e.g. String, substituted for T).
@@ -746,28 +722,8 @@ public final class ClassFileBuilder {
 				// Object and we need to cast it to whatever it needs to be
 				// (e.g. String). Note, if the value substituted for T is
 				// actually Object, then we just do nothing!
-				
-				retT = stmt.type();
-				while(retT instanceof Type.Variable || retT instanceof Type.Wildcard) {
-					if(retT instanceof Type.Variable) {
-						Type.Variable vt = (Type.Variable) retT;
-						
-						if(vt.lowerBound() == null) {
-							return; // no return value cast is required.
-						} else {
-							retT = vt.lowerBound(); // keep search for a concrete type!
-						}
-						
-					} else if(retT instanceof Type.Wildcard) {
-						Type.Wildcard wt = (Type.Wildcard) retT;
-						if(wt.lowerBound() == null) {
-							return; // no return value cast is required.
-						} else {							
-							retT = wt.lowerBound(); // keep search for a concrete type!
-						}
-					} 			
-				}
-				bytecodes.add(new Bytecode.CheckCast(retT));
+								
+				bytecodes.add(new Bytecode.CheckCast(stmt.type()));
 			}
 		}	
 	}
@@ -1276,7 +1232,7 @@ public final class ClassFileBuilder {
 	 * @param funType
 	 * @return 0 for virtual, 1 for interface, 2 for static
 	 */	
-	protected Pair<Clazz, Clazz.Method> determineMethod(Type.Clazz receiver,
+	protected Pair<Clazz, Clazz.Method> determineMethod(Type.Reference receiver,
 			String name, Type.Function funType) throws ClassNotFoundException,
 			MethodNotFoundException {						
 		
@@ -1284,7 +1240,8 @@ public final class ClassFileBuilder {
 		
 		Stack<Type.Clazz> worklist = new Stack<Type.Clazz>();
 		Stack<Type.Clazz> interfaceWorklist = new Stack<Type.Clazz>();
-		worklist.push(receiver);
+
+		initDetermineMethodWorklist(receiver,worklist);		
 		
 		// Need to save the class of the static receiver type, since this
 		// determines whether to use an invokevirtual or invokeinterface. Could
@@ -1295,7 +1252,7 @@ public final class ClassFileBuilder {
 			Clazz c = loader.loadClass(worklist.pop());						
 			for (Clazz.Method m : c.methods(name)) {								
 				String mdesc = ClassFile.descriptor(m.type(), false);
-				if (fdesc.equals(mdesc)) {					
+				if (fdesc.equals(mdesc)) {							
 					return new Pair(outer,m);
 				}
 			}
@@ -1321,6 +1278,33 @@ public final class ClassFileBuilder {
 		}
 		
 		throw new MethodNotFoundException(name,receiver.toString());
+	}
+	
+	protected void initDetermineMethodWorklist(Type.Reference receiver, Stack<Type.Clazz> worklist) {				
+		if(receiver instanceof Type.Clazz) {
+			worklist.push((Type.Clazz) receiver);	
+		} else if(receiver instanceof Type.Variable) {
+			Type.Variable tv = (Type.Variable) receiver;			
+			if(tv.lowerBound() != null) {				
+				initDetermineMethodWorklist(tv.lowerBound(),worklist);
+			} else {
+				worklist.push(Types.JAVA_LANG_OBJECT); // fall back
+			}
+		} else if(receiver instanceof Type.Wildcard) {
+			Type.Wildcard tv = (Type.Wildcard) receiver;
+			if(tv.lowerBound() != null) {
+				initDetermineMethodWorklist(tv.lowerBound(),worklist);
+			} else {
+				worklist.push(Types.JAVA_LANG_OBJECT); // fall back
+			}
+		} else if(receiver instanceof Type.Intersection) {
+			Type.Intersection tv = (Type.Intersection) receiver;
+			for(Type.Reference lb : tv.bounds()) {				
+				initDetermineMethodWorklist(lb,worklist);
+			}
+		} else {
+			worklist.push(Types.JAVA_LANG_OBJECT); // fall back
+		}
 	}
 	
 	/**

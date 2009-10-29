@@ -1854,8 +1854,8 @@ public class JavaFileReader {
 		SourceLocation loc = new SourceLocation(type.getLine(), type
 				.getCharPositionInLine());
 		
-		if(lowerBounds.size() > 1) {
-			Type.Intersection lowerBound = new Type.Intersection(lowerBounds, loc);
+		if(lowerBounds.size() > 1) {			
+			Type.Intersection lowerBound = new Type.Intersection(lowerBounds, loc);			
 			return new Type.Variable(text, lowerBound, loc);
 		} else if(lowerBounds.size() == 1) {
 			return new Type.Variable(text, lowerBounds.get(0), loc);		

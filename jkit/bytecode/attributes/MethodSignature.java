@@ -78,6 +78,7 @@ public class MethodSignature implements BytecodeAttribute {
 		String r = "";
 
 		List<Type.Variable> typeArgs = type.typeArguments();
+		
 		if(!typeArgs.isEmpty()) {				
 			r += "<";
 			for(Type.Variable v : typeArgs) {
@@ -87,22 +88,36 @@ public class MethodSignature implements BytecodeAttribute {
 			
 				if(lb != null) {
 
-					// The following check is needed to deal with the case
-					// where the type bounds are only interfaces. In this
-					// case, there must be an extra colon indicating the
-					// absence of super class. It's actually really annoying
-					// since it couples this code with ClassTable ... grrr.
+					if(lb instanceof Type.Clazz) {
+						// The following check is needed to deal with the case
+						// where the type bounds are only interfaces. In this
+						// case, there must be an extra colon indicating the
+						// absence of super class. It's actually really annoying
+						// since it couples this code with ClassTable ... grrr.
 
-					try {
-						Clazz tmp = loader.loadClass((Type.Clazz) lb);
-						if (tmp.isInterface()) {
-							r += ":";
+						try {
+							Clazz tmp = loader.loadClass((Type.Clazz) lb);
+							if (tmp.isInterface()) {
+								r += ":";
+							}
+							r += ClassFile.descriptor(lb, true);
+						} catch (ClassNotFoundException ce) {
+							throw new RuntimeException("Type bound " + lb
+									+ " not found");									
 						}
-						r += ClassFile.descriptor(lb, true);
-					} catch (ClassNotFoundException ce) {
-						throw new RuntimeException("Type bound " + lb
-								+ " not found");									
-					}				
+					} else if(lb instanceof Type.Intersection) {
+						Type.Intersection ti = (Type.Intersection) lb;
+						boolean firstTime = true;
+						for(Type.Reference b : ti.bounds()) {
+							if(!firstTime) {
+								r += ":";
+							}
+							firstTime = false;
+							r += ClassFile.descriptor(b, true);
+						}
+					} else {
+						throw new RuntimeException("internal failure");
+					}
 				}
 			}
 			r += ">";
