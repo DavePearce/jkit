@@ -115,6 +115,7 @@ public class JKit extends TestHarness {
 	@Test public void JLS_8_1_2_GenericTypes_17() { runTest("JLS_8_1_2_GenericTypes_17"); }		
 	@Test public void JLS_8_1_2_GenericTypes_18() { runTest("JLS_8_1_2_GenericTypes_18"); }
 	@Test public void JLS_8_1_2_GenericTypes_19() { runTest("JLS_8_1_2_GenericTypes_19"); }
+	@Test public void JLS_8_1_2_GenericTypes_20() { runTest("JLS_8_1_2_GenericTypes_20"); }
 	
 	@Test public void JLS_8_1_3_InnerClasses_1() { runTest("JLS_8_1_3_InnerClasses_1"); }
 	@Test public void JLS_8_1_3_InnerClasses_2() { runTest("JLS_8_1_3_InnerClasses_2"); }

@@ -99,6 +99,8 @@ public class TypeSystem {
 			return JAVA_LANG_OBJECT.equals(t1)
 					|| JAVA_LANG_CLONEABLE.equals(t1)
 					|| JAVA_IO_SERIALIZABLE.equals(t1);
+		} else if (t1 instanceof Type.Variable && t2 instanceof Type.Variable) {
+			return t1.equals(t2);
 		} else if(t2 instanceof Type.Variable && t1 instanceof Type.Reference) {			
 			Type.Variable tv = (Type.Variable) t2;
 			if(tv.lowerBound() != null) {				
@@ -113,9 +115,7 @@ public class TypeSystem {
 			} else {				
 				return subtype(JAVA_LANG_OBJECT,t2,loader);				
 			}
-		} else if (t1 instanceof Type.Variable && t2 instanceof Type.Variable) {
-			return t1.equals(t2);
-		}
+		} 
 		
 		return false;
 	}
@@ -301,7 +301,7 @@ public class TypeSystem {
 		if (t2 == null) {
 			throw new IllegalArgumentException("t2 cannot be null");
 		}		
-		
+						
 		if(t1.upperBound() != null) {			
 			return subtype(t1.upperBound(),t2,loader);
 		}
@@ -1439,9 +1439,7 @@ public class TypeSystem {
 				for (int j = 0; j != numToCheck; ++j) {
 					Type p1 = mps[j];
 					Type p2 = params[j];
-
-					
-					
+									
 					if (!(autoboxing && boxSubtype(p1, p2, loader))
 							&& !subtype(p1, p2, loader)) {																	
 						continue outer;
