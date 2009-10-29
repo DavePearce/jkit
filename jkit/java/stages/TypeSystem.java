@@ -511,7 +511,7 @@ public class TypeSystem {
 		// =====================================================================		
 		if (template instanceof Type.Variable
 				&& concrete instanceof Type.Reference) {
-			// Observe, we can only bind a generic variable to a reference type.			
+			// Observe, we can only bind a generic variable to a reference type.						
 			return innerBind((Type.Reference) concrete, (Type.Variable) template,
 					loader);
 		} else if (template instanceof Type.Wildcard) {
@@ -539,6 +539,7 @@ public class TypeSystem {
 		if(loader == null) {
 			throw new IllegalArgumentException("loader cannot be null");
 		}
+						
 		// =====================================================================
 		// Ok, we've reached a type variable, so we can now bind this with
 		// what we already have.
@@ -624,7 +625,7 @@ public class TypeSystem {
 			throw new IllegalArgumentException("loader cannot be null");
 		}
 		// =====================================================================
-		
+				
 		concrete = reduce(template, concrete, loader);		
 		
 		ArrayList<BindConstraint> constraints = new ArrayList<BindConstraint>();
@@ -637,28 +638,9 @@ public class TypeSystem {
 				List<Type.Reference> ts = t.second();
 
 				for (int j = 0; j != Math.max(cs.size(), ts.size()); ++j) {					
-					if(cs.size() <= j) {
-						// We need to deal with the case of erased types. For
-						// example, when binding java.util.ArrayList with
-						// java.util.ArrayList<T> we must assume that the first type
-						// is, in fact, java.util.ArrayList<Object>.						
-						Type.Reference tr = ts.get(j);
-						List<Type.Variable> vars = tr.usedVariables();
-						for(Type.Variable v : vars) {
-							constraints.add(new EqualityConstraint(
-									v.variable(), JAVA_LANG_OBJECT));
-						}
-					} else if(ts.size() <= j) {
-						// We need to deal with the case of erased types. For
-						// example, when binding java.util.ArrayList with
-						// java.util.ArrayList<T> we must assume that the first type
-						// is, in fact, java.util.ArrayList<Object>.						
-						Type.Reference cr = cs.get(j);
-						List<Type.Variable> vars = cr.usedVariables();
-						for(Type.Variable v : vars) {
-							constraints.add(new EqualityConstraint(
-									v.variable(), JAVA_LANG_OBJECT));
-						}
+					if(cs.size() <= j || ts.size() <= j) {
+						// This basically means we've got an erased type. So, we
+						// must do nothing.
 					} else {
 						Type.Reference cr = cs.get(j);
 						Type.Reference tr = ts.get(j);
@@ -1400,7 +1382,7 @@ public class TypeSystem {
 					mts.add(new Triple<Clazz, Clazz.Method, Type.Function>(c, m, mt));
 					} catch(BindError e) {
 						// don't need to do anything. This just indicates that
-						// the current method is not a candidate.
+						// the current method is not a candidate.						
 					}										 			
 				}
 			}
@@ -1438,6 +1420,7 @@ public class TypeSystem {
 		outer: for (int i = methods.size() - 1; i >= 0; --i) {
 			Triple<Clazz, Clazz.Method, Type.Function> methInfo = methods.get(i);
 			Clazz.Method m = methInfo.second();
+									
 			Type.Function f = methInfo.third();			
 			Type[] mps = f.parameterTypes().toArray(new Type[f.parameterTypes().size()]);
 			if (mps.length == params.length
