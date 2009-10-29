@@ -99,12 +99,19 @@ public class TypeSystem {
 			return JAVA_LANG_OBJECT.equals(t1)
 					|| JAVA_LANG_CLONEABLE.equals(t1)
 					|| JAVA_IO_SERIALIZABLE.equals(t1);
-		}  else if(t2 instanceof Type.Variable && t1 instanceof Type.Clazz) {
+		}  else if(t2 instanceof Type.Variable && t1 instanceof Type.Clazz) {			
 			Type.Variable tv = (Type.Variable) t2;
-			if(tv.lowerBound() != null) {
+			if(tv.lowerBound() != null) {				
 				return subtype(t1,tv.lowerBound(),loader);
-			} else {
+			} else {				
 				return JAVA_LANG_OBJECT.equals(t1);
+			}
+		} else if(t1 instanceof Type.Variable && t2 instanceof Type.Clazz) {			
+			Type.Variable tv = (Type.Variable) t1;
+			if(tv.lowerBound() != null) {				
+				return subtype(tv.lowerBound(),t2,loader);
+			} else {				
+				return subtype(JAVA_LANG_OBJECT,t2,loader);				
 			}
 		} else if (t1 instanceof Type.Variable && t2 instanceof Type.Variable) {
 			return t1.equals(t2);

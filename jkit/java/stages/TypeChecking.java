@@ -552,8 +552,7 @@ public class TypeChecking {
 	protected void checkCast(Expr.Cast e) {
 		Type e_t = e.expr().attribute(Type.class);
 		Type c_t = e.type().attribute(Type.class);
-		try {
-			
+		try {		
 			if(e_t instanceof Type.Clazz && c_t instanceof Type.Clazz) {
 				Clazz c_c = loader.loadClass((Type.Clazz) c_t);
 				Clazz e_c = loader.loadClass((Type.Clazz) e_t);
@@ -567,7 +566,7 @@ public class TypeChecking {
 					return;
 				}
 			}
-			
+									
 			if (types.boxSubtype(c_t, e_t, loader)
 					|| types.boxSubtype(e_t, c_t, loader)) {
 				// this is OK
