@@ -553,6 +553,7 @@ public class TypeChecking {
 		Type e_t = e.expr().attribute(Type.class);
 		Type c_t = e.type().attribute(Type.class);
 		try {
+			
 			if(e_t instanceof Type.Clazz && c_t instanceof Type.Clazz) {
 				Clazz c_c = loader.loadClass((Type.Clazz) c_t);
 				Clazz e_c = loader.loadClass((Type.Clazz) e_t);
