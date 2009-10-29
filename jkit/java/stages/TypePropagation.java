@@ -1053,8 +1053,9 @@ public class TypePropagation {
 				e.attributes().add(rhs_t);
 				return;
 			}
-		} else if ((isBoxedType(lhs_t) || isBoxedType(rhs_t))
-				&& (lhs_t instanceof Type.Primitive || rhs_t instanceof Type.Primitive)) {
+		} else if (isBoxedType(lhs_t) || isBoxedType(rhs_t)
+				|| lhs_t instanceof Type.Primitive
+				|| rhs_t instanceof Type.Primitive) {
 			Type rt = binaryNumericPromotion(lhs_t,rhs_t,e);
 			e.attributes().add(rt);
 			e.setTrueBranch(implicitCast(e.trueBranch(),rt));
@@ -1072,14 +1073,14 @@ public class TypePropagation {
 			} else if(lhs_t.equals(rhs_t)) {
 				rt = lhs_t;
 			} else {
-				syntax_error("cannot determine result type for ternary operator",e);
+				syntax_error("cannot determine result type for ternary operator (" + lhs_t + " <> " + rhs_t + ")",e);
 				return; // dead code
 			}
 			
 			e.attributes().add(rt);
-		} else {
+		} else {			
 			// i'm not sure how you can get here.
-			syntax_error("cannot determine result type for ternary operator",e);
+			syntax_error("cannot determine result type for ternary operator (" + lhs_t + " <> " + rhs_t + ")",e);			
 		}
 	}
 		
