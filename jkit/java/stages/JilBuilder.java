@@ -802,22 +802,21 @@ public class JilBuilder {
 			r.add(new JilStmt.Goto(ls.exitLab,brk.attributes()));
 		} else {
 			String label = brk.label();
-			LoopScope lastLoop = null;
+			LabelScope target = null;
 			for(int i=scopes.size()-1;i>=0;--i) {
 				Scope s = scopes.get(i);
-				if(s instanceof LoopScope) {
-					lastLoop = (LoopScope) s;
-				} else if(s instanceof LabelScope) {
+				if(s instanceof LabelScope) {
 					LabelScope lab = (LabelScope) s;
 					if(lab.label.equals(label)) {
+						target = lab;
 						break;
 					}
 				}
 			}
-			if(lastLoop == null) {
-				syntax_error("no enclosing loop instance",brk);
+			if(target == null) {
+				syntax_error("undefined label: " + label,brk);
 			}
-			r.add(new JilStmt.Goto(lastLoop.exitLab,brk.attributes()));
+			r.add(new JilStmt.Goto(target.label,brk.attributes()));
 		}
 		
 		return r;
@@ -861,7 +860,7 @@ public class JilBuilder {
 		scopes.push(new LabelScope(lab.label()));
 		List<JilStmt> r = doStatement(lab.statement());
 		scopes.pop();
-		r.add(0, new JilStmt.Label(lab.label(), lab.attributes()));
+		r.add(new JilStmt.Label(lab.label(), lab.attributes()));
 		return r;
 	}
 	
