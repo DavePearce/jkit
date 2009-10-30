@@ -340,21 +340,22 @@ public class JavaCompiler implements Compiler {
 			// initialisers.			
 			propagateTypes(filename, jfile, loader);			
 
-			// Seventh, check whether the types are being used correctly. If
+			// Seventh, propagate constant values. This must come before type
+			// checking, since it does affect type checking.
+			constantPropagation(filename,jfile,loader);
+						
+			// Eigth, check whether the types are being used correctly. If
 			// not, report a syntax error.
 			checkTypes(filename, jfile, loader);
 		
-			// Eight, break down anonymous inner classes
+			// Ninth, break down anonymous inner classes
 			breakAnonClasses(filename,jfile,loader);
 			
-			// Ninth, rewrite inner classes
+			// Tenth, rewrite inner classes
 			rewriteInnerClasses(filename,jfile,loader);
 						
-			// Tenth, rewriten enumerations
-			rewriteEnumerations(filename,jfile,loader);
-
 			// Eleventh, rewriten enumerations
-			constantPropagation(filename,jfile,loader);
+			rewriteEnumerations(filename,jfile,loader);
 			
 			// Twelth, eliminate side effects from expressions
 			generateJilCode(filename, jfile, loader);			

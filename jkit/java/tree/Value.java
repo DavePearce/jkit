@@ -47,6 +47,10 @@ public interface Value extends Expr {
 			super(attributes);
 			this.value = value;
 		}
+		
+		public int intValue() {
+			return value;
+		}
 	}
 	
 	/**

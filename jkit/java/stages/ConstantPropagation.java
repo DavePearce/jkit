@@ -438,7 +438,23 @@ public class ConstantPropagation {
 	}
 	
 	protected Expr doConvert(Expr.Convert e, JavaFile file) {
-		e.setExpr(doExpression(e.expr(),file));
+		Expr expr = doExpression(e.expr(),file);		
+		
+		if(expr instanceof Value.Number) {
+			Value.Number v = (Value.Number) expr;
+			int n = v.intValue();
+			Type e_type = e.attribute(Type.class);
+			if(e_type instanceof Type.Byte && Byte.MIN_VALUE <= n && n < Byte.MAX_VALUE) {
+				return new Value.Byte((byte)n,e.attributes());
+			} else if(e_type instanceof Type.Char && Character.MIN_VALUE <= n && n < Character.MAX_VALUE) {
+				return new Value.Char((char)n,e.attributes());
+			} else if(e_type instanceof Type.Short && Short.MIN_VALUE <= n && n < Short.MAX_VALUE) {
+				return new Value.Short((short)n,e.attributes());
+			}
+			// not sure if more rewrites are needed here.
+		}
+		
+		e.setExpr(expr);
 		return e;
 	}
 	
