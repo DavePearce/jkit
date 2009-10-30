@@ -182,6 +182,8 @@ public class TypePropagation {
 				doBlock((Stmt.Block)e, m);
 			} else if(e instanceof Stmt.VarDef) {
 				doVarDef((Stmt.VarDef) e, m);
+			} else if(e instanceof Stmt.AssignmentOp) {
+				doAssignmentOp((Stmt.AssignmentOp) e, m);
 			} else if(e instanceof Stmt.Assignment) {
 				doAssignment((Stmt.Assignment) e, m);
 			} else if(e instanceof Stmt.Return) {
@@ -279,55 +281,48 @@ public class TypePropagation {
 		}
 	}
 	
-	protected void doAssignment(Stmt.Assignment def, JavaMethod m) {
+	protected void doAssignmentOp(Stmt.AssignmentOp def, JavaMethod m) {
+		Stmt.AssignmentOp aop = (Stmt.AssignmentOp) def;
+		
+		Expr rhs = new Expr.BinOp(aop.op(), def.lhs(),
+				def.rhs(), aop.attributes());		
+		
+		doBinOp((Expr.BinOp)rhs);
+		
+		Type rt = rhs.attribute(Type.class);
+		Type lhs_t = def.lhs().attribute(Type.class);
+		
+		if(!rt.equals(lhs_t)) {
+			jkit.java.tree.Type ct = jkit.java.tree.Type.fromJilType(lhs_t);
+			ct.attributes().add(lhs_t);
+			rhs = new Expr.Cast(ct,rhs,aop.attributes());
+			rhs.attributes().add(lhs_t);
+		}
+
+		def.setRhs(rhs);
+		def.attributes().add(lhs_t);
+
+	}
+	
+	protected void doAssignment(Stmt.Assignment def, JavaMethod m) {									
+		// special case for dealing with assignment ops
 		doExpression(def.lhs());	
 		doExpression(def.rhs());			
 
 		Type lhs_t = def.lhs().attribute(Type.class);												
 		Type rhs_t = def.rhs().attribute(Type.class);
-		
+
 		// perform type inference (if necesssary)
 		if(isUnknownConstant(def.rhs())) {			
 			Expr c = unknownConstantInference(def.rhs(), lhs_t,
 					def.rhs().attribute(SourceLocation.class));
-			
+
 			def.setRhs(c);			
 		} 
-										
-		// special case for dealing with assignment ops
-		if (def instanceof Stmt.AssignmentOp) {			
-			Stmt.AssignmentOp aop = (Stmt.AssignmentOp) def;
-			int op = aop.op();
-			if(lhs_t instanceof Type.Clazz) {
-				Type.Clazz tc = (Type.Clazz) lhs_t;
-				if(Types.isJavaLangString(tc)) {
-					op = Expr.BinOp.CONCAT;
-					Expr rhs = new Expr.BinOp(op,def.lhs(),def.rhs(),aop.attributes());
-					rhs.attributes().add(JAVA_LANG_STRING);
-					def.setRhs(rhs);
-				}
-			} else {				
-				Type rt = binaryNumericPromotion(lhs_t,rhs_t,aop);			
-				Expr rhs = new Expr.BinOp(op, implicitCast(def.lhs(), rt),
-						implicitCast(def.rhs(), rt), aop.attributes());
-				
-				rhs.attributes().add(rt);
-				
-				if(!rt.equals(lhs_t)) {
-					jkit.java.tree.Type ct = jkit.java.tree.Type.fromJilType(lhs_t);
-					ct.attributes().add(lhs_t);
-					rhs = new Expr.Cast(ct,rhs,aop.attributes());
-					rhs.attributes().add(lhs_t);
-				}
-				def.setRhs(rhs);
-			}												
-			 
-		} else {
-			// the implicit cast should not be used for assignment ops
-			def.setRhs(implicitCast(def.rhs(),lhs_t));
-		}
-		
-		def.attributes().add(lhs_t);				
+
+		// the implicit cast should not be used for assignment ops
+		def.setRhs(implicitCast(def.rhs(),lhs_t));
+		def.attributes().add(lhs_t);					
 	}
 	
 	protected void doReturn(Stmt.Return ret, JavaMethod m) {		
@@ -462,6 +457,9 @@ public class TypePropagation {
 				doArrayIndex((Expr.ArrayIndex) e);
 			} else if(e instanceof Expr.Deref) {
 				doDeref((Expr.Deref) e);
+			} else if(e instanceof Stmt.AssignmentOp) {
+				// force brackets			
+				doAssignment((Stmt.AssignmentOp) e, null);			
 			} else if(e instanceof Stmt.Assignment) {
 				// force brackets			
 				doAssignment((Stmt.Assignment) e, null);			

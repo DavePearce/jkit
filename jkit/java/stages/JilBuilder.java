@@ -1506,6 +1506,9 @@ public class JilBuilder {
 		
 		Type lhs_t = lhs.first().type(); 
 		if (lhs_t instanceof Type.Primitive || isString(lhs_t)) {
+			if(lhs_t instanceof Type.Short || lhs_t instanceof Type.Byte) {
+				lhs_t = new Type.Int(); 
+			}
 			ArrayList<JilExpr> params = new ArrayList<JilExpr>();
 			params.add(lhs.first());
 			stmts.add(new JilExpr.Invoke(new JilExpr.Variable(builderLab,
@@ -1527,6 +1530,9 @@ public class JilBuilder {
 		JilExpr r;
 		Type rhs_t = rhs.first().type(); 
 		if(rhs_t instanceof Type.Primitive || isString(rhs_t)) {
+			if(rhs_t instanceof Type.Short || rhs_t instanceof Type.Byte) {
+				rhs_t = new Type.Int(); 
+			}
 			ArrayList<JilExpr> params = new ArrayList<JilExpr>();
 			params.add(rhs.first());
 			r = new JilExpr.Invoke(new JilExpr.Variable(builderLab, builder),
