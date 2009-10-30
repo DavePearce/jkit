@@ -1208,12 +1208,22 @@ public class TypeSystem {
 		if(receiver == null) {
 			throw new IllegalArgumentException("receiver cannot be null");
 		}		
-		while(receiver != null) {
+		
+		Stack<Type.Clazz> worklist = new Stack<Type.Clazz>();
+		worklist.push(receiver);
+		
+		while(!worklist.isEmpty()) {
+			receiver = worklist.pop();
 			Clazz c = loader.loadClass(receiver);
 			if(c.methods(name).size() > 0) {
 				return true;
 			}
-			receiver = c.superClass();			
+			if(c.superClass() != null) {
+				worklist.push(c.superClass());
+			}
+			for (Type.Clazz t : c.interfaces()) {
+				worklist.add(t);				
+			}
 		}
 		
 		return false;
