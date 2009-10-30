@@ -541,7 +541,7 @@ public class TypeChecking {
 					return;
 				}
 			} else if ((e_t instanceof Type.Variable || e_t instanceof Type.Wildcard)
-					&& c_t instanceof Type.Variable) {
+					&& c_t instanceof Type.Reference) {
 				// javac always lets this pass, no matter what
 				return;
 			}
