@@ -193,6 +193,8 @@ public class TypeResolution {
 		ClassScope classScope = getEnclosingScope(ClassScope.class);
 		MethodScope methodScope = getEnclosingScope(MethodScope.class);
 		
+		LinkedList<String> oldImports = (LinkedList<String>) imports.clone();
+		
 		imports.addFirst(computeImportDecl(parentType,c.name()));
 		
 		resolve(c.modifiers());
@@ -241,14 +243,14 @@ public class TypeResolution {
 		components.add(new Pair(name,typevars));
 		Type.Clazz myType = new Type.Clazz(parentType.pkg(),components);		
 		c.attributes().add(myType); // record the type
-		
+						
 		myScope.type = myType;		
 		
 		// 1) resolve types in my declared super class.
 		if(c.superclass() != null) {
 			Type.Clazz superType = (Type.Clazz) substituteTypeVars(resolve(c.superclass()));
 			c.superclass().attributes().add(superType);
-			imports.addAll(0,computeRecursiveImportDecls(superType));
+			imports.addAll(1,computeRecursiveImportDecls(superType));
 			
 		}		
 
@@ -256,7 +258,7 @@ public class TypeResolution {
 		for(jkit.java.tree.Type.Clazz i : c.interfaces()) {
 			Type.Clazz interType = (Type.Clazz) substituteTypeVars(resolve(i)); 
 			i.attributes().add(interType);
-			imports.addAll(0,computeRecursiveImportDecls(interType));
+			imports.addAll(1,computeRecursiveImportDecls(interType));
 		}			 						
 		
 		// 3) resolve types in my other declarations (e.g. fields, methods,inner
@@ -266,6 +268,8 @@ public class TypeResolution {
 		}
 		
 		scopes.pop(); // undo my type
+		
+		imports = oldImports; // undo my old imports
 	}
 
 	protected void doMethod(JavaMethod d) throws ClassNotFoundException {
@@ -590,7 +594,8 @@ public class TypeResolution {
 	
 	protected void doNew(Expr.New e) throws ClassNotFoundException {
 		// First, figure out the type being created.		
-		Type t = substituteTypeVars(resolve(e.type()));			
+		Type t = substituteTypeVars(resolve(e.type()));	
+						
 		e.type().attributes().add(t);			
 		
 		doExpression(e.context());
@@ -837,7 +842,7 @@ public class TypeResolution {
 		// So, at this point, it seems there was no package information in the
 		// source code and, hence, we need to determine this from the CLASSPATH
 		// and the import list. There are two phases. 
-		
+						
 		Type.Clazz r = loader.resolve(className,imports);		
 		
 		// The following loop is required for two reasons:
@@ -989,7 +994,7 @@ public class TypeResolution {
 		ArrayList<String> decls = new ArrayList<String>();
 				
 		try {
-			for(Type.Reference st : types.listSupertypes(parentType, loader)) {			
+			for(Type.Reference st : types.listSupertypes(parentType, loader)) {												
 				Clazz c = loader.loadClass((Type.Clazz) st);
 				Type.Clazz type = c.type();
 				String decl = type.pkg();
