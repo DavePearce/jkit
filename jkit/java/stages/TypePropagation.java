@@ -459,7 +459,7 @@ public class TypePropagation {
 				doDeref((Expr.Deref) e);
 			} else if(e instanceof Stmt.AssignmentOp) {
 				// force brackets			
-				doAssignment((Stmt.AssignmentOp) e, null);			
+				doAssignmentOp((Stmt.AssignmentOp) e, null);			
 			} else if(e instanceof Stmt.Assignment) {
 				// force brackets			
 				doAssignment((Stmt.Assignment) e, null);			
