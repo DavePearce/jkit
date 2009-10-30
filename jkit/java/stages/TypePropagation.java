@@ -295,7 +295,7 @@ public class TypePropagation {
 		} 
 										
 		// special case for dealing with assignment ops
-		if (def instanceof Stmt.AssignmentOp) {
+		if (def instanceof Stmt.AssignmentOp) {			
 			Stmt.AssignmentOp aop = (Stmt.AssignmentOp) def;
 			int op = aop.op();
 			if(lhs_t instanceof Type.Clazz) {

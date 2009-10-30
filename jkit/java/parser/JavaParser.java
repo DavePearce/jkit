@@ -1,4 +1,4 @@
-// $ANTLR 3.1 jkit/java/parser/Java.g 2009-09-28 20:36:42
+// $ANTLR 3.1 jkit/java/parser/Java.g 2009-10-30 15:27:37
 
 package jkit.java.parser;
 import jkit.compiler.SyntaxError;
@@ -96,207 +96,207 @@ public class JavaParser extends Parser {
     public static final String[] tokenNames = new String[] {
         "<invalid>", "<EOR>", "<DOWN>", "<UP>", "UNIT", "PACKAGE", "IMPORT", "STATIC_IMPORT", "CLASS", "INTERFACE", "ENUM", "MODIFIERS", "EXTENDS", "IMPLEMENTS", "FIELD", "METHOD", "PARAMETER", "VARARGS", "TYPE", "VOID", "TYPE_PARAMETER", "THROWS", "ANNOTATION", "SUPER", "INTVAL", "FLOATVAL", "DOUBLEVAL", "CHARVAL", "STRINGVAL", "BOOLVAL", "NULLVAL", "BLOCK", "VARDEF", "ASSERT", "IF", "FOR", "WHILE", "DOWHILE", "RETURN", "THROW", "BREAK", "CONTINUE", "ASSIGN", "VAR", "LOR", "OR", "LAND", "AND", "XOR", "EQ", "NEQ", "INSTANCEOF", "LTEQ", "GTEQ", "LT", "GT", "SHL", "SHR", "USHR", "ADD", "SUB", "DIV", "MUL", "MOD", "DEREF", "NEG", "POSTINC", "PREINC", "PREDEC", "POSTDEC", "NOT", "INV", "CAST", "SELECTOR", "INVOKE", "ARRAYINDEX", "NEW", "GETCLASS", "SYNCHRONIZED", "INIT", "TEST", "STEP", "LABEL", "FOREACH", "TRY", "CATCH", "FINALLY", "CONDEXPR", "ARRAYVAL", "SWITCH", "CASE", "DEFAULT", "ARRAYINIT", "ARGUMENTS", "LABINOP", "NONE", "STATIC", "ENUM_CONSTANT", "ASSIGNOP", "PARAMETERS", "TYPE_PARAMETERS", "Identifier", "FloatingPointLiteral", "CharacterLiteral", "StringLiteral", "HexLiteral", "OctalLiteral", "DecimalLiteral", "HexDigit", "IntegerTypeSuffix", "Exponent", "FloatTypeSuffix", "EscapeSequence", "UnicodeEscape", "OctalEscape", "Letter", "JavaIDDigit", "WS", "COMMENT", "LINE_COMMENT", "'package'", "';'", "'import'", "'static'", "'.'", "'*'", "'class'", "'extends'", "'implements'", "'<'", "','", "'>'", "'&'", "'{'", "'}'", "'interface'", "'void'", "'throws'", "'['", "']'", "'='", "'public'", "'protected'", "'private'", "'abstract'", "'final'", "'native'", "'synchronized'", "'transient'", "'volatile'", "'strictfp'", "'boolean'", "'char'", "'byte'", "'short'", "'int'", "'long'", "'float'", "'double'", "'?'", "'super'", "'('", "')'", "'...'", "'null'", "'true'", "'false'", "'@'", "'default'", "'assert'", "':'", "'if'", "'else'", "'for'", "'while'", "'do'", "'try'", "'finally'", "'switch'", "'return'", "'throw'", "'break'", "'continue'", "'catch'", "'case'", "'+'", "'-'", "'/'", "'&='", "'|='", "'^='", "'%'", "'||'", "'&&'", "'|'", "'^'", "'=='", "'!='", "'instanceof'", "'++'", "'--'", "'~'", "'!'", "'new'"
     };
-    public static final int PACKAGE=5;
-    public static final int SHR=57;
-    public static final int T__159=159;
-    public static final int T__158=158;
-    public static final int SHL=56;
-    public static final int MOD=63;
-    public static final int PREDEC=68;
-    public static final int T__160=160;
-    public static final int DEREF=64;
-    public static final int NOT=70;
-    public static final int T__167=167;
-    public static final int T__168=168;
-    public static final int EOF=-1;
-    public static final int T__165=165;
-    public static final int T__166=166;
-    public static final int T__163=163;
-    public static final int T__164=164;
-    public static final int T__161=161;
-    public static final int TYPE=18;
-    public static final int T__162=162;
-    public static final int IMPORT=6;
-    public static final int T__148=148;
-    public static final int T__147=147;
-    public static final int T__149=149;
-    public static final int RETURN=38;
-    public static final int EQ=49;
-    public static final int TYPE_PARAMETERS=100;
-    public static final int T__154=154;
-    public static final int T__155=155;
-    public static final int T__156=156;
-    public static final int T__157=157;
-    public static final int T__150=150;
-    public static final int T__151=151;
-    public static final int T__152=152;
-    public static final int T__153=153;
-    public static final int T__139=139;
-    public static final int T__138=138;
-    public static final int T__137=137;
-    public static final int T__136=136;
-    public static final int IntegerTypeSuffix=109;
-    public static final int STATIC=96;
-    public static final int INV=71;
-    public static final int STATIC_IMPORT=7;
-    public static final int T__141=141;
-    public static final int T__142=142;
-    public static final int T__140=140;
-    public static final int T__145=145;
-    public static final int T__146=146;
-    public static final int T__143=143;
-    public static final int T__144=144;
-    public static final int T__126=126;
-    public static final int T__125=125;
-    public static final int T__128=128;
-    public static final int T__127=127;
-    public static final int WS=117;
-    public static final int T__129=129;
-    public static final int NONE=95;
-    public static final int FloatingPointLiteral=102;
-    public static final int JavaIDDigit=116;
-    public static final int FLOATVAL=25;
-    public static final int GT=55;
-    public static final int POSTINC=66;
-    public static final int INVOKE=74;
-    public static final int T__130=130;
-    public static final int INIT=79;
-    public static final int T__131=131;
-    public static final int LAND=46;
-    public static final int T__132=132;
-    public static final int T__133=133;
-    public static final int T__134=134;
-    public static final int T__135=135;
-    public static final int PARAMETERS=99;
-    public static final int ANNOTATION=22;
-    public static final int LTEQ=52;
-    public static final int T__124=124;
-    public static final int T__123=123;
-    public static final int T__122=122;
-    public static final int STEP=81;
-    public static final int T__121=121;
-    public static final int SUB=60;
-    public static final int T__120=120;
-    public static final int ASSIGNOP=98;
-    public static final int HexDigit=108;
-    public static final int T__202=202;
-    public static final int T__203=203;
-    public static final int SELECTOR=73;
-    public static final int IMPLEMENTS=13;
-    public static final int PREINC=67;
-    public static final int ARRAYINIT=92;
-    public static final int ADD=59;
-    public static final int HexLiteral=105;
-    public static final int INSTANCEOF=51;
-    public static final int StringLiteral=104;
-    public static final int ENUM=10;
-    public static final int BLOCK=31;
-    public static final int INTERFACE=9;
-    public static final int DIV=61;
-    public static final int OctalEscape=114;
-    public static final int LOR=44;
-    public static final int CAST=72;
-    public static final int LT=54;
-    public static final int BOOLVAL=29;
-    public static final int WHILE=36;
-    public static final int FloatTypeSuffix=111;
-    public static final int OctalLiteral=106;
-    public static final int CASE=90;
-    public static final int NEW=76;
-    public static final int BREAK=40;
-    public static final int Identifier=101;
-    public static final int PARAMETER=16;
-    public static final int VAR=43;
-    public static final int VOID=19;
-    public static final int SUPER=23;
-    public static final int COMMENT=118;
-    public static final int VARDEF=32;
-    public static final int ENUM_CONSTANT=97;
-    public static final int GETCLASS=77;
-    public static final int ARGUMENTS=93;
-    public static final int LINE_COMMENT=119;
-    public static final int SWITCH=89;
-    public static final int THROWS=21;
-    public static final int ARRAYVAL=88;
-    public static final int ASSERT=33;
-    public static final int MUL=62;
-    public static final int TRY=84;
-    public static final int CONDEXPR=87;
-    public static final int UNIT=4;
-    public static final int T__200=200;
-    public static final int NULLVAL=30;
-    public static final int T__201=201;
-    public static final int INTVAL=24;
-    public static final int OR=45;
-    public static final int TEST=80;
-    public static final int FIELD=14;
-    public static final int FOREACH=83;
-    public static final int CATCH=85;
-    public static final int Letter=115;
-    public static final int EscapeSequence=112;
-    public static final int THROW=39;
-    public static final int POSTDEC=69;
-    public static final int CLASS=8;
-    public static final int VARARGS=17;
-    public static final int STRINGVAL=28;
-    public static final int CharacterLiteral=103;
-    public static final int Exponent=110;
-    public static final int FOR=35;
-    public static final int AND=47;
-    public static final int IF=34;
-    public static final int MODIFIERS=11;
-    public static final int T__199=199;
-    public static final int T__198=198;
     public static final int T__197=197;
+    public static final int T__139=139;
     public static final int SYNCHRONIZED=78;
-    public static final int T__196=196;
-    public static final int T__195=195;
-    public static final int T__194=194;
-    public static final int T__193=193;
-    public static final int CONTINUE=41;
-    public static final int T__192=192;
-    public static final int T__191=191;
-    public static final int T__190=190;
-    public static final int ARRAYINDEX=75;
-    public static final int T__184=184;
-    public static final int T__183=183;
-    public static final int T__186=186;
-    public static final int T__185=185;
-    public static final int T__188=188;
-    public static final int XOR=48;
-    public static final int T__187=187;
-    public static final int T__189=189;
-    public static final int CHARVAL=27;
-    public static final int T__180=180;
-    public static final int T__182=182;
-    public static final int DEFAULT=91;
-    public static final int T__181=181;
-    public static final int DOUBLEVAL=26;
-    public static final int GTEQ=53;
-    public static final int DecimalLiteral=107;
-    public static final int LABINOP=94;
-    public static final int T__175=175;
     public static final int T__174=174;
-    public static final int T__173=173;
-    public static final int T__172=172;
-    public static final int T__179=179;
-    public static final int TYPE_PARAMETER=20;
-    public static final int NEQ=50;
-    public static final int T__178=178;
-    public static final int T__177=177;
-    public static final int T__176=176;
-    public static final int FINALLY=86;
-    public static final int LABEL=82;
-    public static final int UnicodeEscape=113;
-    public static final int T__171=171;
-    public static final int T__170=170;
-    public static final int NEG=65;
-    public static final int ASSIGN=42;
-    public static final int T__169=169;
-    public static final int EXTENDS=12;
+    public static final int HexDigit=108;
+    public static final int T__196=196;
+    public static final int T__144=144;
+    public static final int T__122=122;
     public static final int METHOD=15;
-    public static final int USHR=58;
+    public static final int T__137=137;
+    public static final int T__140=140;
+    public static final int IMPORT=6;
+    public static final int PACKAGE=5;
+    public static final int CONTINUE=41;
+    public static final int Letter=115;
+    public static final int T__138=138;
+    public static final int T__173=173;
+    public static final int ASSERT=33;
+    public static final int T__198=198;
+    public static final int T__142=142;
+    public static final int T__176=176;
+    public static final int FloatTypeSuffix=111;
+    public static final int T__135=135;
+    public static final int EXTENDS=12;
+    public static final int POSTDEC=69;
+    public static final int ARRAYVAL=88;
+    public static final int SUPER=23;
+    public static final int IntegerTypeSuffix=109;
+    public static final int ARGUMENTS=93;
+    public static final int T__156=156;
+    public static final int WS=117;
+    public static final int NONE=95;
+    public static final int PARAMETERS=99;
+    public static final int T__159=159;
+    public static final int T__177=177;
+    public static final int T__158=158;
+    public static final int FIELD=14;
+    public static final int POSTINC=66;
+    public static final int LAND=46;
+    public static final int CATCH=85;
+    public static final int STATIC=96;
+    public static final int MUL=62;
+    public static final int UnicodeEscape=113;
+    public static final int T__157=157;
+    public static final int T__201=201;
+    public static final int MODIFIERS=11;
+    public static final int CONDEXPR=87;
+    public static final int T__143=143;
+    public static final int T__193=193;
+    public static final int XOR=48;
+    public static final int T__141=141;
+    public static final int ADD=59;
+    public static final int FOREACH=83;
+    public static final int TYPE=18;
+    public static final int SHL=56;
+    public static final int LOR=44;
+    public static final int OctalLiteral=106;
+    public static final int T__167=167;
+    public static final int SELECTOR=73;
+    public static final int T__194=194;
+    public static final int CAST=72;
+    public static final int THROWS=21;
+    public static final int LABEL=82;
+    public static final int MOD=63;
+    public static final int T__191=191;
     public static final int DOWHILE=37;
+    public static final int OR=45;
+    public static final int BLOCK=31;
+    public static final int T__192=192;
+    public static final int EscapeSequence=112;
+    public static final int T__202=202;
+    public static final int INSTANCEOF=51;
+    public static final int TYPE_PARAMETERS=100;
+    public static final int FloatingPointLiteral=102;
+    public static final int NEQ=50;
+    public static final int T__175=175;
+    public static final int WHILE=36;
+    public static final int COMMENT=118;
+    public static final int INVOKE=74;
+    public static final int T__199=199;
+    public static final int T__172=172;
+    public static final int GTEQ=53;
+    public static final int LABINOP=94;
+    public static final int UNIT=4;
+    public static final int JavaIDDigit=116;
+    public static final int T__170=170;
+    public static final int T__136=136;
+    public static final int RETURN=38;
+    public static final int IF=34;
+    public static final int T__171=171;
+    public static final int GETCLASS=77;
+    public static final int FOR=35;
+    public static final int T__189=189;
+    public static final int DEFAULT=91;
+    public static final int OctalEscape=114;
+    public static final int STRINGVAL=28;
+    public static final int T__134=134;
+    public static final int T__195=195;
+    public static final int NEG=65;
+    public static final int DEREF=64;
+    public static final int SUB=60;
+    public static final int NOT=70;
+    public static final int TRY=84;
+    public static final int T__162=162;
+    public static final int T__160=160;
+    public static final int T__123=123;
+    public static final int STEP=81;
+    public static final int T__145=145;
+    public static final int T__187=187;
+    public static final int INTVAL=24;
+    public static final int SHR=57;
+    public static final int PREDEC=68;
+    public static final int ARRAYINIT=92;
+    public static final int STATIC_IMPORT=7;
+    public static final int T__186=186;
+    public static final int AND=47;
+    public static final int T__181=181;
+    public static final int T__128=128;
+    public static final int NULLVAL=30;
+    public static final int PREINC=67;
+    public static final int T__161=161;
+    public static final int FINALLY=86;
+    public static final int T__168=168;
+    public static final int T__203=203;
+    public static final int T__150=150;
+    public static final int Identifier=101;
+    public static final int ENUM_CONSTANT=97;
+    public static final int T__182=182;
+    public static final int EQ=49;
+    public static final int NEW=76;
+    public static final int BOOLVAL=29;
+    public static final int LT=54;
+    public static final int T__165=165;
+    public static final int T__130=130;
+    public static final int T__151=151;
+    public static final int LINE_COMMENT=119;
+    public static final int CASE=90;
+    public static final int INTERFACE=9;
+    public static final int HexLiteral=105;
+    public static final int CHARVAL=27;
+    public static final int INV=71;
+    public static final int T__125=125;
+    public static final int T__149=149;
+    public static final int LTEQ=52;
+    public static final int DecimalLiteral=107;
+    public static final int T__166=166;
+    public static final int BREAK=40;
+    public static final int T__132=132;
+    public static final int ANNOTATION=22;
+    public static final int DIV=61;
+    public static final int T__190=190;
+    public static final int T__131=131;
+    public static final int T__124=124;
+    public static final int T__169=169;
+    public static final int THROW=39;
+    public static final int T__126=126;
+    public static final int T__148=148;
+    public static final int INIT=79;
+    public static final int T__188=188;
+    public static final int T__200=200;
+    public static final int VARDEF=32;
+    public static final int DOUBLEVAL=26;
+    public static final int TYPE_PARAMETER=20;
+    public static final int ARRAYINDEX=75;
+    public static final int ASSIGN=42;
+    public static final int T__127=127;
+    public static final int VOID=19;
+    public static final int T__183=183;
+    public static final int T__133=133;
+    public static final int FLOATVAL=25;
+    public static final int VARARGS=17;
+    public static final int T__164=164;
+    public static final int T__120=120;
+    public static final int USHR=58;
+    public static final int ENUM=10;
+    public static final int T__163=163;
+    public static final int Exponent=110;
+    public static final int T__153=153;
+    public static final int IMPLEMENTS=13;
+    public static final int SWITCH=89;
+    public static final int T__185=185;
+    public static final int CharacterLiteral=103;
+    public static final int T__178=178;
+    public static final int GT=55;
+    public static final int StringLiteral=104;
+    public static final int ASSIGNOP=98;
+    public static final int T__129=129;
+    public static final int T__180=180;
+    public static final int T__152=152;
+    public static final int T__121=121;
+    public static final int VAR=43;
+    public static final int CLASS=8;
+    public static final int T__147=147;
+    public static final int T__179=179;
+    public static final int EOF=-1;
+    public static final int T__154=154;
+    public static final int T__184=184;
+    public static final int PARAMETER=16;
+    public static final int T__155=155;
+    public static final int TEST=80;
+    public static final int T__146=146;
 
     // delegates
     // delegators
@@ -353,10 +353,10 @@ public class JavaParser extends Parser {
         JavaParser.typeDeclaration_return typeDeclaration4 = null;
 
 
+        RewriteRuleSubtreeStream stream_importDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule importDeclaration");
         RewriteRuleSubtreeStream stream_packageDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule packageDeclaration");
         RewriteRuleSubtreeStream stream_annotations=new RewriteRuleSubtreeStream(adaptor,"rule annotations");
         RewriteRuleSubtreeStream stream_typeDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule typeDeclaration");
-        RewriteRuleSubtreeStream stream_importDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule importDeclaration");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 1) ) { return retval; }
             // jkit/java/parser/Java.g:223:2: ( ( annotations )? ( packageDeclaration )? ( importDeclaration )* ( typeDeclaration )* -> ^( UNIT ( packageDeclaration )? ( importDeclaration )* ( typeDeclaration )* ) )
@@ -451,7 +451,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: typeDeclaration, importDeclaration, packageDeclaration
+            // elements: packageDeclaration, typeDeclaration, importDeclaration
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -637,11 +637,11 @@ public class JavaParser extends Parser {
         Object char_literal15_tree=null;
         Object i_tree=null;
         RewriteRuleTokenStream stream_125=new RewriteRuleTokenStream(adaptor,"token 125");
+        RewriteRuleTokenStream stream_123=new RewriteRuleTokenStream(adaptor,"token 123");
+        RewriteRuleTokenStream stream_Identifier=new RewriteRuleTokenStream(adaptor,"token Identifier");
         RewriteRuleTokenStream stream_121=new RewriteRuleTokenStream(adaptor,"token 121");
         RewriteRuleTokenStream stream_122=new RewriteRuleTokenStream(adaptor,"token 122");
-        RewriteRuleTokenStream stream_123=new RewriteRuleTokenStream(adaptor,"token 123");
         RewriteRuleTokenStream stream_124=new RewriteRuleTokenStream(adaptor,"token 124");
-        RewriteRuleTokenStream stream_Identifier=new RewriteRuleTokenStream(adaptor,"token Identifier");
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 3) ) { return retval; }
@@ -1024,11 +1024,11 @@ public class JavaParser extends Parser {
         JavaParser.annotationTypeDeclaration_return annotationTypeDeclaration22 = null;
 
 
-        RewriteRuleSubtreeStream stream_modifier=new RewriteRuleSubtreeStream(adaptor,"rule modifier");
-        RewriteRuleSubtreeStream stream_annotationTypeDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule annotationTypeDeclaration");
-        RewriteRuleSubtreeStream stream_classDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule classDeclaration");
-        RewriteRuleSubtreeStream stream_enumDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule enumDeclaration");
         RewriteRuleSubtreeStream stream_normalInterfaceDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule normalInterfaceDeclaration");
+        RewriteRuleSubtreeStream stream_annotationTypeDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule annotationTypeDeclaration");
+        RewriteRuleSubtreeStream stream_modifier=new RewriteRuleSubtreeStream(adaptor,"rule modifier");
+        RewriteRuleSubtreeStream stream_enumDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule enumDeclaration");
+        RewriteRuleSubtreeStream stream_classDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule classDeclaration");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 5) ) { return retval; }
             // jkit/java/parser/Java.g:244:2: ( ( modifier )* ( classDeclaration -> ^( CLASS ^( MODIFIERS ( modifier )* ) classDeclaration ) | enumDeclaration -> ^( ENUM ^( MODIFIERS ( modifier )* ) enumDeclaration ) | normalInterfaceDeclaration -> ^( INTERFACE ^( MODIFIERS ( modifier )* ) normalInterfaceDeclaration ) | annotationTypeDeclaration -> ^( ANNOTATION ^( MODIFIERS ( modifier )* ) annotationTypeDeclaration ) ) )
@@ -1261,7 +1261,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: annotationTypeDeclaration, modifier
+                    // elements: modifier, annotationTypeDeclaration
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -1357,13 +1357,13 @@ public class JavaParser extends Parser {
         Object Identifier24_tree=null;
         Object string_literal26_tree=null;
         Object string_literal28_tree=null;
-        RewriteRuleTokenStream stream_126=new RewriteRuleTokenStream(adaptor,"token 126");
         RewriteRuleTokenStream stream_127=new RewriteRuleTokenStream(adaptor,"token 127");
-        RewriteRuleTokenStream stream_128=new RewriteRuleTokenStream(adaptor,"token 128");
         RewriteRuleTokenStream stream_Identifier=new RewriteRuleTokenStream(adaptor,"token Identifier");
+        RewriteRuleTokenStream stream_128=new RewriteRuleTokenStream(adaptor,"token 128");
+        RewriteRuleTokenStream stream_126=new RewriteRuleTokenStream(adaptor,"token 126");
         RewriteRuleSubtreeStream stream_typeParameters=new RewriteRuleSubtreeStream(adaptor,"rule typeParameters");
-        RewriteRuleSubtreeStream stream_classBody=new RewriteRuleSubtreeStream(adaptor,"rule classBody");
         RewriteRuleSubtreeStream stream_type=new RewriteRuleSubtreeStream(adaptor,"rule type");
+        RewriteRuleSubtreeStream stream_classBody=new RewriteRuleSubtreeStream(adaptor,"rule classBody");
         RewriteRuleSubtreeStream stream_typeList=new RewriteRuleSubtreeStream(adaptor,"rule typeList");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 6) ) { return retval; }
@@ -1460,7 +1460,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: classBody, Identifier, type, typeParameters, typeList
+            // elements: classBody, typeParameters, typeList, type, Identifier
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -1938,9 +1938,9 @@ public class JavaParser extends Parser {
         Object ENUM38_tree=null;
         Object Identifier39_tree=null;
         Object string_literal40_tree=null;
+        RewriteRuleTokenStream stream_Identifier=new RewriteRuleTokenStream(adaptor,"token Identifier");
         RewriteRuleTokenStream stream_128=new RewriteRuleTokenStream(adaptor,"token 128");
         RewriteRuleTokenStream stream_ENUM=new RewriteRuleTokenStream(adaptor,"token ENUM");
-        RewriteRuleTokenStream stream_Identifier=new RewriteRuleTokenStream(adaptor,"token Identifier");
         RewriteRuleSubtreeStream stream_enumBody=new RewriteRuleSubtreeStream(adaptor,"rule enumBody");
         RewriteRuleSubtreeStream stream_typeList=new RewriteRuleSubtreeStream(adaptor,"rule typeList");
         try {
@@ -1989,7 +1989,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: enumBody, Identifier, typeList
+            // elements: enumBody, typeList, Identifier
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -2071,11 +2071,11 @@ public class JavaParser extends Parser {
         Object char_literal43_tree=null;
         Object char_literal45_tree=null;
         Object char_literal47_tree=null;
+        RewriteRuleTokenStream stream_130=new RewriteRuleTokenStream(adaptor,"token 130");
         RewriteRuleTokenStream stream_134=new RewriteRuleTokenStream(adaptor,"token 134");
         RewriteRuleTokenStream stream_133=new RewriteRuleTokenStream(adaptor,"token 133");
-        RewriteRuleTokenStream stream_130=new RewriteRuleTokenStream(adaptor,"token 130");
-        RewriteRuleSubtreeStream stream_enumBodyDeclarations=new RewriteRuleSubtreeStream(adaptor,"rule enumBodyDeclarations");
         RewriteRuleSubtreeStream stream_enumConstants=new RewriteRuleSubtreeStream(adaptor,"rule enumConstants");
+        RewriteRuleSubtreeStream stream_enumBodyDeclarations=new RewriteRuleSubtreeStream(adaptor,"rule enumBodyDeclarations");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 11) ) { return retval; }
             // jkit/java/parser/Java.g:276:2: ( '{' ( enumConstants )? ( ',' )? ( enumBodyDeclarations )? '}' -> ( enumConstants )? ( enumBodyDeclarations )? )
@@ -2349,8 +2349,8 @@ public class JavaParser extends Parser {
         Object Identifier52_tree=null;
         RewriteRuleTokenStream stream_Identifier=new RewriteRuleTokenStream(adaptor,"token Identifier");
         RewriteRuleSubtreeStream stream_arguments=new RewriteRuleSubtreeStream(adaptor,"rule arguments");
-        RewriteRuleSubtreeStream stream_annotations=new RewriteRuleSubtreeStream(adaptor,"rule annotations");
         RewriteRuleSubtreeStream stream_classBody=new RewriteRuleSubtreeStream(adaptor,"rule classBody");
+        RewriteRuleSubtreeStream stream_annotations=new RewriteRuleSubtreeStream(adaptor,"rule annotations");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 13) ) { return retval; }
             // jkit/java/parser/Java.g:284:2: ( ( annotations )? Identifier ( arguments )? ( classBody )? -> ^( ENUM_CONSTANT ( annotations )? Identifier ( arguments )? ( classBody )? ) )
@@ -2431,7 +2431,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: annotations, classBody, Identifier, arguments
+            // elements: annotations, classBody, arguments, Identifier
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -2619,9 +2619,9 @@ public class JavaParser extends Parser {
         Object string_literal57_tree=null;
         Object Identifier58_tree=null;
         Object string_literal60_tree=null;
-        RewriteRuleTokenStream stream_135=new RewriteRuleTokenStream(adaptor,"token 135");
         RewriteRuleTokenStream stream_127=new RewriteRuleTokenStream(adaptor,"token 127");
         RewriteRuleTokenStream stream_Identifier=new RewriteRuleTokenStream(adaptor,"token Identifier");
+        RewriteRuleTokenStream stream_135=new RewriteRuleTokenStream(adaptor,"token 135");
         RewriteRuleSubtreeStream stream_typeParameters=new RewriteRuleSubtreeStream(adaptor,"rule typeParameters");
         RewriteRuleSubtreeStream stream_interfaceBody=new RewriteRuleSubtreeStream(adaptor,"rule interfaceBody");
         RewriteRuleSubtreeStream stream_typeList=new RewriteRuleSubtreeStream(adaptor,"rule typeList");
@@ -2694,7 +2694,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: interfaceBody, Identifier, typeList, typeParameters
+            // elements: typeParameters, typeList, Identifier, interfaceBody
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -3064,17 +3064,17 @@ public class JavaParser extends Parser {
         RewriteRuleTokenStream stream_136=new RewriteRuleTokenStream(adaptor,"token 136");
         RewriteRuleTokenStream stream_123=new RewriteRuleTokenStream(adaptor,"token 123");
         RewriteRuleTokenStream stream_Identifier=new RewriteRuleTokenStream(adaptor,"token Identifier");
-        RewriteRuleSubtreeStream stream_modifier=new RewriteRuleSubtreeStream(adaptor,"rule modifier");
-        RewriteRuleSubtreeStream stream_annotationTypeDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule annotationTypeDeclaration");
-        RewriteRuleSubtreeStream stream_fieldDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule fieldDeclaration");
-        RewriteRuleSubtreeStream stream_classDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule classDeclaration");
-        RewriteRuleSubtreeStream stream_block=new RewriteRuleSubtreeStream(adaptor,"rule block");
-        RewriteRuleSubtreeStream stream_genericMethodOrConstructorDecl=new RewriteRuleSubtreeStream(adaptor,"rule genericMethodOrConstructorDecl");
         RewriteRuleSubtreeStream stream_normalInterfaceDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule normalInterfaceDeclaration");
-        RewriteRuleSubtreeStream stream_enumDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule enumDeclaration");
-        RewriteRuleSubtreeStream stream_voidMethodDeclaratorRest=new RewriteRuleSubtreeStream(adaptor,"rule voidMethodDeclaratorRest");
         RewriteRuleSubtreeStream stream_constructorDeclaratorRest=new RewriteRuleSubtreeStream(adaptor,"rule constructorDeclaratorRest");
+        RewriteRuleSubtreeStream stream_annotationTypeDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule annotationTypeDeclaration");
+        RewriteRuleSubtreeStream stream_modifier=new RewriteRuleSubtreeStream(adaptor,"rule modifier");
+        RewriteRuleSubtreeStream stream_fieldDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule fieldDeclaration");
+        RewriteRuleSubtreeStream stream_enumDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule enumDeclaration");
+        RewriteRuleSubtreeStream stream_genericMethodOrConstructorDecl=new RewriteRuleSubtreeStream(adaptor,"rule genericMethodOrConstructorDecl");
+        RewriteRuleSubtreeStream stream_classDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule classDeclaration");
+        RewriteRuleSubtreeStream stream_voidMethodDeclaratorRest=new RewriteRuleSubtreeStream(adaptor,"rule voidMethodDeclaratorRest");
         RewriteRuleSubtreeStream stream_methodDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule methodDeclaration");
+        RewriteRuleSubtreeStream stream_block=new RewriteRuleSubtreeStream(adaptor,"rule block");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 19) ) { return retval; }
             // jkit/java/parser/Java.g:308:2: ( ';' | 'static' block -> ^( STATIC block ) | ( 'static' )? block -> block | ( modifier )* ( genericMethodOrConstructorDecl -> ^( METHOD ^( MODIFIERS ( modifier )* ) genericMethodOrConstructorDecl ) | methodDeclaration -> ^( METHOD ^( MODIFIERS ( modifier )* ) ^( TYPE_PARAMETERS ) methodDeclaration ) | fieldDeclaration -> ^( FIELD ^( MODIFIERS ( modifier )* ) fieldDeclaration ) | 'void' Identifier voidMethodDeclaratorRest -> ^( METHOD ^( MODIFIERS ( modifier )* ) ^( TYPE_PARAMETERS ) Identifier ^( TYPE VOID ) ( voidMethodDeclaratorRest )? ) | Identifier constructorDeclaratorRest -> ^( METHOD ^( MODIFIERS ( modifier )* ) ^( TYPE_PARAMETERS ) Identifier ^( NONE ) constructorDeclaratorRest ) | normalInterfaceDeclaration -> ^( INTERFACE ^( MODIFIERS ( modifier )* ) normalInterfaceDeclaration ) | annotationTypeDeclaration -> ^( ANNOTATION ^( MODIFIERS ( modifier )* ) annotationTypeDeclaration ) | classDeclaration -> ^( CLASS ^( MODIFIERS ( modifier )* ) classDeclaration ) | enumDeclaration -> ^( ENUM ^( MODIFIERS ( modifier )* ) enumDeclaration ) ) )
@@ -3279,7 +3279,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: methodDeclaration, modifier
+                            // elements: modifier, methodDeclaration
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -3339,7 +3339,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: modifier, fieldDeclaration
+                            // elements: fieldDeclaration, modifier
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -3398,7 +3398,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: modifier, Identifier, voidMethodDeclaratorRest
+                            // elements: modifier, voidMethodDeclaratorRest, Identifier
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -3544,7 +3544,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: modifier, normalInterfaceDeclaration
+                            // elements: normalInterfaceDeclaration, modifier
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -3703,7 +3703,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: enumDeclaration, modifier
+                            // elements: modifier, enumDeclaration
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -3811,7 +3811,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: genericMethodOrConstructorRest, typeParameters
+            // elements: typeParameters, genericMethodOrConstructorRest
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -3964,7 +3964,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: methodDeclaratorRest, type, Identifier
+                    // elements: Identifier, type, methodDeclaratorRest
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -4008,7 +4008,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: Identifier, methodDeclaratorRest
+                    // elements: methodDeclaratorRest, Identifier
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -4151,7 +4151,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: Identifier, methodDeclaratorRest, type
+            // elements: Identifier, type, methodDeclaratorRest
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -4217,8 +4217,8 @@ public class JavaParser extends Parser {
 
         Object char_literal105_tree=null;
         RewriteRuleTokenStream stream_121=new RewriteRuleTokenStream(adaptor,"token 121");
-        RewriteRuleSubtreeStream stream_variableDeclarators=new RewriteRuleSubtreeStream(adaptor,"rule variableDeclarators");
         RewriteRuleSubtreeStream stream_type=new RewriteRuleSubtreeStream(adaptor,"rule type");
+        RewriteRuleSubtreeStream stream_variableDeclarators=new RewriteRuleSubtreeStream(adaptor,"rule variableDeclarators");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 23) ) { return retval; }
             // jkit/java/parser/Java.g:339:2: ( type variableDeclarators ';' -> type variableDeclarators )
@@ -4325,16 +4325,16 @@ public class JavaParser extends Parser {
         Object char_literal119_tree=null;
         RewriteRuleTokenStream stream_136=new RewriteRuleTokenStream(adaptor,"token 136");
         RewriteRuleTokenStream stream_Identifier=new RewriteRuleTokenStream(adaptor,"token Identifier");
-        RewriteRuleSubtreeStream stream_modifier=new RewriteRuleSubtreeStream(adaptor,"rule modifier");
-        RewriteRuleSubtreeStream stream_annotationTypeDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule annotationTypeDeclaration");
-        RewriteRuleSubtreeStream stream_interfaceGenericMethodDecl=new RewriteRuleSubtreeStream(adaptor,"rule interfaceGenericMethodDecl");
         RewriteRuleSubtreeStream stream_interfaceMethodDeclaratorRest=new RewriteRuleSubtreeStream(adaptor,"rule interfaceMethodDeclaratorRest");
-        RewriteRuleSubtreeStream stream_constantDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule constantDeclaration");
-        RewriteRuleSubtreeStream stream_classDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule classDeclaration");
         RewriteRuleSubtreeStream stream_voidInterfaceMethodDeclaratorRest=new RewriteRuleSubtreeStream(adaptor,"rule voidInterfaceMethodDeclaratorRest");
         RewriteRuleSubtreeStream stream_normalInterfaceDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule normalInterfaceDeclaration");
-        RewriteRuleSubtreeStream stream_enumDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule enumDeclaration");
         RewriteRuleSubtreeStream stream_type=new RewriteRuleSubtreeStream(adaptor,"rule type");
+        RewriteRuleSubtreeStream stream_annotationTypeDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule annotationTypeDeclaration");
+        RewriteRuleSubtreeStream stream_modifier=new RewriteRuleSubtreeStream(adaptor,"rule modifier");
+        RewriteRuleSubtreeStream stream_constantDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule constantDeclaration");
+        RewriteRuleSubtreeStream stream_interfaceGenericMethodDecl=new RewriteRuleSubtreeStream(adaptor,"rule interfaceGenericMethodDecl");
+        RewriteRuleSubtreeStream stream_enumDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule enumDeclaration");
+        RewriteRuleSubtreeStream stream_classDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule classDeclaration");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 24) ) { return retval; }
             // jkit/java/parser/Java.g:343:2: ( ( modifier )* ( constantDeclaration -> ^( FIELD ^( MODIFIERS ( modifier )* ) constantDeclaration ) | type Identifier interfaceMethodDeclaratorRest -> ^( METHOD ^( MODIFIERS ( modifier )* ) ^( TYPE_PARAMETERS ) Identifier type ( interfaceMethodDeclaratorRest )? ) | interfaceGenericMethodDecl -> ^( METHOD ^( MODIFIERS ( modifier )* ) interfaceGenericMethodDecl ) | 'void' Identifier voidInterfaceMethodDeclaratorRest -> ^( METHOD ^( MODIFIERS ( modifier )* ) ^( TYPE_PARAMETERS ) Identifier ^( TYPE VOID ) ( voidInterfaceMethodDeclaratorRest )? ) | normalInterfaceDeclaration -> ^( INTERFACE ^( MODIFIERS ( modifier )* ) normalInterfaceDeclaration ) | annotationTypeDeclaration -> ^( ANNOTATION ^( MODIFIERS ( modifier )* ) annotationTypeDeclaration ) | classDeclaration -> ^( CLASS ^( MODIFIERS ( modifier )* ) classDeclaration ) | enumDeclaration -> ^( ENUM ^( MODIFIERS ( modifier )* ) enumDeclaration ) ) | ';' )
@@ -4384,7 +4384,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: modifier, constantDeclaration
+                            // elements: constantDeclaration, modifier
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -4446,7 +4446,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: Identifier, modifier, interfaceMethodDeclaratorRest, type
+                            // elements: type, interfaceMethodDeclaratorRest, Identifier, modifier
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -4513,7 +4513,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: modifier, interfaceGenericMethodDecl
+                            // elements: interfaceGenericMethodDecl, modifier
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -4572,7 +4572,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: voidInterfaceMethodDeclaratorRest, Identifier, modifier
+                            // elements: Identifier, voidInterfaceMethodDeclaratorRest, modifier
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -4753,7 +4753,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: modifier, classDeclaration
+                            // elements: classDeclaration, modifier
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -4806,7 +4806,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: modifier, enumDeclaration
+                            // elements: enumDeclaration, modifier
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -4909,8 +4909,8 @@ public class JavaParser extends Parser {
         Object char_literal124_tree=null;
         RewriteRuleTokenStream stream_121=new RewriteRuleTokenStream(adaptor,"token 121");
         RewriteRuleTokenStream stream_137=new RewriteRuleTokenStream(adaptor,"token 137");
-        RewriteRuleSubtreeStream stream_methodBody=new RewriteRuleSubtreeStream(adaptor,"rule methodBody");
         RewriteRuleSubtreeStream stream_formalParameters=new RewriteRuleSubtreeStream(adaptor,"rule formalParameters");
+        RewriteRuleSubtreeStream stream_methodBody=new RewriteRuleSubtreeStream(adaptor,"rule methodBody");
         RewriteRuleSubtreeStream stream_typeList=new RewriteRuleSubtreeStream(adaptor,"rule typeList");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 25) ) { return retval; }
@@ -5132,8 +5132,8 @@ public class JavaParser extends Parser {
         Object char_literal129_tree=null;
         RewriteRuleTokenStream stream_121=new RewriteRuleTokenStream(adaptor,"token 121");
         RewriteRuleTokenStream stream_137=new RewriteRuleTokenStream(adaptor,"token 137");
-        RewriteRuleSubtreeStream stream_methodBody=new RewriteRuleSubtreeStream(adaptor,"rule methodBody");
         RewriteRuleSubtreeStream stream_formalParameters=new RewriteRuleSubtreeStream(adaptor,"rule formalParameters");
+        RewriteRuleSubtreeStream stream_methodBody=new RewriteRuleSubtreeStream(adaptor,"rule methodBody");
         RewriteRuleSubtreeStream stream_typeList=new RewriteRuleSubtreeStream(adaptor,"rule typeList");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 26) ) { return retval; }
@@ -5202,7 +5202,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: typeList, formalParameters, methodBody
+                    // elements: methodBody, formalParameters, typeList
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -5398,7 +5398,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: typeList, formalParameters
+            // elements: formalParameters, typeList
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -5546,7 +5546,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: type, Identifier, interfaceMethodDeclaratorRest, typeParameters
+                    // elements: Identifier, type, interfaceMethodDeclaratorRest, typeParameters
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -5594,7 +5594,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: interfaceMethodDeclaratorRest, Identifier, typeParameters
+                    // elements: Identifier, interfaceMethodDeclaratorRest, typeParameters
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -5814,8 +5814,8 @@ public class JavaParser extends Parser {
 
         Object string_literal146_tree=null;
         RewriteRuleTokenStream stream_137=new RewriteRuleTokenStream(adaptor,"token 137");
-        RewriteRuleSubtreeStream stream_methodBody=new RewriteRuleSubtreeStream(adaptor,"rule methodBody");
         RewriteRuleSubtreeStream stream_formalParameters=new RewriteRuleSubtreeStream(adaptor,"rule formalParameters");
+        RewriteRuleSubtreeStream stream_methodBody=new RewriteRuleSubtreeStream(adaptor,"rule methodBody");
         RewriteRuleSubtreeStream stream_typeList=new RewriteRuleSubtreeStream(adaptor,"rule typeList");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 30) ) { return retval; }
@@ -5863,7 +5863,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: methodBody, formalParameters, typeList
+            // elements: typeList, formalParameters, methodBody
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -6263,7 +6263,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: 138, variableInitializer
+                    // elements: variableInitializer, 138
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -6378,8 +6378,8 @@ public class JavaParser extends Parser {
 
         Object char_literal160_tree=null;
         RewriteRuleTokenStream stream_121=new RewriteRuleTokenStream(adaptor,"token 121");
-        RewriteRuleSubtreeStream stream_constantDeclarators=new RewriteRuleSubtreeStream(adaptor,"rule constantDeclarators");
         RewriteRuleSubtreeStream stream_type=new RewriteRuleSubtreeStream(adaptor,"rule type");
+        RewriteRuleSubtreeStream stream_constantDeclarators=new RewriteRuleSubtreeStream(adaptor,"rule constantDeclarators");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 34) ) { return retval; }
             // jkit/java/parser/Java.g:406:2: ( type constantDeclarators ';' -> type constantDeclarators )
@@ -6403,7 +6403,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: type, constantDeclarators
+            // elements: constantDeclarators, type
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -6715,7 +6715,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: variableInitializer, 138
+            // elements: 138, variableInitializer
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -6948,9 +6948,9 @@ public class JavaParser extends Parser {
         Object char_literal175_tree=null;
         Object char_literal177_tree=null;
         Object char_literal178_tree=null;
+        RewriteRuleTokenStream stream_130=new RewriteRuleTokenStream(adaptor,"token 130");
         RewriteRuleTokenStream stream_134=new RewriteRuleTokenStream(adaptor,"token 134");
         RewriteRuleTokenStream stream_133=new RewriteRuleTokenStream(adaptor,"token 133");
-        RewriteRuleTokenStream stream_130=new RewriteRuleTokenStream(adaptor,"token 130");
         RewriteRuleSubtreeStream stream_variableInitializer=new RewriteRuleSubtreeStream(adaptor,"rule variableInitializer");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 40) ) { return retval; }
@@ -7490,11 +7490,11 @@ public class JavaParser extends Parser {
             if ( (LA62_0==Identifier) ) {
                 int LA62_1 = input.LA(2);
 
-                if ( (LA62_1==EOF) ) {
-                    alt62=1;
-                }
-                else if ( (LA62_1==124) ) {
+                if ( (LA62_1==124) ) {
                     alt62=2;
+                }
+                else if ( (LA62_1==EOF) ) {
+                    alt62=1;
                 }
                 else {
                     if (state.backtracking>0) {state.failed=true; return retval;}
@@ -8223,8 +8223,8 @@ public class JavaParser extends Parser {
         Object string_literal215_tree=null;
         Object string_literal217_tree=null;
         RewriteRuleTokenStream stream_127=new RewriteRuleTokenStream(adaptor,"token 127");
-        RewriteRuleTokenStream stream_160=new RewriteRuleTokenStream(adaptor,"token 160");
         RewriteRuleTokenStream stream_159=new RewriteRuleTokenStream(adaptor,"token 159");
+        RewriteRuleTokenStream stream_160=new RewriteRuleTokenStream(adaptor,"token 160");
         RewriteRuleSubtreeStream stream_type=new RewriteRuleSubtreeStream(adaptor,"rule type");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 50) ) { return retval; }
@@ -8302,7 +8302,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: type, 159
+                            // elements: 159, type
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -8382,7 +8382,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: type, 159
+                            // elements: 159, type
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -8675,12 +8675,12 @@ public class JavaParser extends Parser {
 
         Object char_literal228_tree=null;
         Object string_literal230_tree=null;
-        RewriteRuleTokenStream stream_163=new RewriteRuleTokenStream(adaptor,"token 163");
         RewriteRuleTokenStream stream_130=new RewriteRuleTokenStream(adaptor,"token 130");
+        RewriteRuleTokenStream stream_163=new RewriteRuleTokenStream(adaptor,"token 163");
         RewriteRuleSubtreeStream stream_variableDeclaratorId=new RewriteRuleSubtreeStream(adaptor,"rule variableDeclaratorId");
+        RewriteRuleSubtreeStream stream_variableModifier=new RewriteRuleSubtreeStream(adaptor,"rule variableModifier");
         RewriteRuleSubtreeStream stream_formalParameterDecls=new RewriteRuleSubtreeStream(adaptor,"rule formalParameterDecls");
         RewriteRuleSubtreeStream stream_type=new RewriteRuleSubtreeStream(adaptor,"rule type");
-        RewriteRuleSubtreeStream stream_variableModifier=new RewriteRuleSubtreeStream(adaptor,"rule variableModifier");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 53) ) { return retval; }
             // jkit/java/parser/Java.g:508:2: ( ( variableModifier )* type ( variableDeclaratorId ( ',' formalParameterDecls )? -> ^( PARAMETER ^( MODIFIERS ( variableModifier )* ) type variableDeclaratorId ) ( formalParameterDecls )? | '...' variableDeclaratorId -> ^( VARARGS ^( MODIFIERS ( variableModifier )* ) type variableDeclaratorId ) ) )
@@ -8778,7 +8778,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: variableDeclaratorId, formalParameterDecls, variableModifier, type
+                    // elements: formalParameterDecls, variableDeclaratorId, type, variableModifier
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -8841,7 +8841,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: type, variableModifier, variableDeclaratorId
+                    // elements: variableModifier, variableDeclaratorId, type
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -8996,8 +8996,8 @@ public class JavaParser extends Parser {
 
         Object char_literal233_tree=null;
         Object i_tree=null;
-        RewriteRuleTokenStream stream_124=new RewriteRuleTokenStream(adaptor,"token 124");
         RewriteRuleTokenStream stream_Identifier=new RewriteRuleTokenStream(adaptor,"token Identifier");
+        RewriteRuleTokenStream stream_124=new RewriteRuleTokenStream(adaptor,"token 124");
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 55) ) { return retval; }
@@ -9119,9 +9119,9 @@ public class JavaParser extends Parser {
         Object StringLiteral237_tree=null;
         Object string_literal239_tree=null;
         RewriteRuleTokenStream stream_StringLiteral=new RewriteRuleTokenStream(adaptor,"token StringLiteral");
+        RewriteRuleTokenStream stream_FloatingPointLiteral=new RewriteRuleTokenStream(adaptor,"token FloatingPointLiteral");
         RewriteRuleTokenStream stream_164=new RewriteRuleTokenStream(adaptor,"token 164");
         RewriteRuleTokenStream stream_CharacterLiteral=new RewriteRuleTokenStream(adaptor,"token CharacterLiteral");
-        RewriteRuleTokenStream stream_FloatingPointLiteral=new RewriteRuleTokenStream(adaptor,"token FloatingPointLiteral");
         RewriteRuleSubtreeStream stream_booleanLiteral=new RewriteRuleSubtreeStream(adaptor,"rule booleanLiteral");
         RewriteRuleSubtreeStream stream_integerLiteral=new RewriteRuleSubtreeStream(adaptor,"rule integerLiteral");
         try {
@@ -9629,8 +9629,8 @@ public class JavaParser extends Parser {
         Object char_literal244_tree=null;
         Object char_literal246_tree=null;
         RewriteRuleTokenStream stream_161=new RewriteRuleTokenStream(adaptor,"token 161");
-        RewriteRuleTokenStream stream_162=new RewriteRuleTokenStream(adaptor,"token 162");
         RewriteRuleTokenStream stream_167=new RewriteRuleTokenStream(adaptor,"token 167");
+        RewriteRuleTokenStream stream_162=new RewriteRuleTokenStream(adaptor,"token 162");
         RewriteRuleSubtreeStream stream_annotationName=new RewriteRuleSubtreeStream(adaptor,"rule annotationName");
         RewriteRuleSubtreeStream stream_elementValuePairs=new RewriteRuleSubtreeStream(adaptor,"rule elementValuePairs");
         try {
@@ -9969,7 +9969,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: elementValue, Identifier
+                    // elements: Identifier, elementValue
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -10171,9 +10171,9 @@ public class JavaParser extends Parser {
         Object char_literal260_tree=null;
         Object char_literal262_tree=null;
         Object char_literal264_tree=null;
+        RewriteRuleTokenStream stream_130=new RewriteRuleTokenStream(adaptor,"token 130");
         RewriteRuleTokenStream stream_134=new RewriteRuleTokenStream(adaptor,"token 134");
         RewriteRuleTokenStream stream_133=new RewriteRuleTokenStream(adaptor,"token 133");
-        RewriteRuleTokenStream stream_130=new RewriteRuleTokenStream(adaptor,"token 130");
         RewriteRuleSubtreeStream stream_elementValue=new RewriteRuleSubtreeStream(adaptor,"rule elementValue");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 65) ) { return retval; }
@@ -10316,9 +10316,9 @@ public class JavaParser extends Parser {
         Object char_literal265_tree=null;
         Object string_literal266_tree=null;
         Object Identifier267_tree=null;
-        RewriteRuleTokenStream stream_135=new RewriteRuleTokenStream(adaptor,"token 135");
-        RewriteRuleTokenStream stream_Identifier=new RewriteRuleTokenStream(adaptor,"token Identifier");
         RewriteRuleTokenStream stream_167=new RewriteRuleTokenStream(adaptor,"token 167");
+        RewriteRuleTokenStream stream_Identifier=new RewriteRuleTokenStream(adaptor,"token Identifier");
+        RewriteRuleTokenStream stream_135=new RewriteRuleTokenStream(adaptor,"token 135");
         RewriteRuleSubtreeStream stream_annotationTypeBody=new RewriteRuleSubtreeStream(adaptor,"rule annotationTypeBody");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 66) ) { return retval; }
@@ -10571,14 +10571,14 @@ public class JavaParser extends Parser {
         Object char_literal284_tree=null;
         Object char_literal286_tree=null;
         RewriteRuleTokenStream stream_121=new RewriteRuleTokenStream(adaptor,"token 121");
-        RewriteRuleSubtreeStream stream_modifier=new RewriteRuleSubtreeStream(adaptor,"rule modifier");
-        RewriteRuleSubtreeStream stream_annotationTypeDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule annotationTypeDeclaration");
-        RewriteRuleSubtreeStream stream_annotationMethodRest=new RewriteRuleSubtreeStream(adaptor,"rule annotationMethodRest");
-        RewriteRuleSubtreeStream stream_classDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule classDeclaration");
-        RewriteRuleSubtreeStream stream_enumDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule enumDeclaration");
         RewriteRuleSubtreeStream stream_normalInterfaceDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule normalInterfaceDeclaration");
-        RewriteRuleSubtreeStream stream_annotationConstantRest=new RewriteRuleSubtreeStream(adaptor,"rule annotationConstantRest");
         RewriteRuleSubtreeStream stream_type=new RewriteRuleSubtreeStream(adaptor,"rule type");
+        RewriteRuleSubtreeStream stream_annotationTypeDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule annotationTypeDeclaration");
+        RewriteRuleSubtreeStream stream_modifier=new RewriteRuleSubtreeStream(adaptor,"rule modifier");
+        RewriteRuleSubtreeStream stream_annotationMethodRest=new RewriteRuleSubtreeStream(adaptor,"rule annotationMethodRest");
+        RewriteRuleSubtreeStream stream_enumDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule enumDeclaration");
+        RewriteRuleSubtreeStream stream_classDeclaration=new RewriteRuleSubtreeStream(adaptor,"rule classDeclaration");
+        RewriteRuleSubtreeStream stream_annotationConstantRest=new RewriteRuleSubtreeStream(adaptor,"rule annotationConstantRest");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 69) ) { return retval; }
             // jkit/java/parser/Java.g:589:2: ( ( modifier )* ( type ( annotationMethodRest ';' -> ^( METHOD ^( MODIFIERS ( modifier )* ) type annotationMethodRest ) | annotationConstantRest ';' -> ^( FIELD ^( MODIFIERS ( modifier )* ) type annotationConstantRest ) ) | classDeclaration ( ';' )? -> ^( CLASS ^( MODIFIERS ( modifier )* ) classDeclaration ) | enumDeclaration ( ';' )? -> ^( ENUM ^( MODIFIERS ( modifier )* ) enumDeclaration ) | normalInterfaceDeclaration ( ';' )? -> ^( INTERFACE ^( MODIFIERS ( modifier )* ) normalInterfaceDeclaration ) | annotationTypeDeclaration ( ';' )? -> ^( ANNOTATION ^( MODIFIERS ( modifier )* ) annotationTypeDeclaration ) ) )
@@ -10763,7 +10763,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: modifier, type, annotationConstantRest
+                            // elements: modifier, annotationConstantRest, type
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -10839,7 +10839,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: classDeclaration, modifier
+                    // elements: modifier, classDeclaration
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -10977,7 +10977,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: modifier, normalInterfaceDeclaration
+                    // elements: normalInterfaceDeclaration, modifier
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -11046,7 +11046,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: modifier, annotationTypeDeclaration
+                    // elements: annotationTypeDeclaration, modifier
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -11526,9 +11526,9 @@ public class JavaParser extends Parser {
 
         Object char_literal303_tree=null;
         RewriteRuleTokenStream stream_121=new RewriteRuleTokenStream(adaptor,"token 121");
-        RewriteRuleSubtreeStream stream_variableDeclarators=new RewriteRuleSubtreeStream(adaptor,"rule variableDeclarators");
-        RewriteRuleSubtreeStream stream_type=new RewriteRuleSubtreeStream(adaptor,"rule type");
         RewriteRuleSubtreeStream stream_variableModifier=new RewriteRuleSubtreeStream(adaptor,"rule variableModifier");
+        RewriteRuleSubtreeStream stream_type=new RewriteRuleSubtreeStream(adaptor,"rule type");
+        RewriteRuleSubtreeStream stream_variableDeclarators=new RewriteRuleSubtreeStream(adaptor,"rule variableDeclarators");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 75) ) { return retval; }
             // jkit/java/parser/Java.g:628:2: ( ( variableModifier )* type variableDeclarators ';' -> ^( VARDEF ^( MODIFIERS ( variableModifier )* ) type variableDeclarators ) )
@@ -11582,7 +11582,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: variableModifier, variableDeclarators, type
+            // elements: type, variableModifier, variableDeclarators
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -11747,33 +11747,33 @@ public class JavaParser extends Parser {
         Object char_literal342_tree=null;
         Object char_literal344_tree=null;
         Object char_literal345_tree=null;
-        RewriteRuleTokenStream stream_134=new RewriteRuleTokenStream(adaptor,"token 134");
-        RewriteRuleTokenStream stream_133=new RewriteRuleTokenStream(adaptor,"token 133");
-        RewriteRuleTokenStream stream_147=new RewriteRuleTokenStream(adaptor,"token 147");
-        RewriteRuleTokenStream stream_121=new RewriteRuleTokenStream(adaptor,"token 121");
-        RewriteRuleTokenStream stream_179=new RewriteRuleTokenStream(adaptor,"token 179");
-        RewriteRuleTokenStream stream_178=new RewriteRuleTokenStream(adaptor,"token 178");
-        RewriteRuleTokenStream stream_169=new RewriteRuleTokenStream(adaptor,"token 169");
-        RewriteRuleTokenStream stream_177=new RewriteRuleTokenStream(adaptor,"token 177");
-        RewriteRuleTokenStream stream_176=new RewriteRuleTokenStream(adaptor,"token 176");
-        RewriteRuleTokenStream stream_170=new RewriteRuleTokenStream(adaptor,"token 170");
         RewriteRuleTokenStream stream_161=new RewriteRuleTokenStream(adaptor,"token 161");
-        RewriteRuleTokenStream stream_180=new RewriteRuleTokenStream(adaptor,"token 180");
-        RewriteRuleTokenStream stream_171=new RewriteRuleTokenStream(adaptor,"token 171");
-        RewriteRuleTokenStream stream_162=new RewriteRuleTokenStream(adaptor,"token 162");
-        RewriteRuleTokenStream stream_181=new RewriteRuleTokenStream(adaptor,"token 181");
-        RewriteRuleTokenStream stream_182=new RewriteRuleTokenStream(adaptor,"token 182");
-        RewriteRuleTokenStream stream_174=new RewriteRuleTokenStream(adaptor,"token 174");
-        RewriteRuleTokenStream stream_175=new RewriteRuleTokenStream(adaptor,"token 175");
+        RewriteRuleTokenStream stream_176=new RewriteRuleTokenStream(adaptor,"token 176");
         RewriteRuleTokenStream stream_172=new RewriteRuleTokenStream(adaptor,"token 172");
-        RewriteRuleTokenStream stream_173=new RewriteRuleTokenStream(adaptor,"token 173");
+        RewriteRuleTokenStream stream_179=new RewriteRuleTokenStream(adaptor,"token 179");
+        RewriteRuleTokenStream stream_171=new RewriteRuleTokenStream(adaptor,"token 171");
         RewriteRuleTokenStream stream_Identifier=new RewriteRuleTokenStream(adaptor,"token Identifier");
-        RewriteRuleSubtreeStream stream_statement=new RewriteRuleSubtreeStream(adaptor,"rule statement");
-        RewriteRuleSubtreeStream stream_expression=new RewriteRuleSubtreeStream(adaptor,"rule expression");
+        RewriteRuleTokenStream stream_178=new RewriteRuleTokenStream(adaptor,"token 178");
+        RewriteRuleTokenStream stream_162=new RewriteRuleTokenStream(adaptor,"token 162");
+        RewriteRuleTokenStream stream_180=new RewriteRuleTokenStream(adaptor,"token 180");
+        RewriteRuleTokenStream stream_133=new RewriteRuleTokenStream(adaptor,"token 133");
+        RewriteRuleTokenStream stream_173=new RewriteRuleTokenStream(adaptor,"token 173");
+        RewriteRuleTokenStream stream_177=new RewriteRuleTokenStream(adaptor,"token 177");
+        RewriteRuleTokenStream stream_134=new RewriteRuleTokenStream(adaptor,"token 134");
+        RewriteRuleTokenStream stream_174=new RewriteRuleTokenStream(adaptor,"token 174");
+        RewriteRuleTokenStream stream_181=new RewriteRuleTokenStream(adaptor,"token 181");
+        RewriteRuleTokenStream stream_121=new RewriteRuleTokenStream(adaptor,"token 121");
+        RewriteRuleTokenStream stream_175=new RewriteRuleTokenStream(adaptor,"token 175");
+        RewriteRuleTokenStream stream_170=new RewriteRuleTokenStream(adaptor,"token 170");
+        RewriteRuleTokenStream stream_182=new RewriteRuleTokenStream(adaptor,"token 182");
+        RewriteRuleTokenStream stream_147=new RewriteRuleTokenStream(adaptor,"token 147");
+        RewriteRuleTokenStream stream_169=new RewriteRuleTokenStream(adaptor,"token 169");
         RewriteRuleSubtreeStream stream_parExpression=new RewriteRuleSubtreeStream(adaptor,"rule parExpression");
-        RewriteRuleSubtreeStream stream_switchBlockStatementGroups=new RewriteRuleSubtreeStream(adaptor,"rule switchBlockStatementGroups");
-        RewriteRuleSubtreeStream stream_catches=new RewriteRuleSubtreeStream(adaptor,"rule catches");
         RewriteRuleSubtreeStream stream_statementExpression=new RewriteRuleSubtreeStream(adaptor,"rule statementExpression");
+        RewriteRuleSubtreeStream stream_statement=new RewriteRuleSubtreeStream(adaptor,"rule statement");
+        RewriteRuleSubtreeStream stream_catches=new RewriteRuleSubtreeStream(adaptor,"rule catches");
+        RewriteRuleSubtreeStream stream_switchBlockStatementGroups=new RewriteRuleSubtreeStream(adaptor,"rule switchBlockStatementGroups");
+        RewriteRuleSubtreeStream stream_expression=new RewriteRuleSubtreeStream(adaptor,"rule expression");
         RewriteRuleSubtreeStream stream_block=new RewriteRuleSubtreeStream(adaptor,"rule block");
         RewriteRuleSubtreeStream stream_forControl=new RewriteRuleSubtreeStream(adaptor,"rule forControl");
         try {
@@ -11896,7 +11896,7 @@ public class JavaParser extends Parser {
                     int LA104_0 = input.LA(1);
 
                     if ( (LA104_0==172) ) {
-                        int LA104_2 = input.LA(2);
+                        int LA104_1 = input.LA(2);
 
                         if ( (synpred154_Java()) ) {
                             alt104=1;
@@ -11985,7 +11985,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: forControl, statement
+                    // elements: statement, forControl
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -12034,7 +12034,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: statement, parExpression
+                    // elements: parExpression, statement
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -12097,7 +12097,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: parExpression, statement
+                    // elements: statement, parExpression
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -12921,8 +12921,8 @@ public class JavaParser extends Parser {
         Object char_literal349_tree=null;
         Object char_literal351_tree=null;
         RewriteRuleTokenStream stream_161=new RewriteRuleTokenStream(adaptor,"token 161");
-        RewriteRuleTokenStream stream_162=new RewriteRuleTokenStream(adaptor,"token 162");
         RewriteRuleTokenStream stream_183=new RewriteRuleTokenStream(adaptor,"token 183");
+        RewriteRuleTokenStream stream_162=new RewriteRuleTokenStream(adaptor,"token 162");
         RewriteRuleSubtreeStream stream_formalParameter=new RewriteRuleSubtreeStream(adaptor,"rule formalParameter");
         RewriteRuleSubtreeStream stream_block=new RewriteRuleSubtreeStream(adaptor,"rule block");
         try {
@@ -13195,8 +13195,8 @@ public class JavaParser extends Parser {
         JavaParser.blockStatement_return blockStatement358 = null;
 
 
-        RewriteRuleSubtreeStream stream_switchLabel=new RewriteRuleSubtreeStream(adaptor,"rule switchLabel");
         RewriteRuleSubtreeStream stream_blockStatement=new RewriteRuleSubtreeStream(adaptor,"rule blockStatement");
+        RewriteRuleSubtreeStream stream_switchLabel=new RewriteRuleSubtreeStream(adaptor,"rule switchLabel");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 81) ) { return retval; }
             // jkit/java/parser/Java.g:671:2: ( switchLabel ( blockStatement )* -> ^( switchLabel ^( BLOCK ( blockStatement )* ) ) )
@@ -13320,11 +13320,11 @@ public class JavaParser extends Parser {
         Object char_literal360_tree=null;
         Object char_literal362_tree=null;
         Object char_literal363_tree=null;
-        RewriteRuleTokenStream stream_170=new RewriteRuleTokenStream(adaptor,"token 170");
-        RewriteRuleTokenStream stream_184=new RewriteRuleTokenStream(adaptor,"token 184");
         RewriteRuleTokenStream stream_168=new RewriteRuleTokenStream(adaptor,"token 168");
-        RewriteRuleSubtreeStream stream_constantExpression=new RewriteRuleSubtreeStream(adaptor,"rule constantExpression");
+        RewriteRuleTokenStream stream_184=new RewriteRuleTokenStream(adaptor,"token 184");
+        RewriteRuleTokenStream stream_170=new RewriteRuleTokenStream(adaptor,"token 170");
         RewriteRuleSubtreeStream stream_enumConstantName=new RewriteRuleSubtreeStream(adaptor,"rule enumConstantName");
+        RewriteRuleSubtreeStream stream_constantExpression=new RewriteRuleSubtreeStream(adaptor,"rule constantExpression");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 82) ) { return retval; }
             // jkit/java/parser/Java.g:675:2: (lc= 'case' constantExpression ':' -> ^( CASE[$lc] constantExpression ) | lc= 'case' enumConstantName ':' -> ^( CASE[$lc] enumConstantName ) | lc= 'default' ':' -> ^( DEFAULT ) )
@@ -13589,10 +13589,10 @@ public class JavaParser extends Parser {
         Object char_literal368_tree=null;
         Object char_literal369_tree=null;
         RewriteRuleTokenStream stream_121=new RewriteRuleTokenStream(adaptor,"token 121");
-        RewriteRuleSubtreeStream stream_expression=new RewriteRuleSubtreeStream(adaptor,"rule expression");
-        RewriteRuleSubtreeStream stream_forVarControl=new RewriteRuleSubtreeStream(adaptor,"rule forVarControl");
-        RewriteRuleSubtreeStream stream_forInit=new RewriteRuleSubtreeStream(adaptor,"rule forInit");
         RewriteRuleSubtreeStream stream_forUpdate=new RewriteRuleSubtreeStream(adaptor,"rule forUpdate");
+        RewriteRuleSubtreeStream stream_forInit=new RewriteRuleSubtreeStream(adaptor,"rule forInit");
+        RewriteRuleSubtreeStream stream_forVarControl=new RewriteRuleSubtreeStream(adaptor,"rule forVarControl");
+        RewriteRuleSubtreeStream stream_expression=new RewriteRuleSubtreeStream(adaptor,"rule expression");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 84) ) { return retval; }
             // jkit/java/parser/Java.g:686:2: ( forVarControl -> ^( FOREACH forVarControl ) | ( forInit )? ';' (fc= expression )? ';' (fu= forUpdate )? -> ^( INIT ( forInit )? ) ^( TEST ( expression )? ) ^( STEP ( forUpdate )? ) )
@@ -13707,7 +13707,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: forInit, expression, forUpdate
+                    // elements: expression, forUpdate, forInit
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -13810,9 +13810,9 @@ public class JavaParser extends Parser {
         JavaParser.expressionList_return expressionList373 = null;
 
 
-        RewriteRuleSubtreeStream stream_variableDeclarators=new RewriteRuleSubtreeStream(adaptor,"rule variableDeclarators");
-        RewriteRuleSubtreeStream stream_type=new RewriteRuleSubtreeStream(adaptor,"rule type");
         RewriteRuleSubtreeStream stream_variableModifier=new RewriteRuleSubtreeStream(adaptor,"rule variableModifier");
+        RewriteRuleSubtreeStream stream_type=new RewriteRuleSubtreeStream(adaptor,"rule type");
+        RewriteRuleSubtreeStream stream_variableDeclarators=new RewriteRuleSubtreeStream(adaptor,"rule variableDeclarators");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 85) ) { return retval; }
             // jkit/java/parser/Java.g:691:2: ( ( variableModifier )* type variableDeclarators -> ^( VARDEF ^( MODIFIERS ( variableModifier )* ) type variableDeclarators ) | expressionList )
@@ -13867,7 +13867,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: variableDeclarators, variableModifier, type
+                    // elements: variableModifier, type, variableDeclarators
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -13968,11 +13968,11 @@ public class JavaParser extends Parser {
 
         Object Identifier376_tree=null;
         Object char_literal377_tree=null;
-        RewriteRuleTokenStream stream_170=new RewriteRuleTokenStream(adaptor,"token 170");
         RewriteRuleTokenStream stream_Identifier=new RewriteRuleTokenStream(adaptor,"token Identifier");
-        RewriteRuleSubtreeStream stream_expression=new RewriteRuleSubtreeStream(adaptor,"rule expression");
-        RewriteRuleSubtreeStream stream_type=new RewriteRuleSubtreeStream(adaptor,"rule type");
+        RewriteRuleTokenStream stream_170=new RewriteRuleTokenStream(adaptor,"token 170");
         RewriteRuleSubtreeStream stream_variableModifier=new RewriteRuleSubtreeStream(adaptor,"rule variableModifier");
+        RewriteRuleSubtreeStream stream_type=new RewriteRuleSubtreeStream(adaptor,"rule type");
+        RewriteRuleSubtreeStream stream_expression=new RewriteRuleSubtreeStream(adaptor,"rule expression");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 86) ) { return retval; }
             // jkit/java/parser/Java.g:696:2: ( ( variableModifier )* type Identifier ':' expression -> ^( VARDEF ^( MODIFIERS ( variableModifier )* ) type Identifier ) expression )
@@ -14398,105 +14398,85 @@ public class JavaParser extends Parser {
     };
 
     // $ANTLR start "expression"
-    // jkit/java/parser/Java.g:721:1: expression : conditionalExpression ( '=' expression -> ^( ASSIGN conditionalExpression expression ) | '+' '=' expression -> ^( ASSIGNOP ADD conditionalExpression expression ) | '-' '=' expression -> ^( ASSIGNOP SUB conditionalExpression expression ) | '*' '=' expression -> ^( ASSIGNOP MUL conditionalExpression expression ) | '/' '=' expression -> ^( ASSIGNOP DIV conditionalExpression expression ) | '&=' expression -> ^( ASSIGNOP AND conditionalExpression expression ) | '|=' expression -> ^( ASSIGNOP OR conditionalExpression expression ) | '^=' expression -> ^( ASSIGNOP XOR conditionalExpression expression ) | '%' '=' expression -> ^( ASSIGNOP MOD conditionalExpression expression ) | '<' '<' '=' expression -> ^( ASSIGNOP SHL conditionalExpression expression ) | '>' '>' '=' expression -> ^( ASSIGNOP SHR conditionalExpression expression ) | '>' '>' '>' '=' expression -> ^( ASSIGNOP USHR conditionalExpression expression ) | -> conditionalExpression ) ;
+    // jkit/java/parser/Java.g:721:1: expression : conditionalExpression ( '=' expression -> ^( ASSIGN conditionalExpression expression ) | lc= '+' '=' expression -> ^( ASSIGNOP[$lc] ADD conditionalExpression expression ) | lc= '-' '=' expression -> ^( ASSIGNOP[$lc] SUB conditionalExpression expression ) | lc= '*' '=' expression -> ^( ASSIGNOP[$lc] MUL conditionalExpression expression ) | lc= '/' '=' expression -> ^( ASSIGNOP[$lc] DIV conditionalExpression expression ) | lc= '&=' expression -> ^( ASSIGNOP[$lc] AND conditionalExpression expression ) | lc= '|=' expression -> ^( ASSIGNOP[$lc] OR conditionalExpression expression ) | lc= '^=' expression -> ^( ASSIGNOP[$lc] XOR conditionalExpression expression ) | lc= '%' '=' expression -> ^( ASSIGNOP[$lc] MOD conditionalExpression expression ) | lc= '<' '<' '=' expression -> ^( ASSIGNOP[$lc] SHL conditionalExpression expression ) | lc= '>' '>' '=' expression -> ^( ASSIGNOP[$lc] SHR conditionalExpression expression ) | lc= '>' '>' '>' '=' expression -> ^( ASSIGNOP[$lc] USHR conditionalExpression expression ) | -> conditionalExpression ) ;
     public final JavaParser.expression_return expression() throws RecognitionException {
         JavaParser.expression_return retval = new JavaParser.expression_return();
         retval.start = input.LT(1);
         int expression_StartIndex = input.index();
         Object root_0 = null;
 
+        Token lc=null;
         Token char_literal389=null;
         Token char_literal391=null;
-        Token char_literal392=null;
-        Token char_literal394=null;
+        Token char_literal393=null;
         Token char_literal395=null;
         Token char_literal397=null;
-        Token char_literal398=null;
-        Token char_literal400=null;
-        Token char_literal401=null;
-        Token string_literal403=null;
-        Token string_literal405=null;
-        Token string_literal407=null;
-        Token char_literal409=null;
+        Token char_literal402=null;
+        Token char_literal404=null;
+        Token char_literal405=null;
+        Token char_literal407=null;
+        Token char_literal408=null;
         Token char_literal410=null;
+        Token char_literal411=null;
         Token char_literal412=null;
-        Token char_literal413=null;
-        Token char_literal414=null;
-        Token char_literal416=null;
-        Token char_literal417=null;
-        Token char_literal418=null;
-        Token char_literal420=null;
-        Token char_literal421=null;
-        Token char_literal422=null;
-        Token char_literal423=null;
         JavaParser.conditionalExpression_return conditionalExpression388 = null;
 
         JavaParser.expression_return expression390 = null;
 
-        JavaParser.expression_return expression393 = null;
+        JavaParser.expression_return expression392 = null;
+
+        JavaParser.expression_return expression394 = null;
 
         JavaParser.expression_return expression396 = null;
 
+        JavaParser.expression_return expression398 = null;
+
         JavaParser.expression_return expression399 = null;
 
-        JavaParser.expression_return expression402 = null;
+        JavaParser.expression_return expression400 = null;
 
-        JavaParser.expression_return expression404 = null;
+        JavaParser.expression_return expression401 = null;
+
+        JavaParser.expression_return expression403 = null;
 
         JavaParser.expression_return expression406 = null;
 
-        JavaParser.expression_return expression408 = null;
+        JavaParser.expression_return expression409 = null;
 
-        JavaParser.expression_return expression411 = null;
-
-        JavaParser.expression_return expression415 = null;
-
-        JavaParser.expression_return expression419 = null;
-
-        JavaParser.expression_return expression424 = null;
+        JavaParser.expression_return expression413 = null;
 
 
+        Object lc_tree=null;
         Object char_literal389_tree=null;
         Object char_literal391_tree=null;
-        Object char_literal392_tree=null;
-        Object char_literal394_tree=null;
+        Object char_literal393_tree=null;
         Object char_literal395_tree=null;
         Object char_literal397_tree=null;
-        Object char_literal398_tree=null;
-        Object char_literal400_tree=null;
-        Object char_literal401_tree=null;
-        Object string_literal403_tree=null;
-        Object string_literal405_tree=null;
-        Object string_literal407_tree=null;
-        Object char_literal409_tree=null;
+        Object char_literal402_tree=null;
+        Object char_literal404_tree=null;
+        Object char_literal405_tree=null;
+        Object char_literal407_tree=null;
+        Object char_literal408_tree=null;
         Object char_literal410_tree=null;
+        Object char_literal411_tree=null;
         Object char_literal412_tree=null;
-        Object char_literal413_tree=null;
-        Object char_literal414_tree=null;
-        Object char_literal416_tree=null;
-        Object char_literal417_tree=null;
-        Object char_literal418_tree=null;
-        Object char_literal420_tree=null;
-        Object char_literal421_tree=null;
-        Object char_literal422_tree=null;
-        Object char_literal423_tree=null;
-        RewriteRuleTokenStream stream_125=new RewriteRuleTokenStream(adaptor,"token 125");
         RewriteRuleTokenStream stream_185=new RewriteRuleTokenStream(adaptor,"token 185");
-        RewriteRuleTokenStream stream_186=new RewriteRuleTokenStream(adaptor,"token 186");
         RewriteRuleTokenStream stream_188=new RewriteRuleTokenStream(adaptor,"token 188");
-        RewriteRuleTokenStream stream_187=new RewriteRuleTokenStream(adaptor,"token 187");
-        RewriteRuleTokenStream stream_189=new RewriteRuleTokenStream(adaptor,"token 189");
-        RewriteRuleTokenStream stream_191=new RewriteRuleTokenStream(adaptor,"token 191");
         RewriteRuleTokenStream stream_131=new RewriteRuleTokenStream(adaptor,"token 131");
         RewriteRuleTokenStream stream_129=new RewriteRuleTokenStream(adaptor,"token 129");
-        RewriteRuleTokenStream stream_140=new RewriteRuleTokenStream(adaptor,"token 140");
+        RewriteRuleTokenStream stream_125=new RewriteRuleTokenStream(adaptor,"token 125");
+        RewriteRuleTokenStream stream_187=new RewriteRuleTokenStream(adaptor,"token 187");
+        RewriteRuleTokenStream stream_186=new RewriteRuleTokenStream(adaptor,"token 186");
+        RewriteRuleTokenStream stream_189=new RewriteRuleTokenStream(adaptor,"token 189");
         RewriteRuleTokenStream stream_190=new RewriteRuleTokenStream(adaptor,"token 190");
+        RewriteRuleTokenStream stream_191=new RewriteRuleTokenStream(adaptor,"token 191");
+        RewriteRuleTokenStream stream_140=new RewriteRuleTokenStream(adaptor,"token 140");
         RewriteRuleSubtreeStream stream_expression=new RewriteRuleSubtreeStream(adaptor,"rule expression");
         RewriteRuleSubtreeStream stream_conditionalExpression=new RewriteRuleSubtreeStream(adaptor,"rule conditionalExpression");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 92) ) { return retval; }
-            // jkit/java/parser/Java.g:722:2: ( conditionalExpression ( '=' expression -> ^( ASSIGN conditionalExpression expression ) | '+' '=' expression -> ^( ASSIGNOP ADD conditionalExpression expression ) | '-' '=' expression -> ^( ASSIGNOP SUB conditionalExpression expression ) | '*' '=' expression -> ^( ASSIGNOP MUL conditionalExpression expression ) | '/' '=' expression -> ^( ASSIGNOP DIV conditionalExpression expression ) | '&=' expression -> ^( ASSIGNOP AND conditionalExpression expression ) | '|=' expression -> ^( ASSIGNOP OR conditionalExpression expression ) | '^=' expression -> ^( ASSIGNOP XOR conditionalExpression expression ) | '%' '=' expression -> ^( ASSIGNOP MOD conditionalExpression expression ) | '<' '<' '=' expression -> ^( ASSIGNOP SHL conditionalExpression expression ) | '>' '>' '=' expression -> ^( ASSIGNOP SHR conditionalExpression expression ) | '>' '>' '>' '=' expression -> ^( ASSIGNOP USHR conditionalExpression expression ) | -> conditionalExpression ) )
-            // jkit/java/parser/Java.g:722:4: conditionalExpression ( '=' expression -> ^( ASSIGN conditionalExpression expression ) | '+' '=' expression -> ^( ASSIGNOP ADD conditionalExpression expression ) | '-' '=' expression -> ^( ASSIGNOP SUB conditionalExpression expression ) | '*' '=' expression -> ^( ASSIGNOP MUL conditionalExpression expression ) | '/' '=' expression -> ^( ASSIGNOP DIV conditionalExpression expression ) | '&=' expression -> ^( ASSIGNOP AND conditionalExpression expression ) | '|=' expression -> ^( ASSIGNOP OR conditionalExpression expression ) | '^=' expression -> ^( ASSIGNOP XOR conditionalExpression expression ) | '%' '=' expression -> ^( ASSIGNOP MOD conditionalExpression expression ) | '<' '<' '=' expression -> ^( ASSIGNOP SHL conditionalExpression expression ) | '>' '>' '=' expression -> ^( ASSIGNOP SHR conditionalExpression expression ) | '>' '>' '>' '=' expression -> ^( ASSIGNOP USHR conditionalExpression expression ) | -> conditionalExpression )
+            // jkit/java/parser/Java.g:722:2: ( conditionalExpression ( '=' expression -> ^( ASSIGN conditionalExpression expression ) | lc= '+' '=' expression -> ^( ASSIGNOP[$lc] ADD conditionalExpression expression ) | lc= '-' '=' expression -> ^( ASSIGNOP[$lc] SUB conditionalExpression expression ) | lc= '*' '=' expression -> ^( ASSIGNOP[$lc] MUL conditionalExpression expression ) | lc= '/' '=' expression -> ^( ASSIGNOP[$lc] DIV conditionalExpression expression ) | lc= '&=' expression -> ^( ASSIGNOP[$lc] AND conditionalExpression expression ) | lc= '|=' expression -> ^( ASSIGNOP[$lc] OR conditionalExpression expression ) | lc= '^=' expression -> ^( ASSIGNOP[$lc] XOR conditionalExpression expression ) | lc= '%' '=' expression -> ^( ASSIGNOP[$lc] MOD conditionalExpression expression ) | lc= '<' '<' '=' expression -> ^( ASSIGNOP[$lc] SHL conditionalExpression expression ) | lc= '>' '>' '=' expression -> ^( ASSIGNOP[$lc] SHR conditionalExpression expression ) | lc= '>' '>' '>' '=' expression -> ^( ASSIGNOP[$lc] USHR conditionalExpression expression ) | -> conditionalExpression ) )
+            // jkit/java/parser/Java.g:722:4: conditionalExpression ( '=' expression -> ^( ASSIGN conditionalExpression expression ) | lc= '+' '=' expression -> ^( ASSIGNOP[$lc] ADD conditionalExpression expression ) | lc= '-' '=' expression -> ^( ASSIGNOP[$lc] SUB conditionalExpression expression ) | lc= '*' '=' expression -> ^( ASSIGNOP[$lc] MUL conditionalExpression expression ) | lc= '/' '=' expression -> ^( ASSIGNOP[$lc] DIV conditionalExpression expression ) | lc= '&=' expression -> ^( ASSIGNOP[$lc] AND conditionalExpression expression ) | lc= '|=' expression -> ^( ASSIGNOP[$lc] OR conditionalExpression expression ) | lc= '^=' expression -> ^( ASSIGNOP[$lc] XOR conditionalExpression expression ) | lc= '%' '=' expression -> ^( ASSIGNOP[$lc] MOD conditionalExpression expression ) | lc= '<' '<' '=' expression -> ^( ASSIGNOP[$lc] SHL conditionalExpression expression ) | lc= '>' '>' '=' expression -> ^( ASSIGNOP[$lc] SHR conditionalExpression expression ) | lc= '>' '>' '>' '=' expression -> ^( ASSIGNOP[$lc] USHR conditionalExpression expression ) | -> conditionalExpression )
             {
             pushFollow(FOLLOW_conditionalExpression_in_expression4916);
             conditionalExpression388=conditionalExpression();
@@ -14504,7 +14484,7 @@ public class JavaParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_conditionalExpression.add(conditionalExpression388.getTree());
-            // jkit/java/parser/Java.g:723:3: ( '=' expression -> ^( ASSIGN conditionalExpression expression ) | '+' '=' expression -> ^( ASSIGNOP ADD conditionalExpression expression ) | '-' '=' expression -> ^( ASSIGNOP SUB conditionalExpression expression ) | '*' '=' expression -> ^( ASSIGNOP MUL conditionalExpression expression ) | '/' '=' expression -> ^( ASSIGNOP DIV conditionalExpression expression ) | '&=' expression -> ^( ASSIGNOP AND conditionalExpression expression ) | '|=' expression -> ^( ASSIGNOP OR conditionalExpression expression ) | '^=' expression -> ^( ASSIGNOP XOR conditionalExpression expression ) | '%' '=' expression -> ^( ASSIGNOP MOD conditionalExpression expression ) | '<' '<' '=' expression -> ^( ASSIGNOP SHL conditionalExpression expression ) | '>' '>' '=' expression -> ^( ASSIGNOP SHR conditionalExpression expression ) | '>' '>' '>' '=' expression -> ^( ASSIGNOP USHR conditionalExpression expression ) | -> conditionalExpression )
+            // jkit/java/parser/Java.g:723:3: ( '=' expression -> ^( ASSIGN conditionalExpression expression ) | lc= '+' '=' expression -> ^( ASSIGNOP[$lc] ADD conditionalExpression expression ) | lc= '-' '=' expression -> ^( ASSIGNOP[$lc] SUB conditionalExpression expression ) | lc= '*' '=' expression -> ^( ASSIGNOP[$lc] MUL conditionalExpression expression ) | lc= '/' '=' expression -> ^( ASSIGNOP[$lc] DIV conditionalExpression expression ) | lc= '&=' expression -> ^( ASSIGNOP[$lc] AND conditionalExpression expression ) | lc= '|=' expression -> ^( ASSIGNOP[$lc] OR conditionalExpression expression ) | lc= '^=' expression -> ^( ASSIGNOP[$lc] XOR conditionalExpression expression ) | lc= '%' '=' expression -> ^( ASSIGNOP[$lc] MOD conditionalExpression expression ) | lc= '<' '<' '=' expression -> ^( ASSIGNOP[$lc] SHL conditionalExpression expression ) | lc= '>' '>' '=' expression -> ^( ASSIGNOP[$lc] SHR conditionalExpression expression ) | lc= '>' '>' '>' '=' expression -> ^( ASSIGNOP[$lc] USHR conditionalExpression expression ) | -> conditionalExpression )
             int alt124=13;
             alt124 = dfa124.predict(input);
             switch (alt124) {
@@ -14552,20 +14532,20 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // jkit/java/parser/Java.g:725:6: '+' '=' expression
+                    // jkit/java/parser/Java.g:725:6: lc= '+' '=' expression
                     {
-                    char_literal391=(Token)match(input,185,FOLLOW_185_in_expression4945); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_185.add(char_literal391);
+                    lc=(Token)match(input,185,FOLLOW_185_in_expression4947); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_185.add(lc);
 
-                    char_literal392=(Token)match(input,140,FOLLOW_140_in_expression4947); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_140.add(char_literal392);
+                    char_literal391=(Token)match(input,140,FOLLOW_140_in_expression4949); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_140.add(char_literal391);
 
-                    pushFollow(FOLLOW_expression_in_expression4949);
-                    expression393=expression();
+                    pushFollow(FOLLOW_expression_in_expression4951);
+                    expression392=expression();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_expression.add(expression393.getTree());
+                    if ( state.backtracking==0 ) stream_expression.add(expression392.getTree());
 
 
                     // AST REWRITE
@@ -14579,12 +14559,12 @@ public class JavaParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
                     root_0 = (Object)adaptor.nil();
-                    // 725:25: -> ^( ASSIGNOP ADD conditionalExpression expression )
+                    // 725:28: -> ^( ASSIGNOP[$lc] ADD conditionalExpression expression )
                     {
-                        // jkit/java/parser/Java.g:725:28: ^( ASSIGNOP ADD conditionalExpression expression )
+                        // jkit/java/parser/Java.g:725:31: ^( ASSIGNOP[$lc] ADD conditionalExpression expression )
                         {
                         Object root_1 = (Object)adaptor.nil();
-                        root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSIGNOP, "ASSIGNOP"), root_1);
+                        root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSIGNOP, lc), root_1);
 
                         adaptor.addChild(root_1, (Object)adaptor.create(ADD, "ADD"));
                         adaptor.addChild(root_1, stream_conditionalExpression.nextTree());
@@ -14599,20 +14579,20 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // jkit/java/parser/Java.g:726:6: '-' '=' expression
+                    // jkit/java/parser/Java.g:726:6: lc= '-' '=' expression
                     {
-                    char_literal394=(Token)match(input,186,FOLLOW_186_in_expression4968); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_186.add(char_literal394);
+                    lc=(Token)match(input,186,FOLLOW_186_in_expression4973); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_186.add(lc);
 
-                    char_literal395=(Token)match(input,140,FOLLOW_140_in_expression4970); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_140.add(char_literal395);
+                    char_literal393=(Token)match(input,140,FOLLOW_140_in_expression4975); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_140.add(char_literal393);
 
-                    pushFollow(FOLLOW_expression_in_expression4972);
-                    expression396=expression();
+                    pushFollow(FOLLOW_expression_in_expression4977);
+                    expression394=expression();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_expression.add(expression396.getTree());
+                    if ( state.backtracking==0 ) stream_expression.add(expression394.getTree());
 
 
                     // AST REWRITE
@@ -14626,12 +14606,12 @@ public class JavaParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
                     root_0 = (Object)adaptor.nil();
-                    // 726:25: -> ^( ASSIGNOP SUB conditionalExpression expression )
+                    // 726:28: -> ^( ASSIGNOP[$lc] SUB conditionalExpression expression )
                     {
-                        // jkit/java/parser/Java.g:726:28: ^( ASSIGNOP SUB conditionalExpression expression )
+                        // jkit/java/parser/Java.g:726:31: ^( ASSIGNOP[$lc] SUB conditionalExpression expression )
                         {
                         Object root_1 = (Object)adaptor.nil();
-                        root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSIGNOP, "ASSIGNOP"), root_1);
+                        root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSIGNOP, lc), root_1);
 
                         adaptor.addChild(root_1, (Object)adaptor.create(SUB, "SUB"));
                         adaptor.addChild(root_1, stream_conditionalExpression.nextTree());
@@ -14646,15 +14626,106 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // jkit/java/parser/Java.g:727:6: '*' '=' expression
+                    // jkit/java/parser/Java.g:727:6: lc= '*' '=' expression
                     {
-                    char_literal397=(Token)match(input,125,FOLLOW_125_in_expression4991); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_125.add(char_literal397);
+                    lc=(Token)match(input,125,FOLLOW_125_in_expression4999); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_125.add(lc);
 
-                    char_literal398=(Token)match(input,140,FOLLOW_140_in_expression4993); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_140.add(char_literal398);
+                    char_literal395=(Token)match(input,140,FOLLOW_140_in_expression5001); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_140.add(char_literal395);
 
-                    pushFollow(FOLLOW_expression_in_expression4995);
+                    pushFollow(FOLLOW_expression_in_expression5003);
+                    expression396=expression();
+
+                    state._fsp--;
+                    if (state.failed) return retval;
+                    if ( state.backtracking==0 ) stream_expression.add(expression396.getTree());
+
+
+                    // AST REWRITE
+                    // elements: conditionalExpression, expression
+                    // token labels: 
+                    // rule labels: retval
+                    // token list labels: 
+                    // rule list labels: 
+                    if ( state.backtracking==0 ) {
+                    retval.tree = root_0;
+                    RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
+
+                    root_0 = (Object)adaptor.nil();
+                    // 727:28: -> ^( ASSIGNOP[$lc] MUL conditionalExpression expression )
+                    {
+                        // jkit/java/parser/Java.g:727:31: ^( ASSIGNOP[$lc] MUL conditionalExpression expression )
+                        {
+                        Object root_1 = (Object)adaptor.nil();
+                        root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSIGNOP, lc), root_1);
+
+                        adaptor.addChild(root_1, (Object)adaptor.create(MUL, "MUL"));
+                        adaptor.addChild(root_1, stream_conditionalExpression.nextTree());
+                        adaptor.addChild(root_1, stream_expression.nextTree());
+
+                        adaptor.addChild(root_0, root_1);
+                        }
+
+                    }
+
+                    retval.tree = root_0;}
+                    }
+                    break;
+                case 5 :
+                    // jkit/java/parser/Java.g:728:6: lc= '/' '=' expression
+                    {
+                    lc=(Token)match(input,187,FOLLOW_187_in_expression5025); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_187.add(lc);
+
+                    char_literal397=(Token)match(input,140,FOLLOW_140_in_expression5027); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_140.add(char_literal397);
+
+                    pushFollow(FOLLOW_expression_in_expression5029);
+                    expression398=expression();
+
+                    state._fsp--;
+                    if (state.failed) return retval;
+                    if ( state.backtracking==0 ) stream_expression.add(expression398.getTree());
+
+
+                    // AST REWRITE
+                    // elements: expression, conditionalExpression
+                    // token labels: 
+                    // rule labels: retval
+                    // token list labels: 
+                    // rule list labels: 
+                    if ( state.backtracking==0 ) {
+                    retval.tree = root_0;
+                    RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
+
+                    root_0 = (Object)adaptor.nil();
+                    // 728:28: -> ^( ASSIGNOP[$lc] DIV conditionalExpression expression )
+                    {
+                        // jkit/java/parser/Java.g:728:31: ^( ASSIGNOP[$lc] DIV conditionalExpression expression )
+                        {
+                        Object root_1 = (Object)adaptor.nil();
+                        root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSIGNOP, lc), root_1);
+
+                        adaptor.addChild(root_1, (Object)adaptor.create(DIV, "DIV"));
+                        adaptor.addChild(root_1, stream_conditionalExpression.nextTree());
+                        adaptor.addChild(root_1, stream_expression.nextTree());
+
+                        adaptor.addChild(root_0, root_1);
+                        }
+
+                    }
+
+                    retval.tree = root_0;}
+                    }
+                    break;
+                case 6 :
+                    // jkit/java/parser/Java.g:729:6: lc= '&=' expression
+                    {
+                    lc=(Token)match(input,188,FOLLOW_188_in_expression5054); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_188.add(lc);
+
+                    pushFollow(FOLLOW_expression_in_expression5056);
                     expression399=expression();
 
                     state._fsp--;
@@ -14673,103 +14744,12 @@ public class JavaParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
                     root_0 = (Object)adaptor.nil();
-                    // 727:25: -> ^( ASSIGNOP MUL conditionalExpression expression )
+                    // 729:25: -> ^( ASSIGNOP[$lc] AND conditionalExpression expression )
                     {
-                        // jkit/java/parser/Java.g:727:28: ^( ASSIGNOP MUL conditionalExpression expression )
+                        // jkit/java/parser/Java.g:729:28: ^( ASSIGNOP[$lc] AND conditionalExpression expression )
                         {
                         Object root_1 = (Object)adaptor.nil();
-                        root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSIGNOP, "ASSIGNOP"), root_1);
-
-                        adaptor.addChild(root_1, (Object)adaptor.create(MUL, "MUL"));
-                        adaptor.addChild(root_1, stream_conditionalExpression.nextTree());
-                        adaptor.addChild(root_1, stream_expression.nextTree());
-
-                        adaptor.addChild(root_0, root_1);
-                        }
-
-                    }
-
-                    retval.tree = root_0;}
-                    }
-                    break;
-                case 5 :
-                    // jkit/java/parser/Java.g:728:6: '/' '=' expression
-                    {
-                    char_literal400=(Token)match(input,187,FOLLOW_187_in_expression5014); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_187.add(char_literal400);
-
-                    char_literal401=(Token)match(input,140,FOLLOW_140_in_expression5016); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_140.add(char_literal401);
-
-                    pushFollow(FOLLOW_expression_in_expression5018);
-                    expression402=expression();
-
-                    state._fsp--;
-                    if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_expression.add(expression402.getTree());
-
-
-                    // AST REWRITE
-                    // elements: conditionalExpression, expression
-                    // token labels: 
-                    // rule labels: retval
-                    // token list labels: 
-                    // rule list labels: 
-                    if ( state.backtracking==0 ) {
-                    retval.tree = root_0;
-                    RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
-
-                    root_0 = (Object)adaptor.nil();
-                    // 728:25: -> ^( ASSIGNOP DIV conditionalExpression expression )
-                    {
-                        // jkit/java/parser/Java.g:728:28: ^( ASSIGNOP DIV conditionalExpression expression )
-                        {
-                        Object root_1 = (Object)adaptor.nil();
-                        root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSIGNOP, "ASSIGNOP"), root_1);
-
-                        adaptor.addChild(root_1, (Object)adaptor.create(DIV, "DIV"));
-                        adaptor.addChild(root_1, stream_conditionalExpression.nextTree());
-                        adaptor.addChild(root_1, stream_expression.nextTree());
-
-                        adaptor.addChild(root_0, root_1);
-                        }
-
-                    }
-
-                    retval.tree = root_0;}
-                    }
-                    break;
-                case 6 :
-                    // jkit/java/parser/Java.g:729:6: '&=' expression
-                    {
-                    string_literal403=(Token)match(input,188,FOLLOW_188_in_expression5040); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_188.add(string_literal403);
-
-                    pushFollow(FOLLOW_expression_in_expression5042);
-                    expression404=expression();
-
-                    state._fsp--;
-                    if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_expression.add(expression404.getTree());
-
-
-                    // AST REWRITE
-                    // elements: expression, conditionalExpression
-                    // token labels: 
-                    // rule labels: retval
-                    // token list labels: 
-                    // rule list labels: 
-                    if ( state.backtracking==0 ) {
-                    retval.tree = root_0;
-                    RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
-
-                    root_0 = (Object)adaptor.nil();
-                    // 729:22: -> ^( ASSIGNOP AND conditionalExpression expression )
-                    {
-                        // jkit/java/parser/Java.g:729:25: ^( ASSIGNOP AND conditionalExpression expression )
-                        {
-                        Object root_1 = (Object)adaptor.nil();
-                        root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSIGNOP, "ASSIGNOP"), root_1);
+                        root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSIGNOP, lc), root_1);
 
                         adaptor.addChild(root_1, (Object)adaptor.create(AND, "AND"));
                         adaptor.addChild(root_1, stream_conditionalExpression.nextTree());
@@ -14784,21 +14764,21 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 7 :
-                    // jkit/java/parser/Java.g:730:6: '|=' expression
+                    // jkit/java/parser/Java.g:730:6: lc= '|=' expression
                     {
-                    string_literal405=(Token)match(input,189,FOLLOW_189_in_expression5061); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_189.add(string_literal405);
+                    lc=(Token)match(input,189,FOLLOW_189_in_expression5078); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_189.add(lc);
 
-                    pushFollow(FOLLOW_expression_in_expression5063);
-                    expression406=expression();
+                    pushFollow(FOLLOW_expression_in_expression5080);
+                    expression400=expression();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_expression.add(expression406.getTree());
+                    if ( state.backtracking==0 ) stream_expression.add(expression400.getTree());
 
 
                     // AST REWRITE
-                    // elements: expression, conditionalExpression
+                    // elements: conditionalExpression, expression
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -14808,12 +14788,12 @@ public class JavaParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
                     root_0 = (Object)adaptor.nil();
-                    // 730:22: -> ^( ASSIGNOP OR conditionalExpression expression )
+                    // 730:25: -> ^( ASSIGNOP[$lc] OR conditionalExpression expression )
                     {
-                        // jkit/java/parser/Java.g:730:25: ^( ASSIGNOP OR conditionalExpression expression )
+                        // jkit/java/parser/Java.g:730:28: ^( ASSIGNOP[$lc] OR conditionalExpression expression )
                         {
                         Object root_1 = (Object)adaptor.nil();
-                        root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSIGNOP, "ASSIGNOP"), root_1);
+                        root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSIGNOP, lc), root_1);
 
                         adaptor.addChild(root_1, (Object)adaptor.create(OR, "OR"));
                         adaptor.addChild(root_1, stream_conditionalExpression.nextTree());
@@ -14828,17 +14808,17 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 8 :
-                    // jkit/java/parser/Java.g:731:6: '^=' expression
+                    // jkit/java/parser/Java.g:731:6: lc= '^=' expression
                     {
-                    string_literal407=(Token)match(input,190,FOLLOW_190_in_expression5082); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_190.add(string_literal407);
+                    lc=(Token)match(input,190,FOLLOW_190_in_expression5102); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_190.add(lc);
 
-                    pushFollow(FOLLOW_expression_in_expression5084);
-                    expression408=expression();
+                    pushFollow(FOLLOW_expression_in_expression5104);
+                    expression401=expression();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_expression.add(expression408.getTree());
+                    if ( state.backtracking==0 ) stream_expression.add(expression401.getTree());
 
 
                     // AST REWRITE
@@ -14852,12 +14832,12 @@ public class JavaParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
                     root_0 = (Object)adaptor.nil();
-                    // 731:22: -> ^( ASSIGNOP XOR conditionalExpression expression )
+                    // 731:25: -> ^( ASSIGNOP[$lc] XOR conditionalExpression expression )
                     {
-                        // jkit/java/parser/Java.g:731:25: ^( ASSIGNOP XOR conditionalExpression expression )
+                        // jkit/java/parser/Java.g:731:28: ^( ASSIGNOP[$lc] XOR conditionalExpression expression )
                         {
                         Object root_1 = (Object)adaptor.nil();
-                        root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSIGNOP, "ASSIGNOP"), root_1);
+                        root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSIGNOP, lc), root_1);
 
                         adaptor.addChild(root_1, (Object)adaptor.create(XOR, "XOR"));
                         adaptor.addChild(root_1, stream_conditionalExpression.nextTree());
@@ -14872,20 +14852,20 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 9 :
-                    // jkit/java/parser/Java.g:732:6: '%' '=' expression
+                    // jkit/java/parser/Java.g:732:6: lc= '%' '=' expression
                     {
-                    char_literal409=(Token)match(input,191,FOLLOW_191_in_expression5106); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_191.add(char_literal409);
+                    lc=(Token)match(input,191,FOLLOW_191_in_expression5129); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_191.add(lc);
 
-                    char_literal410=(Token)match(input,140,FOLLOW_140_in_expression5108); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_140.add(char_literal410);
+                    char_literal402=(Token)match(input,140,FOLLOW_140_in_expression5131); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_140.add(char_literal402);
 
-                    pushFollow(FOLLOW_expression_in_expression5110);
-                    expression411=expression();
+                    pushFollow(FOLLOW_expression_in_expression5133);
+                    expression403=expression();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_expression.add(expression411.getTree());
+                    if ( state.backtracking==0 ) stream_expression.add(expression403.getTree());
 
 
                     // AST REWRITE
@@ -14899,12 +14879,12 @@ public class JavaParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
                     root_0 = (Object)adaptor.nil();
-                    // 732:25: -> ^( ASSIGNOP MOD conditionalExpression expression )
+                    // 732:28: -> ^( ASSIGNOP[$lc] MOD conditionalExpression expression )
                     {
-                        // jkit/java/parser/Java.g:732:28: ^( ASSIGNOP MOD conditionalExpression expression )
+                        // jkit/java/parser/Java.g:732:31: ^( ASSIGNOP[$lc] MOD conditionalExpression expression )
                         {
                         Object root_1 = (Object)adaptor.nil();
-                        root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSIGNOP, "ASSIGNOP"), root_1);
+                        root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSIGNOP, lc), root_1);
 
                         adaptor.addChild(root_1, (Object)adaptor.create(MOD, "MOD"));
                         adaptor.addChild(root_1, stream_conditionalExpression.nextTree());
@@ -14919,23 +14899,23 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 10 :
-                    // jkit/java/parser/Java.g:733:6: '<' '<' '=' expression
+                    // jkit/java/parser/Java.g:733:6: lc= '<' '<' '=' expression
                     {
-                    char_literal412=(Token)match(input,129,FOLLOW_129_in_expression5129); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_129.add(char_literal412);
+                    lc=(Token)match(input,129,FOLLOW_129_in_expression5155); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_129.add(lc);
 
-                    char_literal413=(Token)match(input,129,FOLLOW_129_in_expression5131); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_129.add(char_literal413);
+                    char_literal404=(Token)match(input,129,FOLLOW_129_in_expression5157); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_129.add(char_literal404);
 
-                    char_literal414=(Token)match(input,140,FOLLOW_140_in_expression5133); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_140.add(char_literal414);
+                    char_literal405=(Token)match(input,140,FOLLOW_140_in_expression5159); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_140.add(char_literal405);
 
-                    pushFollow(FOLLOW_expression_in_expression5135);
-                    expression415=expression();
+                    pushFollow(FOLLOW_expression_in_expression5161);
+                    expression406=expression();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_expression.add(expression415.getTree());
+                    if ( state.backtracking==0 ) stream_expression.add(expression406.getTree());
 
 
                     // AST REWRITE
@@ -14949,12 +14929,12 @@ public class JavaParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
                     root_0 = (Object)adaptor.nil();
-                    // 733:29: -> ^( ASSIGNOP SHL conditionalExpression expression )
+                    // 733:32: -> ^( ASSIGNOP[$lc] SHL conditionalExpression expression )
                     {
-                        // jkit/java/parser/Java.g:733:32: ^( ASSIGNOP SHL conditionalExpression expression )
+                        // jkit/java/parser/Java.g:733:35: ^( ASSIGNOP[$lc] SHL conditionalExpression expression )
                         {
                         Object root_1 = (Object)adaptor.nil();
-                        root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSIGNOP, "ASSIGNOP"), root_1);
+                        root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSIGNOP, lc), root_1);
 
                         adaptor.addChild(root_1, (Object)adaptor.create(SHL, "SHL"));
                         adaptor.addChild(root_1, stream_conditionalExpression.nextTree());
@@ -14969,27 +14949,27 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 11 :
-                    // jkit/java/parser/Java.g:734:6: '>' '>' '=' expression
+                    // jkit/java/parser/Java.g:734:6: lc= '>' '>' '=' expression
                     {
-                    char_literal416=(Token)match(input,131,FOLLOW_131_in_expression5154); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_131.add(char_literal416);
+                    lc=(Token)match(input,131,FOLLOW_131_in_expression5183); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_131.add(lc);
 
-                    char_literal417=(Token)match(input,131,FOLLOW_131_in_expression5156); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_131.add(char_literal417);
+                    char_literal407=(Token)match(input,131,FOLLOW_131_in_expression5185); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_131.add(char_literal407);
 
-                    char_literal418=(Token)match(input,140,FOLLOW_140_in_expression5158); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_140.add(char_literal418);
+                    char_literal408=(Token)match(input,140,FOLLOW_140_in_expression5187); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_140.add(char_literal408);
 
-                    pushFollow(FOLLOW_expression_in_expression5160);
-                    expression419=expression();
+                    pushFollow(FOLLOW_expression_in_expression5189);
+                    expression409=expression();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_expression.add(expression419.getTree());
+                    if ( state.backtracking==0 ) stream_expression.add(expression409.getTree());
 
 
                     // AST REWRITE
-                    // elements: expression, conditionalExpression
+                    // elements: conditionalExpression, expression
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -14999,12 +14979,12 @@ public class JavaParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
                     root_0 = (Object)adaptor.nil();
-                    // 734:29: -> ^( ASSIGNOP SHR conditionalExpression expression )
+                    // 734:32: -> ^( ASSIGNOP[$lc] SHR conditionalExpression expression )
                     {
-                        // jkit/java/parser/Java.g:734:32: ^( ASSIGNOP SHR conditionalExpression expression )
+                        // jkit/java/parser/Java.g:734:35: ^( ASSIGNOP[$lc] SHR conditionalExpression expression )
                         {
                         Object root_1 = (Object)adaptor.nil();
-                        root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSIGNOP, "ASSIGNOP"), root_1);
+                        root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSIGNOP, lc), root_1);
 
                         adaptor.addChild(root_1, (Object)adaptor.create(SHR, "SHR"));
                         adaptor.addChild(root_1, stream_conditionalExpression.nextTree());
@@ -15019,30 +14999,30 @@ public class JavaParser extends Parser {
                     }
                     break;
                 case 12 :
-                    // jkit/java/parser/Java.g:735:6: '>' '>' '>' '=' expression
+                    // jkit/java/parser/Java.g:735:6: lc= '>' '>' '>' '=' expression
                     {
-                    char_literal420=(Token)match(input,131,FOLLOW_131_in_expression5179); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_131.add(char_literal420);
+                    lc=(Token)match(input,131,FOLLOW_131_in_expression5211); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_131.add(lc);
 
-                    char_literal421=(Token)match(input,131,FOLLOW_131_in_expression5181); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_131.add(char_literal421);
+                    char_literal410=(Token)match(input,131,FOLLOW_131_in_expression5213); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_131.add(char_literal410);
 
-                    char_literal422=(Token)match(input,131,FOLLOW_131_in_expression5183); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_131.add(char_literal422);
+                    char_literal411=(Token)match(input,131,FOLLOW_131_in_expression5215); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_131.add(char_literal411);
 
-                    char_literal423=(Token)match(input,140,FOLLOW_140_in_expression5185); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_140.add(char_literal423);
+                    char_literal412=(Token)match(input,140,FOLLOW_140_in_expression5217); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_140.add(char_literal412);
 
-                    pushFollow(FOLLOW_expression_in_expression5187);
-                    expression424=expression();
+                    pushFollow(FOLLOW_expression_in_expression5219);
+                    expression413=expression();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_expression.add(expression424.getTree());
+                    if ( state.backtracking==0 ) stream_expression.add(expression413.getTree());
 
 
                     // AST REWRITE
-                    // elements: expression, conditionalExpression
+                    // elements: conditionalExpression, expression
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -15052,12 +15032,12 @@ public class JavaParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"token retval",retval!=null?retval.tree:null);
 
                     root_0 = (Object)adaptor.nil();
-                    // 735:33: -> ^( ASSIGNOP USHR conditionalExpression expression )
+                    // 735:36: -> ^( ASSIGNOP[$lc] USHR conditionalExpression expression )
                     {
-                        // jkit/java/parser/Java.g:735:36: ^( ASSIGNOP USHR conditionalExpression expression )
+                        // jkit/java/parser/Java.g:735:39: ^( ASSIGNOP[$lc] USHR conditionalExpression expression )
                         {
                         Object root_1 = (Object)adaptor.nil();
-                        root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSIGNOP, "ASSIGNOP"), root_1);
+                        root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ASSIGNOP, lc), root_1);
 
                         adaptor.addChild(root_1, (Object)adaptor.create(USHR, "USHR"));
                         adaptor.addChild(root_1, stream_conditionalExpression.nextTree());
@@ -15133,32 +15113,32 @@ public class JavaParser extends Parser {
         int conditionalExpression_StartIndex = input.index();
         Object root_0 = null;
 
-        Token char_literal426=null;
-        Token char_literal428=null;
-        JavaParser.conditionalOrExpression_return conditionalOrExpression425 = null;
+        Token char_literal415=null;
+        Token char_literal417=null;
+        JavaParser.conditionalOrExpression_return conditionalOrExpression414 = null;
 
-        JavaParser.expression_return expression427 = null;
+        JavaParser.expression_return expression416 = null;
 
-        JavaParser.expression_return expression429 = null;
+        JavaParser.expression_return expression418 = null;
 
 
-        Object char_literal426_tree=null;
-        Object char_literal428_tree=null;
-        RewriteRuleTokenStream stream_170=new RewriteRuleTokenStream(adaptor,"token 170");
+        Object char_literal415_tree=null;
+        Object char_literal417_tree=null;
         RewriteRuleTokenStream stream_159=new RewriteRuleTokenStream(adaptor,"token 159");
-        RewriteRuleSubtreeStream stream_expression=new RewriteRuleSubtreeStream(adaptor,"rule expression");
+        RewriteRuleTokenStream stream_170=new RewriteRuleTokenStream(adaptor,"token 170");
         RewriteRuleSubtreeStream stream_conditionalOrExpression=new RewriteRuleSubtreeStream(adaptor,"rule conditionalOrExpression");
+        RewriteRuleSubtreeStream stream_expression=new RewriteRuleSubtreeStream(adaptor,"rule expression");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 93) ) { return retval; }
             // jkit/java/parser/Java.g:741:5: ( conditionalOrExpression ( '?' expression ':' expression -> ^( CONDEXPR conditionalOrExpression expression expression ) | -> conditionalOrExpression ) )
             // jkit/java/parser/Java.g:741:9: conditionalOrExpression ( '?' expression ':' expression -> ^( CONDEXPR conditionalOrExpression expression expression ) | -> conditionalOrExpression )
             {
-            pushFollow(FOLLOW_conditionalOrExpression_in_conditionalExpression5230);
-            conditionalOrExpression425=conditionalOrExpression();
+            pushFollow(FOLLOW_conditionalOrExpression_in_conditionalExpression5263);
+            conditionalOrExpression414=conditionalOrExpression();
 
             state._fsp--;
             if (state.failed) return retval;
-            if ( state.backtracking==0 ) stream_conditionalOrExpression.add(conditionalOrExpression425.getTree());
+            if ( state.backtracking==0 ) stream_conditionalOrExpression.add(conditionalOrExpression414.getTree());
             // jkit/java/parser/Java.g:742:6: ( '?' expression ':' expression -> ^( CONDEXPR conditionalOrExpression expression expression ) | -> conditionalOrExpression )
             int alt125=2;
             alt125 = dfa125.predict(input);
@@ -15166,28 +15146,28 @@ public class JavaParser extends Parser {
                 case 1 :
                     // jkit/java/parser/Java.g:743:7: '?' expression ':' expression
                     {
-                    char_literal426=(Token)match(input,159,FOLLOW_159_in_conditionalExpression5247); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_159.add(char_literal426);
+                    char_literal415=(Token)match(input,159,FOLLOW_159_in_conditionalExpression5280); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_159.add(char_literal415);
 
-                    pushFollow(FOLLOW_expression_in_conditionalExpression5249);
-                    expression427=expression();
-
-                    state._fsp--;
-                    if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_expression.add(expression427.getTree());
-                    char_literal428=(Token)match(input,170,FOLLOW_170_in_conditionalExpression5251); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_170.add(char_literal428);
-
-                    pushFollow(FOLLOW_expression_in_conditionalExpression5253);
-                    expression429=expression();
+                    pushFollow(FOLLOW_expression_in_conditionalExpression5282);
+                    expression416=expression();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_expression.add(expression429.getTree());
+                    if ( state.backtracking==0 ) stream_expression.add(expression416.getTree());
+                    char_literal417=(Token)match(input,170,FOLLOW_170_in_conditionalExpression5284); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_170.add(char_literal417);
+
+                    pushFollow(FOLLOW_expression_in_conditionalExpression5286);
+                    expression418=expression();
+
+                    state._fsp--;
+                    if (state.failed) return retval;
+                    if ( state.backtracking==0 ) stream_expression.add(expression418.getTree());
 
 
                     // AST REWRITE
-                    // elements: expression, expression, conditionalOrExpression
+                    // elements: conditionalOrExpression, expression, expression
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -15278,13 +15258,13 @@ public class JavaParser extends Parser {
         int conditionalOrExpression_StartIndex = input.index();
         Object root_0 = null;
 
-        Token string_literal431=null;
-        JavaParser.conditionalAndExpression_return conditionalAndExpression430 = null;
+        Token string_literal420=null;
+        JavaParser.conditionalAndExpression_return conditionalAndExpression419 = null;
 
-        JavaParser.conditionalOrExpression_return conditionalOrExpression432 = null;
+        JavaParser.conditionalOrExpression_return conditionalOrExpression421 = null;
 
 
-        Object string_literal431_tree=null;
+        Object string_literal420_tree=null;
         RewriteRuleTokenStream stream_192=new RewriteRuleTokenStream(adaptor,"token 192");
         RewriteRuleSubtreeStream stream_conditionalAndExpression=new RewriteRuleSubtreeStream(adaptor,"rule conditionalAndExpression");
         RewriteRuleSubtreeStream stream_conditionalOrExpression=new RewriteRuleSubtreeStream(adaptor,"rule conditionalOrExpression");
@@ -15293,12 +15273,12 @@ public class JavaParser extends Parser {
             // jkit/java/parser/Java.g:749:5: ( conditionalAndExpression ( ( '||' conditionalOrExpression ) -> ^( LOR conditionalAndExpression conditionalOrExpression ) | -> conditionalAndExpression ) )
             // jkit/java/parser/Java.g:749:9: conditionalAndExpression ( ( '||' conditionalOrExpression ) -> ^( LOR conditionalAndExpression conditionalOrExpression ) | -> conditionalAndExpression )
             {
-            pushFollow(FOLLOW_conditionalAndExpression_in_conditionalOrExpression5300);
-            conditionalAndExpression430=conditionalAndExpression();
+            pushFollow(FOLLOW_conditionalAndExpression_in_conditionalOrExpression5333);
+            conditionalAndExpression419=conditionalAndExpression();
 
             state._fsp--;
             if (state.failed) return retval;
-            if ( state.backtracking==0 ) stream_conditionalAndExpression.add(conditionalAndExpression430.getTree());
+            if ( state.backtracking==0 ) stream_conditionalAndExpression.add(conditionalAndExpression419.getTree());
             // jkit/java/parser/Java.g:750:6: ( ( '||' conditionalOrExpression ) -> ^( LOR conditionalAndExpression conditionalOrExpression ) | -> conditionalAndExpression )
             int alt126=2;
             alt126 = dfa126.predict(input);
@@ -15309,22 +15289,22 @@ public class JavaParser extends Parser {
                     // jkit/java/parser/Java.g:751:7: ( '||' conditionalOrExpression )
                     // jkit/java/parser/Java.g:751:8: '||' conditionalOrExpression
                     {
-                    string_literal431=(Token)match(input,192,FOLLOW_192_in_conditionalOrExpression5318); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_192.add(string_literal431);
+                    string_literal420=(Token)match(input,192,FOLLOW_192_in_conditionalOrExpression5351); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_192.add(string_literal420);
 
-                    pushFollow(FOLLOW_conditionalOrExpression_in_conditionalOrExpression5320);
-                    conditionalOrExpression432=conditionalOrExpression();
+                    pushFollow(FOLLOW_conditionalOrExpression_in_conditionalOrExpression5353);
+                    conditionalOrExpression421=conditionalOrExpression();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_conditionalOrExpression.add(conditionalOrExpression432.getTree());
+                    if ( state.backtracking==0 ) stream_conditionalOrExpression.add(conditionalOrExpression421.getTree());
 
                     }
 
 
 
                     // AST REWRITE
-                    // elements: conditionalAndExpression, conditionalOrExpression
+                    // elements: conditionalOrExpression, conditionalAndExpression
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -15414,27 +15394,27 @@ public class JavaParser extends Parser {
         int conditionalAndExpression_StartIndex = input.index();
         Object root_0 = null;
 
-        Token string_literal434=null;
-        JavaParser.inclusiveOrExpression_return inclusiveOrExpression433 = null;
+        Token string_literal423=null;
+        JavaParser.inclusiveOrExpression_return inclusiveOrExpression422 = null;
 
-        JavaParser.conditionalAndExpression_return conditionalAndExpression435 = null;
+        JavaParser.conditionalAndExpression_return conditionalAndExpression424 = null;
 
 
-        Object string_literal434_tree=null;
+        Object string_literal423_tree=null;
         RewriteRuleTokenStream stream_193=new RewriteRuleTokenStream(adaptor,"token 193");
-        RewriteRuleSubtreeStream stream_inclusiveOrExpression=new RewriteRuleSubtreeStream(adaptor,"rule inclusiveOrExpression");
         RewriteRuleSubtreeStream stream_conditionalAndExpression=new RewriteRuleSubtreeStream(adaptor,"rule conditionalAndExpression");
+        RewriteRuleSubtreeStream stream_inclusiveOrExpression=new RewriteRuleSubtreeStream(adaptor,"rule inclusiveOrExpression");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 95) ) { return retval; }
             // jkit/java/parser/Java.g:757:5: ( inclusiveOrExpression ( ( '&&' conditionalAndExpression ) -> ^( LAND inclusiveOrExpression conditionalAndExpression ) | -> inclusiveOrExpression ) )
             // jkit/java/parser/Java.g:757:9: inclusiveOrExpression ( ( '&&' conditionalAndExpression ) -> ^( LAND inclusiveOrExpression conditionalAndExpression ) | -> inclusiveOrExpression )
             {
-            pushFollow(FOLLOW_inclusiveOrExpression_in_conditionalAndExpression5366);
-            inclusiveOrExpression433=inclusiveOrExpression();
+            pushFollow(FOLLOW_inclusiveOrExpression_in_conditionalAndExpression5399);
+            inclusiveOrExpression422=inclusiveOrExpression();
 
             state._fsp--;
             if (state.failed) return retval;
-            if ( state.backtracking==0 ) stream_inclusiveOrExpression.add(inclusiveOrExpression433.getTree());
+            if ( state.backtracking==0 ) stream_inclusiveOrExpression.add(inclusiveOrExpression422.getTree());
             // jkit/java/parser/Java.g:758:6: ( ( '&&' conditionalAndExpression ) -> ^( LAND inclusiveOrExpression conditionalAndExpression ) | -> inclusiveOrExpression )
             int alt127=2;
             alt127 = dfa127.predict(input);
@@ -15445,15 +15425,15 @@ public class JavaParser extends Parser {
                     // jkit/java/parser/Java.g:759:7: ( '&&' conditionalAndExpression )
                     // jkit/java/parser/Java.g:759:8: '&&' conditionalAndExpression
                     {
-                    string_literal434=(Token)match(input,193,FOLLOW_193_in_conditionalAndExpression5384); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_193.add(string_literal434);
+                    string_literal423=(Token)match(input,193,FOLLOW_193_in_conditionalAndExpression5417); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_193.add(string_literal423);
 
-                    pushFollow(FOLLOW_conditionalAndExpression_in_conditionalAndExpression5386);
-                    conditionalAndExpression435=conditionalAndExpression();
+                    pushFollow(FOLLOW_conditionalAndExpression_in_conditionalAndExpression5419);
+                    conditionalAndExpression424=conditionalAndExpression();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_conditionalAndExpression.add(conditionalAndExpression435.getTree());
+                    if ( state.backtracking==0 ) stream_conditionalAndExpression.add(conditionalAndExpression424.getTree());
 
                     }
 
@@ -15550,27 +15530,27 @@ public class JavaParser extends Parser {
         int inclusiveOrExpression_StartIndex = input.index();
         Object root_0 = null;
 
-        Token char_literal437=null;
-        JavaParser.exclusiveOrExpression_return exclusiveOrExpression436 = null;
+        Token char_literal426=null;
+        JavaParser.exclusiveOrExpression_return exclusiveOrExpression425 = null;
 
-        JavaParser.inclusiveOrExpression_return inclusiveOrExpression438 = null;
+        JavaParser.inclusiveOrExpression_return inclusiveOrExpression427 = null;
 
 
-        Object char_literal437_tree=null;
+        Object char_literal426_tree=null;
         RewriteRuleTokenStream stream_194=new RewriteRuleTokenStream(adaptor,"token 194");
-        RewriteRuleSubtreeStream stream_exclusiveOrExpression=new RewriteRuleSubtreeStream(adaptor,"rule exclusiveOrExpression");
         RewriteRuleSubtreeStream stream_inclusiveOrExpression=new RewriteRuleSubtreeStream(adaptor,"rule inclusiveOrExpression");
+        RewriteRuleSubtreeStream stream_exclusiveOrExpression=new RewriteRuleSubtreeStream(adaptor,"rule exclusiveOrExpression");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 96) ) { return retval; }
             // jkit/java/parser/Java.g:765:5: ( exclusiveOrExpression ( ( '|' inclusiveOrExpression ) -> ^( OR exclusiveOrExpression inclusiveOrExpression ) | -> exclusiveOrExpression ) )
             // jkit/java/parser/Java.g:765:9: exclusiveOrExpression ( ( '|' inclusiveOrExpression ) -> ^( OR exclusiveOrExpression inclusiveOrExpression ) | -> exclusiveOrExpression )
             {
-            pushFollow(FOLLOW_exclusiveOrExpression_in_inclusiveOrExpression5438);
-            exclusiveOrExpression436=exclusiveOrExpression();
+            pushFollow(FOLLOW_exclusiveOrExpression_in_inclusiveOrExpression5471);
+            exclusiveOrExpression425=exclusiveOrExpression();
 
             state._fsp--;
             if (state.failed) return retval;
-            if ( state.backtracking==0 ) stream_exclusiveOrExpression.add(exclusiveOrExpression436.getTree());
+            if ( state.backtracking==0 ) stream_exclusiveOrExpression.add(exclusiveOrExpression425.getTree());
             // jkit/java/parser/Java.g:766:9: ( ( '|' inclusiveOrExpression ) -> ^( OR exclusiveOrExpression inclusiveOrExpression ) | -> exclusiveOrExpression )
             int alt128=2;
             alt128 = dfa128.predict(input);
@@ -15581,22 +15561,22 @@ public class JavaParser extends Parser {
                     // jkit/java/parser/Java.g:767:10: ( '|' inclusiveOrExpression )
                     // jkit/java/parser/Java.g:767:11: '|' inclusiveOrExpression
                     {
-                    char_literal437=(Token)match(input,194,FOLLOW_194_in_inclusiveOrExpression5460); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_194.add(char_literal437);
+                    char_literal426=(Token)match(input,194,FOLLOW_194_in_inclusiveOrExpression5493); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_194.add(char_literal426);
 
-                    pushFollow(FOLLOW_inclusiveOrExpression_in_inclusiveOrExpression5462);
-                    inclusiveOrExpression438=inclusiveOrExpression();
+                    pushFollow(FOLLOW_inclusiveOrExpression_in_inclusiveOrExpression5495);
+                    inclusiveOrExpression427=inclusiveOrExpression();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_inclusiveOrExpression.add(inclusiveOrExpression438.getTree());
+                    if ( state.backtracking==0 ) stream_inclusiveOrExpression.add(inclusiveOrExpression427.getTree());
 
                     }
 
 
 
                     // AST REWRITE
-                    // elements: exclusiveOrExpression, inclusiveOrExpression
+                    // elements: inclusiveOrExpression, exclusiveOrExpression
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -15686,13 +15666,13 @@ public class JavaParser extends Parser {
         int exclusiveOrExpression_StartIndex = input.index();
         Object root_0 = null;
 
-        Token char_literal440=null;
-        JavaParser.andExpression_return andExpression439 = null;
+        Token char_literal429=null;
+        JavaParser.andExpression_return andExpression428 = null;
 
-        JavaParser.exclusiveOrExpression_return exclusiveOrExpression441 = null;
+        JavaParser.exclusiveOrExpression_return exclusiveOrExpression430 = null;
 
 
-        Object char_literal440_tree=null;
+        Object char_literal429_tree=null;
         RewriteRuleTokenStream stream_195=new RewriteRuleTokenStream(adaptor,"token 195");
         RewriteRuleSubtreeStream stream_andExpression=new RewriteRuleSubtreeStream(adaptor,"rule andExpression");
         RewriteRuleSubtreeStream stream_exclusiveOrExpression=new RewriteRuleSubtreeStream(adaptor,"rule exclusiveOrExpression");
@@ -15701,12 +15681,12 @@ public class JavaParser extends Parser {
             // jkit/java/parser/Java.g:773:5: ( andExpression ( ( '^' exclusiveOrExpression ) -> ^( XOR andExpression exclusiveOrExpression ) | -> andExpression ) )
             // jkit/java/parser/Java.g:773:9: andExpression ( ( '^' exclusiveOrExpression ) -> ^( XOR andExpression exclusiveOrExpression ) | -> andExpression )
             {
-            pushFollow(FOLLOW_andExpression_in_exclusiveOrExpression5509);
-            andExpression439=andExpression();
+            pushFollow(FOLLOW_andExpression_in_exclusiveOrExpression5542);
+            andExpression428=andExpression();
 
             state._fsp--;
             if (state.failed) return retval;
-            if ( state.backtracking==0 ) stream_andExpression.add(andExpression439.getTree());
+            if ( state.backtracking==0 ) stream_andExpression.add(andExpression428.getTree());
             // jkit/java/parser/Java.g:774:5: ( ( '^' exclusiveOrExpression ) -> ^( XOR andExpression exclusiveOrExpression ) | -> andExpression )
             int alt129=2;
             alt129 = dfa129.predict(input);
@@ -15717,15 +15697,15 @@ public class JavaParser extends Parser {
                     // jkit/java/parser/Java.g:775:6: ( '^' exclusiveOrExpression )
                     // jkit/java/parser/Java.g:775:7: '^' exclusiveOrExpression
                     {
-                    char_literal440=(Token)match(input,195,FOLLOW_195_in_exclusiveOrExpression5525); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_195.add(char_literal440);
+                    char_literal429=(Token)match(input,195,FOLLOW_195_in_exclusiveOrExpression5558); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_195.add(char_literal429);
 
-                    pushFollow(FOLLOW_exclusiveOrExpression_in_exclusiveOrExpression5527);
-                    exclusiveOrExpression441=exclusiveOrExpression();
+                    pushFollow(FOLLOW_exclusiveOrExpression_in_exclusiveOrExpression5560);
+                    exclusiveOrExpression430=exclusiveOrExpression();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_exclusiveOrExpression.add(exclusiveOrExpression441.getTree());
+                    if ( state.backtracking==0 ) stream_exclusiveOrExpression.add(exclusiveOrExpression430.getTree());
 
                     }
 
@@ -15822,27 +15802,27 @@ public class JavaParser extends Parser {
         int andExpression_StartIndex = input.index();
         Object root_0 = null;
 
-        Token char_literal443=null;
-        JavaParser.equalityExpression_return equalityExpression442 = null;
+        Token char_literal432=null;
+        JavaParser.equalityExpression_return equalityExpression431 = null;
 
-        JavaParser.andExpression_return andExpression444 = null;
+        JavaParser.andExpression_return andExpression433 = null;
 
 
-        Object char_literal443_tree=null;
+        Object char_literal432_tree=null;
         RewriteRuleTokenStream stream_132=new RewriteRuleTokenStream(adaptor,"token 132");
-        RewriteRuleSubtreeStream stream_andExpression=new RewriteRuleSubtreeStream(adaptor,"rule andExpression");
         RewriteRuleSubtreeStream stream_equalityExpression=new RewriteRuleSubtreeStream(adaptor,"rule equalityExpression");
+        RewriteRuleSubtreeStream stream_andExpression=new RewriteRuleSubtreeStream(adaptor,"rule andExpression");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 98) ) { return retval; }
             // jkit/java/parser/Java.g:781:5: ( equalityExpression ( ( '&' andExpression ) -> ^( AND equalityExpression andExpression ) | -> equalityExpression ) )
             // jkit/java/parser/Java.g:781:9: equalityExpression ( ( '&' andExpression ) -> ^( AND equalityExpression andExpression ) | -> equalityExpression )
             {
-            pushFollow(FOLLOW_equalityExpression_in_andExpression5571);
-            equalityExpression442=equalityExpression();
+            pushFollow(FOLLOW_equalityExpression_in_andExpression5604);
+            equalityExpression431=equalityExpression();
 
             state._fsp--;
             if (state.failed) return retval;
-            if ( state.backtracking==0 ) stream_equalityExpression.add(equalityExpression442.getTree());
+            if ( state.backtracking==0 ) stream_equalityExpression.add(equalityExpression431.getTree());
             // jkit/java/parser/Java.g:782:5: ( ( '&' andExpression ) -> ^( AND equalityExpression andExpression ) | -> equalityExpression )
             int alt130=2;
             alt130 = dfa130.predict(input);
@@ -15853,15 +15833,15 @@ public class JavaParser extends Parser {
                     // jkit/java/parser/Java.g:783:6: ( '&' andExpression )
                     // jkit/java/parser/Java.g:783:7: '&' andExpression
                     {
-                    char_literal443=(Token)match(input,132,FOLLOW_132_in_andExpression5587); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_132.add(char_literal443);
+                    char_literal432=(Token)match(input,132,FOLLOW_132_in_andExpression5620); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_132.add(char_literal432);
 
-                    pushFollow(FOLLOW_andExpression_in_andExpression5589);
-                    andExpression444=andExpression();
+                    pushFollow(FOLLOW_andExpression_in_andExpression5622);
+                    andExpression433=andExpression();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_andExpression.add(andExpression444.getTree());
+                    if ( state.backtracking==0 ) stream_andExpression.add(andExpression433.getTree());
 
                     }
 
@@ -15958,31 +15938,31 @@ public class JavaParser extends Parser {
         int equalityExpression_StartIndex = input.index();
         Object root_0 = null;
 
-        Token string_literal446=null;
-        Token string_literal448=null;
-        JavaParser.instanceOfExpression_return instanceOfExpression445 = null;
+        Token string_literal435=null;
+        Token string_literal437=null;
+        JavaParser.instanceOfExpression_return instanceOfExpression434 = null;
 
-        JavaParser.instanceOfExpression_return instanceOfExpression447 = null;
+        JavaParser.instanceOfExpression_return instanceOfExpression436 = null;
 
-        JavaParser.instanceOfExpression_return instanceOfExpression449 = null;
+        JavaParser.instanceOfExpression_return instanceOfExpression438 = null;
 
 
-        Object string_literal446_tree=null;
-        Object string_literal448_tree=null;
-        RewriteRuleTokenStream stream_197=new RewriteRuleTokenStream(adaptor,"token 197");
+        Object string_literal435_tree=null;
+        Object string_literal437_tree=null;
         RewriteRuleTokenStream stream_196=new RewriteRuleTokenStream(adaptor,"token 196");
+        RewriteRuleTokenStream stream_197=new RewriteRuleTokenStream(adaptor,"token 197");
         RewriteRuleSubtreeStream stream_instanceOfExpression=new RewriteRuleSubtreeStream(adaptor,"rule instanceOfExpression");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 99) ) { return retval; }
             // jkit/java/parser/Java.g:789:5: ( instanceOfExpression ( ( '==' instanceOfExpression ) -> ^( EQ instanceOfExpression instanceOfExpression ) | ( '!=' instanceOfExpression ) -> ^( NEQ instanceOfExpression instanceOfExpression ) | -> instanceOfExpression ) )
             // jkit/java/parser/Java.g:789:9: instanceOfExpression ( ( '==' instanceOfExpression ) -> ^( EQ instanceOfExpression instanceOfExpression ) | ( '!=' instanceOfExpression ) -> ^( NEQ instanceOfExpression instanceOfExpression ) | -> instanceOfExpression )
             {
-            pushFollow(FOLLOW_instanceOfExpression_in_equalityExpression5633);
-            instanceOfExpression445=instanceOfExpression();
+            pushFollow(FOLLOW_instanceOfExpression_in_equalityExpression5666);
+            instanceOfExpression434=instanceOfExpression();
 
             state._fsp--;
             if (state.failed) return retval;
-            if ( state.backtracking==0 ) stream_instanceOfExpression.add(instanceOfExpression445.getTree());
+            if ( state.backtracking==0 ) stream_instanceOfExpression.add(instanceOfExpression434.getTree());
             // jkit/java/parser/Java.g:790:5: ( ( '==' instanceOfExpression ) -> ^( EQ instanceOfExpression instanceOfExpression ) | ( '!=' instanceOfExpression ) -> ^( NEQ instanceOfExpression instanceOfExpression ) | -> instanceOfExpression )
             int alt131=3;
             alt131 = dfa131.predict(input);
@@ -15993,15 +15973,15 @@ public class JavaParser extends Parser {
                     // jkit/java/parser/Java.g:791:6: ( '==' instanceOfExpression )
                     // jkit/java/parser/Java.g:791:7: '==' instanceOfExpression
                     {
-                    string_literal446=(Token)match(input,196,FOLLOW_196_in_equalityExpression5649); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_196.add(string_literal446);
+                    string_literal435=(Token)match(input,196,FOLLOW_196_in_equalityExpression5682); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_196.add(string_literal435);
 
-                    pushFollow(FOLLOW_instanceOfExpression_in_equalityExpression5651);
-                    instanceOfExpression447=instanceOfExpression();
+                    pushFollow(FOLLOW_instanceOfExpression_in_equalityExpression5684);
+                    instanceOfExpression436=instanceOfExpression();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_instanceOfExpression.add(instanceOfExpression447.getTree());
+                    if ( state.backtracking==0 ) stream_instanceOfExpression.add(instanceOfExpression436.getTree());
 
                     }
 
@@ -16042,15 +16022,15 @@ public class JavaParser extends Parser {
                     // jkit/java/parser/Java.g:792:8: ( '!=' instanceOfExpression )
                     // jkit/java/parser/Java.g:792:9: '!=' instanceOfExpression
                     {
-                    string_literal448=(Token)match(input,197,FOLLOW_197_in_equalityExpression5672); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_197.add(string_literal448);
+                    string_literal437=(Token)match(input,197,FOLLOW_197_in_equalityExpression5705); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_197.add(string_literal437);
 
-                    pushFollow(FOLLOW_instanceOfExpression_in_equalityExpression5674);
-                    instanceOfExpression449=instanceOfExpression();
+                    pushFollow(FOLLOW_instanceOfExpression_in_equalityExpression5707);
+                    instanceOfExpression438=instanceOfExpression();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_instanceOfExpression.add(instanceOfExpression449.getTree());
+                    if ( state.backtracking==0 ) stream_instanceOfExpression.add(instanceOfExpression438.getTree());
 
                     }
 
@@ -16147,27 +16127,27 @@ public class JavaParser extends Parser {
         int instanceOfExpression_StartIndex = input.index();
         Object root_0 = null;
 
-        Token string_literal451=null;
-        JavaParser.relationalExpression_return relationalExpression450 = null;
+        Token string_literal440=null;
+        JavaParser.relationalExpression_return relationalExpression439 = null;
 
-        JavaParser.type_return type452 = null;
+        JavaParser.type_return type441 = null;
 
 
-        Object string_literal451_tree=null;
+        Object string_literal440_tree=null;
         RewriteRuleTokenStream stream_198=new RewriteRuleTokenStream(adaptor,"token 198");
-        RewriteRuleSubtreeStream stream_relationalExpression=new RewriteRuleSubtreeStream(adaptor,"rule relationalExpression");
         RewriteRuleSubtreeStream stream_type=new RewriteRuleSubtreeStream(adaptor,"rule type");
+        RewriteRuleSubtreeStream stream_relationalExpression=new RewriteRuleSubtreeStream(adaptor,"rule relationalExpression");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 100) ) { return retval; }
             // jkit/java/parser/Java.g:798:5: ( relationalExpression ( ( 'instanceof' type ) -> ^( INSTANCEOF relationalExpression type ) | -> relationalExpression ) )
             // jkit/java/parser/Java.g:798:9: relationalExpression ( ( 'instanceof' type ) -> ^( INSTANCEOF relationalExpression type ) | -> relationalExpression )
             {
-            pushFollow(FOLLOW_relationalExpression_in_instanceOfExpression5718);
-            relationalExpression450=relationalExpression();
+            pushFollow(FOLLOW_relationalExpression_in_instanceOfExpression5751);
+            relationalExpression439=relationalExpression();
 
             state._fsp--;
             if (state.failed) return retval;
-            if ( state.backtracking==0 ) stream_relationalExpression.add(relationalExpression450.getTree());
+            if ( state.backtracking==0 ) stream_relationalExpression.add(relationalExpression439.getTree());
             // jkit/java/parser/Java.g:799:5: ( ( 'instanceof' type ) -> ^( INSTANCEOF relationalExpression type ) | -> relationalExpression )
             int alt132=2;
             alt132 = dfa132.predict(input);
@@ -16178,15 +16158,15 @@ public class JavaParser extends Parser {
                     // jkit/java/parser/Java.g:800:6: ( 'instanceof' type )
                     // jkit/java/parser/Java.g:800:7: 'instanceof' type
                     {
-                    string_literal451=(Token)match(input,198,FOLLOW_198_in_instanceOfExpression5733); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_198.add(string_literal451);
+                    string_literal440=(Token)match(input,198,FOLLOW_198_in_instanceOfExpression5766); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_198.add(string_literal440);
 
-                    pushFollow(FOLLOW_type_in_instanceOfExpression5735);
-                    type452=type();
+                    pushFollow(FOLLOW_type_in_instanceOfExpression5768);
+                    type441=type();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_type.add(type452.getTree());
+                    if ( state.backtracking==0 ) stream_type.add(type441.getTree());
 
                     }
 
@@ -16283,29 +16263,29 @@ public class JavaParser extends Parser {
         int relationalExpression_StartIndex = input.index();
         Object root_0 = null;
 
-        Token char_literal454=null;
-        Token char_literal455=null;
-        Token char_literal457=null;
-        Token char_literal459=null;
-        Token char_literal460=null;
-        Token char_literal462=null;
-        JavaParser.shiftExpression_return shiftExpression453 = null;
+        Token char_literal443=null;
+        Token char_literal444=null;
+        Token char_literal446=null;
+        Token char_literal448=null;
+        Token char_literal449=null;
+        Token char_literal451=null;
+        JavaParser.shiftExpression_return shiftExpression442 = null;
 
-        JavaParser.shiftExpression_return shiftExpression456 = null;
+        JavaParser.shiftExpression_return shiftExpression445 = null;
 
-        JavaParser.shiftExpression_return shiftExpression458 = null;
+        JavaParser.shiftExpression_return shiftExpression447 = null;
 
-        JavaParser.shiftExpression_return shiftExpression461 = null;
+        JavaParser.shiftExpression_return shiftExpression450 = null;
 
-        JavaParser.shiftExpression_return shiftExpression463 = null;
+        JavaParser.shiftExpression_return shiftExpression452 = null;
 
 
-        Object char_literal454_tree=null;
-        Object char_literal455_tree=null;
-        Object char_literal457_tree=null;
-        Object char_literal459_tree=null;
-        Object char_literal460_tree=null;
-        Object char_literal462_tree=null;
+        Object char_literal443_tree=null;
+        Object char_literal444_tree=null;
+        Object char_literal446_tree=null;
+        Object char_literal448_tree=null;
+        Object char_literal449_tree=null;
+        Object char_literal451_tree=null;
         RewriteRuleTokenStream stream_131=new RewriteRuleTokenStream(adaptor,"token 131");
         RewriteRuleTokenStream stream_129=new RewriteRuleTokenStream(adaptor,"token 129");
         RewriteRuleTokenStream stream_140=new RewriteRuleTokenStream(adaptor,"token 140");
@@ -16315,12 +16295,12 @@ public class JavaParser extends Parser {
             // jkit/java/parser/Java.g:806:5: ( shiftExpression ( ( '<' '=' shiftExpression ) -> ^( LTEQ shiftExpression shiftExpression ) | ( '<' shiftExpression ) -> ^( LT shiftExpression shiftExpression ) | ( '>' '=' shiftExpression ) -> ^( GTEQ shiftExpression shiftExpression ) | ( '>' shiftExpression ) -> ^( GT shiftExpression shiftExpression ) | -> shiftExpression ) )
             // jkit/java/parser/Java.g:806:9: shiftExpression ( ( '<' '=' shiftExpression ) -> ^( LTEQ shiftExpression shiftExpression ) | ( '<' shiftExpression ) -> ^( LT shiftExpression shiftExpression ) | ( '>' '=' shiftExpression ) -> ^( GTEQ shiftExpression shiftExpression ) | ( '>' shiftExpression ) -> ^( GT shiftExpression shiftExpression ) | -> shiftExpression )
             {
-            pushFollow(FOLLOW_shiftExpression_in_relationalExpression5779);
-            shiftExpression453=shiftExpression();
+            pushFollow(FOLLOW_shiftExpression_in_relationalExpression5812);
+            shiftExpression442=shiftExpression();
 
             state._fsp--;
             if (state.failed) return retval;
-            if ( state.backtracking==0 ) stream_shiftExpression.add(shiftExpression453.getTree());
+            if ( state.backtracking==0 ) stream_shiftExpression.add(shiftExpression442.getTree());
             // jkit/java/parser/Java.g:807:5: ( ( '<' '=' shiftExpression ) -> ^( LTEQ shiftExpression shiftExpression ) | ( '<' shiftExpression ) -> ^( LT shiftExpression shiftExpression ) | ( '>' '=' shiftExpression ) -> ^( GTEQ shiftExpression shiftExpression ) | ( '>' shiftExpression ) -> ^( GT shiftExpression shiftExpression ) | -> shiftExpression )
             int alt133=5;
             alt133 = dfa133.predict(input);
@@ -16331,18 +16311,18 @@ public class JavaParser extends Parser {
                     // jkit/java/parser/Java.g:808:6: ( '<' '=' shiftExpression )
                     // jkit/java/parser/Java.g:808:7: '<' '=' shiftExpression
                     {
-                    char_literal454=(Token)match(input,129,FOLLOW_129_in_relationalExpression5795); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_129.add(char_literal454);
+                    char_literal443=(Token)match(input,129,FOLLOW_129_in_relationalExpression5828); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_129.add(char_literal443);
 
-                    char_literal455=(Token)match(input,140,FOLLOW_140_in_relationalExpression5797); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_140.add(char_literal455);
+                    char_literal444=(Token)match(input,140,FOLLOW_140_in_relationalExpression5830); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_140.add(char_literal444);
 
-                    pushFollow(FOLLOW_shiftExpression_in_relationalExpression5799);
-                    shiftExpression456=shiftExpression();
+                    pushFollow(FOLLOW_shiftExpression_in_relationalExpression5832);
+                    shiftExpression445=shiftExpression();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_shiftExpression.add(shiftExpression456.getTree());
+                    if ( state.backtracking==0 ) stream_shiftExpression.add(shiftExpression445.getTree());
 
                     }
 
@@ -16383,15 +16363,15 @@ public class JavaParser extends Parser {
                     // jkit/java/parser/Java.g:809:8: ( '<' shiftExpression )
                     // jkit/java/parser/Java.g:809:9: '<' shiftExpression
                     {
-                    char_literal457=(Token)match(input,129,FOLLOW_129_in_relationalExpression5820); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_129.add(char_literal457);
+                    char_literal446=(Token)match(input,129,FOLLOW_129_in_relationalExpression5853); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_129.add(char_literal446);
 
-                    pushFollow(FOLLOW_shiftExpression_in_relationalExpression5822);
-                    shiftExpression458=shiftExpression();
+                    pushFollow(FOLLOW_shiftExpression_in_relationalExpression5855);
+                    shiftExpression447=shiftExpression();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_shiftExpression.add(shiftExpression458.getTree());
+                    if ( state.backtracking==0 ) stream_shiftExpression.add(shiftExpression447.getTree());
 
                     }
 
@@ -16432,18 +16412,18 @@ public class JavaParser extends Parser {
                     // jkit/java/parser/Java.g:810:8: ( '>' '=' shiftExpression )
                     // jkit/java/parser/Java.g:810:9: '>' '=' shiftExpression
                     {
-                    char_literal459=(Token)match(input,131,FOLLOW_131_in_relationalExpression5843); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_131.add(char_literal459);
+                    char_literal448=(Token)match(input,131,FOLLOW_131_in_relationalExpression5876); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_131.add(char_literal448);
 
-                    char_literal460=(Token)match(input,140,FOLLOW_140_in_relationalExpression5845); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_140.add(char_literal460);
+                    char_literal449=(Token)match(input,140,FOLLOW_140_in_relationalExpression5878); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_140.add(char_literal449);
 
-                    pushFollow(FOLLOW_shiftExpression_in_relationalExpression5847);
-                    shiftExpression461=shiftExpression();
+                    pushFollow(FOLLOW_shiftExpression_in_relationalExpression5880);
+                    shiftExpression450=shiftExpression();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_shiftExpression.add(shiftExpression461.getTree());
+                    if ( state.backtracking==0 ) stream_shiftExpression.add(shiftExpression450.getTree());
 
                     }
 
@@ -16484,15 +16464,15 @@ public class JavaParser extends Parser {
                     // jkit/java/parser/Java.g:811:8: ( '>' shiftExpression )
                     // jkit/java/parser/Java.g:811:9: '>' shiftExpression
                     {
-                    char_literal462=(Token)match(input,131,FOLLOW_131_in_relationalExpression5868); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_131.add(char_literal462);
+                    char_literal451=(Token)match(input,131,FOLLOW_131_in_relationalExpression5901); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_131.add(char_literal451);
 
-                    pushFollow(FOLLOW_shiftExpression_in_relationalExpression5870);
-                    shiftExpression463=shiftExpression();
+                    pushFollow(FOLLOW_shiftExpression_in_relationalExpression5903);
+                    shiftExpression452=shiftExpression();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_shiftExpression.add(shiftExpression463.getTree());
+                    if ( state.backtracking==0 ) stream_shiftExpression.add(shiftExpression452.getTree());
 
                     }
 
@@ -16589,25 +16569,25 @@ public class JavaParser extends Parser {
         int shiftExpression_StartIndex = input.index();
         Object root_0 = null;
 
-        Token char_literal465=null;
-        Token char_literal466=null;
-        Token char_literal468=null;
-        Token char_literal469=null;
-        Token char_literal470=null;
+        Token char_literal454=null;
+        Token char_literal455=null;
+        Token char_literal457=null;
+        Token char_literal458=null;
+        Token char_literal459=null;
         Token i=null;
         List list_i=null;
-        JavaParser.additiveExpression_return additiveExpression464 = null;
+        JavaParser.additiveExpression_return additiveExpression453 = null;
 
-        JavaParser.additiveExpression_return additiveExpression467 = null;
+        JavaParser.additiveExpression_return additiveExpression456 = null;
 
-        JavaParser.additiveExpression_return additiveExpression471 = null;
+        JavaParser.additiveExpression_return additiveExpression460 = null;
 
 
-        Object char_literal465_tree=null;
-        Object char_literal466_tree=null;
-        Object char_literal468_tree=null;
-        Object char_literal469_tree=null;
-        Object char_literal470_tree=null;
+        Object char_literal454_tree=null;
+        Object char_literal455_tree=null;
+        Object char_literal457_tree=null;
+        Object char_literal458_tree=null;
+        Object char_literal459_tree=null;
         Object i_tree=null;
         RewriteRuleTokenStream stream_131=new RewriteRuleTokenStream(adaptor,"token 131");
         RewriteRuleTokenStream stream_129=new RewriteRuleTokenStream(adaptor,"token 129");
@@ -16617,12 +16597,12 @@ public class JavaParser extends Parser {
             // jkit/java/parser/Java.g:817:5: ( additiveExpression ( ( (i+= '<' '<' | i+= '>' '>' ) additiveExpression )+ -> ^( LABINOP additiveExpression ( $i additiveExpression )+ ) | ( '>' '>' '>' additiveExpression )+ -> ^( USHR additiveExpression ( additiveExpression )+ ) | -> additiveExpression ) )
             // jkit/java/parser/Java.g:817:9: additiveExpression ( ( (i+= '<' '<' | i+= '>' '>' ) additiveExpression )+ -> ^( LABINOP additiveExpression ( $i additiveExpression )+ ) | ( '>' '>' '>' additiveExpression )+ -> ^( USHR additiveExpression ( additiveExpression )+ ) | -> additiveExpression )
             {
-            pushFollow(FOLLOW_additiveExpression_in_shiftExpression5915);
-            additiveExpression464=additiveExpression();
+            pushFollow(FOLLOW_additiveExpression_in_shiftExpression5948);
+            additiveExpression453=additiveExpression();
 
             state._fsp--;
             if (state.failed) return retval;
-            if ( state.backtracking==0 ) stream_additiveExpression.add(additiveExpression464.getTree());
+            if ( state.backtracking==0 ) stream_additiveExpression.add(additiveExpression453.getTree());
             // jkit/java/parser/Java.g:818:5: ( ( (i+= '<' '<' | i+= '>' '>' ) additiveExpression )+ -> ^( LABINOP additiveExpression ( $i additiveExpression )+ ) | ( '>' '>' '>' additiveExpression )+ -> ^( USHR additiveExpression ( additiveExpression )+ ) | -> additiveExpression )
             int alt137=3;
             alt137 = dfa137.predict(input);
@@ -16661,14 +16641,14 @@ public class JavaParser extends Parser {
                     	        case 1 :
                     	            // jkit/java/parser/Java.g:819:8: i+= '<' '<'
                     	            {
-                    	            i=(Token)match(input,129,FOLLOW_129_in_shiftExpression5934); if (state.failed) return retval; 
+                    	            i=(Token)match(input,129,FOLLOW_129_in_shiftExpression5967); if (state.failed) return retval; 
                     	            if ( state.backtracking==0 ) stream_129.add(i);
 
                     	            if (list_i==null) list_i=new ArrayList();
                     	            list_i.add(i);
 
-                    	            char_literal465=(Token)match(input,129,FOLLOW_129_in_shiftExpression5936); if (state.failed) return retval; 
-                    	            if ( state.backtracking==0 ) stream_129.add(char_literal465);
+                    	            char_literal454=(Token)match(input,129,FOLLOW_129_in_shiftExpression5969); if (state.failed) return retval; 
+                    	            if ( state.backtracking==0 ) stream_129.add(char_literal454);
 
 
                     	            }
@@ -16676,14 +16656,14 @@ public class JavaParser extends Parser {
                     	        case 2 :
                     	            // jkit/java/parser/Java.g:819:19: i+= '>' '>'
                     	            {
-                    	            i=(Token)match(input,131,FOLLOW_131_in_shiftExpression5940); if (state.failed) return retval; 
+                    	            i=(Token)match(input,131,FOLLOW_131_in_shiftExpression5973); if (state.failed) return retval; 
                     	            if ( state.backtracking==0 ) stream_131.add(i);
 
                     	            if (list_i==null) list_i=new ArrayList();
                     	            list_i.add(i);
 
-                    	            char_literal466=(Token)match(input,131,FOLLOW_131_in_shiftExpression5942); if (state.failed) return retval; 
-                    	            if ( state.backtracking==0 ) stream_131.add(char_literal466);
+                    	            char_literal455=(Token)match(input,131,FOLLOW_131_in_shiftExpression5975); if (state.failed) return retval; 
+                    	            if ( state.backtracking==0 ) stream_131.add(char_literal455);
 
 
                     	            }
@@ -16691,12 +16671,12 @@ public class JavaParser extends Parser {
 
                     	    }
 
-                    	    pushFollow(FOLLOW_additiveExpression_in_shiftExpression5945);
-                    	    additiveExpression467=additiveExpression();
+                    	    pushFollow(FOLLOW_additiveExpression_in_shiftExpression5978);
+                    	    additiveExpression456=additiveExpression();
 
                     	    state._fsp--;
                     	    if (state.failed) return retval;
-                    	    if ( state.backtracking==0 ) stream_additiveExpression.add(additiveExpression467.getTree());
+                    	    if ( state.backtracking==0 ) stream_additiveExpression.add(additiveExpression456.getTree());
 
                     	    }
                     	    break;
@@ -16765,21 +16745,21 @@ public class JavaParser extends Parser {
                     	case 1 :
                     	    // jkit/java/parser/Java.g:821:9: '>' '>' '>' additiveExpression
                     	    {
-                    	    char_literal468=(Token)match(input,131,FOLLOW_131_in_shiftExpression5979); if (state.failed) return retval; 
-                    	    if ( state.backtracking==0 ) stream_131.add(char_literal468);
+                    	    char_literal457=(Token)match(input,131,FOLLOW_131_in_shiftExpression6012); if (state.failed) return retval; 
+                    	    if ( state.backtracking==0 ) stream_131.add(char_literal457);
 
-                    	    char_literal469=(Token)match(input,131,FOLLOW_131_in_shiftExpression5981); if (state.failed) return retval; 
-                    	    if ( state.backtracking==0 ) stream_131.add(char_literal469);
+                    	    char_literal458=(Token)match(input,131,FOLLOW_131_in_shiftExpression6014); if (state.failed) return retval; 
+                    	    if ( state.backtracking==0 ) stream_131.add(char_literal458);
 
-                    	    char_literal470=(Token)match(input,131,FOLLOW_131_in_shiftExpression5983); if (state.failed) return retval; 
-                    	    if ( state.backtracking==0 ) stream_131.add(char_literal470);
+                    	    char_literal459=(Token)match(input,131,FOLLOW_131_in_shiftExpression6016); if (state.failed) return retval; 
+                    	    if ( state.backtracking==0 ) stream_131.add(char_literal459);
 
-                    	    pushFollow(FOLLOW_additiveExpression_in_shiftExpression5985);
-                    	    additiveExpression471=additiveExpression();
+                    	    pushFollow(FOLLOW_additiveExpression_in_shiftExpression6018);
+                    	    additiveExpression460=additiveExpression();
 
                     	    state._fsp--;
                     	    if (state.failed) return retval;
-                    	    if ( state.backtracking==0 ) stream_additiveExpression.add(additiveExpression471.getTree());
+                    	    if ( state.backtracking==0 ) stream_additiveExpression.add(additiveExpression460.getTree());
 
                     	    }
                     	    break;
@@ -16896,9 +16876,9 @@ public class JavaParser extends Parser {
 
         Token i=null;
         List list_i=null;
-        JavaParser.multiplicativeExpression_return multiplicativeExpression472 = null;
+        JavaParser.multiplicativeExpression_return multiplicativeExpression461 = null;
 
-        JavaParser.multiplicativeExpression_return multiplicativeExpression473 = null;
+        JavaParser.multiplicativeExpression_return multiplicativeExpression462 = null;
 
 
         Object i_tree=null;
@@ -16910,12 +16890,12 @@ public class JavaParser extends Parser {
             // jkit/java/parser/Java.g:827:5: ( multiplicativeExpression ( ( (i+= '+' | i+= '-' ) multiplicativeExpression )+ -> ^( LABINOP multiplicativeExpression ( $i multiplicativeExpression )+ ) | -> multiplicativeExpression ) )
             // jkit/java/parser/Java.g:827:9: multiplicativeExpression ( ( (i+= '+' | i+= '-' ) multiplicativeExpression )+ -> ^( LABINOP multiplicativeExpression ( $i multiplicativeExpression )+ ) | -> multiplicativeExpression )
             {
-            pushFollow(FOLLOW_multiplicativeExpression_in_additiveExpression6028);
-            multiplicativeExpression472=multiplicativeExpression();
+            pushFollow(FOLLOW_multiplicativeExpression_in_additiveExpression6061);
+            multiplicativeExpression461=multiplicativeExpression();
 
             state._fsp--;
             if (state.failed) return retval;
-            if ( state.backtracking==0 ) stream_multiplicativeExpression.add(multiplicativeExpression472.getTree());
+            if ( state.backtracking==0 ) stream_multiplicativeExpression.add(multiplicativeExpression461.getTree());
             // jkit/java/parser/Java.g:828:5: ( ( (i+= '+' | i+= '-' ) multiplicativeExpression )+ -> ^( LABINOP multiplicativeExpression ( $i multiplicativeExpression )+ ) | -> multiplicativeExpression )
             int alt140=2;
             alt140 = dfa140.predict(input);
@@ -16954,7 +16934,7 @@ public class JavaParser extends Parser {
                     	        case 1 :
                     	            // jkit/java/parser/Java.g:829:8: i+= '+'
                     	            {
-                    	            i=(Token)match(input,185,FOLLOW_185_in_additiveExpression6047); if (state.failed) return retval; 
+                    	            i=(Token)match(input,185,FOLLOW_185_in_additiveExpression6080); if (state.failed) return retval; 
                     	            if ( state.backtracking==0 ) stream_185.add(i);
 
                     	            if (list_i==null) list_i=new ArrayList();
@@ -16966,7 +16946,7 @@ public class JavaParser extends Parser {
                     	        case 2 :
                     	            // jkit/java/parser/Java.g:829:15: i+= '-'
                     	            {
-                    	            i=(Token)match(input,186,FOLLOW_186_in_additiveExpression6051); if (state.failed) return retval; 
+                    	            i=(Token)match(input,186,FOLLOW_186_in_additiveExpression6084); if (state.failed) return retval; 
                     	            if ( state.backtracking==0 ) stream_186.add(i);
 
                     	            if (list_i==null) list_i=new ArrayList();
@@ -16978,12 +16958,12 @@ public class JavaParser extends Parser {
 
                     	    }
 
-                    	    pushFollow(FOLLOW_multiplicativeExpression_in_additiveExpression6054);
-                    	    multiplicativeExpression473=multiplicativeExpression();
+                    	    pushFollow(FOLLOW_multiplicativeExpression_in_additiveExpression6087);
+                    	    multiplicativeExpression462=multiplicativeExpression();
 
                     	    state._fsp--;
                     	    if (state.failed) return retval;
-                    	    if ( state.backtracking==0 ) stream_multiplicativeExpression.add(multiplicativeExpression473.getTree());
+                    	    if ( state.backtracking==0 ) stream_multiplicativeExpression.add(multiplicativeExpression462.getTree());
 
                     	    }
                     	    break;
@@ -17001,7 +16981,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: multiplicativeExpression, i, multiplicativeExpression
+                    // elements: multiplicativeExpression, multiplicativeExpression, i
                     // token labels: 
                     // rule labels: retval
                     // token list labels: i
@@ -17103,9 +17083,9 @@ public class JavaParser extends Parser {
 
         Token i=null;
         List list_i=null;
-        JavaParser.unaryExpression_return unaryExpression474 = null;
+        JavaParser.unaryExpression_return unaryExpression463 = null;
 
-        JavaParser.unaryExpression_return unaryExpression475 = null;
+        JavaParser.unaryExpression_return unaryExpression464 = null;
 
 
         Object i_tree=null;
@@ -17118,12 +17098,12 @@ public class JavaParser extends Parser {
             // jkit/java/parser/Java.g:835:5: ( unaryExpression ( ( (i+= '*' | i+= '/' | i+= '%' ) unaryExpression )+ -> ^( LABINOP unaryExpression ( $i unaryExpression )+ ) | -> unaryExpression ) )
             // jkit/java/parser/Java.g:835:9: unaryExpression ( ( (i+= '*' | i+= '/' | i+= '%' ) unaryExpression )+ -> ^( LABINOP unaryExpression ( $i unaryExpression )+ ) | -> unaryExpression )
             {
-            pushFollow(FOLLOW_unaryExpression_in_multiplicativeExpression6105);
-            unaryExpression474=unaryExpression();
+            pushFollow(FOLLOW_unaryExpression_in_multiplicativeExpression6138);
+            unaryExpression463=unaryExpression();
 
             state._fsp--;
             if (state.failed) return retval;
-            if ( state.backtracking==0 ) stream_unaryExpression.add(unaryExpression474.getTree());
+            if ( state.backtracking==0 ) stream_unaryExpression.add(unaryExpression463.getTree());
             // jkit/java/parser/Java.g:836:5: ( ( (i+= '*' | i+= '/' | i+= '%' ) unaryExpression )+ -> ^( LABINOP unaryExpression ( $i unaryExpression )+ ) | -> unaryExpression )
             int alt143=2;
             alt143 = dfa143.predict(input);
@@ -17171,7 +17151,7 @@ public class JavaParser extends Parser {
                     	        case 1 :
                     	            // jkit/java/parser/Java.g:837:9: i+= '*'
                     	            {
-                    	            i=(Token)match(input,125,FOLLOW_125_in_multiplicativeExpression6125); if (state.failed) return retval; 
+                    	            i=(Token)match(input,125,FOLLOW_125_in_multiplicativeExpression6158); if (state.failed) return retval; 
                     	            if ( state.backtracking==0 ) stream_125.add(i);
 
                     	            if (list_i==null) list_i=new ArrayList();
@@ -17183,7 +17163,7 @@ public class JavaParser extends Parser {
                     	        case 2 :
                     	            // jkit/java/parser/Java.g:837:16: i+= '/'
                     	            {
-                    	            i=(Token)match(input,187,FOLLOW_187_in_multiplicativeExpression6129); if (state.failed) return retval; 
+                    	            i=(Token)match(input,187,FOLLOW_187_in_multiplicativeExpression6162); if (state.failed) return retval; 
                     	            if ( state.backtracking==0 ) stream_187.add(i);
 
                     	            if (list_i==null) list_i=new ArrayList();
@@ -17195,7 +17175,7 @@ public class JavaParser extends Parser {
                     	        case 3 :
                     	            // jkit/java/parser/Java.g:837:23: i+= '%'
                     	            {
-                    	            i=(Token)match(input,191,FOLLOW_191_in_multiplicativeExpression6133); if (state.failed) return retval; 
+                    	            i=(Token)match(input,191,FOLLOW_191_in_multiplicativeExpression6166); if (state.failed) return retval; 
                     	            if ( state.backtracking==0 ) stream_191.add(i);
 
                     	            if (list_i==null) list_i=new ArrayList();
@@ -17207,12 +17187,12 @@ public class JavaParser extends Parser {
 
                     	    }
 
-                    	    pushFollow(FOLLOW_unaryExpression_in_multiplicativeExpression6136);
-                    	    unaryExpression475=unaryExpression();
+                    	    pushFollow(FOLLOW_unaryExpression_in_multiplicativeExpression6169);
+                    	    unaryExpression464=unaryExpression();
 
                     	    state._fsp--;
                     	    if (state.failed) return retval;
-                    	    if ( state.backtracking==0 ) stream_unaryExpression.add(unaryExpression475.getTree());
+                    	    if ( state.backtracking==0 ) stream_unaryExpression.add(unaryExpression464.getTree());
 
                     	    }
                     	    break;
@@ -17230,7 +17210,7 @@ public class JavaParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: unaryExpression, i, unaryExpression
+                    // elements: unaryExpression, unaryExpression, i
                     // token labels: 
                     // rule labels: retval
                     // token list labels: i
@@ -17330,28 +17310,28 @@ public class JavaParser extends Parser {
         int unaryExpression_StartIndex = input.index();
         Object root_0 = null;
 
-        Token char_literal476=null;
-        Token char_literal478=null;
-        Token string_literal480=null;
-        Token string_literal482=null;
-        JavaParser.unaryExpression_return unaryExpression477 = null;
+        Token char_literal465=null;
+        Token char_literal467=null;
+        Token string_literal469=null;
+        Token string_literal471=null;
+        JavaParser.unaryExpression_return unaryExpression466 = null;
 
-        JavaParser.unaryExpression_return unaryExpression479 = null;
+        JavaParser.unaryExpression_return unaryExpression468 = null;
 
-        JavaParser.unaryExpression_return unaryExpression481 = null;
+        JavaParser.unaryExpression_return unaryExpression470 = null;
 
-        JavaParser.unaryExpression_return unaryExpression483 = null;
+        JavaParser.unaryExpression_return unaryExpression472 = null;
 
-        JavaParser.unaryExpressionNotPlusMinus_return unaryExpressionNotPlusMinus484 = null;
+        JavaParser.unaryExpressionNotPlusMinus_return unaryExpressionNotPlusMinus473 = null;
 
 
-        Object char_literal476_tree=null;
-        Object char_literal478_tree=null;
-        Object string_literal480_tree=null;
-        Object string_literal482_tree=null;
-        RewriteRuleTokenStream stream_199=new RewriteRuleTokenStream(adaptor,"token 199");
-        RewriteRuleTokenStream stream_200=new RewriteRuleTokenStream(adaptor,"token 200");
+        Object char_literal465_tree=null;
+        Object char_literal467_tree=null;
+        Object string_literal469_tree=null;
+        Object string_literal471_tree=null;
         RewriteRuleTokenStream stream_185=new RewriteRuleTokenStream(adaptor,"token 185");
+        RewriteRuleTokenStream stream_200=new RewriteRuleTokenStream(adaptor,"token 200");
+        RewriteRuleTokenStream stream_199=new RewriteRuleTokenStream(adaptor,"token 199");
         RewriteRuleTokenStream stream_186=new RewriteRuleTokenStream(adaptor,"token 186");
         RewriteRuleSubtreeStream stream_unaryExpression=new RewriteRuleSubtreeStream(adaptor,"rule unaryExpression");
         RewriteRuleSubtreeStream stream_unaryExpressionNotPlusMinus=new RewriteRuleSubtreeStream(adaptor,"rule unaryExpressionNotPlusMinus");
@@ -17364,15 +17344,15 @@ public class JavaParser extends Parser {
                 case 1 :
                     // jkit/java/parser/Java.g:843:9: '+' unaryExpression
                     {
-                    char_literal476=(Token)match(input,185,FOLLOW_185_in_unaryExpression6188); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_185.add(char_literal476);
+                    char_literal465=(Token)match(input,185,FOLLOW_185_in_unaryExpression6221); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_185.add(char_literal465);
 
-                    pushFollow(FOLLOW_unaryExpression_in_unaryExpression6190);
-                    unaryExpression477=unaryExpression();
+                    pushFollow(FOLLOW_unaryExpression_in_unaryExpression6223);
+                    unaryExpression466=unaryExpression();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_unaryExpression.add(unaryExpression477.getTree());
+                    if ( state.backtracking==0 ) stream_unaryExpression.add(unaryExpression466.getTree());
 
 
                     // AST REWRITE
@@ -17398,15 +17378,15 @@ public class JavaParser extends Parser {
                 case 2 :
                     // jkit/java/parser/Java.g:844:7: '-' unaryExpression
                     {
-                    char_literal478=(Token)match(input,186,FOLLOW_186_in_unaryExpression6202); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_186.add(char_literal478);
+                    char_literal467=(Token)match(input,186,FOLLOW_186_in_unaryExpression6235); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_186.add(char_literal467);
 
-                    pushFollow(FOLLOW_unaryExpression_in_unaryExpression6204);
-                    unaryExpression479=unaryExpression();
+                    pushFollow(FOLLOW_unaryExpression_in_unaryExpression6237);
+                    unaryExpression468=unaryExpression();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_unaryExpression.add(unaryExpression479.getTree());
+                    if ( state.backtracking==0 ) stream_unaryExpression.add(unaryExpression468.getTree());
 
 
                     // AST REWRITE
@@ -17440,15 +17420,15 @@ public class JavaParser extends Parser {
                 case 3 :
                     // jkit/java/parser/Java.g:845:9: '++' unaryExpression
                     {
-                    string_literal480=(Token)match(input,199,FOLLOW_199_in_unaryExpression6222); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_199.add(string_literal480);
+                    string_literal469=(Token)match(input,199,FOLLOW_199_in_unaryExpression6255); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_199.add(string_literal469);
 
-                    pushFollow(FOLLOW_unaryExpression_in_unaryExpression6224);
-                    unaryExpression481=unaryExpression();
+                    pushFollow(FOLLOW_unaryExpression_in_unaryExpression6257);
+                    unaryExpression470=unaryExpression();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_unaryExpression.add(unaryExpression481.getTree());
+                    if ( state.backtracking==0 ) stream_unaryExpression.add(unaryExpression470.getTree());
 
 
                     // AST REWRITE
@@ -17482,15 +17462,15 @@ public class JavaParser extends Parser {
                 case 4 :
                     // jkit/java/parser/Java.g:846:9: '--' unaryExpression
                     {
-                    string_literal482=(Token)match(input,200,FOLLOW_200_in_unaryExpression6242); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_200.add(string_literal482);
+                    string_literal471=(Token)match(input,200,FOLLOW_200_in_unaryExpression6275); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_200.add(string_literal471);
 
-                    pushFollow(FOLLOW_unaryExpression_in_unaryExpression6244);
-                    unaryExpression483=unaryExpression();
+                    pushFollow(FOLLOW_unaryExpression_in_unaryExpression6277);
+                    unaryExpression472=unaryExpression();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_unaryExpression.add(unaryExpression483.getTree());
+                    if ( state.backtracking==0 ) stream_unaryExpression.add(unaryExpression472.getTree());
 
 
                     // AST REWRITE
@@ -17524,12 +17504,12 @@ public class JavaParser extends Parser {
                 case 5 :
                     // jkit/java/parser/Java.g:847:9: unaryExpressionNotPlusMinus
                     {
-                    pushFollow(FOLLOW_unaryExpressionNotPlusMinus_in_unaryExpression6262);
-                    unaryExpressionNotPlusMinus484=unaryExpressionNotPlusMinus();
+                    pushFollow(FOLLOW_unaryExpressionNotPlusMinus_in_unaryExpression6295);
+                    unaryExpressionNotPlusMinus473=unaryExpressionNotPlusMinus();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_unaryExpressionNotPlusMinus.add(unaryExpressionNotPlusMinus484.getTree());
+                    if ( state.backtracking==0 ) stream_unaryExpressionNotPlusMinus.add(unaryExpressionNotPlusMinus473.getTree());
 
 
                     // AST REWRITE
@@ -17586,36 +17566,36 @@ public class JavaParser extends Parser {
         int unaryExpressionNotPlusMinus_StartIndex = input.index();
         Object root_0 = null;
 
-        Token char_literal485=null;
-        Token char_literal487=null;
-        Token string_literal492=null;
-        Token string_literal493=null;
-        Token string_literal494=null;
-        Token string_literal495=null;
-        JavaParser.unaryExpression_return unaryExpression486 = null;
+        Token char_literal474=null;
+        Token char_literal476=null;
+        Token string_literal481=null;
+        Token string_literal482=null;
+        Token string_literal483=null;
+        Token string_literal484=null;
+        JavaParser.unaryExpression_return unaryExpression475 = null;
 
-        JavaParser.unaryExpression_return unaryExpression488 = null;
+        JavaParser.unaryExpression_return unaryExpression477 = null;
 
-        JavaParser.castExpression_return castExpression489 = null;
+        JavaParser.castExpression_return castExpression478 = null;
 
-        JavaParser.primary_return primary490 = null;
+        JavaParser.primary_return primary479 = null;
 
-        JavaParser.selector_return selector491 = null;
+        JavaParser.selector_return selector480 = null;
 
 
-        Object char_literal485_tree=null;
-        Object char_literal487_tree=null;
-        Object string_literal492_tree=null;
-        Object string_literal493_tree=null;
-        Object string_literal494_tree=null;
-        Object string_literal495_tree=null;
+        Object char_literal474_tree=null;
+        Object char_literal476_tree=null;
+        Object string_literal481_tree=null;
+        Object string_literal482_tree=null;
+        Object string_literal483_tree=null;
+        Object string_literal484_tree=null;
         RewriteRuleTokenStream stream_202=new RewriteRuleTokenStream(adaptor,"token 202");
-        RewriteRuleTokenStream stream_199=new RewriteRuleTokenStream(adaptor,"token 199");
         RewriteRuleTokenStream stream_200=new RewriteRuleTokenStream(adaptor,"token 200");
+        RewriteRuleTokenStream stream_199=new RewriteRuleTokenStream(adaptor,"token 199");
         RewriteRuleTokenStream stream_201=new RewriteRuleTokenStream(adaptor,"token 201");
-        RewriteRuleSubtreeStream stream_selector=new RewriteRuleSubtreeStream(adaptor,"rule selector");
         RewriteRuleSubtreeStream stream_unaryExpression=new RewriteRuleSubtreeStream(adaptor,"rule unaryExpression");
         RewriteRuleSubtreeStream stream_primary=new RewriteRuleSubtreeStream(adaptor,"rule primary");
+        RewriteRuleSubtreeStream stream_selector=new RewriteRuleSubtreeStream(adaptor,"rule selector");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 106) ) { return retval; }
             // jkit/java/parser/Java.g:851:5: ( '~' unaryExpression -> ^( INV unaryExpression ) | '!' unaryExpression -> ^( NOT unaryExpression ) | castExpression | primary ( ( selector )+ ( '++' -> ^( POSTINC ^( SELECTOR primary ( selector )+ ) ) | '--' -> ^( POSTDEC ^( SELECTOR primary ( selector )+ ) ) | -> ^( SELECTOR primary ( selector )+ ) ) | '++' -> ^( POSTINC primary ) | '--' -> ^( POSTDEC primary ) | -> primary ) )
@@ -17625,15 +17605,15 @@ public class JavaParser extends Parser {
                 case 1 :
                     // jkit/java/parser/Java.g:851:9: '~' unaryExpression
                     {
-                    char_literal485=(Token)match(input,201,FOLLOW_201_in_unaryExpressionNotPlusMinus6293); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_201.add(char_literal485);
+                    char_literal474=(Token)match(input,201,FOLLOW_201_in_unaryExpressionNotPlusMinus6326); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_201.add(char_literal474);
 
-                    pushFollow(FOLLOW_unaryExpression_in_unaryExpressionNotPlusMinus6295);
-                    unaryExpression486=unaryExpression();
+                    pushFollow(FOLLOW_unaryExpression_in_unaryExpressionNotPlusMinus6328);
+                    unaryExpression475=unaryExpression();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_unaryExpression.add(unaryExpression486.getTree());
+                    if ( state.backtracking==0 ) stream_unaryExpression.add(unaryExpression475.getTree());
 
 
                     // AST REWRITE
@@ -17667,15 +17647,15 @@ public class JavaParser extends Parser {
                 case 2 :
                     // jkit/java/parser/Java.g:852:8: '!' unaryExpression
                     {
-                    char_literal487=(Token)match(input,202,FOLLOW_202_in_unaryExpressionNotPlusMinus6312); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_202.add(char_literal487);
+                    char_literal476=(Token)match(input,202,FOLLOW_202_in_unaryExpressionNotPlusMinus6345); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_202.add(char_literal476);
 
-                    pushFollow(FOLLOW_unaryExpression_in_unaryExpressionNotPlusMinus6314);
-                    unaryExpression488=unaryExpression();
+                    pushFollow(FOLLOW_unaryExpression_in_unaryExpressionNotPlusMinus6347);
+                    unaryExpression477=unaryExpression();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_unaryExpression.add(unaryExpression488.getTree());
+                    if ( state.backtracking==0 ) stream_unaryExpression.add(unaryExpression477.getTree());
 
 
                     // AST REWRITE
@@ -17711,24 +17691,24 @@ public class JavaParser extends Parser {
                     {
                     root_0 = (Object)adaptor.nil();
 
-                    pushFollow(FOLLOW_castExpression_in_unaryExpressionNotPlusMinus6332);
-                    castExpression489=castExpression();
+                    pushFollow(FOLLOW_castExpression_in_unaryExpressionNotPlusMinus6365);
+                    castExpression478=castExpression();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) adaptor.addChild(root_0, castExpression489.getTree());
+                    if ( state.backtracking==0 ) adaptor.addChild(root_0, castExpression478.getTree());
 
                     }
                     break;
                 case 4 :
                     // jkit/java/parser/Java.g:854:6: primary ( ( selector )+ ( '++' -> ^( POSTINC ^( SELECTOR primary ( selector )+ ) ) | '--' -> ^( POSTDEC ^( SELECTOR primary ( selector )+ ) ) | -> ^( SELECTOR primary ( selector )+ ) ) | '++' -> ^( POSTINC primary ) | '--' -> ^( POSTDEC primary ) | -> primary )
                     {
-                    pushFollow(FOLLOW_primary_in_unaryExpressionNotPlusMinus6339);
-                    primary490=primary();
+                    pushFollow(FOLLOW_primary_in_unaryExpressionNotPlusMinus6372);
+                    primary479=primary();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_primary.add(primary490.getTree());
+                    if ( state.backtracking==0 ) stream_primary.add(primary479.getTree());
                     // jkit/java/parser/Java.g:855:3: ( ( selector )+ ( '++' -> ^( POSTINC ^( SELECTOR primary ( selector )+ ) ) | '--' -> ^( POSTDEC ^( SELECTOR primary ( selector )+ ) ) | -> ^( SELECTOR primary ( selector )+ ) ) | '++' -> ^( POSTINC primary ) | '--' -> ^( POSTDEC primary ) | -> primary )
                     int alt147=4;
                     alt147 = dfa147.predict(input);
@@ -17746,12 +17726,12 @@ public class JavaParser extends Parser {
                             	case 1 :
                             	    // jkit/java/parser/Java.g:0:0: selector
                             	    {
-                            	    pushFollow(FOLLOW_selector_in_unaryExpressionNotPlusMinus6349);
-                            	    selector491=selector();
+                            	    pushFollow(FOLLOW_selector_in_unaryExpressionNotPlusMinus6382);
+                            	    selector480=selector();
 
                             	    state._fsp--;
                             	    if (state.failed) return retval;
-                            	    if ( state.backtracking==0 ) stream_selector.add(selector491.getTree());
+                            	    if ( state.backtracking==0 ) stream_selector.add(selector480.getTree());
 
                             	    }
                             	    break;
@@ -17773,13 +17753,13 @@ public class JavaParser extends Parser {
                                 case 1 :
                                     // jkit/java/parser/Java.g:858:5: '++'
                                     {
-                                    string_literal492=(Token)match(input,199,FOLLOW_199_in_unaryExpressionNotPlusMinus6362); if (state.failed) return retval; 
-                                    if ( state.backtracking==0 ) stream_199.add(string_literal492);
+                                    string_literal481=(Token)match(input,199,FOLLOW_199_in_unaryExpressionNotPlusMinus6395); if (state.failed) return retval; 
+                                    if ( state.backtracking==0 ) stream_199.add(string_literal481);
 
 
 
                                     // AST REWRITE
-                                    // elements: selector, primary
+                                    // elements: primary, selector
                                     // token labels: 
                                     // rule labels: retval
                                     // token list labels: 
@@ -17825,8 +17805,8 @@ public class JavaParser extends Parser {
                                 case 2 :
                                     // jkit/java/parser/Java.g:859:6: '--'
                                     {
-                                    string_literal493=(Token)match(input,200,FOLLOW_200_in_unaryExpressionNotPlusMinus6384); if (state.failed) return retval; 
-                                    if ( state.backtracking==0 ) stream_200.add(string_literal493);
+                                    string_literal482=(Token)match(input,200,FOLLOW_200_in_unaryExpressionNotPlusMinus6417); if (state.failed) return retval; 
+                                    if ( state.backtracking==0 ) stream_200.add(string_literal482);
 
 
 
@@ -17923,8 +17903,8 @@ public class JavaParser extends Parser {
                         case 2 :
                             // jkit/java/parser/Java.g:862:6: '++'
                             {
-                            string_literal494=(Token)match(input,199,FOLLOW_199_in_unaryExpressionNotPlusMinus6428); if (state.failed) return retval; 
-                            if ( state.backtracking==0 ) stream_199.add(string_literal494);
+                            string_literal483=(Token)match(input,199,FOLLOW_199_in_unaryExpressionNotPlusMinus6461); if (state.failed) return retval; 
+                            if ( state.backtracking==0 ) stream_199.add(string_literal483);
 
 
 
@@ -17959,8 +17939,8 @@ public class JavaParser extends Parser {
                         case 3 :
                             // jkit/java/parser/Java.g:863:6: '--'
                             {
-                            string_literal495=(Token)match(input,200,FOLLOW_200_in_unaryExpressionNotPlusMinus6443); if (state.failed) return retval; 
-                            if ( state.backtracking==0 ) stream_200.add(string_literal495);
+                            string_literal484=(Token)match(input,200,FOLLOW_200_in_unaryExpressionNotPlusMinus6476); if (state.failed) return retval; 
+                            if ( state.backtracking==0 ) stream_200.add(string_literal484);
 
 
 
@@ -18056,38 +18036,38 @@ public class JavaParser extends Parser {
         int castExpression_StartIndex = input.index();
         Object root_0 = null;
 
-        Token char_literal496=null;
-        Token char_literal498=null;
-        Token char_literal500=null;
-        Token char_literal502=null;
-        Token char_literal504=null;
-        Token char_literal506=null;
-        JavaParser.primitiveType_return primitiveType497 = null;
+        Token char_literal485=null;
+        Token char_literal487=null;
+        Token char_literal489=null;
+        Token char_literal491=null;
+        Token char_literal493=null;
+        Token char_literal495=null;
+        JavaParser.primitiveType_return primitiveType486 = null;
 
-        JavaParser.unaryExpression_return unaryExpression499 = null;
+        JavaParser.unaryExpression_return unaryExpression488 = null;
 
-        JavaParser.type_return type501 = null;
+        JavaParser.type_return type490 = null;
 
-        JavaParser.unaryExpressionNotPlusMinus_return unaryExpressionNotPlusMinus503 = null;
+        JavaParser.unaryExpressionNotPlusMinus_return unaryExpressionNotPlusMinus492 = null;
 
-        JavaParser.expression_return expression505 = null;
+        JavaParser.expression_return expression494 = null;
 
-        JavaParser.unaryExpressionNotPlusMinus_return unaryExpressionNotPlusMinus507 = null;
+        JavaParser.unaryExpressionNotPlusMinus_return unaryExpressionNotPlusMinus496 = null;
 
 
-        Object char_literal496_tree=null;
-        Object char_literal498_tree=null;
-        Object char_literal500_tree=null;
-        Object char_literal502_tree=null;
-        Object char_literal504_tree=null;
-        Object char_literal506_tree=null;
+        Object char_literal485_tree=null;
+        Object char_literal487_tree=null;
+        Object char_literal489_tree=null;
+        Object char_literal491_tree=null;
+        Object char_literal493_tree=null;
+        Object char_literal495_tree=null;
         RewriteRuleTokenStream stream_161=new RewriteRuleTokenStream(adaptor,"token 161");
         RewriteRuleTokenStream stream_162=new RewriteRuleTokenStream(adaptor,"token 162");
-        RewriteRuleSubtreeStream stream_expression=new RewriteRuleSubtreeStream(adaptor,"rule expression");
-        RewriteRuleSubtreeStream stream_primitiveType=new RewriteRuleSubtreeStream(adaptor,"rule primitiveType");
         RewriteRuleSubtreeStream stream_unaryExpression=new RewriteRuleSubtreeStream(adaptor,"rule unaryExpression");
-        RewriteRuleSubtreeStream stream_unaryExpressionNotPlusMinus=new RewriteRuleSubtreeStream(adaptor,"rule unaryExpressionNotPlusMinus");
         RewriteRuleSubtreeStream stream_type=new RewriteRuleSubtreeStream(adaptor,"rule type");
+        RewriteRuleSubtreeStream stream_unaryExpressionNotPlusMinus=new RewriteRuleSubtreeStream(adaptor,"rule unaryExpressionNotPlusMinus");
+        RewriteRuleSubtreeStream stream_primitiveType=new RewriteRuleSubtreeStream(adaptor,"rule primitiveType");
+        RewriteRuleSubtreeStream stream_expression=new RewriteRuleSubtreeStream(adaptor,"rule expression");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 107) ) { return retval; }
             // jkit/java/parser/Java.g:869:5: ( '(' primitiveType ')' unaryExpression -> ^( CAST ^( TYPE primitiveType ) unaryExpression ) | '(' type ')' unaryExpressionNotPlusMinus -> ^( CAST type unaryExpressionNotPlusMinus ) | '(' expression ')' unaryExpressionNotPlusMinus ->)
@@ -18097,28 +18077,28 @@ public class JavaParser extends Parser {
                 case 1 :
                     // jkit/java/parser/Java.g:869:8: '(' primitiveType ')' unaryExpression
                     {
-                    char_literal496=(Token)match(input,161,FOLLOW_161_in_castExpression6482); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_161.add(char_literal496);
+                    char_literal485=(Token)match(input,161,FOLLOW_161_in_castExpression6515); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_161.add(char_literal485);
 
-                    pushFollow(FOLLOW_primitiveType_in_castExpression6484);
-                    primitiveType497=primitiveType();
-
-                    state._fsp--;
-                    if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_primitiveType.add(primitiveType497.getTree());
-                    char_literal498=(Token)match(input,162,FOLLOW_162_in_castExpression6486); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_162.add(char_literal498);
-
-                    pushFollow(FOLLOW_unaryExpression_in_castExpression6488);
-                    unaryExpression499=unaryExpression();
+                    pushFollow(FOLLOW_primitiveType_in_castExpression6517);
+                    primitiveType486=primitiveType();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_unaryExpression.add(unaryExpression499.getTree());
+                    if ( state.backtracking==0 ) stream_primitiveType.add(primitiveType486.getTree());
+                    char_literal487=(Token)match(input,162,FOLLOW_162_in_castExpression6519); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_162.add(char_literal487);
+
+                    pushFollow(FOLLOW_unaryExpression_in_castExpression6521);
+                    unaryExpression488=unaryExpression();
+
+                    state._fsp--;
+                    if (state.failed) return retval;
+                    if ( state.backtracking==0 ) stream_unaryExpression.add(unaryExpression488.getTree());
 
 
                     // AST REWRITE
-                    // elements: primitiveType, unaryExpression
+                    // elements: unaryExpression, primitiveType
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -18157,28 +18137,28 @@ public class JavaParser extends Parser {
                 case 2 :
                     // jkit/java/parser/Java.g:870:8: '(' type ')' unaryExpressionNotPlusMinus
                     {
-                    char_literal500=(Token)match(input,161,FOLLOW_161_in_castExpression6511); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_161.add(char_literal500);
+                    char_literal489=(Token)match(input,161,FOLLOW_161_in_castExpression6544); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_161.add(char_literal489);
 
-                    pushFollow(FOLLOW_type_in_castExpression6513);
-                    type501=type();
-
-                    state._fsp--;
-                    if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_type.add(type501.getTree());
-                    char_literal502=(Token)match(input,162,FOLLOW_162_in_castExpression6515); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_162.add(char_literal502);
-
-                    pushFollow(FOLLOW_unaryExpressionNotPlusMinus_in_castExpression6517);
-                    unaryExpressionNotPlusMinus503=unaryExpressionNotPlusMinus();
+                    pushFollow(FOLLOW_type_in_castExpression6546);
+                    type490=type();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_unaryExpressionNotPlusMinus.add(unaryExpressionNotPlusMinus503.getTree());
+                    if ( state.backtracking==0 ) stream_type.add(type490.getTree());
+                    char_literal491=(Token)match(input,162,FOLLOW_162_in_castExpression6548); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_162.add(char_literal491);
+
+                    pushFollow(FOLLOW_unaryExpressionNotPlusMinus_in_castExpression6550);
+                    unaryExpressionNotPlusMinus492=unaryExpressionNotPlusMinus();
+
+                    state._fsp--;
+                    if (state.failed) return retval;
+                    if ( state.backtracking==0 ) stream_unaryExpressionNotPlusMinus.add(unaryExpressionNotPlusMinus492.getTree());
 
 
                     // AST REWRITE
-                    // elements: type, unaryExpressionNotPlusMinus
+                    // elements: unaryExpressionNotPlusMinus, type
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -18209,24 +18189,24 @@ public class JavaParser extends Parser {
                 case 3 :
                     // jkit/java/parser/Java.g:871:8: '(' expression ')' unaryExpressionNotPlusMinus
                     {
-                    char_literal504=(Token)match(input,161,FOLLOW_161_in_castExpression6536); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_161.add(char_literal504);
+                    char_literal493=(Token)match(input,161,FOLLOW_161_in_castExpression6569); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_161.add(char_literal493);
 
-                    pushFollow(FOLLOW_expression_in_castExpression6538);
-                    expression505=expression();
-
-                    state._fsp--;
-                    if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_expression.add(expression505.getTree());
-                    char_literal506=(Token)match(input,162,FOLLOW_162_in_castExpression6540); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_162.add(char_literal506);
-
-                    pushFollow(FOLLOW_unaryExpressionNotPlusMinus_in_castExpression6542);
-                    unaryExpressionNotPlusMinus507=unaryExpressionNotPlusMinus();
+                    pushFollow(FOLLOW_expression_in_castExpression6571);
+                    expression494=expression();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_unaryExpressionNotPlusMinus.add(unaryExpressionNotPlusMinus507.getTree());
+                    if ( state.backtracking==0 ) stream_expression.add(expression494.getTree());
+                    char_literal495=(Token)match(input,162,FOLLOW_162_in_castExpression6573); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_162.add(char_literal495);
+
+                    pushFollow(FOLLOW_unaryExpressionNotPlusMinus_in_castExpression6575);
+                    unaryExpressionNotPlusMinus496=unaryExpressionNotPlusMinus();
+
+                    state._fsp--;
+                    if (state.failed) return retval;
+                    if ( state.backtracking==0 ) stream_unaryExpressionNotPlusMinus.add(unaryExpressionNotPlusMinus496.getTree());
 
 
                     // AST REWRITE
@@ -18282,99 +18262,99 @@ public class JavaParser extends Parser {
         int primary_StartIndex = input.index();
         Object root_0 = null;
 
+        Token string_literal501=null;
+        Token char_literal504=null;
+        Token char_literal506=null;
+        Token char_literal507=null;
+        Token char_literal508=null;
+        Token char_literal509=null;
+        Token char_literal510=null;
         Token string_literal512=null;
+        Token char_literal514=null;
         Token char_literal515=null;
         Token char_literal517=null;
         Token char_literal518=null;
         Token char_literal519=null;
         Token char_literal520=null;
         Token char_literal521=null;
-        Token string_literal523=null;
         Token char_literal525=null;
-        Token char_literal526=null;
+        Token string_literal526=null;
+        Token string_literal527=null;
         Token char_literal528=null;
-        Token char_literal529=null;
-        Token char_literal530=null;
-        Token char_literal531=null;
-        Token char_literal532=null;
-        Token char_literal536=null;
-        Token string_literal537=null;
-        Token string_literal538=null;
-        Token char_literal539=null;
-        Token string_literal540=null;
-        Token string_literal541=null;
-        Token Identifier543=null;
+        Token string_literal529=null;
+        Token string_literal530=null;
+        Token Identifier532=null;
         List list_i=null;
-        JavaParser.parExpression_return parExpression508 = null;
+        JavaParser.parExpression_return parExpression497 = null;
 
-        JavaParser.nonWildcardTypeArguments_return nonWildcardTypeArguments509 = null;
+        JavaParser.nonWildcardTypeArguments_return nonWildcardTypeArguments498 = null;
 
-        JavaParser.explicitGenericInvocationSuffix_return explicitGenericInvocationSuffix510 = null;
+        JavaParser.explicitGenericInvocationSuffix_return explicitGenericInvocationSuffix499 = null;
 
-        JavaParser.literal_return literal511 = null;
+        JavaParser.literal_return literal500 = null;
+
+        JavaParser.nonWildcardTypeArguments_return nonWildcardTypeArguments502 = null;
+
+        JavaParser.primitiveType_return primitiveType503 = null;
+
+        JavaParser.expression_return expression505 = null;
+
+        JavaParser.arrayInitializer_return arrayInitializer511 = null;
 
         JavaParser.nonWildcardTypeArguments_return nonWildcardTypeArguments513 = null;
-
-        JavaParser.primitiveType_return primitiveType514 = null;
 
         JavaParser.expression_return expression516 = null;
 
         JavaParser.arrayInitializer_return arrayInitializer522 = null;
 
-        JavaParser.nonWildcardTypeArguments_return nonWildcardTypeArguments524 = null;
+        JavaParser.classCreatorRest_return classCreatorRest523 = null;
 
-        JavaParser.expression_return expression527 = null;
+        JavaParser.type_return type524 = null;
 
-        JavaParser.arrayInitializer_return arrayInitializer533 = null;
+        JavaParser.arguments_return arguments531 = null;
 
-        JavaParser.classCreatorRest_return classCreatorRest534 = null;
-
-        JavaParser.type_return type535 = null;
-
-        JavaParser.arguments_return arguments542 = null;
-
-        JavaParser.arguments_return arguments544 = null;
+        JavaParser.arguments_return arguments533 = null;
 
         JavaParser.refComponent_return i = null;
+        Object string_literal501_tree=null;
+        Object char_literal504_tree=null;
+        Object char_literal506_tree=null;
+        Object char_literal507_tree=null;
+        Object char_literal508_tree=null;
+        Object char_literal509_tree=null;
+        Object char_literal510_tree=null;
         Object string_literal512_tree=null;
+        Object char_literal514_tree=null;
         Object char_literal515_tree=null;
         Object char_literal517_tree=null;
         Object char_literal518_tree=null;
         Object char_literal519_tree=null;
         Object char_literal520_tree=null;
         Object char_literal521_tree=null;
-        Object string_literal523_tree=null;
         Object char_literal525_tree=null;
-        Object char_literal526_tree=null;
+        Object string_literal526_tree=null;
+        Object string_literal527_tree=null;
         Object char_literal528_tree=null;
-        Object char_literal529_tree=null;
-        Object char_literal530_tree=null;
-        Object char_literal531_tree=null;
-        Object char_literal532_tree=null;
-        Object char_literal536_tree=null;
-        Object string_literal537_tree=null;
-        Object string_literal538_tree=null;
-        Object char_literal539_tree=null;
-        Object string_literal540_tree=null;
-        Object string_literal541_tree=null;
-        Object Identifier543_tree=null;
-        RewriteRuleTokenStream stream_126=new RewriteRuleTokenStream(adaptor,"token 126");
-        RewriteRuleTokenStream stream_203=new RewriteRuleTokenStream(adaptor,"token 203");
-        RewriteRuleTokenStream stream_138=new RewriteRuleTokenStream(adaptor,"token 138");
-        RewriteRuleTokenStream stream_139=new RewriteRuleTokenStream(adaptor,"token 139");
+        Object string_literal529_tree=null;
+        Object string_literal530_tree=null;
+        Object Identifier532_tree=null;
         RewriteRuleTokenStream stream_136=new RewriteRuleTokenStream(adaptor,"token 136");
+        RewriteRuleTokenStream stream_138=new RewriteRuleTokenStream(adaptor,"token 138");
         RewriteRuleTokenStream stream_160=new RewriteRuleTokenStream(adaptor,"token 160");
-        RewriteRuleTokenStream stream_124=new RewriteRuleTokenStream(adaptor,"token 124");
         RewriteRuleTokenStream stream_Identifier=new RewriteRuleTokenStream(adaptor,"token Identifier");
-        RewriteRuleSubtreeStream stream_expression=new RewriteRuleSubtreeStream(adaptor,"rule expression");
+        RewriteRuleTokenStream stream_139=new RewriteRuleTokenStream(adaptor,"token 139");
+        RewriteRuleTokenStream stream_203=new RewriteRuleTokenStream(adaptor,"token 203");
+        RewriteRuleTokenStream stream_124=new RewriteRuleTokenStream(adaptor,"token 124");
+        RewriteRuleTokenStream stream_126=new RewriteRuleTokenStream(adaptor,"token 126");
         RewriteRuleSubtreeStream stream_arguments=new RewriteRuleSubtreeStream(adaptor,"rule arguments");
-        RewriteRuleSubtreeStream stream_refComponent=new RewriteRuleSubtreeStream(adaptor,"rule refComponent");
         RewriteRuleSubtreeStream stream_arrayInitializer=new RewriteRuleSubtreeStream(adaptor,"rule arrayInitializer");
-        RewriteRuleSubtreeStream stream_primitiveType=new RewriteRuleSubtreeStream(adaptor,"rule primitiveType");
-        RewriteRuleSubtreeStream stream_nonWildcardTypeArguments=new RewriteRuleSubtreeStream(adaptor,"rule nonWildcardTypeArguments");
         RewriteRuleSubtreeStream stream_type=new RewriteRuleSubtreeStream(adaptor,"rule type");
         RewriteRuleSubtreeStream stream_classCreatorRest=new RewriteRuleSubtreeStream(adaptor,"rule classCreatorRest");
         RewriteRuleSubtreeStream stream_explicitGenericInvocationSuffix=new RewriteRuleSubtreeStream(adaptor,"rule explicitGenericInvocationSuffix");
+        RewriteRuleSubtreeStream stream_refComponent=new RewriteRuleSubtreeStream(adaptor,"rule refComponent");
+        RewriteRuleSubtreeStream stream_nonWildcardTypeArguments=new RewriteRuleSubtreeStream(adaptor,"rule nonWildcardTypeArguments");
+        RewriteRuleSubtreeStream stream_primitiveType=new RewriteRuleSubtreeStream(adaptor,"rule primitiveType");
+        RewriteRuleSubtreeStream stream_expression=new RewriteRuleSubtreeStream(adaptor,"rule expression");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 108) ) { return retval; }
             // jkit/java/parser/Java.g:875:5: ( parExpression | nonWildcardTypeArguments explicitGenericInvocationSuffix -> ^( INVOKE ^( TYPE_PARAMETER nonWildcardTypeArguments ) explicitGenericInvocationSuffix ) | literal | 'new' ( nonWildcardTypeArguments )? primitiveType ( ( '[' expression ']' )+ ( '[' ']' )* -> ^( NEW ^( TYPE primitiveType ( '[' )* ) ( expression )* ) | ( '[' ']' )+ arrayInitializer -> ^( ARRAYINIT ^( TYPE primitiveType ( '[' )* ) arrayInitializer ) ) | 'new' ( nonWildcardTypeArguments )? (i+= refComponent ( '.' i+= refComponent )* ) ( ( '[' expression ']' )+ ( '[' ']' )* -> ^( NEW ^( TYPE ( $i)+ ( '[' )* ) ( expression )* ) | ( '[' ']' )+ arrayInitializer -> ^( ARRAYINIT ^( TYPE ( $i)+ ( '[' )* ) arrayInitializer ) | classCreatorRest -> ^( NEW ^( TYPE ( $i)+ ) ( classCreatorRest )? ) ) | type '.' 'class' -> ^( GETCLASS type ) | 'void' '.' 'class' -> ^( GETCLASS ^( TYPE VOID ) ) | 'super' ( arguments -> ^( INVOKE 'super' ( arguments )? ) | -> ^( VAR 'super' ) ) | Identifier ( arguments -> ^( INVOKE Identifier ( arguments )? ) | -> ^( VAR Identifier ) ) )
@@ -18386,30 +18366,30 @@ public class JavaParser extends Parser {
                     {
                     root_0 = (Object)adaptor.nil();
 
-                    pushFollow(FOLLOW_parExpression_in_primary6562);
-                    parExpression508=parExpression();
+                    pushFollow(FOLLOW_parExpression_in_primary6595);
+                    parExpression497=parExpression();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) adaptor.addChild(root_0, parExpression508.getTree());
+                    if ( state.backtracking==0 ) adaptor.addChild(root_0, parExpression497.getTree());
 
                     }
                     break;
                 case 2 :
                     // jkit/java/parser/Java.g:876:6: nonWildcardTypeArguments explicitGenericInvocationSuffix
                     {
-                    pushFollow(FOLLOW_nonWildcardTypeArguments_in_primary6569);
-                    nonWildcardTypeArguments509=nonWildcardTypeArguments();
+                    pushFollow(FOLLOW_nonWildcardTypeArguments_in_primary6602);
+                    nonWildcardTypeArguments498=nonWildcardTypeArguments();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_nonWildcardTypeArguments.add(nonWildcardTypeArguments509.getTree());
-                    pushFollow(FOLLOW_explicitGenericInvocationSuffix_in_primary6571);
-                    explicitGenericInvocationSuffix510=explicitGenericInvocationSuffix();
+                    if ( state.backtracking==0 ) stream_nonWildcardTypeArguments.add(nonWildcardTypeArguments498.getTree());
+                    pushFollow(FOLLOW_explicitGenericInvocationSuffix_in_primary6604);
+                    explicitGenericInvocationSuffix499=explicitGenericInvocationSuffix();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_explicitGenericInvocationSuffix.add(explicitGenericInvocationSuffix510.getTree());
+                    if ( state.backtracking==0 ) stream_explicitGenericInvocationSuffix.add(explicitGenericInvocationSuffix499.getTree());
 
 
                     // AST REWRITE
@@ -18454,20 +18434,20 @@ public class JavaParser extends Parser {
                     {
                     root_0 = (Object)adaptor.nil();
 
-                    pushFollow(FOLLOW_literal_in_primary6595);
-                    literal511=literal();
+                    pushFollow(FOLLOW_literal_in_primary6628);
+                    literal500=literal();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) adaptor.addChild(root_0, literal511.getTree());
+                    if ( state.backtracking==0 ) adaptor.addChild(root_0, literal500.getTree());
 
                     }
                     break;
                 case 4 :
                     // jkit/java/parser/Java.g:878:9: 'new' ( nonWildcardTypeArguments )? primitiveType ( ( '[' expression ']' )+ ( '[' ']' )* -> ^( NEW ^( TYPE primitiveType ( '[' )* ) ( expression )* ) | ( '[' ']' )+ arrayInitializer -> ^( ARRAYINIT ^( TYPE primitiveType ( '[' )* ) arrayInitializer ) )
                     {
-                    string_literal512=(Token)match(input,203,FOLLOW_203_in_primary6605); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_203.add(string_literal512);
+                    string_literal501=(Token)match(input,203,FOLLOW_203_in_primary6638); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_203.add(string_literal501);
 
                     // jkit/java/parser/Java.g:878:15: ( nonWildcardTypeArguments )?
                     int alt150=2;
@@ -18480,24 +18460,24 @@ public class JavaParser extends Parser {
                         case 1 :
                             // jkit/java/parser/Java.g:0:0: nonWildcardTypeArguments
                             {
-                            pushFollow(FOLLOW_nonWildcardTypeArguments_in_primary6607);
-                            nonWildcardTypeArguments513=nonWildcardTypeArguments();
+                            pushFollow(FOLLOW_nonWildcardTypeArguments_in_primary6640);
+                            nonWildcardTypeArguments502=nonWildcardTypeArguments();
 
                             state._fsp--;
                             if (state.failed) return retval;
-                            if ( state.backtracking==0 ) stream_nonWildcardTypeArguments.add(nonWildcardTypeArguments513.getTree());
+                            if ( state.backtracking==0 ) stream_nonWildcardTypeArguments.add(nonWildcardTypeArguments502.getTree());
 
                             }
                             break;
 
                     }
 
-                    pushFollow(FOLLOW_primitiveType_in_primary6610);
-                    primitiveType514=primitiveType();
+                    pushFollow(FOLLOW_primitiveType_in_primary6643);
+                    primitiveType503=primitiveType();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_primitiveType.add(primitiveType514.getTree());
+                    if ( state.backtracking==0 ) stream_primitiveType.add(primitiveType503.getTree());
                     // jkit/java/parser/Java.g:879:6: ( ( '[' expression ']' )+ ( '[' ']' )* -> ^( NEW ^( TYPE primitiveType ( '[' )* ) ( expression )* ) | ( '[' ']' )+ arrayInitializer -> ^( ARRAYINIT ^( TYPE primitiveType ( '[' )* ) arrayInitializer ) )
                     int alt154=2;
                     alt154 = dfa154.predict(input);
@@ -18515,17 +18495,17 @@ public class JavaParser extends Parser {
                             	case 1 :
                             	    // jkit/java/parser/Java.g:880:8: '[' expression ']'
                             	    {
-                            	    char_literal515=(Token)match(input,138,FOLLOW_138_in_primary6626); if (state.failed) return retval; 
-                            	    if ( state.backtracking==0 ) stream_138.add(char_literal515);
+                            	    char_literal504=(Token)match(input,138,FOLLOW_138_in_primary6659); if (state.failed) return retval; 
+                            	    if ( state.backtracking==0 ) stream_138.add(char_literal504);
 
-                            	    pushFollow(FOLLOW_expression_in_primary6628);
-                            	    expression516=expression();
+                            	    pushFollow(FOLLOW_expression_in_primary6661);
+                            	    expression505=expression();
 
                             	    state._fsp--;
                             	    if (state.failed) return retval;
-                            	    if ( state.backtracking==0 ) stream_expression.add(expression516.getTree());
-                            	    char_literal517=(Token)match(input,139,FOLLOW_139_in_primary6630); if (state.failed) return retval; 
-                            	    if ( state.backtracking==0 ) stream_139.add(char_literal517);
+                            	    if ( state.backtracking==0 ) stream_expression.add(expression505.getTree());
+                            	    char_literal506=(Token)match(input,139,FOLLOW_139_in_primary6663); if (state.failed) return retval; 
+                            	    if ( state.backtracking==0 ) stream_139.add(char_literal506);
 
 
                             	    }
@@ -18550,11 +18530,11 @@ public class JavaParser extends Parser {
                             	case 1 :
                             	    // jkit/java/parser/Java.g:880:30: '[' ']'
                             	    {
-                            	    char_literal518=(Token)match(input,138,FOLLOW_138_in_primary6635); if (state.failed) return retval; 
-                            	    if ( state.backtracking==0 ) stream_138.add(char_literal518);
+                            	    char_literal507=(Token)match(input,138,FOLLOW_138_in_primary6668); if (state.failed) return retval; 
+                            	    if ( state.backtracking==0 ) stream_138.add(char_literal507);
 
-                            	    char_literal519=(Token)match(input,139,FOLLOW_139_in_primary6637); if (state.failed) return retval; 
-                            	    if ( state.backtracking==0 ) stream_139.add(char_literal519);
+                            	    char_literal508=(Token)match(input,139,FOLLOW_139_in_primary6670); if (state.failed) return retval; 
+                            	    if ( state.backtracking==0 ) stream_139.add(char_literal508);
 
 
                             	    }
@@ -18568,7 +18548,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: 138, primitiveType, expression
+                            // elements: primitiveType, expression, 138
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -18634,11 +18614,11 @@ public class JavaParser extends Parser {
                             	case 1 :
                             	    // jkit/java/parser/Java.g:881:10: '[' ']'
                             	    {
-                            	    char_literal520=(Token)match(input,138,FOLLOW_138_in_primary6668); if (state.failed) return retval; 
-                            	    if ( state.backtracking==0 ) stream_138.add(char_literal520);
+                            	    char_literal509=(Token)match(input,138,FOLLOW_138_in_primary6701); if (state.failed) return retval; 
+                            	    if ( state.backtracking==0 ) stream_138.add(char_literal509);
 
-                            	    char_literal521=(Token)match(input,139,FOLLOW_139_in_primary6670); if (state.failed) return retval; 
-                            	    if ( state.backtracking==0 ) stream_139.add(char_literal521);
+                            	    char_literal510=(Token)match(input,139,FOLLOW_139_in_primary6703); if (state.failed) return retval; 
+                            	    if ( state.backtracking==0 ) stream_139.add(char_literal510);
 
 
                             	    }
@@ -18654,12 +18634,12 @@ public class JavaParser extends Parser {
                                 cnt153++;
                             } while (true);
 
-                            pushFollow(FOLLOW_arrayInitializer_in_primary6674);
-                            arrayInitializer522=arrayInitializer();
+                            pushFollow(FOLLOW_arrayInitializer_in_primary6707);
+                            arrayInitializer511=arrayInitializer();
 
                             state._fsp--;
                             if (state.failed) return retval;
-                            if ( state.backtracking==0 ) stream_arrayInitializer.add(arrayInitializer522.getTree());
+                            if ( state.backtracking==0 ) stream_arrayInitializer.add(arrayInitializer511.getTree());
 
 
                             // AST REWRITE
@@ -18714,8 +18694,8 @@ public class JavaParser extends Parser {
                 case 5 :
                     // jkit/java/parser/Java.g:883:9: 'new' ( nonWildcardTypeArguments )? (i+= refComponent ( '.' i+= refComponent )* ) ( ( '[' expression ']' )+ ( '[' ']' )* -> ^( NEW ^( TYPE ( $i)+ ( '[' )* ) ( expression )* ) | ( '[' ']' )+ arrayInitializer -> ^( ARRAYINIT ^( TYPE ( $i)+ ( '[' )* ) arrayInitializer ) | classCreatorRest -> ^( NEW ^( TYPE ( $i)+ ) ( classCreatorRest )? ) )
                     {
-                    string_literal523=(Token)match(input,203,FOLLOW_203_in_primary6706); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_203.add(string_literal523);
+                    string_literal512=(Token)match(input,203,FOLLOW_203_in_primary6739); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_203.add(string_literal512);
 
                     // jkit/java/parser/Java.g:883:15: ( nonWildcardTypeArguments )?
                     int alt155=2;
@@ -18728,12 +18708,12 @@ public class JavaParser extends Parser {
                         case 1 :
                             // jkit/java/parser/Java.g:0:0: nonWildcardTypeArguments
                             {
-                            pushFollow(FOLLOW_nonWildcardTypeArguments_in_primary6708);
-                            nonWildcardTypeArguments524=nonWildcardTypeArguments();
+                            pushFollow(FOLLOW_nonWildcardTypeArguments_in_primary6741);
+                            nonWildcardTypeArguments513=nonWildcardTypeArguments();
 
                             state._fsp--;
                             if (state.failed) return retval;
-                            if ( state.backtracking==0 ) stream_nonWildcardTypeArguments.add(nonWildcardTypeArguments524.getTree());
+                            if ( state.backtracking==0 ) stream_nonWildcardTypeArguments.add(nonWildcardTypeArguments513.getTree());
 
                             }
                             break;
@@ -18743,7 +18723,7 @@ public class JavaParser extends Parser {
                     // jkit/java/parser/Java.g:883:41: (i+= refComponent ( '.' i+= refComponent )* )
                     // jkit/java/parser/Java.g:883:42: i+= refComponent ( '.' i+= refComponent )*
                     {
-                    pushFollow(FOLLOW_refComponent_in_primary6714);
+                    pushFollow(FOLLOW_refComponent_in_primary6747);
                     i=refComponent();
 
                     state._fsp--;
@@ -18767,10 +18747,10 @@ public class JavaParser extends Parser {
                     	case 1 :
                     	    // jkit/java/parser/Java.g:883:59: '.' i+= refComponent
                     	    {
-                    	    char_literal525=(Token)match(input,124,FOLLOW_124_in_primary6717); if (state.failed) return retval; 
-                    	    if ( state.backtracking==0 ) stream_124.add(char_literal525);
+                    	    char_literal514=(Token)match(input,124,FOLLOW_124_in_primary6750); if (state.failed) return retval; 
+                    	    if ( state.backtracking==0 ) stream_124.add(char_literal514);
 
-                    	    pushFollow(FOLLOW_refComponent_in_primary6721);
+                    	    pushFollow(FOLLOW_refComponent_in_primary6754);
                     	    i=refComponent();
 
                     	    state._fsp--;
@@ -18808,17 +18788,17 @@ public class JavaParser extends Parser {
                             	case 1 :
                             	    // jkit/java/parser/Java.g:885:8: '[' expression ']'
                             	    {
-                            	    char_literal526=(Token)match(input,138,FOLLOW_138_in_primary6740); if (state.failed) return retval; 
-                            	    if ( state.backtracking==0 ) stream_138.add(char_literal526);
+                            	    char_literal515=(Token)match(input,138,FOLLOW_138_in_primary6773); if (state.failed) return retval; 
+                            	    if ( state.backtracking==0 ) stream_138.add(char_literal515);
 
-                            	    pushFollow(FOLLOW_expression_in_primary6742);
-                            	    expression527=expression();
+                            	    pushFollow(FOLLOW_expression_in_primary6775);
+                            	    expression516=expression();
 
                             	    state._fsp--;
                             	    if (state.failed) return retval;
-                            	    if ( state.backtracking==0 ) stream_expression.add(expression527.getTree());
-                            	    char_literal528=(Token)match(input,139,FOLLOW_139_in_primary6744); if (state.failed) return retval; 
-                            	    if ( state.backtracking==0 ) stream_139.add(char_literal528);
+                            	    if ( state.backtracking==0 ) stream_expression.add(expression516.getTree());
+                            	    char_literal517=(Token)match(input,139,FOLLOW_139_in_primary6777); if (state.failed) return retval; 
+                            	    if ( state.backtracking==0 ) stream_139.add(char_literal517);
 
 
                             	    }
@@ -18843,11 +18823,11 @@ public class JavaParser extends Parser {
                             	case 1 :
                             	    // jkit/java/parser/Java.g:885:30: '[' ']'
                             	    {
-                            	    char_literal529=(Token)match(input,138,FOLLOW_138_in_primary6749); if (state.failed) return retval; 
-                            	    if ( state.backtracking==0 ) stream_138.add(char_literal529);
+                            	    char_literal518=(Token)match(input,138,FOLLOW_138_in_primary6782); if (state.failed) return retval; 
+                            	    if ( state.backtracking==0 ) stream_138.add(char_literal518);
 
-                            	    char_literal530=(Token)match(input,139,FOLLOW_139_in_primary6751); if (state.failed) return retval; 
-                            	    if ( state.backtracking==0 ) stream_139.add(char_literal530);
+                            	    char_literal519=(Token)match(input,139,FOLLOW_139_in_primary6784); if (state.failed) return retval; 
+                            	    if ( state.backtracking==0 ) stream_139.add(char_literal519);
 
 
                             	    }
@@ -18861,7 +18841,7 @@ public class JavaParser extends Parser {
 
 
                             // AST REWRITE
-                            // elements: 138, expression, i
+                            // elements: expression, 138, i
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -18934,11 +18914,11 @@ public class JavaParser extends Parser {
                             	case 1 :
                             	    // jkit/java/parser/Java.g:886:10: '[' ']'
                             	    {
-                            	    char_literal531=(Token)match(input,138,FOLLOW_138_in_primary6784); if (state.failed) return retval; 
-                            	    if ( state.backtracking==0 ) stream_138.add(char_literal531);
+                            	    char_literal520=(Token)match(input,138,FOLLOW_138_in_primary6817); if (state.failed) return retval; 
+                            	    if ( state.backtracking==0 ) stream_138.add(char_literal520);
 
-                            	    char_literal532=(Token)match(input,139,FOLLOW_139_in_primary6786); if (state.failed) return retval; 
-                            	    if ( state.backtracking==0 ) stream_139.add(char_literal532);
+                            	    char_literal521=(Token)match(input,139,FOLLOW_139_in_primary6819); if (state.failed) return retval; 
+                            	    if ( state.backtracking==0 ) stream_139.add(char_literal521);
 
 
                             	    }
@@ -18954,16 +18934,16 @@ public class JavaParser extends Parser {
                                 cnt159++;
                             } while (true);
 
-                            pushFollow(FOLLOW_arrayInitializer_in_primary6790);
-                            arrayInitializer533=arrayInitializer();
+                            pushFollow(FOLLOW_arrayInitializer_in_primary6823);
+                            arrayInitializer522=arrayInitializer();
 
                             state._fsp--;
                             if (state.failed) return retval;
-                            if ( state.backtracking==0 ) stream_arrayInitializer.add(arrayInitializer533.getTree());
+                            if ( state.backtracking==0 ) stream_arrayInitializer.add(arrayInitializer522.getTree());
 
 
                             // AST REWRITE
-                            // elements: i, 138, arrayInitializer
+                            // elements: arrayInitializer, i, 138
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -19015,16 +18995,16 @@ public class JavaParser extends Parser {
                         case 3 :
                             // jkit/java/parser/Java.g:887:9: classCreatorRest
                             {
-                            pushFollow(FOLLOW_classCreatorRest_in_primary6819);
-                            classCreatorRest534=classCreatorRest();
+                            pushFollow(FOLLOW_classCreatorRest_in_primary6852);
+                            classCreatorRest523=classCreatorRest();
 
                             state._fsp--;
                             if (state.failed) return retval;
-                            if ( state.backtracking==0 ) stream_classCreatorRest.add(classCreatorRest534.getTree());
+                            if ( state.backtracking==0 ) stream_classCreatorRest.add(classCreatorRest523.getTree());
 
 
                             // AST REWRITE
-                            // elements: classCreatorRest, i
+                            // elements: i, classCreatorRest
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -19081,17 +19061,17 @@ public class JavaParser extends Parser {
                 case 6 :
                     // jkit/java/parser/Java.g:889:9: type '.' 'class'
                     {
-                    pushFollow(FOLLOW_type_in_primary6851);
-                    type535=type();
+                    pushFollow(FOLLOW_type_in_primary6884);
+                    type524=type();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_type.add(type535.getTree());
-                    char_literal536=(Token)match(input,124,FOLLOW_124_in_primary6853); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_124.add(char_literal536);
+                    if ( state.backtracking==0 ) stream_type.add(type524.getTree());
+                    char_literal525=(Token)match(input,124,FOLLOW_124_in_primary6886); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_124.add(char_literal525);
 
-                    string_literal537=(Token)match(input,126,FOLLOW_126_in_primary6855); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_126.add(string_literal537);
+                    string_literal526=(Token)match(input,126,FOLLOW_126_in_primary6888); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_126.add(string_literal526);
 
 
 
@@ -19126,14 +19106,14 @@ public class JavaParser extends Parser {
                 case 7 :
                     // jkit/java/parser/Java.g:890:9: 'void' '.' 'class'
                     {
-                    string_literal538=(Token)match(input,136,FOLLOW_136_in_primary6877); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_136.add(string_literal538);
+                    string_literal527=(Token)match(input,136,FOLLOW_136_in_primary6910); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_136.add(string_literal527);
 
-                    char_literal539=(Token)match(input,124,FOLLOW_124_in_primary6879); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_124.add(char_literal539);
+                    char_literal528=(Token)match(input,124,FOLLOW_124_in_primary6912); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_124.add(char_literal528);
 
-                    string_literal540=(Token)match(input,126,FOLLOW_126_in_primary6881); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_126.add(string_literal540);
+                    string_literal529=(Token)match(input,126,FOLLOW_126_in_primary6914); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_126.add(string_literal529);
 
 
 
@@ -19176,8 +19156,8 @@ public class JavaParser extends Parser {
                 case 8 :
                     // jkit/java/parser/Java.g:891:8: 'super' ( arguments -> ^( INVOKE 'super' ( arguments )? ) | -> ^( VAR 'super' ) )
                     {
-                    string_literal541=(Token)match(input,160,FOLLOW_160_in_primary6902); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_160.add(string_literal541);
+                    string_literal530=(Token)match(input,160,FOLLOW_160_in_primary6935); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_160.add(string_literal530);
 
                     // jkit/java/parser/Java.g:892:3: ( arguments -> ^( INVOKE 'super' ( arguments )? ) | -> ^( VAR 'super' ) )
                     int alt161=2;
@@ -19186,16 +19166,16 @@ public class JavaParser extends Parser {
                         case 1 :
                             // jkit/java/parser/Java.g:893:4: arguments
                             {
-                            pushFollow(FOLLOW_arguments_in_primary6912);
-                            arguments542=arguments();
+                            pushFollow(FOLLOW_arguments_in_primary6945);
+                            arguments531=arguments();
 
                             state._fsp--;
                             if (state.failed) return retval;
-                            if ( state.backtracking==0 ) stream_arguments.add(arguments542.getTree());
+                            if ( state.backtracking==0 ) stream_arguments.add(arguments531.getTree());
 
 
                             // AST REWRITE
-                            // elements: arguments, 160
+                            // elements: 160, arguments
                             // token labels: 
                             // rule labels: retval
                             // token list labels: 
@@ -19269,8 +19249,8 @@ public class JavaParser extends Parser {
                 case 9 :
                     // jkit/java/parser/Java.g:896:9: Identifier ( arguments -> ^( INVOKE Identifier ( arguments )? ) | -> ^( VAR Identifier ) )
                     {
-                    Identifier543=(Token)match(input,Identifier,FOLLOW_Identifier_in_primary6950); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_Identifier.add(Identifier543);
+                    Identifier532=(Token)match(input,Identifier,FOLLOW_Identifier_in_primary6983); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_Identifier.add(Identifier532);
 
                     // jkit/java/parser/Java.g:897:6: ( arguments -> ^( INVOKE Identifier ( arguments )? ) | -> ^( VAR Identifier ) )
                     int alt162=2;
@@ -19279,12 +19259,12 @@ public class JavaParser extends Parser {
                         case 1 :
                             // jkit/java/parser/Java.g:898:7: arguments
                             {
-                            pushFollow(FOLLOW_arguments_in_primary6966);
-                            arguments544=arguments();
+                            pushFollow(FOLLOW_arguments_in_primary6999);
+                            arguments533=arguments();
 
                             state._fsp--;
                             if (state.failed) return retval;
-                            if ( state.backtracking==0 ) stream_arguments.add(arguments544.getTree());
+                            if ( state.backtracking==0 ) stream_arguments.add(arguments533.getTree());
 
 
                             // AST REWRITE
@@ -19393,11 +19373,11 @@ public class JavaParser extends Parser {
         int innerCreator_StartIndex = input.index();
         Object root_0 = null;
 
-        Token Identifier545=null;
-        JavaParser.classCreatorRest_return classCreatorRest546 = null;
+        Token Identifier534=null;
+        JavaParser.classCreatorRest_return classCreatorRest535 = null;
 
 
-        Object Identifier545_tree=null;
+        Object Identifier534_tree=null;
         RewriteRuleTokenStream stream_Identifier=new RewriteRuleTokenStream(adaptor,"token Identifier");
         RewriteRuleSubtreeStream stream_classCreatorRest=new RewriteRuleSubtreeStream(adaptor,"rule classCreatorRest");
         try {
@@ -19405,15 +19385,15 @@ public class JavaParser extends Parser {
             // jkit/java/parser/Java.g:904:2: ( Identifier classCreatorRest -> ^( TYPE Identifier ) ( classCreatorRest )? )
             // jkit/java/parser/Java.g:904:4: Identifier classCreatorRest
             {
-            Identifier545=(Token)match(input,Identifier,FOLLOW_Identifier_in_innerCreator7011); if (state.failed) return retval; 
-            if ( state.backtracking==0 ) stream_Identifier.add(Identifier545);
+            Identifier534=(Token)match(input,Identifier,FOLLOW_Identifier_in_innerCreator7044); if (state.failed) return retval; 
+            if ( state.backtracking==0 ) stream_Identifier.add(Identifier534);
 
-            pushFollow(FOLLOW_classCreatorRest_in_innerCreator7013);
-            classCreatorRest546=classCreatorRest();
+            pushFollow(FOLLOW_classCreatorRest_in_innerCreator7046);
+            classCreatorRest535=classCreatorRest();
 
             state._fsp--;
             if (state.failed) return retval;
-            if ( state.backtracking==0 ) stream_classCreatorRest.add(classCreatorRest546.getTree());
+            if ( state.backtracking==0 ) stream_classCreatorRest.add(classCreatorRest535.getTree());
 
 
             // AST REWRITE
@@ -19482,9 +19462,9 @@ public class JavaParser extends Parser {
         int classCreatorRest_StartIndex = input.index();
         Object root_0 = null;
 
-        JavaParser.arguments_return arguments547 = null;
+        JavaParser.arguments_return arguments536 = null;
 
-        JavaParser.classBody_return classBody548 = null;
+        JavaParser.classBody_return classBody537 = null;
 
 
         RewriteRuleSubtreeStream stream_arguments=new RewriteRuleSubtreeStream(adaptor,"rule arguments");
@@ -19494,12 +19474,12 @@ public class JavaParser extends Parser {
             // jkit/java/parser/Java.g:908:2: ( arguments ( classBody )? -> ( arguments )? ( classBody )? )
             // jkit/java/parser/Java.g:908:4: arguments ( classBody )?
             {
-            pushFollow(FOLLOW_arguments_in_classCreatorRest7035);
-            arguments547=arguments();
+            pushFollow(FOLLOW_arguments_in_classCreatorRest7068);
+            arguments536=arguments();
 
             state._fsp--;
             if (state.failed) return retval;
-            if ( state.backtracking==0 ) stream_arguments.add(arguments547.getTree());
+            if ( state.backtracking==0 ) stream_arguments.add(arguments536.getTree());
             // jkit/java/parser/Java.g:908:14: ( classBody )?
             int alt164=2;
             alt164 = dfa164.predict(input);
@@ -19507,12 +19487,12 @@ public class JavaParser extends Parser {
                 case 1 :
                     // jkit/java/parser/Java.g:0:0: classBody
                     {
-                    pushFollow(FOLLOW_classBody_in_classCreatorRest7037);
-                    classBody548=classBody();
+                    pushFollow(FOLLOW_classBody_in_classCreatorRest7070);
+                    classBody537=classBody();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_classBody.add(classBody548.getTree());
+                    if ( state.backtracking==0 ) stream_classBody.add(classBody537.getTree());
 
                     }
                     break;
@@ -19522,7 +19502,7 @@ public class JavaParser extends Parser {
 
 
             // AST REWRITE
-            // elements: classBody, arguments
+            // elements: arguments, classBody
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -19584,9 +19564,9 @@ public class JavaParser extends Parser {
         int explicitGenericInvocation_StartIndex = input.index();
         Object root_0 = null;
 
-        JavaParser.nonWildcardTypeArguments_return nonWildcardTypeArguments549 = null;
+        JavaParser.nonWildcardTypeArguments_return nonWildcardTypeArguments538 = null;
 
-        JavaParser.explicitGenericInvocationSuffix_return explicitGenericInvocationSuffix550 = null;
+        JavaParser.explicitGenericInvocationSuffix_return explicitGenericInvocationSuffix539 = null;
 
 
 
@@ -19597,18 +19577,18 @@ public class JavaParser extends Parser {
             {
             root_0 = (Object)adaptor.nil();
 
-            pushFollow(FOLLOW_nonWildcardTypeArguments_in_explicitGenericInvocation7058);
-            nonWildcardTypeArguments549=nonWildcardTypeArguments();
+            pushFollow(FOLLOW_nonWildcardTypeArguments_in_explicitGenericInvocation7091);
+            nonWildcardTypeArguments538=nonWildcardTypeArguments();
 
             state._fsp--;
             if (state.failed) return retval;
-            if ( state.backtracking==0 ) adaptor.addChild(root_0, nonWildcardTypeArguments549.getTree());
-            pushFollow(FOLLOW_explicitGenericInvocationSuffix_in_explicitGenericInvocation7060);
-            explicitGenericInvocationSuffix550=explicitGenericInvocationSuffix();
+            if ( state.backtracking==0 ) adaptor.addChild(root_0, nonWildcardTypeArguments538.getTree());
+            pushFollow(FOLLOW_explicitGenericInvocationSuffix_in_explicitGenericInvocation7093);
+            explicitGenericInvocationSuffix539=explicitGenericInvocationSuffix();
 
             state._fsp--;
             if (state.failed) return retval;
-            if ( state.backtracking==0 ) adaptor.addChild(root_0, explicitGenericInvocationSuffix550.getTree());
+            if ( state.backtracking==0 ) adaptor.addChild(root_0, explicitGenericInvocationSuffix539.getTree());
 
             }
 
@@ -19644,13 +19624,13 @@ public class JavaParser extends Parser {
         int nonWildcardTypeArguments_StartIndex = input.index();
         Object root_0 = null;
 
-        Token char_literal551=null;
-        Token char_literal553=null;
-        JavaParser.typeList_return typeList552 = null;
+        Token char_literal540=null;
+        Token char_literal542=null;
+        JavaParser.typeList_return typeList541 = null;
 
 
-        Object char_literal551_tree=null;
-        Object char_literal553_tree=null;
+        Object char_literal540_tree=null;
+        Object char_literal542_tree=null;
         RewriteRuleTokenStream stream_131=new RewriteRuleTokenStream(adaptor,"token 131");
         RewriteRuleTokenStream stream_129=new RewriteRuleTokenStream(adaptor,"token 129");
         RewriteRuleSubtreeStream stream_typeList=new RewriteRuleSubtreeStream(adaptor,"rule typeList");
@@ -19659,17 +19639,17 @@ public class JavaParser extends Parser {
             // jkit/java/parser/Java.g:916:2: ( '<' typeList '>' -> typeList )
             // jkit/java/parser/Java.g:916:4: '<' typeList '>'
             {
-            char_literal551=(Token)match(input,129,FOLLOW_129_in_nonWildcardTypeArguments7072); if (state.failed) return retval; 
-            if ( state.backtracking==0 ) stream_129.add(char_literal551);
+            char_literal540=(Token)match(input,129,FOLLOW_129_in_nonWildcardTypeArguments7105); if (state.failed) return retval; 
+            if ( state.backtracking==0 ) stream_129.add(char_literal540);
 
-            pushFollow(FOLLOW_typeList_in_nonWildcardTypeArguments7074);
-            typeList552=typeList();
+            pushFollow(FOLLOW_typeList_in_nonWildcardTypeArguments7107);
+            typeList541=typeList();
 
             state._fsp--;
             if (state.failed) return retval;
-            if ( state.backtracking==0 ) stream_typeList.add(typeList552.getTree());
-            char_literal553=(Token)match(input,131,FOLLOW_131_in_nonWildcardTypeArguments7076); if (state.failed) return retval; 
-            if ( state.backtracking==0 ) stream_131.add(char_literal553);
+            if ( state.backtracking==0 ) stream_typeList.add(typeList541.getTree());
+            char_literal542=(Token)match(input,131,FOLLOW_131_in_nonWildcardTypeArguments7109); if (state.failed) return retval; 
+            if ( state.backtracking==0 ) stream_131.add(char_literal542);
 
 
 
@@ -19725,15 +19705,15 @@ public class JavaParser extends Parser {
         int explicitGenericInvocationSuffix_StartIndex = input.index();
         Object root_0 = null;
 
-        Token string_literal554=null;
-        Token Identifier556=null;
-        JavaParser.superSuffix_return superSuffix555 = null;
+        Token string_literal543=null;
+        Token Identifier545=null;
+        JavaParser.superSuffix_return superSuffix544 = null;
 
-        JavaParser.arguments_return arguments557 = null;
+        JavaParser.arguments_return arguments546 = null;
 
 
-        Object string_literal554_tree=null;
-        Object Identifier556_tree=null;
+        Object string_literal543_tree=null;
+        Object Identifier545_tree=null;
         RewriteRuleTokenStream stream_160=new RewriteRuleTokenStream(adaptor,"token 160");
         RewriteRuleTokenStream stream_Identifier=new RewriteRuleTokenStream(adaptor,"token Identifier");
         RewriteRuleSubtreeStream stream_arguments=new RewriteRuleSubtreeStream(adaptor,"rule arguments");
@@ -19761,15 +19741,15 @@ public class JavaParser extends Parser {
                 case 1 :
                     // jkit/java/parser/Java.g:920:4: 'super' superSuffix
                     {
-                    string_literal554=(Token)match(input,160,FOLLOW_160_in_explicitGenericInvocationSuffix7092); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_160.add(string_literal554);
+                    string_literal543=(Token)match(input,160,FOLLOW_160_in_explicitGenericInvocationSuffix7125); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_160.add(string_literal543);
 
-                    pushFollow(FOLLOW_superSuffix_in_explicitGenericInvocationSuffix7094);
-                    superSuffix555=superSuffix();
+                    pushFollow(FOLLOW_superSuffix_in_explicitGenericInvocationSuffix7127);
+                    superSuffix544=superSuffix();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_superSuffix.add(superSuffix555.getTree());
+                    if ( state.backtracking==0 ) stream_superSuffix.add(superSuffix544.getTree());
 
 
                     // AST REWRITE
@@ -19801,15 +19781,15 @@ public class JavaParser extends Parser {
                 case 2 :
                     // jkit/java/parser/Java.g:921:6: Identifier arguments
                     {
-                    Identifier556=(Token)match(input,Identifier,FOLLOW_Identifier_in_explicitGenericInvocationSuffix7108); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_Identifier.add(Identifier556);
+                    Identifier545=(Token)match(input,Identifier,FOLLOW_Identifier_in_explicitGenericInvocationSuffix7141); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_Identifier.add(Identifier545);
 
-                    pushFollow(FOLLOW_arguments_in_explicitGenericInvocationSuffix7110);
-                    arguments557=arguments();
+                    pushFollow(FOLLOW_arguments_in_explicitGenericInvocationSuffix7143);
+                    arguments546=arguments();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_arguments.add(arguments557.getTree());
+                    if ( state.backtracking==0 ) stream_arguments.add(arguments546.getTree());
 
 
                     // AST REWRITE
@@ -19872,15 +19852,15 @@ public class JavaParser extends Parser {
         int superSuffix_StartIndex = input.index();
         Object root_0 = null;
 
-        Token char_literal559=null;
-        Token Identifier560=null;
-        JavaParser.arguments_return arguments558 = null;
+        Token char_literal548=null;
+        Token Identifier549=null;
+        JavaParser.arguments_return arguments547 = null;
 
-        JavaParser.arguments_return arguments561 = null;
+        JavaParser.arguments_return arguments550 = null;
 
 
-        Object char_literal559_tree=null;
-        Object Identifier560_tree=null;
+        Object char_literal548_tree=null;
+        Object Identifier549_tree=null;
         RewriteRuleSubtreeStream stream_arguments=new RewriteRuleSubtreeStream(adaptor,"rule arguments");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 114) ) { return retval; }
@@ -19905,12 +19885,12 @@ public class JavaParser extends Parser {
                 case 1 :
                     // jkit/java/parser/Java.g:925:4: arguments
                     {
-                    pushFollow(FOLLOW_arguments_in_superSuffix7129);
-                    arguments558=arguments();
+                    pushFollow(FOLLOW_arguments_in_superSuffix7162);
+                    arguments547=arguments();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_arguments.add(arguments558.getTree());
+                    if ( state.backtracking==0 ) stream_arguments.add(arguments547.getTree());
 
 
                     // AST REWRITE
@@ -19943,15 +19923,15 @@ public class JavaParser extends Parser {
                     {
                     root_0 = (Object)adaptor.nil();
 
-                    char_literal559=(Token)match(input,124,FOLLOW_124_in_superSuffix7141); if (state.failed) return retval;
+                    char_literal548=(Token)match(input,124,FOLLOW_124_in_superSuffix7174); if (state.failed) return retval;
                     if ( state.backtracking==0 ) {
-                    char_literal559_tree = (Object)adaptor.create(char_literal559);
-                    adaptor.addChild(root_0, char_literal559_tree);
+                    char_literal548_tree = (Object)adaptor.create(char_literal548);
+                    adaptor.addChild(root_0, char_literal548_tree);
                     }
-                    Identifier560=(Token)match(input,Identifier,FOLLOW_Identifier_in_superSuffix7143); if (state.failed) return retval;
+                    Identifier549=(Token)match(input,Identifier,FOLLOW_Identifier_in_superSuffix7176); if (state.failed) return retval;
                     if ( state.backtracking==0 ) {
-                    Identifier560_tree = (Object)adaptor.create(Identifier560);
-                    adaptor.addChild(root_0, Identifier560_tree);
+                    Identifier549_tree = (Object)adaptor.create(Identifier549);
+                    adaptor.addChild(root_0, Identifier549_tree);
                     }
                     // jkit/java/parser/Java.g:926:21: ( arguments )?
                     int alt166=2;
@@ -19960,12 +19940,12 @@ public class JavaParser extends Parser {
                         case 1 :
                             // jkit/java/parser/Java.g:926:22: arguments
                             {
-                            pushFollow(FOLLOW_arguments_in_superSuffix7146);
-                            arguments561=arguments();
+                            pushFollow(FOLLOW_arguments_in_superSuffix7179);
+                            arguments550=arguments();
 
                             state._fsp--;
                             if (state.failed) return retval;
-                            if ( state.backtracking==0 ) adaptor.addChild(root_0, arguments561.getTree());
+                            if ( state.backtracking==0 ) adaptor.addChild(root_0, arguments550.getTree());
 
                             }
                             break;
@@ -20009,50 +19989,50 @@ public class JavaParser extends Parser {
         int selector_StartIndex = input.index();
         Object root_0 = null;
 
-        Token char_literal562=null;
-        Token string_literal563=null;
-        Token char_literal565=null;
-        Token string_literal566=null;
-        Token char_literal569=null;
-        Token char_literal572=null;
-        Token Identifier573=null;
-        Token char_literal575=null;
-        Token char_literal577=null;
-        JavaParser.arguments_return arguments564 = null;
+        Token char_literal551=null;
+        Token string_literal552=null;
+        Token char_literal554=null;
+        Token string_literal555=null;
+        Token char_literal558=null;
+        Token char_literal561=null;
+        Token Identifier562=null;
+        Token char_literal564=null;
+        Token char_literal566=null;
+        JavaParser.arguments_return arguments553 = null;
 
-        JavaParser.nonWildcardTypeArguments_return nonWildcardTypeArguments567 = null;
+        JavaParser.nonWildcardTypeArguments_return nonWildcardTypeArguments556 = null;
 
-        JavaParser.innerCreator_return innerCreator568 = null;
+        JavaParser.innerCreator_return innerCreator557 = null;
 
-        JavaParser.nonWildcardTypeArguments_return nonWildcardTypeArguments570 = null;
+        JavaParser.nonWildcardTypeArguments_return nonWildcardTypeArguments559 = null;
 
-        JavaParser.explicitGenericInvocationSuffix_return explicitGenericInvocationSuffix571 = null;
+        JavaParser.explicitGenericInvocationSuffix_return explicitGenericInvocationSuffix560 = null;
 
-        JavaParser.arguments_return arguments574 = null;
+        JavaParser.arguments_return arguments563 = null;
 
-        JavaParser.expression_return expression576 = null;
+        JavaParser.expression_return expression565 = null;
 
 
-        Object char_literal562_tree=null;
-        Object string_literal563_tree=null;
-        Object char_literal565_tree=null;
-        Object string_literal566_tree=null;
-        Object char_literal569_tree=null;
-        Object char_literal572_tree=null;
-        Object Identifier573_tree=null;
-        Object char_literal575_tree=null;
-        Object char_literal577_tree=null;
-        RewriteRuleTokenStream stream_203=new RewriteRuleTokenStream(adaptor,"token 203");
+        Object char_literal551_tree=null;
+        Object string_literal552_tree=null;
+        Object char_literal554_tree=null;
+        Object string_literal555_tree=null;
+        Object char_literal558_tree=null;
+        Object char_literal561_tree=null;
+        Object Identifier562_tree=null;
+        Object char_literal564_tree=null;
+        Object char_literal566_tree=null;
         RewriteRuleTokenStream stream_138=new RewriteRuleTokenStream(adaptor,"token 138");
-        RewriteRuleTokenStream stream_139=new RewriteRuleTokenStream(adaptor,"token 139");
         RewriteRuleTokenStream stream_160=new RewriteRuleTokenStream(adaptor,"token 160");
-        RewriteRuleTokenStream stream_124=new RewriteRuleTokenStream(adaptor,"token 124");
         RewriteRuleTokenStream stream_Identifier=new RewriteRuleTokenStream(adaptor,"token Identifier");
-        RewriteRuleSubtreeStream stream_expression=new RewriteRuleSubtreeStream(adaptor,"rule expression");
-        RewriteRuleSubtreeStream stream_innerCreator=new RewriteRuleSubtreeStream(adaptor,"rule innerCreator");
+        RewriteRuleTokenStream stream_139=new RewriteRuleTokenStream(adaptor,"token 139");
+        RewriteRuleTokenStream stream_203=new RewriteRuleTokenStream(adaptor,"token 203");
+        RewriteRuleTokenStream stream_124=new RewriteRuleTokenStream(adaptor,"token 124");
         RewriteRuleSubtreeStream stream_arguments=new RewriteRuleSubtreeStream(adaptor,"rule arguments");
-        RewriteRuleSubtreeStream stream_nonWildcardTypeArguments=new RewriteRuleSubtreeStream(adaptor,"rule nonWildcardTypeArguments");
+        RewriteRuleSubtreeStream stream_innerCreator=new RewriteRuleSubtreeStream(adaptor,"rule innerCreator");
         RewriteRuleSubtreeStream stream_explicitGenericInvocationSuffix=new RewriteRuleSubtreeStream(adaptor,"rule explicitGenericInvocationSuffix");
+        RewriteRuleSubtreeStream stream_nonWildcardTypeArguments=new RewriteRuleSubtreeStream(adaptor,"rule nonWildcardTypeArguments");
+        RewriteRuleSubtreeStream stream_expression=new RewriteRuleSubtreeStream(adaptor,"rule expression");
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 115) ) { return retval; }
             // jkit/java/parser/Java.g:930:2: ( '.' 'super' arguments -> ^( INVOKE 'super' ( arguments )? ) | '.' 'new' ( nonWildcardTypeArguments )? innerCreator -> ^( NEW innerCreator ) | '.' nonWildcardTypeArguments explicitGenericInvocationSuffix -> ^( INVOKE ^( TYPE_PARAMETER nonWildcardTypeArguments ) explicitGenericInvocationSuffix ) | '.' Identifier ( arguments -> ^( INVOKE Identifier ( arguments )? ) | -> ^( DEREF Identifier ) ) | '[' expression ']' -> ^( ARRAYINDEX expression ) )
@@ -20104,22 +20084,22 @@ public class JavaParser extends Parser {
                 case 1 :
                     // jkit/java/parser/Java.g:930:4: '.' 'super' arguments
                     {
-                    char_literal562=(Token)match(input,124,FOLLOW_124_in_selector7160); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_124.add(char_literal562);
+                    char_literal551=(Token)match(input,124,FOLLOW_124_in_selector7193); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_124.add(char_literal551);
 
-                    string_literal563=(Token)match(input,160,FOLLOW_160_in_selector7162); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_160.add(string_literal563);
+                    string_literal552=(Token)match(input,160,FOLLOW_160_in_selector7195); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_160.add(string_literal552);
 
-                    pushFollow(FOLLOW_arguments_in_selector7164);
-                    arguments564=arguments();
+                    pushFollow(FOLLOW_arguments_in_selector7197);
+                    arguments553=arguments();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_arguments.add(arguments564.getTree());
+                    if ( state.backtracking==0 ) stream_arguments.add(arguments553.getTree());
 
 
                     // AST REWRITE
-                    // elements: arguments, 160
+                    // elements: 160, arguments
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -20155,11 +20135,11 @@ public class JavaParser extends Parser {
                 case 2 :
                     // jkit/java/parser/Java.g:931:6: '.' 'new' ( nonWildcardTypeArguments )? innerCreator
                     {
-                    char_literal565=(Token)match(input,124,FOLLOW_124_in_selector7182); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_124.add(char_literal565);
+                    char_literal554=(Token)match(input,124,FOLLOW_124_in_selector7215); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_124.add(char_literal554);
 
-                    string_literal566=(Token)match(input,203,FOLLOW_203_in_selector7184); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_203.add(string_literal566);
+                    string_literal555=(Token)match(input,203,FOLLOW_203_in_selector7217); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_203.add(string_literal555);
 
                     // jkit/java/parser/Java.g:931:16: ( nonWildcardTypeArguments )?
                     int alt168=2;
@@ -20172,24 +20152,24 @@ public class JavaParser extends Parser {
                         case 1 :
                             // jkit/java/parser/Java.g:931:17: nonWildcardTypeArguments
                             {
-                            pushFollow(FOLLOW_nonWildcardTypeArguments_in_selector7187);
-                            nonWildcardTypeArguments567=nonWildcardTypeArguments();
+                            pushFollow(FOLLOW_nonWildcardTypeArguments_in_selector7220);
+                            nonWildcardTypeArguments556=nonWildcardTypeArguments();
 
                             state._fsp--;
                             if (state.failed) return retval;
-                            if ( state.backtracking==0 ) stream_nonWildcardTypeArguments.add(nonWildcardTypeArguments567.getTree());
+                            if ( state.backtracking==0 ) stream_nonWildcardTypeArguments.add(nonWildcardTypeArguments556.getTree());
 
                             }
                             break;
 
                     }
 
-                    pushFollow(FOLLOW_innerCreator_in_selector7191);
-                    innerCreator568=innerCreator();
+                    pushFollow(FOLLOW_innerCreator_in_selector7224);
+                    innerCreator557=innerCreator();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_innerCreator.add(innerCreator568.getTree());
+                    if ( state.backtracking==0 ) stream_innerCreator.add(innerCreator557.getTree());
 
 
                     // AST REWRITE
@@ -20223,25 +20203,25 @@ public class JavaParser extends Parser {
                 case 3 :
                     // jkit/java/parser/Java.g:932:5: '.' nonWildcardTypeArguments explicitGenericInvocationSuffix
                     {
-                    char_literal569=(Token)match(input,124,FOLLOW_124_in_selector7206); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_124.add(char_literal569);
+                    char_literal558=(Token)match(input,124,FOLLOW_124_in_selector7239); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_124.add(char_literal558);
 
-                    pushFollow(FOLLOW_nonWildcardTypeArguments_in_selector7208);
-                    nonWildcardTypeArguments570=nonWildcardTypeArguments();
-
-                    state._fsp--;
-                    if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_nonWildcardTypeArguments.add(nonWildcardTypeArguments570.getTree());
-                    pushFollow(FOLLOW_explicitGenericInvocationSuffix_in_selector7210);
-                    explicitGenericInvocationSuffix571=explicitGenericInvocationSuffix();
+                    pushFollow(FOLLOW_nonWildcardTypeArguments_in_selector7241);
+                    nonWildcardTypeArguments559=nonWildcardTypeArguments();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_explicitGenericInvocationSuffix.add(explicitGenericInvocationSuffix571.getTree());
+                    if ( state.backtracking==0 ) stream_nonWildcardTypeArguments.add(nonWildcardTypeArguments559.getTree());
+                    pushFollow(FOLLOW_explicitGenericInvocationSuffix_in_selector7243);
+                    explicitGenericInvocationSuffix560=explicitGenericInvocationSuffix();
+
+                    state._fsp--;
+                    if (state.failed) return retval;
+                    if ( state.backtracking==0 ) stream_explicitGenericInvocationSuffix.add(explicitGenericInvocationSuffix560.getTree());
 
 
                     // AST REWRITE
-                    // elements: nonWildcardTypeArguments, explicitGenericInvocationSuffix
+                    // elements: explicitGenericInvocationSuffix, nonWildcardTypeArguments
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -20280,11 +20260,11 @@ public class JavaParser extends Parser {
                 case 4 :
                     // jkit/java/parser/Java.g:933:4: '.' Identifier ( arguments -> ^( INVOKE Identifier ( arguments )? ) | -> ^( DEREF Identifier ) )
                     {
-                    char_literal572=(Token)match(input,124,FOLLOW_124_in_selector7229); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_124.add(char_literal572);
+                    char_literal561=(Token)match(input,124,FOLLOW_124_in_selector7262); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_124.add(char_literal561);
 
-                    Identifier573=(Token)match(input,Identifier,FOLLOW_Identifier_in_selector7231); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_Identifier.add(Identifier573);
+                    Identifier562=(Token)match(input,Identifier,FOLLOW_Identifier_in_selector7264); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_Identifier.add(Identifier562);
 
                     // jkit/java/parser/Java.g:934:3: ( arguments -> ^( INVOKE Identifier ( arguments )? ) | -> ^( DEREF Identifier ) )
                     int alt169=2;
@@ -20293,12 +20273,12 @@ public class JavaParser extends Parser {
                         case 1 :
                             // jkit/java/parser/Java.g:935:4: arguments
                             {
-                            pushFollow(FOLLOW_arguments_in_selector7241);
-                            arguments574=arguments();
+                            pushFollow(FOLLOW_arguments_in_selector7274);
+                            arguments563=arguments();
 
                             state._fsp--;
                             if (state.failed) return retval;
-                            if ( state.backtracking==0 ) stream_arguments.add(arguments574.getTree());
+                            if ( state.backtracking==0 ) stream_arguments.add(arguments563.getTree());
 
 
                             // AST REWRITE
@@ -20376,17 +20356,17 @@ public class JavaParser extends Parser {
                 case 5 :
                     // jkit/java/parser/Java.g:938:6: '[' expression ']'
                     {
-                    char_literal575=(Token)match(input,138,FOLLOW_138_in_selector7276); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_138.add(char_literal575);
+                    char_literal564=(Token)match(input,138,FOLLOW_138_in_selector7309); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_138.add(char_literal564);
 
-                    pushFollow(FOLLOW_expression_in_selector7278);
-                    expression576=expression();
+                    pushFollow(FOLLOW_expression_in_selector7311);
+                    expression565=expression();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_expression.add(expression576.getTree());
-                    char_literal577=(Token)match(input,139,FOLLOW_139_in_selector7280); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_139.add(char_literal577);
+                    if ( state.backtracking==0 ) stream_expression.add(expression565.getTree());
+                    char_literal566=(Token)match(input,139,FOLLOW_139_in_selector7313); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_139.add(char_literal566);
 
 
 
@@ -20452,13 +20432,13 @@ public class JavaParser extends Parser {
         int arguments_StartIndex = input.index();
         Object root_0 = null;
 
-        Token char_literal578=null;
-        Token char_literal580=null;
-        JavaParser.expressionList_return expressionList579 = null;
+        Token char_literal567=null;
+        Token char_literal569=null;
+        JavaParser.expressionList_return expressionList568 = null;
 
 
-        Object char_literal578_tree=null;
-        Object char_literal580_tree=null;
+        Object char_literal567_tree=null;
+        Object char_literal569_tree=null;
 
         try {
             if ( state.backtracking>0 && alreadyParsedRule(input, 116) ) { return retval; }
@@ -20467,7 +20447,7 @@ public class JavaParser extends Parser {
             {
             root_0 = (Object)adaptor.nil();
 
-            char_literal578=(Token)match(input,161,FOLLOW_161_in_arguments7299); if (state.failed) return retval;
+            char_literal567=(Token)match(input,161,FOLLOW_161_in_arguments7332); if (state.failed) return retval;
             // jkit/java/parser/Java.g:942:9: ( expressionList )?
             int alt171=2;
             alt171 = dfa171.predict(input);
@@ -20475,19 +20455,19 @@ public class JavaParser extends Parser {
                 case 1 :
                     // jkit/java/parser/Java.g:0:0: expressionList
                     {
-                    pushFollow(FOLLOW_expressionList_in_arguments7302);
-                    expressionList579=expressionList();
+                    pushFollow(FOLLOW_expressionList_in_arguments7335);
+                    expressionList568=expressionList();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) adaptor.addChild(root_0, expressionList579.getTree());
+                    if ( state.backtracking==0 ) adaptor.addChild(root_0, expressionList568.getTree());
 
                     }
                     break;
 
             }
 
-            char_literal580=(Token)match(input,162,FOLLOW_162_in_arguments7305); if (state.failed) return retval;
+            char_literal569=(Token)match(input,162,FOLLOW_162_in_arguments7338); if (state.failed) return retval;
 
             }
 
@@ -20916,9 +20896,9 @@ public class JavaParser extends Parser {
         // jkit/java/parser/Java.g:725:6: ( '+' '=' expression )
         // jkit/java/parser/Java.g:725:6: '+' '=' expression
         {
-        match(input,185,FOLLOW_185_in_synpred189_Java4945); if (state.failed) return ;
-        match(input,140,FOLLOW_140_in_synpred189_Java4947); if (state.failed) return ;
-        pushFollow(FOLLOW_expression_in_synpred189_Java4949);
+        match(input,185,FOLLOW_185_in_synpred189_Java4947); if (state.failed) return ;
+        match(input,140,FOLLOW_140_in_synpred189_Java4949); if (state.failed) return ;
+        pushFollow(FOLLOW_expression_in_synpred189_Java4951);
         expression();
 
         state._fsp--;
@@ -20933,9 +20913,9 @@ public class JavaParser extends Parser {
         // jkit/java/parser/Java.g:726:6: ( '-' '=' expression )
         // jkit/java/parser/Java.g:726:6: '-' '=' expression
         {
-        match(input,186,FOLLOW_186_in_synpred190_Java4968); if (state.failed) return ;
-        match(input,140,FOLLOW_140_in_synpred190_Java4970); if (state.failed) return ;
-        pushFollow(FOLLOW_expression_in_synpred190_Java4972);
+        match(input,186,FOLLOW_186_in_synpred190_Java4973); if (state.failed) return ;
+        match(input,140,FOLLOW_140_in_synpred190_Java4975); if (state.failed) return ;
+        pushFollow(FOLLOW_expression_in_synpred190_Java4977);
         expression();
 
         state._fsp--;
@@ -20950,9 +20930,9 @@ public class JavaParser extends Parser {
         // jkit/java/parser/Java.g:727:6: ( '*' '=' expression )
         // jkit/java/parser/Java.g:727:6: '*' '=' expression
         {
-        match(input,125,FOLLOW_125_in_synpred191_Java4991); if (state.failed) return ;
-        match(input,140,FOLLOW_140_in_synpred191_Java4993); if (state.failed) return ;
-        pushFollow(FOLLOW_expression_in_synpred191_Java4995);
+        match(input,125,FOLLOW_125_in_synpred191_Java4999); if (state.failed) return ;
+        match(input,140,FOLLOW_140_in_synpred191_Java5001); if (state.failed) return ;
+        pushFollow(FOLLOW_expression_in_synpred191_Java5003);
         expression();
 
         state._fsp--;
@@ -20967,9 +20947,9 @@ public class JavaParser extends Parser {
         // jkit/java/parser/Java.g:728:6: ( '/' '=' expression )
         // jkit/java/parser/Java.g:728:6: '/' '=' expression
         {
-        match(input,187,FOLLOW_187_in_synpred192_Java5014); if (state.failed) return ;
-        match(input,140,FOLLOW_140_in_synpred192_Java5016); if (state.failed) return ;
-        pushFollow(FOLLOW_expression_in_synpred192_Java5018);
+        match(input,187,FOLLOW_187_in_synpred192_Java5025); if (state.failed) return ;
+        match(input,140,FOLLOW_140_in_synpred192_Java5027); if (state.failed) return ;
+        pushFollow(FOLLOW_expression_in_synpred192_Java5029);
         expression();
 
         state._fsp--;
@@ -20984,8 +20964,8 @@ public class JavaParser extends Parser {
         // jkit/java/parser/Java.g:729:6: ( '&=' expression )
         // jkit/java/parser/Java.g:729:6: '&=' expression
         {
-        match(input,188,FOLLOW_188_in_synpred193_Java5040); if (state.failed) return ;
-        pushFollow(FOLLOW_expression_in_synpred193_Java5042);
+        match(input,188,FOLLOW_188_in_synpred193_Java5054); if (state.failed) return ;
+        pushFollow(FOLLOW_expression_in_synpred193_Java5056);
         expression();
 
         state._fsp--;
@@ -21000,8 +20980,8 @@ public class JavaParser extends Parser {
         // jkit/java/parser/Java.g:730:6: ( '|=' expression )
         // jkit/java/parser/Java.g:730:6: '|=' expression
         {
-        match(input,189,FOLLOW_189_in_synpred194_Java5061); if (state.failed) return ;
-        pushFollow(FOLLOW_expression_in_synpred194_Java5063);
+        match(input,189,FOLLOW_189_in_synpred194_Java5078); if (state.failed) return ;
+        pushFollow(FOLLOW_expression_in_synpred194_Java5080);
         expression();
 
         state._fsp--;
@@ -21016,8 +20996,8 @@ public class JavaParser extends Parser {
         // jkit/java/parser/Java.g:731:6: ( '^=' expression )
         // jkit/java/parser/Java.g:731:6: '^=' expression
         {
-        match(input,190,FOLLOW_190_in_synpred195_Java5082); if (state.failed) return ;
-        pushFollow(FOLLOW_expression_in_synpred195_Java5084);
+        match(input,190,FOLLOW_190_in_synpred195_Java5102); if (state.failed) return ;
+        pushFollow(FOLLOW_expression_in_synpred195_Java5104);
         expression();
 
         state._fsp--;
@@ -21032,9 +21012,9 @@ public class JavaParser extends Parser {
         // jkit/java/parser/Java.g:732:6: ( '%' '=' expression )
         // jkit/java/parser/Java.g:732:6: '%' '=' expression
         {
-        match(input,191,FOLLOW_191_in_synpred196_Java5106); if (state.failed) return ;
-        match(input,140,FOLLOW_140_in_synpred196_Java5108); if (state.failed) return ;
-        pushFollow(FOLLOW_expression_in_synpred196_Java5110);
+        match(input,191,FOLLOW_191_in_synpred196_Java5129); if (state.failed) return ;
+        match(input,140,FOLLOW_140_in_synpred196_Java5131); if (state.failed) return ;
+        pushFollow(FOLLOW_expression_in_synpred196_Java5133);
         expression();
 
         state._fsp--;
@@ -21049,10 +21029,10 @@ public class JavaParser extends Parser {
         // jkit/java/parser/Java.g:733:6: ( '<' '<' '=' expression )
         // jkit/java/parser/Java.g:733:6: '<' '<' '=' expression
         {
-        match(input,129,FOLLOW_129_in_synpred197_Java5129); if (state.failed) return ;
-        match(input,129,FOLLOW_129_in_synpred197_Java5131); if (state.failed) return ;
-        match(input,140,FOLLOW_140_in_synpred197_Java5133); if (state.failed) return ;
-        pushFollow(FOLLOW_expression_in_synpred197_Java5135);
+        match(input,129,FOLLOW_129_in_synpred197_Java5155); if (state.failed) return ;
+        match(input,129,FOLLOW_129_in_synpred197_Java5157); if (state.failed) return ;
+        match(input,140,FOLLOW_140_in_synpred197_Java5159); if (state.failed) return ;
+        pushFollow(FOLLOW_expression_in_synpred197_Java5161);
         expression();
 
         state._fsp--;
@@ -21067,10 +21047,10 @@ public class JavaParser extends Parser {
         // jkit/java/parser/Java.g:734:6: ( '>' '>' '=' expression )
         // jkit/java/parser/Java.g:734:6: '>' '>' '=' expression
         {
-        match(input,131,FOLLOW_131_in_synpred198_Java5154); if (state.failed) return ;
-        match(input,131,FOLLOW_131_in_synpred198_Java5156); if (state.failed) return ;
-        match(input,140,FOLLOW_140_in_synpred198_Java5158); if (state.failed) return ;
-        pushFollow(FOLLOW_expression_in_synpred198_Java5160);
+        match(input,131,FOLLOW_131_in_synpred198_Java5183); if (state.failed) return ;
+        match(input,131,FOLLOW_131_in_synpred198_Java5185); if (state.failed) return ;
+        match(input,140,FOLLOW_140_in_synpred198_Java5187); if (state.failed) return ;
+        pushFollow(FOLLOW_expression_in_synpred198_Java5189);
         expression();
 
         state._fsp--;
@@ -21085,11 +21065,11 @@ public class JavaParser extends Parser {
         // jkit/java/parser/Java.g:735:6: ( '>' '>' '>' '=' expression )
         // jkit/java/parser/Java.g:735:6: '>' '>' '>' '=' expression
         {
-        match(input,131,FOLLOW_131_in_synpred199_Java5179); if (state.failed) return ;
-        match(input,131,FOLLOW_131_in_synpred199_Java5181); if (state.failed) return ;
-        match(input,131,FOLLOW_131_in_synpred199_Java5183); if (state.failed) return ;
-        match(input,140,FOLLOW_140_in_synpred199_Java5185); if (state.failed) return ;
-        pushFollow(FOLLOW_expression_in_synpred199_Java5187);
+        match(input,131,FOLLOW_131_in_synpred199_Java5211); if (state.failed) return ;
+        match(input,131,FOLLOW_131_in_synpred199_Java5213); if (state.failed) return ;
+        match(input,131,FOLLOW_131_in_synpred199_Java5215); if (state.failed) return ;
+        match(input,140,FOLLOW_140_in_synpred199_Java5217); if (state.failed) return ;
+        pushFollow(FOLLOW_expression_in_synpred199_Java5219);
         expression();
 
         state._fsp--;
@@ -21107,8 +21087,8 @@ public class JavaParser extends Parser {
         // jkit/java/parser/Java.g:809:8: ( '<' shiftExpression )
         // jkit/java/parser/Java.g:809:9: '<' shiftExpression
         {
-        match(input,129,FOLLOW_129_in_synpred210_Java5820); if (state.failed) return ;
-        pushFollow(FOLLOW_shiftExpression_in_synpred210_Java5822);
+        match(input,129,FOLLOW_129_in_synpred210_Java5853); if (state.failed) return ;
+        pushFollow(FOLLOW_shiftExpression_in_synpred210_Java5855);
         shiftExpression();
 
         state._fsp--;
@@ -21147,23 +21127,23 @@ public class JavaParser extends Parser {
             case 1 :
                 // jkit/java/parser/Java.g:819:8: '<' '<'
                 {
-                match(input,129,FOLLOW_129_in_synpred214_Java5934); if (state.failed) return ;
-                match(input,129,FOLLOW_129_in_synpred214_Java5936); if (state.failed) return ;
+                match(input,129,FOLLOW_129_in_synpred214_Java5967); if (state.failed) return ;
+                match(input,129,FOLLOW_129_in_synpred214_Java5969); if (state.failed) return ;
 
                 }
                 break;
             case 2 :
                 // jkit/java/parser/Java.g:819:19: '>' '>'
                 {
-                match(input,131,FOLLOW_131_in_synpred214_Java5940); if (state.failed) return ;
-                match(input,131,FOLLOW_131_in_synpred214_Java5942); if (state.failed) return ;
+                match(input,131,FOLLOW_131_in_synpred214_Java5973); if (state.failed) return ;
+                match(input,131,FOLLOW_131_in_synpred214_Java5975); if (state.failed) return ;
 
                 }
                 break;
 
         }
 
-        pushFollow(FOLLOW_additiveExpression_in_synpred214_Java5945);
+        pushFollow(FOLLOW_additiveExpression_in_synpred214_Java5978);
         additiveExpression();
 
         state._fsp--;
@@ -21215,23 +21195,23 @@ public class JavaParser extends Parser {
         	        case 1 :
         	            // jkit/java/parser/Java.g:819:8: '<' '<'
         	            {
-        	            match(input,129,FOLLOW_129_in_synpred215_Java5934); if (state.failed) return ;
-        	            match(input,129,FOLLOW_129_in_synpred215_Java5936); if (state.failed) return ;
+        	            match(input,129,FOLLOW_129_in_synpred215_Java5967); if (state.failed) return ;
+        	            match(input,129,FOLLOW_129_in_synpred215_Java5969); if (state.failed) return ;
 
         	            }
         	            break;
         	        case 2 :
         	            // jkit/java/parser/Java.g:819:19: '>' '>'
         	            {
-        	            match(input,131,FOLLOW_131_in_synpred215_Java5940); if (state.failed) return ;
-        	            match(input,131,FOLLOW_131_in_synpred215_Java5942); if (state.failed) return ;
+        	            match(input,131,FOLLOW_131_in_synpred215_Java5973); if (state.failed) return ;
+        	            match(input,131,FOLLOW_131_in_synpred215_Java5975); if (state.failed) return ;
 
         	            }
         	            break;
 
         	    }
 
-        	    pushFollow(FOLLOW_additiveExpression_in_synpred215_Java5945);
+        	    pushFollow(FOLLOW_additiveExpression_in_synpred215_Java5978);
         	    additiveExpression();
 
         	    state._fsp--;
@@ -21260,10 +21240,10 @@ public class JavaParser extends Parser {
         // jkit/java/parser/Java.g:821:9: ( '>' '>' '>' additiveExpression )
         // jkit/java/parser/Java.g:821:9: '>' '>' '>' additiveExpression
         {
-        match(input,131,FOLLOW_131_in_synpred216_Java5979); if (state.failed) return ;
-        match(input,131,FOLLOW_131_in_synpred216_Java5981); if (state.failed) return ;
-        match(input,131,FOLLOW_131_in_synpred216_Java5983); if (state.failed) return ;
-        pushFollow(FOLLOW_additiveExpression_in_synpred216_Java5985);
+        match(input,131,FOLLOW_131_in_synpred216_Java6012); if (state.failed) return ;
+        match(input,131,FOLLOW_131_in_synpred216_Java6014); if (state.failed) return ;
+        match(input,131,FOLLOW_131_in_synpred216_Java6016); if (state.failed) return ;
+        pushFollow(FOLLOW_additiveExpression_in_synpred216_Java6018);
         additiveExpression();
 
         state._fsp--;
@@ -21294,10 +21274,10 @@ public class JavaParser extends Parser {
         	case 1 :
         	    // jkit/java/parser/Java.g:821:9: '>' '>' '>' additiveExpression
         	    {
-        	    match(input,131,FOLLOW_131_in_synpred217_Java5979); if (state.failed) return ;
-        	    match(input,131,FOLLOW_131_in_synpred217_Java5981); if (state.failed) return ;
-        	    match(input,131,FOLLOW_131_in_synpred217_Java5983); if (state.failed) return ;
-        	    pushFollow(FOLLOW_additiveExpression_in_synpred217_Java5985);
+        	    match(input,131,FOLLOW_131_in_synpred217_Java6012); if (state.failed) return ;
+        	    match(input,131,FOLLOW_131_in_synpred217_Java6014); if (state.failed) return ;
+        	    match(input,131,FOLLOW_131_in_synpred217_Java6016); if (state.failed) return ;
+        	    pushFollow(FOLLOW_additiveExpression_in_synpred217_Java6018);
         	    additiveExpression();
 
         	    state._fsp--;
@@ -21326,7 +21306,7 @@ public class JavaParser extends Parser {
         // jkit/java/parser/Java.g:853:9: ( castExpression )
         // jkit/java/parser/Java.g:853:9: castExpression
         {
-        pushFollow(FOLLOW_castExpression_in_synpred231_Java6332);
+        pushFollow(FOLLOW_castExpression_in_synpred231_Java6365);
         castExpression();
 
         state._fsp--;
@@ -21341,14 +21321,14 @@ public class JavaParser extends Parser {
         // jkit/java/parser/Java.g:869:8: ( '(' primitiveType ')' unaryExpression )
         // jkit/java/parser/Java.g:869:8: '(' primitiveType ')' unaryExpression
         {
-        match(input,161,FOLLOW_161_in_synpred238_Java6482); if (state.failed) return ;
-        pushFollow(FOLLOW_primitiveType_in_synpred238_Java6484);
+        match(input,161,FOLLOW_161_in_synpred238_Java6515); if (state.failed) return ;
+        pushFollow(FOLLOW_primitiveType_in_synpred238_Java6517);
         primitiveType();
 
         state._fsp--;
         if (state.failed) return ;
-        match(input,162,FOLLOW_162_in_synpred238_Java6486); if (state.failed) return ;
-        pushFollow(FOLLOW_unaryExpression_in_synpred238_Java6488);
+        match(input,162,FOLLOW_162_in_synpred238_Java6519); if (state.failed) return ;
+        pushFollow(FOLLOW_unaryExpression_in_synpred238_Java6521);
         unaryExpression();
 
         state._fsp--;
@@ -21363,14 +21343,14 @@ public class JavaParser extends Parser {
         // jkit/java/parser/Java.g:870:8: ( '(' type ')' unaryExpressionNotPlusMinus )
         // jkit/java/parser/Java.g:870:8: '(' type ')' unaryExpressionNotPlusMinus
         {
-        match(input,161,FOLLOW_161_in_synpred239_Java6511); if (state.failed) return ;
-        pushFollow(FOLLOW_type_in_synpred239_Java6513);
+        match(input,161,FOLLOW_161_in_synpred239_Java6544); if (state.failed) return ;
+        pushFollow(FOLLOW_type_in_synpred239_Java6546);
         type();
 
         state._fsp--;
         if (state.failed) return ;
-        match(input,162,FOLLOW_162_in_synpred239_Java6515); if (state.failed) return ;
-        pushFollow(FOLLOW_unaryExpressionNotPlusMinus_in_synpred239_Java6517);
+        match(input,162,FOLLOW_162_in_synpred239_Java6548); if (state.failed) return ;
+        pushFollow(FOLLOW_unaryExpressionNotPlusMinus_in_synpred239_Java6550);
         unaryExpressionNotPlusMinus();
 
         state._fsp--;
@@ -21385,13 +21365,13 @@ public class JavaParser extends Parser {
         // jkit/java/parser/Java.g:880:8: ( '[' expression ']' )
         // jkit/java/parser/Java.g:880:8: '[' expression ']'
         {
-        match(input,138,FOLLOW_138_in_synpred244_Java6626); if (state.failed) return ;
-        pushFollow(FOLLOW_expression_in_synpred244_Java6628);
+        match(input,138,FOLLOW_138_in_synpred244_Java6659); if (state.failed) return ;
+        pushFollow(FOLLOW_expression_in_synpred244_Java6661);
         expression();
 
         state._fsp--;
         if (state.failed) return ;
-        match(input,139,FOLLOW_139_in_synpred244_Java6630); if (state.failed) return ;
+        match(input,139,FOLLOW_139_in_synpred244_Java6663); if (state.failed) return ;
 
         }
     }
@@ -21402,7 +21382,7 @@ public class JavaParser extends Parser {
         // jkit/java/parser/Java.g:878:9: ( 'new' ( nonWildcardTypeArguments )? primitiveType ( ( '[' expression ']' )+ ( '[' ']' )* | ( '[' ']' )+ arrayInitializer ) )
         // jkit/java/parser/Java.g:878:9: 'new' ( nonWildcardTypeArguments )? primitiveType ( ( '[' expression ']' )+ ( '[' ']' )* | ( '[' ']' )+ arrayInitializer )
         {
-        match(input,203,FOLLOW_203_in_synpred248_Java6605); if (state.failed) return ;
+        match(input,203,FOLLOW_203_in_synpred248_Java6638); if (state.failed) return ;
         // jkit/java/parser/Java.g:878:15: ( nonWildcardTypeArguments )?
         int alt208=2;
         int LA208_0 = input.LA(1);
@@ -21414,7 +21394,7 @@ public class JavaParser extends Parser {
             case 1 :
                 // jkit/java/parser/Java.g:0:0: nonWildcardTypeArguments
                 {
-                pushFollow(FOLLOW_nonWildcardTypeArguments_in_synpred248_Java6607);
+                pushFollow(FOLLOW_nonWildcardTypeArguments_in_synpred248_Java6640);
                 nonWildcardTypeArguments();
 
                 state._fsp--;
@@ -21425,7 +21405,7 @@ public class JavaParser extends Parser {
 
         }
 
-        pushFollow(FOLLOW_primitiveType_in_synpred248_Java6610);
+        pushFollow(FOLLOW_primitiveType_in_synpred248_Java6643);
         primitiveType();
 
         state._fsp--;
@@ -21447,13 +21427,13 @@ public class JavaParser extends Parser {
                 	case 1 :
                 	    // jkit/java/parser/Java.g:880:8: '[' expression ']'
                 	    {
-                	    match(input,138,FOLLOW_138_in_synpred248_Java6626); if (state.failed) return ;
-                	    pushFollow(FOLLOW_expression_in_synpred248_Java6628);
+                	    match(input,138,FOLLOW_138_in_synpred248_Java6659); if (state.failed) return ;
+                	    pushFollow(FOLLOW_expression_in_synpred248_Java6661);
                 	    expression();
 
                 	    state._fsp--;
                 	    if (state.failed) return ;
-                	    match(input,139,FOLLOW_139_in_synpred248_Java6630); if (state.failed) return ;
+                	    match(input,139,FOLLOW_139_in_synpred248_Java6663); if (state.failed) return ;
 
                 	    }
                 	    break;
@@ -21483,8 +21463,8 @@ public class JavaParser extends Parser {
                 	case 1 :
                 	    // jkit/java/parser/Java.g:880:30: '[' ']'
                 	    {
-                	    match(input,138,FOLLOW_138_in_synpred248_Java6635); if (state.failed) return ;
-                	    match(input,139,FOLLOW_139_in_synpred248_Java6637); if (state.failed) return ;
+                	    match(input,138,FOLLOW_138_in_synpred248_Java6668); if (state.failed) return ;
+                	    match(input,139,FOLLOW_139_in_synpred248_Java6670); if (state.failed) return ;
 
                 	    }
                 	    break;
@@ -21516,8 +21496,8 @@ public class JavaParser extends Parser {
                 	case 1 :
                 	    // jkit/java/parser/Java.g:881:10: '[' ']'
                 	    {
-                	    match(input,138,FOLLOW_138_in_synpred248_Java6668); if (state.failed) return ;
-                	    match(input,139,FOLLOW_139_in_synpred248_Java6670); if (state.failed) return ;
+                	    match(input,138,FOLLOW_138_in_synpred248_Java6701); if (state.failed) return ;
+                	    match(input,139,FOLLOW_139_in_synpred248_Java6703); if (state.failed) return ;
 
                 	    }
                 	    break;
@@ -21532,7 +21512,7 @@ public class JavaParser extends Parser {
                     cnt211++;
                 } while (true);
 
-                pushFollow(FOLLOW_arrayInitializer_in_synpred248_Java6674);
+                pushFollow(FOLLOW_arrayInitializer_in_synpred248_Java6707);
                 arrayInitializer();
 
                 state._fsp--;
@@ -21553,13 +21533,13 @@ public class JavaParser extends Parser {
         // jkit/java/parser/Java.g:885:8: ( '[' expression ']' )
         // jkit/java/parser/Java.g:885:8: '[' expression ']'
         {
-        match(input,138,FOLLOW_138_in_synpred251_Java6740); if (state.failed) return ;
-        pushFollow(FOLLOW_expression_in_synpred251_Java6742);
+        match(input,138,FOLLOW_138_in_synpred251_Java6773); if (state.failed) return ;
+        pushFollow(FOLLOW_expression_in_synpred251_Java6775);
         expression();
 
         state._fsp--;
         if (state.failed) return ;
-        match(input,139,FOLLOW_139_in_synpred251_Java6744); if (state.failed) return ;
+        match(input,139,FOLLOW_139_in_synpred251_Java6777); if (state.failed) return ;
 
         }
     }
@@ -21570,7 +21550,7 @@ public class JavaParser extends Parser {
         // jkit/java/parser/Java.g:883:9: ( 'new' ( nonWildcardTypeArguments )? ( refComponent ( '.' refComponent )* ) ( ( '[' expression ']' )+ ( '[' ']' )* | ( '[' ']' )+ arrayInitializer | classCreatorRest ) )
         // jkit/java/parser/Java.g:883:9: 'new' ( nonWildcardTypeArguments )? ( refComponent ( '.' refComponent )* ) ( ( '[' expression ']' )+ ( '[' ']' )* | ( '[' ']' )+ arrayInitializer | classCreatorRest )
         {
-        match(input,203,FOLLOW_203_in_synpred256_Java6706); if (state.failed) return ;
+        match(input,203,FOLLOW_203_in_synpred256_Java6739); if (state.failed) return ;
         // jkit/java/parser/Java.g:883:15: ( nonWildcardTypeArguments )?
         int alt216=2;
         int LA216_0 = input.LA(1);
@@ -21582,7 +21562,7 @@ public class JavaParser extends Parser {
             case 1 :
                 // jkit/java/parser/Java.g:0:0: nonWildcardTypeArguments
                 {
-                pushFollow(FOLLOW_nonWildcardTypeArguments_in_synpred256_Java6708);
+                pushFollow(FOLLOW_nonWildcardTypeArguments_in_synpred256_Java6741);
                 nonWildcardTypeArguments();
 
                 state._fsp--;
@@ -21596,7 +21576,7 @@ public class JavaParser extends Parser {
         // jkit/java/parser/Java.g:883:41: ( refComponent ( '.' refComponent )* )
         // jkit/java/parser/Java.g:883:42: refComponent ( '.' refComponent )*
         {
-        pushFollow(FOLLOW_refComponent_in_synpred256_Java6714);
+        pushFollow(FOLLOW_refComponent_in_synpred256_Java6747);
         refComponent();
 
         state._fsp--;
@@ -21616,8 +21596,8 @@ public class JavaParser extends Parser {
         	case 1 :
         	    // jkit/java/parser/Java.g:883:59: '.' refComponent
         	    {
-        	    match(input,124,FOLLOW_124_in_synpred256_Java6717); if (state.failed) return ;
-        	    pushFollow(FOLLOW_refComponent_in_synpred256_Java6721);
+        	    match(input,124,FOLLOW_124_in_synpred256_Java6750); if (state.failed) return ;
+        	    pushFollow(FOLLOW_refComponent_in_synpred256_Java6754);
         	    refComponent();
 
         	    state._fsp--;
@@ -21651,13 +21631,13 @@ public class JavaParser extends Parser {
                 	case 1 :
                 	    // jkit/java/parser/Java.g:885:8: '[' expression ']'
                 	    {
-                	    match(input,138,FOLLOW_138_in_synpred256_Java6740); if (state.failed) return ;
-                	    pushFollow(FOLLOW_expression_in_synpred256_Java6742);
+                	    match(input,138,FOLLOW_138_in_synpred256_Java6773); if (state.failed) return ;
+                	    pushFollow(FOLLOW_expression_in_synpred256_Java6775);
                 	    expression();
 
                 	    state._fsp--;
                 	    if (state.failed) return ;
-                	    match(input,139,FOLLOW_139_in_synpred256_Java6744); if (state.failed) return ;
+                	    match(input,139,FOLLOW_139_in_synpred256_Java6777); if (state.failed) return ;
 
                 	    }
                 	    break;
@@ -21687,8 +21667,8 @@ public class JavaParser extends Parser {
                 	case 1 :
                 	    // jkit/java/parser/Java.g:885:30: '[' ']'
                 	    {
-                	    match(input,138,FOLLOW_138_in_synpred256_Java6749); if (state.failed) return ;
-                	    match(input,139,FOLLOW_139_in_synpred256_Java6751); if (state.failed) return ;
+                	    match(input,138,FOLLOW_138_in_synpred256_Java6782); if (state.failed) return ;
+                	    match(input,139,FOLLOW_139_in_synpred256_Java6784); if (state.failed) return ;
 
                 	    }
                 	    break;
@@ -21720,8 +21700,8 @@ public class JavaParser extends Parser {
                 	case 1 :
                 	    // jkit/java/parser/Java.g:886:10: '[' ']'
                 	    {
-                	    match(input,138,FOLLOW_138_in_synpred256_Java6784); if (state.failed) return ;
-                	    match(input,139,FOLLOW_139_in_synpred256_Java6786); if (state.failed) return ;
+                	    match(input,138,FOLLOW_138_in_synpred256_Java6817); if (state.failed) return ;
+                	    match(input,139,FOLLOW_139_in_synpred256_Java6819); if (state.failed) return ;
 
                 	    }
                 	    break;
@@ -21736,7 +21716,7 @@ public class JavaParser extends Parser {
                     cnt220++;
                 } while (true);
 
-                pushFollow(FOLLOW_arrayInitializer_in_synpred256_Java6790);
+                pushFollow(FOLLOW_arrayInitializer_in_synpred256_Java6823);
                 arrayInitializer();
 
                 state._fsp--;
@@ -21747,7 +21727,7 @@ public class JavaParser extends Parser {
             case 3 :
                 // jkit/java/parser/Java.g:887:9: classCreatorRest
                 {
-                pushFollow(FOLLOW_classCreatorRest_in_synpred256_Java6819);
+                pushFollow(FOLLOW_classCreatorRest_in_synpred256_Java6852);
                 classCreatorRest();
 
                 state._fsp--;
@@ -21768,13 +21748,13 @@ public class JavaParser extends Parser {
         // jkit/java/parser/Java.g:889:9: ( type '.' 'class' )
         // jkit/java/parser/Java.g:889:9: type '.' 'class'
         {
-        pushFollow(FOLLOW_type_in_synpred257_Java6851);
+        pushFollow(FOLLOW_type_in_synpred257_Java6884);
         type();
 
         state._fsp--;
         if (state.failed) return ;
-        match(input,124,FOLLOW_124_in_synpred257_Java6853); if (state.failed) return ;
-        match(input,126,FOLLOW_126_in_synpred257_Java6855); if (state.failed) return ;
+        match(input,124,FOLLOW_124_in_synpred257_Java6886); if (state.failed) return ;
+        match(input,126,FOLLOW_126_in_synpred257_Java6888); if (state.failed) return ;
 
         }
     }
@@ -21782,11 +21762,11 @@ public class JavaParser extends Parser {
 
     // Delegated rules
 
-    public final boolean synpred193_Java() {
+    public final boolean synpred244_Java() {
         state.backtracking++;
         int start = input.mark();
         try {
-            synpred193_Java_fragment(); // can never throw exception
+            synpred244_Java_fragment(); // can never throw exception
         } catch (RecognitionException re) {
             System.err.println("impossible: "+re);
         }
@@ -21796,11 +21776,11 @@ public class JavaParser extends Parser {
         state.failed=false;
         return success;
     }
-    public final boolean synpred239_Java() {
+    public final boolean synpred199_Java() {
         state.backtracking++;
         int start = input.mark();
         try {
-            synpred239_Java_fragment(); // can never throw exception
+            synpred199_Java_fragment(); // can never throw exception
         } catch (RecognitionException re) {
             System.err.println("impossible: "+re);
         }
@@ -21810,11 +21790,11 @@ public class JavaParser extends Parser {
         state.failed=false;
         return success;
     }
-    public final boolean synpred214_Java() {
+    public final boolean synpred251_Java() {
         state.backtracking++;
         int start = input.mark();
         try {
-            synpred214_Java_fragment(); // can never throw exception
+            synpred251_Java_fragment(); // can never throw exception
         } catch (RecognitionException re) {
             System.err.println("impossible: "+re);
         }
@@ -21824,11 +21804,11 @@ public class JavaParser extends Parser {
         state.failed=false;
         return success;
     }
-    public final boolean synpred178_Java() {
+    public final boolean synpred195_Java() {
         state.backtracking++;
         int start = input.mark();
         try {
-            synpred178_Java_fragment(); // can never throw exception
+            synpred195_Java_fragment(); // can never throw exception
         } catch (RecognitionException re) {
             System.err.println("impossible: "+re);
         }
@@ -21838,39 +21818,11 @@ public class JavaParser extends Parser {
         state.failed=false;
         return success;
     }
-    public final boolean synpred256_Java() {
+    public final boolean synpred248_Java() {
         state.backtracking++;
         int start = input.mark();
         try {
-            synpred256_Java_fragment(); // can never throw exception
-        } catch (RecognitionException re) {
-            System.err.println("impossible: "+re);
-        }
-        boolean success = !state.failed;
-        input.rewind(start);
-        state.backtracking--;
-        state.failed=false;
-        return success;
-    }
-    public final boolean synpred1_Java() {
-        state.backtracking++;
-        int start = input.mark();
-        try {
-            synpred1_Java_fragment(); // can never throw exception
-        } catch (RecognitionException re) {
-            System.err.println("impossible: "+re);
-        }
-        boolean success = !state.failed;
-        input.rewind(start);
-        state.backtracking--;
-        state.failed=false;
-        return success;
-    }
-    public final boolean synpred154_Java() {
-        state.backtracking++;
-        int start = input.mark();
-        try {
-            synpred154_Java_fragment(); // can never throw exception
+            synpred248_Java_fragment(); // can never throw exception
         } catch (RecognitionException re) {
             System.err.println("impossible: "+re);
         }
@@ -21894,11 +21846,221 @@ public class JavaParser extends Parser {
         state.failed=false;
         return success;
     }
-    public final boolean synpred177_Java() {
+    public final boolean synpred134_Java() {
         state.backtracking++;
         int start = input.mark();
         try {
-            synpred177_Java_fragment(); // can never throw exception
+            synpred134_Java_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
+    public final boolean synpred193_Java() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred193_Java_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
+    public final boolean synpred38_Java() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred38_Java_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
+    public final boolean synpred217_Java() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred217_Java_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
+    public final boolean synpred178_Java() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred178_Java_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
+    public final boolean synpred194_Java() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred194_Java_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
+    public final boolean synpred51_Java() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred51_Java_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
+    public final boolean synpred159_Java() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred159_Java_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
+    public final boolean synpred42_Java() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred42_Java_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
+    public final boolean synpred188_Java() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred188_Java_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
+    public final boolean synpred41_Java() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred41_Java_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
+    public final boolean synpred198_Java() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred198_Java_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
+    public final boolean synpred216_Java() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred216_Java_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
+    public final boolean synpred160_Java() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred160_Java_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
+    public final boolean synpred185_Java() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred185_Java_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
+    public final boolean synpred257_Java() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred257_Java_fragment(); // can never throw exception
         } catch (RecognitionException re) {
             System.err.println("impossible: "+re);
         }
@@ -21913,62 +22075,6 @@ public class JavaParser extends Parser {
         int start = input.mark();
         try {
             synpred215_Java_fragment(); // can never throw exception
-        } catch (RecognitionException re) {
-            System.err.println("impossible: "+re);
-        }
-        boolean success = !state.failed;
-        input.rewind(start);
-        state.backtracking--;
-        state.failed=false;
-        return success;
-    }
-    public final boolean synpred189_Java() {
-        state.backtracking++;
-        int start = input.mark();
-        try {
-            synpred189_Java_fragment(); // can never throw exception
-        } catch (RecognitionException re) {
-            System.err.println("impossible: "+re);
-        }
-        boolean success = !state.failed;
-        input.rewind(start);
-        state.backtracking--;
-        state.failed=false;
-        return success;
-    }
-    public final boolean synpred196_Java() {
-        state.backtracking++;
-        int start = input.mark();
-        try {
-            synpred196_Java_fragment(); // can never throw exception
-        } catch (RecognitionException re) {
-            System.err.println("impossible: "+re);
-        }
-        boolean success = !state.failed;
-        input.rewind(start);
-        state.backtracking--;
-        state.failed=false;
-        return success;
-    }
-    public final boolean synpred191_Java() {
-        state.backtracking++;
-        int start = input.mark();
-        try {
-            synpred191_Java_fragment(); // can never throw exception
-        } catch (RecognitionException re) {
-            System.err.println("impossible: "+re);
-        }
-        boolean success = !state.failed;
-        input.rewind(start);
-        state.backtracking--;
-        state.failed=false;
-        return success;
-    }
-    public final boolean synpred238_Java() {
-        state.backtracking++;
-        int start = input.mark();
-        try {
-            synpred238_Java_fragment(); // can never throw exception
         } catch (RecognitionException re) {
             System.err.println("impossible: "+re);
         }
@@ -22006,291 +22112,11 @@ public class JavaParser extends Parser {
         state.failed=false;
         return success;
     }
-    public final boolean synpred185_Java() {
+    public final boolean synpred214_Java() {
         state.backtracking++;
         int start = input.mark();
         try {
-            synpred185_Java_fragment(); // can never throw exception
-        } catch (RecognitionException re) {
-            System.err.println("impossible: "+re);
-        }
-        boolean success = !state.failed;
-        input.rewind(start);
-        state.backtracking--;
-        state.failed=false;
-        return success;
-    }
-    public final boolean synpred217_Java() {
-        state.backtracking++;
-        int start = input.mark();
-        try {
-            synpred217_Java_fragment(); // can never throw exception
-        } catch (RecognitionException re) {
-            System.err.println("impossible: "+re);
-        }
-        boolean success = !state.failed;
-        input.rewind(start);
-        state.backtracking--;
-        state.failed=false;
-        return success;
-    }
-    public final boolean synpred194_Java() {
-        state.backtracking++;
-        int start = input.mark();
-        try {
-            synpred194_Java_fragment(); // can never throw exception
-        } catch (RecognitionException re) {
-            System.err.println("impossible: "+re);
-        }
-        boolean success = !state.failed;
-        input.rewind(start);
-        state.backtracking--;
-        state.failed=false;
-        return success;
-    }
-    public final boolean synpred188_Java() {
-        state.backtracking++;
-        int start = input.mark();
-        try {
-            synpred188_Java_fragment(); // can never throw exception
-        } catch (RecognitionException re) {
-            System.err.println("impossible: "+re);
-        }
-        boolean success = !state.failed;
-        input.rewind(start);
-        state.backtracking--;
-        state.failed=false;
-        return success;
-    }
-    public final boolean synpred257_Java() {
-        state.backtracking++;
-        int start = input.mark();
-        try {
-            synpred257_Java_fragment(); // can never throw exception
-        } catch (RecognitionException re) {
-            System.err.println("impossible: "+re);
-        }
-        boolean success = !state.failed;
-        input.rewind(start);
-        state.backtracking--;
-        state.failed=false;
-        return success;
-    }
-    public final boolean synpred231_Java() {
-        state.backtracking++;
-        int start = input.mark();
-        try {
-            synpred231_Java_fragment(); // can never throw exception
-        } catch (RecognitionException re) {
-            System.err.println("impossible: "+re);
-        }
-        boolean success = !state.failed;
-        input.rewind(start);
-        state.backtracking--;
-        state.failed=false;
-        return success;
-    }
-    public final boolean synpred42_Java() {
-        state.backtracking++;
-        int start = input.mark();
-        try {
-            synpred42_Java_fragment(); // can never throw exception
-        } catch (RecognitionException re) {
-            System.err.println("impossible: "+re);
-        }
-        boolean success = !state.failed;
-        input.rewind(start);
-        state.backtracking--;
-        state.failed=false;
-        return success;
-    }
-    public final boolean synpred38_Java() {
-        state.backtracking++;
-        int start = input.mark();
-        try {
-            synpred38_Java_fragment(); // can never throw exception
-        } catch (RecognitionException re) {
-            System.err.println("impossible: "+re);
-        }
-        boolean success = !state.failed;
-        input.rewind(start);
-        state.backtracking--;
-        state.failed=false;
-        return success;
-    }
-    public final boolean synpred190_Java() {
-        state.backtracking++;
-        int start = input.mark();
-        try {
-            synpred190_Java_fragment(); // can never throw exception
-        } catch (RecognitionException re) {
-            System.err.println("impossible: "+re);
-        }
-        boolean success = !state.failed;
-        input.rewind(start);
-        state.backtracking--;
-        state.failed=false;
-        return success;
-    }
-    public final boolean synpred51_Java() {
-        state.backtracking++;
-        int start = input.mark();
-        try {
-            synpred51_Java_fragment(); // can never throw exception
-        } catch (RecognitionException re) {
-            System.err.println("impossible: "+re);
-        }
-        boolean success = !state.failed;
-        input.rewind(start);
-        state.backtracking--;
-        state.failed=false;
-        return success;
-    }
-    public final boolean synpred41_Java() {
-        state.backtracking++;
-        int start = input.mark();
-        try {
-            synpred41_Java_fragment(); // can never throw exception
-        } catch (RecognitionException re) {
-            System.err.println("impossible: "+re);
-        }
-        boolean success = !state.failed;
-        input.rewind(start);
-        state.backtracking--;
-        state.failed=false;
-        return success;
-    }
-    public final boolean synpred124_Java() {
-        state.backtracking++;
-        int start = input.mark();
-        try {
-            synpred124_Java_fragment(); // can never throw exception
-        } catch (RecognitionException re) {
-            System.err.println("impossible: "+re);
-        }
-        boolean success = !state.failed;
-        input.rewind(start);
-        state.backtracking--;
-        state.failed=false;
-        return success;
-    }
-    public final boolean synpred197_Java() {
-        state.backtracking++;
-        int start = input.mark();
-        try {
-            synpred197_Java_fragment(); // can never throw exception
-        } catch (RecognitionException re) {
-            System.err.println("impossible: "+re);
-        }
-        boolean success = !state.failed;
-        input.rewind(start);
-        state.backtracking--;
-        state.failed=false;
-        return success;
-    }
-    public final boolean synpred199_Java() {
-        state.backtracking++;
-        int start = input.mark();
-        try {
-            synpred199_Java_fragment(); // can never throw exception
-        } catch (RecognitionException re) {
-            System.err.println("impossible: "+re);
-        }
-        boolean success = !state.failed;
-        input.rewind(start);
-        state.backtracking--;
-        state.failed=false;
-        return success;
-    }
-    public final boolean synpred134_Java() {
-        state.backtracking++;
-        int start = input.mark();
-        try {
-            synpred134_Java_fragment(); // can never throw exception
-        } catch (RecognitionException re) {
-            System.err.println("impossible: "+re);
-        }
-        boolean success = !state.failed;
-        input.rewind(start);
-        state.backtracking--;
-        state.failed=false;
-        return success;
-    }
-    public final boolean synpred216_Java() {
-        state.backtracking++;
-        int start = input.mark();
-        try {
-            synpred216_Java_fragment(); // can never throw exception
-        } catch (RecognitionException re) {
-            System.err.println("impossible: "+re);
-        }
-        boolean success = !state.failed;
-        input.rewind(start);
-        state.backtracking--;
-        state.failed=false;
-        return success;
-    }
-    public final boolean synpred52_Java() {
-        state.backtracking++;
-        int start = input.mark();
-        try {
-            synpred52_Java_fragment(); // can never throw exception
-        } catch (RecognitionException re) {
-            System.err.println("impossible: "+re);
-        }
-        boolean success = !state.failed;
-        input.rewind(start);
-        state.backtracking--;
-        state.failed=false;
-        return success;
-    }
-    public final boolean synpred198_Java() {
-        state.backtracking++;
-        int start = input.mark();
-        try {
-            synpred198_Java_fragment(); // can never throw exception
-        } catch (RecognitionException re) {
-            System.err.println("impossible: "+re);
-        }
-        boolean success = !state.failed;
-        input.rewind(start);
-        state.backtracking--;
-        state.failed=false;
-        return success;
-    }
-    public final boolean synpred36_Java() {
-        state.backtracking++;
-        int start = input.mark();
-        try {
-            synpred36_Java_fragment(); // can never throw exception
-        } catch (RecognitionException re) {
-            System.err.println("impossible: "+re);
-        }
-        boolean success = !state.failed;
-        input.rewind(start);
-        state.backtracking--;
-        state.failed=false;
-        return success;
-    }
-    public final boolean synpred195_Java() {
-        state.backtracking++;
-        int start = input.mark();
-        try {
-            synpred195_Java_fragment(); // can never throw exception
-        } catch (RecognitionException re) {
-            System.err.println("impossible: "+re);
-        }
-        boolean success = !state.failed;
-        input.rewind(start);
-        state.backtracking--;
-        state.failed=false;
-        return success;
-    }
-    public final boolean synpred149_Java() {
-        state.backtracking++;
-        int start = input.mark();
-        try {
-            synpred149_Java_fragment(); // can never throw exception
+            synpred214_Java_fragment(); // can never throw exception
         } catch (RecognitionException re) {
             System.err.println("impossible: "+re);
         }
@@ -22314,11 +22140,11 @@ public class JavaParser extends Parser {
         state.failed=false;
         return success;
     }
-    public final boolean synpred192_Java() {
+    public final boolean synpred189_Java() {
         state.backtracking++;
         int start = input.mark();
         try {
-            synpred192_Java_fragment(); // can never throw exception
+            synpred189_Java_fragment(); // can never throw exception
         } catch (RecognitionException re) {
             System.err.println("impossible: "+re);
         }
@@ -22328,11 +22154,25 @@ public class JavaParser extends Parser {
         state.failed=false;
         return success;
     }
-    public final boolean synpred159_Java() {
+    public final boolean synpred239_Java() {
         state.backtracking++;
         int start = input.mark();
         try {
-            synpred159_Java_fragment(); // can never throw exception
+            synpred239_Java_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
+    public final boolean synpred191_Java() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred191_Java_fragment(); // can never throw exception
         } catch (RecognitionException re) {
             System.err.println("impossible: "+re);
         }
@@ -22356,11 +22196,11 @@ public class JavaParser extends Parser {
         state.failed=false;
         return success;
     }
-    public final boolean synpred244_Java() {
+    public final boolean synpred190_Java() {
         state.backtracking++;
         int start = input.mark();
         try {
-            synpred244_Java_fragment(); // can never throw exception
+            synpred190_Java_fragment(); // can never throw exception
         } catch (RecognitionException re) {
             System.err.println("impossible: "+re);
         }
@@ -22370,11 +22210,11 @@ public class JavaParser extends Parser {
         state.failed=false;
         return success;
     }
-    public final boolean synpred248_Java() {
+    public final boolean synpred231_Java() {
         state.backtracking++;
         int start = input.mark();
         try {
-            synpred248_Java_fragment(); // can never throw exception
+            synpred231_Java_fragment(); // can never throw exception
         } catch (RecognitionException re) {
             System.err.println("impossible: "+re);
         }
@@ -22384,11 +22224,11 @@ public class JavaParser extends Parser {
         state.failed=false;
         return success;
     }
-    public final boolean synpred251_Java() {
+    public final boolean synpred197_Java() {
         state.backtracking++;
         int start = input.mark();
         try {
-            synpred251_Java_fragment(); // can never throw exception
+            synpred197_Java_fragment(); // can never throw exception
         } catch (RecognitionException re) {
             System.err.println("impossible: "+re);
         }
@@ -22398,11 +22238,151 @@ public class JavaParser extends Parser {
         state.failed=false;
         return success;
     }
-    public final boolean synpred160_Java() {
+    public final boolean synpred36_Java() {
         state.backtracking++;
         int start = input.mark();
         try {
-            synpred160_Java_fragment(); // can never throw exception
+            synpred36_Java_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
+    public final boolean synpred196_Java() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred196_Java_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
+    public final boolean synpred149_Java() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred149_Java_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
+    public final boolean synpred177_Java() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred177_Java_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
+    public final boolean synpred1_Java() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred1_Java_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
+    public final boolean synpred192_Java() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred192_Java_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
+    public final boolean synpred256_Java() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred256_Java_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
+    public final boolean synpred52_Java() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred52_Java_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
+    public final boolean synpred124_Java() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred124_Java_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
+    public final boolean synpred154_Java() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred154_Java_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
+    public final boolean synpred238_Java() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred238_Java_fragment(); // can never throw exception
         } catch (RecognitionException re) {
             System.err.println("impossible: "+re);
         }
@@ -22615,8 +22595,8 @@ public class JavaParser extends Parser {
     static final String DFA2_specialS =
         "\24\uffff}>";
     static final String[] DFA2_transitionS = {
-            "\1\2\155\uffff\1\1\3\2\2\uffff\1\2\10\uffff\1\2\5\uffff\12"+
-            "\2\20\uffff\1\2",
+            "\1\2\155\uffff\1\1\3\2\2\uffff\1\2\10\uffff\1\2\5\uffff\12\2"+
+            "\20\uffff\1\2",
             "",
             "",
             "",
@@ -22819,8 +22799,8 @@ public class JavaParser extends Parser {
     static final String DFA10_specialS =
         "\21\uffff}>";
     static final String[] DFA10_transitionS = {
-            "\1\1\156\uffff\1\20\1\uffff\1\1\2\uffff\1\1\10\uffff\1\1\5"+
-            "\uffff\12\1\20\uffff\1\1",
+            "\1\1\156\uffff\1\20\1\uffff\1\1\2\uffff\1\1\10\uffff\1\1\5\uffff"+
+            "\12\1\20\uffff\1\1",
             "",
             "",
             "",
@@ -23171,8 +23151,8 @@ public class JavaParser extends Parser {
             "\1\4\132\uffff\1\4\23\uffff\1\1\1\uffff\1\2\2\uffff\1\4\2\uffff"+
             "\1\4\3\uffff\1\3\1\uffff\2\4\4\uffff\22\4\10\uffff\1\4",
             "",
-            "\1\4\132\uffff\1\4\25\uffff\1\4\2\uffff\1\4\2\uffff\1\4\3"+
-            "\uffff\1\51\1\uffff\2\4\4\uffff\22\4\10\uffff\1\4",
+            "\1\4\132\uffff\1\4\25\uffff\1\4\2\uffff\1\4\2\uffff\1\4\3\uffff"+
+            "\1\51\1\uffff\2\4\4\uffff\22\4\10\uffff\1\4",
             "",
             "",
             "",
@@ -23287,8 +23267,8 @@ public class JavaParser extends Parser {
     static final String DFA34_specialS =
         "\26\uffff}>";
     static final String[] DFA34_transitionS = {
-            "\1\1\132\uffff\1\1\25\uffff\1\11\2\uffff\1\1\2\uffff\1\1\5"+
-            "\uffff\2\1\4\uffff\12\11\10\1\10\uffff\1\6",
+            "\1\1\132\uffff\1\1\25\uffff\1\11\2\uffff\1\1\2\uffff\1\1\5\uffff"+
+            "\2\1\4\uffff\12\11\10\1\10\uffff\1\6",
             "",
             "",
             "",
@@ -23358,11 +23338,10 @@ public class JavaParser extends Parser {
     static final String DFA35_specialS =
         "\12\uffff\1\0\1\1\1\2\1\3\1\4\1\5\2\uffff}>";
     static final String[] DFA35_transitionS = {
-            "\1\10\132\uffff\1\2\30\uffff\1\7\2\uffff\1\1\5\uffff\1\5\1"+
-            "\4\16\uffff\10\3\10\uffff\1\6",
+            "\1\10\132\uffff\1\2\30\uffff\1\7\2\uffff\1\1\5\uffff\1\5\1\4"+
+            "\16\uffff\10\3\10\uffff\1\6",
             "",
-            "\1\15\26\uffff\1\13\4\uffff\1\12\10\uffff\1\14\26\uffff\1"+
-            "\11",
+            "\1\15\26\uffff\1\13\4\uffff\1\12\10\uffff\1\14\26\uffff\1\11",
             "\1\17\44\uffff\1\16",
             "",
             "",
@@ -23527,8 +23506,8 @@ public class JavaParser extends Parser {
     static final String DFA40_specialS =
         "\25\uffff}>";
     static final String[] DFA40_transitionS = {
-            "\1\1\132\uffff\1\1\23\uffff\1\24\1\uffff\1\1\2\uffff\1\1\2"+
-            "\uffff\1\1\5\uffff\2\1\4\uffff\22\1\10\uffff\1\1",
+            "\1\1\132\uffff\1\1\23\uffff\1\24\1\uffff\1\1\2\uffff\1\1\2\uffff"+
+            "\1\1\5\uffff\2\1\4\uffff\22\1\10\uffff\1\1",
             "",
             "",
             "",
@@ -23597,8 +23576,8 @@ public class JavaParser extends Parser {
     static final String DFA38_specialS =
         "\26\uffff}>";
     static final String[] DFA38_transitionS = {
-            "\1\1\132\uffff\1\1\25\uffff\1\11\2\uffff\1\1\2\uffff\1\1\5"+
-            "\uffff\2\1\4\uffff\12\11\10\1\10\uffff\1\6",
+            "\1\1\132\uffff\1\1\25\uffff\1\11\2\uffff\1\1\2\uffff\1\1\5\uffff"+
+            "\2\1\4\uffff\12\11\10\1\10\uffff\1\6",
             "",
             "",
             "",
@@ -23668,8 +23647,8 @@ public class JavaParser extends Parser {
     static final String DFA39_specialS =
         "\11\uffff\1\0\1\1\1\2\1\3\1\4\1\5\2\uffff}>";
     static final String[] DFA39_transitionS = {
-            "\1\10\132\uffff\1\1\30\uffff\1\7\2\uffff\1\3\5\uffff\1\5\1"+
-            "\4\16\uffff\10\2\10\uffff\1\6",
+            "\1\10\132\uffff\1\1\30\uffff\1\7\2\uffff\1\3\5\uffff\1\5\1\4"+
+            "\16\uffff\10\2\10\uffff\1\6",
             "\1\14\26\uffff\1\12\4\uffff\1\11\10\uffff\1\13",
             "\1\16\44\uffff\1\15",
             "",
@@ -23905,8 +23884,8 @@ public class JavaParser extends Parser {
     static final String DFA59_specialS =
         "\26\uffff}>";
     static final String[] DFA59_transitionS = {
-            "\7\1\25\uffff\1\1\3\uffff\1\1\1\25\1\uffff\1\1\16\uffff\10"+
-            "\1\1\uffff\2\1\2\uffff\3\1\22\uffff\2\1\14\uffff\5\1",
+            "\7\1\25\uffff\1\1\3\uffff\1\1\1\25\1\uffff\1\1\16\uffff\10\1"+
+            "\1\uffff\2\1\2\uffff\3\1\22\uffff\2\1\14\uffff\5\1",
             "",
             "",
             "",
@@ -23977,8 +23956,8 @@ public class JavaParser extends Parser {
         "\30\uffff}>";
     static final String[] DFA57_transitionS = {
             "\1\1\3\uffff\1\2",
-            "\7\4\25\uffff\1\4\3\uffff\1\4\1\2\1\uffff\1\4\16\uffff\10"+
-            "\4\1\uffff\2\4\2\uffff\3\4\22\uffff\2\4\14\uffff\5\4",
+            "\7\4\25\uffff\1\4\3\uffff\1\4\1\2\1\uffff\1\4\16\uffff\10\4"+
+            "\1\uffff\2\4\2\uffff\3\4\22\uffff\2\4\14\uffff\5\4",
             "",
             "",
             "",
@@ -24049,8 +24028,8 @@ public class JavaParser extends Parser {
     static final String DFA60_specialS =
         "\15\uffff}>";
     static final String[] DFA60_transitionS = {
-            "\1\5\21\uffff\1\2\1\3\1\4\1\6\1\7\1\10\1\11\1\12\1\13\1\14"+
-            "\20\uffff\1\1",
+            "\1\5\21\uffff\1\2\1\3\1\4\1\6\1\7\1\10\1\11\1\12\1\13\1\14\20"+
+            "\uffff\1\1",
             "",
             "",
             "",
@@ -24111,8 +24090,8 @@ public class JavaParser extends Parser {
     static final String DFA63_specialS =
         "\43\uffff}>";
     static final String[] DFA63_transitionS = {
-            "\1\1\23\uffff\1\1\2\uffff\1\40\1\1\2\uffff\7\1\3\uffff\3\1"+
-            "\22\uffff\1\1\2\uffff\2\1\6\uffff\1\1\16\uffff\15\1",
+            "\1\1\23\uffff\1\1\2\uffff\1\40\1\1\2\uffff\7\1\3\uffff\3\1\22"+
+            "\uffff\1\1\2\uffff\2\1\6\uffff\1\1\16\uffff\15\1",
             "",
             "",
             "",
@@ -24195,8 +24174,8 @@ public class JavaParser extends Parser {
     static final String DFA64_specialS =
         "\41\uffff}>";
     static final String[] DFA64_transitionS = {
-            "\1\1\23\uffff\1\1\2\uffff\2\1\2\uffff\7\1\3\uffff\1\40\2\1"+
-            "\22\uffff\1\1\2\uffff\2\1\6\uffff\1\1\16\uffff\15\1",
+            "\1\1\23\uffff\1\1\2\uffff\2\1\2\uffff\7\1\3\uffff\1\40\2\1\22"+
+            "\uffff\1\1\2\uffff\2\1\6\uffff\1\1\16\uffff\15\1",
             "",
             "",
             "",
@@ -24277,8 +24256,8 @@ public class JavaParser extends Parser {
     static final String DFA65_specialS =
         "\41\uffff}>";
     static final String[] DFA65_transitionS = {
-            "\1\1\23\uffff\1\1\2\uffff\2\1\2\uffff\7\1\3\uffff\1\40\2\1"+
-            "\22\uffff\1\1\2\uffff\2\1\6\uffff\1\1\16\uffff\15\1",
+            "\1\1\23\uffff\1\1\2\uffff\2\1\2\uffff\7\1\3\uffff\1\40\2\1\22"+
+            "\uffff\1\1\2\uffff\2\1\6\uffff\1\1\16\uffff\15\1",
             "",
             "",
             "",
@@ -24592,8 +24571,8 @@ public class JavaParser extends Parser {
     static final String DFA81_specialS =
         "\26\uffff\1\0\1\uffff}>";
     static final String[] DFA81_transitionS = {
-            "\1\1\132\uffff\1\1\22\uffff\4\1\2\uffff\1\1\10\uffff\1\1\5"+
-            "\uffff\12\1\20\uffff\1\3",
+            "\1\1\132\uffff\1\1\22\uffff\4\1\2\uffff\1\1\10\uffff\1\1\5\uffff"+
+            "\12\1\20\uffff\1\3",
             "",
             "",
             "\1\26\41\uffff\1\1",
@@ -24840,8 +24819,8 @@ public class JavaParser extends Parser {
     static final String DFA84_specialS =
         "\35\uffff}>";
     static final String[] DFA84_transitionS = {
-            "\1\1\132\uffff\1\1\22\uffff\4\1\1\34\1\uffff\1\1\2\uffff\2"+
-            "\1\3\uffff\3\1\4\uffff\22\1\2\uffff\2\1\4\uffff\1\1",
+            "\1\1\132\uffff\1\1\22\uffff\4\1\1\34\1\uffff\1\1\2\uffff\2\1"+
+            "\3\uffff\3\1\4\uffff\22\1\2\uffff\2\1\4\uffff\1\1",
             "",
             "",
             "",
@@ -25015,8 +24994,8 @@ public class JavaParser extends Parser {
     static final String DFA87_specialS =
         "\26\uffff}>";
     static final String[] DFA87_transitionS = {
-            "\7\1\25\uffff\1\1\3\uffff\1\25\2\uffff\1\1\16\uffff\10\1\1"+
-            "\uffff\2\1\2\uffff\3\1\1\24\21\uffff\2\1\14\uffff\5\1",
+            "\7\1\25\uffff\1\1\3\uffff\1\25\2\uffff\1\1\16\uffff\10\1\1\uffff"+
+            "\2\1\2\uffff\3\1\1\24\21\uffff\2\1\14\uffff\5\1",
             "",
             "",
             "",
@@ -25086,8 +25065,8 @@ public class JavaParser extends Parser {
     static final String DFA89_specialS =
         "\27\uffff}>";
     static final String[] DFA89_transitionS = {
-            "\7\1\25\uffff\1\1\3\uffff\1\1\1\26\1\uffff\1\1\16\uffff\10"+
-            "\1\1\uffff\2\1\2\uffff\4\1\21\uffff\2\1\14\uffff\5\1",
+            "\7\1\25\uffff\1\1\3\uffff\1\1\1\26\1\uffff\1\1\16\uffff\10\1"+
+            "\1\uffff\2\1\2\uffff\4\1\21\uffff\2\1\14\uffff\5\1",
             "",
             "",
             "",
@@ -25158,8 +25137,8 @@ public class JavaParser extends Parser {
     static final String DFA90_specialS =
         "\22\uffff\1\0\64\uffff}>";
     static final String[] DFA90_transitionS = {
-            "\1\1\132\uffff\1\1\25\uffff\1\1\2\uffff\1\1\7\uffff\1\22\1"+
-            "\1\5\uffff\22\1\10\uffff\1\1",
+            "\1\1\132\uffff\1\1\25\uffff\1\1\2\uffff\1\1\7\uffff\1\22\1\1"+
+            "\5\uffff\22\1\10\uffff\1\1",
             "",
             "",
             "",
@@ -25373,8 +25352,8 @@ public class JavaParser extends Parser {
     static final String DFA92_specialS =
         "\24\uffff}>";
     static final String[] DFA92_transitionS = {
-            "\1\1\132\uffff\1\1\25\uffff\1\7\2\uffff\1\1\10\uffff\1\1\5"+
-            "\uffff\12\7\10\1\10\uffff\1\6",
+            "\1\1\132\uffff\1\1\25\uffff\1\7\2\uffff\1\1\10\uffff\1\1\5\uffff"+
+            "\12\7\10\1\10\uffff\1\6",
             "",
             "",
             "",
@@ -25814,8 +25793,8 @@ public class JavaParser extends Parser {
     static final String DFA101_eofS =
         "\162\uffff";
     static final String DFA101_minS =
-        "\2\12\3\145\6\uffff\1\12\47\uffff\1\0\5\uffff\1\0\10\uffff\1\0"+
-        "\1\uffff\3\0\30\uffff\1\0\22\uffff";
+        "\2\12\3\145\6\uffff\1\12\47\uffff\1\0\5\uffff\1\0\10\uffff\1\0\1"+
+        "\uffff\3\0\30\uffff\1\0\22\uffff";
     static final String DFA101_maxS =
         "\1\u00cb\1\u00a7\1\u0087\1\u00c8\1\u008a\6\uffff\1\u00a7\47\uffff"+
         "\1\0\5\uffff\1\0\10\uffff\1\0\1\uffff\3\0\30\uffff\1\0\22\uffff";
@@ -25830,8 +25809,8 @@ public class JavaParser extends Parser {
             "\1\1\5\1\13\3\5\10\4\1\uffff\2\22\2\uffff\3\22\1\2\1\uffff\1"+
             "\22\1\uffff\1\22\1\uffff\4\22\1\uffff\5\22\2\uffff\2\22\14\uffff"+
             "\5\22",
-            "\1\5\132\uffff\1\77\25\uffff\1\5\2\uffff\1\5\10\uffff\1\5"+
-            "\5\uffff\4\5\1\71\5\5\10\77\10\uffff\1\63",
+            "\1\5\132\uffff\1\77\25\uffff\1\5\2\uffff\1\5\10\uffff\1\5\5"+
+            "\uffff\4\5\1\71\5\5\10\77\10\uffff\1\63",
             "\1\102\41\uffff\1\5",
             "\1\77\23\uffff\1\22\2\uffff\1\105\1\22\3\uffff\1\104\1\uffff"+
             "\2\22\5\uffff\1\106\1\uffff\1\22\22\uffff\1\22\1\uffff\1\22"+
@@ -26145,8 +26124,8 @@ public class JavaParser extends Parser {
             "",
             "",
             "",
-            "\1\17\2\uffff\2\17\3\uffff\1\17\1\uffff\2\17\5\uffff\1\17"+
-            "\1\uffff\1\17\22\uffff\1\17\1\uffff\1\17\10\uffff\1\42\16\uffff"+
+            "\1\17\2\uffff\2\17\3\uffff\1\17\1\uffff\2\17\5\uffff\1\17\1"+
+            "\uffff\1\17\22\uffff\1\17\1\uffff\1\17\10\uffff\1\42\16\uffff"+
             "\20\17",
             "",
             "",
@@ -26226,8 +26205,8 @@ public class JavaParser extends Parser {
     static final String DFA106_specialS =
         "\25\uffff}>";
     static final String[] DFA106_transitionS = {
-            "\7\1\15\uffff\1\24\7\uffff\1\1\6\uffff\1\1\16\uffff\10\1\1"+
-            "\uffff\2\1\2\uffff\3\1\22\uffff\2\1\14\uffff\5\1",
+            "\7\1\15\uffff\1\24\7\uffff\1\1\6\uffff\1\1\16\uffff\10\1\1\uffff"+
+            "\2\1\2\uffff\3\1\22\uffff\2\1\14\uffff\5\1",
             "",
             "",
             "",
@@ -26594,21 +26573,21 @@ public class JavaParser extends Parser {
     static final String DFA119_eofS =
         "\u0085\uffff";
     static final String DFA119_minS =
-        "\5\145\22\uffff\10\145\1\171\30\uffff\1\u008b\1\uffff\1\171\21"+
-        "\0\2\uffff\3\0\22\uffff\1\0\2\uffff\1\0\30\uffff\1\0\5\uffff";
+        "\5\145\22\uffff\10\145\1\171\30\uffff\1\u008b\1\uffff\1\171\21\0"+
+        "\2\uffff\3\0\23\uffff\1\0\1\uffff\1\0\30\uffff\1\0\5\uffff";
     static final String DFA119_maxS =
         "\1\u00cb\1\u00a7\1\145\1\u00c8\1\u008a\22\uffff\2\u008a\1\u00a7"+
         "\1\145\1\u00a7\3\u00cb\1\u00aa\30\uffff\1\u008b\1\uffff\1\u00aa"+
-        "\21\0\2\uffff\3\0\22\uffff\1\0\2\uffff\1\0\30\uffff\1\0\5\uffff";
+        "\21\0\2\uffff\3\0\23\uffff\1\0\1\uffff\1\0\30\uffff\1\0\5\uffff";
     static final String DFA119_acceptS =
         "\5\uffff\1\2\164\uffff\1\1\12\uffff";
     static final String DFA119_specialS =
         "\73\uffff\1\0\1\1\1\2\1\3\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13\1"+
-        "\14\1\15\1\16\1\17\1\20\2\uffff\1\21\1\22\1\23\22\uffff\1\24\2\uffff"+
+        "\14\1\15\1\16\1\17\1\20\2\uffff\1\21\1\22\1\23\23\uffff\1\24\1\uffff"+
         "\1\25\30\uffff\1\26\5\uffff}>";
     static final String[] DFA119_transitionS = {
-            "\1\3\6\5\15\uffff\1\5\7\uffff\1\5\6\uffff\1\5\10\uffff\1\1"+
-            "\5\uffff\10\4\1\uffff\2\5\2\uffff\3\5\1\2\21\uffff\2\5\14\uffff"+
+            "\1\3\6\5\15\uffff\1\5\7\uffff\1\5\6\uffff\1\5\10\uffff\1\1\5"+
+            "\uffff\10\4\1\uffff\2\5\2\uffff\3\5\1\2\21\uffff\2\5\14\uffff"+
             "\5\5",
             "\1\27\53\uffff\1\31\5\uffff\10\30\10\uffff\1\32",
             "\1\33",
@@ -26641,9 +26620,9 @@ public class JavaParser extends Parser {
             "\1\107\5\uffff\1\113",
             "\1\116\6\5\25\uffff\1\5\6\uffff\1\5\3\uffff\1\5\12\uffff\10"+
             "\117\1\120\2\5\2\uffff\3\5\22\uffff\2\5\14\uffff\5\5",
-            "\1\143\30\uffff\1\5\2\uffff\1\5\36\uffff\1\5\52\uffff\1\5",
-            "\7\5\25\uffff\1\5\6\uffff\1\5\2\uffff\1\146\13\uffff\10\5"+
-            "\1\uffff\2\5\2\uffff\3\5\22\uffff\2\5\14\uffff\5\5",
+            "\1\144\30\uffff\1\5\2\uffff\1\5\36\uffff\1\5\52\uffff\1\5",
+            "\7\5\25\uffff\1\5\6\uffff\1\5\2\uffff\1\146\13\uffff\10\5\1"+
+            "\uffff\2\5\2\uffff\3\5\22\uffff\2\5\14\uffff\5\5",
             "\1\5\10\uffff\1\5\7\uffff\1\5\1\uffff\1\5\35\uffff\1\172",
             "",
             "",
@@ -26712,8 +26691,8 @@ public class JavaParser extends Parser {
             "",
             "",
             "",
-            "\1\uffff",
             "",
+            "\1\uffff",
             "",
             "\1\uffff",
             "",
@@ -27085,10 +27064,10 @@ public class JavaParser extends Parser {
                         if ( s>=0 ) return s;
                         break;
                     case 20 : 
-                        int LA119_99 = input.LA(1);
+                        int LA119_100 = input.LA(1);
 
                          
-                        int index119_99 = input.index();
+                        int index119_100 = input.index();
                         input.rewind();
                         s = -1;
                         if ( (synpred180_Java()) ) {s = 122;}
@@ -27096,7 +27075,7 @@ public class JavaParser extends Parser {
                         else if ( (true) ) {s = 5;}
 
                          
-                        input.seek(index119_99);
+                        input.seek(index119_100);
                         if ( s>=0 ) return s;
                         break;
                     case 21 : 
@@ -27222,8 +27201,8 @@ public class JavaParser extends Parser {
     static final String DFA117_specialS =
         "\25\uffff}>";
     static final String[] DFA117_transitionS = {
-            "\7\1\15\uffff\1\24\7\uffff\1\1\6\uffff\1\1\16\uffff\10\1\1"+
-            "\uffff\2\1\2\uffff\3\1\22\uffff\2\1\14\uffff\5\1",
+            "\7\1\15\uffff\1\24\7\uffff\1\1\6\uffff\1\1\16\uffff\10\1\1\uffff"+
+            "\2\1\2\uffff\3\1\22\uffff\2\1\14\uffff\5\1",
             "",
             "",
             "",
@@ -27688,7 +27667,7 @@ public class JavaParser extends Parser {
             this.transition = DFA124_transition;
         }
         public String getDescription() {
-            return "723:3: ( '=' expression -> ^( ASSIGN conditionalExpression expression ) | '+' '=' expression -> ^( ASSIGNOP ADD conditionalExpression expression ) | '-' '=' expression -> ^( ASSIGNOP SUB conditionalExpression expression ) | '*' '=' expression -> ^( ASSIGNOP MUL conditionalExpression expression ) | '/' '=' expression -> ^( ASSIGNOP DIV conditionalExpression expression ) | '&=' expression -> ^( ASSIGNOP AND conditionalExpression expression ) | '|=' expression -> ^( ASSIGNOP OR conditionalExpression expression ) | '^=' expression -> ^( ASSIGNOP XOR conditionalExpression expression ) | '%' '=' expression -> ^( ASSIGNOP MOD conditionalExpression expression ) | '<' '<' '=' expression -> ^( ASSIGNOP SHL conditionalExpression expression ) | '>' '>' '=' expression -> ^( ASSIGNOP SHR conditionalExpression expression ) | '>' '>' '>' '=' expression -> ^( ASSIGNOP USHR conditionalExpression expression ) | -> conditionalExpression )";
+            return "723:3: ( '=' expression -> ^( ASSIGN conditionalExpression expression ) | lc= '+' '=' expression -> ^( ASSIGNOP[$lc] ADD conditionalExpression expression ) | lc= '-' '=' expression -> ^( ASSIGNOP[$lc] SUB conditionalExpression expression ) | lc= '*' '=' expression -> ^( ASSIGNOP[$lc] MUL conditionalExpression expression ) | lc= '/' '=' expression -> ^( ASSIGNOP[$lc] DIV conditionalExpression expression ) | lc= '&=' expression -> ^( ASSIGNOP[$lc] AND conditionalExpression expression ) | lc= '|=' expression -> ^( ASSIGNOP[$lc] OR conditionalExpression expression ) | lc= '^=' expression -> ^( ASSIGNOP[$lc] XOR conditionalExpression expression ) | lc= '%' '=' expression -> ^( ASSIGNOP[$lc] MOD conditionalExpression expression ) | lc= '<' '<' '=' expression -> ^( ASSIGNOP[$lc] SHL conditionalExpression expression ) | lc= '>' '>' '=' expression -> ^( ASSIGNOP[$lc] SHR conditionalExpression expression ) | lc= '>' '>' '>' '=' expression -> ^( ASSIGNOP[$lc] USHR conditionalExpression expression ) | -> conditionalExpression )";
         }
         public int specialStateTransition(int s, IntStream _input) throws NoViableAltException {
             TokenStream input = (TokenStream)_input;
@@ -28460,17 +28439,17 @@ public class JavaParser extends Parser {
     static final String DFA133_maxS =
         "\1\u00c6\2\u00cb\32\uffff\1\0\47\uffff";
     static final String DFA133_acceptS =
-        "\3\uffff\1\5\30\uffff\1\1\1\uffff\1\2\21\uffff\1\3\1\uffff\1\4"+
-        "\22\uffff";
+        "\3\uffff\1\5\30\uffff\1\1\1\uffff\1\2\21\uffff\1\3\1\uffff\1\4\22"+
+        "\uffff";
     static final String DFA133_specialS =
         "\35\uffff\1\0\47\uffff}>";
     static final String[] DFA133_transitionS = {
             "\1\3\3\uffff\1\3\3\uffff\1\1\1\3\1\2\1\3\1\uffff\1\3\4\uffff"+
             "\2\3\22\uffff\1\3\2\uffff\1\3\7\uffff\1\3\16\uffff\16\3",
-            "\7\36\25\uffff\1\35\6\uffff\1\36\3\uffff\1\34\12\uffff\10"+
-            "\36\1\uffff\2\36\2\uffff\3\36\22\uffff\2\36\14\uffff\5\36",
-            "\7\62\25\uffff\1\62\1\uffff\1\3\4\uffff\1\62\3\uffff\1\60"+
-            "\12\uffff\10\62\1\uffff\2\62\2\uffff\3\62\22\uffff\2\62\14\uffff"+
+            "\7\36\25\uffff\1\35\6\uffff\1\36\3\uffff\1\34\12\uffff\10\36"+
+            "\1\uffff\2\36\2\uffff\3\36\22\uffff\2\36\14\uffff\5\36",
+            "\7\62\25\uffff\1\62\1\uffff\1\3\4\uffff\1\62\3\uffff\1\60\12"+
+            "\uffff\10\62\1\uffff\2\62\2\uffff\3\62\22\uffff\2\62\14\uffff"+
             "\5\62",
             "",
             "",
@@ -28616,9 +28595,8 @@ public class JavaParser extends Parser {
             "\2\3\22\uffff\1\3\2\uffff\1\3\7\uffff\1\3\16\uffff\16\3",
             "\7\3\25\uffff\1\34\6\uffff\1\3\3\uffff\1\3\12\uffff\10\3\1"+
             "\uffff\2\3\2\uffff\3\3\22\uffff\2\3\14\uffff\5\3",
-            "\7\3\25\uffff\1\3\1\uffff\1\60\4\uffff\1\3\3\uffff\1\3\12"+
-            "\uffff\10\3\1\uffff\2\3\2\uffff\3\3\22\uffff\2\3\14\uffff\5"+
-            "\3",
+            "\7\3\25\uffff\1\3\1\uffff\1\60\4\uffff\1\3\3\uffff\1\3\12\uffff"+
+            "\10\3\1\uffff\2\3\2\uffff\3\3\22\uffff\2\3\14\uffff\5\3",
             "",
             "",
             "",
@@ -28782,9 +28760,8 @@ public class JavaParser extends Parser {
             "\2\3\22\uffff\1\3\2\uffff\1\3\7\uffff\1\3\16\uffff\16\3",
             "\7\3\25\uffff\1\35\6\uffff\1\3\3\uffff\1\3\12\uffff\10\3\1"+
             "\uffff\2\3\2\uffff\3\3\22\uffff\2\3\14\uffff\5\3",
-            "\7\3\25\uffff\1\3\1\uffff\1\61\4\uffff\1\3\3\uffff\1\3\12"+
-            "\uffff\10\3\1\uffff\2\3\2\uffff\3\3\22\uffff\2\3\14\uffff\5"+
-            "\3",
+            "\7\3\25\uffff\1\3\1\uffff\1\61\4\uffff\1\3\3\uffff\1\3\12\uffff"+
+            "\10\3\1\uffff\2\3\2\uffff\3\3\22\uffff\2\3\14\uffff\5\3",
             "",
             "",
             "",
@@ -28941,12 +28918,11 @@ public class JavaParser extends Parser {
     static final String DFA136_specialS =
         "\35\uffff\1\0\24\uffff}>";
     static final String[] DFA136_transitionS = {
-            "\1\1\3\uffff\1\1\3\uffff\2\1\1\2\1\1\1\uffff\1\1\4\uffff\2"+
-            "\1\22\uffff\1\1\2\uffff\1\1\7\uffff\1\1\16\uffff\16\1",
+            "\1\1\3\uffff\1\1\3\uffff\2\1\1\2\1\1\1\uffff\1\1\4\uffff\2\1"+
+            "\22\uffff\1\1\2\uffff\1\1\7\uffff\1\1\16\uffff\16\1",
             "",
-            "\7\1\25\uffff\1\1\1\uffff\1\35\4\uffff\1\1\3\uffff\1\1\12"+
-            "\uffff\10\1\1\uffff\2\1\2\uffff\3\1\22\uffff\2\1\14\uffff\5"+
-            "\1",
+            "\7\1\25\uffff\1\1\1\uffff\1\35\4\uffff\1\1\3\uffff\1\1\12\uffff"+
+            "\10\1\1\uffff\2\1\2\uffff\3\1\22\uffff\2\1\14\uffff\5\1",
             "",
             "",
             "",
@@ -29660,9 +29636,9 @@ public class JavaParser extends Parser {
             "\2\uffff\3\4\42\uffff\1\1\1\2\1\4",
             "",
             "",
-            "\1\37\1\31\1\32\1\33\3\30\25\uffff\1\27\6\uffff\1\41\16\uffff"+
-            "\10\40\1\uffff\1\42\1\26\2\uffff\1\35\2\34\22\uffff\1\20\1\21"+
-            "\14\uffff\1\22\1\23\1\24\1\25\1\36",
+            "\1\20\1\33\1\34\1\35\3\32\25\uffff\1\31\6\uffff\1\41\16\uffff"+
+            "\10\21\1\uffff\1\42\1\30\2\uffff\1\37\2\36\22\uffff\1\22\1\23"+
+            "\14\uffff\1\24\1\25\1\26\1\27\1\40",
             "",
             "",
             "",
@@ -30039,9 +30015,8 @@ public class JavaParser extends Parser {
     static final String DFA147_specialS =
         "\40\uffff}>";
     static final String[] DFA147_transitionS = {
-            "\1\5\2\uffff\1\1\1\5\3\uffff\4\5\1\uffff\1\5\3\uffff\1\1\2"+
-            "\5\22\uffff\1\5\2\uffff\1\5\7\uffff\1\5\16\uffff\16\5\1\3\1"+
-            "\4",
+            "\1\5\2\uffff\1\1\1\5\3\uffff\4\5\1\uffff\1\5\3\uffff\1\1\2\5"+
+            "\22\uffff\1\5\2\uffff\1\5\7\uffff\1\5\16\uffff\16\5\1\3\1\4",
             "",
             "",
             "",
@@ -30121,8 +30096,8 @@ public class JavaParser extends Parser {
     static final String DFA145_specialS =
         "\40\uffff}>";
     static final String[] DFA145_transitionS = {
-            "\1\1\2\uffff\1\36\1\1\3\uffff\4\1\1\uffff\1\1\3\uffff\1\36"+
-            "\2\1\22\uffff\1\1\2\uffff\1\1\7\uffff\1\1\16\uffff\20\1",
+            "\1\1\2\uffff\1\36\1\1\3\uffff\4\1\1\uffff\1\1\3\uffff\1\36\2"+
+            "\1\22\uffff\1\1\2\uffff\1\1\7\uffff\1\1\16\uffff\20\1",
             "",
             "",
             "",
@@ -30273,34 +30248,34 @@ public class JavaParser extends Parser {
     static final String DFA149_eofS =
         "\27\uffff";
     static final String DFA149_minS =
-        "\1\u00a1\1\145\17\uffff\2\0\4\uffff";
+        "\1\u00a1\1\145\2\0\23\uffff";
     static final String DFA149_maxS =
-        "\1\u00a1\1\u00cb\17\uffff\2\0\4\uffff";
+        "\1\u00a1\1\u00cb\2\0\23\uffff";
     static final String DFA149_acceptS =
-        "\2\uffff\1\3\22\uffff\1\2\1\1";
+        "\4\uffff\1\3\20\uffff\1\2\1\1";
     static final String DFA149_specialS =
-        "\21\uffff\1\0\1\1\4\uffff}>";
+        "\2\uffff\1\0\1\1\23\uffff}>";
     static final String[] DFA149_transitionS = {
             "\1\1",
-            "\1\21\6\2\25\uffff\1\2\6\uffff\1\2\16\uffff\10\22\1\uffff"+
-            "\2\2\2\uffff\3\2\22\uffff\2\2\14\uffff\5\2",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
+            "\1\2\6\4\25\uffff\1\4\6\uffff\1\4\16\uffff\10\3\1\uffff\2\4"+
+            "\2\uffff\3\4\22\uffff\2\4\14\uffff\5\4",
             "\1\uffff",
             "\1\uffff",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
             "",
             "",
             "",
@@ -30344,35 +30319,35 @@ public class JavaParser extends Parser {
         	int _s = s;
             switch ( s ) {
                     case 0 : 
-                        int LA149_17 = input.LA(1);
+                        int LA149_2 = input.LA(1);
 
                          
-                        int index149_17 = input.index();
+                        int index149_2 = input.index();
                         input.rewind();
                         s = -1;
                         if ( (synpred239_Java()) ) {s = 21;}
 
-                        else if ( (true) ) {s = 2;}
+                        else if ( (true) ) {s = 4;}
 
                          
-                        input.seek(index149_17);
+                        input.seek(index149_2);
                         if ( s>=0 ) return s;
                         break;
                     case 1 : 
-                        int LA149_18 = input.LA(1);
+                        int LA149_3 = input.LA(1);
 
                          
-                        int index149_18 = input.index();
+                        int index149_3 = input.index();
                         input.rewind();
                         s = -1;
                         if ( (synpred238_Java()) ) {s = 22;}
 
                         else if ( (synpred239_Java()) ) {s = 21;}
 
-                        else if ( (true) ) {s = 2;}
+                        else if ( (true) ) {s = 4;}
 
                          
-                        input.seek(index149_18);
+                        input.seek(index149_3);
                         if ( s>=0 ) return s;
                         break;
             }
@@ -30394,13 +30369,13 @@ public class JavaParser extends Parser {
         "\1\u00cb\10\uffff\1\u009e\1\u00c8\3\uffff\1\0\3\uffff\2\0\7\uffff"+
         "\1\0\25\uffff";
     static final String DFA163_acceptS =
-        "\1\uffff\1\1\1\2\1\3\7\uffff\1\6\1\7\1\10\1\uffff\1\4\1\5\1\11"+
-        "\37\uffff";
+        "\1\uffff\1\1\1\2\1\3\7\uffff\1\6\1\7\1\10\1\uffff\1\4\1\5\1\11\37"+
+        "\uffff";
     static final String DFA163_specialS =
         "\16\uffff\1\0\3\uffff\1\1\1\2\7\uffff\1\3\25\uffff}>";
     static final String[] DFA163_transitionS = {
-            "\1\12\6\3\25\uffff\1\2\6\uffff\1\14\16\uffff\10\13\1\uffff"+
-            "\1\15\1\1\2\uffff\3\3\44\uffff\1\11",
+            "\1\12\6\3\25\uffff\1\2\6\uffff\1\14\16\uffff\10\13\1\uffff\1"+
+            "\15\1\1\2\uffff\3\3\44\uffff\1\11",
             "",
             "",
             "",
@@ -30571,8 +30546,8 @@ public class JavaParser extends Parser {
         "\26\uffff}>";
     static final String[] DFA154_transitionS = {
             "\1\1",
-            "\7\3\25\uffff\1\3\6\uffff\1\3\2\uffff\1\2\13\uffff\10\3\1"+
-            "\uffff\2\3\2\uffff\3\3\22\uffff\2\3\14\uffff\5\3",
+            "\7\3\25\uffff\1\3\6\uffff\1\3\2\uffff\1\2\13\uffff\10\3\1\uffff"+
+            "\2\3\2\uffff\3\3\22\uffff\2\3\14\uffff\5\3",
             "",
             "",
             "",
@@ -31145,8 +31120,8 @@ public class JavaParser extends Parser {
         "\27\uffff}>";
     static final String[] DFA160_transitionS = {
             "\1\1\26\uffff\1\2",
-            "\7\4\25\uffff\1\4\6\uffff\1\4\2\uffff\1\3\13\uffff\10\4\1"+
-            "\uffff\2\4\2\uffff\3\4\22\uffff\2\4\14\uffff\5\4",
+            "\7\4\25\uffff\1\4\6\uffff\1\4\2\uffff\1\3\13\uffff\10\4\1\uffff"+
+            "\2\4\2\uffff\3\4\22\uffff\2\4\14\uffff\5\4",
             "",
             "",
             "",
@@ -32200,8 +32175,8 @@ public class JavaParser extends Parser {
         "\26\uffff}>";
     static final String[] DFA212_transitionS = {
             "\1\1",
-            "\7\3\25\uffff\1\3\6\uffff\1\3\2\uffff\1\2\13\uffff\10\3\1"+
-            "\uffff\2\3\2\uffff\3\3\22\uffff\2\3\14\uffff\5\3",
+            "\7\3\25\uffff\1\3\6\uffff\1\3\2\uffff\1\2\13\uffff\10\3\1\uffff"+
+            "\2\3\2\uffff\3\3\22\uffff\2\3\14\uffff\5\3",
             "",
             "",
             "",
@@ -32271,8 +32246,8 @@ public class JavaParser extends Parser {
         "\27\uffff}>";
     static final String[] DFA209_transitionS = {
             "\1\1",
-            "\7\4\25\uffff\1\4\6\uffff\1\4\2\uffff\1\2\13\uffff\10\4\1"+
-            "\uffff\2\4\2\uffff\3\4\22\uffff\2\4\14\uffff\5\4",
+            "\7\4\25\uffff\1\4\6\uffff\1\4\2\uffff\1\2\13\uffff\10\4\1\uffff"+
+            "\2\4\2\uffff\3\4\22\uffff\2\4\14\uffff\5\4",
             "",
             "",
             "",
@@ -32343,8 +32318,8 @@ public class JavaParser extends Parser {
         "\27\uffff}>";
     static final String[] DFA221_transitionS = {
             "\1\1\26\uffff\1\2",
-            "\7\4\25\uffff\1\4\6\uffff\1\4\2\uffff\1\3\13\uffff\10\4\1"+
-            "\uffff\2\4\2\uffff\3\4\22\uffff\2\4\14\uffff\5\4",
+            "\7\4\25\uffff\1\4\6\uffff\1\4\2\uffff\1\3\13\uffff\10\4\1\uffff"+
+            "\2\4\2\uffff\3\4\22\uffff\2\4\14\uffff\5\4",
             "",
             "",
             "",
@@ -32415,8 +32390,8 @@ public class JavaParser extends Parser {
         "\27\uffff}>";
     static final String[] DFA218_transitionS = {
             "\1\1",
-            "\7\4\25\uffff\1\4\6\uffff\1\4\2\uffff\1\2\13\uffff\10\4\1"+
-            "\uffff\2\4\2\uffff\3\4\22\uffff\2\4\14\uffff\5\4",
+            "\7\4\25\uffff\1\4\6\uffff\1\4\2\uffff\1\2\13\uffff\10\4\1\uffff"+
+            "\2\4\2\uffff\3\4\22\uffff\2\4\14\uffff\5\4",
             "",
             "",
             "",
@@ -32907,205 +32882,205 @@ public class JavaParser extends Parser {
     public static final BitSet FOLLOW_conditionalExpression_in_expression4916 = new BitSet(new long[]{0x0000000000000002L,0x2000000000000000L,0xFE0000000000100AL});
     public static final BitSet FOLLOW_140_in_expression4926 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
     public static final BitSet FOLLOW_expression_in_expression4928 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_185_in_expression4945 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
-    public static final BitSet FOLLOW_140_in_expression4947 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_expression_in_expression4949 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_186_in_expression4968 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
-    public static final BitSet FOLLOW_140_in_expression4970 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_expression_in_expression4972 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_125_in_expression4991 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
-    public static final BitSet FOLLOW_140_in_expression4993 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_expression_in_expression4995 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_187_in_expression5014 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
-    public static final BitSet FOLLOW_140_in_expression5016 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_expression_in_expression5018 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_188_in_expression5040 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_expression_in_expression5042 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_189_in_expression5061 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_expression_in_expression5063 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_190_in_expression5082 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_expression_in_expression5084 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_191_in_expression5106 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
-    public static final BitSet FOLLOW_140_in_expression5108 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_expression_in_expression5110 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_129_in_expression5129 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000002L});
-    public static final BitSet FOLLOW_129_in_expression5131 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
-    public static final BitSet FOLLOW_140_in_expression5133 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_expression_in_expression5135 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_131_in_expression5154 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
-    public static final BitSet FOLLOW_131_in_expression5156 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
-    public static final BitSet FOLLOW_140_in_expression5158 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_expression_in_expression5160 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_131_in_expression5179 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
-    public static final BitSet FOLLOW_131_in_expression5181 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
-    public static final BitSet FOLLOW_131_in_expression5183 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
-    public static final BitSet FOLLOW_140_in_expression5185 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_expression_in_expression5187 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_conditionalOrExpression_in_conditionalExpression5230 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000080000000L});
-    public static final BitSet FOLLOW_159_in_conditionalExpression5247 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_expression_in_conditionalExpression5249 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000040000000000L});
-    public static final BitSet FOLLOW_170_in_conditionalExpression5251 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_expression_in_conditionalExpression5253 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_conditionalAndExpression_in_conditionalOrExpression5300 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000000L,0x0000000000000001L});
-    public static final BitSet FOLLOW_192_in_conditionalOrExpression5318 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_conditionalOrExpression_in_conditionalOrExpression5320 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_inclusiveOrExpression_in_conditionalAndExpression5366 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000000L,0x0000000000000002L});
-    public static final BitSet FOLLOW_193_in_conditionalAndExpression5384 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_conditionalAndExpression_in_conditionalAndExpression5386 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_exclusiveOrExpression_in_inclusiveOrExpression5438 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000000L,0x0000000000000004L});
-    public static final BitSet FOLLOW_194_in_inclusiveOrExpression5460 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_inclusiveOrExpression_in_inclusiveOrExpression5462 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_andExpression_in_exclusiveOrExpression5509 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
-    public static final BitSet FOLLOW_195_in_exclusiveOrExpression5525 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_exclusiveOrExpression_in_exclusiveOrExpression5527 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_equalityExpression_in_andExpression5571 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000010L});
-    public static final BitSet FOLLOW_132_in_andExpression5587 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_andExpression_in_andExpression5589 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_instanceOfExpression_in_equalityExpression5633 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000000L,0x0000000000000030L});
-    public static final BitSet FOLLOW_196_in_equalityExpression5649 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_instanceOfExpression_in_equalityExpression5651 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_197_in_equalityExpression5672 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_instanceOfExpression_in_equalityExpression5674 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_relationalExpression_in_instanceOfExpression5718 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000000L,0x0000000000000040L});
-    public static final BitSet FOLLOW_198_in_instanceOfExpression5733 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x000000807F820000L});
-    public static final BitSet FOLLOW_type_in_instanceOfExpression5735 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_shiftExpression_in_relationalExpression5779 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x000000000000000AL});
-    public static final BitSet FOLLOW_129_in_relationalExpression5795 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
-    public static final BitSet FOLLOW_140_in_relationalExpression5797 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_shiftExpression_in_relationalExpression5799 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_129_in_relationalExpression5820 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_shiftExpression_in_relationalExpression5822 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_131_in_relationalExpression5843 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
-    public static final BitSet FOLLOW_140_in_relationalExpression5845 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_shiftExpression_in_relationalExpression5847 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_131_in_relationalExpression5868 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_shiftExpression_in_relationalExpression5870 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_additiveExpression_in_shiftExpression5915 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x000000000000000AL});
-    public static final BitSet FOLLOW_129_in_shiftExpression5934 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000002L});
-    public static final BitSet FOLLOW_129_in_shiftExpression5936 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_131_in_shiftExpression5940 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
-    public static final BitSet FOLLOW_131_in_shiftExpression5942 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_additiveExpression_in_shiftExpression5945 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x000000000000000AL});
-    public static final BitSet FOLLOW_131_in_shiftExpression5979 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
-    public static final BitSet FOLLOW_131_in_shiftExpression5981 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
-    public static final BitSet FOLLOW_131_in_shiftExpression5983 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_additiveExpression_in_shiftExpression5985 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000008L});
-    public static final BitSet FOLLOW_multiplicativeExpression_in_additiveExpression6028 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0600000000000000L});
-    public static final BitSet FOLLOW_185_in_additiveExpression6047 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_186_in_additiveExpression6051 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_multiplicativeExpression_in_additiveExpression6054 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0600000000000000L});
-    public static final BitSet FOLLOW_unaryExpression_in_multiplicativeExpression6105 = new BitSet(new long[]{0x0000000000000002L,0x2000000000000000L,0x8800000000000000L});
-    public static final BitSet FOLLOW_125_in_multiplicativeExpression6125 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_187_in_multiplicativeExpression6129 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_191_in_multiplicativeExpression6133 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_unaryExpression_in_multiplicativeExpression6136 = new BitSet(new long[]{0x0000000000000002L,0x2000000000000000L,0x8800000000000000L});
-    public static final BitSet FOLLOW_185_in_unaryExpression6188 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_unaryExpression_in_unaryExpression6190 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_186_in_unaryExpression6202 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_unaryExpression_in_unaryExpression6204 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_199_in_unaryExpression6222 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_unaryExpression_in_unaryExpression6224 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_200_in_unaryExpression6242 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_unaryExpression_in_unaryExpression6244 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_unaryExpressionNotPlusMinus_in_unaryExpression6262 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_201_in_unaryExpressionNotPlusMinus6293 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_unaryExpression_in_unaryExpressionNotPlusMinus6295 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_202_in_unaryExpressionNotPlusMinus6312 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_unaryExpression_in_unaryExpressionNotPlusMinus6314 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_castExpression_in_unaryExpressionNotPlusMinus6332 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_primary_in_unaryExpressionNotPlusMinus6339 = new BitSet(new long[]{0x0000000000000002L,0x1000000000000000L,0x0000000000000400L,0x0000000000000180L});
-    public static final BitSet FOLLOW_selector_in_unaryExpressionNotPlusMinus6349 = new BitSet(new long[]{0x0000000000000002L,0x1000000000000000L,0x0000000000000400L,0x0000000000000180L});
-    public static final BitSet FOLLOW_199_in_unaryExpressionNotPlusMinus6362 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_200_in_unaryExpressionNotPlusMinus6384 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_199_in_unaryExpressionNotPlusMinus6428 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_200_in_unaryExpressionNotPlusMinus6443 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_161_in_castExpression6482 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x000000807F820000L});
-    public static final BitSet FOLLOW_primitiveType_in_castExpression6484 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000400000000L});
-    public static final BitSet FOLLOW_162_in_castExpression6486 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_unaryExpression_in_castExpression6488 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_161_in_castExpression6511 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x000000807F820000L});
-    public static final BitSet FOLLOW_type_in_castExpression6513 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000400000000L});
-    public static final BitSet FOLLOW_162_in_castExpression6515 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_unaryExpressionNotPlusMinus_in_castExpression6517 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_161_in_castExpression6536 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_expression_in_castExpression6538 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000400000000L});
-    public static final BitSet FOLLOW_162_in_castExpression6540 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_unaryExpressionNotPlusMinus_in_castExpression6542 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_parExpression_in_primary6562 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_nonWildcardTypeArguments_in_primary6569 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x0000000100000000L});
-    public static final BitSet FOLLOW_explicitGenericInvocationSuffix_in_primary6571 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_literal_in_primary6595 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_203_in_primary6605 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x000000807F820002L});
-    public static final BitSet FOLLOW_nonWildcardTypeArguments_in_primary6607 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x000000807F820002L});
-    public static final BitSet FOLLOW_primitiveType_in_primary6610 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000400L});
-    public static final BitSet FOLLOW_138_in_primary6626 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_expression_in_primary6628 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000800L});
-    public static final BitSet FOLLOW_139_in_primary6630 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000400L});
-    public static final BitSet FOLLOW_138_in_primary6635 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000800L});
-    public static final BitSet FOLLOW_139_in_primary6637 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000400L});
+    public static final BitSet FOLLOW_185_in_expression4947 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
+    public static final BitSet FOLLOW_140_in_expression4949 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_expression_in_expression4951 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_186_in_expression4973 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
+    public static final BitSet FOLLOW_140_in_expression4975 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_expression_in_expression4977 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_125_in_expression4999 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
+    public static final BitSet FOLLOW_140_in_expression5001 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_expression_in_expression5003 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_187_in_expression5025 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
+    public static final BitSet FOLLOW_140_in_expression5027 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_expression_in_expression5029 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_188_in_expression5054 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_expression_in_expression5056 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_189_in_expression5078 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_expression_in_expression5080 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_190_in_expression5102 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_expression_in_expression5104 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_191_in_expression5129 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
+    public static final BitSet FOLLOW_140_in_expression5131 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_expression_in_expression5133 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_129_in_expression5155 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000002L});
+    public static final BitSet FOLLOW_129_in_expression5157 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
+    public static final BitSet FOLLOW_140_in_expression5159 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_expression_in_expression5161 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_131_in_expression5183 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
+    public static final BitSet FOLLOW_131_in_expression5185 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
+    public static final BitSet FOLLOW_140_in_expression5187 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_expression_in_expression5189 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_131_in_expression5211 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
+    public static final BitSet FOLLOW_131_in_expression5213 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
+    public static final BitSet FOLLOW_131_in_expression5215 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
+    public static final BitSet FOLLOW_140_in_expression5217 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_expression_in_expression5219 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_conditionalOrExpression_in_conditionalExpression5263 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000080000000L});
+    public static final BitSet FOLLOW_159_in_conditionalExpression5280 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_expression_in_conditionalExpression5282 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000040000000000L});
+    public static final BitSet FOLLOW_170_in_conditionalExpression5284 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_expression_in_conditionalExpression5286 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_conditionalAndExpression_in_conditionalOrExpression5333 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000000L,0x0000000000000001L});
+    public static final BitSet FOLLOW_192_in_conditionalOrExpression5351 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_conditionalOrExpression_in_conditionalOrExpression5353 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_inclusiveOrExpression_in_conditionalAndExpression5399 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000000L,0x0000000000000002L});
+    public static final BitSet FOLLOW_193_in_conditionalAndExpression5417 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_conditionalAndExpression_in_conditionalAndExpression5419 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_exclusiveOrExpression_in_inclusiveOrExpression5471 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000000L,0x0000000000000004L});
+    public static final BitSet FOLLOW_194_in_inclusiveOrExpression5493 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_inclusiveOrExpression_in_inclusiveOrExpression5495 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_andExpression_in_exclusiveOrExpression5542 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
+    public static final BitSet FOLLOW_195_in_exclusiveOrExpression5558 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_exclusiveOrExpression_in_exclusiveOrExpression5560 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_equalityExpression_in_andExpression5604 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000010L});
+    public static final BitSet FOLLOW_132_in_andExpression5620 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_andExpression_in_andExpression5622 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_instanceOfExpression_in_equalityExpression5666 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000000L,0x0000000000000030L});
+    public static final BitSet FOLLOW_196_in_equalityExpression5682 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_instanceOfExpression_in_equalityExpression5684 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_197_in_equalityExpression5705 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_instanceOfExpression_in_equalityExpression5707 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_relationalExpression_in_instanceOfExpression5751 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000000L,0x0000000000000040L});
+    public static final BitSet FOLLOW_198_in_instanceOfExpression5766 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x000000807F820000L});
+    public static final BitSet FOLLOW_type_in_instanceOfExpression5768 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_shiftExpression_in_relationalExpression5812 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x000000000000000AL});
+    public static final BitSet FOLLOW_129_in_relationalExpression5828 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
+    public static final BitSet FOLLOW_140_in_relationalExpression5830 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_shiftExpression_in_relationalExpression5832 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_129_in_relationalExpression5853 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_shiftExpression_in_relationalExpression5855 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_131_in_relationalExpression5876 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
+    public static final BitSet FOLLOW_140_in_relationalExpression5878 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_shiftExpression_in_relationalExpression5880 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_131_in_relationalExpression5901 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_shiftExpression_in_relationalExpression5903 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_additiveExpression_in_shiftExpression5948 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x000000000000000AL});
+    public static final BitSet FOLLOW_129_in_shiftExpression5967 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000002L});
+    public static final BitSet FOLLOW_129_in_shiftExpression5969 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_131_in_shiftExpression5973 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
+    public static final BitSet FOLLOW_131_in_shiftExpression5975 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_additiveExpression_in_shiftExpression5978 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x000000000000000AL});
+    public static final BitSet FOLLOW_131_in_shiftExpression6012 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
+    public static final BitSet FOLLOW_131_in_shiftExpression6014 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
+    public static final BitSet FOLLOW_131_in_shiftExpression6016 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_additiveExpression_in_shiftExpression6018 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000008L});
+    public static final BitSet FOLLOW_multiplicativeExpression_in_additiveExpression6061 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0600000000000000L});
+    public static final BitSet FOLLOW_185_in_additiveExpression6080 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_186_in_additiveExpression6084 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_multiplicativeExpression_in_additiveExpression6087 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0600000000000000L});
+    public static final BitSet FOLLOW_unaryExpression_in_multiplicativeExpression6138 = new BitSet(new long[]{0x0000000000000002L,0x2000000000000000L,0x8800000000000000L});
+    public static final BitSet FOLLOW_125_in_multiplicativeExpression6158 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_187_in_multiplicativeExpression6162 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_191_in_multiplicativeExpression6166 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_unaryExpression_in_multiplicativeExpression6169 = new BitSet(new long[]{0x0000000000000002L,0x2000000000000000L,0x8800000000000000L});
+    public static final BitSet FOLLOW_185_in_unaryExpression6221 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_unaryExpression_in_unaryExpression6223 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_186_in_unaryExpression6235 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_unaryExpression_in_unaryExpression6237 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_199_in_unaryExpression6255 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_unaryExpression_in_unaryExpression6257 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_200_in_unaryExpression6275 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_unaryExpression_in_unaryExpression6277 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_unaryExpressionNotPlusMinus_in_unaryExpression6295 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_201_in_unaryExpressionNotPlusMinus6326 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_unaryExpression_in_unaryExpressionNotPlusMinus6328 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_202_in_unaryExpressionNotPlusMinus6345 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_unaryExpression_in_unaryExpressionNotPlusMinus6347 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_castExpression_in_unaryExpressionNotPlusMinus6365 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_primary_in_unaryExpressionNotPlusMinus6372 = new BitSet(new long[]{0x0000000000000002L,0x1000000000000000L,0x0000000000000400L,0x0000000000000180L});
+    public static final BitSet FOLLOW_selector_in_unaryExpressionNotPlusMinus6382 = new BitSet(new long[]{0x0000000000000002L,0x1000000000000000L,0x0000000000000400L,0x0000000000000180L});
+    public static final BitSet FOLLOW_199_in_unaryExpressionNotPlusMinus6395 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_200_in_unaryExpressionNotPlusMinus6417 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_199_in_unaryExpressionNotPlusMinus6461 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_200_in_unaryExpressionNotPlusMinus6476 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_161_in_castExpression6515 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x000000807F820000L});
+    public static final BitSet FOLLOW_primitiveType_in_castExpression6517 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000400000000L});
+    public static final BitSet FOLLOW_162_in_castExpression6519 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_unaryExpression_in_castExpression6521 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_161_in_castExpression6544 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x000000807F820000L});
+    public static final BitSet FOLLOW_type_in_castExpression6546 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000400000000L});
+    public static final BitSet FOLLOW_162_in_castExpression6548 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_unaryExpressionNotPlusMinus_in_castExpression6550 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_161_in_castExpression6569 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_expression_in_castExpression6571 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000400000000L});
+    public static final BitSet FOLLOW_162_in_castExpression6573 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_unaryExpressionNotPlusMinus_in_castExpression6575 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_parExpression_in_primary6595 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_nonWildcardTypeArguments_in_primary6602 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x0000000100000000L});
+    public static final BitSet FOLLOW_explicitGenericInvocationSuffix_in_primary6604 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_literal_in_primary6628 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_203_in_primary6638 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x000000807F820002L});
+    public static final BitSet FOLLOW_nonWildcardTypeArguments_in_primary6640 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x000000807F820002L});
+    public static final BitSet FOLLOW_primitiveType_in_primary6643 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000400L});
+    public static final BitSet FOLLOW_138_in_primary6659 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_expression_in_primary6661 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000800L});
+    public static final BitSet FOLLOW_139_in_primary6663 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000400L});
     public static final BitSet FOLLOW_138_in_primary6668 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000800L});
-    public static final BitSet FOLLOW_139_in_primary6670 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000420L});
-    public static final BitSet FOLLOW_arrayInitializer_in_primary6674 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_203_in_primary6706 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x0000000000000002L});
-    public static final BitSet FOLLOW_nonWildcardTypeArguments_in_primary6708 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x0000000000000002L});
-    public static final BitSet FOLLOW_refComponent_in_primary6714 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L,0x0000000200000400L});
-    public static final BitSet FOLLOW_124_in_primary6717 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x0000000000000002L});
-    public static final BitSet FOLLOW_refComponent_in_primary6721 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L,0x0000000200000400L});
-    public static final BitSet FOLLOW_138_in_primary6740 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_expression_in_primary6742 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000800L});
-    public static final BitSet FOLLOW_139_in_primary6744 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000400L});
-    public static final BitSet FOLLOW_138_in_primary6749 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000800L});
-    public static final BitSet FOLLOW_139_in_primary6751 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000400L});
-    public static final BitSet FOLLOW_138_in_primary6784 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000800L});
-    public static final BitSet FOLLOW_139_in_primary6786 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000420L});
-    public static final BitSet FOLLOW_arrayInitializer_in_primary6790 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_classCreatorRest_in_primary6819 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_type_in_primary6851 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L});
-    public static final BitSet FOLLOW_124_in_primary6853 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
-    public static final BitSet FOLLOW_126_in_primary6855 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_136_in_primary6877 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L});
-    public static final BitSet FOLLOW_124_in_primary6879 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
-    public static final BitSet FOLLOW_126_in_primary6881 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_160_in_primary6902 = new BitSet(new long[]{0x0000000000000002L,0x1000000000000000L,0x0000000200000400L});
-    public static final BitSet FOLLOW_arguments_in_primary6912 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_Identifier_in_primary6950 = new BitSet(new long[]{0x0000000000000002L,0x1000000000000000L,0x0000000200000400L});
-    public static final BitSet FOLLOW_arguments_in_primary6966 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_Identifier_in_innerCreator7011 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L,0x0000000200000400L});
-    public static final BitSet FOLLOW_classCreatorRest_in_innerCreator7013 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_arguments_in_classCreatorRest7035 = new BitSet(new long[]{0x0000000000000002L,0x8000000000000000L,0x0000000000000023L});
-    public static final BitSet FOLLOW_classBody_in_classCreatorRest7037 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_nonWildcardTypeArguments_in_explicitGenericInvocation7058 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x0000000100000000L});
-    public static final BitSet FOLLOW_explicitGenericInvocationSuffix_in_explicitGenericInvocation7060 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_129_in_nonWildcardTypeArguments7072 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x000000807F820002L});
-    public static final BitSet FOLLOW_typeList_in_nonWildcardTypeArguments7074 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
-    public static final BitSet FOLLOW_131_in_nonWildcardTypeArguments7076 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_160_in_explicitGenericInvocationSuffix7092 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L,0x0000000200000400L});
-    public static final BitSet FOLLOW_superSuffix_in_explicitGenericInvocationSuffix7094 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_Identifier_in_explicitGenericInvocationSuffix7108 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L,0x0000000200000400L});
-    public static final BitSet FOLLOW_arguments_in_explicitGenericInvocationSuffix7110 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_arguments_in_superSuffix7129 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_124_in_superSuffix7141 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L});
-    public static final BitSet FOLLOW_Identifier_in_superSuffix7143 = new BitSet(new long[]{0x0000000000000002L,0x1000000000000000L,0x0000000200000400L});
-    public static final BitSet FOLLOW_arguments_in_superSuffix7146 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_124_in_selector7160 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000100000000L});
-    public static final BitSet FOLLOW_160_in_selector7162 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L,0x0000000200000400L});
-    public static final BitSet FOLLOW_arguments_in_selector7164 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_124_in_selector7182 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000800L});
-    public static final BitSet FOLLOW_203_in_selector7184 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x0000000000000002L});
-    public static final BitSet FOLLOW_nonWildcardTypeArguments_in_selector7187 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x0000000000000002L});
-    public static final BitSet FOLLOW_innerCreator_in_selector7191 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_124_in_selector7206 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000002L});
-    public static final BitSet FOLLOW_nonWildcardTypeArguments_in_selector7208 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x0000000100000000L});
-    public static final BitSet FOLLOW_explicitGenericInvocationSuffix_in_selector7210 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_124_in_selector7229 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L});
-    public static final BitSet FOLLOW_Identifier_in_selector7231 = new BitSet(new long[]{0x0000000000000002L,0x1000000000000000L,0x0000000200000400L});
-    public static final BitSet FOLLOW_arguments_in_selector7241 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_138_in_selector7276 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_expression_in_selector7278 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000800L});
-    public static final BitSet FOLLOW_139_in_selector7280 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_161_in_arguments7299 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F77F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_expressionList_in_arguments7302 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000400000000L});
-    public static final BitSet FOLLOW_162_in_arguments7305 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_139_in_primary6670 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000400L});
+    public static final BitSet FOLLOW_138_in_primary6701 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000800L});
+    public static final BitSet FOLLOW_139_in_primary6703 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000420L});
+    public static final BitSet FOLLOW_arrayInitializer_in_primary6707 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_203_in_primary6739 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x0000000000000002L});
+    public static final BitSet FOLLOW_nonWildcardTypeArguments_in_primary6741 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x0000000000000002L});
+    public static final BitSet FOLLOW_refComponent_in_primary6747 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L,0x0000000200000400L});
+    public static final BitSet FOLLOW_124_in_primary6750 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x0000000000000002L});
+    public static final BitSet FOLLOW_refComponent_in_primary6754 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L,0x0000000200000400L});
+    public static final BitSet FOLLOW_138_in_primary6773 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_expression_in_primary6775 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000800L});
+    public static final BitSet FOLLOW_139_in_primary6777 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000400L});
+    public static final BitSet FOLLOW_138_in_primary6782 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000800L});
+    public static final BitSet FOLLOW_139_in_primary6784 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000400L});
+    public static final BitSet FOLLOW_138_in_primary6817 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000800L});
+    public static final BitSet FOLLOW_139_in_primary6819 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000420L});
+    public static final BitSet FOLLOW_arrayInitializer_in_primary6823 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_classCreatorRest_in_primary6852 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_type_in_primary6884 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L});
+    public static final BitSet FOLLOW_124_in_primary6886 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
+    public static final BitSet FOLLOW_126_in_primary6888 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_136_in_primary6910 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L});
+    public static final BitSet FOLLOW_124_in_primary6912 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
+    public static final BitSet FOLLOW_126_in_primary6914 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_160_in_primary6935 = new BitSet(new long[]{0x0000000000000002L,0x1000000000000000L,0x0000000200000400L});
+    public static final BitSet FOLLOW_arguments_in_primary6945 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_Identifier_in_primary6983 = new BitSet(new long[]{0x0000000000000002L,0x1000000000000000L,0x0000000200000400L});
+    public static final BitSet FOLLOW_arguments_in_primary6999 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_Identifier_in_innerCreator7044 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L,0x0000000200000400L});
+    public static final BitSet FOLLOW_classCreatorRest_in_innerCreator7046 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_arguments_in_classCreatorRest7068 = new BitSet(new long[]{0x0000000000000002L,0x8000000000000000L,0x0000000000000023L});
+    public static final BitSet FOLLOW_classBody_in_classCreatorRest7070 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_nonWildcardTypeArguments_in_explicitGenericInvocation7091 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x0000000100000000L});
+    public static final BitSet FOLLOW_explicitGenericInvocationSuffix_in_explicitGenericInvocation7093 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_129_in_nonWildcardTypeArguments7105 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x000000807F820002L});
+    public static final BitSet FOLLOW_typeList_in_nonWildcardTypeArguments7107 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
+    public static final BitSet FOLLOW_131_in_nonWildcardTypeArguments7109 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_160_in_explicitGenericInvocationSuffix7125 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L,0x0000000200000400L});
+    public static final BitSet FOLLOW_superSuffix_in_explicitGenericInvocationSuffix7127 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_Identifier_in_explicitGenericInvocationSuffix7141 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L,0x0000000200000400L});
+    public static final BitSet FOLLOW_arguments_in_explicitGenericInvocationSuffix7143 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_arguments_in_superSuffix7162 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_124_in_superSuffix7174 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L});
+    public static final BitSet FOLLOW_Identifier_in_superSuffix7176 = new BitSet(new long[]{0x0000000000000002L,0x1000000000000000L,0x0000000200000400L});
+    public static final BitSet FOLLOW_arguments_in_superSuffix7179 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_124_in_selector7193 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000100000000L});
+    public static final BitSet FOLLOW_160_in_selector7195 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L,0x0000000200000400L});
+    public static final BitSet FOLLOW_arguments_in_selector7197 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_124_in_selector7215 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000000L,0x0000000000000800L});
+    public static final BitSet FOLLOW_203_in_selector7217 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x0000000000000002L});
+    public static final BitSet FOLLOW_nonWildcardTypeArguments_in_selector7220 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x0000000000000002L});
+    public static final BitSet FOLLOW_innerCreator_in_selector7224 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_124_in_selector7239 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000002L});
+    public static final BitSet FOLLOW_nonWildcardTypeArguments_in_selector7241 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x0000000100000000L});
+    public static final BitSet FOLLOW_explicitGenericInvocationSuffix_in_selector7243 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_124_in_selector7262 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L});
+    public static final BitSet FOLLOW_Identifier_in_selector7264 = new BitSet(new long[]{0x0000000000000002L,0x1000000000000000L,0x0000000200000400L});
+    public static final BitSet FOLLOW_arguments_in_selector7274 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_138_in_selector7309 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_expression_in_selector7311 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000800L});
+    public static final BitSet FOLLOW_139_in_selector7313 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_161_in_arguments7332 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F77F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_expressionList_in_arguments7335 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000400000000L});
+    public static final BitSet FOLLOW_162_in_arguments7338 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_annotations_in_synpred1_Java475 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_123_in_synpred36_Java1216 = new BitSet(new long[]{0x0000000000000000L,0x0800000000000000L,0x0000000000000220L});
     public static final BitSet FOLLOW_block_in_synpred36_Java1218 = new BitSet(new long[]{0x0000000000000002L});
@@ -33143,102 +33118,102 @@ public class JavaParser extends Parser {
     public static final BitSet FOLLOW_variableDeclarators_in_synpred185_Java4761 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_140_in_synpred188_Java4926 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
     public static final BitSet FOLLOW_expression_in_synpred188_Java4928 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_185_in_synpred189_Java4945 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
-    public static final BitSet FOLLOW_140_in_synpred189_Java4947 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_expression_in_synpred189_Java4949 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_186_in_synpred190_Java4968 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
-    public static final BitSet FOLLOW_140_in_synpred190_Java4970 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_expression_in_synpred190_Java4972 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_125_in_synpred191_Java4991 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
-    public static final BitSet FOLLOW_140_in_synpred191_Java4993 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_expression_in_synpred191_Java4995 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_187_in_synpred192_Java5014 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
-    public static final BitSet FOLLOW_140_in_synpred192_Java5016 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_expression_in_synpred192_Java5018 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_188_in_synpred193_Java5040 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_expression_in_synpred193_Java5042 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_189_in_synpred194_Java5061 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_expression_in_synpred194_Java5063 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_190_in_synpred195_Java5082 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_expression_in_synpred195_Java5084 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_191_in_synpred196_Java5106 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
-    public static final BitSet FOLLOW_140_in_synpred196_Java5108 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_expression_in_synpred196_Java5110 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_129_in_synpred197_Java5129 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000002L});
-    public static final BitSet FOLLOW_129_in_synpred197_Java5131 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
-    public static final BitSet FOLLOW_140_in_synpred197_Java5133 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_expression_in_synpred197_Java5135 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_131_in_synpred198_Java5154 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
-    public static final BitSet FOLLOW_131_in_synpred198_Java5156 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
-    public static final BitSet FOLLOW_140_in_synpred198_Java5158 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_expression_in_synpred198_Java5160 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_131_in_synpred199_Java5179 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
-    public static final BitSet FOLLOW_131_in_synpred199_Java5181 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
-    public static final BitSet FOLLOW_131_in_synpred199_Java5183 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
-    public static final BitSet FOLLOW_140_in_synpred199_Java5185 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_expression_in_synpred199_Java5187 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_129_in_synpred210_Java5820 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_shiftExpression_in_synpred210_Java5822 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_129_in_synpred214_Java5934 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000002L});
-    public static final BitSet FOLLOW_129_in_synpred214_Java5936 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_131_in_synpred214_Java5940 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
-    public static final BitSet FOLLOW_131_in_synpred214_Java5942 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_additiveExpression_in_synpred214_Java5945 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_129_in_synpred215_Java5934 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000002L});
-    public static final BitSet FOLLOW_129_in_synpred215_Java5936 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_131_in_synpred215_Java5940 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
-    public static final BitSet FOLLOW_131_in_synpred215_Java5942 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_additiveExpression_in_synpred215_Java5945 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x000000000000000AL});
-    public static final BitSet FOLLOW_131_in_synpred216_Java5979 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
-    public static final BitSet FOLLOW_131_in_synpred216_Java5981 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
-    public static final BitSet FOLLOW_131_in_synpred216_Java5983 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_additiveExpression_in_synpred216_Java5985 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_131_in_synpred217_Java5979 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
-    public static final BitSet FOLLOW_131_in_synpred217_Java5981 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
-    public static final BitSet FOLLOW_131_in_synpred217_Java5983 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_additiveExpression_in_synpred217_Java5985 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000008L});
-    public static final BitSet FOLLOW_castExpression_in_synpred231_Java6332 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_161_in_synpred238_Java6482 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x000000807F820002L});
-    public static final BitSet FOLLOW_primitiveType_in_synpred238_Java6484 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000400000000L});
-    public static final BitSet FOLLOW_162_in_synpred238_Java6486 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_unaryExpression_in_synpred238_Java6488 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_161_in_synpred239_Java6511 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x000000807F820002L});
-    public static final BitSet FOLLOW_type_in_synpred239_Java6513 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000400000000L});
-    public static final BitSet FOLLOW_162_in_synpred239_Java6515 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_unaryExpressionNotPlusMinus_in_synpred239_Java6517 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_138_in_synpred244_Java6626 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_expression_in_synpred244_Java6628 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000800L});
-    public static final BitSet FOLLOW_139_in_synpred244_Java6630 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_203_in_synpred248_Java6605 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x000000807F820002L});
-    public static final BitSet FOLLOW_nonWildcardTypeArguments_in_synpred248_Java6607 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x000000807F820002L});
-    public static final BitSet FOLLOW_primitiveType_in_synpred248_Java6610 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000400L});
-    public static final BitSet FOLLOW_138_in_synpred248_Java6626 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_expression_in_synpred248_Java6628 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000800L});
-    public static final BitSet FOLLOW_139_in_synpred248_Java6630 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000400L});
-    public static final BitSet FOLLOW_138_in_synpred248_Java6635 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000800L});
-    public static final BitSet FOLLOW_139_in_synpred248_Java6637 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000400L});
+    public static final BitSet FOLLOW_185_in_synpred189_Java4947 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
+    public static final BitSet FOLLOW_140_in_synpred189_Java4949 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_expression_in_synpred189_Java4951 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_186_in_synpred190_Java4973 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
+    public static final BitSet FOLLOW_140_in_synpred190_Java4975 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_expression_in_synpred190_Java4977 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_125_in_synpred191_Java4999 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
+    public static final BitSet FOLLOW_140_in_synpred191_Java5001 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_expression_in_synpred191_Java5003 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_187_in_synpred192_Java5025 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
+    public static final BitSet FOLLOW_140_in_synpred192_Java5027 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_expression_in_synpred192_Java5029 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_188_in_synpred193_Java5054 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_expression_in_synpred193_Java5056 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_189_in_synpred194_Java5078 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_expression_in_synpred194_Java5080 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_190_in_synpred195_Java5102 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_expression_in_synpred195_Java5104 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_191_in_synpred196_Java5129 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
+    public static final BitSet FOLLOW_140_in_synpred196_Java5131 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_expression_in_synpred196_Java5133 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_129_in_synpred197_Java5155 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000002L});
+    public static final BitSet FOLLOW_129_in_synpred197_Java5157 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
+    public static final BitSet FOLLOW_140_in_synpred197_Java5159 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_expression_in_synpred197_Java5161 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_131_in_synpred198_Java5183 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
+    public static final BitSet FOLLOW_131_in_synpred198_Java5185 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
+    public static final BitSet FOLLOW_140_in_synpred198_Java5187 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_expression_in_synpred198_Java5189 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_131_in_synpred199_Java5211 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
+    public static final BitSet FOLLOW_131_in_synpred199_Java5213 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
+    public static final BitSet FOLLOW_131_in_synpred199_Java5215 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000001000L});
+    public static final BitSet FOLLOW_140_in_synpred199_Java5217 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_expression_in_synpred199_Java5219 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_129_in_synpred210_Java5853 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_shiftExpression_in_synpred210_Java5855 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_129_in_synpred214_Java5967 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000002L});
+    public static final BitSet FOLLOW_129_in_synpred214_Java5969 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_131_in_synpred214_Java5973 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
+    public static final BitSet FOLLOW_131_in_synpred214_Java5975 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_additiveExpression_in_synpred214_Java5978 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_129_in_synpred215_Java5967 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000002L});
+    public static final BitSet FOLLOW_129_in_synpred215_Java5969 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_131_in_synpred215_Java5973 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
+    public static final BitSet FOLLOW_131_in_synpred215_Java5975 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_additiveExpression_in_synpred215_Java5978 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x000000000000000AL});
+    public static final BitSet FOLLOW_131_in_synpred216_Java6012 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
+    public static final BitSet FOLLOW_131_in_synpred216_Java6014 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
+    public static final BitSet FOLLOW_131_in_synpred216_Java6016 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_additiveExpression_in_synpred216_Java6018 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_131_in_synpred217_Java6012 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
+    public static final BitSet FOLLOW_131_in_synpred217_Java6014 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
+    public static final BitSet FOLLOW_131_in_synpred217_Java6016 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_additiveExpression_in_synpred217_Java6018 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000008L});
+    public static final BitSet FOLLOW_castExpression_in_synpred231_Java6365 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_161_in_synpred238_Java6515 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x000000807F820002L});
+    public static final BitSet FOLLOW_primitiveType_in_synpred238_Java6517 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000400000000L});
+    public static final BitSet FOLLOW_162_in_synpred238_Java6519 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_unaryExpression_in_synpred238_Java6521 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_161_in_synpred239_Java6544 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x000000807F820002L});
+    public static final BitSet FOLLOW_type_in_synpred239_Java6546 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000400000000L});
+    public static final BitSet FOLLOW_162_in_synpred239_Java6548 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_unaryExpressionNotPlusMinus_in_synpred239_Java6550 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_138_in_synpred244_Java6659 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_expression_in_synpred244_Java6661 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000800L});
+    public static final BitSet FOLLOW_139_in_synpred244_Java6663 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_203_in_synpred248_Java6638 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x000000807F820002L});
+    public static final BitSet FOLLOW_nonWildcardTypeArguments_in_synpred248_Java6640 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x000000807F820002L});
+    public static final BitSet FOLLOW_primitiveType_in_synpred248_Java6643 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000400L});
+    public static final BitSet FOLLOW_138_in_synpred248_Java6659 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_expression_in_synpred248_Java6661 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000800L});
+    public static final BitSet FOLLOW_139_in_synpred248_Java6663 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000400L});
     public static final BitSet FOLLOW_138_in_synpred248_Java6668 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000800L});
-    public static final BitSet FOLLOW_139_in_synpred248_Java6670 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000420L});
-    public static final BitSet FOLLOW_arrayInitializer_in_synpred248_Java6674 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_138_in_synpred251_Java6740 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_expression_in_synpred251_Java6742 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000800L});
-    public static final BitSet FOLLOW_139_in_synpred251_Java6744 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_203_in_synpred256_Java6706 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x0000000000000002L});
-    public static final BitSet FOLLOW_nonWildcardTypeArguments_in_synpred256_Java6708 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x0000000000000002L});
-    public static final BitSet FOLLOW_refComponent_in_synpred256_Java6714 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L,0x0000000200000400L});
-    public static final BitSet FOLLOW_124_in_synpred256_Java6717 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x0000000000000002L});
-    public static final BitSet FOLLOW_refComponent_in_synpred256_Java6721 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L,0x0000000200000400L});
-    public static final BitSet FOLLOW_138_in_synpred256_Java6740 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
-    public static final BitSet FOLLOW_expression_in_synpred256_Java6742 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000800L});
-    public static final BitSet FOLLOW_139_in_synpred256_Java6744 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000400L});
-    public static final BitSet FOLLOW_138_in_synpred256_Java6749 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000800L});
-    public static final BitSet FOLLOW_139_in_synpred256_Java6751 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000400L});
-    public static final BitSet FOLLOW_138_in_synpred256_Java6784 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000800L});
-    public static final BitSet FOLLOW_139_in_synpred256_Java6786 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000420L});
-    public static final BitSet FOLLOW_arrayInitializer_in_synpred256_Java6790 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_classCreatorRest_in_synpred256_Java6819 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_type_in_synpred257_Java6851 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L});
-    public static final BitSet FOLLOW_124_in_synpred257_Java6853 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
-    public static final BitSet FOLLOW_126_in_synpred257_Java6855 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_139_in_synpred248_Java6670 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000400L});
+    public static final BitSet FOLLOW_138_in_synpred248_Java6701 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000800L});
+    public static final BitSet FOLLOW_139_in_synpred248_Java6703 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000420L});
+    public static final BitSet FOLLOW_arrayInitializer_in_synpred248_Java6707 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_138_in_synpred251_Java6773 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_expression_in_synpred251_Java6775 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000800L});
+    public static final BitSet FOLLOW_139_in_synpred251_Java6777 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_203_in_synpred256_Java6739 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x0000000000000002L});
+    public static final BitSet FOLLOW_nonWildcardTypeArguments_in_synpred256_Java6741 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x0000000000000002L});
+    public static final BitSet FOLLOW_refComponent_in_synpred256_Java6747 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L,0x0000000200000400L});
+    public static final BitSet FOLLOW_124_in_synpred256_Java6750 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L,0x0000000000000002L});
+    public static final BitSet FOLLOW_refComponent_in_synpred256_Java6754 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L,0x0000000200000400L});
+    public static final BitSet FOLLOW_138_in_synpred256_Java6773 = new BitSet(new long[]{0x0000000000000000L,0x00000FE000000000L,0x060000F37F820122L,0x0000000000000F80L});
+    public static final BitSet FOLLOW_expression_in_synpred256_Java6775 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000800L});
+    public static final BitSet FOLLOW_139_in_synpred256_Java6777 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000400L});
+    public static final BitSet FOLLOW_138_in_synpred256_Java6782 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000800L});
+    public static final BitSet FOLLOW_139_in_synpred256_Java6784 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000400L});
+    public static final BitSet FOLLOW_138_in_synpred256_Java6817 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000800L});
+    public static final BitSet FOLLOW_139_in_synpred256_Java6819 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000420L});
+    public static final BitSet FOLLOW_arrayInitializer_in_synpred256_Java6823 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_classCreatorRest_in_synpred256_Java6852 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_type_in_synpred257_Java6884 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L});
+    public static final BitSet FOLLOW_124_in_synpred257_Java6886 = new BitSet(new long[]{0x0000000000000000L,0x4000000000000000L});
+    public static final BitSet FOLLOW_126_in_synpred257_Java6888 = new BitSet(new long[]{0x0000000000000002L});
 
 }

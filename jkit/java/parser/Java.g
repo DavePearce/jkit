@@ -722,17 +722,17 @@ expression
 	:	conditionalExpression 
 		(
 			'=' expression -> ^(ASSIGN conditionalExpression expression)
-			| '+' '=' expression -> ^(ASSIGNOP ADD conditionalExpression expression)
-			| '-' '=' expression -> ^(ASSIGNOP SUB conditionalExpression expression)
-			| '*' '=' expression -> ^(ASSIGNOP MUL conditionalExpression expression)
-			| '/' '=' expression -> ^(ASSIGNOP DIV conditionalExpression expression)			
-			| '&=' expression -> ^(ASSIGNOP AND conditionalExpression expression)
-			| '|=' expression -> ^(ASSIGNOP OR conditionalExpression expression)
-			| '^=' expression -> ^(ASSIGNOP XOR conditionalExpression expression)			
-			| '%' '=' expression -> ^(ASSIGNOP MOD conditionalExpression expression)
-			| '<' '<' '=' expression -> ^(ASSIGNOP SHL conditionalExpression expression)
-			| '>' '>' '=' expression -> ^(ASSIGNOP SHR conditionalExpression expression)
-			| '>' '>' '>' '=' expression -> ^(ASSIGNOP USHR conditionalExpression expression)
+			| lc='+' '=' expression -> ^(ASSIGNOP[$lc] ADD conditionalExpression expression)
+			| lc='-' '=' expression -> ^(ASSIGNOP[$lc] SUB conditionalExpression expression)
+			| lc='*' '=' expression -> ^(ASSIGNOP[$lc] MUL conditionalExpression expression)
+			| lc='/' '=' expression -> ^(ASSIGNOP[$lc] DIV conditionalExpression expression)			
+			| lc='&=' expression -> ^(ASSIGNOP[$lc] AND conditionalExpression expression)
+			| lc='|=' expression -> ^(ASSIGNOP[$lc] OR conditionalExpression expression)
+			| lc='^=' expression -> ^(ASSIGNOP[$lc] XOR conditionalExpression expression)			
+			| lc='%' '=' expression -> ^(ASSIGNOP[$lc] MOD conditionalExpression expression)
+			| lc='<' '<' '=' expression -> ^(ASSIGNOP[$lc] SHL conditionalExpression expression)
+			| lc='>' '>' '=' expression -> ^(ASSIGNOP[$lc] SHR conditionalExpression expression)
+			| lc='>' '>' '>' '=' expression -> ^(ASSIGNOP[$lc] USHR conditionalExpression expression)
 			| -> conditionalExpression
 		) 
 	;
