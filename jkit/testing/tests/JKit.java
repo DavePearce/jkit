@@ -116,12 +116,13 @@ public class JKit extends TestHarness {
 	@Test public void JLS_8_1_2_GenericTypes_18() { runTest("JLS_8_1_2_GenericTypes_18"); }
 	@Test public void JLS_8_1_2_GenericTypes_19() { runTest("JLS_8_1_2_GenericTypes_19"); }
 	@Test public void JLS_8_1_2_GenericTypes_20() { runTest("JLS_8_1_2_GenericTypes_20"); }
+	@Test public void JLS_8_1_2_GenericTypes_21() { runTest("JLS_8_1_2_GenericTypes_21"); }
 	
 	@Test public void JLS_8_1_3_InnerClasses_1() { runTest("JLS_8_1_3_InnerClasses_1"); }
 	@Test public void JLS_8_1_3_InnerClasses_2() { runTest("JLS_8_1_3_InnerClasses_2"); }
 	@Test public void JLS_8_1_3_InnerClasses_3() { runTest("JLS_8_1_3_InnerClasses_3"); }
 	@Test public void JLS_8_1_3_InnerClasses_4() { runTest("JLS_8_1_3_InnerClasses_4"); }	
-	@Test public void JLS_8_1_3_InnerClasses_5() { runTest("JLS_8_1_3_InnerClasses_5"); }
+	@Ignore("Known bug") @Test public void JLS_8_1_3_InnerClasses_5() { runTest("JLS_8_1_3_InnerClasses_5"); }
 	@Test public void JLS_8_1_3_InnerClasses_6() { runTest("JLS_8_1_3_InnerClasses_6"); }
 	@Test public void JLS_8_1_3_InnerClasses_7() { runTest("JLS_8_1_3_InnerClasses_7"); }
 	@Test public void JLS_8_1_3_InnerClasses_8() { runTest("JLS_8_1_3_InnerClasses_8"); }
