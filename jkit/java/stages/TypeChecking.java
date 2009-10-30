@@ -540,6 +540,10 @@ public class TypeChecking {
 					// cast cannot fail here.
 					return;
 				}
+			} else if ((e_t instanceof Type.Variable || e_t instanceof Type.Wildcard)
+					&& c_t instanceof Type.Variable) {
+				// javac always lets this pass, no matter what
+				return;
 			}
 									
 			if (types.boxSubtype(c_t, e_t, loader)
