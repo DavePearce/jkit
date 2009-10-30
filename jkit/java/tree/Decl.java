@@ -596,6 +596,8 @@ public interface Decl extends SyntacticElement {
 			} else if(initialiser instanceof Value.Double) {
 				Value.Double i = (Value.Double) initialiser;
 				return i.value();
+			} else if(initialiser instanceof Value.Null) {
+				return null;
 			} else {
 				Value.String i = (Value.String) initialiser;
 				return i.value();

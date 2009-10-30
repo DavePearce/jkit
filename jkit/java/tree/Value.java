@@ -21,7 +21,7 @@
 
 package jkit.java.tree;
 
-import java.util.List;
+import java.util.*;
 
 import jkit.compiler.SyntacticAttribute;
 import jkit.compiler.SyntacticElementImpl;
@@ -244,6 +244,9 @@ public interface Value extends Expr {
      */
 	public static class Null extends SyntacticElementImpl implements Value {
 		public Null(SyntacticAttribute... attributes) {
+			super(attributes);
+		}
+		public Null(List<SyntacticAttribute> attributes) {
 			super(attributes);
 		}
 	}

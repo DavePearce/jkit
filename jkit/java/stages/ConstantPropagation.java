@@ -538,7 +538,9 @@ public class ConstantPropagation {
 			return new Value.Double((Double) constant,attributes);
 		} else if(constant instanceof String) {			
 			return new Value.String((String) constant,attributes);
-		} 
+		} else if(constant == null) {
+			return new Value.Null(attributes);
+		}
 		syntax_error("unknown constant encountered: " + constant,src);
 		return null; // dead
 	}
