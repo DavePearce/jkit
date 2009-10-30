@@ -302,8 +302,6 @@ public class JilBuilder {
 				return doBlock((Stmt.Block)e);
 			} else if(e instanceof Stmt.VarDef) {
 				return doVarDef((Stmt.VarDef) e);
-			} else if(e instanceof Stmt.AssignmentOp) {
-				return doAssignmentOp((Stmt.AssignmentOp) e).second();
 			} else if(e instanceof Stmt.Assignment) {
 				return doAssignment((Stmt.Assignment) e).second();
 			} else if(e instanceof Stmt.Return) {
@@ -631,75 +629,8 @@ public class JilBuilder {
 	}		
 	
 	protected Pair<JilExpr,List<JilStmt>> doAssignmentOp(Stmt.AssignmentOp def) {
-		ArrayList<JilStmt> r = new ArrayList<JilStmt>();
-		
-		Pair<JilExpr,List<JilStmt>> lhs = doExpression(def.lhs());
-		
-		Pair<JilExpr, List<JilStmt>> rhs = doExpression(new Expr.BinOp(
-				def.op(), def.lhs(), def.rhs(), def.attributes()));
-		
-		Type lhs_t = lhs.first().type();
-
-		if (rhs.second().isEmpty() || lhs.first() instanceof JilExpr.Variable) {		
-			JilExpr tmpVar = new JilExpr.Variable(getTempVar(), lhs_t, def
-					.attributes());
-			r.add(new JilStmt.Assign(tmpVar, lhs.first(), def.attributes()));
-			r.addAll(rhs.second());
-			r.add(new JilStmt.Assign(lhs.first(), rhs.first(), def
-					.attributes()));
-			return new Pair(lhs.first(), r);
-		} else if(lhs.first() instanceof JilExpr.Deref) {			
-			JilExpr.Deref deref1 = (JilExpr.Deref) lhs.first(); 
-
-			if(deref1.target() instanceof JilExpr.ClassVariable) {
-				// Slightly awkward case, since this corresponds to a static
-                // class access and, hence, there are no possible side-effects.
-                // However, we cannot assign the target to a tmp variable, since
-                // it will not compile down to anything in practice.
-				r.addAll(rhs.second());
-				r.add(new JilStmt.Assign(lhs.first(), rhs.first(), def
-								.attributes()));
-				return new Pair(lhs.first(), r);
-			} else {
-
-				JilExpr tmpVar = new JilExpr.Variable(getTempVar(), deref1.target()
-						.type(), def.attributes());
-				r.add(new JilStmt.Assign(tmpVar, deref1.target(), def.attributes()));
-				r.addAll(rhs.second());
-				JilExpr.Deref deref2 = new JilExpr.Deref(tmpVar, deref1.name(),
-						deref1.isStatic(), deref1.type(), deref1.attributes()); 
-				r
-				.add(new JilStmt.Assign(deref2, rhs.first(), def
-						.attributes()));
-				return new Pair(deref2, r);
-			}
-		} else if(lhs.first() instanceof JilExpr.ArrayIndex) {
-			
-			JilExpr.ArrayIndex aindex1 = (JilExpr.ArrayIndex) lhs.first();
-			r.addAll(lhs.second());			
-			
-			JilExpr targetVar = new JilExpr.Variable(getTempVar(), aindex1
-					.target().type(), def.attributes());											
-			JilExpr indexVar = new JilExpr.Variable(getTempVar(), aindex1
-					.index().type(), def.attributes());
-			
-			r.add(new JilStmt.Assign(targetVar, aindex1.target(), def
-					.attributes()));
-			r.add(new JilStmt.Assign(indexVar, aindex1.index(), def
-					.attributes()));
-			r.addAll(rhs.second());
-			JilExpr.ArrayIndex aindex2 = new JilExpr.ArrayIndex(targetVar,
-					indexVar, aindex1.type(), aindex1.attributes());
-			r
-			.add(new JilStmt.Assign(aindex2, rhs.first(), def
-					.attributes()));
-			return new Pair(aindex2, r);
-		} else {
-			syntax_error(
-					"unknown l-value encountered on assignment with side-effects",
-					def);
-			return null; // unreachable.
-		}	
+		// assignment ops are effectively eliminated in TypePropagation.
+		return null;	
 	}
 	
 	protected Pair<JilExpr,List<JilStmt>> doAssignment(Stmt.Assignment def) {
@@ -1194,9 +1125,6 @@ public class JilBuilder {
 				return doArrayIndex((Expr.ArrayIndex) e);
 			} else if(e instanceof Expr.Deref) {
 				return doDeref((Expr.Deref) e);
-			} else if(e instanceof Stmt.AssignmentOp) {
-				// force brackets			
-				return doAssignmentOp((Stmt.AssignmentOp) e);			
 			} else if(e instanceof Stmt.Assignment) {
 				// force brackets			
 				return doAssignment((Stmt.Assignment) e);			

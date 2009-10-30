@@ -284,6 +284,7 @@ public class TypePropagation {
 		doExpression(def.rhs());			
 
 		Type lhs_t = def.lhs().attribute(Type.class);												
+		Type rhs_t = def.rhs().attribute(Type.class);
 		
 		// perform type inference (if necesssary)
 		if(isUnknownConstant(def.rhs())) {			
@@ -292,20 +293,41 @@ public class TypePropagation {
 			
 			def.setRhs(c);			
 		} 
-		
-		def.setRhs(implicitCast(def.rhs(),lhs_t));		
-					
-		def.attributes().add(lhs_t);
-		
+										
 		// special case for dealing with assignment ops
-		if (def instanceof Stmt.AssignmentOp
-				&& lhs_t instanceof Type.Clazz) {
-			Type.Clazz tc = (Type.Clazz) lhs_t;
-			if(Types.isJavaLangString(tc)) {
-				Stmt.AssignmentOp aop = (Stmt.AssignmentOp) def;
-				aop.setOp(Expr.BinOp.CONCAT);
-			}
+		if (def instanceof Stmt.AssignmentOp) {
+			Stmt.AssignmentOp aop = (Stmt.AssignmentOp) def;
+			int op = aop.op();
+			if(lhs_t instanceof Type.Clazz) {
+				Type.Clazz tc = (Type.Clazz) lhs_t;
+				if(Types.isJavaLangString(tc)) {
+					op = Expr.BinOp.CONCAT;
+					Expr rhs = new Expr.BinOp(op,def.lhs(),def.rhs(),aop.attributes());
+					rhs.attributes().add(JAVA_LANG_STRING);
+					def.setRhs(rhs);
+				}
+			} else {				
+				Type rt = binaryNumericPromotion(lhs_t,rhs_t,aop);			
+				Expr rhs = new Expr.BinOp(op, implicitCast(def.lhs(), rt),
+						implicitCast(def.rhs(), rt), aop.attributes());
+				
+				rhs.attributes().add(rt);
+				
+				if(!rt.equals(lhs_t)) {
+					jkit.java.tree.Type ct = jkit.java.tree.Type.fromJilType(lhs_t);
+					ct.attributes().add(lhs_t);
+					rhs = new Expr.Cast(ct,rhs,aop.attributes());
+					rhs.attributes().add(lhs_t);
+				}
+				def.setRhs(rhs);
+			}												
+			 
+		} else {
+			// the implicit cast should not be used for assignment ops
+			def.setRhs(implicitCast(def.rhs(),lhs_t));
 		}
+		
+		def.attributes().add(lhs_t);				
 	}
 	
 	protected void doReturn(Stmt.Return ret, JavaMethod m) {		
@@ -1233,7 +1255,7 @@ public class TypePropagation {
 		
 		return e;
 	}
-	
+		
 	/**
      * An unknown constant is a constant expression without any explicit type
      * labels. For example:
