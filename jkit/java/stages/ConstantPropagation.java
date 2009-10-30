@@ -25,6 +25,9 @@ import jkit.java.tree.Decl.JavaMethod;
 import jkit.java.tree.Stmt.Case;
 import jkit.jil.tree.Modifier;
 import jkit.jil.tree.Type;
+import jkit.jil.tree.JilClass;
+import jkit.jil.tree.JilField;
+import jkit.jil.tree.JilConstant;
 import jkit.util.Pair;
 import jkit.util.Triple;
 
@@ -61,6 +64,7 @@ import jkit.util.Triple;
 public class ConstantPropagation {
 	private ClassLoader loader;
 	private TypeSystem types;	
+	private Stack<Type.Clazz> enclosingClass = new Stack<Type.Clazz>();
 	
 	public ConstantPropagation(ClassLoader loader, TypeSystem types) {
 		this.loader = loader; 
@@ -102,17 +106,51 @@ public class ConstantPropagation {
 	}
 	
 	protected void doClass(JavaClass c, JavaFile file) {		
+		Type.Clazz type = c.attribute(Type.Clazz.class);
+		enclosingClass.push(type);
+		
 		for(Decl d : c.declarations()) {
 			doDeclaration(d, file);
 		}
+		
+		enclosingClass.pop();
 	}
 
 	protected void doMethod(JavaMethod d, JavaFile file) {		
 		doStatement(d.body(), file);
 	}
 
-	protected void doField(JavaField d, JavaFile file) {			
-		d.setInitialiser(doExpression(d.initialiser(), file));				
+	protected void doField(JavaField d, JavaFile file) {		
+		Type.Clazz owner = enclosingClass.lastElement();
+		
+		try {				
+			d.setInitialiser(doExpression(d.initialiser(), file));
+			
+			if(d.isConstant()) {
+				Clazz c = loader.loadClass(owner);			
+				if(!c.field(d.name()).isConstant()) {
+					// Ok, in this instance, we have determined that this field
+					// is actually a constant. Therefore, we need to propagate
+					// this information into the relevant JilClass.
+					JilClass jc = (JilClass) c;
+					
+					List<JilField> fields = jc.fields();
+					for(int i=0;i!=fields.size();++i) {
+						JilField f = fields.get(i);
+						if(f.name().equals(d.name())) {
+							// found it.
+							JilConstant jilc = new JilConstant(f.name(), f
+									.type(), d.constant(), f.modifiers(), f
+									.attributes());
+							fields.set(i,jilc); // done
+							break;
+						}
+					}
+				}
+			}			
+		} catch(ClassNotFoundException cne) {
+			internal_error(d,cne);
+		}
 	}
 	
 	protected void doInitialiserBlock(Decl.InitialiserBlock d,
@@ -285,14 +323,14 @@ public class ConstantPropagation {
 	}
 	
 	protected void doSwitch(Stmt.Switch sw, JavaFile file) {
+		
 		sw.setCondition(doExpression(sw.condition(), file));
-		for(Case c : sw.cases()) {
-			c.setCondition(doExpression(c.condition(), file));
+		for(Case c : sw.cases()) {									
+			c.setCondition(doExpression(c.condition(), file));									
 			for(Stmt s : c.statements()) {
 				doStatement(s, file);
 			}
-		}
-		
+		}		
 		// should check that case conditions are final constants here.
 	}
 	
@@ -369,8 +407,9 @@ public class ConstantPropagation {
 		Expr target = doExpression(e.target(), file);				
 		e.setTarget(target);
 		
-		if(target instanceof Expr.ClassVariable && !e.name().equals("this")) {			
+		if(target instanceof Expr.ClassVariable && !e.name().equals("this")) {						
 			Type.Clazz owner = target.attribute(Type.Clazz.class);
+									
 			// static field access, which could be a constant
 			Triple<Clazz,Clazz.Field,Type> r = types.resolveField(owner, e.name(), loader);			
 			if(r.second().isConstant()) {								
