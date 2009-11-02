@@ -33,7 +33,7 @@ public class Tag {
 		
 		public String toString() {
 			return first() + "." + second() + ":" + type();
-		}				
+		}						
 	}
 	
 	public static class Field extends Pair<Type.Reference, String> {
