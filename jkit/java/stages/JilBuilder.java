@@ -1843,6 +1843,7 @@ public class JilBuilder {
 		if(si.size() == 0) {		
 			ArrayList<Modifier> mods = new ArrayList<Modifier>();
 			mods.add(Modifier.ACC_STATIC);
+			mods.add(Modifier.ACC_SYNTHETIC);
 			JilMethod r = new JilMethod("<clinit>", new Type.Function(
 					Types.T_VOID), new ArrayList(), mods,
 					new ArrayList<Type.Clazz>());
