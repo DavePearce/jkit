@@ -365,10 +365,9 @@ public class JavaFileReader {
 
 	protected Decl.JavaMethod parseMethod(Tree method, HashSet<String> genericVariables) {
 		genericVariables = (HashSet<String>) genericVariables.clone(); 
-
-		System.out.println("<<<<");
+		
 		SourceLocation loc = determineStartLocation(method);
-		System.out.println(">>>> " + loc);		
+		
 		// ====================================================================
 		// =========================== PARSE MODIFIERS ========================
 		// ====================================================================
