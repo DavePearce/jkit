@@ -366,6 +366,9 @@ public class JavaFileReader {
 	protected Decl.JavaMethod parseMethod(Tree method, HashSet<String> genericVariables) {
 		genericVariables = (HashSet<String>) genericVariables.clone(); 
 
+		System.out.println("<<<<");
+		SourceLocation loc = determineStartLocation(method);
+		System.out.println(">>>> " + loc);		
 		// ====================================================================
 		// =========================== PARSE MODIFIERS ========================
 		// ====================================================================
@@ -426,12 +429,10 @@ public class JavaFileReader {
 		
 		if (returnType == null) {
 			return new Decl.JavaConstructor(modifiers, name, params, varargs,
-					typeArgs, exceptions, block, new SourceLocation(method
-							.getLine(), method.getCharPositionInLine()));
+					typeArgs, exceptions, block, loc);
 		} else {
 			return new Decl.JavaMethod(modifiers, name, returnType, params,
-					varargs, typeArgs, exceptions, block, new SourceLocation(
-							method.getLine(), method.getCharPositionInLine()));
+					varargs, typeArgs, exceptions, block, loc);
 		}
 	}
 
@@ -1864,6 +1865,25 @@ public class JavaFileReader {
 		}
 	}
 
+	public SourceLocation determineStartLocation(Tree ast) {
+		if(ast.getChildCount() == 0) {			
+			return new SourceLocation(ast.getLine(),ast.getCharPositionInLine());			
+		} else {			
+			int line = ast.getLine();
+			int col = ast.getCharPositionInLine();
+			for(int i=0;i!=ast.getChildCount();++i) {
+				SourceLocation l = determineStartLocation(ast.getChild(i));				
+				if(l.line() != 0 && (line == 0 || l.line() < line)) {										
+					line = l.line();
+					col = l.column();
+				} else if(line != 0 && l.line() == line && l.column() < col) {
+					col = l.column();
+				}
+			}
+			return new SourceLocation(line,col);
+		}		
+	}
+	
 	public void printTree(Tree ast, int n, int line) {
 		if (ast.getLine() != line) {
 			System.out.print("(line " + ast.getLine() + ")\t");

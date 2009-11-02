@@ -234,10 +234,7 @@ public class SkeletonBuilder {
 		List<Type.Clazz> exceptions = new ArrayList<Type.Clazz>();
 		List<JilMethod.Parameter> parameters = new ArrayList();
 		
-		for(Decl.JavaParameter p : d.parameters()) {
-			
-			// Determine sourcelocation as best possible, since ANTLR front-end
-            // does very bad job of this.
+		for(Decl.JavaParameter p : d.parameters()) {						
 			ArrayList<SyntacticAttribute> attrs = new ArrayList(p.attributes()); 			
 			parameters.add(new JilMethod.Parameter(p.name(),
 					new ArrayList<Modifier>(p.modifiers()),
@@ -255,7 +252,7 @@ public class SkeletonBuilder {
 			// constructor name will actually be different here, because the
 			// class name is prepended with an integer to identify it uniquely.
 			name = skeleton.name();
-		}
+		}				
 		
 		skeleton.methods().add(
 				new JilMethod(name, type, parameters, d.modifiers(),
