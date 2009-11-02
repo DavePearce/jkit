@@ -16,7 +16,7 @@ public class Tag {
 	
 	public static class Method extends Triple<Type.Reference, String, Type.Function> {
 		public Method(Type.Reference owner, String name, Type.Function type) {
-			super(owner, name, type);
+			super((Type.Reference) Types.stripGenerics(owner), name, Types.stripGenerics(type));
 		}
 
 		public Type.Reference owner() {
@@ -38,7 +38,7 @@ public class Tag {
 	
 	public static class Field extends Pair<Type.Reference, String> {
 		public Field(Type.Reference owner, String name) {
-			super(owner, name);
+			super((Type.Reference) Types.stripGenerics(owner), name);
 		}
 
 		public Type.Reference owner() {

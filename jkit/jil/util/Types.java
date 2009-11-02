@@ -361,6 +361,70 @@ public class Types {
 	}	
 	
 	/**
+     * The purpose of this method is to strip the generic information from a
+     * type.
+     * 
+     * @param t
+     * @return
+     */
+	public static Type stripGenerics(Type t) {
+		if(t instanceof Type.Clazz) {
+			return stripGenerics((Type.Clazz)t);
+		} else if(t instanceof Type.Function) {
+			return stripGenerics((Type.Function)t);
+		} else if(t instanceof Type.Variable) {
+			return stripGenerics((Type.Variable)t);
+		} else if(t instanceof Type.Wildcard) {
+			return stripGenerics((Type.Wildcard)t);
+		} else if(t instanceof Type.Intersection) {
+			return stripGenerics((Type.Intersection)t);
+		} else {		
+			return t;
+		}
+	}
+	
+	public static Type.Clazz stripGenerics(Type.Clazz ct) {
+		ArrayList<Pair<String,List<Type.Reference>>> ncomponents = new ArrayList();
+		for(Pair<String,List<Type.Reference>> p : ct.components()) {
+			ncomponents.add(new Pair(p.first(),new ArrayList()));
+		}
+		return new Type.Clazz(ct.pkg(),ncomponents);
+	}
+	
+	public static Type.Function stripGenerics(Type.Function ft) {
+		ArrayList<Type> params = new ArrayList<Type>();
+		for(Type t : ft.parameterTypes()) {
+			params.add(stripGenerics(t));
+		}
+		
+		return new Type.Function(stripGenerics(ft.returnType()),params);
+	}
+
+	public static Type stripGenerics(Type.Variable vt) {
+		if(vt.lowerBound() == null) {
+			return JAVA_LANG_OBJECT;
+		} else {
+			return stripGenerics(vt.lowerBound());
+		}
+	}
+
+	public static Type stripGenerics(Type.Wildcard wt) {		
+		if(wt.lowerBound() == null) {
+			return JAVA_LANG_OBJECT;
+		} else {
+			return stripGenerics(wt.lowerBound());
+		}
+	}	
+	
+	public static Type.Intersection stripGenerics(Type.Intersection wt) {
+		ArrayList<Type.Reference> bounds = new ArrayList();
+		for(Type.Reference t : wt.bounds()) {
+			bounds.add((Type.Reference) stripGenerics(t));
+		}
+		return new Type.Intersection(bounds);
+	}
+	
+	/**
 	 * The following are provided for performance reasons, particularly to help
 	 * reduce the memory footprint during compilation.
 	 */
