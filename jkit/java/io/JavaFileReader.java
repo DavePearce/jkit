@@ -91,7 +91,7 @@ public class JavaFileReader {
 		JavaParser parser = new JavaParser(tokenStream);
 		try {
 			Tree tree = (Tree) parser.compilationUnit().getTree();
-			printTree(tree,0,0);
+			// printTree(tree,0,0);
 			return tree;
 		} catch (RecognitionException e) {
 		}
