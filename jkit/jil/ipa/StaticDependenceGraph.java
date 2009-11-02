@@ -240,8 +240,6 @@ public class StaticDependenceGraph {
 			Tag.Method targetNode = new Tag.Method(type, type.lastComponent().first(), expr
 				.funType());
 		
-			System.out.println("*** ADDING EDGE(2): " + myNode + " ---> " + targetNode);
-			
 			// Add the call graph edge!
 			callGraph.add(new Invocation(myNode,targetNode));
 		}
