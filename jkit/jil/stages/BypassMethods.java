@@ -161,6 +161,7 @@ public final class BypassMethods {
 	protected JilMethod generateBypass(JilClass owner, Clazz.Method method,
 			Type.Function to) {
 		// First, we substitute each type variable with java.lang.object
+			
 		Type.Function from = method.type();
 		Type.Function ftype = (Type.Function) stripGenerics(from);
 		String name = method.name();
@@ -208,6 +209,7 @@ public final class BypassMethods {
 
 		ArrayList<Modifier> modifiers = new ArrayList<Modifier>();
 		modifiers.add(Modifier.ACC_PUBLIC);
+		modifiers.add(Modifier.ACC_SYNTHETIC);
 		
 		JilMethod r = new JilMethod(name, ftype, params, modifiers,
 				new ArrayList<Type.Clazz>());

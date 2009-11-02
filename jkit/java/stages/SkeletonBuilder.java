@@ -238,7 +238,7 @@ public class SkeletonBuilder {
 			
 			// Determine sourcelocation as best possible, since ANTLR front-end
             // does very bad job of this.
-			ArrayList<SyntacticAttribute> attrs = new ArrayList(p.attributes()); 
+			ArrayList<SyntacticAttribute> attrs = new ArrayList(p.attributes()); 			
 			parameters.add(new JilMethod.Parameter(p.name(),
 					new ArrayList<Modifier>(p.modifiers()),
 					attrs));
