@@ -265,7 +265,12 @@ public class ConstantPropagation {
 	}
 	
 	protected Expr doAssignment(Stmt.Assignment def, JavaFile file) {
-		def.setLhs(doExpression(def.lhs(), file));	
+		
+		// At the moment, I don't perform constant propagation on the lhs of an
+        // assignment. This is absolutely less than ideal. However, it's
+        // difficult to deal with it, so for now I ignore it.
+		
+		// def.setLhs(doExpression(def.lhs(), file));	
 		def.setRhs(doExpression(def.rhs(), file));
 		return def;
 	}
@@ -558,6 +563,14 @@ public class ConstantPropagation {
 	}
 		
 	protected Expr doUnOp(Expr.UnOp e, JavaFile file) {		
+		
+		if(e.op() == Expr.UnOp.PREDEC 
+			|| e.op() == Expr.UnOp.POSTDEC
+			|| e.op() == Expr.UnOp.POSTINC
+			|| e.op() == Expr.UnOp.PREINC) {
+			return e;
+		}
+		
 		e.setExpr(doExpression(e.expr(), file));
 		return e;
 	}

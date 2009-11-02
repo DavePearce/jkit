@@ -812,7 +812,7 @@ public final class ClassFileBuilder {
 			bytecodes.add(new Bytecode.ArrayStore((Type.Array) ai.target()
 					.type()));			
 		} else {
-			throw new RuntimeException("Unknown lval encountered");
+			throw new RuntimeException("Unknown lval encountered (" + stmt.lhs().getClass().getName() + ")");
 		}
 	}
 
