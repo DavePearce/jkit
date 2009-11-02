@@ -312,7 +312,7 @@ classBodyDeclaration
 	    genericMethodOrConstructorDecl -> ^(METHOD ^(MODIFIERS modifier*) genericMethodOrConstructorDecl)
      	|	methodDeclaration -> ^(METHOD ^(MODIFIERS modifier*) ^(TYPE_PARAMETERS) methodDeclaration)
      	|	fieldDeclaration -> ^(FIELD ^(MODIFIERS modifier*) fieldDeclaration)
-    	|	'void' Identifier voidMethodDeclaratorRest -> ^(METHOD ^(MODIFIERS modifier*) ^(TYPE_PARAMETERS) Identifier ^(TYPE VOID) voidMethodDeclaratorRest?)
+    	|	lc='void' Identifier voidMethodDeclaratorRest -> ^(METHOD ^(MODIFIERS modifier*) ^(TYPE_PARAMETERS) Identifier ^(TYPE VOID[$lc]) voidMethodDeclaratorRest?)
     	|	Identifier constructorDeclaratorRest -> ^(METHOD ^(MODIFIERS modifier*) ^(TYPE_PARAMETERS) Identifier ^(NONE) constructorDeclaratorRest)
     	|	normalInterfaceDeclaration -> ^(INTERFACE ^(MODIFIERS modifier*) normalInterfaceDeclaration)
       	|	annotationTypeDeclaration -> ^(ANNOTATION ^(MODIFIERS modifier*) annotationTypeDeclaration)
@@ -327,7 +327,7 @@ genericMethodOrConstructorDecl
 	
 genericMethodOrConstructorRest
 	:	type Identifier methodDeclaratorRest -> Identifier type methodDeclaratorRest?
-	|	'void' Identifier methodDeclaratorRest -> Identifier ^(TYPE VOID) methodDeclaratorRest?
+	|	lc='void' Identifier methodDeclaratorRest -> Identifier ^(TYPE VOID[$lc]) methodDeclaratorRest?
 	|	Identifier constructorDeclaratorRest -> Identifier ^(NONE) constructorDeclaratorRest
 	;
 
@@ -344,7 +344,7 @@ interfaceBodyDeclaration
 		constantDeclaration -> ^(FIELD ^(MODIFIERS modifier*) constantDeclaration)
 		| type Identifier interfaceMethodDeclaratorRest -> ^(METHOD ^(MODIFIERS modifier*) ^(TYPE_PARAMETERS) Identifier type interfaceMethodDeclaratorRest?)
 		| interfaceGenericMethodDecl -> ^(METHOD ^(MODIFIERS modifier*) interfaceGenericMethodDecl)
-		| 'void' Identifier voidInterfaceMethodDeclaratorRest -> ^(METHOD ^(MODIFIERS modifier*) ^(TYPE_PARAMETERS) Identifier ^(TYPE VOID) voidInterfaceMethodDeclaratorRest?)
+		| lc='void' Identifier voidInterfaceMethodDeclaratorRest -> ^(METHOD ^(MODIFIERS modifier*) ^(TYPE_PARAMETERS) Identifier ^(TYPE VOID[$lc]) voidInterfaceMethodDeclaratorRest?)
 		| normalInterfaceDeclaration -> ^(INTERFACE ^(MODIFIERS modifier*) normalInterfaceDeclaration) 
       	| annotationTypeDeclaration -> ^(ANNOTATION ^(MODIFIERS modifier*) annotationTypeDeclaration)
 		| classDeclaration -> ^(CLASS ^(MODIFIERS modifier*) classDeclaration)
@@ -375,7 +375,7 @@ interfaceMethodDeclaratorRest
 interfaceGenericMethodDecl
 	:	typeParameters 
 		(type Identifier interfaceMethodDeclaratorRest -> ^(TYPE_PARAMETERS typeParameters) Identifier type interfaceMethodDeclaratorRest
-		| 'void' Identifier interfaceMethodDeclaratorRest -> ^(TYPE_PARAMETERS typeParameters) Identifier ^(TYPE VOID) interfaceMethodDeclaratorRest
+		| lc='void' Identifier interfaceMethodDeclaratorRest -> ^(TYPE_PARAMETERS typeParameters) Identifier ^(TYPE VOID[$lc]) interfaceMethodDeclaratorRest
 		)
 	;
 	
@@ -887,7 +887,7 @@ primary
 		    | classCreatorRest -> ^(NEW ^(TYPE $i+) classCreatorRest?)
 		) 
     |   type '.' 'class' -> ^(GETCLASS type)    
-    |   'void' '.' 'class' -> ^(GETCLASS ^(TYPE VOID))
+    |   lc='void' '.' 'class' -> ^(GETCLASS ^(TYPE VOID[$lc]))
     | 	'super' 
 		(
 			arguments -> ^(INVOKE 'super' arguments?)

@@ -1733,7 +1733,7 @@ public class JavaFileReader {
 			
 			String ct = type.getChild(0).getText();						
 			
-			if (ct.equals("VOID")) { // grr, annoying.
+			if (ct.equals("void")) { 
 				r = new Type.Void(loc);
 			} else if (ct.equals("boolean")) {
 				r = new Type.Bool(loc);
