@@ -26,8 +26,10 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.io.*;
 
+import jkit.bytecode.ClassFile;
 import jkit.bytecode.ClassFileReader;
 import jkit.jil.tree.Type;
+import jkit.jil.util.Types;
 import jkit.util.Pair;
 
 /**
@@ -485,6 +487,86 @@ public final class ClassLoader {
 			return pkg;
 		} else {
 			return pkg.substring(idx+1);
+		}
+	}
+	
+	/**
+     * The purpose of this method is to determine which method is actually
+     * called for a given invoke instruction.
+     */	
+	public Pair<Clazz, Clazz.Method> determineMethod(Type.Reference receiver,
+			String name, Type.Function funType) throws ClassNotFoundException,
+			MethodNotFoundException {						
+		
+		String fdesc = ClassFile.descriptor(funType, false);				
+		
+		Stack<Type.Clazz> worklist = new Stack<Type.Clazz>();
+		Stack<Type.Clazz> interfaceWorklist = new Stack<Type.Clazz>();
+
+		initDetermineMethodWorklist(receiver,worklist);		
+		
+		if (receiver instanceof Type.Clazz
+				&& (name.equals("super") || name.equals("this"))) {			
+			Type.Clazz r = (Type.Clazz) receiver;
+			name = r.lastComponent().first();
+		}
+		
+		while (!worklist.isEmpty()) {
+			Clazz c = loadClass(worklist.pop());						
+			for (Clazz.Method m : c.methods(name)) {								
+				String mdesc = ClassFile.descriptor(m.type(), false);
+				if (fdesc.equals(mdesc)) {							
+					return new Pair(c,m);
+				}
+			}
+			if(c.superClass() != null) {
+				worklist.push(c.superClass());
+			}
+			for(Type.Clazz i : c.interfaces()) {
+				interfaceWorklist.push(i);
+			}
+		}
+
+		while (!interfaceWorklist.isEmpty()) {
+			Clazz c = loadClass(interfaceWorklist.pop());						
+			for (Clazz.Method m : c.methods(name)) {				
+				String mdesc = ClassFile.descriptor(m.type(), false);						
+				if (fdesc.equals(mdesc)) {
+					return new Pair(c,m);
+				}
+			}
+			for(Type.Clazz i : c.interfaces()) {
+				interfaceWorklist.push(i);
+			}			
+		}
+		
+		throw new MethodNotFoundException(name,receiver.toString());
+	}
+	
+	protected void initDetermineMethodWorklist(Type.Reference receiver, Stack<Type.Clazz> worklist) {				
+		if(receiver instanceof Type.Clazz) {
+			worklist.push((Type.Clazz) receiver);	
+		} else if(receiver instanceof Type.Variable) {
+			Type.Variable tv = (Type.Variable) receiver;			
+			if(tv.lowerBound() != null) {				
+				initDetermineMethodWorklist(tv.lowerBound(),worklist);
+			} else {
+				worklist.push(Types.JAVA_LANG_OBJECT); // fall back
+			}
+		} else if(receiver instanceof Type.Wildcard) {
+			Type.Wildcard tv = (Type.Wildcard) receiver;
+			if(tv.lowerBound() != null) {
+				initDetermineMethodWorklist(tv.lowerBound(),worklist);
+			} else {
+				worklist.push(Types.JAVA_LANG_OBJECT); // fall back
+			}
+		} else if(receiver instanceof Type.Intersection) {
+			Type.Intersection tv = (Type.Intersection) receiver;
+			for(Type.Reference lb : tv.bounds()) {				
+				initDetermineMethodWorklist(lb,worklist);
+			}
+		} else {
+			worklist.push(Types.JAVA_LANG_OBJECT); // fall back
 		}
 	}
 	

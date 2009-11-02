@@ -1,9 +1,11 @@
 package jkit.jil.ipa;
 
-import static jkit.compiler.SyntaxError.syntax_error;
+import static jkit.compiler.SyntaxError.*;
 
 import java.util.List;
 
+import jkit.compiler.ClassLoader;
+import jkit.compiler.*;
 import jkit.jil.tree.*;
 import jkit.jil.util.*;
 
@@ -39,6 +41,11 @@ public class StaticDependenceGraph {
 	}
 	
 	private Graph<Tag.Method,Invocation> callGraph;
+	private ClassLoader loader;
+	
+	public StaticDependenceGraph(ClassLoader loader) {
+		this.loader = loader;
+	}
 	
 	/**
      * Access the constructed call graph. Each node in the call graph is
@@ -191,14 +198,34 @@ public class StaticDependenceGraph {
 		for(JilExpr e : expr.parameters()) {
 			addCallGraphEdges(e, myNode);
 		}		
+							
+		// So, at this point, we appear have a method call to the given
+		// target.type(). However, in practice, it's not quite that simple. In
+		// particular, it may occur that the method in question doesn't actually
+		// exist. This happens when the method being called is actually in some
+		// supertype of the target.type().
+
+		try {			
+			Pair<Clazz,Clazz.Method> rt = loader.determineMethod((Type.Reference) target.type(),expr.name(),expr.funType());
 			
-		Tag.Method targetNode = new Tag.Method((Type.Reference) target.type(), expr.name(),
-				expr.funType());
+			Type.Clazz type = rt.first().type(); 
+			
+			// FIXME: One potential problem arises here when the set of potential
+            // target methods is greater than one. In this case, we miss edges
+            // to all of them
+			
+			Tag.Method targetNode = new Tag.Method(type, expr.name(),
+				expr.funType());				
 		
-		System.out.println("*** ADDING EDGE(1): " + myNode + " ---> " + targetNode);
+			// Add the call graph edge!
+			callGraph.add(new Invocation(myNode,targetNode));
 		
-		// Add the call graph edge!
-		callGraph.add(new Invocation(myNode,targetNode));
+		} catch(MethodNotFoundException mnfe) {
+			internal_error(expr,mnfe);
+		} catch(ClassNotFoundException cnfe) {
+			internal_error(expr,cnfe);
+		}
+		
 	}
 
 	public void addCallGraphEdges(JilExpr.New expr, Tag.Method myNode) { 		

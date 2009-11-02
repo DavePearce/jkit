@@ -623,7 +623,7 @@ public final class ClassFileBuilder {
 		} 								
 
 		
-		Pair<Clazz,Clazz.Method> cm = determineMethod(targetT, stmt.name(), stmt
+		Pair<Clazz,Clazz.Method> cm = loader.determineMethod(targetT, stmt.name(), stmt
 				.funType());
 				
 		Clazz c = cm.first();
@@ -1069,7 +1069,7 @@ public final class ClassFileBuilder {
 		
 		String name = targetT.lastComponent().first();
 						
-		Pair<Clazz, Clazz.Method> cm = determineMethod(targetT, name, stmt
+		Pair<Clazz, Clazz.Method> cm = loader.determineMethod(targetT, name, stmt
 				.funType());			
 		Clazz.Method m = cm.second();		
 
@@ -1256,90 +1256,7 @@ public final class ClassFileBuilder {
 					(Type.Primitive) to));	
 		} 
 	}		
-	
-	/**
-	 * The purpose of this method is to determine the dispatch mode required for
-	 * this particular method call.
-	 * 
-	 * @param receiver
-	 * @param funType
-	 * @return 0 for virtual, 1 for interface, 2 for static
-	 */	
-	protected Pair<Clazz, Clazz.Method> determineMethod(Type.Reference receiver,
-			String name, Type.Function funType) throws ClassNotFoundException,
-			MethodNotFoundException {						
-		
-		String fdesc = ClassFile.descriptor(funType, false);				
-		
-		Stack<Type.Clazz> worklist = new Stack<Type.Clazz>();
-		Stack<Type.Clazz> interfaceWorklist = new Stack<Type.Clazz>();
-
-		initDetermineMethodWorklist(receiver,worklist);		
-		
-		// Need to save the class of the static receiver type, since this
-		// determines whether to use an invokevirtual or invokeinterface. Could
-		// probably optimise this to avoid two identical calls to load class.
-		Clazz outer = loader.loadClass(worklist.peek());
-		
-		while (!worklist.isEmpty()) {
-			Clazz c = loader.loadClass(worklist.pop());						
-			for (Clazz.Method m : c.methods(name)) {								
-				String mdesc = ClassFile.descriptor(m.type(), false);
-				if (fdesc.equals(mdesc)) {							
-					return new Pair(outer,m);
-				}
-			}
-			if(c.superClass() != null) {
-				worklist.push(c.superClass());
-			}
-			for(Type.Clazz i : c.interfaces()) {
-				interfaceWorklist.push(i);
-			}
-		}
-
-		while (!interfaceWorklist.isEmpty()) {
-			Clazz c = loader.loadClass(interfaceWorklist.pop());						
-			for (Clazz.Method m : c.methods(name)) {				
-				String mdesc = ClassFile.descriptor(m.type(), false);						
-				if (fdesc.equals(mdesc)) {
-					return new Pair(outer,m);
-				}
-			}
-			for(Type.Clazz i : c.interfaces()) {
-				interfaceWorklist.push(i);
-			}			
-		}
-		
-		throw new MethodNotFoundException(name,receiver.toString());
-	}
-	
-	protected void initDetermineMethodWorklist(Type.Reference receiver, Stack<Type.Clazz> worklist) {				
-		if(receiver instanceof Type.Clazz) {
-			worklist.push((Type.Clazz) receiver);	
-		} else if(receiver instanceof Type.Variable) {
-			Type.Variable tv = (Type.Variable) receiver;			
-			if(tv.lowerBound() != null) {				
-				initDetermineMethodWorklist(tv.lowerBound(),worklist);
-			} else {
-				worklist.push(Types.JAVA_LANG_OBJECT); // fall back
-			}
-		} else if(receiver instanceof Type.Wildcard) {
-			Type.Wildcard tv = (Type.Wildcard) receiver;
-			if(tv.lowerBound() != null) {
-				initDetermineMethodWorklist(tv.lowerBound(),worklist);
-			} else {
-				worklist.push(Types.JAVA_LANG_OBJECT); // fall back
-			}
-		} else if(receiver instanceof Type.Intersection) {
-			Type.Intersection tv = (Type.Intersection) receiver;
-			for(Type.Reference lb : tv.bounds()) {				
-				initDetermineMethodWorklist(lb,worklist);
-			}
-		} else {
-			worklist.push(Types.JAVA_LANG_OBJECT); // fall back
-		}
-	}
-	
+			
 	/**
 	 * This method determines the actual type of a field. This is important,
 	 * since the actual type and the bytecode type can differ in the case of
