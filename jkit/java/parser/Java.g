@@ -257,7 +257,7 @@ classDeclaration
 	;
 
 typeParameters
-	:	'<' t+=typeParameter (',' t+=typeParameter)* '>' -> $t*
+	:	'<' t+=typeParameter (',' t+=typeParameter)* '>' -> '<' $t*
 	;
 
 typeParameter

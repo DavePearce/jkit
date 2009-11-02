@@ -91,7 +91,7 @@ public class JavaFileReader {
 		JavaParser parser = new JavaParser(tokenStream);
 		try {
 			Tree tree = (Tree) parser.compilationUnit().getTree();
-			// printTree(tree,0,0);
+			printTree(tree,0,0);
 			return tree;
 		} catch (RecognitionException e) {
 		}
@@ -1640,8 +1640,12 @@ public class JavaFileReader {
 	
 	protected ArrayList<Type.Variable> parseTypeVariables(Tree child,
 			HashSet<String> genericVariables) {
+		
+		// NOTE. I LEAVE THE '<' IN THE ANTLR TREE TO ENSURE CORRECT LINE NUMBER
+		// INFORMATION FOR GENERIC METHODS.
+		
 		ArrayList<Type.Variable> typeArgs = new ArrayList<Type.Variable>();
-		for (int i = 0; i != child.getChildCount(); ++i) {									
+		for (int i = 1; i < child.getChildCount(); ++i) {
 			Type.Variable tvar = parseVariableType(child.getChild(i),
 					genericVariables);
 									
