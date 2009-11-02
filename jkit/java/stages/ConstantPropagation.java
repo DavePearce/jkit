@@ -125,8 +125,8 @@ public class ConstantPropagation {
 		
 		try {				
 			d.setInitialiser(doExpression(d.initialiser(), file));
-			
-			if(d.isConstant()) {
+								
+			if(d.isConstant()) {				
 				Clazz c = loader.loadClass(owner);			
 				if(!c.field(d.name()).isConstant()) {
 					// Ok, in this instance, we have determined that this field
