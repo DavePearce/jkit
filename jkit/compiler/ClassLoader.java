@@ -499,9 +499,7 @@ public final class ClassLoader {
 			MethodNotFoundException {						
 						
 		String fdesc = ClassFile.descriptor(funType, false);				
-		
-		System.out.println("*** DETERMINE METHOD: " + receiver + " " + name + ":" + funType + "(" + fdesc + ")");
-		
+						
 		Stack<Type.Clazz> worklist = new Stack<Type.Clazz>();
 		Stack<Type.Clazz> interfaceWorklist = new Stack<Type.Clazz>();
 
@@ -516,10 +514,8 @@ public final class ClassLoader {
 		while (!worklist.isEmpty()) {
 			Clazz c = loadClass(worklist.pop());						
 			for (Clazz.Method m : c.methods(name)) {												
-				String mdesc = ClassFile.descriptor(m.type(), false);
-				System.out.println("*** FOUND: " + c.name() + " " + mdesc);
-				if (fdesc.equals(mdesc)) {
-					System.out.println("*** MATCHED: " + c.name() + " " + mdesc);
+				String mdesc = ClassFile.descriptor(m.type(), false);				
+				if (fdesc.equals(mdesc)) {					
 					return new Pair(c,m);
 				}
 			}

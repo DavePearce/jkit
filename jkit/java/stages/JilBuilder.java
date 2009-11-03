@@ -1239,8 +1239,6 @@ public class JilBuilder {
 		Type type = e.attribute(Type.class);				
 		MethodInfo mi = e.attribute(MethodInfo.class);				
 		
-		System.out.println("GOT: " + e.name() + " " + mi.type);
-		
 		Pair<JilExpr,List<JilStmt>> target = doExpression(e.target());
 		r.addAll(target.second());
 		

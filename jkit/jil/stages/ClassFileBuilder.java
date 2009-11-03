@@ -611,8 +611,7 @@ public final class ClassFileBuilder {
 		
 		Type.Reference targetT = (Type.Reference) stmt.target().type();
 
-		if (stmt.name().equals("super") || stmt.name().equals("this")) {
-			System.out.println("GOT: " + stmt.type());
+		if (stmt.name().equals("super") || stmt.name().equals("this")) {			
 			// catch explicit super constructor call.
 			translateExpression(stmt.target(), varmap, bytecodes);
 			for (JilExpr p : stmt.parameters()) {

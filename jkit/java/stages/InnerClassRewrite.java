@@ -612,7 +612,7 @@ public class InnerClassRewrite {
 				// whether it's static or not.				
 				Clazz clazz = loader.loadClass(tc);										
 
-				if(!clazz.isStatic()) {						
+				if(!clazz.isStatic()) {									
 					// First, update the arguments to the new call
 					Type.Clazz parentType = parentType(tc);
 
@@ -639,7 +639,7 @@ public class InnerClassRewrite {
 		return e;
 	}
 	
-	protected Expr doInvoke(Expr.Invoke e) {				
+	protected Expr doInvoke(Expr.Invoke e) throws ClassNotFoundException {				
 		 				
 		e.setTarget(doExpression(e.target()));		
 		
@@ -648,6 +648,35 @@ public class InnerClassRewrite {
 			Expr p = parameters.get(i);
 			parameters.set(i, doExpression(p));
 		}				
+		
+		Type.Reference target = e.target().attribute(Type.Reference.class);
+		
+		if (target instanceof Type.Clazz
+				&& (e.name().equals("super") || e.name().equals("this"))) {
+			// These indicate constructor calls. Therefore, we may need to
+            // rewrite them if they are for non-static inner classes.
+			Type.Clazz tc = (Type.Clazz) target;
+			
+			Clazz clazz = loader.loadClass(tc);										
+
+			if(!clazz.isStatic()) {									
+				// First, update the arguments to the new call
+				Type.Clazz parentType = parentType(tc);
+				
+				Expr.LocalVariable thiz = new Expr.LocalVariable(
+						"this$0", parentType,e.attribute(SourceLocation.class));
+				
+				e.parameters().add(0,thiz);		
+				
+				// Second, update the function type.
+				JilBuilder.MethodInfo mi = e.attribute(JilBuilder.MethodInfo.class); 
+				Type.Function mt = mi.type;
+				ArrayList<Type> nparamtypes = new ArrayList<Type>(mt.parameterTypes());	
+				nparamtypes.add(0,parentType);
+				mi.type = new Type.Function(mt.returnType(), nparamtypes,
+						mt.typeArguments());
+			}
+		}
 		
 		return e;
 	}
