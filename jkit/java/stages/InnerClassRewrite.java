@@ -362,7 +362,8 @@ public class InnerClassRewrite {
 
 						ArrayList<jkit.compiler.SyntacticAttribute> attributes = new ArrayList(e.attributes());
 						Clazz.Method accessor = createWriteAccessor(f, (jkit.jil.tree.JilClass) c);
-						attributes.add(new JilBuilder.MethodInfo(accessor.exceptions(),accessor.type()));						
+						attributes.add(new JilBuilder.MethodInfo(accessor.exceptions(),accessor.type()));
+						attributes.addAll(def.attributes());
 						ArrayList<Expr> params = new ArrayList<Expr>();							
 						params.add(e.target());
 						params.add(def.rhs());
@@ -559,7 +560,8 @@ public class InnerClassRewrite {
 
 					ArrayList<jkit.compiler.SyntacticAttribute> attributes = new ArrayList(e.attributes());
 					Clazz.Method accessor = createReadAccessor(f, (jkit.jil.tree.JilClass) c);
-					attributes.add(new JilBuilder.MethodInfo(accessor.exceptions(),accessor.type()));						
+					attributes.add(new JilBuilder.MethodInfo(accessor.exceptions(),accessor.type()));	
+					attributes.addAll(e.attributes());
 					ArrayList<Expr> params = new ArrayList<Expr>();
 					params.add(e.target());
 					return new Expr.Invoke(new Expr.ClassVariable(c.type()
@@ -832,14 +834,14 @@ public class InnerClassRewrite {
 	
 	protected void rewriteConstructor(JavaMethod constructor, Type.Clazz ownerType,
 			Type.Clazz parentType, SourceLocation loc) {
-				
+		
 		ArrayList<Modifier> mods = new ArrayList<Modifier>();
 		mods.add(Modifier.ACC_FINAL);
 		constructor.parameters().add(0, new Decl.JavaParameter("this$0", mods, fromJilType(parentType)));
 		Expr.LocalVariable param = new Expr.LocalVariable("this$0", parentType, loc);
 		Expr.LocalVariable thiz = new Expr.LocalVariable("this", ownerType, loc);
 		Expr.Deref lhs = new Expr.Deref(thiz, "this$0", parentType, loc);
-		Stmt.Assignment assign = new Stmt.Assignment(lhs, param);
+		Stmt.Assignment assign = new Stmt.Assignment(lhs, param, loc);
 		constructor.body().statements().add(0, assign);		
 		
 		// Now, update the inferred jil type for this method.

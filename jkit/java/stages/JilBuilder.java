@@ -201,7 +201,7 @@ public class JilBuilder {
 			if(findSuperCall(stmts) == -1) {							
 				stmts.add(0, new JilExpr.SpecialInvoke(new JilExpr.Variable("super", parent
 						.superClass()), "super", new ArrayList<JilExpr>(),
-						new Type.Function(T_VOID), T_VOID));
+						new Type.Function(T_VOID), T_VOID, d.attribute(SourceLocation.class)));
 			} 
 		}				
 		
@@ -948,7 +948,7 @@ public class JilBuilder {
 		JilExpr.Variable iter;
 		
 		if (srcType instanceof Type.Array) {
-			iter = new JilExpr.Variable(iterLab, T_INT);
+			iter = new JilExpr.Variable(iterLab, T_INT, stmt.attributes());
 			stmts
 					.add(new JilStmt.Assign(iter, new JilExpr.Int(0), stmt
 							.attributes()));
@@ -957,7 +957,7 @@ public class JilBuilder {
 			// information on the iterator. The easiest way to do this is to
 			// look up the iterator() method in the src class, and use it's
 			// return type.
-			iter = new JilExpr.Variable(iterLab, JAVA_UTIL_ITERATOR);			 
+			iter = new JilExpr.Variable(iterLab, JAVA_UTIL_ITERATOR, stmt.attributes());			 
 
 			stmts.add(new JilStmt.Assign(iter, new JilExpr.Invoke(src.first(),
 					"iterator", new ArrayList<JilExpr>(), new Type.Function(
@@ -980,13 +980,13 @@ public class JilBuilder {
 					.attributes()));					
 			
 			stmts.add(new JilStmt.Assign(loopVar, implicitCast(new JilExpr.ArrayIndex(src.first(),
-					iter, arrType.element()),loopVar.type())));
+					iter, arrType.element()),loopVar.type()), stmt.attributes()));
 		} else {
 			JilExpr hasnext = new JilExpr.Invoke(iter, "hasNext",
 					new ArrayList<JilExpr>(), new Type.Function(T_BOOL),
 					T_BOOL, stmt.attributes());
 			stmts.add(new JilStmt.IfGoto(new JilExpr.UnOp(hasnext, JilExpr.UnOp.NOT,
-					T_BOOL), exitLab));
+					T_BOOL), exitLab, stmt.attributes()));
 			
 			JilExpr cast;
 			if(loopVar.type() instanceof Type.Primitive) {
@@ -1156,11 +1156,11 @@ public class JilBuilder {
 				// pointer of an enclosing class. 
 				ClassScope cs = (ClassScope) findEnclosingScope(ClassScope.class);
 				int level =  cs.type.components().size() - targetT.components().size();
-				JilExpr r = new JilExpr.Variable("this",cs.type);
+				JilExpr r = new JilExpr.Variable("this",cs.type, e.attributes());
 				Type.Clazz t = cs.type;
 				while(level > 0) {
 					t = parentType(t);
-					r = new JilExpr.Deref(r,"this$0",false,t);
+					r = new JilExpr.Deref(r,"this$0",false,t, e.attributes());
 					level = level - 1;
 				}
 				return new Pair(r,  new ArrayList<JilStmt>());
@@ -1239,6 +1239,8 @@ public class JilBuilder {
 		Type type = e.attribute(Type.class);				
 		MethodInfo mi = e.attribute(MethodInfo.class);				
 		
+		System.out.println("GOT: " + e.name() + " " + mi.type);
+		
 		Pair<JilExpr,List<JilStmt>> target = doExpression(e.target());
 		r.addAll(target.second());
 		
@@ -1263,7 +1265,7 @@ public class JilBuilder {
 			// support.
 			JilExpr ie = new JilExpr.Invoke(target.first(), e.name(), params
 					.first(), mi.type, type, e.attributes());
-			ie = new JilExpr.Cast(ie, rec.type());
+			ie = new JilExpr.Cast(ie, rec.type(),e.attributes());
 			return new Pair<JilExpr, List<JilStmt>>(ie, r);
 		} else {
 			return new Pair<JilExpr, List<JilStmt>>(new JilExpr.Invoke(target.first(), e
@@ -1295,40 +1297,40 @@ public class JilBuilder {
 	}
 	
 	protected Pair<JilExpr,List<JilStmt>> doBoolVal(Value.Bool e) {
-		return new Pair<JilExpr, List<JilStmt>>(new JilExpr.Bool(e.value()),
+		return new Pair<JilExpr, List<JilStmt>>(new JilExpr.Bool(e.value(), e.attributes()),
 				new ArrayList<JilStmt>());
 	}
 	
 	protected Pair<JilExpr,List<JilStmt>> doCharVal(Value.Char e) {
-		return new Pair<JilExpr,List<JilStmt>>(new JilExpr.Char(e.value()), new ArrayList<JilStmt>());		
+		return new Pair<JilExpr,List<JilStmt>>(new JilExpr.Char(e.value(), e.attributes()), new ArrayList<JilStmt>());		
 	}
 	
 	protected Pair<JilExpr,List<JilStmt>> doByteVal(Value.Byte e) {
-		return new Pair<JilExpr,List<JilStmt>>(new JilExpr.Byte(e.value()), new ArrayList<JilStmt>());		
+		return new Pair<JilExpr,List<JilStmt>>(new JilExpr.Byte(e.value(), e.attributes()), new ArrayList<JilStmt>());		
 	}
 	
 	protected Pair<JilExpr,List<JilStmt>> doShortVal(Value.Short e) {
-		return new Pair<JilExpr,List<JilStmt>>(new JilExpr.Short(e.value()), new ArrayList<JilStmt>());		
+		return new Pair<JilExpr,List<JilStmt>>(new JilExpr.Short(e.value(), e.attributes()), new ArrayList<JilStmt>());		
 	}
 	
 	protected Pair<JilExpr,List<JilStmt>> doIntVal(Value.Int e) {
-		return new Pair<JilExpr,List<JilStmt>>(new JilExpr.Int(e.value()), new ArrayList<JilStmt>());
+		return new Pair<JilExpr,List<JilStmt>>(new JilExpr.Int(e.value(), e.attributes()), new ArrayList<JilStmt>());
 	}
 	
 	protected Pair<JilExpr,List<JilStmt>> doLongVal(Value.Long e) {
-		return new Pair<JilExpr,List<JilStmt>>(new JilExpr.Long(e.value()), new ArrayList<JilStmt>());
+		return new Pair<JilExpr,List<JilStmt>>(new JilExpr.Long(e.value(), e.attributes()), new ArrayList<JilStmt>());
 	}
 	
 	protected Pair<JilExpr,List<JilStmt>> doFloatVal(Value.Float e) {
-		return new Pair<JilExpr,List<JilStmt>>(new JilExpr.Float(e.value()), new ArrayList<JilStmt>());
+		return new Pair<JilExpr,List<JilStmt>>(new JilExpr.Float(e.value(), e.attributes()), new ArrayList<JilStmt>());
 	}
 	
 	protected Pair<JilExpr,List<JilStmt>> doDoubleVal(Value.Double e) {
-		return new Pair<JilExpr,List<JilStmt>>(new JilExpr.Double(e.value()), new ArrayList<JilStmt>());
+		return new Pair<JilExpr,List<JilStmt>>(new JilExpr.Double(e.value(), e.attributes()), new ArrayList<JilStmt>());
 	}
 	
 	protected Pair<JilExpr,List<JilStmt>> doStringVal(Value.String e) {
-		return new Pair<JilExpr,List<JilStmt>>(new JilExpr.StringVal(e.value()), new ArrayList<JilStmt>());
+		return new Pair<JilExpr,List<JilStmt>>(new JilExpr.StringVal(e.value(), e.attributes()), new ArrayList<JilStmt>());
 	}
 	
 	protected Pair<JilExpr,List<JilStmt>> doNullVal(Value.Null e) {
@@ -1414,7 +1416,7 @@ public class JilBuilder {
 		case Expr.UnOp.POSTINC:
 		{
 			JilExpr lhs = r.first();	
-			JilExpr.Variable tmp = new JilExpr.Variable(getTempVar(),type,new ArrayList(lhs.attributes()));			
+			JilExpr.Variable tmp = new JilExpr.Variable(getTempVar(),type,lhs.attributes());			
 			stmts.add(new JilStmt.Assign(tmp,lhs,e.attributes()));			
 			JilExpr rhs = new JilExpr.BinOp(lhs, constant(1,lhs.type()), JilExpr.BinOp.ADD,
 					type, e.attributes());
@@ -1424,7 +1426,7 @@ public class JilBuilder {
 		case Expr.UnOp.POSTDEC:
 		{
 			JilExpr lhs = r.first();
-			JilExpr.Variable tmp = new JilExpr.Variable(getTempVar(),type,new ArrayList(lhs.attributes()));			
+			JilExpr.Variable tmp = new JilExpr.Variable(getTempVar(),type,lhs.attributes());			
 			stmts.add(new JilStmt.Assign(tmp,lhs,e.attributes()));			
 			JilExpr rhs = new JilExpr.BinOp(lhs, constant(1,lhs.type()), JilExpr.BinOp.SUB,
 					type, e.attributes());

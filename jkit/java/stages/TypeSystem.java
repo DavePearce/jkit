@@ -1295,7 +1295,7 @@ public class TypeSystem {
 				}
 			}
 		}
-		
+						
 		return methodInfo;
 	}
 
@@ -1501,7 +1501,7 @@ public class TypeSystem {
 		if (matchIndex == -1) {
 			// No method was found			
 			return null;
-		} else {						
+		} else {
 			return methods.get(matchIndex);
 		}
 	}
