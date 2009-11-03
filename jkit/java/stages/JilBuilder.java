@@ -199,6 +199,7 @@ public class JilBuilder {
 		// explicit super constructor call or not.  If not, then add one.
 		if (d instanceof Decl.JavaConstructor && !parent.type().equals(JAVA_LANG_OBJECT)) {
 			SourceLocation loc = d.attribute(SourceLocation.class);
+			
 			if(findSuperCall(stmts) == -1) {
 				ArrayList<JilExpr> params = new ArrayList<JilExpr>();
 				Type.Function funType = new Type.Function(T_VOID);
@@ -207,10 +208,13 @@ public class JilBuilder {
 						// in this circumstance, we need to pass the special
                         // enclosing class pointer through the super class call.
 					
-					Type.Clazz enclosing = parentType(parent.type());
+					Clazz ec = loader.loadClass(parent.superClass());
 					
-					params.add(new JilExpr.Variable("this$0",enclosing,loc));
-					funType = new Type.Function(T_VOID,enclosing);
+					if(ec.isInnerClass() && !ec.isStatic()) {
+						Type.Clazz pt = parentType(ec.type());
+						params.add(new JilExpr.Variable("this$0",pt,loc));
+						funType = new Type.Function(T_VOID,pt);
+					}
 				} 
 									
 				
