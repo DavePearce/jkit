@@ -147,6 +147,7 @@ public class JKit extends TestHarness {
 	@Test public void JLS_8_1_3_InnerClasses_22() { compileFailTest("JLS_8_1_3_InnerClasses_22"); }
 	@Test public void JLS_8_1_3_InnerClasses_23() { runTest("JLS_8_1_3_InnerClasses_23"); }
 	@Test public void JLS_8_1_3_InnerClasses_24() { runTest("JLS_8_1_3_InnerClasses_24"); }
+	@Test public void JLS_8_1_3_InnerClasses_25() { runTest("JLS_8_1_3_InnerClasses_25"); }
 	
 	@Ignore("Known Bug") @Test public void JLS_8_1_1_3_StrictClasses_1() { runTest("JLS_8_1_1_3_StrictClasses_1"); }
 	

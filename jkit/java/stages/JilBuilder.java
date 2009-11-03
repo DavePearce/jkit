@@ -185,7 +185,7 @@ public class JilBuilder {
 		scopes.pop();
 	}
 
-	protected void doMethod(Decl.JavaMethod d, JilClass parent) {	
+	protected void doMethod(Decl.JavaMethod d, JilClass parent) throws ClassNotFoundException {	
 		Type.Function type = d.attribute(Type.Function.class);
 		List<JilStmt> stmts = doStatement(d.body());		
 				
@@ -197,11 +197,26 @@ public class JilBuilder {
 		
 		// First, off. If this is a constructor, then check whether there is an
 		// explicit super constructor call or not.  If not, then add one.
-		if (d instanceof Decl.JavaConstructor && !parent.type().equals(JAVA_LANG_OBJECT)) {			
-			if(findSuperCall(stmts) == -1) {							
+		if (d instanceof Decl.JavaConstructor && !parent.type().equals(JAVA_LANG_OBJECT)) {
+			SourceLocation loc = d.attribute(SourceLocation.class);
+			if(findSuperCall(stmts) == -1) {
+				ArrayList<JilExpr> params = new ArrayList<JilExpr>();
+				Type.Function funType = new Type.Function(T_VOID);
+												
+				if(parent.isInnerClass() && !parent.isStatic()) {
+						// in this circumstance, we need to pass the special
+                        // enclosing class pointer through the super class call.
+					
+					Type.Clazz enclosing = parentType(parent.type());
+					
+					params.add(new JilExpr.Variable("this$0",enclosing,loc));
+					funType = new Type.Function(T_VOID,enclosing);
+				} 
+									
+				
 				stmts.add(0, new JilExpr.SpecialInvoke(new JilExpr.Variable("super", parent
-						.superClass()), "super", new ArrayList<JilExpr>(),
-						new Type.Function(T_VOID), T_VOID, d.attribute(SourceLocation.class)));
+						.superClass()), "super", params,
+						funType, T_VOID, loc));
 			} 
 		}				
 		
