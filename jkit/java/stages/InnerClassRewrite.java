@@ -659,7 +659,7 @@ public class InnerClassRewrite {
 			
 			Clazz clazz = loader.loadClass(tc);										
 
-			if(!clazz.isStatic()) {									
+			if(!clazz.isStatic() && clazz.isInnerClass()) {									
 				// First, update the arguments to the new call
 				Type.Clazz parentType = parentType(tc);
 				
