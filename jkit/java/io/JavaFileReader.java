@@ -476,8 +476,7 @@ public class JavaFileReader {
 				initialiser = parseExpression(child.getChild(aindx), genericVariables);
 			}
 			fields.add(new Decl.JavaField(modifiers, name, type, initialiser,
-					new SourceLocation(child.getLine(), child
-							.getCharPositionInLine())));
+					determineStartLocation(tree)));
 		}
 		return fields;
 	}
