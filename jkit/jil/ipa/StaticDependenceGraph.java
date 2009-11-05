@@ -149,7 +149,8 @@ public class StaticDependenceGraph {
 			JilExpr.Deref df = (JilExpr.Deref) stmt.lhs();
 			
 			try {
-				Pair<Clazz,Clazz.Field> rt = loader.determineField((Type.Clazz) df.type(),df.name());
+				Pair<Clazz, Clazz.Field> rt = loader.determineField(
+						(Type.Clazz) df.target().type(), df.name());
 				Type.Clazz type = rt.first().type(); 
 
 				Tag.Field targetNode = new Tag.Field(type, df.name());				
@@ -237,7 +238,7 @@ public class StaticDependenceGraph {
 
 		try {
 			Pair<Clazz, Clazz.Field> rt = loader.determineField(
-					(Type.Clazz) expr.type(), expr.name());
+					(Type.Clazz) expr.target().type(), expr.name());
 			Type.Clazz type = rt.first().type();
 
 			Tag.Field targetNode = new Tag.Field(type, expr.name());
