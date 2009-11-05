@@ -140,13 +140,12 @@ public class StaticDependenceGraph {
 		addEdges(stmt.condition(),myNode);			
 	}
 	
-	protected void addEdges(JilStmt.Assign stmt, Tag.Method myNode) {
-		addEdges(stmt.lhs(),myNode);
-		addEdges(stmt.rhs(),myNode);
-		
+	protected void addEdges(JilStmt.Assign stmt, Tag.Method myNode) {		
 		if(stmt.lhs() instanceof JilExpr.Deref) {
 			// this indicates a field write			
 			JilExpr.Deref df = (JilExpr.Deref) stmt.lhs();
+			
+			addEdges(df.target(),myNode);
 			
 			try {
 				Pair<Clazz, Clazz.Field> rt = loader.determineField(
@@ -164,7 +163,11 @@ public class StaticDependenceGraph {
 			} catch(ClassNotFoundException cnfe) {
 				internal_error(df,cnfe);
 			}
+		} else  {
+			addEdges(stmt.lhs(),myNode);
 		}
+		
+		addEdges(stmt.rhs(),myNode);			
 	}
 	
 	protected void addEdges(JilStmt.Return stmt, Tag.Method myNode) {
@@ -241,8 +244,7 @@ public class StaticDependenceGraph {
 					(Type.Clazz) expr.target().type(), expr.name());
 			Type.Clazz type = rt.first().type();
 
-			Tag.Field targetNode = new Tag.Field(type, expr.name());
-
+			Tag.Field targetNode = new Tag.Field(type, expr.name());			
 			fieldReads.add(new FieldAccess(myNode, targetNode));
 		} catch (FieldNotFoundException mnfe) {
 			internal_error(expr, mnfe);
