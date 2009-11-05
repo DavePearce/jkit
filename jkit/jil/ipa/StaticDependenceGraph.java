@@ -239,17 +239,22 @@ public class StaticDependenceGraph {
 	public void addEdges(JilExpr.Deref expr, Tag.Method myNode) {
 		addEdges(expr.target(), myNode);
 
-		try {
-			Pair<Clazz, Clazz.Field> rt = loader.determineField(
-					(Type.Clazz) expr.target().type(), expr.name());
-			Type.Clazz type = rt.first().type();
+		Type.Reference target = (Type.Reference) expr.target().type();
+		
+		if(target instanceof Type.Clazz) {
 
-			Tag.Field targetNode = new Tag.Field(type, expr.name());			
-			fieldReads.add(new FieldAccess(myNode, targetNode));
-		} catch (FieldNotFoundException mnfe) {
-			internal_error(expr, mnfe);
-		} catch (ClassNotFoundException cnfe) {
-			internal_error(expr, cnfe);
+			try {
+				Pair<Clazz, Clazz.Field> rt = loader.determineField(
+						(Type.Clazz) expr.target().type(), expr.name());
+				Type.Clazz type = rt.first().type();
+
+				Tag.Field targetNode = new Tag.Field(type, expr.name());			
+				fieldReads.add(new FieldAccess(myNode, targetNode));
+			} catch (FieldNotFoundException mnfe) {
+				internal_error(expr, mnfe);
+			} catch (ClassNotFoundException cnfe) {
+				internal_error(expr, cnfe);
+			}
 		}
 	}	
 	public void addEdges(JilExpr.Variable expr, Tag.Method myNode) { 
