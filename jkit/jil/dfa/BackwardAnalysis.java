@@ -76,7 +76,9 @@ public abstract class BackwardAnalysis<T extends FlowSet> {
 			}
 									
 			JilStmt stmt = body.get(current);
-							
+			
+			System.out.println("WORKING ON STATEMENT: " + stmt);
+			
 			try {
 				// now, add any exceptional edges
 				for(Pair<Type.Clazz,String> ex : stmt.exceptions()) {
@@ -124,7 +126,7 @@ public abstract class BackwardAnalysis<T extends FlowSet> {
 					merge(current,get_store(current+1,emptyStore),worklist,preds);
 				}
 			} catch(Exception e) {
-				internal_error(e.getMessage(),stmt);
+				internal_error(stmt,e);
 			}
 		}
 	}			
