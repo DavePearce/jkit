@@ -968,7 +968,7 @@ public final class ClassFileBuilder {
 			Type.Clazz lhs_t = (Type.Clazz) tmp_t;
 
 
-			Type actualFieldType = determineFieldType(lhs_t,def.name());
+			Type actualFieldType = loader.determineField(lhs_t,def.name()).second().type();
 			Type bytecodeType = actualFieldType;				
 
 			if(actualFieldType instanceof Type.Variable) {
@@ -1257,54 +1257,7 @@ public final class ClassFileBuilder {
 		} 
 	}		
 			
-	/**
-	 * This method determines the actual type of a field. This is important,
-	 * since the actual type and the bytecode type can differ in the case of
-	 * generics. Thus, if we're loading a field of generic type, then we need a
-	 * cast in the bytecode accordinly.
-	 * 
-	 * @param t
-	 * @return
-	 */
-	protected Type determineFieldType(Type.Clazz receiver, String name)
-			throws ClassNotFoundException, FieldNotFoundException {
-		
-		Stack<Type.Clazz> worklist = new Stack<Type.Clazz>();
-		Stack<Type.Clazz> interfaceWorklist = new Stack<Type.Clazz>();
-		worklist.push(receiver);
-		
-		// Need to save the class of the static receiver type, since this
-		// determines whether to use an invokevirtual or invokeinterface. Could
-		// probably optimise this to avoid two identical calls to load class.
-		Clazz outer = loader.loadClass(worklist.peek());
-		
-		while (!worklist.isEmpty()) {
-			Clazz c = loader.loadClass(worklist.pop());									
-			Clazz.Field f = c.field(name);
-			if (f != null) {
-				return f.type();
-			}
-			if(c.superClass() != null) {
-				worklist.push(c.superClass());
-			}
-			for(Type.Clazz i : c.interfaces()) {
-				interfaceWorklist.push(i);
-			}
-		}
-
-		while (!interfaceWorklist.isEmpty()) {
-			Clazz c = loader.loadClass(interfaceWorklist.pop());			
-			Clazz.Field f = c.field(name);
-			if (f != null) {
-				return f.type();
-			}			
-			for(Type.Clazz i : c.interfaces()) {
-				interfaceWorklist.push(i);
-			}		
-		}
-				
-		throw new FieldNotFoundException(name,receiver.toString());
-	}			
+	
 	
 	protected boolean needClassSignature(JilClass c) {
 		if (Types.isGeneric(c.type())

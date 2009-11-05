@@ -12,9 +12,9 @@ import jkit.util.Triple;
  * @author djp
  * 
  */
-public class Tag {
+public interface Tag {
 	
-	public static class Method extends Triple<Type.Reference, String, Type.Function> {
+	public static class Method extends Triple<Type.Reference, String, Type.Function> implements Tag {
 		public Method(Type.Reference owner, String name, Type.Function type) {
 			super((Type.Reference) Types.stripGenerics(owner), name, Types.stripGenerics(type));
 		}
@@ -36,7 +36,7 @@ public class Tag {
 		}						
 	}
 	
-	public static class Field extends Pair<Type.Reference, String> {
+	public static class Field extends Pair<Type.Reference, String> implements Tag {
 		public Field(Type.Reference owner, String name) {
 			super((Type.Reference) Types.stripGenerics(owner), name);
 		}
