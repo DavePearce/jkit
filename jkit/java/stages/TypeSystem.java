@@ -1028,8 +1028,7 @@ public class TypeSystem {
 	public ArrayList<Triple<Clazz,Clazz.Method,Type.Function>> listOverrides(Type.Clazz owner, String name,
 			Type.Function funType, ClassLoader loader)
 			throws ClassNotFoundException {
-		funType = Types.stripGenerics(funType);
-		System.out.println("LOOKING for METHOD: " + owner + ":" + funType);
+		funType = Types.stripGenerics(funType);		
 		ArrayList<Triple<Clazz,Clazz.Method,Type.Function>> methods = new ArrayList();
 
 		LinkedList<Type.Clazz> worklist = new LinkedList();
