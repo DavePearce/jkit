@@ -418,7 +418,7 @@ public class JavaFileReader {
 
 		Stmt.Block block = null;
 
-		if(method.getChildCount() > 6) {
+		if(method.getChildCount() > 6) {			
 			block = parseBlock(method.getChild(6), genericVariables);
 		}
 
