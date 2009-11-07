@@ -23,6 +23,7 @@ package jkit.jil.tree;
 
 import java.util.*;
 
+import jkit.bytecode.attributes.SourceFile;
 import jkit.compiler.SyntacticAttribute;
 import jkit.compiler.SyntacticElementImpl;
 
@@ -375,4 +376,13 @@ public final class JilClass extends SyntacticElementImpl implements jkit.compile
 		return type.components().size() > 1;
 	}
 
+	public String sourceFile() {
+		for(SyntacticAttribute ba : attributes()) {
+			if(ba instanceof SourceFile) {
+				SourceFile sf = (SourceFile) ba;
+				return sf.name();
+			}
+		}
+		return null;
+	}
 }
