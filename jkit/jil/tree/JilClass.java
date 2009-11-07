@@ -380,7 +380,7 @@ public final class JilClass extends SyntacticElementImpl implements jkit.compile
 		for(SyntacticAttribute ba : attributes()) {
 			if(ba instanceof SourceFile) {
 				SourceFile sf = (SourceFile) ba;
-				return sf.name();
+				return sf.filename();
 			}
 		}
 		return null;

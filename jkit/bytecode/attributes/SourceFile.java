@@ -23,6 +23,10 @@ public class SourceFile implements BytecodeAttribute {
 		return "SourceFile";
 	}
 	
+	public String filename() {
+		return filename;
+	}
+	
 	public void write(BinaryOutputStream writer,
 			Map<Constant.Info, Integer> constantPool, ClassLoader loader)
 			throws IOException {		
