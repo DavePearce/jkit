@@ -372,11 +372,11 @@ public class JavaCompiler implements Compiler {
 			// Thitienth, add bypass methods
 			for(JilClass clazz : skeletons) {
 				variableDefinitions(filename,clazz,loader);
-				eliminateDeadCode(filename,clazz,loader);
-				addBypassMethods(filename,clazz,loader);
+				eliminateDeadCode(filename,clazz,loader);				
 				if(fieldLoadOptimisationFlag) {
 					fieldLoadOptimisation(filename,clazz,loader);
 				}
+				addBypassMethods(filename,clazz,loader);
 			}
 			
 			// Ok, at this point, we need to determine the root component of the

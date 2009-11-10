@@ -16,7 +16,7 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 	
 	public void apply(JilClass owner) {
 		for(JilMethod m : owner.methods()) {			
-			if(m.body() != null) {
+			if (m.body() != null && !m.name().equals(owner.name())) {
 				// First, infer the "live dereference expressions".
 				infer(m,owner);
 				// Second, implement the rewrite.
@@ -176,6 +176,10 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 		// do nout
 	}
 	
+	protected void genUses(JilExpr.ClassVariable e, HashSet<Exprs.Equiv> uses) {
+		// do nout
+	}
+	
 	protected void genUses(JilExpr.InstanceOf e, HashSet<Exprs.Equiv> uses) {
 		genUses(e.lhs(),uses);
 	}
@@ -185,7 +189,7 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 		for(JilExpr p : e.parameters()) {
 			genUses(p,uses);
 		}
-		uses.add(new Exprs.Equiv(e));		
+		// uses.add(new Exprs.Equiv(e));		
 	}
 	
 	protected void genUses(JilExpr.New e, HashSet<Exprs.Equiv> uses) {		
@@ -203,18 +207,18 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 		}
 	}
 		
-	public void rewrite(List<JilStmt> body) {		
+	public void rewrite(List<JilStmt> body) {				
 		HashMap<Integer,List<JilStmt>> imap = new HashMap();
-		
+
 		// The emap maps the expressions to the temporary variables they are
 		// stored in.
 		HashMap<Exprs.Equiv,String> emap = new HashMap();
 		int tmpidx = 0;
-		
+
 		for(int i=0;i!=body.size();++i) {
 			JilStmt stmt = body.get(i);
 			ArrayList<JilStmt> inserts = new ArrayList<JilStmt>();
-			
+
 			if(i == 0) {
 				UnionFlowSet<Exprs.Equiv> uses = stores.get(i);
 				for(Exprs.Equiv ee : uses) {
@@ -226,41 +230,50 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 							.type()), e));
 				}
 			} /* else if(...) */
-			
-			rewrite(stmt,emap);
-			
+
+			body.set(i,rewrite(stmt,emap));
+
 			imap.put(i,inserts);
 		}
-				
+
 		// Finally, add the new inserts
+		int idx = 0;
 		for(int i=0;i!=body.size();++i) {
-			List<JilStmt> inserts = imap.get(i);
+			List<JilStmt> inserts = imap.get(idx++);
 			for(JilStmt s : inserts) {
 				body.add(i++,s);
 			}
 		}		
 	}	
 	
-	public void rewrite(JilStmt stmt, HashMap<Exprs.Equiv,String> emap) {		
-		if(stmt instanceof JilStmt.Assign) {
-			rewrite((JilStmt.Assign)stmt, emap);					
-		} else if(stmt instanceof JilExpr.Invoke) {
-			rewrite((JilExpr.Invoke)stmt, emap);										
-		} else if(stmt instanceof JilExpr.New) {
-			rewrite((JilExpr.New) stmt, emap);						
-		} else if(stmt instanceof JilStmt.Return) {
-			rewrite((JilStmt.Return) stmt, emap);
-		} else if(stmt instanceof JilStmt.Throw) {
-			rewrite((JilStmt.Throw) stmt, emap);
-		} else if (stmt instanceof JilStmt.Nop || stmt instanceof JilStmt.Label) {
-			// nop
-		} else if(stmt instanceof JilStmt.Lock) {		
-			rewrite((JilStmt.Lock) stmt, emap);
-		} else if(stmt instanceof JilStmt.Unlock) {		
-			rewrite((JilStmt.Unlock) stmt, emap);
-		} else {
-			syntax_error("unknown statement encountered (" + stmt.getClass().getName() + ")",stmt);				
-		}		
+	public JilStmt rewrite(JilStmt stmt, HashMap<Exprs.Equiv,String> emap) {	
+		try {
+			if (stmt instanceof JilStmt.Assign) {
+				return rewrite((JilStmt.Assign) stmt, emap);
+			} else if (stmt instanceof JilExpr.Invoke) {
+				return rewrite((JilExpr.Invoke) stmt, emap);
+			} else if (stmt instanceof JilExpr.New) {
+				return rewrite((JilExpr.New) stmt, emap);
+			} else if (stmt instanceof JilStmt.Return) {
+				return rewrite((JilStmt.Return) stmt, emap);
+			} else if (stmt instanceof JilStmt.Throw) {
+				return rewrite((JilStmt.Throw) stmt, emap);
+			} else if (stmt instanceof JilStmt.Nop
+					|| stmt instanceof JilStmt.Label) {
+				// nop
+				return stmt;
+			} else if (stmt instanceof JilStmt.Lock) {
+				return rewrite((JilStmt.Lock) stmt, emap);
+			} else if (stmt instanceof JilStmt.Unlock) {
+				return rewrite((JilStmt.Unlock) stmt, emap);
+			} else {
+				syntax_error("unknown statement encountered ("
+						+ stmt.getClass().getName() + ")", stmt);
+			}
+		} catch (Exception e) {
+			internal_error(stmt, e);
+		}
+		return null;
 	}
 	
 	protected JilStmt rewrite(JilStmt.Assign stmt, HashMap<Exprs.Equiv,String> emap) {
@@ -317,34 +330,40 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 	}
 	
 	protected JilExpr rewrite(JilExpr expr, HashMap<Exprs.Equiv,String> emap) {
-		if(expr instanceof JilExpr.ArrayIndex) {
-			return rewrite((JilExpr.ArrayIndex) expr, emap);
-		} else if(expr instanceof JilExpr.BinOp) {		
-			return rewrite((JilExpr.BinOp) expr, emap);
-		} else if(expr instanceof JilExpr.UnOp) {		
-			return rewrite((JilExpr.UnOp) expr, emap);								
-		} else if(expr instanceof JilExpr.Cast) {
-			return rewrite((JilExpr.Cast) expr, emap);			 			
-		}  else if(expr instanceof JilExpr.Convert) {
-			return rewrite((JilExpr.Convert) expr, emap);			 			
-		} else if(expr instanceof JilExpr.ClassVariable) {
-			return rewrite((JilExpr.ClassVariable) expr, emap);			 			
-		} else if(expr instanceof JilExpr.Deref) {
-			return rewrite((JilExpr.Deref) expr, emap);			 							
-		} else if(expr instanceof JilExpr.Variable) {
-			return rewrite((JilExpr.Variable) expr, emap);
-		} else if(expr instanceof JilExpr.InstanceOf) {
-			return rewrite((JilExpr.InstanceOf) expr, emap);
-		} else if(expr instanceof JilExpr.Invoke) {
-			return rewrite((JilExpr.Invoke) expr, emap);
-		} else if(expr instanceof JilExpr.New) {
-			return rewrite((JilExpr.New) expr, emap);
-		} else if(expr instanceof JilExpr.Value) {
-			return rewrite((JilExpr.Value) expr, emap);
-		} else {
-			syntax_error("Unknown expression \"" + expr + "\" encoutered",expr);
+		try {
+			if (expr instanceof JilExpr.ArrayIndex) {
+				return rewrite((JilExpr.ArrayIndex) expr, emap);
+			} else if (expr instanceof JilExpr.BinOp) {
+				return rewrite((JilExpr.BinOp) expr, emap);
+			} else if (expr instanceof JilExpr.UnOp) {
+				return rewrite((JilExpr.UnOp) expr, emap);
+			} else if (expr instanceof JilExpr.Cast) {
+				return rewrite((JilExpr.Cast) expr, emap);
+			} else if (expr instanceof JilExpr.Convert) {
+				return rewrite((JilExpr.Convert) expr, emap);
+			} else if (expr instanceof JilExpr.ClassVariable) {
+				return rewrite((JilExpr.ClassVariable) expr, emap);
+			} else if (expr instanceof JilExpr.Deref) {
+				return rewrite((JilExpr.Deref) expr, emap);
+			} else if (expr instanceof JilExpr.Variable) {
+				return rewrite((JilExpr.Variable) expr, emap);
+			} else if (expr instanceof JilExpr.InstanceOf) {
+				return rewrite((JilExpr.InstanceOf) expr, emap);
+			} else if (expr instanceof JilExpr.Invoke) {
+				return rewrite((JilExpr.Invoke) expr, emap);
+			} else if (expr instanceof JilExpr.New) {
+				return rewrite((JilExpr.New) expr, emap);
+			} else if (expr instanceof JilExpr.Value) {
+				return rewrite((JilExpr.Value) expr, emap);
+			} else {
+				syntax_error("Unknown expression \"" + expr + "\" encoutered",
+						expr);
+				return null;
+			}
+		} catch (Exception e) {
+			internal_error(expr, e);
 			return null;
-		}				
+		}
 	}
 	
 	protected JilExpr rewrite(JilExpr.ArrayIndex expr, HashMap<Exprs.Equiv,String> emap) {
@@ -381,7 +400,7 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 
 		String var = emap.get(ee);
 		if (var != null) {
-			lhs = new JilExpr.Variable(var, expr.type());
+			return new JilExpr.Variable(var, expr.type(), expr.attributes());
 		} else {
 			lhs = rewrite(expr.target(), emap);
 		}
