@@ -31,6 +31,147 @@ import jkit.jil.tree.Type;
 
 public class Exprs {
 	/**
+	 * The following class is provided for situations where you want to use
+	 * JilExpr's in, for example, a HashSet and, furthermore, you want them to
+	 * be considered equal upto attributes.
+	 * 
+	 * @author djp
+	 * 
+	 */
+	public static class Equiv {
+		private final JilExpr expr;
+
+		public Equiv(JilExpr expr) {
+			this.expr = expr;
+		}
+
+		public boolean equals(Object o) {
+			if (o instanceof Equiv) {
+				Equiv ee = (Equiv) o;
+				return equivalent(expr, ee.expr);
+			}
+			return false;
+		}
+
+		public int hashCode() {
+			// the followng is something of a hack for now.
+			return expr.toString().hashCode();
+		}
+	}
+	
+	/**
+	 * The following method determines whether two expressions are equivalent or
+	 * not. Essentially, this means they are identical, up to attributes. Hence,
+	 * two expressions which have different attributes, but were otherwise equal
+	 * would be considered "equivalent".
+	 * 
+	 * @param e1
+	 * @param e2
+	 * @return
+	 */
+	public static boolean equivalent(JilExpr e1, JilExpr e2) {
+		if(e1.getClass() != e2.getClass()) {
+			return false;
+		} else if(e1 instanceof Variable) {
+			Variable v1 = (Variable) e1;
+			Variable v2 = (Variable) e2;
+			return v1.value().equals(v2.value());
+		} else if(e1 instanceof Cast) {
+			Cast c1 = (Cast) e1;
+			Cast c2 = (Cast) e2;
+			return c1.type().equals(c2.type())
+					&& equivalent(c1.expr(), c2.expr());
+		} else if(e1 instanceof Convert) {
+			Convert c1 = (Convert) e1;
+			Convert c2 = (Convert) e2;
+			return c1.type().equals(c2.type())
+			&& equivalent(c1.expr(), c2.expr());
+		} else if(e1 instanceof InstanceOf) {
+			InstanceOf c1 = (InstanceOf) e1;
+			InstanceOf c2 = (InstanceOf) e2;
+			return c1.type().equals(c2.type())
+			&& equivalent(c1.lhs(), c2.lhs());
+		} else if(e1 instanceof UnOp) {
+			UnOp c1 = (UnOp) e1;
+			UnOp c2 = (UnOp) e2;
+			return c1.op() == c2.op() && equivalent(c1.expr(), c2.expr());
+		} else if(e1 instanceof Deref) {
+			Deref c1 = (Deref) e1;
+			Deref c2 = (Deref) e2;
+			return c1.name().equals(c2.name())
+					&& equivalent(c1.target(), c2.target());
+		} else if(e1 instanceof BinOp) {
+			BinOp c1 = (BinOp) e1;
+			BinOp c2 = (BinOp) e2;
+			return c1.op() == c2.op() && equivalent(c1.lhs(), c2.lhs())
+					&& equivalent(c1.lhs(), c2.lhs());
+		} else if(e1 instanceof Deref) {
+		} else if(e1 instanceof ArrayIndex) {
+			ArrayIndex c1 = (ArrayIndex) e1;
+			ArrayIndex c2 = (ArrayIndex) e2;
+			return equivalent(c1.target(), c2.target())
+			&& equivalent(c1.index(), c2.index());
+		} else if(e1 instanceof Invoke) {
+			Invoke c1 = (Invoke) e1;
+			Invoke c2 = (Invoke) e2;
+			
+			List<? extends JilExpr> c1_params = c1.parameters();
+			List<? extends JilExpr> c2_params = c2.parameters();
+			
+			if (!c1.name().equals(c2.name())
+					|| c1_params.size() != c2_params.size()) {
+				return false;
+			}
+			
+			for (int i = 0; i != c1_params.size(); ++i) {
+				if (!equivalent(c1_params.get(i), c2_params.get(i))) {
+					return false;
+				}
+			}			
+			
+			return true;
+		} else if(e1 instanceof New) {
+			New c1 = (New) e1;
+			New c2 = (New) e2;	
+			List<? extends JilExpr> c1_params = c1.parameters();
+			List<? extends JilExpr> c2_params = c2.parameters();
+			
+			if (!c1.type().equals(c2.type())
+					|| c1_params.size() != c2_params.size()) {
+				return false;
+			}
+
+			for (int i = 0; i != c1_params.size(); ++i) {
+				if (!equivalent(c1_params.get(i), c2_params.get(i))) {
+					return false;
+				}
+			}			
+			
+			return true;
+						
+		} else if(e1 instanceof Array) {
+			Array c1 = (Array) e1;
+			Array c2 = (Array) e2;		
+			List<? extends JilExpr> c1_values = c1.values();
+			List<? extends JilExpr> c2_values = c2.values();
+			
+			if (!c1.type().equals(c2.type())
+					|| c1_values.size() != c2_values.size()) {
+				return false;
+			}
+
+			for (int i = 0; i != c1_values.size(); ++i) {
+				if (!equivalent(c1_values.get(i), c2_values.get(i))) {
+					return false;
+				}
+			}			
+			
+			return true;			
+		}
+		return false;
+	}
+	
+	/**
 	 * This method determines the set of local variables used within an
 	 * expression.
 	 * 
