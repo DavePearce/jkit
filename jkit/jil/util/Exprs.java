@@ -61,6 +61,10 @@ public class Exprs {
 			// the followng is something of a hack for now.
 			return expr.toString().hashCode();
 		}
+		
+		public String toString() {
+			return "~[" + expr.toString() + "]";
+		}
 	}
 	
 	/**
@@ -80,6 +84,10 @@ public class Exprs {
 			Variable v1 = (Variable) e1;
 			Variable v2 = (Variable) e2;
 			return v1.value().equals(v2.value());
+		} else if(e1 instanceof ClassVariable) {
+			ClassVariable v1 = (ClassVariable) e1;
+			ClassVariable v2 = (ClassVariable) e2;
+			return v1.type().equals(v2.type());
 		} else if(e1 instanceof Cast) {
 			Cast c1 = (Cast) e1;
 			Cast c2 = (Cast) e2;
@@ -101,15 +109,17 @@ public class Exprs {
 			return c1.op() == c2.op() && equivalent(c1.expr(), c2.expr());
 		} else if(e1 instanceof Deref) {
 			Deref c1 = (Deref) e1;
-			Deref c2 = (Deref) e2;
-			return c1.name().equals(c2.name())
+			Deref c2 = (Deref) e2;						
+			
+			boolean r = c1.name().equals(c2.name())
 					&& equivalent(c1.target(), c2.target());
+			
+			return r;
 		} else if(e1 instanceof BinOp) {
 			BinOp c1 = (BinOp) e1;
 			BinOp c2 = (BinOp) e2;
 			return c1.op() == c2.op() && equivalent(c1.lhs(), c2.lhs())
 					&& equivalent(c1.lhs(), c2.lhs());
-		} else if(e1 instanceof Deref) {
 		} else if(e1 instanceof ArrayIndex) {
 			ArrayIndex c1 = (ArrayIndex) e1;
 			ArrayIndex c2 = (ArrayIndex) e2;
@@ -123,12 +133,12 @@ public class Exprs {
 			List<? extends JilExpr> c2_params = c2.parameters();
 			
 			if (!c1.name().equals(c2.name())
-					|| c1_params.size() != c2_params.size()) {
+					|| c1_params.size() != c2_params.size()) {				
 				return false;
 			}
 			
 			for (int i = 0; i != c1_params.size(); ++i) {
-				if (!equivalent(c1_params.get(i), c2_params.get(i))) {
+				if (!equivalent(c1_params.get(i), c2_params.get(i))) {					
 					return false;
 				}
 			}			

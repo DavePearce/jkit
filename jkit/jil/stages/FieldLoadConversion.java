@@ -74,67 +74,71 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 	public UnionFlowSet<Exprs.Equiv> transfer(JilStmt.Assign stmt,
 			UnionFlowSet<Exprs.Equiv> in) throws ClassNotFoundException {										
 		// this is clearly broken.
-		HashSet<Exprs.Equiv> uses = new HashSet();
+		Set<Exprs.Equiv> uses = in.toSet();
 		killUses(stmt.lhs(),uses);
 		killUses(stmt.rhs(),uses);
 		
-		
-		
 		genUses(stmt.rhs(),uses);
 		genUses(stmt.lhs(),uses);
-		return in.union(new UnionFlowSet(uses));
+		return new UnionFlowSet(uses);
 	}
 	
 	public UnionFlowSet<Exprs.Equiv> transfer(JilExpr.Invoke stmt,
 			UnionFlowSet<Exprs.Equiv> in) throws ClassNotFoundException {										
-		HashSet<Exprs.Equiv> uses = new HashSet();
+		Set<Exprs.Equiv> uses = in.toSet();
+		killUses(stmt,uses);
 		genUses(stmt,uses);		
-		return in.union(new UnionFlowSet(uses));		
+		return new UnionFlowSet(uses);		
 	}
 	
 	public UnionFlowSet<Exprs.Equiv> transfer(JilExpr.New stmt,
 			UnionFlowSet<Exprs.Equiv> in) throws ClassNotFoundException {
-		HashSet<Exprs.Equiv> uses = new HashSet();
+		Set<Exprs.Equiv> uses = in.toSet();
+		killUses(stmt,uses);
 		genUses(stmt,uses);		
-		return in.union(new UnionFlowSet(uses));		
+		return new UnionFlowSet(uses);		
 	}
 	
 	public UnionFlowSet<Exprs.Equiv> transfer(JilStmt.Return stmt,
 			UnionFlowSet<Exprs.Equiv> in) throws ClassNotFoundException {
 		if(stmt.expr() != null) {
-			HashSet<Exprs.Equiv> uses = new HashSet();
+			Set<Exprs.Equiv> uses = in.toSet();
+			killUses(stmt.expr(),uses);
 			genUses(stmt.expr(),uses);		
-			return in.union(new UnionFlowSet(uses));
+			return new UnionFlowSet(uses);
 		}
 		return in;
 	}
 	
 	public UnionFlowSet<Exprs.Equiv> transfer(JilStmt.Throw stmt,
 			UnionFlowSet<Exprs.Equiv> in) throws ClassNotFoundException {
-		HashSet<Exprs.Equiv> uses = new HashSet();
+		Set<Exprs.Equiv> uses = in.toSet();
+		killUses(stmt.expr(),uses);
 		genUses(stmt.expr(),uses);		
-		return in.union(new UnionFlowSet(uses));		
+		return new UnionFlowSet(uses);		
 	}
 	
 	public UnionFlowSet<Exprs.Equiv> transfer(JilStmt.Lock stmt,
 			UnionFlowSet<Exprs.Equiv> in) throws ClassNotFoundException {
-		HashSet<Exprs.Equiv> uses = new HashSet();
+		Set<Exprs.Equiv> uses = in.toSet();
+		killUses(stmt.expr(),uses);
 		genUses(stmt.expr(),uses);		
-		return in.union(new UnionFlowSet(uses));		
+		return new UnionFlowSet(uses);		
 	}
 	
 	public UnionFlowSet<Exprs.Equiv> transfer(JilStmt.Unlock stmt,
 			UnionFlowSet<Exprs.Equiv> in) throws ClassNotFoundException {
-		HashSet<Exprs.Equiv> uses = new HashSet();
-		genUses(stmt.expr(),uses);		
-		return in.union(new UnionFlowSet(uses));		
+		Set<Exprs.Equiv> uses = in.toSet();
+		killUses(stmt.expr(),uses);
+		genUses(stmt.expr(),uses);	
+		return new UnionFlowSet(uses);		
 	}
 	
 	public UnionFlowSet<Exprs.Equiv> transfer(JilExpr e, UnionFlowSet<Exprs.Equiv> in) {
 		return in; // conditions have no effect.
 	}
 	
-	protected void genUses(JilExpr expr, HashSet<Exprs.Equiv> uses) {
+	protected void genUses(JilExpr expr, Set<Exprs.Equiv> uses) {
 		if(expr instanceof JilExpr.ArrayIndex) {
 			genUses((JilExpr.ArrayIndex) expr, uses);
 		} else if(expr instanceof JilExpr.BinOp) {		
@@ -164,42 +168,42 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 		}		
 	}
 	
-	protected void genUses(JilExpr.ArrayIndex e, HashSet<Exprs.Equiv> uses) {
+	protected void genUses(JilExpr.ArrayIndex e, Set<Exprs.Equiv> uses) {
 		genUses(e.target(),uses);
 		genUses(e.index(),uses);
 	}
 	
-	protected void genUses(JilExpr.BinOp e, HashSet<Exprs.Equiv> uses) {
+	protected void genUses(JilExpr.BinOp e, Set<Exprs.Equiv> uses) {
 		genUses(e.lhs(),uses);
 		genUses(e.rhs(),uses);
 	}
 
-	protected void genUses(JilExpr.UnOp e, HashSet<Exprs.Equiv> uses) {
+	protected void genUses(JilExpr.UnOp e, Set<Exprs.Equiv> uses) {
 		genUses(e.expr(),uses);
 	}
 	
-	protected void genUses(JilExpr.Cast e, HashSet<Exprs.Equiv> uses) {
+	protected void genUses(JilExpr.Cast e, Set<Exprs.Equiv> uses) {
 		genUses(e.expr(),uses);
 	}
 	
-	protected void genUses(JilExpr.Deref e, HashSet<Exprs.Equiv> uses) {
+	protected void genUses(JilExpr.Deref e, Set<Exprs.Equiv> uses) {
 		genUses(e.target(),uses);
 		uses.add(new Exprs.Equiv(e));
 	}
 	
-	protected void genUses(JilExpr.Variable e, HashSet<Exprs.Equiv> uses) {
+	protected void genUses(JilExpr.Variable e, Set<Exprs.Equiv> uses) {
 		// do nout
 	}
 	
-	protected void genUses(JilExpr.ClassVariable e, HashSet<Exprs.Equiv> uses) {
+	protected void genUses(JilExpr.ClassVariable e, Set<Exprs.Equiv> uses) {
 		// do nout
 	}
 	
-	protected void genUses(JilExpr.InstanceOf e, HashSet<Exprs.Equiv> uses) {
+	protected void genUses(JilExpr.InstanceOf e, Set<Exprs.Equiv> uses) {
 		genUses(e.lhs(),uses);
 	}
 	
-	protected void genUses(JilExpr.Invoke e, HashSet<Exprs.Equiv> uses) {
+	protected void genUses(JilExpr.Invoke e, Set<Exprs.Equiv> uses) {
 		genUses(e.target(),uses);
 		for(JilExpr p : e.parameters()) {
 			genUses(p,uses);
@@ -207,13 +211,13 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 		// uses.add(new Exprs.Equiv(e));		
 	}
 	
-	protected void genUses(JilExpr.New e, HashSet<Exprs.Equiv> uses) {		
+	protected void genUses(JilExpr.New e, Set<Exprs.Equiv> uses) {		
 		for(JilExpr p : e.parameters()) {
 			genUses(p,uses);
 		}
 	}
 	
-	protected void genUses(JilExpr.Value e, HashSet<Exprs.Equiv> uses) {
+	protected void genUses(JilExpr.Value e, Set<Exprs.Equiv> uses) {
 		if(e instanceof JilExpr.Array) {
 			JilExpr.Array a = (JilExpr.Array) e;
 			for(JilExpr p : a.values()) {
@@ -222,7 +226,7 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 		}
 	}
 	
-	protected void killUses(JilExpr expr, HashSet<Exprs.Equiv> uses) {
+	protected void killUses(JilExpr expr, Set<Exprs.Equiv> uses) {
 		if(expr instanceof JilExpr.ArrayIndex) {
 			killUses((JilExpr.ArrayIndex) expr, uses);
 		} else if(expr instanceof JilExpr.BinOp) {		
@@ -252,41 +256,41 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 		}		
 	}
 	
-	protected void killUses(JilExpr.ArrayIndex e, HashSet<Exprs.Equiv> uses) {
+	protected void killUses(JilExpr.ArrayIndex e, Set<Exprs.Equiv> uses) {
 		killUses(e.target(),uses);
 		killUses(e.index(),uses);
 	}
 	
-	protected void killUses(JilExpr.BinOp e, HashSet<Exprs.Equiv> uses) {
+	protected void killUses(JilExpr.BinOp e, Set<Exprs.Equiv> uses) {
 		killUses(e.lhs(),uses);
 		killUses(e.rhs(),uses);
 	}
 
-	protected void killUses(JilExpr.UnOp e, HashSet<Exprs.Equiv> uses) {
+	protected void killUses(JilExpr.UnOp e, Set<Exprs.Equiv> uses) {
 		killUses(e.expr(),uses);
 	}
 	
-	protected void killUses(JilExpr.Cast e, HashSet<Exprs.Equiv> uses) {
+	protected void killUses(JilExpr.Cast e, Set<Exprs.Equiv> uses) {
 		killUses(e.expr(),uses);
 	}
 	
-	protected void killUses(JilExpr.Deref e, HashSet<Exprs.Equiv> uses) {
+	protected void killUses(JilExpr.Deref e, Set<Exprs.Equiv> uses) {
 		killUses(e.target(),uses);
 	}
 	
-	protected void killUses(JilExpr.Variable e, HashSet<Exprs.Equiv> uses) {
+	protected void killUses(JilExpr.Variable e, Set<Exprs.Equiv> uses) {
 		// do nout
 	}
 	
-	protected void killUses(JilExpr.ClassVariable e, HashSet<Exprs.Equiv> uses) {
+	protected void killUses(JilExpr.ClassVariable e, Set<Exprs.Equiv> uses) {
 		// do nout
 	}
 	
-	protected void killUses(JilExpr.InstanceOf e, HashSet<Exprs.Equiv> uses) {
+	protected void killUses(JilExpr.InstanceOf e, Set<Exprs.Equiv> uses) {
 		killUses(e.lhs(),uses);
 	}
 	
-	protected void killUses(JilExpr.Invoke e, HashSet<Exprs.Equiv> uses) {
+	protected void killUses(JilExpr.Invoke e, Set<Exprs.Equiv> uses) {
 		killUses(e.target(), uses);
 		for (JilExpr p : e.parameters()) {
 			killUses(p, uses);
@@ -297,6 +301,9 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 					(Type.Reference) e.target().type(), e.name(), e.funType());
 
 			if (!rt.second().isPure()) {
+				
+				System.out.println("IMPURE METHOD: " + rt.first().name() + " " + rt.second().name());
+				
 				uses.clear(); // should be able to do better in some cases
 			}
 
@@ -307,13 +314,13 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 		}
 	}
 	
-	protected void killUses(JilExpr.New e, HashSet<Exprs.Equiv> uses) {		
+	protected void killUses(JilExpr.New e, Set<Exprs.Equiv> uses) {		
 		for(JilExpr p : e.parameters()) {
 			killUses(p,uses);
 		}
 	}
 	
-	protected void killUses(JilExpr.Value e, HashSet<Exprs.Equiv> uses) {
+	protected void killUses(JilExpr.Value e, Set<Exprs.Equiv> uses) {
 		if(e instanceof JilExpr.Array) {
 			JilExpr.Array a = (JilExpr.Array) e;
 			for(JilExpr p : a.values()) {
@@ -512,6 +519,9 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 		JilExpr lhs = expr.target();
 		Exprs.Equiv ee = new Exprs.Equiv(expr);
 
+		System.out.println("EMAP: " + emap);
+		System.out.println("LOOKING FOR: " + ee);
+		
 		String var = emap.get(ee);
 		if (var != null) {
 			return new JilExpr.Variable(var, expr.type(), expr.attributes());
@@ -537,7 +547,11 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 			params.add(rewrite(p,emap));
 		}
 		
+		System.out.println("GOT: " + stmt.target());
+		
 		JilExpr target = rewrite(stmt.target(),emap);
+		
+		System.out.println("NOW: " + target);
 		
 		if(stmt instanceof JilExpr.SpecialInvoke) {
 			return new JilExpr.SpecialInvoke(target, stmt.name(), params, stmt.funType(),
