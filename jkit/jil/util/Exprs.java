@@ -22,14 +22,110 @@
 package jkit.jil.util;
 
 import java.util.*;
+
 import static jkit.compiler.SyntaxError.*;
 import static jkit.jil.util.Types.*;
+import jkit.compiler.Clazz;
+import jkit.compiler.ClassLoader;
+import jkit.compiler.MethodNotFoundException;
 import jkit.jil.tree.*;
-import jkit.jil.tree.JilExpr;
 import jkit.jil.tree.JilExpr.*;
 import jkit.jil.tree.Type;
+import jkit.util.Pair;
 
 public class Exprs {
+	
+	
+	/**
+	 * The following method determines whether an expression is side-effect
+	 * free. Essentially, a JilExpr is side:effect free if either: doesn't use
+	 * any method invocations; or, those that it does use are marked pure.
+	 * 
+	 * @param e
+	 * @return
+	 */
+	public static boolean isSideEffectFree(JilExpr e, ClassLoader loader) {
+		if(e instanceof Variable) {
+			return true;
+		} else if(e instanceof ClassVariable) {
+			return true;
+		} else if(e instanceof Cast) {
+			Cast c1 = (Cast) e;
+			return isSideEffectFree(c1.expr(),loader);
+		} else if(e instanceof Convert) {
+			Convert c1 = (Convert) e;
+			return isSideEffectFree(c1.expr(),loader);
+		} else if(e instanceof InstanceOf) {
+			InstanceOf c1 = (InstanceOf) e;
+			return isSideEffectFree(c1.lhs(),loader);
+		} else if(e instanceof UnOp) {
+			UnOp c1 = (UnOp) e;
+			return isSideEffectFree(c1.expr(),loader);			
+		} else if(e instanceof Deref) {
+			Deref c1 = (Deref) e;			
+			return isSideEffectFree(c1.target(),loader);
+		} else if(e instanceof BinOp) {
+			BinOp c1 = (BinOp) e;
+			return isSideEffectFree(c1.lhs(),loader) && isSideEffectFree(c1.rhs(),loader);
+		} else if(e instanceof ArrayIndex) {
+			ArrayIndex c1 = (ArrayIndex) e;
+			return isSideEffectFree(c1.target(), loader)
+					&& isSideEffectFree(c1.index(), loader);			
+		} else if(e instanceof Invoke) {
+			Invoke c1 = (Invoke) e;
+
+			try {
+
+				if (!isSideEffectFree(c1.target(), loader)) {
+					return false;
+				}
+
+				for (JilExpr p : c1.parameters()) {
+					if (!isSideEffectFree(p, loader)) {
+						return false;
+					}
+				}
+
+				Pair<Clazz, Clazz.Method> rt = loader.determineMethod(
+						(Type.Reference) c1.target().type(), c1.name(), c1
+								.funType());
+
+				return rt.second().isPure();
+			} catch (MethodNotFoundException mnfe) {
+				internal_error(e, mnfe);
+			} catch (ClassNotFoundException cnfe) {
+				internal_error(e, cnfe);
+			}
+			return false;
+		} else if (e instanceof New) {
+			New c1 = (New) e;
+			
+			// FIXME: this is broken
+
+			for (JilExpr p : c1.parameters()) {
+				if (!isSideEffectFree(p, loader)) {
+					return false;
+				}
+			}
+
+			return true;
+		} else if(e instanceof Array) {
+			Array c1 = (Array) e;
+						
+			for(JilExpr p : c1.values()) {
+				if(!isSideEffectFree(p,loader)) {
+					return false;
+				}
+			}	
+
+			return true;			
+		} else {
+			syntax_error("unknown expression encountered ("
+					+ e.getClass().getName() + ")", e);
+		}
+		return false;
+	}
+	
 	/**
 	 * The following class is provided for situations where you want to use
 	 * JilExpr's in, for example, a HashSet and, furthermore, you want them to
@@ -66,7 +162,6 @@ public class Exprs {
 			return "~[" + expr.toString() + "]";
 		}
 	}
-	
 	/**
 	 * The following method determines whether two expressions are equivalent or
 	 * not. Essentially, this means they are identical, up to attributes. Hence,

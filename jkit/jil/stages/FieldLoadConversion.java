@@ -8,7 +8,20 @@ import java.util.*;
 import jkit.compiler.Clazz;
 import jkit.compiler.ClassLoader;
 import jkit.compiler.MethodNotFoundException;
+import jkit.compiler.FieldNotFoundException;
 import jkit.jil.tree.*;
+import jkit.jil.tree.JilExpr.Array;
+import jkit.jil.tree.JilExpr.ArrayIndex;
+import jkit.jil.tree.JilExpr.BinOp;
+import jkit.jil.tree.JilExpr.Cast;
+import jkit.jil.tree.JilExpr.ClassVariable;
+import jkit.jil.tree.JilExpr.Convert;
+import jkit.jil.tree.JilExpr.Deref;
+import jkit.jil.tree.JilExpr.InstanceOf;
+import jkit.jil.tree.JilExpr.Invoke;
+import jkit.jil.tree.JilExpr.New;
+import jkit.jil.tree.JilExpr.UnOp;
+import jkit.jil.tree.JilExpr.Variable;
 import jkit.jil.util.*;
 import jkit.jil.dfa.BackwardAnalysis;
 import jkit.jil.dfa.UnionFlowSet;
@@ -105,6 +118,8 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 			}
 		} else if(lhs instanceof JilExpr.Deref) {
 			JilExpr.Deref d = (JilExpr.Deref) lhs;
+			Tag.Field tf = determineField(d);
+			killFields(tf,uses);
 			genUses(d.target(),uses);
 		} else if(lhs instanceof JilExpr.ArrayIndex) {
 			JilExpr.ArrayIndex a = (JilExpr.ArrayIndex) lhs;
@@ -221,7 +236,9 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 	
 	protected void genUses(JilExpr.Deref e, Set<Exprs.Equiv> uses) {
 		genUses(e.target(),uses);
-		uses.add(new Exprs.Equiv(e));
+		if(Exprs.isSideEffectFree(e,loader)) {
+			uses.add(new Exprs.Equiv(e));
+		}
 	}
 	
 	protected void genUses(JilExpr.Variable e, Set<Exprs.Equiv> uses) {
@@ -329,19 +346,9 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 			killUses(p, uses);
 		}
 
-		try {
-			Pair<Clazz, Clazz.Method> rt = loader.determineMethod(
-					(Type.Reference) e.target().type(), e.name(), e.funType());
-
-			if (!rt.second().isPure()) {
-				uses.clear(); // should be able to do better in some cases
-			}
-
-		} catch (MethodNotFoundException mnfe) {
-			internal_error(e, mnfe);
-		} catch (ClassNotFoundException cnfe) {
-			internal_error(e, cnfe);
-		}
+		if(!Exprs.isSideEffectFree(e,loader)) {
+			uses.clear();
+		}		
 	}
 	
 	protected void killUses(JilExpr.New e, Set<Exprs.Equiv> uses) {		
@@ -358,6 +365,96 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 			}
 		}
 	}
+	
+	protected void killFields(Tag.Field field, Set<Exprs.Equiv> uses) {
+		ArrayList<Exprs.Equiv> olduses = new ArrayList(uses);
+		uses.clear();
+		for(Exprs.Equiv ee : olduses) {
+			if(!conflict(ee.expr(),field)) {
+				uses.add(ee);
+			}
+		}
+	}
+	
+	protected boolean conflict(JilExpr e, Tag.Field field) {		
+		if(e instanceof Variable) {
+			return false;
+		} else if(e instanceof ClassVariable) {
+			return false;
+		} else if(e instanceof Cast) {
+			Cast c1 = (Cast) e;
+			return conflict(c1.expr(),field);
+		} else if(e instanceof Convert) {
+			Convert c1 = (Convert) e;
+			return conflict(c1.expr(),field);
+		} else if(e instanceof InstanceOf) {
+			InstanceOf c1 = (InstanceOf) e;
+			return conflict(c1.lhs(),field);
+		} else if(e instanceof UnOp) {
+			UnOp c1 = (UnOp) e;
+			return conflict(c1.expr(),field);			
+		} else if(e instanceof Deref) {
+			Deref c1 = (Deref) e;			
+
+			if (c1.name().equals(field.name())
+					&& field.owner() instanceof Type.Clazz) {
+				// Ok, at this stage we need to really determine where the field
+				// is coming from.
+				Tag.Field f = determineField(c1);
+				if(f.equals(field)) {
+					return true;
+				}
+			}
+			return conflict(c1.target(),field);
+		} else if(e instanceof BinOp) {
+			BinOp c1 = (BinOp) e;
+			return conflict(c1.lhs(),field) || conflict(c1.rhs(),field);
+		} else if(e instanceof ArrayIndex) {
+			ArrayIndex c1 = (ArrayIndex) e;
+			return conflict(c1.target(), field) || conflict(c1.index(), field);			
+		} else if(e instanceof Invoke) {
+			Invoke c1 = (Invoke) e;
+
+			if (!Exprs.isSideEffectFree(e, loader)) {
+				return true;
+			}
+
+			for(JilExpr p : c1.parameters()) {
+				if(conflict(p,field)) {
+					return true;
+				}
+			}
+
+			return conflict(c1.target(),field);
+		} else if(e instanceof New) {
+			New c1 = (New) e;
+
+			List<? extends JilExpr> c1_params = c1.parameters();
+					
+			for(JilExpr p : c1.parameters()) {
+				if(conflict(p,field)) {
+					return true;
+				}
+			}
+			
+			return false;
+		} else if(e instanceof Array) {
+			Array c1 = (Array) e;
+						
+			for(JilExpr p : c1.values()) {
+				if(conflict(p,field)) {
+					return true;
+				}
+			}	
+
+			return false;			
+		} else {
+			syntax_error("unknown expression encountered ("
+					+ e.getClass().getName() + ")", e);
+		}
+		return false;
+	}
+	
 	public void rewrite(List<JilStmt> body) {				
 		HashMap<Integer,List<JilStmt>> imap = new HashMap();
 
@@ -606,5 +703,20 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 		} else {
 			return expr;
 		}
+	}
+	
+	protected Tag.Field determineField(JilExpr.Deref d) {
+		try {
+			Pair<Clazz, Clazz.Field> rf = loader.determineField(
+					(Type.Clazz) d.target().type(), d.name());
+
+			return new Tag.Field(rf.first().type(), rf.second()
+					.name());
+		} catch (ClassNotFoundException cnfe) {
+			internal_error(d, cnfe);
+		} catch (FieldNotFoundException fnfe) {
+			internal_error(d, fnfe);
+		}
+		return null;
 	}
 }
