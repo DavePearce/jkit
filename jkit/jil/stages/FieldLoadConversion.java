@@ -5,12 +5,22 @@ import static jkit.compiler.SyntaxError.syntax_error;
 
 import java.util.*;
 
+import jkit.compiler.Clazz;
+import jkit.compiler.ClassLoader;
+import jkit.compiler.MethodNotFoundException;
 import jkit.jil.tree.*;
 import jkit.jil.util.*;
 import jkit.jil.dfa.BackwardAnalysis;
 import jkit.jil.dfa.UnionFlowSet;
+import jkit.util.Pair;
 
 public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equiv>> {
+	private final ClassLoader loader;
+	
+	public FieldLoadConversion(ClassLoader loader) {
+		this.loader = loader;
+	}
+	
 	// First thing I need is some kind of expression comparator. This is because
 	// JilExpr doesn't have a .equals method (and probably shouldn't)
 	
@@ -65,6 +75,11 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 			UnionFlowSet<Exprs.Equiv> in) throws ClassNotFoundException {										
 		// this is clearly broken.
 		HashSet<Exprs.Equiv> uses = new HashSet();
+		killUses(stmt.lhs(),uses);
+		killUses(stmt.rhs(),uses);
+		
+		
+		
 		genUses(stmt.rhs(),uses);
 		genUses(stmt.lhs(),uses);
 		return in.union(new UnionFlowSet(uses));
@@ -206,7 +221,106 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 			}
 		}
 	}
-		
+	
+	protected void killUses(JilExpr expr, HashSet<Exprs.Equiv> uses) {
+		if(expr instanceof JilExpr.ArrayIndex) {
+			killUses((JilExpr.ArrayIndex) expr, uses);
+		} else if(expr instanceof JilExpr.BinOp) {		
+			killUses((JilExpr.BinOp) expr, uses);
+		} else if(expr instanceof JilExpr.UnOp) {		
+			killUses((JilExpr.UnOp) expr, uses);								
+		} else if(expr instanceof JilExpr.Cast) {
+			killUses((JilExpr.Cast) expr, uses);			 			
+		}  else if(expr instanceof JilExpr.Convert) {
+			killUses((JilExpr.Convert) expr, uses);			 			
+		} else if(expr instanceof JilExpr.ClassVariable) {
+			killUses((JilExpr.ClassVariable) expr, uses);			 			
+		} else if(expr instanceof JilExpr.Deref) {
+			killUses((JilExpr.Deref) expr, uses);			 							
+		} else if(expr instanceof JilExpr.Variable) {
+			killUses((JilExpr.Variable) expr, uses);
+		} else if(expr instanceof JilExpr.InstanceOf) {
+			killUses((JilExpr.InstanceOf) expr, uses);
+		} else if(expr instanceof JilExpr.Invoke) {
+			killUses((JilExpr.Invoke) expr, uses);
+		} else if(expr instanceof JilExpr.New) {
+			killUses((JilExpr.New) expr, uses);
+		} else if(expr instanceof JilExpr.Value) {
+			killUses((JilExpr.Value) expr, uses);
+		} else {
+			syntax_error("Unknown expression \"" + expr + "\" encoutered",expr);			
+		}		
+	}
+	
+	protected void killUses(JilExpr.ArrayIndex e, HashSet<Exprs.Equiv> uses) {
+		killUses(e.target(),uses);
+		killUses(e.index(),uses);
+	}
+	
+	protected void killUses(JilExpr.BinOp e, HashSet<Exprs.Equiv> uses) {
+		killUses(e.lhs(),uses);
+		killUses(e.rhs(),uses);
+	}
+
+	protected void killUses(JilExpr.UnOp e, HashSet<Exprs.Equiv> uses) {
+		killUses(e.expr(),uses);
+	}
+	
+	protected void killUses(JilExpr.Cast e, HashSet<Exprs.Equiv> uses) {
+		killUses(e.expr(),uses);
+	}
+	
+	protected void killUses(JilExpr.Deref e, HashSet<Exprs.Equiv> uses) {
+		killUses(e.target(),uses);
+	}
+	
+	protected void killUses(JilExpr.Variable e, HashSet<Exprs.Equiv> uses) {
+		// do nout
+	}
+	
+	protected void killUses(JilExpr.ClassVariable e, HashSet<Exprs.Equiv> uses) {
+		// do nout
+	}
+	
+	protected void killUses(JilExpr.InstanceOf e, HashSet<Exprs.Equiv> uses) {
+		killUses(e.lhs(),uses);
+	}
+	
+	protected void killUses(JilExpr.Invoke e, HashSet<Exprs.Equiv> uses) {
+		killUses(e.target(), uses);
+		for (JilExpr p : e.parameters()) {
+			killUses(p, uses);
+		}
+
+		try {
+			Pair<Clazz, Clazz.Method> rt = loader.determineMethod(
+					(Type.Reference) e.target().type(), e.name(), e.funType());
+
+			if (!rt.second().isPure()) {
+				uses.clear(); // should be able to do better in some cases
+			}
+
+		} catch (MethodNotFoundException mnfe) {
+			internal_error(e, mnfe);
+		} catch (ClassNotFoundException cnfe) {
+			internal_error(e, cnfe);
+		}
+	}
+	
+	protected void killUses(JilExpr.New e, HashSet<Exprs.Equiv> uses) {		
+		for(JilExpr p : e.parameters()) {
+			killUses(p,uses);
+		}
+	}
+	
+	protected void killUses(JilExpr.Value e, HashSet<Exprs.Equiv> uses) {
+		if(e instanceof JilExpr.Array) {
+			JilExpr.Array a = (JilExpr.Array) e;
+			for(JilExpr p : a.values()) {
+				killUses(p,uses);
+			}
+		}
+	}
 	public void rewrite(List<JilStmt> body) {				
 		HashMap<Integer,List<JilStmt>> imap = new HashMap();
 
