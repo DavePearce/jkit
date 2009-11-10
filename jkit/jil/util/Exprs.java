@@ -45,6 +45,10 @@ public class Exprs {
 			this.expr = expr;
 		}
 
+		public JilExpr expr() {
+			return expr;
+		}
+		
 		public boolean equals(Object o) {
 			if (o instanceof Equiv) {
 				Equiv ee = (Equiv) o;
