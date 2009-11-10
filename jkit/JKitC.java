@@ -65,6 +65,7 @@ public class JKitC {
 		boolean bytecodeOutput = false;
 		boolean jilOutput = false;		
 		boolean bytecodeOptimisation = true;
+		boolean fieldLoadOptimisation = false;
 		
 		if (args.length == 0) {
 			// no command-line arguments provided
@@ -111,6 +112,8 @@ public class JKitC {
 					jilOutput = true;
 				} else if (arg.equals("-noopt")) {
 					bytecodeOptimisation = false;
+				} else if (arg.equals("-flo")) {
+					fieldLoadOptimisation = true;
 				} else {
 					throw new RuntimeException("Unknown option: " + args[i]);
 				}
@@ -153,6 +156,7 @@ public class JKitC {
 			}
 
 			compiler.setBytecodeOptimisation(bytecodeOptimisation);
+			compiler.setFieldLoadOptimisation(fieldLoadOptimisation);
 			
 			if (outputDirectory != null) {
 				compiler.setOutputDirectory(new File(outputDirectory));

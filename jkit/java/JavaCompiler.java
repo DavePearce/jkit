@@ -100,6 +100,7 @@ public class JavaCompiler implements Compiler {
 	
 	protected final BytecodeOptimiser optimiser;
 	protected boolean bytecodeOptimisationFlag = true;
+	protected boolean fieldLoadOptimisationFlag = false;
 	
 	/**
 	 * @param classpath
@@ -163,6 +164,14 @@ public class JavaCompiler implements Compiler {
 	 */
 	public void setBytecodeOptimisation(boolean flag) {
 		bytecodeOptimisationFlag = flag;
+	}
+	
+	/**
+	 * Enable/disable field load optimisation in the compiler.
+	 * @param level
+	 */
+	public void setFieldLoadOptimisation(boolean flag) {
+		fieldLoadOptimisationFlag = flag;
 	}
 	
 	/**
@@ -364,7 +373,10 @@ public class JavaCompiler implements Compiler {
 			for(JilClass clazz : skeletons) {
 				variableDefinitions(filename,clazz,loader);
 				eliminateDeadCode(filename,clazz,loader);
-				addBypassMethods(filename,clazz,loader);				
+				addBypassMethods(filename,clazz,loader);
+				if(fieldLoadOptimisationFlag) {
+					fieldLoadOptimisation(filename,clazz,loader);
+				}
 			}
 			
 			// Ok, at this point, we need to determine the root component of the
@@ -671,6 +683,20 @@ public class JavaCompiler implements Compiler {
 		long start = System.currentTimeMillis();
 		new BypassMethods(loader, new TypeSystem()).apply(jfile);
 		logTimedMessage("[" + srcfile.getPath() + "] Added bypass methods",
+				(System.currentTimeMillis() - start));
+	}
+	
+	/**
+	 * This is the next stage in the compilation pipeline --- we are now
+	 * beginning the process of code-generation. 
+	 * 
+	 * @param jfile
+	 * @param loader
+	 */
+	protected void fieldLoadOptimisation(File srcfile, JilClass jfile, ClassLoader loader) {
+		long start = System.currentTimeMillis();
+		new FieldLoadConversion().apply(jfile);
+		logTimedMessage("[" + srcfile.getPath() + "] converted field loads",
 				(System.currentTimeMillis() - start));
 	}
 	
