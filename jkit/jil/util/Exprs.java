@@ -181,6 +181,9 @@ public class Exprs {
 			}			
 			
 			return true;			
+		} else {
+			syntax_error("unknown expression encountered ("
+					+ e1.getClass().getName() + ")", e1);
 		}
 		return false;
 	}
@@ -240,6 +243,91 @@ public class Exprs {
 		}
 		
 		return vars;
+	}
+	
+	/**
+	 * This method substitutes all occurrences of a given local variable with an
+	 * expression.
+	 * 
+	 * @param e
+	 * @return
+	 */
+	public static JilExpr substitute(JilExpr e, String var, JilExpr expr) {
+		HashMap<String,Type> vars = new HashMap<String,Type>(); 
+		
+		if(e instanceof Variable) {
+			Variable v = (Variable) e;			
+			if(v.value().equals(var)) {
+				return expr;
+			} else {
+				return v;
+			}
+		} else if(e instanceof ClassVariable) {
+			return e;
+		}else if(e instanceof Cast) {
+			Cast c = (Cast) e;
+			return new Cast(substitute(c.expr(),var,expr),c.type(),c.attributes());
+		} else if(e instanceof Convert) {
+			Convert c = (Convert) e;
+			return new Cast(substitute(c.expr(),var,expr),c.type(),c.attributes());
+		} else if(e instanceof InstanceOf) {
+			InstanceOf c = (InstanceOf) e;
+			return new InstanceOf(substitute(c.lhs(), var, expr), c.rhs(), c
+					.type(), c.attributes());
+		} else if(e instanceof UnOp) {
+			UnOp c = (UnOp) e;
+			return new UnOp(substitute(c.expr(),var,expr),c.op(),c.type(),c.attributes());			
+		} else if(e instanceof Deref) {
+			Deref c = (Deref) e;
+			return new Deref(substitute(c.target(), var, expr), c.name(), c
+					.isStatic(), c.type(), c.attributes());					
+		} else if(e instanceof BinOp) {
+			BinOp c = (BinOp) e;
+			return new BinOp(substitute(c.lhs(), var, expr), substitute(
+					c.rhs(), var, expr), c.op(), c.type(), c.attributes());			
+		} else if(e instanceof ArrayIndex) {
+			ArrayIndex c = (ArrayIndex) e;
+			return new ArrayIndex(substitute(c.target(), var, expr), substitute(
+					c.index(), var, expr), c.type(), c.attributes());			
+		} else if(e instanceof Invoke) {
+			Invoke c = (Invoke) e;
+			JilExpr target = substitute(c.target(), var, expr);
+			ArrayList<JilExpr> params = new ArrayList();
+			for(JilExpr p : c.parameters()) {
+				params.add(substitute(p, var, expr));
+			}			
+			if(e instanceof SpecialInvoke) {				
+				return new SpecialInvoke(target, c.name(), params, c
+						.funType(), c.type(), c.attributes());
+			} else {
+				return new Invoke(target, c.name(), params, c
+						.funType(), c.type(), c.attributes());
+			}
+		} else if(e instanceof New) {
+			New c = (New) e;
+
+			ArrayList<JilExpr> params = new ArrayList();
+			for (JilExpr p : c.parameters()) {
+				params.add(substitute(p, var, expr));
+			}
+
+			return new New(c.type(), params, c.funType(), c.attributes());
+							
+		} else if(e instanceof Array) {
+			Array c = (Array) e;			
+			
+			ArrayList<JilExpr> values = new ArrayList();
+			for (JilExpr p : c.values()) {
+				values.add(substitute(p, var, expr));
+			}
+
+			return new Array(values, c.type(), c.attributes());			
+		} else {
+			syntax_error("unknown expression encountered ("
+					+ e.getClass().getName() + ")", e);
+		}
+		
+		return null;
 	}
 	
 	/**

@@ -73,13 +73,46 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 	
 	public UnionFlowSet<Exprs.Equiv> transfer(JilStmt.Assign stmt,
 			UnionFlowSet<Exprs.Equiv> in) throws ClassNotFoundException {										
-		// this is clearly broken.
-		Set<Exprs.Equiv> uses = in.toSet();
-		killUses(stmt.lhs(),uses);
-		killUses(stmt.rhs(),uses);
+		JilExpr lhs = stmt.lhs();
+		JilExpr rhs = stmt.rhs();
 		
-		genUses(stmt.rhs(),uses);
-		genUses(stmt.lhs(),uses);
+		Set<Exprs.Equiv> uses = in.toSet();
+		killUses(lhs,uses);
+		killUses(rhs,uses);
+		
+		if(lhs instanceof JilExpr.Variable) {
+			JilExpr.Variable v = (JilExpr.Variable) lhs;
+			if(rhs instanceof JilExpr.Variable) {
+				// here, we can perform a substitution
+				JilExpr.Variable rv = (JilExpr.Variable) rhs;
+				ArrayList<Exprs.Equiv> olduses = new ArrayList(uses);
+				uses.clear();				
+				for(Exprs.Equiv ee : olduses) {
+					JilExpr ne = Exprs.substitute(ee.expr(),v.value(),rv);
+					uses.add(new Exprs.Equiv(ne));
+				}
+			} else {
+				// otherwise, we need to eliminate all uses involving this
+				// variable
+				ArrayList<Exprs.Equiv> delta = new ArrayList();
+				for(Exprs.Equiv ee : uses) {
+					Map<String,Type> vars = Exprs.localVariables(ee.expr());
+					if(vars.keySet().contains(v.value())) {
+						delta.add(ee);
+					}
+				}
+				uses.removeAll(delta);
+			}
+		} else if(lhs instanceof JilExpr.Deref) {
+			JilExpr.Deref d = (JilExpr.Deref) lhs;
+			genUses(d.target(),uses);
+		} else if(lhs instanceof JilExpr.ArrayIndex) {
+			JilExpr.ArrayIndex a = (JilExpr.ArrayIndex) lhs;
+			genUses(a.target(),uses);
+			genUses(a.index(),uses);				
+		}
+				
+		genUses(rhs,uses);		
 		return new UnionFlowSet(uses);
 	}
 	
@@ -301,9 +334,6 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 					(Type.Reference) e.target().type(), e.name(), e.funType());
 
 			if (!rt.second().isPure()) {
-				
-				System.out.println("IMPURE METHOD: " + rt.first().name() + " " + rt.second().name());
-				
 				uses.clear(); // should be able to do better in some cases
 			}
 
@@ -518,9 +548,6 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 			HashMap<Exprs.Equiv, String> emap) {
 		JilExpr lhs = expr.target();
 		Exprs.Equiv ee = new Exprs.Equiv(expr);
-
-		System.out.println("EMAP: " + emap);
-		System.out.println("LOOKING FOR: " + ee);
 		
 		String var = emap.get(ee);
 		if (var != null) {
@@ -547,11 +574,7 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 			params.add(rewrite(p,emap));
 		}
 		
-		System.out.println("GOT: " + stmt.target());
-		
 		JilExpr target = rewrite(stmt.target(),emap);
-		
-		System.out.println("NOW: " + target);
 		
 		if(stmt instanceof JilExpr.SpecialInvoke) {
 			return new JilExpr.SpecialInvoke(target, stmt.name(), params, stmt.funType(),
