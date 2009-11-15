@@ -37,6 +37,13 @@ public class JKit extends TestHarness {
 	@Test public void FieldSignature_1() { runTest("FieldSignature_1"); }
 	@Test public void FieldSignature_2() { runTest("FieldSignature_2"); }
 	
+	@Test public void FieldLoadConversion_1() { runTest("FieldLoadConversion_1"); }
+	@Test public void FieldLoadConversion_2() { runTest("FieldLoadConversion_2"); }
+	@Test public void FieldLoadConversion_3() { runTest("FieldLoadConversion_3"); }
+	@Test public void FieldLoadConversion_4() { runTest("FieldLoadConversion_4"); }
+	@Test public void FieldLoadConversion_5() { runTest("FieldLoadConversion_5"); }
+	@Test public void FieldLoadConversion_6() { runTest("FieldLoadConversion_6"); }
+	
 	@Test public void FreeVariables() { compileFailTest("FreeVariables"); }
 	
 	@Test public void HeapException_1() { runTest("HeapException_1"); }
