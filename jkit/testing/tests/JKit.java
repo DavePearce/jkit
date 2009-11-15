@@ -43,6 +43,7 @@ public class JKit extends TestHarness {
 	@Test public void FieldLoadConversion_4() { runTest("FieldLoadConversion_4"); }
 	@Test public void FieldLoadConversion_5() { runTest("FieldLoadConversion_5"); }
 	@Test public void FieldLoadConversion_6() { runTest("FieldLoadConversion_6"); }
+	@Test public void FieldLoadConversion_7() { runTest("FieldLoadConversion_7"); }
 	
 	@Test public void FreeVariables() { compileFailTest("FreeVariables"); }
 	

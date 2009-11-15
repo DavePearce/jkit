@@ -466,43 +466,121 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 	}
 	
 	public void rewrite(List<JilStmt> body) {				
-		HashMap<Integer,List<JilStmt>> imap = new HashMap();
-
-		// The emap maps the expressions to the temporary variables they are
-		// stored in.
-		HashMap<Exprs.Equiv,String> emap = new HashMap();
+		
 		int tmpidx = 0;
-
-		for(int i=0;i!=body.size();++i) {
-			JilStmt stmt = body.get(i);
-			ArrayList<JilStmt> inserts = new ArrayList<JilStmt>();
-
-			if(i == 0) {
-				UnionFlowSet<Exprs.Equiv> uses = stores.get(i);
-				for(Exprs.Equiv ee : uses) {
-					// the order in which we do this really does matter
-					String var = "flc_tmp$" + tmpidx++;					
-					emap.put(ee,var);
-					JilExpr e = ee.expr();
-					inserts.add(new JilStmt.Assign(new JilExpr.Variable(var, e
-							.type()), e));
-				}
-			} /* else if(...) */
-
-			body.set(i,rewrite(stmt,emap));
-
-			imap.put(i,inserts);
+		HashMap<Integer,List<JilStmt>> inserts = new HashMap();
+		HashMap<String,Integer> labels = new HashMap<String,Integer>();		
+		Stack<Integer> worklist = new Stack<Integer>();
+		Stack<HashMap<Exprs.Equiv,String>> environments = new Stack();
+		HashSet<Integer> visited = new HashSet<Integer>();
+		
+		// first, initialiser label map
+		int pos = 0;
+		for(JilStmt s : body) {
+			if(s instanceof JilStmt.Label) {
+				JilStmt.Label lab = (JilStmt.Label) s;				
+				labels.put(lab.label(),pos);
+			}
+			pos++;
 		}
+		
+		worklist.push(0);		
+		environments.push(new HashMap<Exprs.Equiv,String>());
+		visited.add(0);
+		
+		while(!worklist.isEmpty()) {
+			int idx = worklist.pop();
+			
+			if(idx != body.size()) {
+				HashMap<Exprs.Equiv,String> env = environments.pop();								
+				ArrayList<JilStmt> is = new ArrayList();
+				
+				for (Exprs.Equiv ee : stores.get(idx)) {			
+					if(!env.containsKey(ee)) {			
+						String var = "flc_tmp$" + tmpidx++;
+						env.put(ee, var);
+						JilExpr e = ee.expr();
+						is.add(new JilStmt.Assign(new JilExpr.Variable(var, e.type()), e));
+					}
+				}
 
+				inserts.put(idx, is);
+				JilStmt stmt = body.get(idx);				
+				body.set(idx,rewrite(stmt,env));
+				addSuccessors(worklist, environments, visited, labels, env,
+						stmt, idx);
+			}
+		}
+		
 		// Finally, add the new inserts
 		int idx = 0;
-		for(int i=0;i!=body.size();++i) {
-			List<JilStmt> inserts = imap.get(idx++);
-			for(JilStmt s : inserts) {
+		for(int i=0;i!=body.size();++i) {			
+			for(JilStmt s : inserts.get(idx++)) {
 				body.add(i++,s);
 			}
 		}		
 	}	
+	
+	protected void addSuccessors(Stack<Integer> worklist,
+			Stack<HashMap<Exprs.Equiv,String>> environments,
+			HashSet<Integer> visited, HashMap<String, Integer> labels,
+			HashMap<Exprs.Equiv,String> env,
+			JilStmt stmt, int offset) {
+		
+		// First, add sequential exit if there is one.
+		if(stmt instanceof JilStmt.Goto) {
+			JilStmt.Goto gto = (JilStmt.Goto) stmt;
+			int target = labels.get(gto.label());
+			if(!visited.contains(target)) {
+				worklist.add(target);
+				environments.add(env);
+				visited.add(target);
+			}
+		} else if(stmt instanceof JilStmt.Switch) {
+			JilStmt.Switch swt = (JilStmt.Switch) stmt;
+			for(Pair<JilExpr.Number,String> c : swt.cases()) {
+				int target = labels.get(c.second());				
+				if(!visited.contains(target)) {
+					worklist.add(target);
+					visited.add(target);
+				}	
+			}
+			// And, don't forget the default label!
+			int deftarget = labels.get(swt.defaultLabel());				
+			if(!visited.contains(deftarget)) {
+				worklist.add(deftarget);
+				visited.add(deftarget);
+			}
+		} else if(!(stmt instanceof JilStmt.Return || stmt instanceof JilStmt.Throw)) {
+			// this is a statement with a sequential exit
+			if(!visited.contains(offset+1)) {
+				environments.add(env);
+				worklist.add(offset+1);
+				visited.add(offset+1);
+			}
+		}
+		
+		// Second, check for conditional branch
+		if(stmt instanceof JilStmt.IfGoto) {
+			JilStmt.IfGoto gto = (JilStmt.IfGoto) stmt;
+			int target = labels.get(gto.label());
+			if(!visited.contains(target)) {
+				environments.add((HashMap)env.clone());
+				worklist.add(target);
+				visited.add(target);
+			}
+		}
+		
+		// Third, add any exceptional edges
+		for(Pair<Type.Clazz,String> ex : stmt.exceptions()) {
+			int target = labels.get(ex.second());
+			if(!visited.contains(target)) {
+				environments.add((HashMap)env.clone());
+				worklist.add(target);
+				visited.add(target);
+			}
+		}
+	}
 	
 	public JilStmt rewrite(JilStmt stmt, HashMap<Exprs.Equiv,String> emap) {	
 		try {
@@ -526,10 +604,10 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 			} else if (stmt instanceof JilStmt.Unlock) {
 				return rewrite((JilStmt.Unlock) stmt, emap);
 			} else if (stmt instanceof JilStmt.IfGoto) {				
-				return rewrite((JilStmt.IfGoto) stmt,emap);
+				return rewrite((JilStmt.IfGoto) stmt,emap);												
 			} else if (stmt instanceof JilStmt.Switch) {
 				return rewrite((JilStmt.Switch) stmt,emap);				
-			}else {
+			} else {
 				syntax_error("unknown statement encountered ("
 						+ stmt.getClass().getName() + ")", stmt);
 			}
@@ -680,13 +758,25 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 		return new JilExpr.InstanceOf(rewrite(expr.lhs(),emap), expr.rhs(), expr.type(), expr.attributes());		
 	}
 	
-	protected JilExpr.Invoke rewrite(JilExpr.Invoke stmt, HashMap<Exprs.Equiv,String> emap) {
+	protected JilExpr.Invoke rewrite(JilExpr.Invoke stmt,
+			HashMap<Exprs.Equiv, String> emap) throws MethodNotFoundException,
+			ClassNotFoundException {
 		ArrayList<JilExpr> params = new ArrayList<JilExpr>();
 		for(JilExpr p : stmt.parameters()) {
 			params.add(rewrite(p,emap));
 		}
 		
 		JilExpr target = rewrite(stmt.target(),emap);
+		
+		// NOW, CHECK WHETHER THIS IS A PURE METHOD INVOCATION OR NOT
+		
+		Pair<Clazz, Clazz.Method> rt = loader.determineMethod(
+				(Type.Reference) stmt.target().type(), stmt.name(), stmt
+						.funType());
+		
+		if(!rt.second().isPure()) {
+			emap.clear();
+		}
 		
 		if(stmt instanceof JilExpr.SpecialInvoke) {
 			return new JilExpr.SpecialInvoke(target, stmt.name(), params, stmt.funType(),
