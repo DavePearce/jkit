@@ -50,7 +50,8 @@ public class Exprs {
 				|| e instanceof JilExpr.Short || e instanceof JilExpr.Int
 				|| e instanceof JilExpr.Long || e instanceof JilExpr.Float
 				|| e instanceof JilExpr.Double || e instanceof JilExpr.Null
-				|| e instanceof ClassVariable || e instanceof Variable) {
+				|| e instanceof ClassVariable || e instanceof Variable
+				|| e instanceof JilExpr.Class) {
 			return true;
 		} else if(e instanceof Cast) {
 			Cast c1 = (Cast) e;
