@@ -45,9 +45,12 @@ public class Exprs {
 	 * @return
 	 */
 	public static boolean isSideEffectFree(JilExpr e, ClassLoader loader) {
-		if(e instanceof Variable) {
-			return true;
-		} else if(e instanceof ClassVariable) {
+		if (e instanceof StringVal || e instanceof JilExpr.Bool
+				|| e instanceof JilExpr.Byte || e instanceof JilExpr.Char
+				|| e instanceof JilExpr.Short || e instanceof JilExpr.Int
+				|| e instanceof JilExpr.Long || e instanceof JilExpr.Float
+				|| e instanceof JilExpr.Double || e instanceof JilExpr.Null
+				|| e instanceof ClassVariable || e instanceof Variable) {
 			return true;
 		} else if(e instanceof Cast) {
 			Cast c1 = (Cast) e;

@@ -326,6 +326,10 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 		killUses(e.expr(),uses);
 	}
 	
+	protected void killUses(JilExpr.Convert e, Set<Exprs.Equiv> uses) {
+		killUses(e.expr(),uses);
+	}
+	
 	protected void killUses(JilExpr.Deref e, Set<Exprs.Equiv> uses) {
 		killUses(e.target(),uses);
 	}
