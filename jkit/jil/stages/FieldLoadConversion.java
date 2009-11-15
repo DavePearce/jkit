@@ -33,19 +33,21 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 	public FieldLoadConversion(ClassLoader loader) {
 		this.loader = loader;
 	}
-	
-	// First thing I need is some kind of expression comparator. This is because
-	// JilExpr doesn't have a .equals method (and probably shouldn't)
-	
-	public void apply(JilClass owner) {
+		
+	public Pair<Integer,Integer> apply(JilClass owner) {	
+		int countBefore = 0;
+		int countAfter = 0;
 		for(JilMethod m : owner.methods()) {			
-			if (m.body() != null && !m.name().equals(owner.name())) {
+			if (m.body() != null && !m.name().equals(owner.name())) {				
 				// First, infer the "live dereference expressions".
 				infer(m,owner);
 				// Second, implement the rewrite.
+				countBefore += countDerefs(m.body());
 				rewrite(m.body());
+				countAfter += countDerefs(m.body());
 			} 
 		}
+		return new Pair(countBefore,countAfter);
 	}
 	
 	public void infer(JilMethod method, JilClass owner) {
@@ -718,5 +720,124 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 			internal_error(d, fnfe);
 		}
 		return null;
+	}
+	
+	/**
+     * This method simply counts the number of field, array and method
+     * dereference expressions.
+     * 
+     * @param stmt
+     * @return
+     */
+	protected int countDerefs(List<JilStmt> stmts) {
+		int r = 0;
+		for(JilStmt s : stmts) {
+			r += countDerefs(s);
+		}
+		return r;
+	}
+	
+	protected int countDerefs(JilStmt stmt) {
+		try {
+			if (stmt instanceof JilStmt.Assign) {
+				JilStmt.Assign s = (JilStmt.Assign) stmt;
+				return countExprDerefs(s.lhs()) + countExprDerefs(s.rhs());
+			} else if (stmt instanceof JilExpr.Invoke) {
+				return countExprDerefs((JilExpr.Invoke)stmt);
+			} else if (stmt instanceof JilExpr.New) {
+				return countExprDerefs((JilExpr.New)stmt);
+			} else if (stmt instanceof JilStmt.Return) {
+				JilStmt.Return s = (JilStmt.Return) stmt;
+				if(s.expr() != null) {
+					return countExprDerefs(s.expr());
+				} else {
+					return 0;
+				}
+			} else if (stmt instanceof JilStmt.Throw) {
+				JilStmt.Throw s = (JilStmt.Throw) stmt;				
+				return countExprDerefs(s.expr());				
+			} else if (stmt instanceof JilStmt.Nop
+					|| stmt instanceof JilStmt.Label) {
+				// nop
+				return 0;
+			} else if (stmt instanceof JilStmt.Lock) {
+				JilStmt.Lock s = (JilStmt.Lock) stmt;				
+				return 1 + countExprDerefs(s.expr());
+			} else if (stmt instanceof JilStmt.Unlock) {
+				JilStmt.Unlock s = (JilStmt.Unlock) stmt;				
+				return 1 + countExprDerefs(s.expr());
+			} else {
+				syntax_error("unknown statement encountered ("
+						+ stmt.getClass().getName() + ")", stmt);
+				return 0;
+			}
+		} catch (Exception e) {
+			internal_error(stmt, e);
+			return 0;
+		}
+	}
+	
+	protected int countExprDerefs(JilExpr expr) {
+		try {
+			if (expr instanceof JilExpr.ArrayIndex) {
+				ArrayIndex e = (ArrayIndex) expr;
+				return countExprDerefs(e.target()) + countExprDerefs(e.index()) + 1; 				
+			} else if (expr instanceof JilExpr.BinOp) {
+				BinOp e = (BinOp) expr;
+				return countExprDerefs(e.lhs()) + countExprDerefs(e.rhs());				
+			} else if (expr instanceof JilExpr.UnOp) {
+				UnOp e = (UnOp) expr;
+				return countExprDerefs(e.expr());				
+			} else if (expr instanceof JilExpr.Cast) {
+				Cast e = (Cast) expr;
+				return countExprDerefs(e.expr());				
+			} else if (expr instanceof JilExpr.Convert) {
+				Convert e = (Convert) expr;
+				return countExprDerefs(e.expr());				
+			} else if (expr instanceof JilExpr.ClassVariable) {
+				return 0;
+			} else if (expr instanceof JilExpr.Deref) {
+				Deref e = (Deref) expr;
+				return countExprDerefs(e.target()) + 1;				
+			} else if (expr instanceof JilExpr.Variable) {
+				return 0;
+			} else if (expr instanceof JilExpr.InstanceOf) {
+				InstanceOf e = (InstanceOf) expr;
+				return countExprDerefs(e.lhs());
+			} else if (expr instanceof JilExpr.Invoke) {
+				Invoke ivk = (Invoke) expr;
+				int c = 0;
+				for(JilExpr e : ivk.parameters()) {
+					c += countExprDerefs(e);
+				}
+				c += countExprDerefs(ivk.target());
+				return c + 1;
+			} else if (expr instanceof JilExpr.New) {
+				New ne = (New) expr;
+				int c = 0;
+				for(JilExpr e : ne.parameters()) {
+					c += countExprDerefs(e);
+				}				
+				return c;				
+			} else if (expr instanceof JilExpr.Value) {
+				if(expr instanceof JilExpr.Array) {
+					Array ne = (Array) expr;
+					int c = 0;
+					for(JilExpr e : ne.values()) {
+						c += countExprDerefs(e);
+					}				
+					return c;
+				} else {
+					return 0;
+				}
+			} else {
+				syntax_error("Unknown expression \"" + expr + "\" encoutered",
+						expr);
+				return 0;
+			}
+		} catch (Exception e) {
+			internal_error(expr, e);
+			return 0;
+		}	
 	}
 }

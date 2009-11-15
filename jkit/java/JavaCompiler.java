@@ -695,9 +695,10 @@ public class JavaCompiler implements Compiler {
 	 */
 	protected void fieldLoadOptimisation(File srcfile, JilClass jfile, ClassLoader loader) {
 		long start = System.currentTimeMillis();
-		new FieldLoadConversion(loader).apply(jfile);
-		logTimedMessage("[" + srcfile.getPath() + "] converted field loads",
-				(System.currentTimeMillis() - start));
+		Pair<Integer,Integer> stats = new FieldLoadConversion(loader).apply(jfile);
+		logTimedMessage("[" + srcfile.getPath() + "] converted field loads ("
+				+ stats.first() + " => " + stats.second() + ")", (System
+				.currentTimeMillis() - start));
 	}
 	
 	/**

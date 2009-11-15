@@ -123,7 +123,7 @@ public abstract class BackwardAnalysis<T extends FlowSet> {
 				} else if(stmt instanceof JilStmt.Label) {
 					merge(current,get_store(current+1,emptyStore),worklist,preds);
 				}
-			} catch(Exception e) {
+			} catch(Exception e) {										
 				internal_error(stmt,e);
 			}
 		}
