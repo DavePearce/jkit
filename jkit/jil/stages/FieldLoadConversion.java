@@ -509,14 +509,19 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 			} else if (stmt instanceof JilStmt.Throw) {
 				return rewrite((JilStmt.Throw) stmt, emap);
 			} else if (stmt instanceof JilStmt.Nop
-					|| stmt instanceof JilStmt.Label) {
+					|| stmt instanceof JilStmt.Label
+					|| stmt instanceof JilStmt.Goto) {
 				// nop
 				return stmt;
 			} else if (stmt instanceof JilStmt.Lock) {
 				return rewrite((JilStmt.Lock) stmt, emap);
 			} else if (stmt instanceof JilStmt.Unlock) {
 				return rewrite((JilStmt.Unlock) stmt, emap);
-			} else {
+			} else if (stmt instanceof JilStmt.IfGoto) {				
+				return rewrite((JilStmt.IfGoto) stmt,emap);
+			} else if (stmt instanceof JilStmt.Switch) {
+				return rewrite((JilStmt.Switch) stmt,emap);				
+			}else {
 				syntax_error("unknown statement encountered ("
 						+ stmt.getClass().getName() + ")", stmt);
 			}
@@ -757,7 +762,8 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 				JilStmt.Throw s = (JilStmt.Throw) stmt;				
 				return countExprDerefs(s.expr());				
 			} else if (stmt instanceof JilStmt.Nop
-					|| stmt instanceof JilStmt.Label) {
+					|| stmt instanceof JilStmt.Label
+					|| stmt instanceof JilStmt.Goto) {
 				// nop
 				return 0;
 			} else if (stmt instanceof JilStmt.Lock) {
@@ -766,6 +772,12 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 			} else if (stmt instanceof JilStmt.Unlock) {
 				JilStmt.Unlock s = (JilStmt.Unlock) stmt;				
 				return 1 + countExprDerefs(s.expr());
+			} else if (stmt instanceof JilStmt.IfGoto) {
+				JilStmt.IfGoto s = (JilStmt.IfGoto) stmt;
+				return countExprDerefs(s.condition());
+			} else if (stmt instanceof JilStmt.Switch) {
+				JilStmt.Switch s = (JilStmt.Switch) stmt;												
+				return countExprDerefs(s.condition());
 			} else {
 				syntax_error("unknown statement encountered ("
 						+ stmt.getClass().getName() + ")", stmt);
