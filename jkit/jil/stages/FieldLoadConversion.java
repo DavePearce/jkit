@@ -761,13 +761,13 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 	protected JilExpr.Invoke rewrite(JilExpr.Invoke stmt,
 			HashMap<Exprs.Equiv, String> emap) throws MethodNotFoundException,
 			ClassNotFoundException {
+		JilExpr target = rewrite(stmt.target(),emap);
+		
 		ArrayList<JilExpr> params = new ArrayList<JilExpr>();
 		for(JilExpr p : stmt.parameters()) {
 			params.add(rewrite(p,emap));
 		}
-		
-		JilExpr target = rewrite(stmt.target(),emap);
-		
+						
 		// NOW, CHECK WHETHER THIS IS A PURE METHOD INVOCATION OR NOT
 		
 		Pair<Clazz, Clazz.Method> rt = loader.determineMethod(
