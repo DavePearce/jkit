@@ -113,6 +113,7 @@ public class JKitC {
 				} else if (arg.equals("-noopt")) {
 					bytecodeOptimisation = false;
 				} else if (arg.equals("-flo")) {
+					System.err.println("Warning: field-load optimisation is EXPERIMENTAL and may contain BUGS.");
 					fieldLoadOptimisation = true;
 				} else {
 					throw new RuntimeException("Unknown option: " + args[i]);

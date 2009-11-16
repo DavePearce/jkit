@@ -386,6 +386,15 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 		}
 	}
 	
+	protected void killFields(Tag.Field field, HashMap<Exprs.Equiv,String> env) {		
+		Set<Exprs.Equiv> uses = env.keySet();
+		for(Exprs.Equiv ee : uses) {
+			if(conflict(ee.expr(),field)) {
+				env.put(ee,null);
+			}
+		}
+	}
+	
 	protected boolean conflict(JilExpr e, Tag.Field field) {		
 		if(e instanceof Variable) {
 			return false;
@@ -624,6 +633,7 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 			JilExpr.Deref d = (JilExpr.Deref) lhs;
 			lhs = new JilExpr.Deref(rewrite(d.target(), emap), d.name(), d
 					.isStatic(), d.type(), d.attributes());
+			killFields(determineField(d),emap);
 		} else if(lhs instanceof JilExpr.ArrayIndex) {
 			JilExpr.ArrayIndex d = (JilExpr.ArrayIndex) lhs;
 			lhs = new JilExpr.ArrayIndex(rewrite(d.target(), emap), rewrite(d
