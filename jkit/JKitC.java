@@ -40,8 +40,8 @@ import jkit.java.*;
 public class JKitC {
 
 	public static final int MAJOR_VERSION = 0;
-	public static final int MINOR_VERSION = 5;
-	public static final int MINOR_REVISION = 1;
+	public static final int MINOR_VERSION = 6;
+	public static final int MINOR_REVISION = 0;
 			
 	/**
 	 * Main method provides command-line processing capability.
@@ -72,7 +72,7 @@ public class JKitC {
 			usage();
 			System.exit(0);
 		}
-				
+					
 		// ======================================================
 		// ======== First, parse command-line arguments ========
 		// ======================================================
@@ -144,7 +144,7 @@ public class JKitC {
 		}
 
 		classPath.addAll(bootClassPath);
-		
+			
 		try {
 			JavaCompiler compiler;
 
@@ -165,15 +165,15 @@ public class JKitC {
 
 			// ======================================================
 			// ============== Third, load skeletons ================
-			// ======================================================		
-
+			// ======================================================								
 
 			List<File> srcfiles = new ArrayList<File>();
 			for(int i=fileArgsBegin;i!=args.length;++i) {
 				srcfiles.add(new File(args[i]));
 			}
 			compiler.compile(srcfiles);		
-			compiler.flushCompilationQueue();
+			compiler.flushCompilationQueue();						
+			
 		} catch (SyntaxError e) {
 			outputSourceError(e.fileName(), e.line(), e.column(), e.width(), e
 					.getMessage());
@@ -188,7 +188,7 @@ public class JKitC {
 			}
 			return false;
 		}
-		
+						
 		return true;
 	}
 	
