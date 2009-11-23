@@ -456,6 +456,10 @@ public class ClassFile implements Clazz {
 			type = t;
 		}
 		
+		public List<Parameter> parameters() {
+			return null; // FIXME
+		}
+		
 		public List<Modifier> modifiers() {
 			return modifiers;
 		}		

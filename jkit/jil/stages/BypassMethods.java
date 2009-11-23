@@ -167,7 +167,7 @@ public final class BypassMethods {
 		String name = method.name();
 
 		// Second, create the local variable list for the new method
-		ArrayList<JilMethod.Parameter> params = new ArrayList();
+		ArrayList<JilMethod.JilParameter> params = new ArrayList();
 		ArrayList<JilExpr> funParams = new ArrayList<JilExpr>();
 		List<Type> ftypeParamTypes = ftype.parameterTypes();
 
@@ -177,7 +177,7 @@ public final class BypassMethods {
 			
 			ArrayList<Modifier> mods = new ArrayList<Modifier>();
 			mods.add(Modifier.ACC_FINAL);
-			params.add(new JilMethod.Parameter(n, mods));
+			params.add(new JilMethod.JilParameter(n, mods));
 			
 			if (from.parameterTypes().get(i) instanceof Type.Variable) {
 				// the following cast is required because generic types are

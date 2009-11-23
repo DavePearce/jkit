@@ -288,7 +288,16 @@ public interface Clazz {
 	     * @return
 	     */
 		public List<Modifier> modifiers();
-				
+			
+		/**
+	     * Access information about the parameters the modifiers contained in this method object. The returned list
+	     * may be modified by adding, or removing modifiers. The returned list is
+	     * always non-null.
+	     * 
+	     * @return
+	     */
+		public List<? extends Parameter> parameters();
+		
 		/**
 	     * Access the modifiers contained in this method object. The returned list
 	     * may be modified by adding, or removing modifiers. The returned list is
@@ -361,4 +370,15 @@ public interface Clazz {
 		 */
 		public boolean isVariableArity();
 	}
+	
+	public static interface Parameter {		
+		
+		public List<Modifier> modifiers();
+		
+
+		/**
+		 * Check whether this parameter is synthetic
+		 */
+		public boolean isSynthetic();
+	}	
 }

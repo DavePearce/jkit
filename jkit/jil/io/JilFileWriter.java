@@ -115,7 +115,7 @@ public class JilFileWriter {
 			
 		
 		List<Type> paramTypes = type.parameterTypes();
-		List<JilMethod.Parameter> params = m.parameters();
+		List<JilMethod.JilParameter> params = m.parameters();
 		
 		firstTime=true;
 		for(int i = 0; i != params.size();++i) {

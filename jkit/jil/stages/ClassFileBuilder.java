@@ -210,7 +210,7 @@ public final class ClassFileBuilder {
 		// determine slot allocations for parameters
 		List<Type> paramTypes = method.type().parameterTypes();
 		int idx = 0;
-		for (JilMethod.Parameter pp : method.parameters()) {
+		for (JilMethod.JilParameter pp : method.parameters()) {
 			localVarMap.put(pp.name(), maxLocals);
 			maxLocals += ClassFile.slotSize(paramTypes.get(idx++));
 		}

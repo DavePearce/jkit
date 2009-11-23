@@ -23,23 +23,24 @@ package jkit.jil.tree;
 
 import java.util.*;
 import jkit.util.Pair;
+import jkit.compiler.Clazz;
 import jkit.compiler.SyntacticAttribute;
 import jkit.compiler.SyntacticElementImpl;
 import jkit.jil.util.*;
 
 public final class JilMethod extends SyntacticElementImpl implements jkit.compiler.Clazz.Method {
 	
-	public static final class Parameter extends SyntacticElementImpl {
+	public static final class JilParameter extends SyntacticElementImpl implements Clazz.Parameter {
 		private String name;
 		private final List<Modifier> modifiers;
 		
-		public Parameter(String name, List<Modifier> modifiers, SyntacticAttribute... attributes) {
+		public JilParameter(String name, List<Modifier> modifiers, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.name = name;
 			this.modifiers = modifiers;
 		}
 		
-		public Parameter(String name, List<Modifier> modifiers, List<SyntacticAttribute> attributes) {
+		public JilParameter(String name, List<Modifier> modifiers, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.name = name;
 			this.modifiers = modifiers;
@@ -71,7 +72,7 @@ public final class JilMethod extends SyntacticElementImpl implements jkit.compil
 	private Type.Function type;
 	private List<Modifier> modifiers;
 	private List<Type.Clazz> exceptions;
-	private List<Parameter> parameters; 	
+	private List<JilParameter> parameters; 	
 	private List<JilStmt> body = new ArrayList<JilStmt>();
 	
 	/**
@@ -91,7 +92,7 @@ public final class JilMethod extends SyntacticElementImpl implements jkit.compil
 	 *            The (non-null) list of exceptions thrown by this method.
 	 */
 	public JilMethod(String name, Type.Function type,
-			List<Parameter> parameters, List<Modifier> modifiers,
+			List<JilParameter> parameters, List<Modifier> modifiers,
 			List<Type.Clazz> exceptions, SyntacticAttribute... attributes) {
 		super(attributes);
 		this.name = name;
@@ -118,7 +119,7 @@ public final class JilMethod extends SyntacticElementImpl implements jkit.compil
 	 *            The (non-null) list of exceptions thrown by this method.
 	 */
 	public JilMethod(String name, Type.Function type,
-			List<Parameter> parameters,			
+			List<JilParameter> parameters,			
 			List<Modifier> modifiers, List<Type.Clazz> exceptions,
 			List<SyntacticAttribute> attributes) {
 		super(attributes);
@@ -168,7 +169,7 @@ public final class JilMethod extends SyntacticElementImpl implements jkit.compil
 	 * 
 	 * @return
 	 */
-	public List<Parameter> parameters() { return parameters; }	
+	public List<JilParameter> parameters() { return parameters; }	
 	
 	/**
      * Access the modifiers contained in this field object. The returned list
@@ -429,7 +430,7 @@ public final class JilMethod extends SyntacticElementImpl implements jkit.compil
 			}
 		}
 		
-		for(Parameter p : parameters) {
+		for(JilParameter p : parameters) {
 			vars.remove(p.name());
 		}
 		

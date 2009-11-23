@@ -216,8 +216,8 @@ public class SkeletonBuilder {
 		JilMethod values = new JilMethod("values", new Type.Function(
 				new Type.Array(type)), new ArrayList(), modifiers, new ArrayList(), loc);
 		
-		ArrayList<JilMethod.Parameter> params = new ArrayList();
-		params.add(new JilMethod.Parameter("key",new ArrayList())); // could add final modifier=		
+		ArrayList<JilMethod.JilParameter> params = new ArrayList();
+		params.add(new JilMethod.JilParameter("key",new ArrayList())); // could add final modifier=		
 		
 		JilMethod valueOf = new JilMethod("valueOf", new Type.Function(type,
 				Types.JAVA_LANG_STRING), params,
@@ -232,11 +232,11 @@ public class SkeletonBuilder {
 	protected void doMethod(Decl.JavaMethod d, JilClass skeleton) {		
 		Type.Function type = d.attribute(Type.Function.class);
 		List<Type.Clazz> exceptions = new ArrayList<Type.Clazz>();
-		List<JilMethod.Parameter> parameters = new ArrayList();
+		List<JilMethod.JilParameter> parameters = new ArrayList();
 		
 		for(Decl.JavaParameter p : d.parameters()) {						
 			ArrayList<SyntacticAttribute> attrs = new ArrayList(p.attributes()); 			
-			parameters.add(new JilMethod.Parameter(p.name(),
+			parameters.add(new JilMethod.JilParameter(p.name(),
 					new ArrayList<Modifier>(p.modifiers()),
 					attrs));
 		}
