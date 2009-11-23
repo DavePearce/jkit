@@ -460,7 +460,9 @@ public class ClassFile implements Clazz {
 		public List<Parameter> parameters() {
 			ArrayList<Parameter> r = new ArrayList<Parameter>();
 			
-			// FIXME: need to do more here.
+			for(Type t : type.parameterTypes()) {
+				r.add(new Parameter());
+			}
 			
 			return r;
 		}
@@ -639,6 +641,18 @@ public class ClassFile implements Clazz {
 			}
 			return false;
 		}		
+	}
+	
+	public static class Parameter implements
+			jkit.compiler.Clazz.Parameter {
+
+		public List<Modifier> modifiers() {
+			return new ArrayList();
+		}
+		
+		public boolean isSynthetic() {
+			return false;
+		}
 	}
 	
 	/**
