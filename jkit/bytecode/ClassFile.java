@@ -25,6 +25,7 @@ import java.util.*;
 
 import jkit.bytecode.attributes.ConstantValue;
 import jkit.bytecode.attributes.Exceptions;
+import jkit.bytecode.attributes.RuntimeVisibleAnnotations;
 import jkit.compiler.Clazz;
 import jkit.compiler.ClassLoader;
 import jkit.jil.tree.*;
@@ -457,7 +458,11 @@ public class ClassFile implements Clazz {
 		}
 		
 		public List<Parameter> parameters() {
-			return null; // FIXME
+			ArrayList<Parameter> r = new ArrayList<Parameter>();
+			
+			// FIXME: need to do more here.
+			
+			return r;
 		}
 		
 		public List<Modifier> modifiers() {
