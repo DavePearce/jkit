@@ -1379,10 +1379,12 @@ public final class ClassFileReader {
 		index += 2;
 		ArrayList<Modifier.Annotation> r = new ArrayList();
 		for(int k=0;k!=na;k++) {
-			Modifier.Annotation a = parseAnnotation(index); 			
+			Modifier.Annotation a = parseAnnotation(index);
+			
 			r.add(a);
-			index+=annotationLength(index);
+			index += annotationLength(index);
 		}
+						
 		return new RuntimeVisibleAnnotations(r);
 	}
 	
@@ -1440,7 +1442,7 @@ public final class ClassFileReader {
 		int length=0;
 		int type = read_u2(offset);						
 		int npairs = read_u2(offset+2);
-		offset += 4;
+		length += 4;
 		for (int j = 0; j < npairs; j++) {
 			switch (type) {
 				case BOOLEAN:
