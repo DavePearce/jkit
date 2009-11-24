@@ -104,8 +104,7 @@ public class TestHarness {
 		args[3] = path + ";" + classpath;
 		// args[4] = "-flo";
 		args[4] = path + File.separatorChar + name + "." + srcExtension;		
-	
-		
+			
 		return new JKitC().compile(args);
 	}
 	

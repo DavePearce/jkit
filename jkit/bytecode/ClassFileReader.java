@@ -321,14 +321,20 @@ public final class ClassFileReader {
 		
 		Type type = parseDescriptor(desc);
 		
-		for(BytecodeAttribute at : attributes) {
-			if(at instanceof FieldSignature) {
+		List<Modifier> mods = parseFieldModifiers(modifiers);
+		
+		for (BytecodeAttribute at : attributes) {
+			if (at instanceof FieldSignature) {
 				type = ((FieldSignature) at).type();
-			} 
+			} else if (at instanceof RuntimeVisibleAnnotations) {
+				RuntimeVisibleAnnotations rva = (RuntimeVisibleAnnotations) at;
+				mods.addAll(rva.annotations());
+			}
+
 		}					
 		
 		ClassFile.Field f = new ClassFile.Field(name, type,
-				parseFieldModifiers(modifiers));
+				mods);
 		
 		f.attributes().addAll(attributes);
 		
