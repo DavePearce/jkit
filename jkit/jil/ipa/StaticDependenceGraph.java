@@ -265,11 +265,7 @@ public class StaticDependenceGraph {
 	}
 	public void addEdges(JilExpr.Invoke expr, Tag.Method myNode) { 
 		JilExpr target = expr.target();
-		addEdges(target, myNode);
-		for(JilExpr e : expr.parameters()) {
-			addEdges(e, myNode);
-		}		
-							
+		
 		// So, at this point, we appear have a method call to the given
 		// target.type(). However, in practice, it's not quite that simple. In
 		// particular, it may occur that the method in question doesn't actually
@@ -278,6 +274,17 @@ public class StaticDependenceGraph {
 
 		try {			
 			Pair<Clazz,Clazz.Method> rt = loader.determineMethod((Type.Reference) target.type(),expr.name(),expr.funType());
+		
+			if (!rt.second().isStatic()) {
+				// In the case of a static method call, the target is not "used"
+				addEdges(target, myNode);
+			}
+			
+			for(JilExpr e : expr.parameters()) {
+				addEdges(e, myNode);
+			}		
+								
+			
 			
 			Type.Clazz type = rt.first().type(); 
 			
