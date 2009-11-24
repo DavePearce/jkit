@@ -71,7 +71,7 @@ public final class BypassMethods {
 	 *            class to manipulate
 	 */
 	public void apply(JilClass owner) {
-		HashSet<Triple<Clazz, Clazz.Method, Type.Function>> matches = new HashSet();
+		HashSet<Triple<Clazz, Clazz.Method, JilMethod>> matches = new HashSet();
 
 		// First, we identify all the problem cases.
 		for (JilMethod m : owner.methods()) {			
@@ -88,7 +88,7 @@ public final class BypassMethods {
 		}
 
 		// Second, we add appropriate bypass methods.
-		for (Triple<Clazz,Clazz.Method, Type.Function> p : matches) {
+		for (Triple<Clazz,Clazz.Method, JilMethod> p : matches) {
 			JilMethod m = generateBypass(owner, p.second(), p.third());
 			owner.methods().add(m);
 		}
@@ -109,7 +109,7 @@ public final class BypassMethods {
 	 *            The set of problem cases being built up
 	 */
 	protected void checkForProblem(JilMethod method, Type.Reference owner,
-			Set<Triple<Clazz, Clazz.Method, Type.Function>> problems) {
+			Set<Triple<Clazz, Clazz.Method, JilMethod>> problems) {
 		try {
 			// traverse the heirarchy looking for a class or interface which
 			// implements this method.
@@ -136,8 +136,8 @@ public final class BypassMethods {
 			}
 
 			if (isMatch) {				
-				problems.add(new Triple<Clazz, Clazz.Method, Type.Function>(minfo
-						.first(), minfo.second(), method.type()));
+				problems.add(new Triple<Clazz, Clazz.Method, JilMethod>(minfo
+						.first(), minfo.second(), method));
 			}
 		} catch (ClassNotFoundException ce) {
 		} catch (MethodNotFoundException me) {
@@ -159,9 +159,15 @@ public final class BypassMethods {
 	 * @return
 	 */
 	protected JilMethod generateBypass(JilClass owner, Clazz.Method method,
-			Type.Function to) {
-		// First, we substitute each type variable with java.lang.object
-			
+			JilMethod match) {
+		
+		// First, find a source location for this bypass
+		
+		SourceLocation loc = match.attribute(SourceLocation.class);
+		Type.Function to = match.type();
+		
+		// First, we substitute each type variable with java.lang.object		
+		
 		Type.Function from = method.type();
 		Type.Function ftype = (Type.Function) stripGenerics(from);
 		String name = method.name();
@@ -185,10 +191,10 @@ public final class BypassMethods {
 				// bytecode. Assuming the class passed compilation without any
 				// warnings with respect to generic types, then this cast should
 				// always pass.
-				funParams.add(new JilExpr.Cast(new JilExpr.Variable(n, t), to
-						.parameterTypes().get(i)));
+				funParams.add(new JilExpr.Cast(new JilExpr.Variable(n, t, loc), to
+						.parameterTypes().get(i), loc));
 			} else {
-				funParams.add(new JilExpr.Variable(n, t));
+				funParams.add(new JilExpr.Variable(n, t, loc));
 			}
 		}
 
@@ -197,13 +203,13 @@ public final class BypassMethods {
 		if (ftype.returnType() instanceof Type.Void) {
 			// no return type
 			JilStmt ivk = new JilExpr.Invoke(new JilExpr.Variable("this", owner.type()),
-					name, funParams, to, ftype.returnType());
+					name, funParams, to, ftype.returnType(), loc);
 			body.add(ivk);			
-			body.add(new JilStmt.Return(null));
+			body.add(new JilStmt.Return(null, loc));
 		} else {
 			JilExpr ivk = new JilExpr.Invoke(new JilExpr.Variable("this", owner.type()),
-					name, funParams, to, ftype.returnType());
-			JilStmt ret = new JilStmt.Return(ivk);
+					name, funParams, to, ftype.returnType(), loc);
+			JilStmt ret = new JilStmt.Return(ivk, loc);
 			body.add(ret);
 		}
 

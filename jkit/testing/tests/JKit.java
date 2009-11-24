@@ -345,5 +345,6 @@ public class JKit extends TestHarness {
 	@Test public void JLS_XXX_BypassMethod_3() { runTest("JLS_XXX_BypassMethod_3"); }
 	@Test public void JLS_XXX_BypassMethod_4() { runTest("JLS_XXX_BypassMethod_4"); }
 	@Test public void JLS_XXX_BypassMethod_5() { runTest("JLS_XXX_BypassMethod_5"); }
+	@Test public void JLS_XXX_BypassMethod_6() { runTest("JLS_XXX_BypassMethod_6"); }
 }
 

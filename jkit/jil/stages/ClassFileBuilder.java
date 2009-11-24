@@ -723,6 +723,7 @@ public final class ClassFileBuilder {
 				
 				HashSet<Type.Reference> ctypes = new HashSet<Type.Reference>();
 				Stack<Type.Reference> stack = new Stack<Type.Reference>();
+
 				stack.push((Type.Reference) stmt.type());
 				
 				// The following strategy is suboptimal. It will introduce casts

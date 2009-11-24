@@ -980,7 +980,7 @@ public class JilBuilder {
 
 			stmts.add(new JilStmt.Assign(iter, new JilExpr.Invoke(src.first(),
 					"iterator", new ArrayList<JilExpr>(), new Type.Function(
-							JAVA_UTIL_ITERATOR), JAVA_UTIL_ITERATOR), stmt
+							JAVA_UTIL_ITERATOR), JAVA_UTIL_ITERATOR,stmt.attributes()), stmt
 					.attributes()));
 		}				
 		
@@ -999,13 +999,13 @@ public class JilBuilder {
 					.attributes()));					
 			
 			stmts.add(new JilStmt.Assign(loopVar, implicitCast(new JilExpr.ArrayIndex(src.first(),
-					iter, arrType.element()),loopVar.type()), stmt.attributes()));
+					iter, arrType.element(),stmt.attributes()),loopVar.type()), stmt.attributes()));
 		} else {
 			JilExpr hasnext = new JilExpr.Invoke(iter, "hasNext",
 					new ArrayList<JilExpr>(), new Type.Function(T_BOOL),
 					T_BOOL, stmt.attributes());
 			stmts.add(new JilStmt.IfGoto(new JilExpr.UnOp(hasnext, JilExpr.UnOp.NOT,
-					T_BOOL), exitLab, stmt.attributes()));
+					T_BOOL,stmt.attributes()), exitLab, stmt.attributes()));
 			
 			JilExpr cast;
 			if(loopVar.type() instanceof Type.Primitive) {
@@ -1020,7 +1020,7 @@ public class JilBuilder {
 				JilExpr next = new JilExpr.Invoke(iter, "next", new ArrayList<JilExpr>(),
 						new Type.Function(JAVA_LANG_OBJECT),
 						loopVar.type(), stmt.attributes());
-				cast = new JilExpr.Cast(next, loopVar.type());
+				cast = new JilExpr.Cast(next, loopVar.type(),stmt.attributes());
 			}
 			stmts.add(new JilStmt.Assign(loopVar, cast, stmt.attributes()));			
 		}

@@ -96,7 +96,7 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 
 		public <T extends SyntacticAttribute> T attribute(java.lang.Class<T> ac) {
 			for (SyntacticAttribute a : attributes) {
-				if (a.getClass().equals(ac)) {
+				if (a != null && a.getClass().equals(ac)) {
 					return (T) a;
 				}
 			}

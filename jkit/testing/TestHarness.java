@@ -96,7 +96,7 @@ public class TestHarness {
 	 *            (but excluding the extension)
 	 */
 	private boolean compile(String path, String name) {		
-		String classpath = System.getenv("CLASSPATH");				
+		String classpath = System.getenv("CLASSPATH");
 		final String[] args = new String[5];
 		args[0] = "-sourcepath";
 		args[1] = path;
