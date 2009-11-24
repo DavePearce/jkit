@@ -96,12 +96,12 @@ public class TestHarness {
 	 *            (but excluding the extension)
 	 */
 	private boolean compile(String path, String name) {		
-		String classpath = System.getenv("CLASSPATH");		
+		String classpath = System.getenv("CLASSPATH");				
 		final String[] args = new String[5];
 		args[0] = "-sourcepath";
 		args[1] = path;
 		args[2] = "-cp";
-		args[3] = path + ";" + classpath;
+		args[3] = path + File.pathSeparator + classpath;
 		// args[4] = "-flo";
 		args[4] = path + File.separatorChar + name + "." + srcExtension;		
 			
