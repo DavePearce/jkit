@@ -320,7 +320,7 @@ public class InnerClassRewrite {
 		def.setRhs(doExpression(def.rhs()));
 		
 		// second, so the left-hand side.		
-		if(def.lhs() instanceof Expr.Deref) {
+		if(def.lhs() instanceof Expr.Deref) {			
 			Expr.Deref e = (Expr.Deref) def.lhs();			
 			Type tmp = e.target().attribute(Type.class);
 			
@@ -375,7 +375,7 @@ public class InnerClassRewrite {
 					}
 				}
 			}
-		} else {
+		} else {			
 			Expr lhs = doExpression(def.lhs());
 			def.setLhs(lhs);
 		}					
@@ -768,9 +768,92 @@ public class InnerClassRewrite {
 		return e;
 	}
 		
-	protected Expr doUnOp(Expr.UnOp e) {		
-		e.setExpr(doExpression(e.expr()));
-		return e;
+	protected Expr doUnOp(Expr.UnOp uop) throws ClassNotFoundException, FieldNotFoundException {		
+		Expr expr = doExpression(uop.expr());
+		
+		if (uop.expr() instanceof Expr.Deref
+				&& (uop.op() == Expr.UnOp.POSTINC
+						|| uop.op() == Expr.UnOp.POSTDEC
+						|| uop.op() == Expr.UnOp.PREINC || uop.op() == Expr.UnOp.PREDEC)) {						
+			Expr.Deref e = (Expr.Deref) uop.expr();			
+			Type tmp = e.target().attribute(Type.class);
+						
+			if(!(tmp instanceof Type.Reference) || tmp instanceof Type.Array) {
+				// don't need to do anything in this case			
+			} else {
+				Type.Clazz target = (Type.Clazz) tmp;
+
+				if(e.name().equals("this")) {
+					// This is a special case, where we're trying to look up a field
+					// called "this". No such field can exist! What this means is that
+					// we're inside an inner class, and we're trying to access the this
+					// pointer of an enclosing class. This is easy to deal with here,
+					// since the type returned by this expression will be the target
+					// type of the dereference.
+
+					// don't need to do anything here.
+				} else {
+					// now, perform field lookup!					
+					Triple<Clazz, Clazz.Field, Type> r = types
+					.resolveField(target, e.name(), loader);
+
+					Clazz.Field f = r.second();															
+					Clazz c = r.first();
+
+					if (f.isPrivate()
+							&& isStrictInnerClass(enclosingClasses.peek(), c.type())) {
+						// Ok, we have found a dereference of a field. This
+						// means we need to add an accessor method, unless there
+						// already is one.
+
+						if (!(c instanceof jkit.jil.tree.JilClass)) {
+							// it should be impossible to get here.
+							internal_error(
+									"internal failure --- jil class required, found "
+									+ c.getClass().getName(), e);
+						}
+						
+						ArrayList<jkit.compiler.SyntacticAttribute> attributes = new ArrayList(e.attributes());
+						Clazz.Method accessor = createWriteAccessor(f, (jkit.jil.tree.JilClass) c);
+						attributes.add(new JilBuilder.MethodInfo(accessor.exceptions(),accessor.type()));
+						attributes.addAll(uop.attributes());
+						ArrayList<Expr> params = new ArrayList<Expr>();							
+						params.add(e.target());
+						
+						switch(uop.op()) {
+							case Expr.UnOp.POSTDEC:
+							case Expr.UnOp.PREDEC:
+								expr = new Expr.BinOp(Expr.BinOp.SUB,expr, new Value.Int(1),expr.attributes());
+								break;							
+							case Expr.UnOp.POSTINC:	
+							case Expr.UnOp.PREINC:
+								expr = new Expr.BinOp(Expr.BinOp.ADD,expr, new Value.Int(1),expr.attributes());
+								break;
+						}
+						
+						params.add(expr);
+
+						expr = new Expr.Invoke(new Expr.ClassVariable(c.type()
+								.toString(), c.type()), accessor.name(),
+								params, new ArrayList(), attributes);
+						
+						// yeah, this is all a little ugly I must say ...
+						switch(uop.op()) {							
+							case Expr.UnOp.PREDEC:
+								expr = new Expr.BinOp(Expr.BinOp.SUB,expr, new Value.Int(1),expr.attributes());
+								break;														
+							case Expr.UnOp.PREINC:
+								expr = new Expr.BinOp(Expr.BinOp.ADD,expr, new Value.Int(1),expr.attributes());
+								break;
+						}
+					}
+				}
+			}			 
+		} else {
+			uop.setExpr(expr);			
+		}
+
+		return uop;
 	}
 		
 	protected Expr doBinOp(Expr.BinOp e) {				

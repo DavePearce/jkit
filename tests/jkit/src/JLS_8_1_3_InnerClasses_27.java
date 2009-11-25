@@ -4,8 +4,10 @@ public class JLS_8_1_3_InnerClasses_27 {
     public JLS_8_1_3_InnerClasses_27 f(){
 	return new JLS_8_1_3_InnerClasses_27() {
 	    public JLS_8_1_3_InnerClasses_27 f() {
-		size--;
-		System.out.println("Got: " + size);
+		System.out.println("Got: " + --size);
+		System.out.println("Got: " + ++size);
+		System.out.println("Got: " + size--);
+		System.out.println("Got: " + size++);
 		return null;
 	    }
 	};
