@@ -77,13 +77,7 @@ public final class BypassMethods {
 		for (JilMethod m : owner.methods()) {			
 			if(!m.isStatic()) {
 				// Look through interfaces
-				for (Type.Clazz i : owner.interfaces()) {
-					checkForProblem(m, i, matches);
-				}
-				// Now, look through the super class (if there is one)
-				if (owner.superClass() != null) {
-					checkForProblem(m, owner.superClass(), matches);
-				}
+				checkForProblem(m,owner.type(),matches);				
 			}
 		}
 
@@ -111,6 +105,7 @@ public final class BypassMethods {
 	protected void checkForProblem(JilMethod method, Type.Reference owner,
 			Set<Triple<Clazz, Clazz.Method, JilMethod>> problems) {
 		try {
+			
 			// traverse the heirarchy looking for a class or interface which
 			// this method overrides.
 			for(Triple<Clazz, Clazz.Method, Type.Function> minfo : types

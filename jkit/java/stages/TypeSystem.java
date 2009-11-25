@@ -1036,15 +1036,15 @@ public class TypeSystem {
 
 		while (!worklist.isEmpty()) {
 			Type.Clazz type = worklist.removeFirst(); // to ensure BFS
-                                                      // traversal
-			
+                                                      // traversal			
 			Clazz c = loader.loadClass(type);												
 
 			Map<String,Type.Reference> binding = bind(type,c.type(), loader);
 						
 			if(!type.equals(owner)) {
 				for(Clazz.Method m : c.methods(name)) {																
-					Type.Function mtype = Types.stripGenerics(substitute(m.type(),binding));					
+					Type.Function mtype = Types.stripGenerics(substitute(m.type(),binding));
+					
 					if(mtype.equals(funType)) {						
 						methods.add(new Triple(c,m,mtype));
 					}
