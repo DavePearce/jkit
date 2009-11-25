@@ -67,7 +67,8 @@ public abstract class ForwardAnalysis<T extends FlowSet> {
 			if(current == body.size()) {
 				continue;
 			}
-									
+			
+
 			JilStmt stmt = body.get(current);
 			
 			try {
@@ -121,7 +122,7 @@ public abstract class ForwardAnalysis<T extends FlowSet> {
 				} else if(stmt instanceof JilStmt.Label) {
 					merge(current+1,store,worklist);
 				}
-			} catch(Exception e) {
+			} catch(Exception e) {											
 				internal_error(e.getMessage(),stmt);
 			}
 		}
@@ -134,7 +135,7 @@ public abstract class ForwardAnalysis<T extends FlowSet> {
 	 * @param p Destination Point for merge
 	 * @param m FlowSet to merge into point
 	 */
-	private void merge(Integer p, T m, HashSet<Integer> worklist) {
+	private void merge(Integer p, T m, HashSet<Integer> worklist) {		
 		T tmp = stores.get(p);		
 		if(tmp != null) {
 			T ntmp = (T) tmp.join(m);
