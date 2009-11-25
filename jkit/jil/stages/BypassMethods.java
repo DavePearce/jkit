@@ -112,36 +112,35 @@ public final class BypassMethods {
 			Set<Triple<Clazz, Clazz.Method, JilMethod>> problems) {
 		try {
 			// traverse the heirarchy looking for a class or interface which
-			// implements this method.
-			Triple<Clazz, Clazz.Method, Type.Function> minfo = types
-					.resolveMethod(owner, method.name(), method.type()
-							.parameterTypes(), loader);
-			
-			Type.Function ft = minfo.second().type();
-			Type.Function mt = method.type();
-			List<Type> ftParamTypes = ft.parameterTypes();
-			List<Type> mtParamTypes = mt.parameterTypes();
-			Type ftReturnType = stripGenerics(ft.returnType());
-			Type mtReturnType = stripGenerics(mt.returnType());
-			
-			boolean isMatch = !ftReturnType.equals(mtReturnType);
-			
-			for (int i = 0; i != ftParamTypes.size(); ++i) {
-				Type fp = ftParamTypes.get(i);
-				Type mp = mtParamTypes.get(i);
-				// Basically, if the parameter type we found is generic, but the
-				// actual type is not, then we found a problem case.
-				isMatch = isMatch
-						| (fp instanceof Type.Variable && !(mp instanceof Type.Variable));
-			}
+			// this method overrides.
+			for(Triple<Clazz, Clazz.Method, Type.Function> minfo : types
+					.listOverrides((Type.Clazz)owner, method.name(), method.type(), loader)) {
 
-			if (isMatch) {				
-				problems.add(new Triple<Clazz, Clazz.Method, JilMethod>(minfo
-						.first(), minfo.second(), method));
+				Type.Function ft = minfo.second().type();
+				Type.Function mt = method.type();
+				List<Type> ftParamTypes = ft.parameterTypes();
+				List<Type> mtParamTypes = mt.parameterTypes();
+				Type ftReturnType = stripGenerics(ft.returnType());
+				Type mtReturnType = stripGenerics(mt.returnType());
+
+				boolean isMatch = !ftReturnType.equals(mtReturnType);
+
+				for (int i = 0; i != ftParamTypes.size(); ++i) {
+					Type fp = ftParamTypes.get(i);
+					Type mp = mtParamTypes.get(i);
+					// Basically, if the parameter type we found is generic, but the
+					// actual type is not, then we found a problem case.
+					isMatch = isMatch
+					| (fp instanceof Type.Variable && !(mp instanceof Type.Variable));
+				}
+
+				if (isMatch) {				
+					problems.add(new Triple<Clazz, Clazz.Method, JilMethod>(minfo
+							.first(), minfo.second(), method));
+				}
 			}
 		} catch (ClassNotFoundException ce) {
-		} catch (MethodNotFoundException me) {
-		}
+		} 
 	}
 
 	/**
