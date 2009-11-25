@@ -1043,9 +1043,8 @@ public class TypeSystem {
 						
 			if(!type.equals(owner)) {
 				for(Clazz.Method m : c.methods(name)) {																
-					Type.Function mtype = Types.stripGenerics(substitute(m.type(),binding));
-					
-					if(mtype.equals(funType)) {						
+					Type.Function mtype = Types.stripGenerics(substitute(m.type(),binding));					
+					if(mtype.parameterTypes().equals(funType.parameterTypes())) {						
 						methods.add(new Triple(c,m,mtype));
 					}
 				}
