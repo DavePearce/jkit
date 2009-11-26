@@ -368,7 +368,7 @@ public class InnerClassRewrite {
 						attributes.addAll(def.attributes());
 						
 						ArrayList<Expr> params = new ArrayList<Expr>();							
-						if(!accessor.isStatic()) {
+						if(!f.isStatic()) {
 							params.add(e.target());
 						}
 						params.add(def.rhs());
@@ -571,7 +571,7 @@ public class InnerClassRewrite {
 				
 					ArrayList<Expr> params = new ArrayList<Expr>();
 					
-					if(!accessor.isStatic()) {
+					if(!f.isStatic()) {
 						params.add(e.target());
 					}
 					
