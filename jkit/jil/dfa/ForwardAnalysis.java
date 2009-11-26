@@ -123,7 +123,7 @@ public abstract class ForwardAnalysis<T extends FlowSet> {
 					merge(current+1,store,worklist);
 				}
 			} catch(Exception e) {											
-				internal_error(e.getMessage(),stmt);
+				internal_error(stmt,e);
 			}
 		}
 	}	
