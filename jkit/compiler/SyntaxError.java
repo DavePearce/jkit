@@ -230,7 +230,7 @@ public final class SyntaxError extends RuntimeException {
 		
 		SourceLocation loc = (SourceLocation) e.attribute(SourceLocation.class);
 		int line = -1;
-		int column = -1;
+		int column = -1;		
 		
 		if(loc != null) {
 			line = loc.line();
