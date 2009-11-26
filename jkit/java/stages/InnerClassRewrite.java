@@ -367,7 +367,9 @@ public class InnerClassRewrite {
 						attributes.add(new JilBuilder.MethodInfo(accessor.exceptions(),accessor.type()));
 						attributes.addAll(def.attributes());
 						ArrayList<Expr> params = new ArrayList<Expr>();							
-						params.add(e.target());
+						if(!accessor.isStatic()) {
+							params.add(e.target());
+						}
 						params.add(def.rhs());
 
 						return new Expr.Invoke(new Expr.ClassVariable(c.type()
@@ -567,7 +569,11 @@ public class InnerClassRewrite {
 					attributes.add(new JilBuilder.MethodInfo(accessor.exceptions(),accessor.type()));	
 				
 					ArrayList<Expr> params = new ArrayList<Expr>();
-					params.add(e.target());
+					
+					if(!accessor.isStatic()) {
+						params.add(e.target());
+					}
+					
 					return new Expr.Invoke(new Expr.ClassVariable(c.type()
 							.toString(), c.type(), e
 							.attribute(SourceLocation.class)), accessor.name(),
