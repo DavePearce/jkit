@@ -361,17 +361,19 @@ public class InnerClassRewrite {
 						}
 
 						ArrayList<jkit.compiler.SyntacticAttribute> attributes = new ArrayList(e.attributes());
-						Clazz.Method accessor = createWriteAccessor(f, (jkit.jil.tree.JilClass) c);
+						Clazz.Method accessor = createWriteAccessor(f,
+								(jkit.jil.tree.JilClass) c, e
+										.attribute(SourceLocation.class));
 						attributes.add(new JilBuilder.MethodInfo(accessor.exceptions(),accessor.type()));
 						attributes.addAll(def.attributes());
 						ArrayList<Expr> params = new ArrayList<Expr>();							
 						params.add(e.target());
 						params.add(def.rhs());
 
-						return new Expr.Invoke(new Expr.ClassVariable(c
-								.type().toString(), c.type()), accessor
-								.name(), params, new ArrayList(),
-								attributes);
+						return new Expr.Invoke(new Expr.ClassVariable(c.type()
+								.toString(), c.type(), e
+								.attribute(SourceLocation.class)), accessor
+								.name(), params, new ArrayList(), attributes);
 					}
 				}
 			}
@@ -559,13 +561,16 @@ public class InnerClassRewrite {
 					}
 
 					ArrayList<jkit.compiler.SyntacticAttribute> attributes = new ArrayList(e.attributes());
-					Clazz.Method accessor = createReadAccessor(f, (jkit.jil.tree.JilClass) c);
+					Clazz.Method accessor = createReadAccessor(f,
+							(jkit.jil.tree.JilClass) c, e
+									.attribute(SourceLocation.class));
 					attributes.add(new JilBuilder.MethodInfo(accessor.exceptions(),accessor.type()));	
 					attributes.addAll(e.attributes());
 					ArrayList<Expr> params = new ArrayList<Expr>();
 					params.add(e.target());
 					return new Expr.Invoke(new Expr.ClassVariable(c.type()
-							.toString(), c.type()), accessor.name(),
+							.toString(), c.type(), e
+							.attribute(SourceLocation.class)), accessor.name(),
 							params, new ArrayList(), attributes);
 				}
 			}
@@ -814,7 +819,9 @@ public class InnerClassRewrite {
 						}
 						
 						ArrayList<jkit.compiler.SyntacticAttribute> attributes = new ArrayList(e.attributes());
-						Clazz.Method accessor = createWriteAccessor(f, (jkit.jil.tree.JilClass) c);
+						Clazz.Method accessor = createWriteAccessor(f,
+								(jkit.jil.tree.JilClass) c, uop
+										.attribute(SourceLocation.class));
 						attributes.add(new JilBuilder.MethodInfo(accessor.exceptions(),accessor.type()));
 						attributes.addAll(uop.attributes());
 						ArrayList<Expr> params = new ArrayList<Expr>();							
@@ -834,7 +841,7 @@ public class InnerClassRewrite {
 						params.add(expr);
 
 						expr = new Expr.Invoke(new Expr.ClassVariable(c.type()
-								.toString(), c.type()), accessor.name(),
+								.toString(), c.type(),uop.attribute(SourceLocation.class)), accessor.name(),
 								params, new ArrayList(), attributes);
 						
 						// yeah, this is all a little ugly I must say ...
@@ -966,7 +973,7 @@ public class InnerClassRewrite {
 		constructor.attributes().add(new Type.Function(type.returnType(),nparams));
 	}
 	
-	protected Clazz.Method createReadAccessor(Clazz.Field field, jkit.jil.tree.JilClass clazz) {		
+	protected Clazz.Method createReadAccessor(Clazz.Field field, jkit.jil.tree.JilClass clazz, SourceLocation loc) {		
 		// The first thing we need to do is check whether or not we've actually
 		// created an accessor already.
 		
@@ -995,11 +1002,11 @@ public class InnerClassRewrite {
 			modifiers.add(Modifier.ACC_SYNTHETIC);
 			
 			if(field.isStatic()) {
-				thisVar = new JilExpr.ClassVariable(clazz.type());				
+				thisVar = new JilExpr.ClassVariable(clazz.type(),loc);				
 				ft = new Type.Function(field.type());
 			} else {
-				thisVar = new JilExpr.Variable("thisp",clazz.type());
-				params.add(new JilMethod.JilParameter("thisp",mods));
+				thisVar = new JilExpr.Variable("thisp",clazz.type(),loc);
+				params.add(new JilMethod.JilParameter("thisp",mods,loc));
 				ft = new Type.Function(field.type(),clazz.type());
 			}						
 			
@@ -1007,9 +1014,9 @@ public class InnerClassRewrite {
 					ft, params, modifiers, new ArrayList<Type.Clazz>()); 
 			
 			JilExpr expr = new JilExpr.Deref(thisVar, field.name(), field
-					.isStatic(), field.type());
+					.isStatic(), field.type(),loc);
 			
-			JilStmt stmt = new JilStmt.Return(expr,field.type());
+			JilStmt stmt = new JilStmt.Return(expr,field.type(),loc);
 			
 			accessor.body().add(stmt);
 			
@@ -1020,7 +1027,7 @@ public class InnerClassRewrite {
 		return accessor;
 	}
 	
-	protected Clazz.Method createWriteAccessor(Clazz.Field field, jkit.jil.tree.JilClass clazz) {		
+	protected Clazz.Method createWriteAccessor(Clazz.Field field, jkit.jil.tree.JilClass clazz, SourceLocation loc) {		
 		// The first thing we need to do is check whether or not we've actually
 		// created an accessor already.
 		
@@ -1051,31 +1058,31 @@ public class InnerClassRewrite {
 			modifiers.add(Modifier.ACC_SYNTHETIC);
 			
 			if(field.isStatic()) {				
-				thisVar = new JilExpr.ClassVariable(clazz.type());
+				thisVar = new JilExpr.ClassVariable(clazz.type(),loc);
 				ft = new Type.Function(field.type(),field.type());
 			} else {
-				thisVar = new JilExpr.Variable("thisp",clazz.type());
-				params.add(new JilMethod.JilParameter("thisp",mods));
+				thisVar = new JilExpr.Variable("thisp",clazz.type(),loc);
+				params.add(new JilMethod.JilParameter("thisp",mods,loc));
 				ft = new Type.Function(field.type(),clazz.type(),field.type());
 			}
 			
-			params.add(new JilMethod.JilParameter("tmp",mods));									
+			params.add(new JilMethod.JilParameter("tmp",mods,loc));									
 			
 			accessor = new JilMethod("access$" + accessors.size() + "02", ft,
 					params, modifiers, new ArrayList<Type.Clazz>()); 						
 						
-			JilExpr tmpVar = new JilExpr.Variable("old", field.type());
+			JilExpr tmpVar = new JilExpr.Variable("old", field.type(),loc);
 			
 			JilStmt copy = new JilStmt.Assign(tmpVar, new JilExpr.Deref(
-					thisVar, field.name(), field.isStatic(), field.type()));
+					thisVar, field.name(), field.isStatic(), field.type(),loc),loc);
 
 			JilExpr lhs = new JilExpr.Deref(thisVar, field.name(), field
-					.isStatic(), field.type());						
+					.isStatic(), field.type(),loc);						
 			
 			JilStmt assign = new JilStmt.Assign(lhs, new JilExpr.Variable(
-					"tmp", field.type()));
+					"tmp", field.type(),loc),loc);
 			
-			JilStmt ret = new JilStmt.Return(tmpVar,field.type());
+			JilStmt ret = new JilStmt.Return(tmpVar,field.type(),loc);
 			
 			accessor.body().add(copy);
 			accessor.body().add(assign);			
