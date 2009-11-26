@@ -815,12 +815,12 @@ public class ScopeResolution {
 									e.attributes());			
 							target.attributes().add(cs.type);
 						} else if(!isStatic) {
-							Expr.ClassVariable cv = new Expr.ClassVariable(cs.type.toString());
+							Expr.ClassVariable cv = new Expr.ClassVariable(cs.type.toString(),e.attributes());
 							cv.attributes().add(cs.type);
 							target = new Expr.Deref(cv, "this",
 									e.attributes());								
 						} else {															
-							target = new Expr.ClassVariable(cs.type.toString());
+							target = new Expr.ClassVariable(cs.type.toString(),e.attributes());
 							target.attributes().add(cs.type);
 						}
 						break;
@@ -993,7 +993,7 @@ public class ScopeResolution {
 							.attributes());
 					} else if(!isStatic && !r.second().isStatic()){			
 						// Create a class access variable via a parent pointer
-						Expr.ClassVariable cv = new Expr.ClassVariable(cs.type.toString());
+						Expr.ClassVariable cv = new Expr.ClassVariable(cs.type.toString(),e.attributes());
 						cv.attributes().add(cs.type);
 						return new Expr.Deref(new Expr.Deref(cv, "this",
 								e.attributes()), e.value(), e
@@ -1008,7 +1008,7 @@ public class ScopeResolution {
 									+ e.value() + "\" from static context", e);
 						}
 						
-						Expr.ClassVariable cv = new Expr.ClassVariable(cs.type.toString());
+						Expr.ClassVariable cv = new Expr.ClassVariable(cs.type.toString(),e.attributes());
 						cv.attributes().add(cs.type);
 						return new Expr.Deref(cv, e.value(), e
 								.attributes());

@@ -936,6 +936,7 @@ public class InnerClassRewrite {
 			ArrayList<Modifier> mods = new ArrayList<Modifier>();
 			mods.add(Modifier.ACC_FINAL);
 			mods.add(Modifier.ACC_SYNTHETIC);
+			mods.add(new Modifier.Annotation(new Type.Clazz("jkit.java.annotations","NonNull")));
 			m.parameters().add(0, new JilMethod.JilParameter("this$0",mods));
 		}
 		
@@ -943,6 +944,7 @@ public class InnerClassRewrite {
 		ArrayList<Modifier> modifiers = new ArrayList<Modifier>();
 		modifiers.add(Modifier.ACC_FINAL);
 		modifiers.add(Modifier.ACC_SYNTHETIC);
+		modifiers.add(new Modifier.Annotation(new Type.Clazz("jkit.java.annotations","NonNull")));
 		// note: parent pointers must have package access.
 		
 		JilField field = new JilField("this$0",
@@ -956,6 +958,7 @@ public class InnerClassRewrite {
 		
 		ArrayList<Modifier> mods = new ArrayList<Modifier>();
 		mods.add(Modifier.ACC_FINAL);
+		mods.add(new Modifier.Annotation(new Type.Clazz("jkit.java.annotations","NonNull")));
 		constructor.parameters().add(0, new Decl.JavaParameter("this$0", mods, fromJilType(parentType)));
 		Expr.LocalVariable param = new Expr.LocalVariable("this$0", parentType, loc);
 		Expr.LocalVariable thiz = new Expr.LocalVariable("this", ownerType, loc);
