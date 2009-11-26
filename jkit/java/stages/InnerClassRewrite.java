@@ -529,7 +529,7 @@ public class InnerClassRewrite {
 		} else {
 
 			Type.Clazz target = (Type.Clazz) tmp;
-
+						
 			if(e.name().equals("this")) {
 				// This is a special case, where we're trying to look up a field
 				// called "this". No such field can exist! What this means is that
@@ -546,7 +546,7 @@ public class InnerClassRewrite {
 
 				Clazz.Field f = r.second();															
 				Clazz c = r.first();										
-
+								
 				if (f.isPrivate()
 						&& isStrictInnerClass(enclosingClasses.peek(), c.type())) {						
 					// Ok, we have found a dereference of a field. This
@@ -565,7 +565,7 @@ public class InnerClassRewrite {
 							(jkit.jil.tree.JilClass) c, e
 									.attribute(SourceLocation.class));
 					attributes.add(new JilBuilder.MethodInfo(accessor.exceptions(),accessor.type()));	
-					attributes.addAll(e.attributes());
+				
 					ArrayList<Expr> params = new ArrayList<Expr>();
 					params.add(e.target());
 					return new Expr.Invoke(new Expr.ClassVariable(c.type()
@@ -979,7 +979,7 @@ public class InnerClassRewrite {
 	protected Clazz.Method createReadAccessor(Clazz.Field field, jkit.jil.tree.JilClass clazz, SourceLocation loc) {		
 		// The first thing we need to do is check whether or not we've actually
 		// created an accessor already.
-		
+						
 		HashMap<String,JilMethod> accessors = readAccessors.get(clazz.type());
 		
 		JilMethod accessor = null;
