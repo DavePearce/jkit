@@ -822,11 +822,8 @@ public class FieldLoadConversion extends BackwardAnalysis<UnionFlowSet<Exprs.Equ
 	
 	protected Tag.Field determineField(JilExpr.Deref d) {
 		try {
-			Pair<Clazz, Clazz.Field> rf = loader.determineField(
-					(Type.Clazz) d.target().type(), d.name());
-
-			return new Tag.Field(rf.first().type(), rf.second()
-					.name());
+			return Tag.create((Type.Reference) d.target().type(), d.name(),
+					loader);
 		} catch (ClassNotFoundException cnfe) {
 			internal_error(d, cnfe);
 		} catch (FieldNotFoundException fnfe) {

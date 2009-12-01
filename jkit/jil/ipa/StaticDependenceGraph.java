@@ -86,14 +86,14 @@ public class StaticDependenceGraph {
 		fieldReads = new DirectedAdjacencyList();
 		fieldWrites = new DirectedAdjacencyList();
 		for(JilClass owner : classes) {
-			for (JilMethod method : owner.methods()) {
-				build(method,owner);
+			for (JilMethod method : owner.methods()) {				
+				build(method,owner);				
 			}
 		}
 	}
 	
 	protected void build(JilMethod method, JilClass owner) {
-		Tag.Method myNode = new Tag.Method(owner.type(), method.name(), method.type());
+		Tag.Method myNode = Tag.create(owner, method.name(), method.type());
 		List<JilStmt> body = method.body();
 		
 		// first, initialise label map		
@@ -148,11 +148,8 @@ public class StaticDependenceGraph {
 			addEdges(df.target(),myNode);
 			
 			try {
-				Pair<Clazz, Clazz.Field> rt = loader.determineField(
-						(Type.Clazz) df.target().type(), df.name());
-				Type.Clazz type = rt.first().type(); 
-
-				Tag.Field targetNode = new Tag.Field(type, df.name());				
+				Tag.Field targetNode = Tag.create((Type.Reference) df.target()
+						.type(), df.name(), loader);				
 
 				// Add the call graph edge!
 				fieldWrites.add(new FieldAccess(myNode,targetNode));
@@ -243,12 +240,10 @@ public class StaticDependenceGraph {
 		
 		if(target instanceof Type.Clazz) {
 
-			try {
-				Pair<Clazz, Clazz.Field> rt = loader.determineField(
-						(Type.Clazz) expr.target().type(), expr.name());
-				Type.Clazz type = rt.first().type();
-
-				Tag.Field targetNode = new Tag.Field(type, expr.name());			
+			try {				
+				Tag.Field targetNode = Tag.create((Type.Reference) expr.target()
+						.type(), expr.name(), loader);				
+						
 				fieldReads.add(new FieldAccess(myNode, targetNode));
 			} catch (FieldNotFoundException mnfe) {
 				internal_error(expr, mnfe);
@@ -284,15 +279,12 @@ public class StaticDependenceGraph {
 				addEdges(e, myNode);
 			}		
 								
-			
-			
-			Type.Clazz type = rt.first().type(); 
-			
+						
 			// FIXME: One potential problem arises here when the set of potential
             // target methods is greater than one. In this case, we miss edges
             // to all of them
 			
-			Tag.Method targetNode = new Tag.Method(type, expr.name(),
+			Tag.Method targetNode = Tag.create(rt.first(), expr.name(),
 				expr.funType());				
 		
 			// Add the call graph edge!
@@ -306,20 +298,26 @@ public class StaticDependenceGraph {
 		
 	}
 
-	public void addEdges(JilExpr.New expr, Tag.Method myNode) { 		
-		for(JilExpr e : expr.parameters()) {
+	public void addEdges(JilExpr.New expr, Tag.Method myNode) {
+		for (JilExpr e : expr.parameters()) {
 			addEdges(e, myNode);
 		}
 
 		// Interesting issue here if target is not a class. Could be an array,
-        // for example.		
-		if(expr.type() instanceof Type.Clazz) {
-			Type.Clazz type = (Type.Clazz) expr.type();
-			Tag.Method targetNode = new Tag.Method(type, type.lastComponent().first(), expr
-				.funType());
-		
-			// Add the call graph edge!
-			callGraph.add(new Invocation(myNode,targetNode));
+		// for example.
+		if (expr.type() instanceof Type.Clazz) {
+			try {
+				Type.Clazz type = (Type.Clazz) expr.type();
+				Tag.Method targetNode = Tag.create(type, type.lastComponent()
+						.first(), expr.funType(), loader);
+
+				// Add the call graph edge!
+				callGraph.add(new Invocation(myNode, targetNode));
+			} catch (MethodNotFoundException mnfe) {
+				internal_error(expr, mnfe);
+			} catch (ClassNotFoundException cnfe) {
+				internal_error(expr, cnfe);
+			}
 		}
 	}
 	
