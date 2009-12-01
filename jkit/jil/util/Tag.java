@@ -111,13 +111,20 @@ public abstract class Tag {
 	
 	public static Tag.Method create(Clazz owner, String name, Type.Function funtype) {
 		funtype = Types.stripGenerics(funtype);
-		for(Clazz.Method m : owner.methods(name)) {
+		
+		if(name.equals("super")) {
+			name = owner.type().lastComponent().first();			
+		}
+		
+		for (Clazz.Method m : owner.methods(name)) {
 			Type.Function mtype = Types.stripGenerics(m.type());
-			if(m.type().equals(funtype)) {
+			if (mtype.equals(funtype)) {
 				return new Tag.Method(owner.type(), name, funtype);
 			}
 		}
-		throw new RuntimeException("invalid parameter");
+		throw new IllegalArgumentException("cannot create tag --- method \""
+				+ name + ":" + funtype + "\" does not exist in class \""
+				+ owner.type() + "\"");		
 	}
 	
 	public static Tag.Method create(Type.Reference owner, String name,
@@ -140,7 +147,8 @@ public abstract class Tag {
 			return new Tag.Field(owner.type(), name);	
 		}
 		
-		throw new RuntimeException("invalid parameter");
+		throw new IllegalArgumentException("cannot create tag --- field \""
+				+ name + "\" does not exist in class \"" + owner.type() + "\"");
 	}
 	
 	public static Tag.Field create(Type.Reference owner, String name,
