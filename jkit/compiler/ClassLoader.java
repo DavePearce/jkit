@@ -579,18 +579,18 @@ public final class ClassLoader {
 	 * @param t
 	 * @return
 	 */
-	public Pair<Clazz,Clazz.Field> determineField(Type.Clazz receiver, String name)
+	public Pair<Clazz,Clazz.Field> determineField(Type.Reference receiver, String name)
 			throws ClassNotFoundException, FieldNotFoundException {
 		
 		Stack<Type.Clazz> worklist = new Stack<Type.Clazz>();
 		Stack<Type.Clazz> interfaceWorklist = new Stack<Type.Clazz>();
-		worklist.push(receiver);
 		
-		// Need to save the class of the static receiver type, since this
-		// determines whether to use an invokevirtual or invokeinterface. Could
-		// probably optimise this to avoid two identical calls to load class.
-		Clazz outer = loadClass(worklist.peek());
+		if(!(receiver instanceof Type.Clazz)) {
+			receiver = Types.JAVA_LANG_OBJECT; 
+		}
 		
+		worklist.push((Type.Clazz) receiver);
+				
 		while (!worklist.isEmpty()) {
 			Clazz c = loadClass(worklist.pop());									
 			Clazz.Field f = c.field(name);
