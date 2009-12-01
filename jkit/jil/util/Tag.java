@@ -96,7 +96,7 @@ public abstract class Tag {
 		}
 		
 		public boolean equals(Object o) {
-			if(o instanceof Tag.Method) {				
+			if(o instanceof Tag.Field) {				
 				Tag.Field p = (Tag.Field) o;
 				boolean r=false;
 				if(owner != null) { r = owner.equals(p.owner); }
