@@ -237,9 +237,8 @@ public class JKit extends TestHarness {
 	@Test public void JLS_14_14_ForStatement_3() { runTest("JLS_14_14_ForStatement_3"); }
 	@Test public void JLS_14_14_ForStatement_4() { runTest("JLS_14_14_ForStatement_4"); }
 	@Test public void JLS_14_14_ForStatement_5() { runTest("JLS_14_14_ForStatement_5"); }
-	@Test public void JLS_14_14_ForStatement_6() { runTest("JLS_14_14_ForStatement_6"); }
-	// fails because labelled blocks aren't supported.
-	@Ignore("Known Bug") @Test public void JLS_14_14_ForStatement_7() { runTest("JLS_14_14_ForStatement_7"); }
+	@Test public void JLS_14_14_ForStatement_6() { runTest("JLS_14_14_ForStatement_6"); }	
+	@Test public void JLS_14_14_ForStatement_7() { runTest("JLS_14_14_ForStatement_7"); }
 	@Test public void JLS_14_14_ForStatement_8() { runTest("JLS_14_14_ForStatement_8"); }
 	@Test public void JLS_14_14_ForStatement_9() { runTest("JLS_14_14_ForStatement_9"); }
 	

@@ -112,14 +112,14 @@ public abstract class Tag {
 	public static Tag.Method create(Clazz owner, String name, Type.Function funtype) {
 		funtype = Types.stripGenerics(funtype);
 		
-		if(name.equals("super")) {
+		if(name.equals("super") || name.equals("this")) {
 			name = owner.type().lastComponent().first();			
-		}
+		} 
 		
 		for (Clazz.Method m : owner.methods(name)) {
 			Type.Function mtype = Types.stripGenerics(m.type());
 			if (mtype.equals(funtype)) {
-				return new Tag.Method(owner.type(), name, funtype);
+				return new Tag.Method(owner.type(), name, mtype);
 			}
 		}
 		throw new IllegalArgumentException("cannot create tag --- method \""
@@ -129,16 +129,21 @@ public abstract class Tag {
 	
 	public static Tag.Method create(Type.Reference owner, String name,
 			Type.Function funtype, ClassLoader loader)
-			throws ClassNotFoundException, MethodNotFoundException {
+			throws ClassNotFoundException, MethodNotFoundException {		
 
 		if (!(owner instanceof Type.Clazz)) {
 			return new Tag.Method(owner, name, funtype);
 		} else {
-
+			Type.Clazz cowner = (Type.Clazz) owner;
+			
+			if(name.equals("super") || name.equals("this")) {
+				name = cowner.lastComponent().first();			
+			} 
+						
 			Pair<Clazz, Clazz.Method> m = loader.determineMethod(
-					(Type.Clazz) owner, name, funtype);
+					cowner, name, funtype);
 
-			return new Tag.Method(m.first().type(), name, funtype);
+			return new Tag.Method(m.first().type(), name, m.second().type());
 		}
 	}
 	
