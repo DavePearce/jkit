@@ -1341,7 +1341,7 @@ public class TypeSystem {
 		worklist.add(receiver);
 		
 		ArrayList<Triple<Clazz, Clazz.Method, Type.Function>> mts = new ArrayList();
-
+			
 		// Traverse type hierarchy building a list of potential methods
 		while (!worklist.isEmpty()) {
 			Type.Clazz type = worklist.remove(0);
@@ -1349,7 +1349,7 @@ public class TypeSystem {
 			List<? extends Clazz.Method> methods = c.methods(name);						
 			
 			Map<String,Type.Reference> binding = bind(type, c.type(), loader);		
-			
+												
 			for (Clazz.Method m : methods) {
 				// try to rule out as many impossible candidates as possible
 				Type.Function m_type = m.type();												
@@ -1366,16 +1366,17 @@ public class TypeSystem {
 					// Second, substitute method type parameters
 					Type.Function concreteFunctionType = new Type.Function(mt.returnType(),
 							concreteParameterTypes, new ArrayList<Type.Variable>());										
-					
+												
 					try {
-					mt = (Type.Function) substitute(mt, bind(
+						mt = (Type.Function) substitute(mt, bind(
 							concreteFunctionType, mt, m.isVariableArity(),
 							loader));				
-															
-					mts.add(new Triple<Clazz, Clazz.Method, Type.Function>(c, m, mt));
+																
+						mts.add(new Triple<Clazz, Clazz.Method, Type.Function>(c, m, mt));
 					} catch(BindError e) {
 						// don't need to do anything. This just indicates that
-						// the current method is not a candidate.						
+						// the current method is not a candidate.
+																	
 					}										 			
 				}
 			}

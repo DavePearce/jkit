@@ -375,7 +375,6 @@ public interface Clazz {
 		
 		public List<Modifier> modifiers();
 		
-
 		/**
 		 * Check whether this parameter is synthetic
 		 */
