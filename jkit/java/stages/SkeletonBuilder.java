@@ -758,10 +758,29 @@ public class SkeletonBuilder {
 		mods.add(Modifier.ACC_SYNTHETIC);
 		ArrayList<Stmt> stmts = new ArrayList();
 		
-		if(!skeleton.type().equals(JAVA_LANG_OBJECT)) {		
+		if(!skeleton.type().equals(JAVA_LANG_OBJECT)) {
 			Expr.Invoke ivk = new Expr.Invoke(null, "super", new ArrayList(),
 					new ArrayList(), loc);		
+			
+			try {
+				Clazz c = loader.loadClass(skeleton.superClass());
+				for(Clazz.Method m : c.methods(c.type().lastComponent().first())) {
+					if(m.type().parameterTypes().size() == 0) {
+						// found the default constructor!
+						if (m.isPure()) {
+							// propagate pureness
+							mods.add(new Modifier.Annotation(new Type.Clazz(
+									"jkit.java.annotations", "NonNull")));
+						}
+					}
+				}
+			} catch(ClassNotFoundException e) {
+				internal_error(ivk,e);
+			}
 			stmts.add(ivk);
+		} else {
+			mods.add(new Modifier.Annotation(new Type.Clazz(
+					"jkit.java.annotations", "NonNull")));
 		}
 		
 		Stmt.Block block = new Stmt.Block(stmts, loc);
