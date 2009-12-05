@@ -37,13 +37,13 @@ public final class JilMethod extends SyntacticElementImpl implements jkit.compil
 		public JilParameter(String name, List<Modifier> modifiers, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.name = name;
-			this.modifiers = modifiers;
+			this.modifiers = new ArrayList<Modifier>(modifiers);
 		}
 		
 		public JilParameter(String name, List<Modifier> modifiers, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.name = name;
-			this.modifiers = modifiers;
+			this.modifiers = new ArrayList<Modifier>(modifiers);
 		}
 		
 		public String name() {
@@ -97,9 +97,9 @@ public final class JilMethod extends SyntacticElementImpl implements jkit.compil
 		super(attributes);
 		this.name = name;
 		this.type = type;
-		this.parameters = parameters;
-		this.modifiers = modifiers;
-		this.exceptions = exceptions;
+		this.parameters = new ArrayList<JilParameter>(parameters);
+		this.modifiers = new ArrayList<Modifier>(modifiers);
+		this.exceptions = new ArrayList<Type.Clazz>(exceptions);
 	}
 	
 	/**
@@ -124,10 +124,10 @@ public final class JilMethod extends SyntacticElementImpl implements jkit.compil
 			List<SyntacticAttribute> attributes) {
 		super(attributes);
 		this.name = name;
-		this.type = type;
-		this.modifiers = modifiers;
-		this.exceptions = exceptions;
-		this.parameters = parameters;
+		this.type = type;		
+		this.parameters = new ArrayList<JilParameter>(parameters);
+		this.modifiers = new ArrayList<Modifier>(modifiers);
+		this.exceptions = new ArrayList<Type.Clazz>(exceptions);		
 	}
 	
 	/**

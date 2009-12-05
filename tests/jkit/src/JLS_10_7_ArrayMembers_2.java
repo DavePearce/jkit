@@ -1,4 +1,4 @@
-public class JLS_10_7_ArrayMembers_2 {
+xpublic class JLS_10_7_ArrayMembers_2 {
     public static void main (String args[]) {
 	int[] xs = {1,2,3,4,5,6,7,8,9};
 	int[] ys;
