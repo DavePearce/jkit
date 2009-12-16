@@ -302,6 +302,7 @@ public class JKit extends TestHarness {
 	@Ignore("Known Bug") @Test public void JLS_15_14_PostfixOperators_5() { runTest("JLS_15_14_PostfixOperators_5"); }
 	@Test public void JLS_15_14_PostfixOperators_6() { runTest("JLS_15_14_PostfixOperators_6"); }
 	@Test public void JLS_15_14_PostfixOperators_7() { runTest("JLS_15_14_PostfixOperators_7"); }
+	@Test public void JLS_15_14_PostfixOperators_8() { runTest("JLS_15_14_PostfixOperators_8"); }
 	@Test public void JLS_15_17_BinaryOperators_1() { runTest("JLS_15_17_BinaryOperators_1"); }
 	@Test public void JLS_15_17_BinaryOperators_2() { runTest("JLS_15_17_BinaryOperators_2"); }
 	@Test public void JLS_15_17_BinaryOperators_3() { runTest("JLS_15_17_BinaryOperators_3"); }

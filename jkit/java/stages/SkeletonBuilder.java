@@ -778,7 +778,7 @@ public class SkeletonBuilder {
 				internal_error(ivk,e);
 			}
 			stmts.add(ivk);
-		} else {
+		} else {			
 			mods.add(new Modifier.Annotation(new Type.Clazz(
 					"jkit.java.annotations", "NonNull")));
 		}
