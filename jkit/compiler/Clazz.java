@@ -357,6 +357,12 @@ public interface Clazz {
 		public boolean isPure();
 		
 		/**
+		 * Check whether this method is local
+		 */
+		public boolean isLocal();
+		
+		
+		/**
 		 * Check whether this method is synchronized
 		 */
 		public boolean isSynchronized();
