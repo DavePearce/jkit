@@ -115,7 +115,8 @@ public interface JilStmt extends SyntacticElement, Cloneable {
 		
 		public List<SyntacticAttribute> attributes() {
 			// this is to prevent any kind of aliasing issues.
-			return new CopyOnWriteArrayList<SyntacticAttribute>(attributes);
+			// return new CopyOnWriteArrayList<SyntacticAttribute>(attributes);
+			return attributes();
 		}
 		
 		public abstract AbstractStmt clone();
