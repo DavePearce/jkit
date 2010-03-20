@@ -762,10 +762,7 @@ public class SkeletonBuilder {
 			Expr.Invoke ivk = new Expr.Invoke(null, "super", new ArrayList(),
 					new ArrayList(), loc);								
 			stmts.add(ivk);
-		} else {			
-			mods.add(new Modifier.Annotation(new Type.Clazz(
-					"jkit.java.annotations", "NonNull")));
-		}
+		} 
 		
 		Stmt.Block block = new Stmt.Block(stmts, loc);
 

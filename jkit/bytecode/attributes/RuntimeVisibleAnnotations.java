@@ -32,6 +32,7 @@ public class RuntimeVisibleAnnotations implements BytecodeAttribute {
 		for(Modifier.Annotation a : annotations) {
 			writer.write_u2(constantPool.get(new Constant.Utf8(ClassFile.descriptor(a.type(),false))));
 			writer.write_u2(0); // ignore arguments for now
+			System.out.println("GOT: " + a.arguments());
 		}
 	}
 	
