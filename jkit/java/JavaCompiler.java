@@ -99,8 +99,7 @@ public class JavaCompiler implements Compiler {
 	protected final ClassFileBuilder builder;
 	
 	protected final BytecodeOptimiser optimiser;
-	protected boolean bytecodeOptimisationFlag = true;
-	protected boolean fieldLoadOptimisationFlag = false;
+	protected boolean bytecodeOptimisationFlag = true;	
 	
 	/**
 	 * @param classpath
@@ -165,15 +164,7 @@ public class JavaCompiler implements Compiler {
 	public void setBytecodeOptimisation(boolean flag) {
 		bytecodeOptimisationFlag = flag;
 	}
-	
-	/**
-	 * Enable/disable field load optimisation in the compiler.
-	 * @param level
-	 */
-	public void setFieldLoadOptimisation(boolean flag) {
-		fieldLoadOptimisationFlag = flag;
-	}
-	
+		
 	/**
 	 * The purpose of this method is to indicate that a source file is currently
 	 * being compiled.
@@ -373,9 +364,6 @@ public class JavaCompiler implements Compiler {
 			for(JilClass clazz : skeletons) {
 				variableDefinitions(filename,clazz,loader);
 				eliminateDeadCode(filename,clazz,loader);				
-				if(fieldLoadOptimisationFlag) {
-					fieldLoadOptimisation(filename,clazz,loader);
-				}
 				addBypassMethods(filename,clazz,loader);
 			}
 			
@@ -684,21 +672,6 @@ public class JavaCompiler implements Compiler {
 		new BypassMethods(loader, new TypeSystem()).apply(jfile);
 		logTimedMessage("[" + srcfile.getPath() + "] Added bypass methods",
 				(System.currentTimeMillis() - start));
-	}
-	
-	/**
-	 * This is the next stage in the compilation pipeline --- we are now
-	 * beginning the process of code-generation. 
-	 * 
-	 * @param jfile
-	 * @param loader
-	 */
-	protected void fieldLoadOptimisation(File srcfile, JilClass jfile, ClassLoader loader) {
-		long start = System.currentTimeMillis();
-		Pair<Integer,Integer> stats = new FieldLoadConversion(loader).apply(jfile);
-		logTimedMessage("[" + srcfile.getPath() + "] converted field loads ("
-				+ stats.first() + " => " + stats.second() + ")", (System
-				.currentTimeMillis() - start));
 	}
 	
 	/**
