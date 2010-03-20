@@ -350,17 +350,6 @@ public interface Clazz {
 		 * Check whether this method is native
 		 */
 		public boolean isNative();
-
-		/**
-		 * Check whether this method is pure
-		 */
-		public boolean isPure();
-		
-		/**
-		 * Check whether this method is local
-		 */
-		public boolean isLocal();
-		
 		
 		/**
 		 * Check whether this method is synchronized

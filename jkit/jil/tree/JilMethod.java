@@ -271,40 +271,6 @@ public final class JilMethod extends SyntacticElementImpl implements jkit.compil
 	}
 
 	/**
-	 * Check whether this method is pure
-	 */
-	public boolean isPure() {
-		for (Modifier m : modifiers) {
-			if (m instanceof Modifier.Annotation) {
-				Modifier.Annotation a = (Modifier.Annotation) m;
-				Type.Clazz t = a.type();
-				if (t.pkg().equals("jkit.java.annotations")
-						&& t.lastComponent().first().equals("Pure")) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	
-	/**
-	 * Check whether this method is pure
-	 */
-	public boolean isLocal() {
-		for (Modifier m : modifiers) {
-			if (m instanceof Modifier.Annotation) {
-				Modifier.Annotation a = (Modifier.Annotation) m;
-				Type.Clazz t = a.type();
-				if (t.pkg().equals("jkit.java.annotations")
-						&& t.lastComponent().first().equals("Local")) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	
-	/**
 	 * Check whether this method is native
 	 */
 	public boolean isNative() {
