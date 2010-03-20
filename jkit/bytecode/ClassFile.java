@@ -578,23 +578,6 @@ public class ClassFile implements Clazz {
 		}
 
 		/**
-		 * Check whether this method is local
-		 */
-		public boolean isLocal() {
-			for (Modifier m : modifiers) {
-				if (m instanceof Modifier.Annotation) {
-					Modifier.Annotation a = (Modifier.Annotation) m;
-					Type.Clazz t = a.type();
-					if (t.pkg().equals("jkit.java.annotations")
-							&& t.lastComponent().first().equals("Local")) {
-						return true;
-					}
-				}
-			}
-			return false;
-		}
-		
-		/**
 		 * Check whether this method is native
 		 */
 		public boolean isNative() {
