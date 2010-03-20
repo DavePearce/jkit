@@ -1603,7 +1603,7 @@ public class JavaFileReader {
 				arguments.add(parseExpression(tree.getChild(j),
 						genericVariables));
 			}
-							
+			System.out.println("GOT: " + name + ", " + arguments);				
 			return new Annotation(new Type.Clazz(name), arguments, loc);			
 		} else if (modifier.charAt(0) <= 'p') {
 			if (modifier.equals("public")) {

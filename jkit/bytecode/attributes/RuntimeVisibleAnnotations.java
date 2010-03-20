@@ -1,10 +1,10 @@
 package jkit.bytecode.attributes;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.*;
 
 import jkit.jil.tree.Modifier;
+import jkit.jil.tree.JilExpr;
 import jkit.bytecode.*;
 import jkit.compiler.ClassLoader;
 
@@ -27,12 +27,32 @@ public class RuntimeVisibleAnnotations implements BytecodeAttribute {
 			Map<Constant.Info, Integer> constantPool, ClassLoader loader)
 			throws IOException {		
 		writer.write_u2(constantPool.get(new Constant.Utf8("RuntimeVisibleAnnotations")));
-		writer.write_u4(2 + (annotations.size() * 4));
-		writer.write_u2(annotations.size());
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		BinaryOutputStream outstream = new BinaryOutputStream(out);
 		for(Modifier.Annotation a : annotations) {
-			writer.write_u2(constantPool.get(new Constant.Utf8(ClassFile.descriptor(a.type(),false))));
-			writer.write_u2(0); // ignore arguments for now
-			System.out.println("GOT: " + a.arguments());
+			outstream.write_u2(constantPool.get(new Constant.Utf8(ClassFile.descriptor(a.type(),false))));
+			Map<String,JilExpr.Value> args = a.arguments();
+			outstream.write_u2(args.size());
+			for(Map.Entry<String,JilExpr.Value> me : args.entrySet()) {
+				outstream.write_u2(constantPool.get(new Constant.Utf8(me.getKey())));
+				// here we have to write the value
+				writeElementValue(me.getValue(),outstream,constantPool);
+			}			
+		}
+		byte[] bytes = out.toByteArray();
+		writer.write_u4(2 + bytes.length);
+		writer.write_u2(annotations.size());
+		writer.write(bytes);
+	}
+	
+	protected void writeElementValue(JilExpr.Value val, BinaryOutputStream writer,
+			Map<Constant.Info, Integer> constantPool) throws IOException {
+		if(val instanceof JilExpr.Int){
+			int v = ((JilExpr.Int)val).value(); 
+			writer.write_u1('I');
+			writer.write_u2(constantPool.get(new Constant.Integer(v)));
+		} else {
+			throw new RuntimeException("No support for annotation element (yet): " + val);
 		}
 	}
 	
@@ -40,7 +60,20 @@ public class RuntimeVisibleAnnotations implements BytecodeAttribute {
 		Constant.addPoolItem(new Constant.Utf8("RuntimeVisibleAnnotations"),constantPool);
 				
 		for(Modifier.Annotation a : annotations) {
-			Constant.addPoolItem(new Constant.Utf8(ClassFile.descriptor(a.type(),false)),constantPool);		
+			Constant.addPoolItem(new Constant.Utf8(ClassFile.descriptor(a.type(),false)),constantPool);
+			for(Map.Entry<String,JilExpr.Value> me : a.arguments().entrySet()) {
+				Constant.addPoolItem(new Constant.Utf8(me.getKey()),constantPool);
+				addElementValue(me.getValue(),constantPool);
+			}
+		}
+	}
+		
+	protected void addElementValue(JilExpr.Value val, Set<Constant.Info> constantPool) {
+		if(val instanceof JilExpr.Int){
+			int v = ((JilExpr.Int)val).value(); 			
+			Constant.addPoolItem(new Constant.Integer(v),constantPool);			
+		} else {
+			throw new RuntimeException("No support for annotation element (yet): " + val);
 		}
 	}
 	

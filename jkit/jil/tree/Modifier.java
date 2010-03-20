@@ -191,41 +191,41 @@ public interface Modifier extends SyntacticElement {
 	public final static class Annotation extends SyntacticElementImpl implements
 			Modifier {
 		private Type.Clazz type;
-		private List<JilExpr> arguments;
+		private HashMap<String,JilExpr.Value> arguments;
 
 		public Annotation(Type.Clazz type,
 				SyntacticAttribute... attributes) {
 			super(attributes);
 			this.type = type;
-			this.arguments = new ArrayList<JilExpr>();
+			this.arguments = new HashMap<String,JilExpr.Value>();
 		}
 		
 		public Annotation(Type.Clazz type,
 				List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.type = type;
-			this.arguments = new ArrayList<JilExpr>();
+			this.arguments = new HashMap<String,JilExpr.Value>();
 		}
 		
-		public Annotation(Type.Clazz type, Collection<JilExpr> arguments,
+		public Annotation(Type.Clazz type, Map<String,JilExpr.Value> arguments,
 				SyntacticAttribute... attributes) {
 			super(attributes);
 			this.type = type;
-			this.arguments = new ArrayList<JilExpr>(arguments);
+			this.arguments = new HashMap<String,JilExpr.Value>(arguments);
 		}
 
-		public Annotation(Type.Clazz type, Collection<JilExpr> arguments,
+		public Annotation(Type.Clazz type, Map<String,JilExpr.Value> arguments,
 				List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.type = type;
-			this.arguments = new ArrayList<JilExpr>(arguments);
+			this.arguments = new HashMap<String,JilExpr.Value>(arguments);
 		}
 		
 		public Type.Clazz type() {
 			return type;
 		}
 
-		public List<JilExpr> arguments() {
+		public Map<String,JilExpr.Value> arguments() {
 			return arguments;
 		}
 	}

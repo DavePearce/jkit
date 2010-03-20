@@ -1632,7 +1632,11 @@ public class JilBuilder {
 			if(m instanceof Annotation) {
 				Annotation a = (Annotation) m;
 				Type.Clazz t = a.type().attribute(Type.Clazz.class);
-				modifiers.set(i,new Modifier.Annotation(t, a.attributes()));
+				HashMap<String,JilExpr.Value> arguments = new HashMap<String,JilExpr.Value>();
+				for(Expr e : a.arguments()) {
+					arguments.put("value",(JilExpr.Value) doExpression(e).first());
+				}
+				modifiers.set(i,new Modifier.Annotation(t, arguments, a.attributes()));
 			} 
 		}		
 	}
