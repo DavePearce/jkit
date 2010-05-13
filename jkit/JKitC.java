@@ -28,6 +28,7 @@ import jkit.bytecode.*;
 import jkit.compiler.ClassLoader;
 import jkit.compiler.SyntaxError;
 import jkit.java.*;
+import jkit.jil.tree.JilClass;
 
 /**
  * The main class provides the entry point for the JKit compiler. It is
@@ -41,7 +42,7 @@ public class JKitC {
 
 	public static final int MAJOR_VERSION = 0;
 	public static final int MINOR_VERSION = 6;
-	public static final int MINOR_REVISION = 0;
+	public static final int MINOR_REVISION = 1;
 			
 	/**
 	 * Main method provides command-line processing capability.
@@ -149,7 +150,7 @@ public class JKitC {
 			} else if(jilOutput) {
 				compiler = new JilCompiler(sourcePath, classPath, verbOutput);
 			} else {
-				compiler = new JavaCompiler(sourcePath, classPath, verbOutput);
+				compiler = new JavaCompiler(sourcePath, classPath, verbOutput);				
 			}
 
 			compiler.setBytecodeOptimisation(bytecodeOptimisation);			
