@@ -1,0 +1,35 @@
+This directory contains Raytracer benchmark.
+This is version 0.1 for preliminary evaluation by SPEC.
+	Walter Bays, 11/1/96
+The author of Raytracer is Jeff Chan
+
+Raytracer
+---------
+
+This is a raytracer that works on a scene depicting a dinosaur. The source 
+code is included in the top directory. 
+
+To run the Raytracer benchmark, follow the directions in the README 
+in the raytrace directory which contains the class files. 
+
+For class documentation see doc/index.html
+
+For benchmark analysis see analysis/index.html
+
+
+V17 Changes:
+
+2a3
+>  * Modified by Don McCauley - IBM 02/18/98
+83c84,90
+<             new Runner( this, 0, 1 ).run();
+---
+>             //new Runner( this, 0, 1 ).run();
+>             Runner runner = new Runner( this, 0, 1 ); /* DWM */
+>             runner.start();                           /* DWM */
+>             try {                                     /* DWM */
+>                runner.join();                         /* DWM */
+>             } catch (java.lang.InterruptedException ie) {}  /* DWM */ 
+>             runner = null;                            /* DWM */                
+99a107
+>                 runners[i] = null;                    /* DWM */
