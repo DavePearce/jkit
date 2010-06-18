@@ -202,7 +202,8 @@ public class JKitC {
 				{"bootclasspath <path>",
 				"Specific where to find system class files"},
 				{"jil","output jil intermediate representation"},
-				{"bytecode","output bytecode in textual format"}};
+				{"bytecode","output bytecode in textual format"},
+				{"noopt","don't perform bytecode optimisation"}};
 		System.out.println("Usage: jkit <options> <source-files>");
 		System.out.println("Options:");
 
