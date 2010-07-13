@@ -42,7 +42,7 @@ public class JKitC {
 
 	public static final int MAJOR_VERSION = 0;
 	public static final int MINOR_VERSION = 6;
-	public static final int MINOR_REVISION = 1;
+	public static final int MINOR_REVISION = 2;
 			
 	/**
 	 * Main method provides command-line processing capability.
