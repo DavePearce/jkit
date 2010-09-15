@@ -63,7 +63,7 @@ public class UnionFlowSet<T> implements FlowSet, Cloneable, Iterable<T> {
 		UnionFlowSet<T> tmp = (UnionFlowSet<T>) clone();
 
 		if(tmp.data.addAll(fs.data)) {				
-			return fs;
+			return tmp;
 		} else {				
 			return this;
 		}					
