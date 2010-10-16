@@ -606,13 +606,15 @@ public class JavaFileReader {
 
 			if (child.getType() == CATCH) {
 				Tree cb = child.getChild(0);
-				Type.Clazz type = parseClassType(cb.getChild(0), genericVariables);
+				List<Modifier> modifiers = parseModifiers(cb.getChild(0),genericVariables);
+				// should actually do something with the modifiers ...
+				Type.Clazz type = parseClassType(cb.getChild(1), genericVariables);
 				Tree cbb = child.getChild(1);
 				for (int j = 0; j != cbb.getChildCount(); ++j) {
 					Stmt stmt = parseStatement(cbb.getChild(j), genericVariables);
 					cbstmts.add(stmt);
 				}
-				handlers.add(new Stmt.CatchBlock(type, cb.getChild(1)
+				handlers.add(new Stmt.CatchBlock(type, cb.getChild(2)
 						.getText(), cbstmts, new SourceLocation(cb.getLine(),
 						cb.getCharPositionInLine())));
 			} else {

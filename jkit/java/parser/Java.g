@@ -656,11 +656,11 @@ catches
 	;
 	
 catchClause
-	:	lc='catch' '(' formalParameter ')' block -> ^(CATCH[$lc] ^(PARAMETER formalParameter) block)
+	:	lc='catch' '(' formalParameter ')' block -> ^(CATCH[$lc] formalParameter block)
 	;
 
 formalParameter
-	:	variableModifier* type variableDeclaratorId
+	:	variableModifier* type variableDeclaratorId -> ^(PARAMETER ^(MODIFIERS variableModifier*) type variableDeclaratorId)
 	;
 		
 switchBlockStatementGroups
