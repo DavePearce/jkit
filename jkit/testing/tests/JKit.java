@@ -254,6 +254,7 @@ public class JKit extends TestHarness {
 	@Test public void JLS_14_20_TryStatement_7() { runTest("JLS_14_20_TryStatement_7"); }
 	@Test public void JLS_14_20_TryStatement_8() { runTest("JLS_14_20_TryStatement_8"); }
 	@Test public void JLS_14_20_TryStatement_9() { runTest("JLS_14_20_TryStatement_9"); }
+	@Test public void JLS_14_20_TryStatement_10() { runTest("JLS_14_20_TryStatement_10"); }
 	
 	@Test public void JLS_15_6_ArrayAssignment_1() { runTest("JLS_15_6_ArrayAssignment_1"); }
 	@Test public void JLS_15_6_ArrayAssignment_2() { runTest("JLS_15_6_ArrayAssignment_2"); }
