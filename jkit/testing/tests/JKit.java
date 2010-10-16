@@ -29,8 +29,6 @@ public class JKit extends TestHarness {
 	public JKit() {
 		super("tests/jkit/src", "java", "tests/jkit/output", "sysout");
 	}
-												
-	@Test public void Comment_1() { runTest("Comment_1"); }
 	
 	@Test public void ClassSignature_1() { runTest("ClassSignature_1"); }
 	@Test public void ClassSignature_2() { runTest("ClassSignature_2"); }
