@@ -1,4 +1,4 @@
-// $ANTLR 3.1 jkit/java/parser/Java.g 2009-11-02 18:31:49
+// $ANTLR 3.1 jkit/java/parser/Java.g 2010-10-16 17:25:54
 
 package jkit.java.parser;
 import jkit.compiler.SyntaxError;
@@ -3246,8 +3246,8 @@ public class JavaLexer extends Lexer {
         try {
             int _type = LINE_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // jkit/java/parser/Java.g:1054:5: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? '\\n' )
-            // jkit/java/parser/Java.g:1054:7: '//' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? '\\n'
+            // jkit/java/parser/Java.g:1054:5: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? ( '\\n' | EOF ) )
+            // jkit/java/parser/Java.g:1054:7: '//' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? ( '\\n' | EOF )
             {
             match("//"); 
 
@@ -3302,7 +3302,33 @@ public class JavaLexer extends Lexer {
 
             }
 
-            match('\n'); 
+            // jkit/java/parser/Java.g:1054:32: ( '\\n' | EOF )
+            int alt29=2;
+            int LA29_0 = input.LA(1);
+
+            if ( (LA29_0=='\n') ) {
+                alt29=1;
+            }
+            else {
+                alt29=2;}
+            switch (alt29) {
+                case 1 :
+                    // jkit/java/parser/Java.g:1054:33: '\\n'
+                    {
+                    match('\n'); 
+
+                    }
+                    break;
+                case 2 :
+                    // jkit/java/parser/Java.g:1054:40: EOF
+                    {
+                    match(EOF); 
+
+                    }
+                    break;
+
+            }
+
             _channel=HIDDEN;
 
             }
@@ -3317,9 +3343,9 @@ public class JavaLexer extends Lexer {
 
     public void mTokens() throws RecognitionException {
         // jkit/java/parser/Java.g:1:8: ( T__120 | T__121 | T__122 | T__123 | T__124 | T__125 | T__126 | T__127 | T__128 | T__129 | T__130 | T__131 | T__132 | T__133 | T__134 | T__135 | T__136 | T__137 | T__138 | T__139 | T__140 | T__141 | T__142 | T__143 | T__144 | T__145 | T__146 | T__147 | T__148 | T__149 | T__150 | T__151 | T__152 | T__153 | T__154 | T__155 | T__156 | T__157 | T__158 | T__159 | T__160 | T__161 | T__162 | T__163 | T__164 | T__165 | T__166 | T__167 | T__168 | T__169 | T__170 | T__171 | T__172 | T__173 | T__174 | T__175 | T__176 | T__177 | T__178 | T__179 | T__180 | T__181 | T__182 | T__183 | T__184 | T__185 | T__186 | T__187 | T__188 | T__189 | T__190 | T__191 | T__192 | T__193 | T__194 | T__195 | T__196 | T__197 | T__198 | T__199 | T__200 | T__201 | T__202 | T__203 | HexLiteral | DecimalLiteral | OctalLiteral | FloatingPointLiteral | CharacterLiteral | StringLiteral | ENUM | Identifier | WS | COMMENT | LINE_COMMENT )
-        int alt29=95;
-        alt29 = dfa29.predict(input);
-        switch (alt29) {
+        int alt30=95;
+        alt30 = dfa30.predict(input);
+        switch (alt30) {
             case 1 :
                 // jkit/java/parser/Java.g:1:10: T__120
                 {
@@ -3992,7 +4018,7 @@ public class JavaLexer extends Lexer {
 
 
     protected DFA18 dfa18 = new DFA18(this);
-    protected DFA29 dfa29 = new DFA29(this);
+    protected DFA30 dfa30 = new DFA30(this);
     static final String DFA18_eotS =
         "\7\uffff\1\10\2\uffff";
     static final String DFA18_eofS =
@@ -4052,8 +4078,8 @@ public class JavaLexer extends Lexer {
             return "959:1: FloatingPointLiteral : ( ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( Exponent )? ( FloatTypeSuffix )? | '.' ( '0' .. '9' )+ ( Exponent )? ( FloatTypeSuffix )? | ( '0' .. '9' )+ Exponent | ( '0' .. '9' )+ FloatTypeSuffix | ( '0' .. '9' )+ Exponent FloatTypeSuffix );";
         }
     }
-    static final String DFA29_eotS =
-        "\1\uffff\1\55\1\uffff\2\55\1\74\1\uffff\2\55\3\uffff\1\106\2\uffff"+
+    static final String DFA30_eotS =
+        "\1\uffff\1\55\1\uffff\2\55\1\73\1\uffff\2\55\3\uffff\1\106\2\uffff"+
         "\2\55\2\uffff\1\113\6\55\5\uffff\2\55\1\136\1\140\1\143\1\146\1"+
         "\150\1\uffff\1\152\1\uffff\2\155\4\uffff\5\55\1\166\5\55\3\uffff"+
         "\7\55\3\uffff\3\55\2\uffff\15\55\1\u0099\3\55\17\uffff\1\u009d\1"+
@@ -4072,9 +4098,9 @@ public class JavaLexer extends Lexer {
         "\55\1\u0146\1\55\1\u0148\1\uffff\1\u0149\1\55\1\u014b\3\uffff\1"+
         "\u014c\1\55\1\u014e\1\55\1\uffff\1\55\2\uffff\1\u0151\2\uffff\1"+
         "\u0152\1\uffff\1\u0153\1\55\3\uffff\1\55\1\u0156\1\uffff";
-    static final String DFA29_eofS =
+    static final String DFA30_eofS =
         "\u0157\uffff";
-    static final String DFA29_minS =
+    static final String DFA30_minS =
         "\1\11\1\141\1\uffff\1\146\1\150\1\56\1\uffff\1\141\1\154\3\uffff"+
         "\1\46\2\uffff\1\157\1\150\2\uffff\1\75\1\142\2\141\2\157\1\145\5"+
         "\uffff\1\150\1\145\1\53\1\55\1\52\2\75\1\uffff\1\75\1\uffff\2\56"+
@@ -4103,7 +4129,7 @@ public class JavaLexer extends Lexer {
         "\uffff\1\44\1\164\1\44\3\uffff\1\44\1\163\1\44\1\146\1\uffff\1\172"+
         "\2\uffff\1\44\2\uffff\1\44\1\uffff\1\44\1\145\3\uffff\1\144\1\44"+
         "\1\uffff";
-    static final String DFA29_maxS =
+    static final String DFA30_maxS =
         "\1\ufaff\1\165\1\uffff\1\156\1\171\1\71\1\uffff\1\157\1\170\3\uffff"+
         "\1\75\2\uffff\1\157\1\162\2\uffff\1\75\1\163\1\157\1\165\1\171\2"+
         "\157\5\uffff\1\150\1\145\1\53\1\55\1\57\1\174\1\75\1\uffff\1\75"+
@@ -4134,11 +4160,11 @@ public class JavaLexer extends Lexer {
         "\1\164\1\ufaff\3\uffff\1\ufaff\1\163\1\ufaff\1\146\1\uffff\1\172"+
         "\2\uffff\1\ufaff\2\uffff\1\ufaff\1\uffff\1\ufaff\1\145\3\uffff\1"+
         "\144\1\ufaff\1\uffff";
-    static final String DFA29_acceptS =
+    static final String DFA30_acceptS =
         "\2\uffff\1\2\3\uffff\1\6\2\uffff\1\12\1\13\1\14\1\uffff\1\16\1"+
         "\17\2\uffff\1\23\1\24\7\uffff\1\50\1\52\1\53\1\60\1\63\7\uffff\1"+
         "\110\1\uffff\1\122\2\uffff\1\131\1\132\1\134\1\135\13\uffff\1\54"+
-        "\1\130\1\5\7\uffff\1\105\1\112\1\15\3\uffff\1\115\1\25\21\uffff"+
+        "\1\5\1\130\7\uffff\1\105\1\112\1\15\3\uffff\1\115\1\25\21\uffff"+
         "\1\120\1\102\1\121\1\103\1\136\1\137\1\104\1\106\1\111\1\113\1\107"+
         "\1\114\1\116\1\123\1\125\1\uffff\1\126\10\uffff\1\64\42\uffff\1"+
         "\70\3\uffff\1\127\7\uffff\1\44\24\uffff\1\71\5\uffff\1\66\2\uffff"+
@@ -4150,9 +4176,9 @@ public class JavaLexer extends Lexer {
         "\1\uffff\1\74\1\1\1\uffff\1\30\6\uffff\1\10\3\uffff\1\72\1\40\1"+
         "\61\4\uffff\1\37\1\uffff\1\77\1\36\1\uffff\1\31\1\27\1\uffff\1\20"+
         "\2\uffff\1\35\1\11\1\117\2\uffff\1\34";
-    static final String DFA29_specialS =
+    static final String DFA30_specialS =
         "\u0157\uffff}>";
-    static final String[] DFA29_transitionS = {
+    static final String[] DFA30_transitionS = {
             "\2\56\1\uffff\2\56\22\uffff\1\56\1\47\1\54\1\uffff\1\55\1\46"+
             "\1\14\1\53\1\33\1\34\1\6\1\41\1\12\1\42\1\5\1\43\1\51\11\52"+
             "\1\36\1\2\1\11\1\23\1\13\1\32\1\35\32\55\1\21\1\uffff\1\22\1"+
@@ -4165,7 +4191,7 @@ public class JavaLexer extends Lexer {
             "",
             "\1\64\6\uffff\1\62\1\63",
             "\1\67\13\uffff\1\65\1\70\1\uffff\1\71\1\uffff\1\66",
-            "\1\72\1\uffff\12\73",
+            "\1\72\1\uffff\12\74",
             "",
             "\1\100\6\uffff\1\76\3\uffff\1\75\2\uffff\1\77",
             "\1\102\1\uffff\1\103\11\uffff\1\101",
@@ -4201,9 +4227,9 @@ public class JavaLexer extends Lexer {
             "",
             "\1\151",
             "",
-            "\1\73\1\uffff\10\154\2\73\12\uffff\3\73\21\uffff\1\153\13"+
-            "\uffff\3\73\21\uffff\1\153",
-            "\1\73\1\uffff\12\156\12\uffff\3\73\35\uffff\3\73",
+            "\1\74\1\uffff\10\154\2\74\12\uffff\3\74\21\uffff\1\153\13"+
+            "\uffff\3\74\21\uffff\1\153",
+            "\1\74\1\uffff\12\156\12\uffff\3\74\35\uffff\3\74",
             "",
             "",
             "",
@@ -4275,9 +4301,9 @@ public class JavaLexer extends Lexer {
             "",
             "",
             "",
-            "\1\73\1\uffff\10\154\2\73\12\uffff\3\73\35\uffff\3\73",
+            "\1\74\1\uffff\10\154\2\74\12\uffff\3\74\35\uffff\3\74",
             "",
-            "\1\73\1\uffff\12\156\12\uffff\3\73\35\uffff\3\73",
+            "\1\74\1\uffff\12\156\12\uffff\3\74\35\uffff\3\74",
             "\1\u009e",
             "\1\u009f",
             "\1\u00a0",
@@ -4656,34 +4682,34 @@ public class JavaLexer extends Lexer {
             ""
     };
 
-    static final short[] DFA29_eot = DFA.unpackEncodedString(DFA29_eotS);
-    static final short[] DFA29_eof = DFA.unpackEncodedString(DFA29_eofS);
-    static final char[] DFA29_min = DFA.unpackEncodedStringToUnsignedChars(DFA29_minS);
-    static final char[] DFA29_max = DFA.unpackEncodedStringToUnsignedChars(DFA29_maxS);
-    static final short[] DFA29_accept = DFA.unpackEncodedString(DFA29_acceptS);
-    static final short[] DFA29_special = DFA.unpackEncodedString(DFA29_specialS);
-    static final short[][] DFA29_transition;
+    static final short[] DFA30_eot = DFA.unpackEncodedString(DFA30_eotS);
+    static final short[] DFA30_eof = DFA.unpackEncodedString(DFA30_eofS);
+    static final char[] DFA30_min = DFA.unpackEncodedStringToUnsignedChars(DFA30_minS);
+    static final char[] DFA30_max = DFA.unpackEncodedStringToUnsignedChars(DFA30_maxS);
+    static final short[] DFA30_accept = DFA.unpackEncodedString(DFA30_acceptS);
+    static final short[] DFA30_special = DFA.unpackEncodedString(DFA30_specialS);
+    static final short[][] DFA30_transition;
 
     static {
-        int numStates = DFA29_transitionS.length;
-        DFA29_transition = new short[numStates][];
+        int numStates = DFA30_transitionS.length;
+        DFA30_transition = new short[numStates][];
         for (int i=0; i<numStates; i++) {
-            DFA29_transition[i] = DFA.unpackEncodedString(DFA29_transitionS[i]);
+            DFA30_transition[i] = DFA.unpackEncodedString(DFA30_transitionS[i]);
         }
     }
 
-    class DFA29 extends DFA {
+    class DFA30 extends DFA {
 
-        public DFA29(BaseRecognizer recognizer) {
+        public DFA30(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
-            this.decisionNumber = 29;
-            this.eot = DFA29_eot;
-            this.eof = DFA29_eof;
-            this.min = DFA29_min;
-            this.max = DFA29_max;
-            this.accept = DFA29_accept;
-            this.special = DFA29_special;
-            this.transition = DFA29_transition;
+            this.decisionNumber = 30;
+            this.eot = DFA30_eot;
+            this.eof = DFA30_eof;
+            this.min = DFA30_min;
+            this.max = DFA30_max;
+            this.accept = DFA30_accept;
+            this.special = DFA30_special;
+            this.transition = DFA30_transition;
         }
         public String getDescription() {
             return "1:1: Tokens : ( T__120 | T__121 | T__122 | T__123 | T__124 | T__125 | T__126 | T__127 | T__128 | T__129 | T__130 | T__131 | T__132 | T__133 | T__134 | T__135 | T__136 | T__137 | T__138 | T__139 | T__140 | T__141 | T__142 | T__143 | T__144 | T__145 | T__146 | T__147 | T__148 | T__149 | T__150 | T__151 | T__152 | T__153 | T__154 | T__155 | T__156 | T__157 | T__158 | T__159 | T__160 | T__161 | T__162 | T__163 | T__164 | T__165 | T__166 | T__167 | T__168 | T__169 | T__170 | T__171 | T__172 | T__173 | T__174 | T__175 | T__176 | T__177 | T__178 | T__179 | T__180 | T__181 | T__182 | T__183 | T__184 | T__185 | T__186 | T__187 | T__188 | T__189 | T__190 | T__191 | T__192 | T__193 | T__194 | T__195 | T__196 | T__197 | T__198 | T__199 | T__200 | T__201 | T__202 | T__203 | HexLiteral | DecimalLiteral | OctalLiteral | FloatingPointLiteral | CharacterLiteral | StringLiteral | ENUM | Identifier | WS | COMMENT | LINE_COMMENT );";
