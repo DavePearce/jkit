@@ -182,6 +182,7 @@ public class JKit extends TestHarness {
 	@Test public void JLS_8_8_7_2_Super_2() { runTest("JLS_8_8_7_2_Super_2"); }
 	@Test public void JLS_8_8_7_2_Super_3() { runTest("JLS_8_8_7_2_Super_3"); }
 	@Test public void JLS_8_8_7_2_Super_4() { runTest("JLS_8_8_7_2_Super_4"); }	
+	@Test public void JLS_8_8_7_2_Super_5() { runTest("JLS_8_8_7_2_Super_5"); }
 	
 	@Test public void JLS_8_9_Enums_1() { runTest("JLS_8_9_Enums_1"); }
 	@Test public void JLS_8_9_Enums_2() { runTest("JLS_8_9_Enums_2"); }
