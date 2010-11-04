@@ -1,0 +1,68 @@
+/*
+ * FindBugs - Find bugs in Java programs
+ * Copyright (C) 2003,2004 University of Maryland
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+package edu.umd.cs.findbugs;
+
+import edu.umd.cs.findbugs.ba.ClassContext;
+
+/**
+ * The interface which all bug pattern detectors must implement.
+ */
+public interface Detector {
+	/**
+	 *  priority for bug instances that should be ignored
+	 */
+	public static final int IGNORE_PRIORITY = 5;	
+	/**
+	 * Experimental priority for bug instances.
+	 */
+	public static final int EXP_PRIORITY = 4;	
+	
+	/**
+	 * Low priority for bug instances.
+	 */
+	public static final int LOW_PRIORITY = 3;
+
+	/**
+	 * Normal priority for bug instances.
+	 */
+	public static final int NORMAL_PRIORITY = 2;
+
+	/**
+	 * High priority for bug instances.
+	 */
+	public static final int HIGH_PRIORITY = 1;
+
+	/**
+	 * Visit the ClassContext for a class which should be analyzed
+	 * for instances of bug patterns.
+	 *
+	 * @param classContext the ClassContext
+	 */
+	public void visitClassContext(ClassContext classContext);
+
+	/**
+	 * This method is called after all classes to be visited.
+	 * It should be used by any detectors which accumulate information
+	 * over all visited classes to generate results.
+	 */
+	public void report();
+}
+
+// vim:ts=4
