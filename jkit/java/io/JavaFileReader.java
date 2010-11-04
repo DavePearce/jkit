@@ -703,6 +703,8 @@ public class JavaFileReader {
 			op = Expr.BinOp.MUL;
 		} else if(_op.equals("DIV")) {
 			op = Expr.BinOp.DIV;
+		} else if(_op.equals("MOD")) {
+			op = Expr.BinOp.MOD;			
 		} else if(_op.equals("AND")) {
 			op = Expr.BinOp.AND;
 		} else if(_op.equals("OR")) {
@@ -713,7 +715,7 @@ public class JavaFileReader {
 			op = Expr.BinOp.SHL;
 		} else if(_op.equals("SHR")) {
 			op = Expr.BinOp.SHR;
-		} else {
+		} else {			
 			op = Expr.BinOp.USHR;
 		}
 		Expr lhs = parseExpression(tree.getChild(1), genericVariables);

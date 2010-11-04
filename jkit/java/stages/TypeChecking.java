@@ -685,7 +685,7 @@ public class TypeChecking {
 			}	
 	}
 		
-	protected void checkBinOp(Expr.BinOp e) {				
+	protected void checkBinOp(Expr.BinOp e) {						
 		checkExpression(e.lhs());
 		checkExpression(e.rhs());
 		
