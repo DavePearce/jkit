@@ -335,6 +335,7 @@ public class JKit extends TestHarness {
 	@Test public void JLS_15_26_2_CompoundAssignmentOperators_1() { runTest("JLS_15_26_2_CompoundAssignmentOperators_1"); }	
 	@Test public void JLS_15_26_2_CompoundAssignmentOperators_2() { runTest("JLS_15_26_2_CompoundAssignmentOperators_2"); }
 	@Test public void JLS_15_26_2_CompoundAssignmentOperators_3() { runTest("JLS_15_26_2_CompoundAssignmentOperators_3"); }
+	@Test public void JLS_15_26_2_CompoundAssignmentOperators_4() { runTest("JLS_15_26_2_CompoundAssignmentOperators_4"); }
 
 	// Fails because: need definite assignment test
 	@Test public void JLS_16_3_DefiniteAssignment_1() { compileFailTest("JLS_16_3_DefiniteAssignment_1"); }
