@@ -22,6 +22,6 @@ public class LookupswitchInsn extends Insn implements RuntimeConstants
   public LookupswitchInsn(LabelOrOffset def, int match[],
                                     LabelOrOffset target[]) {
     opc = opc_lookupswitch;
-    operand = new LookupswitchOperand(this, def, match, target);
+    operand = new jas.LookupswitchOperand(this, def, match, target);
   }
 }

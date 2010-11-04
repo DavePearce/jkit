@@ -20,6 +20,6 @@ public class MultiarrayInsn extends Insn implements RuntimeConstants
   public MultiarrayInsn(CP cpe, int sz)
   {
     opc = opc_multianewarray;
-    operand = new MultiarrayOperand(cpe, sz);
+    operand = new jas.MultiarrayOperand(cpe, sz);
   }
 }

@@ -28,7 +28,7 @@ public class IincInsn extends Insn implements RuntimeConstants
   public IincInsn(int vindex, int increment, boolean Wide)
   {
     opc = opc_iinc;
-    operand = new IincOperand(vindex, increment, Wide);
+    operand = new jas.IincOperand(vindex, increment, Wide);
   }
 }
 

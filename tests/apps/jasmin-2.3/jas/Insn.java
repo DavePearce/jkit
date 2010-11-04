@@ -92,7 +92,7 @@ public class Insn implements RuntimeConstants
       case opc_bipush:
           if(val > 127 || val < -128)
             throw new jasError("bipush value exceed size of byte", true);
-          operand = new ByteOperand(val);
+          operand = new jas.ByteOperand(val);
           break;
 
       case opc_sipush:
@@ -115,16 +115,16 @@ public class Insn implements RuntimeConstants
       case opc_ifnull:
       case opc_jsr:
         check_short(val, opc);
-        operand = new OffsetOperand(this, val); break;
+        operand = new jas.OffsetOperand(this, val); break;
 
       case opc_goto_w:
       case opc_jsr_w:
-        operand = new OffsetOperand(this, val, true); break;
+        operand = new jas.OffsetOperand(this, val, true); break;
 
       case opc_newarray:
         if(val < 0 || val > 255)
             throw new jasError("newarray counter is illegal", true);
-        operand = new UnsignedByteOperand(val);
+        operand = new jas.UnsignedByteOperand(val);
         break;
 
       case opc_ret:
@@ -138,7 +138,7 @@ public class Insn implements RuntimeConstants
       case opc_fstore:
       case opc_dstore:
       case opc_astore:
-        operand = new UnsignedByteWideOperand(val, Wide);
+        operand = new jas.UnsignedByteWideOperand(val, Wide);
         break;
 
       default:
@@ -175,11 +175,11 @@ public class Insn implements RuntimeConstants
       case opc_ifnull:
       case opc_jsr:
         check_short(val, opc);
-        operand = new RelativeOffsetOperand(this, val); break;
+        operand = new jas.RelativeOffsetOperand(this, val); break;
 
       case opc_goto_w:
       case opc_jsr_w:
-        operand = new RelativeOffsetOperand(this, val, true); break;
+        operand = new jas.RelativeOffsetOperand(this, val, true); break;
 
       default:
         throw new jasError
@@ -234,11 +234,11 @@ public class Insn implements RuntimeConstants
       case opc_ifeq:
       case opc_ifnull:
       case opc_ifnonnull:
-        operand = new LabelOperand(target, this, line);
+        operand = new jas.LabelOperand(target, this, line);
         break;
       case opc_goto_w:
       case opc_jsr_w:
-        operand = new LabelOperand(target, this, true, line);
+        operand = new jas.LabelOperand(target, this, true, line);
         break;
       default:
         throw new jasError
@@ -282,14 +282,14 @@ public class Insn implements RuntimeConstants
       case opc_putstatic:
       case opc_getfield:
       case opc_putfield:
-        operand = new CPOperand(arg);
+        operand = new jas.CPOperand(arg);
         break;
       case opc_ldc2_w:
       case opc_ldc_w:
-        operand = new LdcOperand(this, arg);
+        operand = new jas.LdcOperand(this, arg);
         break;
       case opc_ldc:
-        operand = new LdcOperand(this, arg, false);
+        operand = new jas.LdcOperand(this, arg, false);
         break;
       default:
         throw new jasError
