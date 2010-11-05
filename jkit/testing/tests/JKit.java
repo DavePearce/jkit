@@ -87,6 +87,7 @@ public class JKit extends TestHarness {
 	
 	@Test public void JLS_4_3_2_GetClass_1() { runTest("JLS_4_3_2_GetClass_1"); }
 	
+	@Test public void JLS_5_1_2_Widening_Conversion_1() { runTest("JLS_5_1_2_Widening_Conversion_1"); }
 	@Test public void JLS_5_1_3_NarrowingConversions_1() { runTest("JLS_5_1_3_NarrowingConversions_1"); }
 	@Test public void JLS_5_1_3_NarrowingConversions_2() { runTest("JLS_5_1_3_NarrowingConversions_2"); }
 	@Test public void JLS_5_1_3_NarrowingConversions_3() { runTest("JLS_5_1_3_NarrowingConversions_3"); }

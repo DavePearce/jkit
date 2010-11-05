@@ -338,10 +338,11 @@ public class TypePropagation {
 				// Integer that actually returns "1" must box this at the point of
 				// return.
 				doExpression(exp);
-
-				exp = implicitCast(exp, m.returnType()
-						.attribute(Type.class));
 			}
+			
+			exp = implicitCast(exp, m.returnType()
+					.attribute(Type.class));
+			
 			ret.setExpr(exp);
 		}
 	}
