@@ -264,13 +264,11 @@ public class SkeletonBuilder {
 	protected void doField(Decl.JavaField f, JilClass skeleton) {				
 		Type t = f.type().attribute(Type.class);	
 		
-		if(skeleton.isInterface()) {			
-			Object constant;
-			if(f.isConstant()) {
-				constant = f.constant();
-			} else {
-				constant = determineConstantValue(f.initialiser(),skeleton);	
-			}	
+		Object constant = f.isConstant()
+				? f.constant()
+				: determineConstantValue(f.initialiser(), skeleton);
+		
+		if(skeleton.isInterface()) {						
 			ArrayList<Modifier> mods = new ArrayList(f.modifiers());
 			if(!f.isProtected()) {
 				mods.add(Modifier.ACC_PUBLIC);
@@ -293,14 +291,14 @@ public class SkeletonBuilder {
 						new JilField(f.name(), t, mods, f
 								.attributes()));
 			}
-		} else if(f.isConstant() && f.isStatic() && f.isFinal()) {			
+		} else if(constant != null && f.isStatic() && f.isFinal()) {			
 			// Ok, this is actually a constant field.
 			skeleton.fields().add(
-					new JilConstant(f.name(), t, f.constant(), f.modifiers(), f
+					new JilConstant(f.name(), t, constant, f.modifiers(), f
 							.attributes()));
-		} else {
+		} else {						
 			skeleton.fields().add(
-					new JilField(f.name(), t, f.modifiers(), f.attributes()));
+					new JilField(f.name(), t, f.modifiers(), f.attributes()));			
 		}
 
 		doExpression(f.initialiser(), skeleton);		
@@ -694,7 +692,8 @@ public class SkeletonBuilder {
 			return ((Value.Double) e).value();
 		} else if(e instanceof Expr.BinOp) {
 			return eval((Expr.BinOp) e,skeleton);			
-		}
+		}		
+		
 		return null;
 	}
 	
@@ -708,7 +707,7 @@ public class SkeletonBuilder {
 		if(lval instanceof Integer && rval instanceof Integer) {
 			int l = (Integer) lval;
 			int r = (Integer) rval;
-			
+									
 			switch(bop.op()) {
 				case Expr.BinOp.ADD:
 					return l+r;
@@ -725,7 +724,11 @@ public class SkeletonBuilder {
 				case Expr.BinOp.SHR:
 					return l>>r;
 				case Expr.BinOp.USHR:
-					return l>>>r;					
+					return l>>>r;
+				case Expr.BinOp.OR:					
+					return l|r;
+				case Expr.BinOp.AND:
+					return l&r;
 				case Expr.BinOp.LT:
 					return l<r;
 				case Expr.BinOp.LTEQ:
@@ -737,8 +740,66 @@ public class SkeletonBuilder {
 				case Expr.BinOp.EQ:
 					return l==r;
 				case Expr.BinOp.NEQ:
-					return l!=r;									
+					return l!=r;													
 			}
+		} else if ((lval instanceof Float || lval instanceof Integer)
+				&& (rval instanceof Float || rval instanceof Integer)) {
+			float l = lval instanceof Float ? (Float) lval : (Integer) lval;
+			float r = rval instanceof Float ? (Float) rval : (Integer) rval;			
+									
+			switch(bop.op()) {
+				case Expr.BinOp.ADD:
+					return l+r;
+				case Expr.BinOp.SUB:
+					return l-r;
+				case Expr.BinOp.MUL:
+					return l*r;
+				case Expr.BinOp.DIV:
+					return l/r;
+				case Expr.BinOp.MOD:
+					return l%r;
+				case Expr.BinOp.LT:
+					return l<r;
+				case Expr.BinOp.LTEQ:
+					return l<=r;
+				case Expr.BinOp.GT:
+					return l>r;
+				case Expr.BinOp.GTEQ:
+					return l>=r;
+				case Expr.BinOp.EQ:
+					return l==r;
+				case Expr.BinOp.NEQ:
+					return l!=r;													
+			}		
+		} else if ((lval instanceof Double || lval instanceof Integer)
+				&& (rval instanceof Double || rval instanceof Integer)) {
+			double l = lval instanceof Double ? (Double) lval : (Integer) lval;
+			double r = rval instanceof Double ? (Double) rval : (Integer) rval;			
+									
+			switch(bop.op()) {
+				case Expr.BinOp.ADD:
+					return l+r;
+				case Expr.BinOp.SUB:
+					return l-r;
+				case Expr.BinOp.MUL:
+					return l*r;
+				case Expr.BinOp.DIV:
+					return l/r;
+				case Expr.BinOp.MOD:
+					return l%r;
+				case Expr.BinOp.LT:
+					return l<r;
+				case Expr.BinOp.LTEQ:
+					return l<=r;
+				case Expr.BinOp.GT:
+					return l>r;
+				case Expr.BinOp.GTEQ:
+					return l>=r;
+				case Expr.BinOp.EQ:
+					return l==r;
+				case Expr.BinOp.NEQ:
+					return l!=r;													
+			}		
 		}
 		
 		return null;

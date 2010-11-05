@@ -1325,7 +1325,7 @@ public class TypePropagation {
 			int rhs = evaluateUnknownConstant(bop.rhs());
 			
 			switch(bop.op()) {
-				case Expr.BinOp.ADD:
+				case Expr.BinOp.ADD:					
 					return lhs + rhs;					
 				case Expr.BinOp.SUB:
 					return lhs - rhs;					
