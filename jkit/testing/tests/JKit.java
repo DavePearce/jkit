@@ -248,6 +248,7 @@ public class JKit extends TestHarness {
 	@Test public void JLS_14_14_ForStatement_9() { runTest("JLS_14_14_ForStatement_9"); }
 	
 	@Test public void JLS_14_19_Synchronization_1() { runTest("JLS_14_19_Synchronization_1"); }
+	@Test public void JLS_14_19_Synchronization_2() { runTest("JLS_14_19_Synchronization_2"); }
 	
 	@Test public void JLS_14_20_TryStatement_1() { runTest("JLS_14_20_TryStatement_1"); }
 	@Test public void JLS_14_20_TryStatement_2() { runTest("JLS_14_20_TryStatement_2"); }
