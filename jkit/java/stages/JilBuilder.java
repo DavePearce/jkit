@@ -86,6 +86,13 @@ public class JilBuilder {
 		}
 	}
 	
+	private static class SynchronisedScope extends Scope {
+		public JilExpr var;
+		public SynchronisedScope(JilExpr var) {			
+			this.var = var;
+		}
+	}
+	
 	private static class LoopScope extends SwitchScope {
 		public String continueLab;		
 		public LoopScope(String cl, String el) {
@@ -405,8 +412,12 @@ public class JilBuilder {
 		JilExpr tmpVar = new JilExpr.Variable(getTempVar(), target.type(), target
 				.attributes());						
 		r.add(new JilStmt.Assign(tmpVar, target, target.attributes()));
-		r.add(new JilStmt.Lock(tmpVar,block.attributes()));						
+		r.add(new JilStmt.Lock(tmpVar,block.attributes()));
+		
+		scopes.push(new SynchronisedScope(tmpVar));		
 		r.addAll(doBlock(block));
+		scopes.pop();
+		
 		r.add(new JilStmt.Unlock(tmpVar,block.attributes()));
 		// need to add synch enter and leave here ?
 		return r;
@@ -714,6 +725,17 @@ public class JilBuilder {
 	
 	protected List<JilStmt> doReturn(Stmt.Return ret) {
 		ArrayList<JilStmt> r = new ArrayList<JilStmt>();
+		
+		// get out of any sync scopes we're in
+		
+		for(int i=scopes.size()-1;i>=0;--i) {
+			Scope s = scopes.get(i);
+			if(s instanceof SynchronisedScope) {
+				SynchronisedScope ss = (SynchronisedScope) s;
+				r.add(new JilStmt.Unlock(ss.var));
+			} 			
+		}
+		
 		if(ret.expr() != null) {
 			Pair<JilExpr,List<JilStmt>> expr = doExpression(ret.expr());
 			r.addAll(expr.second());
