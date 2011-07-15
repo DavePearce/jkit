@@ -1,46 +1,9 @@
-====================================================================
-JKit v0.5 Release Notes
-====================================================================
-By David J. Pearce, July 2009.
-
-There are currently numerous issues with the JKit compiler, and the
-following list identifies all those which are known to us.  If you
-find a problem which is not listed here, please email
-david.pearce@mcs.vuw.ac.nz with information detailing the problem.
-
-The various problems are split into different categories!
-
-====================================================================
-1) Parsing
-====================================================================
-
-1.1) Various problems related to using generic types in method bodies.
-
-====================================================================
-2) Type Checking
-====================================================================
-
-2.1) No support for checking whether variables are defined before
-being used.
-
-2.2) No support for checking method overriding issues
-     (e.g. covariance, contravariance, reducing visibility etc.)
-
-====================================================================
-3) Code Generation
-====================================================================
-
-====================================================================
-4) Class File Generation
-====================================================================
-
-4.1) Assertions do nothing
-
-4.2) UTF8 Encoding in Constant.Utf8 maybe incorrect, according to VM
-  Spec "4.4.7 The CONSTANT_Utf8_info Structure".
-
-4.3) Line number information is not written to class files.
-
-====================================================================
-5) Misc
-====================================================================
+The Java Compiler Kit is a straightforward implementation of a Java
+compiler, designed with extensibility in mind. In building the JKit
+compiler, the aims were: firstly, to help with teaching compilers by
+considering an implementation for a fully fledged language (Java),
+rather than a stripped-down imitation language; secondly, to aid
+research in programming languages, compilers and verification. With
+JKit you can easily prototype new extensions to the Java language, or
+implement completely new languages and compile them down to Java
+Bytecode.
