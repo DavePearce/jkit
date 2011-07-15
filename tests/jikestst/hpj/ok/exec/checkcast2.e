@@ -1,2 +1,0 @@
-ClassCastException!
-11
