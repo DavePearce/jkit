@@ -1,23 +1,23 @@
 //This file is part of the Java Compiler Kit (JKit)
 
-//The Java Compiler Kit is free software; you can 
-//redistribute it and/or modify it under the terms of the 
-//GNU General Public License as published by the Free Software 
-//Foundation; either version 2 of the License, or (at your 
+//The Java Compiler Kit is free software; you can
+//redistribute it and/or modify it under the terms of the
+//GNU General Public License as published by the Free Software
+//Foundation; either version 2 of the License, or (at your
 //option) any later version.
 
 //The Java Compiler Kit is distributed in the hope
-//that it will be useful, but WITHOUT ANY WARRANTY; without 
-//even the implied warranty of MERCHANTABILITY or FITNESS FOR 
-//A PARTICULAR PURPOSE.  See the GNU General Public License 
+//that it will be useful, but WITHOUT ANY WARRANTY; without
+//even the implied warranty of MERCHANTABILITY or FITNESS FOR
+//A PARTICULAR PURPOSE.  See the GNU General Public License
 //for more details.
 
-//You should have received a copy of the GNU General Public 
-//License along with the Java Compiler Kit; if not, 
-//write to the Free Software Foundation, Inc., 59 Temple Place, 
+//You should have received a copy of the GNU General Public
+//License along with the Java Compiler Kit; if not,
+//write to the Free Software Foundation, Inc., 59 Temple Place,
 //Suite 330, Boston, MA  02111-1307  USA
 
-//(C) David James Pearce, 2009. 
+//(C) David James Pearce, 2009.
 
 package jkit;
 
@@ -34,45 +34,45 @@ import jkit.jil.tree.JilClass;
  * The main class provides the entry point for the JKit compiler. It is
  * responsible for parsing command-line parameters, configuring and executing
  * the pipeline and determining the name of the output file.
- * 
+ *
  * @author djp
- * 
+ *
  */
 public class JKitC {
 
 	public static final int MAJOR_VERSION = 0;
 	public static final int MINOR_VERSION = 6;
 	public static final int MINOR_REVISION = 2;
-			
+
 	/**
 	 * Main method provides command-line processing capability.
-	 * 
+	 *
 	 * @param args
 	 */
-	public static void main(String[] args) {		
-		if(!new JKitC().compile(args)) {	
+	public static void main(String[] args) {
+		if(!new JKitC().compile(args)) {
 			System.exit(1);
 		} else {
 			System.exit(0);
 		}
 	}
-	
+
 	public boolean compile(String[] args) {
 		ArrayList<String> classPath = null;
 		ArrayList<String> bootClassPath = null;
 		ArrayList<String> sourcePath = null;
-		String outputDirectory = null;		
+		String outputDirectory = null;
 		boolean verbose = false;
 		boolean bytecodeOutput = false;
-		boolean jilOutput = false;		
+		boolean jilOutput = false;
 		boolean bytecodeOptimisation = true;
-		
+
 		if (args.length == 0) {
 			// no command-line arguments provided
 			usage();
 			System.exit(0);
 		}
-					
+
 		// ======================================================
 		// ======== First, parse command-line arguments ========
 		// ======================================================
@@ -89,7 +89,7 @@ public class JKitC {
 							+ MINOR_VERSION + "." + MINOR_REVISION);
 				} else if (arg.equals("-verbose")) {
 					verbose = true;
-				} else if (arg.equals("-cp") || arg.equals("-claspath")) {
+				} else if (arg.equals("-cp") || arg.equals("-classpath")) {
 					classPath = new ArrayList<String>();
 					// split classpath along appropriate separator
 					Collections.addAll(classPath, args[++i]
@@ -121,11 +121,11 @@ public class JKitC {
 		}
 
 		PrintStream verbOutput = null;
-		
+
 		if(verbose) {
 			verbOutput = System.err;
 		}
-		
+
 		// ======================================================
 		// =========== Second, setup classpath properly ==========
 		// ======================================================
@@ -141,35 +141,35 @@ public class JKitC {
 		}
 
 		classPath.addAll(bootClassPath);
-			
+
 		try {
 			JavaCompiler compiler;
 
 			if(bytecodeOutput) {
-				compiler = new BytecodeCompiler(sourcePath, classPath, verbOutput);	
+				compiler = new BytecodeCompiler(sourcePath, classPath, verbOutput);
 			} else if(jilOutput) {
 				compiler = new JilCompiler(sourcePath, classPath, verbOutput);
 			} else {
-				compiler = new JavaCompiler(sourcePath, classPath, verbOutput);				
+				compiler = new JavaCompiler(sourcePath, classPath, verbOutput);
 			}
 
-			compiler.setBytecodeOptimisation(bytecodeOptimisation);			
-			
+			compiler.setBytecodeOptimisation(bytecodeOptimisation);
+
 			if (outputDirectory != null) {
 				compiler.setOutputDirectory(new File(outputDirectory));
 			}
 
 			// ======================================================
 			// ============== Third, load skeletons ================
-			// ======================================================								
+			// ======================================================
 
 			List<File> srcfiles = new ArrayList<File>();
 			for(int i=fileArgsBegin;i!=args.length;++i) {
 				srcfiles.add(new File(args[i]));
 			}
-			compiler.compile(srcfiles);		
-			compiler.flushCompilationQueue();						
-			
+			compiler.compile(srcfiles);
+			compiler.flushCompilationQueue();
+
 		} catch (SyntaxError e) {
 			outputSourceError(e.fileName(), e.line(), e.column(), e.width(), e
 					.getMessage());
@@ -184,13 +184,13 @@ public class JKitC {
 			}
 			return false;
 		}
-						
+
 		return true;
 	}
-	
+
 	/**
 	 * Print out information regarding command-line arguments
-	 * 
+	 *
 	 */
 	public void usage() {
 		String[][] info = {
@@ -223,12 +223,12 @@ public class JKitC {
 			}
 			System.out.println(p[1]);
 		}
-	}	
+	}
 
 	public static void outputSourceError(String fileArg, int line, int col,
 			int width, String message) {
 		System.err.println(fileArg + ":" + line + ": " + message);
-		String l = readLine(fileArg, line);		
+		String l = readLine(fileArg, line);
 		if(l != null) {
 			System.err.println(l);
 			for (int j = 0; j < Math.min(col,l.length()); ++j) {
@@ -237,7 +237,7 @@ public class JKitC {
 				} else {
 					System.err.print(" ");
 				}
-			}		
+			}
 			for (int j = 0; j < width; ++j)
 				System.err.print("^");
 			System.err.println("");

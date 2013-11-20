@@ -296,7 +296,7 @@ public class JKit extends TestHarness {
 	@Test public void JLS_15_9_5_AnonymousClasses_10() { runTest("JLS_15_9_5_AnonymousClasses_10"); }
 
 	//Difficult to reproduce error (threading), but occasionally this test hangs and will not terminate
-	@Test public void JLS_15_9_5_AnonymousClasses_11() { runTest("JLS_15_9_5_AnonymousClasses_11"); }
+	@Ignore("Known Bug")@Test public void JLS_15_9_5_AnonymousClasses_11() { runTest("JLS_15_9_5_AnonymousClasses_11"); }
 
 	@Test public void JLS_15_9_5_AnonymousClasses_12() { runTest("JLS_15_9_5_AnonymousClasses_12"); }
 	@Test public void JLS_15_9_5_AnonymousClasses_13() { runTest("JLS_15_9_5_AnonymousClasses_13"); }
