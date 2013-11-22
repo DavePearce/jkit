@@ -30,8 +30,10 @@ import jkit.bytecode.ClassFile;
 import jkit.bytecode.ClassFileReader;
 import jkit.error.ErrorHandler;
 import jkit.jil.tree.Type;
+import jkit.jil.tree.JilClass;
 import jkit.jil.util.Types;
 import jkit.util.Pair;
+import jkit.compiler.SyntaxError;
 
 /**
  * A ClassLoader is responsible for loading classes from the filesystem. Classes
@@ -451,6 +453,11 @@ public final class ClassLoader {
 		// Need to do this to indicate that the source file in question has
 		// being compiled. Otherwise, we end up with an infinite loop of
 		// class loading.
+
+		if (pkgInfo == null) {
+			ErrorHandler.handleError(ErrorHandler.ErrorType.PACKAGE_NOT_FOUND,
+					new ErrorHandler.PackageNotFoundException(this, jilClass));
+		}
 		pkgInfo.classes.add(pc);
 		pkgInfo.compiledClasses.add(pc);
 	}
@@ -665,6 +672,49 @@ public final class ClassLoader {
 
 		failedPackages.add(pkg);
 		return null;
+	}
+
+	/**
+	 * Given a class, finds the directory that class is in
+	 * (and converts that directory to a package name)
+	 * @param jilClass - the class to find the directory of
+	 * @return
+	 */
+	public String findDirectory(Clazz jilClass) {
+		String pkg = jilClass.type().pkg().replace('.', File.pathSeparatorChar);
+
+		//A pairing of directory to classpath directory (used to find relative path)
+		Stack<Pair<String, String>> directories = new Stack<Pair<String, String>>();
+
+		for (String dir : sourcepath) {
+			if (!dir.contains("."))
+				directories.push(new Pair<String, String>(dir, dir));
+		}
+
+		for (String dir : classpath) {
+			if (!dir.contains("."))
+				directories.push(new Pair<String, String>(dir, dir));
+		}
+
+		while(!directories.isEmpty()) {
+			Pair<String,String> dir = directories.pop();
+			File f = new File(dir.first());
+			if (!f.isDirectory())
+				continue;
+			for (String file : f.list()) {
+				if (file.equals(jilClass.name() + ".java"))
+					return (f.getPath().replaceAll(dir.second(), "").substring(1).replace(File.separatorChar, '.'));
+				else if (!file.contains(".")) {
+					//File is a directory, so can push it onto the stack
+					directories.push(new Pair<String, String>(dir.first()+File.separator+file, dir.second()));
+				}
+			}
+		}
+
+
+
+		//Shouldn't be able to get here
+		throw new SyntaxError("Unable to find source file directory", -1, -1);
 	}
 
 	protected void buildInitialPackageMap() {

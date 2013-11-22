@@ -46,7 +46,7 @@ import jkit.compiler.Clazz;
 public class ErrorHandler {
 
 	public enum ErrorType
-	{ METHOD_NOT_FOUND, FIELD_NOT_FOUND, VARIABLE_NOT_FOUND, BAD_TYPE_CONVERSION }
+	{ METHOD_NOT_FOUND, PACKAGE_NOT_FOUND }
 
 	//The maximum difference between a target and a candidate to be considered for substitution
 	public final static int MAX_DIFFERENCE = 3;
@@ -66,16 +66,8 @@ public class ErrorHandler {
 			handleMethodNotFound((MethodNotFoundException)ex);
 			break;
 
-		case FIELD_NOT_FOUND:
-
-			break;
-
-		case VARIABLE_NOT_FOUND:
-
-			break;
-
-		case BAD_TYPE_CONVERSION:
-
+		case PACKAGE_NOT_FOUND:
+			handlePackageNotFound((PackageNotFoundException)ex);
 			break;
 
 		default:
@@ -83,6 +75,28 @@ public class ErrorHandler {
 		}
 	}
 
+	/**
+	 * This method is fairly trivial - we just want to suggest the directory
+	 * containing the java file for the class as an alternative package.
+	 */
+	private static void handlePackageNotFound(PackageNotFoundException ex) {
+		jkit.compiler.ClassLoader loader = ex.loader();
+		Clazz jilClass = ex.jilClass();
+
+		String dir = loader.findDirectory(jilClass);
+
+		throw new SyntaxError(String.format("Unable to find package %s\nUse source directory package instead: %s",
+				jilClass.type().pkg(), dir), -1, -1);
+	}
+
+	/**
+	 * This method throws an exception which may contain a suggestion to the user of an alternative
+	 * method to use. Alternatives are considered based on the class hierarchy, edit distance between
+	 * names, types of parameters and number of parameters. Only the most suitable candidate is considered,
+	 * and only those close enough to the target (within three cumulative edits/substitutions) are
+	 * actually suggested.
+	 *
+	 */
 	private static void handleMethodNotFound(MethodNotFoundException ex) {
 
 		//First, need to turn the owner into an explicit class or set of classes
@@ -160,7 +174,16 @@ public class ErrorHandler {
 			for(Pair<Clazz, Integer> p2 : classes) {
 				Clazz c = p2.first();
 				for (Clazz.Method m : c.methods(p.first())) {
-					int diff = Math.abs(m.parameters().size() - ex.parameters().size());
+					int diff;
+
+					//The number of different parameters is different for methods with variable arity
+					if (!m.isVariableArity())
+						diff = Math.abs(m.parameters().size() - ex.parameters().size());
+
+					else
+						diff = (m.parameters().size() <= (ex.parameters().size()+1))
+								? 0 : m.parameters().size() - (ex.parameters().size()+1);
+
 					if (diff + p.second() <= MAX_DIFFERENCE) methods.add(new Pair<Clazz.Method, Integer>(m, diff + p.second()));
 				}
 			}
@@ -286,6 +309,32 @@ public class ErrorHandler {
 
 		public int compare(E o1, E o2) {
 			return o1.second().compareTo(o2.second());
+		}
+	}
+
+	/**
+	 * Exception for the case where a package isn't found during compilation.
+	 *
+	 * @author Daniel Campbell
+	 *
+	 */
+	public static class PackageNotFoundException extends Exception {
+
+		private static final long serialVersionUID = 1L;
+		private final jkit.compiler.ClassLoader loader;
+		private final Clazz jilClass;
+
+		public PackageNotFoundException(jkit.compiler.ClassLoader classLoader, Clazz jc) {
+			loader = classLoader;
+			jilClass = jc;
+		}
+
+		public jkit.compiler.ClassLoader loader() {
+			return loader;
+		}
+
+		public Clazz jilClass() {
+			return jilClass;
 		}
 	}
 }

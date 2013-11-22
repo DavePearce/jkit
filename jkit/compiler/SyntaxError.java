@@ -216,6 +216,21 @@ public final class SyntaxError extends RuntimeException {
 	}
 
 	/**
+	 * Same as above, except the error was thrown whilst parsing the syntactic
+	 * element, so just the source location is required.
+	 *
+	 * @param msg	- The error message
+	 * @param loc	- The location of the element causing the error
+	 */
+	public static void syntax_error(String msg, SourceLocation loc) {
+		if(loc != null) {
+			throw new SyntaxError(msg,loc.line(),loc.column());
+		} else {
+			throw new SyntaxError(msg,-1,-1);
+		}
+	}
+
+	/**
 	 * This method is just to factor out the code for looking up the source
 	 * location and throwing an exception based on that. In this case, we also
 	 * have an internal exception which has given rise to this particular

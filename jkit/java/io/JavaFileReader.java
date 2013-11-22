@@ -1,23 +1,23 @@
 //This file is part of the Java Compiler Kit (JKit)
 
-//The Java Compiler Kit is free software; you can 
-//redistribute it and/or modify it under the terms of the 
-//GNU General Public License as published by the Free Software 
-//Foundation; either version 2 of the License, or (at your 
+//The Java Compiler Kit is free software; you can
+//redistribute it and/or modify it under the terms of the
+//GNU General Public License as published by the Free Software
+//Foundation; either version 2 of the License, or (at your
 //option) any later version.
 
 //The Java Compiler Kit is distributed in the hope
-//that it will be useful, but WITHOUT ANY WARRANTY; without 
-//even the implied warranty of MERCHANTABILITY or FITNESS FOR 
-//A PARTICULAR PURPOSE.  See the GNU General Public License 
+//that it will be useful, but WITHOUT ANY WARRANTY; without
+//even the implied warranty of MERCHANTABILITY or FITNESS FOR
+//A PARTICULAR PURPOSE.  See the GNU General Public License
 //for more details.
 
-//You should have received a copy of the GNU General Public 
-//License along with the Java Compiler Kit; if not, 
-//write to the Free Software Foundation, Inc., 59 Temple Place, 
+//You should have received a copy of the GNU General Public
+//License along with the Java Compiler Kit; if not,
+//write to the Free Software Foundation, Inc., 59 Temple Place,
 //Suite 330, Boston, MA  02111-1307  USA
 
-//(C) David James Pearce, 2009. 
+//(C) David James Pearce, 2009.
 
 package jkit.java.io;
 
@@ -45,16 +45,16 @@ import org.antlr.runtime.tree.*;
 public class JavaFileReader {
 
 	private Tree ast;
-		
+
 	/**
      * Create a JavaFileReader from a file.
-     * 
+     *
      * @param file
      *            the filename to read from.
-     * 
+     *
      * @param loader
      *            the class loader to use for resolving types
-     * 
+     *
      * @throws IOException
      */
 	public JavaFileReader(String file) throws IOException {
@@ -63,25 +63,25 @@ public class JavaFileReader {
 
 	/**
      * Create a JavaFileReader from a general Reader.
-     * 
+     *
      * @param r
      *            the reader to read from
-     * 
+     *
      * @throws IOException
      */
-	public JavaFileReader(Reader r) throws IOException {		
+	public JavaFileReader(Reader r) throws IOException {
 		ast = parseInputFile(r);
 	}
 
 	/**
      * Create a JavaFileReader from a general InputStream
-     * 
+     *
      * @param in
      *            the input stream to read from
-     * 
+     *
      * @throws IOException
      */
-	public JavaFileReader(InputStream in) throws IOException {		
+	public JavaFileReader(InputStream in) throws IOException {
 		ast = parseInputFile(new InputStreamReader(in));
 	}
 
@@ -97,7 +97,7 @@ public class JavaFileReader {
 		}
 		return null;
 	}
-	
+
 	public JavaFile read() {
 		ArrayList<Decl> classes = new ArrayList<Decl>();
 		ArrayList<Pair<Boolean, String>> imports = new ArrayList<Pair<Boolean, String>>();
@@ -139,13 +139,13 @@ public class JavaFileReader {
 		}
 
 		for (int i = 0; i != ast.getChildCount(); ++i) {
-			classes.addAll(parseDeclaration(ast.getChild(i), new HashSet<String>()));
+			classes.addAll(parseDeclaration(ast.getChild(i), new HashSet<String>(), null));
 		}
 
 		return new JavaFile(pkg, imports, classes);
 	}
 
-	protected List<Decl> parseDeclaration(Tree decl, HashSet<String> genericVariables) {
+	protected List<Decl> parseDeclaration(Tree decl, HashSet<String> genericVariables, String name) {
 		ArrayList<Decl> declarations = new ArrayList<Decl>();
 
 		switch (decl.getType()) {
@@ -153,7 +153,7 @@ public class JavaFileReader {
 				declarations.addAll(parseField(decl, genericVariables));
 				break;
 			case METHOD :
-				declarations.add(parseMethod(decl, genericVariables));
+				declarations.add(parseMethod(decl, genericVariables, name));
 				break;
 			case CLASS :
 			case INTERFACE :
@@ -184,33 +184,33 @@ public class JavaFileReader {
 	}
 
 	protected Decl.JavaClass parseClass(Tree decl, HashSet<String> genericVariables) {
-				
+
 		// ====================================================================
 		// =========================== PARSE MODIFIERS ========================
 		// ====================================================================
 
 		List<Modifier> modifiers = parseModifiers(decl.getChild(0), genericVariables);
-				
+
 		genericVariables = (HashSet<String>) genericVariables.clone();
 
 		// ====================================================================
 		// ======================== PARSE TYPE VARIABLES ======================
 		// ====================================================================
-		
-		ArrayList<Type.Variable> typeArgs = parseTypeVariables(decl.getChild(1),genericVariables); 
+
+		ArrayList<Type.Variable> typeArgs = parseTypeVariables(decl.getChild(1),genericVariables);
 
 		// ====================================================================
 		// ============================== PARSE NAME ==========================
 		// ====================================================================
-		
+
 		String name = decl.getChild(1).getText();
-		
+
 		// ====================================================================
 		// ====================== PARSE EXTENDS CLAUSE ========================
 		// ====================================================================
 
 		Type.Clazz superclass = parseExtends(decl.getChild(2),genericVariables);
-		
+
 		// ====================================================================
 		// ===================== PARSE IMPLEMENTS CLAUSE ======================
 		// ====================================================================
@@ -224,7 +224,7 @@ public class JavaFileReader {
 		ArrayList<Decl> declarations = new ArrayList<Decl>();
 
 		for (int i = 4; i < decl.getChildCount(); ++i) {
-			declarations.addAll(parseDeclaration(decl.getChild(i), genericVariables));
+			declarations.addAll(parseDeclaration(decl.getChild(i), genericVariables, name));
 		}
 
 		SourceLocation loc = new SourceLocation(decl.getLine(), decl
@@ -246,37 +246,37 @@ public class JavaFileReader {
 		}
 		return null;
 	}
-	
-	protected ArrayList<Type.Clazz> parseImplements(Tree tree, HashSet<String> genericVariables) {		
-		ArrayList<Type.Clazz> interfaces = new ArrayList();	
+
+	protected ArrayList<Type.Clazz> parseImplements(Tree tree, HashSet<String> genericVariables) {
+		ArrayList<Type.Clazz> interfaces = new ArrayList();
 		for (int i = 0; i < tree.getChildCount(); ++i) {
 			interfaces.add(parseClassType(tree.getChild(i), genericVariables));
-		}		
+		}
 		return interfaces;
 	}
-	
-	protected Decl.JavaEnum parseEnum(Tree decl, HashSet<String> genericVariables) {		
+
+	protected Decl.JavaEnum parseEnum(Tree decl, HashSet<String> genericVariables) {
 		// ====================================================================
 		// ========================= PARSE MODIFIERS ==========================
 		// ====================================================================
 
 		List<Modifier> modifiers = parseModifiers(decl.getChild(0), genericVariables);
-		
+
 		// ====================================================================
 		// ============================ PARSE NAME ============================
 		// ====================================================================
-		
+
 		String name = decl.getChild(1).getText();
-		
+
 		// ====================================================================
 		// ===================== PARSE IMPLEMENTS CLAUSE ======================
 		// ====================================================================
 		ArrayList<Type.Clazz> interfaces = parseImplements(decl.getChild(2), genericVariables);
-						
+
 		// ====================================================================
 		// ========================= PARSE CONSTANTS ==========================
 		// ====================================================================
-		
+
 		int idx = 3;
 		ArrayList<Decl.EnumConstant> constants = new ArrayList<Decl.EnumConstant>();
 		while (idx < decl.getChildCount()
@@ -290,8 +290,8 @@ public class JavaFileReader {
 		// ====================================================================
 
 		ArrayList<Decl> declarations = new ArrayList<Decl>();
-		for (; idx < decl.getChildCount(); ++idx) {			
-			declarations.addAll(parseDeclaration(decl.getChild(idx), genericVariables));
+		for (; idx < decl.getChildCount(); ++idx) {
+			declarations.addAll(parseDeclaration(decl.getChild(idx), genericVariables, name));
 		}
 
 		return new Decl.JavaEnum(modifiers, name, interfaces, constants,
@@ -315,7 +315,7 @@ public class JavaFileReader {
 				case ENUM :
 				case STATIC :
 				case BLOCK :
-					declarations.addAll(parseDeclaration(child, genericVariables));
+					declarations.addAll(parseDeclaration(child, genericVariables, null));
 					break;
 				default :
 					// in the default case, we must have an expression which is
@@ -337,7 +337,7 @@ public class JavaFileReader {
 
 		List<Modifier> modifiers = parseModifiers(decl.getChild(0), genericVariables);
 		int idx = 1;
-		
+
 		String name = decl.getChild(idx++).getText();
 
 		ArrayList<Triple<Type, String, Value>> methods = new ArrayList<Triple<Type, String, Value>>();
@@ -363,11 +363,12 @@ public class JavaFileReader {
 				new SourceLocation(decl.getLine(), decl.getCharPositionInLine()-1));
 	}
 
-	protected Decl.JavaMethod parseMethod(Tree method, HashSet<String> genericVariables) {
-		genericVariables = (HashSet<String>) genericVariables.clone(); 
-		
+	//Added name parameter to check if a method without a return type is really a constructor
+	protected Decl.JavaMethod parseMethod(Tree method, HashSet<String> genericVariables, String nm) {
+		genericVariables = (HashSet<String>) genericVariables.clone();
+
 		SourceLocation loc = determineStartLocation(method);
-		
+
 		// ====================================================================
 		// =========================== PARSE MODIFIERS ========================
 		// ====================================================================
@@ -378,54 +379,61 @@ public class JavaFileReader {
 		// ========================= PARSE TYPE VARIABLES =====================
 		// ====================================================================
 
-		ArrayList<Type.Variable> typeArgs = parseTypeVariables(method.getChild(1),genericVariables);		
+		ArrayList<Type.Variable> typeArgs = parseTypeVariables(method.getChild(1),genericVariables);
 
 		// ====================================================================
 		// =============================== PARSE NAME =========================
 		// ====================================================================
-		
+
 		String name = method.getChild(2).getText();
-				
+
 		Type returnType = null;
 
 		// ====================================================================
 		// ========================== PARSE RETURN TYPE =======================
-		// ====================================================================		
-		
+		// ====================================================================
+
 		// if no return type, then is a constructor
 		if (method.getChild(3).getType() == TYPE) {
 			returnType = parseType(method.getChild(3), genericVariables);
-		}		
+		}
+		else {
+			if (name.equals(nm))
+				returnType = null;
+			else {
+				jkit.compiler.SyntaxError.syntax_error("Missing method return type in method: " + name, loc);
+			}
+		}
 
 		// ====================================================================
 		// =========================== PARSE PARAMETERS =======================
-		// ====================================================================		
-	
+		// ====================================================================
+
 		ArrayList<Decl.JavaParameter> params = parseParameters(
-				method.getChild(4), genericVariables);		
+				method.getChild(4), genericVariables);
 
 		boolean varargs = hasVarArgs(method.getChild(4));
-				
+
 		// ====================================================================
 		// ============================= PARSE THROWS =========================
-		// ====================================================================		
+		// ====================================================================
 
 		ArrayList<Type.Clazz> exceptions = parseThrows(method.getChild(5),genericVariables);
 
 		// ====================================================================
 		// ============================== PARSE BODY ==========================
-		// ====================================================================		
+		// ====================================================================
 
 		Stmt.Block block = null;
 
-		if(method.getChildCount() > 6) {			
+		if(method.getChildCount() > 6) {
 			block = parseBlock(method.getChild(6), genericVariables);
 		}
 
 		// ====================================================================
 		// ========================== CREATE DECLARATION ======================
-		// ====================================================================		
-		
+		// ====================================================================
+
 		if (returnType == null) {
 			return new Decl.JavaConstructor(modifiers, name, params, varargs,
 					typeArgs, exceptions, block, loc);
@@ -443,7 +451,7 @@ public class JavaFileReader {
 		}
 		return exceptions;
 	}
-	
+
 	protected List<Decl.JavaField> parseField(Tree tree, HashSet<String> genericVariables) {
 		assert tree.getType() == FIELD;
 
@@ -452,7 +460,7 @@ public class JavaFileReader {
 		// === MODIFIERS ===
 		List<Modifier> modifiers = parseModifiers(tree.getChild(0), genericVariables);
 		int idx = 1;
-		
+
 		// === FIELD TYPE ===
 		Type type = parseType(tree.getChild(idx++), genericVariables);
 
@@ -524,7 +532,7 @@ public class JavaFileReader {
 			case POSTDEC :
 				return parseIncDec(Expr.UnOp.POSTDEC, stmt, genericVariables);
 			case PREDEC :
-				return parseIncDec(Expr.UnOp.PREDEC, stmt, genericVariables);				
+				return parseIncDec(Expr.UnOp.PREDEC, stmt, genericVariables);
 			case ASSERT :
 				return parseAssert(stmt, genericVariables);
 			case TRY :
@@ -544,11 +552,11 @@ public class JavaFileReader {
 	/**
      * This method is responsible for parsing a block of code, which is a set of
      * statements between '{' and '}'
-     * 
+     *
      * @param tree
      *            block to parse
      * @return A Block containing all the statements in this block
-     * 
+     *
      */
 	protected Stmt.Block parseBlock(Tree tree, HashSet<String> genericVariables) {
 		ArrayList<Stmt> stmts = new ArrayList<Stmt>();
@@ -567,11 +575,11 @@ public class JavaFileReader {
 	/**
      * This method is responsible for parsing a synchronized block of code, e.g,
      * "synchronised(e.list()) { ... }"
-     * 
+     *
      * @param tree
      *            block to parse
      * @return A Block containing all the statements in this block
-     * 
+     *
      */
 	protected Stmt parseSynchronisedBlock(Tree tree, HashSet<String> genericVariables) {
 		ArrayList<Stmt> stmts = new ArrayList<Stmt>();
@@ -631,9 +639,9 @@ public class JavaFileReader {
 
 	/**
      * Responsible for translating variable declarations. ANTLR tree format:
-     * 
+     *
      * VARDEF MODIFIERS? TYPE NAME [= EXPRESSION]
-     * 
+     *
      * @param tree
      *            ANTLR if-statement tree
      * @return
@@ -664,8 +672,8 @@ public class JavaFileReader {
 			}
 			vardefs.add(new Triple<String, Integer, Expr>(
 					myName, dims, myInitialiser));
-		}				
-		
+		}
+
 		return new Stmt.VarDef(
 				modifiers,
 				type,
@@ -675,20 +683,20 @@ public class JavaFileReader {
 
 	/**
      * This method parses an assignment statement.
-     * 
+     *
      * @param tree
      * @return
      */
 	protected Stmt.Assignment parseAssign(Tree tree, HashSet<String> genericVariables) {
 		Expr lhs = parseExpression(tree.getChild(0), genericVariables);
-		Expr rhs = parseExpression(tree.getChild(1), genericVariables);		
+		Expr rhs = parseExpression(tree.getChild(1), genericVariables);
 		return new Stmt.Assignment(lhs, rhs, new SourceLocation(tree
 				.getLine(), tree.getCharPositionInLine()));
 	}
 
 	/**
      * This method parses an assignment op statement.
-     * 
+     *
      * @param tree
      * @return
      */
@@ -704,7 +712,7 @@ public class JavaFileReader {
 		} else if(_op.equals("DIV")) {
 			op = Expr.BinOp.DIV;
 		} else if(_op.equals("MOD")) {
-			op = Expr.BinOp.MOD;			
+			op = Expr.BinOp.MOD;
 		} else if(_op.equals("AND")) {
 			op = Expr.BinOp.AND;
 		} else if(_op.equals("OR")) {
@@ -715,16 +723,16 @@ public class JavaFileReader {
 			op = Expr.BinOp.SHL;
 		} else if(_op.equals("SHR")) {
 			op = Expr.BinOp.SHR;
-		} else {			
+		} else {
 			op = Expr.BinOp.USHR;
 		}
 		Expr lhs = parseExpression(tree.getChild(1), genericVariables);
 		Expr rhs = parseExpression(tree.getChild(2), genericVariables);
-						
+
 		return new Stmt.AssignmentOp(op, lhs, rhs, new SourceLocation(tree
 				.getLine(), tree.getCharPositionInLine()));
 	}
-	
+
 	protected Stmt parseReturn(Tree tree, HashSet<String> genericVariables) {
 		if (tree.getChildCount() > 0) {
 			return new Stmt.Return(parseExpression(tree.getChild(0), genericVariables),
@@ -750,7 +758,7 @@ public class JavaFileReader {
 
 	/**
      * Responsible for parsing break statements.
-     * 
+     *
      * @param tree
      * @param label
      * @param cfg
@@ -770,7 +778,7 @@ public class JavaFileReader {
 
 	/**
      * Responsible for parsing continue statements.
-     * 
+     *
      * @param tree
      * @param label
      * @param cfg
@@ -790,7 +798,7 @@ public class JavaFileReader {
 
 	/**
      * Responsible for parsing labelled statements.
-     * 
+     *
      * @param stmt
      * @param label
      * @param cfg
@@ -844,7 +852,7 @@ public class JavaFileReader {
 		}
 
 		if (stmt.getChild(0).getChildCount() > 0) {
-			int childCount = stmt.getChild(0).getChildCount(); 
+			int childCount = stmt.getChild(0).getChildCount();
 			if(childCount == 1) {
 				initialiser = parseStatement(stmt.getChild(0).getChild(0), genericVariables);
 			} else {
@@ -861,7 +869,7 @@ public class JavaFileReader {
 			condition = parseExpression(stmt.getChild(1).getChild(0), genericVariables);
 		}
 		if (stmt.getChild(2).getChildCount() > 0) {
-			int childCount = stmt.getChild(2).getChildCount(); 
+			int childCount = stmt.getChild(2).getChildCount();
 			if(childCount == 1) {
 				increment = parseStatement(stmt.getChild(2).getChild(0), genericVariables);
 			} else {
@@ -870,7 +878,7 @@ public class JavaFileReader {
 					Stmt s = parseStatement(stmt.getChild(2).getChild(i), genericVariables);
 					incs.add(s);
 				}
-				increment = new Stmt.Block(incs);	
+				increment = new Stmt.Block(incs);
 			}
 		}
 		if (stmt.getChild(3).getChildCount() > 0) {
@@ -887,9 +895,9 @@ public class JavaFileReader {
 
 	/**
      * Responsible for translating Java 1.5 for statements. ANTLR tree format:
-     * 
+     *
      * FOR FOREACH [YUCK NEED TO FIX THIS] VARDEF VAR STATEMENT
-     * 
+     *
      * @param stmt
      *            ANTLR for-statement tree
      * @param cfg
@@ -947,7 +955,7 @@ public class JavaFileReader {
 
 	/**
      * Parse a standalone pre/post inc/dec statement (e.g. ++i, --i, etc).
-     * 
+     *
      * @param stmt
      * @return
      */
@@ -1130,7 +1138,7 @@ public class JavaFileReader {
 	/**
      * This parses a "new" expression. The key difficulties here, lie in the
      * fact that a new statement can involve an anonymous class declaration.
-     * 
+     *
      * @param expr
      * @return
      */
@@ -1143,13 +1151,13 @@ public class JavaFileReader {
 			Tree child = expr.getChild(i);
 			if (child.getType() == METHOD) {
 				// Store anonymous class methods
-				declarations.add(parseMethod(child, genericVariables));
+				declarations.add(parseMethod(child, genericVariables, null));
 				end = Math.min(i, end);
 			} else if (child.getType() == FIELD) {
 				declarations.addAll(parseField(child, genericVariables));
 				end = Math.min(i, end);
 			} else if (child.getType() == BLOCK) {
-				declarations.addAll(parseDeclaration(child, genericVariables));
+				declarations.addAll(parseDeclaration(child, genericVariables, null));
 				end = Math.min(i, end);
 			}
 		}
@@ -1164,7 +1172,7 @@ public class JavaFileReader {
 	/**
      * This method parses an isolated invoke call. For example, "f()" is
      * isolated, whilst "x.f()" or "this.f()" etc are not.
-     * 
+     *
      * @param expr
      * @return
      */
@@ -1201,7 +1209,7 @@ public class JavaFileReader {
 				new SourceLocation(expr.getLine(), expr.getCharPositionInLine()));
 	}
 
-	public Expr parseGetClass(Tree expr, HashSet<String> genericVariables) {		
+	public Expr parseGetClass(Tree expr, HashSet<String> genericVariables) {
 		return new Value.Class(parseType(expr.getChild(0), genericVariables));
 	}
 
@@ -1228,9 +1236,9 @@ public class JavaFileReader {
 	}
 
 	protected Expr parseUnOp(int uop, Tree expr, HashSet<String> genericVariables) {
-		
-		Expr e = parseExpression(expr.getChild(0), genericVariables); 
-		
+
+		Expr e = parseExpression(expr.getChild(0), genericVariables);
+
 		if(e instanceof Value) {
 			// this means we can propagate the constant
 			if(e instanceof Value.Int) {
@@ -1239,31 +1247,31 @@ public class JavaFileReader {
 					case Expr.UnOp.NEG:
 						return new Value.Int(-x,e.attributes());
 					case Expr.UnOp.INV:
-						return new Value.Int(~x,e.attributes());					
-				}				
+						return new Value.Int(~x,e.attributes());
+				}
 			} else if(e instanceof Value.Long) {
 				long x = ((Value.Long)e).value();
 				switch(uop) {
 					case Expr.UnOp.NEG:
 						return new Value.Long(-x,e.attributes());
 					case Expr.UnOp.INV:
-						return new Value.Long(~x,e.attributes());					
+						return new Value.Long(~x,e.attributes());
 				}
 			} else if(e instanceof Value.Float) {
 				float x = ((Value.Float)e).value();
 				switch(uop) {
 					case Expr.UnOp.NEG:
-						return new Value.Float(-x,e.attributes());								
+						return new Value.Float(-x,e.attributes());
 				}
 			} else if(e instanceof Value.Double) {
 				double x = ((Value.Double)e).value();
 				switch(uop) {
 					case Expr.UnOp.NEG:
-						return new Value.Double(-x,e.attributes());								
+						return new Value.Double(-x,e.attributes());
 				}
-			} 
+			}
 		}
-		
+
 		return new Expr.UnOp(
 				uop,
 				e,
@@ -1376,21 +1384,21 @@ public class JavaFileReader {
 	protected Expr parseIntVal(Tree expr) {
 		int radix = 10;
 		String value = expr.getChild(0).getText();
-		
+
 		if (value.startsWith("0x")) {
 			// HEX value
 			radix = 16;
 			value = value.substring(2);
 		} else if(value.startsWith("0")) {
 			radix = 8; // octal
-		}			
-		
+		}
+
 		char lc = value.charAt(value.length() - 1);
 
 		long val = parseLongVal(value.substring(0, value.length() - 1), radix);
 
 		SourceLocation loc = new SourceLocation(expr.getLine(),expr.getCharPositionInLine());
-		
+
 		if (lc == 'l' || lc == 'L') {
 			// return new LongVal(Long.parseLong(value.substring(0,
 			// value.length() - 1), radix));
@@ -1402,7 +1410,7 @@ public class JavaFileReader {
 		}
 
 		val = parseLongVal(value, radix);
-		
+
 		return new Value.Int((int) val, loc);
 	}
 
@@ -1536,18 +1544,18 @@ public class JavaFileReader {
 
 	/**
      * Parse an array initialiser expression. For example:
-     * 
+     *
      * <pre>
      * Object[] test = {&quot;abc&quot;, new Integer(2)};
      * </pre>
-     * 
+     *
      * @param expr
      * @return
      */
 	protected Expr parseArrayVal(Tree expr, HashSet<String> genericVariables) {
 		List<Expr> values = parseExpressionList(0, expr
 				.getChildCount(), expr, genericVariables);
-		
+
 		return new Value.Array(values, new SourceLocation(expr.getLine(),
 				expr.getCharPositionInLine()));
 	}
@@ -1556,12 +1564,12 @@ public class JavaFileReader {
      * Parse a typed array initialiser expression. This is distinct from an
      * array initialiser in a subtle way. To generate a typed array initiliser
      * you must specify the class of array to construct. For example:
-     * 
+     *
      * <pre>
      * Object[] test = new Object[]{&quot;abc&quot;, new Integer(2)};
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param expr
      * @return
      */
@@ -1570,7 +1578,7 @@ public class JavaFileReader {
 		Tree aval = expr.getChild(1);
 		List<Expr> values = parseExpressionList(0, aval
 				.getChildCount(), aval, genericVariables);
-			
+
 		return new Value.TypedArray(type, values, new SourceLocation(expr
 				.getLine(), expr.getCharPositionInLine()));
 	}
@@ -1590,12 +1598,12 @@ public class JavaFileReader {
 	protected List<Modifier> parseModifiers(Tree ms, HashSet<String> genericVariables) {
 		ArrayList<Modifier> mods = new ArrayList<Modifier>();
 		for (int i = 0; i != ms.getChildCount(); ++i) {
-			Tree modifier = ms.getChild(i);						
-			mods.add(parseModifier(modifier,genericVariables));			
+			Tree modifier = ms.getChild(i);
+			mods.add(parseModifier(modifier,genericVariables));
 		}
 		return mods;
 	}
-	
+
 	protected Modifier parseModifier(Tree tree, HashSet<String> genericVariables) {
 		String modifier = tree.getText();
 		SourceLocation loc = new SourceLocation(tree.getLine(), tree
@@ -1606,8 +1614,8 @@ public class JavaFileReader {
 			for (int j = 1; j != tree.getChildCount(); ++j) {
 				arguments.add(parseExpression(tree.getChild(j),
 						genericVariables));
-			}						
-			return new Annotation(new Type.Clazz(name), arguments, loc);			
+			}
+			return new Annotation(new Type.Clazz(name), arguments, loc);
 		} else if (modifier.charAt(0) <= 'p') {
 			if (modifier.equals("public")) {
 				return new Modifier.Public(loc);
@@ -1634,23 +1642,23 @@ public class JavaFileReader {
 			} else if (modifier.equals("volatile")) {
 				return new Modifier.Volatile(loc);
 			}
-		} 
-		
+		}
+
 		throw new SyntaxError("not expecting " + modifier, tree.getLine(), tree
-					.getCharPositionInLine());					
+					.getCharPositionInLine());
 	}
-	
+
 	protected ArrayList<Type.Variable> parseTypeVariables(Tree child,
 			HashSet<String> genericVariables) {
-		
+
 		// NOTE. I LEAVE THE '<' IN THE ANTLR TREE TO ENSURE CORRECT LINE NUMBER
 		// INFORMATION FOR GENERIC METHODS.
-		
+
 		ArrayList<Type.Variable> typeArgs = new ArrayList<Type.Variable>();
 		for (int i = 1; i < child.getChildCount(); ++i) {
 			Type.Variable tvar = parseVariableType(child.getChild(i),
 					genericVariables);
-									
+
 			typeArgs.add(tvar);
 			genericVariables.add(tvar.variable());
 		}
@@ -1666,44 +1674,44 @@ public class JavaFileReader {
 		}
 		return false;
 	}
-	
+
 	protected ArrayList<Decl.JavaParameter> parseParameters(
 			Tree paramList, HashSet<String> genericVariables) {
-		ArrayList<Decl.JavaParameter> params = new ArrayList();		
-		
+		ArrayList<Decl.JavaParameter> params = new ArrayList();
+
 		for (int i = 0; i != paramList.getChildCount(); ++i) {
-			Tree c = paramList.getChild(i);			
-														
+			Tree c = paramList.getChild(i);
+
 			List<Modifier> pModifiers = parseModifiers(c.getChild(0),
 					genericVariables);
 			Type t = parseType(c.getChild(1), genericVariables);
-			
+
 			SourceLocation loc;
-			
+
 			if(pModifiers.isEmpty()) {
 				loc = (SourceLocation) t.attribute(SourceLocation.class);
-			} else {			
+			} else {
 				loc = (SourceLocation) pModifiers.get(0).attribute(SourceLocation.class);
 			}
-			
+
 			String n = c.getChild(2).getText();
 
 			for (int j = 3; j < c.getChildCount(); j = j + 2) {
 				t = new Type.Array(t);
 			}
 
-			params.add(new Decl.JavaParameter(n, pModifiers, t, loc));			
+			params.add(new Decl.JavaParameter(n, pModifiers, t, loc));
 		}
 
 		return params;
 	}
-	
+
 	protected Type parseType(Tree type, HashSet<String> genericVariables) {
 		assert type.getType() == TYPE;
 
 		SourceLocation loc = new SourceLocation(type.getLine(), type
 				.getCharPositionInLine());
-		
+
 		if (type.getChild(0).getText().equals("?")) {
 			// special case to deal with wildcards
 			Tree child = type.getChild(0);
@@ -1712,14 +1720,14 @@ public class JavaFileReader {
 			Type.Reference upperBound = null;
 
 			if (child.getChildCount() > 0
-					&& child.getChild(0).getType() == EXTENDS) {			
-				lowerBound = parseClassVarType(child.getChild(0).getChild(0), genericVariables);				
+					&& child.getChild(0).getType() == EXTENDS) {
+				lowerBound = parseClassVarType(child.getChild(0).getChild(0), genericVariables);
 			} else if (child.getChildCount() > 0
 					&& child.getChild(0).getType() == SUPER) {
 				upperBound = parseClassVarType(child.getChild(0).getChild(0), genericVariables);
 			}
 			// Ok, all done!
-			return new Type.Wildcard(lowerBound, upperBound,loc);			
+			return new Type.Wildcard(lowerBound, upperBound,loc);
 		} else {
 
 			// === ARRAY DIMENSIONS ===
@@ -1736,10 +1744,10 @@ public class JavaFileReader {
 			// === PRIMITIVE TYPES ===
 
 			Type r;
-			
-			String ct = type.getChild(0).getText();						
-			
-			if (ct.equals("void")) { 
+
+			String ct = type.getChild(0).getText();
+
+			if (ct.equals("void")) {
 				r = new Type.Void(loc);
 			} else if (ct.equals("boolean")) {
 				r = new Type.Bool(loc);
@@ -1749,7 +1757,7 @@ public class JavaFileReader {
 				r = new Type.Char(loc);
 			} else if (ct.equals("short")) {
 				r = new Type.Short(loc);
-			} else if (ct.equals("int")) {								
+			} else if (ct.equals("int")) {
 				r = new Type.Int(loc);
 			} else if (ct.equals("long")) {
 				r = new Type.Long(loc);
@@ -1757,7 +1765,7 @@ public class JavaFileReader {
 				r = new Type.Float(loc);
 			} else if (ct.equals("double")) {
 				r = new Type.Double(loc);
-			} else if(genericVariables.contains(ct)) {				
+			} else if(genericVariables.contains(ct)) {
 				r = new Type.Variable(ct,null,loc);
 			} else {
 
@@ -1783,11 +1791,11 @@ public class JavaFileReader {
 				r = new Type.Clazz(components, loc);
 
 			}
-			
+
 			for (int i = 0; i != dims; ++i) {
 				r = new Type.Array(r,loc);
 			}
-			
+
 			return r;
 		}
 	}
@@ -1796,17 +1804,17 @@ public class JavaFileReader {
 		if(type.getChildCount() == 1 && genericVariables.contains(type.getChild(0).getText())) {
 			SourceLocation loc = new SourceLocation(type.getLine(), type
 					.getCharPositionInLine());
-			
+
 			return new Type.Variable(type.getChild(0).getText(),
 					null,loc);
 		} else {
 			return parseClassType(type,genericVariables);
 		}
 	}
-	
+
 	protected Type.Clazz parseClassType(Tree type, HashSet<String> genericVariables) {
 		assert type.getType() == TYPE;
-		
+
 		// === COMPONENTS ===
 
 		ArrayList<Pair<String, List<Type.Reference>>> components = new ArrayList<Pair<String, List<Type.Reference>>>();
@@ -1815,11 +1823,11 @@ public class JavaFileReader {
 			Tree child = type.getChild(i);
 
 			String text = child.getText();
-			
+
 			if (text.equals("VOID")) {
 				text = "void"; // hack!
 			}
-			
+
 			ArrayList<Type.Reference> genArgs = new ArrayList<Type.Reference>();
 
 			for (int j = 0; j != child.getChildCount(); ++j) {
@@ -1842,10 +1850,10 @@ public class JavaFileReader {
 	protected Type.Variable parseVariableType(Tree type, HashSet<String> genericVariables) {
 		Tree child = type.getChild(0);
 		String text = child.getText();
-		
+
 		genericVariables = (HashSet) genericVariables.clone();
 		genericVariables.add(text); // needed for recursive type bounds
-		
+
 		List<Type.Reference> lowerBounds = new ArrayList<Type.Reference>();
 
 		if (child.getChildCount() > 0 && child.getChild(0).getType() == EXTENDS) {
@@ -1855,30 +1863,30 @@ public class JavaFileReader {
 						.getChild(i), genericVariables));
 			}
 		}
-		
+
 		// here, we need to build an intersection type.
 		SourceLocation loc = new SourceLocation(type.getLine(), type
 				.getCharPositionInLine());
-		
-		if(lowerBounds.size() > 1) {			
-			Type.Intersection lowerBound = new Type.Intersection(lowerBounds, loc);			
+
+		if(lowerBounds.size() > 1) {
+			Type.Intersection lowerBound = new Type.Intersection(lowerBounds, loc);
 			return new Type.Variable(text, lowerBound, loc);
 		} else if(lowerBounds.size() == 1) {
-			return new Type.Variable(text, lowerBounds.get(0), loc);		
+			return new Type.Variable(text, lowerBounds.get(0), loc);
 		} else {
 			return new Type.Variable(text, null, loc);
 		}
 	}
 
 	public SourceLocation determineStartLocation(Tree ast) {
-		if(ast.getChildCount() == 0) {			
-			return new SourceLocation(ast.getLine(),ast.getCharPositionInLine());			
-		} else {			
+		if(ast.getChildCount() == 0) {
+			return new SourceLocation(ast.getLine(),ast.getCharPositionInLine());
+		} else {
 			int line = ast.getLine();
 			int col = ast.getCharPositionInLine();
 			for(int i=0;i!=ast.getChildCount();++i) {
-				SourceLocation l = determineStartLocation(ast.getChild(i));				
-				if(l.line() != 0 && (line == 0 || l.line() < line)) {										
+				SourceLocation l = determineStartLocation(ast.getChild(i));
+				if(l.line() != 0 && (line == 0 || l.line() < line)) {
 					line = l.line();
 					col = l.column();
 				} else if(line != 0 && l.line() == line && l.column() < col) {
@@ -1886,9 +1894,9 @@ public class JavaFileReader {
 				}
 			}
 			return new SourceLocation(line,col);
-		}		
+		}
 	}
-	
+
 	public void printTree(Tree ast, int n, int line) {
 		if (ast.getLine() != line) {
 			System.out.print("(line " + ast.getLine() + ")\t");
@@ -1950,7 +1958,7 @@ public class JavaFileReader {
 	protected static final int NULLVAL = JavaParser.NULLVAL;
 
 	protected static final int ASSIGN = JavaParser.ASSIGN;
-	
+
 	protected static final int ASSIGNOP = JavaParser.ASSIGNOP;
 
 	protected static final int INSTANCEOF = JavaParser.INSTANCEOF;

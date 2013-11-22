@@ -672,6 +672,8 @@ public class TypePropagation {
 			receiver = r;
 		}
 
+		//If receiver is still null then the receiver wasn't a reference type at all
+		if (receiver == null) throw new SyntaxError("Can't call a method on a primitive type", -1, -1);
 		Triple<Clazz, Clazz.Method, Type.Function> r = types
 		.resolveMethod(receiver, e_name, parameterTypes, loader);
 
