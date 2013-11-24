@@ -21,6 +21,7 @@
 
 package jkit.error;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -76,17 +77,57 @@ public class ErrorHandler {
 	}
 
 	/**
-	 * This method is fairly trivial - we just want to suggest the directory
-	 * containing the java file for the class as an alternative package.
+	 * Finds the directory containing the class with the bad package declaration,
+	 * to suggest that directory as an alternative package
 	 */
 	private static void handlePackageNotFound(PackageNotFoundException ex) {
-		jkit.compiler.ClassLoader loader = ex.loader();
 		Clazz jilClass = ex.jilClass();
+		String pkg = jilClass.type().pkg().replace('.', File.pathSeparatorChar);
+		List<String> sourcepath = ex.sourcepath;
+		List<String> classpath = ex.classpath;
+		String result = null;
 
-		String dir = loader.findDirectory(jilClass);
+		//A pairing of directory to classpath parent directory (used to find relative path)
+		Stack<Pair<String, String>> directories = new Stack<Pair<String, String>>();
+
+		for (String dir : sourcepath) {
+			if (!dir.contains("."))
+				directories.push(new Pair<String, String>(dir, dir));
+		}
+
+		for (String dir : classpath) {
+			if (!dir.contains(".") && ! directories.contains(new Pair<String, String>(dir, dir)))
+				directories.push(new Pair<String, String>(dir, dir));
+		}
+
+		outer:
+			while(!directories.isEmpty()) {
+				Pair<String,String> dir = directories.pop();
+				File f = new File(dir.first());
+
+				if (!f.isDirectory())
+					continue;
+
+				for (String file : f.list()) {
+
+					if (file.equals(jilClass.name() + ".java")) {
+						result = dir.first().replaceAll(dir.second(), "").substring(1).replace(File.separatorChar, '.');
+						break outer;
+					}
+					else if (!file.contains(".")) {
+
+						//File is a directory, so can push it onto the stack
+						directories.push(new Pair<String, String>(dir.first()+File.separator+file, dir.second()));
+					}
+				}
+			}
+
+		//Not sure if possible, but will handle the case anyway
+		if (result == null)
+			throw new SyntaxError("Unable to find source file directory", -1, -1);
 
 		throw new SyntaxError(String.format("Unable to find package %s\nUse source directory package instead: %s",
-				jilClass.type().pkg(), dir), -1, -1);
+				pkg, result), -1, -1);
 	}
 
 	/**
@@ -321,16 +362,14 @@ public class ErrorHandler {
 	public static class PackageNotFoundException extends Exception {
 
 		private static final long serialVersionUID = 1L;
-		private final jkit.compiler.ClassLoader loader;
+		private final List<String> classpath;
+		private final List<String> sourcepath;
 		private final Clazz jilClass;
 
-		public PackageNotFoundException(jkit.compiler.ClassLoader classLoader, Clazz jc) {
-			loader = classLoader;
+		public PackageNotFoundException(Clazz jc, List<String> cp, List<String> sp) {
 			jilClass = jc;
-		}
-
-		public jkit.compiler.ClassLoader loader() {
-			return loader;
+			classpath = cp;
+			sourcepath = sp;
 		}
 
 		public Clazz jilClass() {
