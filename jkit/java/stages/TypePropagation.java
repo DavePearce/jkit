@@ -25,12 +25,12 @@ import java.util.*;
 
 import jkit.compiler.ClassLoader;
 import jkit.compiler.Clazz;
-import jkit.compiler.FieldNotFoundException;
-import jkit.compiler.MethodNotFoundException;
 import jkit.compiler.SyntacticAttribute;
 import jkit.compiler.SyntacticElement;
 import jkit.compiler.Clazz.Method;
 import jkit.compiler.SyntaxError;
+import jkit.error.FieldNotFoundException;
+import jkit.error.MethodNotFoundException;
 import static jkit.compiler.SyntaxError.*;
 import static jkit.jil.util.Types.*;
 import static jkit.java.tree.Type.fromJilType;

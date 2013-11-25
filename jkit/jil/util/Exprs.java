@@ -27,7 +27,7 @@ import static jkit.compiler.SyntaxError.*;
 import static jkit.jil.util.Types.*;
 import jkit.compiler.Clazz;
 import jkit.compiler.ClassLoader;
-import jkit.compiler.MethodNotFoundException;
+import jkit.error.MethodNotFoundException;
 import jkit.jil.tree.*;
 import jkit.jil.tree.JilExpr.*;
 import jkit.jil.tree.Type;

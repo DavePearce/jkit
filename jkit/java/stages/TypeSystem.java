@@ -26,10 +26,10 @@ import java.util.*;
 import static jkit.jil.util.Types.*;
 import jkit.compiler.ClassLoader;
 import jkit.compiler.Clazz.Method;
-import jkit.compiler.FieldNotFoundException;
-import jkit.compiler.MethodNotFoundException;
 import jkit.compiler.Clazz;
 import jkit.error.ErrorHandler;
+import jkit.error.FieldNotFoundException;
+import jkit.error.MethodNotFoundException;
 import jkit.jil.tree.JilMethod;
 import jkit.jil.tree.Type;
 import jkit.jil.tree.Type.Function;
@@ -1262,8 +1262,7 @@ public class TypeSystem {
 				if(methodInfo == null) {
 
 					// Ok, phase 3 failed, so give up.
-					ErrorHandler.handleError(ErrorHandler.ErrorType.METHOD_NOT_FOUND,
-							new MethodNotFoundException(name, receiver, concreteParameterTypes, loader));
+					throw new MethodNotFoundException(name, receiver, concreteParameterTypes, loader);
 				}
 			}
 		}
@@ -1495,44 +1494,43 @@ public class TypeSystem {
 	 */
 	public Triple<Clazz, Clazz.Field, Type> resolveField(Type.Clazz owner,
 			String name, ClassLoader loader) throws ClassNotFoundException,
-			FieldNotFoundException {
-		if(loader == null) {
-			throw new IllegalArgumentException("loader cannot be null");
-		}
-		if(name == null) {
-			throw new IllegalArgumentException("name cannot be null");
-		}
-		if(owner == null) {
-			throw new IllegalArgumentException("receiver cannot be null");
-		}
-		// traverse class hierarchy looking for field
-		ArrayList<Type.Clazz> worklist = new ArrayList<Type.Clazz>();
-		worklist.add(owner);
-		while (!worklist.isEmpty()) {
-			Type.Clazz type = worklist.remove(worklist.size() - 1);
-			Clazz c = loader.loadClass(type);
-			Map<String,Type.Reference> binding = bind(type, c.type(), loader);
-			Clazz.Field f = c.field(name);
+			FieldNotFoundException{
 
-			if (f != null) {
-				// found it!
-				Type fieldT = f.type();
-				if(fieldT instanceof Type.Reference) {
-					fieldT = substitute((Type.Reference) f.type(), binding);
-				}
-				return new Triple<Clazz, Clazz.Field, Type>(c, f, fieldT);
-			}
-			// no match yet, so traverse super class and interfaces
-			if (c.superClass() != null) {
-				worklist.add((Type.Clazz) substitute(c.superClass(),binding));
-			}
-			for (Type.Reference t : c.interfaces()) {
-				worklist.add((Type.Clazz) substitute(t,binding));
-			}
-		}
+        if(loader == null) {
+                throw new IllegalArgumentException("loader cannot be null");
+        }
+        if(name == null) {
+                throw new IllegalArgumentException("name cannot be null");
+        }
+        if(owner == null) {
+                throw new IllegalArgumentException("receiver cannot be null");
+        }
+        // traverse class hierarchy looking for field
+        ArrayList<Type.Clazz> worklist = new ArrayList<Type.Clazz>();
+        worklist.add(owner);
+        while (!worklist.isEmpty()) {
+                Type.Clazz type = worklist.remove(worklist.size() - 1);
+                Clazz c = loader.loadClass(type);
+                Map<String,Type.Reference> binding = bind(type, c.type(), loader);
+                Clazz.Field f = c.field(name);
 
-		ErrorHandler.handleError(ErrorHandler.ErrorType.FIELD_NOT_FOUND,
-				new FieldNotFoundException(name, owner, loader));
-		return null;  //Dead code
+                if (f != null) {
+                        // found it!
+                        Type fieldT = f.type();
+                        if(fieldT instanceof Type.Reference) {
+                                fieldT = substitute((Type.Reference) f.type(), binding);
+                        }
+                        return new Triple<Clazz, Clazz.Field, Type>(c, f, fieldT);
+                }
+                // no match yet, so traverse super class and interfaces
+                if (c.superClass() != null) {
+                        worklist.add((Type.Clazz) substitute(c.superClass(),binding));
+                }
+                for (Type.Reference t : c.interfaces()) {
+                        worklist.add((Type.Clazz) substitute(t,binding));
+                }
+        }
+
+		throw new FieldNotFoundException(name, owner, loader);
 	}
 }

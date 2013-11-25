@@ -6,6 +6,8 @@ import java.util.*;
 
 import jkit.compiler.ClassLoader;
 import jkit.compiler.*;
+import jkit.error.FieldNotFoundException;
+import jkit.error.MethodNotFoundException;
 import jkit.jil.tree.*;
 import jkit.jil.util.*;
 

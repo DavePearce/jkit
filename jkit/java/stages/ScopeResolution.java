@@ -24,11 +24,12 @@ package jkit.java.stages;
 import java.util.*;
 
 import jkit.compiler.ClassLoader;
-import jkit.compiler.FieldNotFoundException;
 import jkit.compiler.SyntacticElement;
+import jkit.compiler.SyntaxError;
 import static jkit.compiler.SyntaxError.*;
 import static jkit.jil.util.Types.*;
 import jkit.compiler.Clazz;
+import jkit.error.FieldNotFoundException;
 import jkit.java.io.JavaFile;
 import jkit.java.tree.Decl;
 import jkit.java.tree.Expr;
@@ -650,7 +651,7 @@ public class ScopeResolution {
 		return null;
 	}
 
-	protected Expr doDeref(Expr.Deref e, JavaFile file) throws ClassNotFoundException {
+	protected Expr doDeref(Expr.Deref e, JavaFile file) throws ClassNotFoundException, FieldNotFoundException {
 		Expr target = doExpression(e.target(), file);
 
 		if(target instanceof Expr.UnresolvedVariable) {
@@ -689,7 +690,7 @@ public class ScopeResolution {
 					//
 					// so do nothing!
 				}
-			} catch(FieldNotFoundException fne) {
+			} catch(FieldNotFoundException ex) {
 				// Right, if we get here then there is no field ... so maybe
 				// this is actually an inner class (or a syntax error :)
 				try {
@@ -956,7 +957,7 @@ public class ScopeResolution {
 	}
 
 	protected Expr doUnresolvedVariable(Expr.UnresolvedVariable e, JavaFile file)
-			throws ClassNotFoundException {
+			throws ClassNotFoundException, FieldNotFoundException {
 
 		// This method is really the heart of the whole operation defined in
 		// this class. It is at this point that we have encountered a variable

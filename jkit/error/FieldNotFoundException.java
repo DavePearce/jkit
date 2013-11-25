@@ -19,8 +19,9 @@
 //
 // (C) David James Pearce, 2009.
 
-package jkit.compiler;
+package jkit.error;
 
+import jkit.compiler.ClassLoader;
 import jkit.jil.tree.Type;
 
 /**
@@ -31,7 +32,7 @@ import jkit.jil.tree.Type;
  * @author djp
  *
  */
-public final class FieldNotFoundException extends Exception {
+public final class FieldNotFoundException extends JKitException {
 
 	private final ClassLoader loader;		//Needed to turn class types into actual classes
 	private final String field;				//Name of field not found

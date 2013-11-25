@@ -19,10 +19,11 @@
 //
 // (C) David James Pearce, 2009.
 
-package jkit.compiler;
+package jkit.error;
 
 import java.util.List;
 
+import jkit.compiler.ClassLoader;
 import jkit.jil.tree.Type;
 
 /**
@@ -33,7 +34,7 @@ import jkit.jil.tree.Type;
  * @author djp
  *
  */
-public final class MethodNotFoundException extends Exception {
+public final class MethodNotFoundException extends JKitException {
 
 
 	private final Type.Reference owner;   //The receiver/owner of the method that was not found

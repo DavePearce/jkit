@@ -21,6 +21,9 @@
 
 package jkit.compiler;
 
+import jkit.error.ErrorHandler;
+import jkit.error.FieldNotFoundException;
+import jkit.error.MethodNotFoundException;
 import jkit.jil.tree.SourceLocation;
 
 /**
@@ -264,8 +267,9 @@ public final class SyntaxError extends RuntimeException {
 			throw new SyntaxError("class not found (" + ex.getMessage() + ")",
 					line, column, ex);
 		} else if (ex instanceof FieldNotFoundException) {
-			throw new SyntaxError("field not found (" + ex.getMessage() + ")",
-					line, column, ex);
+			ErrorHandler.handleError(ErrorHandler.ErrorType.FIELD_NOT_FOUND, (Exception)ex, loc);
+		} else if (ex instanceof MethodNotFoundException) {
+			ErrorHandler.handleError(ErrorHandler.ErrorType.METHOD_NOT_FOUND, (Exception)ex, loc);
 		}
 
 		throw new SyntaxError("internal failure (" + ex.getMessage() + ")",line,column,ex);

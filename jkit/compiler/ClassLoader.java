@@ -29,6 +29,9 @@ import java.io.*;
 import jkit.bytecode.ClassFile;
 import jkit.bytecode.ClassFileReader;
 import jkit.error.ErrorHandler;
+import jkit.error.FieldNotFoundException;
+import jkit.error.JKitException;
+import jkit.error.MethodNotFoundException;
 import jkit.jil.tree.Type;
 import jkit.jil.tree.JilClass;
 import jkit.jil.util.Types;
@@ -457,7 +460,7 @@ public final class ClassLoader {
 		if (pkgInfo == null) {
 			ErrorHandler.handleError(ErrorHandler.ErrorType.PACKAGE_NOT_FOUND,
 					new ErrorHandler.PackageNotFoundException(jilClass,
-							Collections.unmodifiableList(classpath), Collections.unmodifiableList(sourcepath)));
+							Collections.unmodifiableList(classpath), Collections.unmodifiableList(sourcepath)), null);
 		}
 		pkgInfo.classes.add(pc);
 		pkgInfo.compiledClasses.add(pc);
@@ -549,10 +552,8 @@ public final class ClassLoader {
 			}
 		}
 
-		ErrorHandler.handleError(ErrorHandler.ErrorType.METHOD_NOT_FOUND,
-				new MethodNotFoundException(name, receiver, funType.parameterTypes(), this));
+			throw new MethodNotFoundException(name, receiver, funType.parameterTypes(), this);
 
-		return null; //Shouldn't get to this point
 	}
 
 	protected void initDetermineMethodWorklist(Type.Reference receiver, Stack<Type.Clazz> worklist) {
@@ -628,10 +629,8 @@ public final class ClassLoader {
 			}
 		}
 
-		ErrorHandler.handleError(ErrorHandler.ErrorType.FIELD_NOT_FOUND,
-				new FieldNotFoundException(name,receiver, this));
+		throw new FieldNotFoundException(name,receiver, this);
 
-		return null; //Dead code
 	}
 
 	/**

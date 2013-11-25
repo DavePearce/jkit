@@ -26,7 +26,7 @@ import static jkit.compiler.SyntaxError.internal_error;
 import java.util.*;
 
 import jkit.compiler.ClassLoader;
-import jkit.compiler.MethodNotFoundException;
+import jkit.error.MethodNotFoundException;
 import jkit.java.io.JavaFile;
 import jkit.java.tree.*;
 import jkit.java.tree.Decl.*;

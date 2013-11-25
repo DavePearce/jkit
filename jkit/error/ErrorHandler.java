@@ -31,9 +31,8 @@ import java.util.Set;
 import java.util.Stack;
 
 import jkit.compiler.ClassLoader;
-import jkit.compiler.FieldNotFoundException;
 import jkit.compiler.SyntaxError;
-import jkit.compiler.MethodNotFoundException;
+import jkit.jil.tree.SourceLocation;
 import jkit.jil.tree.Type;
 import jkit.util.Pair;
 import jkit.compiler.Clazz;
@@ -61,12 +60,12 @@ public class ErrorHandler {
 	 * @param type - The type of error encountered
 	 * @param ex   - The exception to be improved
 	 */
-	public static void handleError(ErrorType type, Exception ex) {
+	public static void handleError(ErrorType type, Exception ex, SourceLocation loc) {
 
 		switch(type) {
 
 		case METHOD_NOT_FOUND:
-			handleMethodNotFound((MethodNotFoundException)ex);
+			handleMethodNotFound((MethodNotFoundException)ex, loc);
 			break;
 
 		case PACKAGE_NOT_FOUND:
@@ -74,7 +73,7 @@ public class ErrorHandler {
 			break;
 
 		case FIELD_NOT_FOUND:
-			handleFieldNotFound((FieldNotFoundException)ex);
+			handleFieldNotFound((FieldNotFoundException)ex, loc);
 
 		default:
 			throw new SyntaxError("Undefined error for error handler: " +ex.getMessage(), -1, -1);
@@ -89,20 +88,19 @@ public class ErrorHandler {
 	 *
 	 * @param ex - The FieldNotFound exception encountered
 	 */
-	private static void handleFieldNotFound(FieldNotFoundException ex) {
+	private static void handleFieldNotFound(FieldNotFoundException ex, SourceLocation loc) {
 
-		Set<Pair<Clazz, Integer>> classes = getClasses(ex.loader(), ex.owner());
+		Set<Clazz> classes = getClasses(ex.loader(), ex.owner());
 		classes = getSuperClasses(ex.loader(), classes);
 
 		//Next, we should look for misspelled field names (ignoring possible methods for now)
 		//If we find a candidate, we give it a weighting based on its edit distance
 		List<Pair<Clazz.Field, Integer>> fields = new ArrayList<Pair<Clazz.Field, Integer>>();
 
-		for (Pair<Clazz, Integer> p : classes) {
-			Clazz c = p.first();
+		for (Clazz c : classes) {
 			for (Clazz.Field f : c.fields()) {
-				int dist = distance(ex.field(), f.name()) + p.second();
-				if (dist < MAX_DIFFERENCE)
+				int dist = distance(ex.field(), f.name());
+				if (dist <= MAX_DIFFERENCE)
 					fields.add(new Pair<Clazz.Field, Integer>(f, dist));
 			}
 		}
@@ -112,15 +110,14 @@ public class ErrorHandler {
 		//for being a method (unfortunately, we can't check the type of the method matches)
 		List<Pair<Clazz.Method, Integer>> methods = new ArrayList<Pair<Clazz.Method, Integer>>();
 
-		for (Pair<Clazz, Integer> p : classes) {
-			Clazz c = p.first();
+		for (Clazz c : classes) {
 
 			for (Clazz.Method m : c.methods()) {
 				if (m.type().returnType() instanceof Type.Void || !m.parameters().isEmpty())
 					continue;
 
-				int dist = distance(ex.field(), m.name()) + 1 + p.second();
-				if (dist < MAX_DIFFERENCE)
+				int dist = distance(ex.field(), m.name()) + 2;
+				if (dist <= MAX_DIFFERENCE)
 					methods.add(new Pair<Clazz.Method, Integer>(m, dist));
 			}
 		}
@@ -151,7 +148,7 @@ public class ErrorHandler {
 
 		ex.loader();
 		throw new SyntaxError(String.format("Field %s.%s not found%s", ClassLoader.pathChild(ex.owner().toString()),
-				ex.field(), suggestion), -1, -1);
+				ex.field(), suggestion), loc.line(), loc.column());
 	}
 
 	/**
@@ -216,23 +213,22 @@ public class ErrorHandler {
 	 * actually suggested.
 	 *
 	 */
-	private static void handleMethodNotFound(MethodNotFoundException ex) {
+	private static void handleMethodNotFound(MethodNotFoundException ex, SourceLocation loc) {
 
-		Set<Pair<Clazz, Integer>> classes = getClasses(ex.loader(), ex.owner());
+		Set<Clazz> classes = getClasses(ex.loader(), ex.owner());
 		classes = getSuperClasses(ex.loader(), classes);
 
-		//Next, we should look for misspelled method names (ignoring parameters for now)
+		//First, we should look for misspelled method names (ignoring parameters for now)
 		//If we find a candidate, we give it a weighting based on its Levenshtein distance
 		Set<Pair<String, Integer>> names = new HashSet<Pair<String, Integer>>();
-		for (Pair<Clazz, Integer> p : classes) {
-			Clazz c = p.first();
+		for (Clazz c : classes) {
 			for (Clazz.Method m : c.methods()) {
 				//We want to ignore superclass constructors
 				if (m.name().equals(c.name()) && classes.contains(new Pair<Clazz, Integer>(c, 1)))
 					continue;
 
-				int dist = distance(ex.method(), m.name()) + p.second();
-				if (dist < MAX_DIFFERENCE)
+				int dist = distance(ex.method(), m.name());
+				if (dist <= MAX_DIFFERENCE)
 					names.add(new Pair<String, Integer>(m.name(), dist));
 			}
 		}
@@ -242,8 +238,7 @@ public class ErrorHandler {
 		List<Pair<Clazz.Method, Integer>> methods = new ArrayList<Pair<Clazz.Method, Integer>>();
 
 		for (Pair<String, Integer> p : names) {
-			for(Pair<Clazz, Integer> p2 : classes) {
-				Clazz c = p2.first();
+			for(Clazz c : classes) {
 				for (Clazz.Method m : c.methods(p.first())) {
 					int diff;
 
@@ -260,7 +255,7 @@ public class ErrorHandler {
 			}
 		}
 
-		//Finally, check for different types of parameters
+		//Next, check for different types of parameters
 		//Again, a weighting is given based on the number of parameters changed
 		List<Pair<Clazz.Method, Integer>> suggestions = new ArrayList<Pair<Clazz.Method, Integer>>();
 
@@ -299,7 +294,7 @@ public class ErrorHandler {
 		}
 		msg.append(")\" not found.");
 		if (suggestion == null)
-			throw new SyntaxError(msg.toString(), -1, -1);
+			throw new SyntaxError(msg.toString(), loc.line(), loc.column());
 
 		ex.loader();
 		msg.append(String.format("\nA possible substitute is \"%s.%s(",
@@ -312,7 +307,7 @@ public class ErrorHandler {
 			msg.append(t.toString());
 			firstTime = false;
 		}
-		throw new SyntaxError(msg.toString()+")\"", -1, -1);
+		throw new SyntaxError(msg.toString()+")\"", loc.line(), loc.column());
 	}
 
 	/**
@@ -373,15 +368,14 @@ public class ErrorHandler {
 
 	/**
 	 * Utility method that, when given a reference type, returns all the classes
-	 * that can be substituted into that type, in the pair format necessary for
-	 * further error processing.
+	 * that can be substituted into that type
 	 *
 	 * @param loader - The ClassLoader required to load the classes
 	 * @param owner  - The reference type we are checking
 	 * @return
 	 */
-	private static Set<Pair<Clazz, Integer>> getClasses(ClassLoader loader, Type.Reference owner) {
-		Set<Pair<Clazz, Integer>> classes = new HashSet<Pair<Clazz, Integer>>();
+	private static Set<Clazz> getClasses(ClassLoader loader, Type.Reference owner) {
+		Set<Clazz> classes = new HashSet<Clazz>();
 		Stack<Type.Reference> stk = new Stack<Type.Reference>();
 		stk.push(owner);
 
@@ -391,7 +385,7 @@ public class ErrorHandler {
 			if (ref instanceof Type.Clazz)
 
 				try {
-					classes.add(new Pair<Clazz, Integer>(loader.loadClass((Type.Clazz)ref), 0));
+					classes.add(loader.loadClass((Type.Clazz)ref));
 				} catch (ClassNotFoundException e) {
 					//Skip trying to load this class
 					continue;
@@ -412,22 +406,21 @@ public class ErrorHandler {
 
 	/**
 	 * Utility method that, when given a set of classes, returns the corresponding
-	 * set of all classes and super classes, with a weighting on super classes.
+	 * set of all classes and super classes.
 	 *
 	 * @param loader - A ClassLoader (to read classes)
 	 * @param classes - The set of classes we want to expand to include parent classes
 	 * @return
 	 */
-	private static Set<Pair<Clazz, Integer>> getSuperClasses(ClassLoader loader,
-			Set<Pair<Clazz, Integer>> classes) {
+	private static Set<Clazz> getSuperClasses(ClassLoader loader,
+			Set<Clazz> classes) {
 
-		Set<Pair<Clazz, Integer>> result = new HashSet<Pair<Clazz, Integer>>();
-		for (Pair<Clazz, Integer> p : classes) {
-			Clazz c = p.first();
+		Set<Clazz> result = new HashSet<Clazz>();
+		for (Clazz c : classes) {
 			try {
 				Clazz tmp = c;
-				while (tmp != null && !result.contains(new Pair<Clazz, Integer>(tmp, tmp.equals(c) ? 0 : 1))) {
-					result.add(new Pair<Clazz, Integer>(tmp, tmp.equals(c) ? 0 : 1));
+				while (tmp != null && !result.contains(tmp)) {
+					result.add(tmp);
 					if (c.superClass() == null)
 						break;
 
@@ -462,7 +455,7 @@ public class ErrorHandler {
 	 * @author Daniel Campbell
 	 *
 	 */
-	public static class PackageNotFoundException extends Exception {
+	public static class PackageNotFoundException extends JKitException {
 
 		private static final long serialVersionUID = 1L;
 		private final List<String> classpath;
