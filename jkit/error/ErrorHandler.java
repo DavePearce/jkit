@@ -25,8 +25,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
@@ -330,40 +332,58 @@ public class ErrorHandler {
 		if (lowerBound > MAX_DIFFERENCE)
 			return lowerBound;
 
-		//Need two arrays, one for the current (working) row,
-		//and one for the previous (worked) row
-		int[] curr = new int[Math.max(trg.length()+1, src.length()+1)];
-		int[] prev = new int[curr.length];
+		int[][] matrix = new int[src.length()+2][trg.length()+2];
+		int inf = src.length() + trg.length();
+		matrix[0][0] = inf;
 
-		//Initialise prev to be the edit distance if src was empty
-		for (int i = 0; i < prev.length; i++) {
-			prev[i] = i;
+		//Initialize the first few entries in the matrix
+
+		for (int i = 0; i <= src.length(); i++) {
+			matrix[i+1][1] = i;
+			matrix[i+1][0] = inf;
 		}
 
+		for (int i = 0; i <= trg.length(); i++) {
+			matrix[1][i+1] = i;
+			matrix[0][i+1] = inf;
+		}
+
+		//Need to set up a mapping of characters to integers
+		Map<Character, Integer> map = new HashMap<Character, Integer>();
+
+		//Initialize the dictionary with the characters in the source and target words
 		for (int i = 0; i < src.length(); i++) {
-
-			//First value of current row is always i+1
-			curr[i] = i+1;
-			int min = i+1;
-
-			//The following formula calculates the rest of the current row
-			//If at the end the calculated min distance is greater than a threshold
-			//We return immediately, as we only care about 'close' strings
-
-			for (int j = 0; j < trg.length(); j++) {
-				int cost = (src.charAt(i) == trg.charAt(j)) ? 0 : 1;
-				curr[j+1] = Math.min(curr[j]+1, Math.min(prev[j+1]+1, prev[j]+cost));
-				min = (curr[j+1] < min) ? curr[j+1] : min;
-			}
-
-			if (min > MAX_DIFFERENCE) return min;
-
-			//Copy current row over to old row and start over
-			for (int j = 0; j < prev.length; j++)
-				prev[j] = curr[j];
+			char c = src.charAt(i);
+			if (!map.containsKey(c))
+				map.put(c, 0);
+		}
+		for (int i = 0; i < trg.length(); i++) {
+			char c = trg.charAt(i);
+			if (!map.containsKey(c))
+				map.put(c, 0);
 		}
 
-		return curr[trg.length()];
+		//Main loop for calculating the rows of the matrix
+		//Once this has terminated, distance will be in matrix[src.length()+1][trg.length()+1]
+		for (int i = 1; i <= src.length(); i++) {
+			int DB = 0;
+			for (int j = 1; j <= trg.length(); j++) {
+				int i1 = map.get(trg.charAt(j-1));
+				int j1 = DB;
+
+				if (src.charAt(i-1) == trg.charAt(j-1)) {
+					matrix[i+1][j+1] = matrix[i][j];
+					DB = j;
+				}
+				else {
+					matrix[i+1][j+1] = Math.min(matrix[i][j],
+							Math.min(matrix[i+1][j], matrix[i][j+1])) + 1;
+				}
+				matrix[i+1][j+1] = Math.min(matrix[i+1][j+1], matrix[i1][j1] + (i-i1-1) + 1 + (j - j1 - 1));
+			}
+			map.put(src.charAt(i-1), i);
+		}
+		return matrix[src.length()+1][trg.length()+1];
 	}
 
 	/**
