@@ -471,7 +471,7 @@ public final class ClassLoader {
 	 * @param pkg
 	 * @return
 	 */
-	private String pathParent(String pkg) {
+	public static String pathParent(String pkg) {
 		if(pkg.equals("")) {
 			return null;
 		}
@@ -490,7 +490,7 @@ public final class ClassLoader {
 	 * @param pkg
 	 * @return
 	 */
-	private String pathChild(String pkg) {
+	public static String pathChild(String pkg) {
 		int idx = pkg.lastIndexOf('.');
 		if(idx == -1) {
 			return pkg;
@@ -628,7 +628,10 @@ public final class ClassLoader {
 			}
 		}
 
-		throw new FieldNotFoundException(name,receiver.toString());
+		ErrorHandler.handleError(ErrorHandler.ErrorType.FIELD_NOT_FOUND,
+				new FieldNotFoundException(name,receiver, this));
+
+		return null; //Dead code
 	}
 
 	/**

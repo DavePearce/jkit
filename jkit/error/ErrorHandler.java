@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
+import jkit.compiler.ClassLoader;
+import jkit.compiler.FieldNotFoundException;
 import jkit.compiler.SyntaxError;
 import jkit.compiler.MethodNotFoundException;
 import jkit.jil.tree.Type;
@@ -47,7 +49,7 @@ import jkit.compiler.Clazz;
 public class ErrorHandler {
 
 	public enum ErrorType
-	{ METHOD_NOT_FOUND, PACKAGE_NOT_FOUND }
+	{ METHOD_NOT_FOUND, PACKAGE_NOT_FOUND, FIELD_NOT_FOUND }
 
 	//The maximum difference between a target and a candidate to be considered for substitution
 	public final static int MAX_DIFFERENCE = 3;
@@ -71,9 +73,85 @@ public class ErrorHandler {
 			handlePackageNotFound((PackageNotFoundException)ex);
 			break;
 
+		case FIELD_NOT_FOUND:
+			handleFieldNotFound((FieldNotFoundException)ex);
+
 		default:
 			throw new SyntaxError("Undefined error for error handler: " +ex.getMessage(), -1, -1);
 		}
+	}
+
+	/**
+	 * A simpler version for handling methods not found, must search up
+	 * the class hierarchy looking for any possible fields that match.
+	 * Also checks for methods of the correct return type that take no parameters,
+	 * as it is possible that is what the user intended.
+	 *
+	 * @param ex - The FieldNotFound exception encountered
+	 */
+	private static void handleFieldNotFound(FieldNotFoundException ex) {
+
+		Set<Pair<Clazz, Integer>> classes = getClasses(ex.loader(), ex.owner());
+		classes = getSuperClasses(ex.loader(), classes);
+
+		//Next, we should look for misspelled field names (ignoring possible methods for now)
+		//If we find a candidate, we give it a weighting based on its edit distance
+		List<Pair<Clazz.Field, Integer>> fields = new ArrayList<Pair<Clazz.Field, Integer>>();
+
+		for (Pair<Clazz, Integer> p : classes) {
+			Clazz c = p.first();
+			for (Clazz.Field f : c.fields()) {
+				int dist = distance(ex.field(), f.name()) + p.second();
+				if (dist < MAX_DIFFERENCE)
+					fields.add(new Pair<Clazz.Field, Integer>(f, dist));
+			}
+		}
+
+		//Now we check for methods with no parameters
+		//If we find a candidate, it is given a weighting based on edit distance, with an extra weighting
+		//for being a method (unfortunately, we can't check the type of the method matches)
+		List<Pair<Clazz.Method, Integer>> methods = new ArrayList<Pair<Clazz.Method, Integer>>();
+
+		for (Pair<Clazz, Integer> p : classes) {
+			Clazz c = p.first();
+
+			for (Clazz.Method m : c.methods()) {
+				if (m.type().returnType() instanceof Type.Void || !m.parameters().isEmpty())
+					continue;
+
+				int dist = distance(ex.field(), m.name()) + 1 + p.second();
+				if (dist < MAX_DIFFERENCE)
+					methods.add(new Pair<Clazz.Method, Integer>(m, dist));
+			}
+		}
+		//Now sort the two lists to find the one with the least weighting,
+		//And throw a Syntax Error with the appropriate error message
+		Collections.sort(fields, new WeightComparator<Pair<Clazz.Field, Integer>>());
+		Collections.sort(methods, new WeightComparator<Pair<Clazz.Method, Integer>>());
+		String suggestion;
+
+		if (fields.isEmpty()) {
+			if (methods.isEmpty()) {
+				suggestion = "";
+			}
+			else suggestion = String.format("\nA possible substitute is method %s.%s()", ClassLoader.pathChild(ex.owner().toString()),
+					methods.get(0).first().name());
+		}
+		else if (methods.isEmpty()) {
+			suggestion = String.format("\nA possible substitute is field %s.%s", ClassLoader.pathChild(ex.owner().toString()),
+					fields.get(0).first().name());
+		}
+		else {
+			suggestion = (fields.get(0).second() < methods.get(0).second()) ?
+					String.format("\nA possible substitute is field %s.%s", ClassLoader.pathChild(ex.owner().toString()),
+							fields.get(0).first().name()) :
+					String.format("\nA possible substitute is method %s.%s()", ClassLoader.pathChild(ex.owner().toString()),
+							methods.get(0).first().name());
+		}
+
+		ex.loader();
+		throw new SyntaxError(String.format("Field %s.%s not found%s", ClassLoader.pathChild(ex.owner().toString()),
+				ex.field(), suggestion), -1, -1);
 	}
 
 	/**
@@ -140,56 +218,8 @@ public class ErrorHandler {
 	 */
 	private static void handleMethodNotFound(MethodNotFoundException ex) {
 
-		//First, need to turn the owner into an explicit class or set of classes
-		//We store the distance of the found class from the original class as an int
-		//At this point, all distances are 0
-		Set<Pair<Clazz, Integer>> classes = new HashSet<Pair<Clazz, Integer>>();
-		Stack<Type.Reference> stk = new Stack<Type.Reference>();
-		stk.push(ex.owner());
-
-		while (!stk.isEmpty()) {
-			Type.Reference ref = stk.pop();
-
-			if (ref instanceof Type.Clazz)
-
-				try {
-					classes.add(new Pair<Clazz, Integer>(ex.loader().loadClass((Type.Clazz)ref), 0));
-				} catch (ClassNotFoundException e) {
-					//Skip trying to load this class
-					continue;
-				}
-
-			else if (ref instanceof Type.Intersection) {
-				Type.Intersection it = (Type.Intersection) ref;
-				for (Type.Reference b : it.bounds())
-					stk.push(b);
-			}
-
-			else if (ref instanceof Type.Wildcard) {
-				//Not sure what to do here, if anything
-			}
-		}
-
-		//Now need to make sure all super classes are added as well
-		//Super classes have a distance of 1 from their subclass
-		//Regardless of how far up the chain they are
-
-		Set<Pair<Clazz, Integer>> tmpSet = new HashSet<Pair<Clazz, Integer>>();
-		for (Pair<Clazz, Integer> p : classes) {
-			Clazz c = p.first();
-			try {
-				Clazz tmp = c;
-				while (tmp != null && !tmpSet.contains(new Pair<Clazz, Integer>(tmp, tmp.equals(c) ? 0 : 1))) {
-					tmpSet.add(new Pair<Clazz, Integer>(tmp, tmp.equals(c) ? 0 : 1));
-					tmp = ex.loader().loadClass(c.superClass());
-				}
-			} catch (ClassNotFoundException e) {
-				//Skip trying to load this superclass
-				continue;
-			}
-		}
-
-		classes = tmpSet;
+		Set<Pair<Clazz, Integer>> classes = getClasses(ex.loader(), ex.owner());
+		classes = getSuperClasses(ex.loader(), classes);
 
 		//Next, we should look for misspelled method names (ignoring parameters for now)
 		//If we find a candidate, we give it a weighting based on its Levenshtein distance
@@ -259,7 +289,8 @@ public class ErrorHandler {
 		Clazz.Method suggestion = (suggestions.isEmpty()) ? null : suggestions.get(0).first();
 
 		StringBuilder msg = new StringBuilder(100);
-		msg.append(String.format("Method \"%s.%s(", ex.owner().toString(), ex.method()));
+		ex.loader();
+		msg.append(String.format("Method \"%s.%s(", ClassLoader.pathChild(ex.owner().toString()), ex.method()));
 		boolean firstTime = true;
 		for (Type t : ex.parameters()) {
 			if (!firstTime)
@@ -270,8 +301,9 @@ public class ErrorHandler {
 		if (suggestion == null)
 			throw new SyntaxError(msg.toString(), -1, -1);
 
+		ex.loader();
 		msg.append(String.format("\nA possible substitute is \"%s.%s(",
-				ex.owner().toString(), suggestion.name()));
+				ClassLoader.pathChild(ex.owner().toString()), suggestion.name()));
 
 		firstTime = true;
 		for (Type t : suggestion.type().parameterTypes()) {
@@ -337,6 +369,77 @@ public class ErrorHandler {
 		}
 
 		return curr[trg.length()];
+	}
+
+	/**
+	 * Utility method that, when given a reference type, returns all the classes
+	 * that can be substituted into that type, in the pair format necessary for
+	 * further error processing.
+	 *
+	 * @param loader - The ClassLoader required to load the classes
+	 * @param owner  - The reference type we are checking
+	 * @return
+	 */
+	private static Set<Pair<Clazz, Integer>> getClasses(ClassLoader loader, Type.Reference owner) {
+		Set<Pair<Clazz, Integer>> classes = new HashSet<Pair<Clazz, Integer>>();
+		Stack<Type.Reference> stk = new Stack<Type.Reference>();
+		stk.push(owner);
+
+		while (!stk.isEmpty()) {
+			Type.Reference ref = stk.pop();
+
+			if (ref instanceof Type.Clazz)
+
+				try {
+					classes.add(new Pair<Clazz, Integer>(loader.loadClass((Type.Clazz)ref), 0));
+				} catch (ClassNotFoundException e) {
+					//Skip trying to load this class
+					continue;
+				}
+
+			else if (ref instanceof Type.Intersection) {
+				Type.Intersection it = (Type.Intersection) ref;
+				for (Type.Reference b : it.bounds())
+					stk.push(b);
+			}
+
+			else if (ref instanceof Type.Wildcard) {
+				//Not sure what to do here, if anything
+			}
+		}
+		return classes;
+	}
+
+	/**
+	 * Utility method that, when given a set of classes, returns the corresponding
+	 * set of all classes and super classes, with a weighting on super classes.
+	 *
+	 * @param loader - A ClassLoader (to read classes)
+	 * @param classes - The set of classes we want to expand to include parent classes
+	 * @return
+	 */
+	private static Set<Pair<Clazz, Integer>> getSuperClasses(ClassLoader loader,
+			Set<Pair<Clazz, Integer>> classes) {
+
+		Set<Pair<Clazz, Integer>> result = new HashSet<Pair<Clazz, Integer>>();
+		for (Pair<Clazz, Integer> p : classes) {
+			Clazz c = p.first();
+			try {
+				Clazz tmp = c;
+				while (tmp != null && !result.contains(new Pair<Clazz, Integer>(tmp, tmp.equals(c) ? 0 : 1))) {
+					result.add(new Pair<Clazz, Integer>(tmp, tmp.equals(c) ? 0 : 1));
+					if (c.superClass() == null)
+						break;
+
+					tmp = loader.loadClass(c.superClass());
+				}
+			} catch (ClassNotFoundException e) {
+				//Skip trying to load this superclass
+				continue;
+			}
+		}
+
+		return result;
 	}
 
 	/**

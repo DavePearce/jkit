@@ -543,9 +543,9 @@ public class JavaFileReader {
 				// this is a strange case for inner classes
 				return parseClass(stmt, genericVariables);
 			default :
-				throw new SyntaxError("Unknown statement encountered ("
-						+ stmt.getText() + ")", stmt.getLine(), stmt
-						.getCharPositionInLine(), stmt.getText().length());
+				//Don't want to expose the ANTLR workings to the user
+				throw new SyntaxError("Syntax Error: Not a valid statement",
+						 stmt.getLine(), stmt.getCharPositionInLine(), stmt.getText().length());
 		}
 	}
 
@@ -969,6 +969,7 @@ public class JavaFileReader {
 		if (e instanceof Stmt) {
 			return (Stmt) e;
 		} else {
+			System.out.println(e.getClass());
 			throw new RuntimeException("Syntax Error");
 		}
 	}

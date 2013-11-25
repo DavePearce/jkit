@@ -1531,6 +1531,8 @@ public class TypeSystem {
 			}
 		}
 
-		throw new FieldNotFoundException(name, owner.toString());
+		ErrorHandler.handleError(ErrorHandler.ErrorType.FIELD_NOT_FOUND,
+				new FieldNotFoundException(name, owner, loader));
+		return null;  //Dead code
 	}
 }
