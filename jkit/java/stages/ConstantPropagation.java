@@ -11,8 +11,8 @@ import java.util.Stack;
 
 import jkit.compiler.ClassLoader;
 import jkit.compiler.Clazz;
-import jkit.compiler.FieldNotFoundException;
 import jkit.compiler.SyntacticAttribute;
+import jkit.error.FieldNotFoundException;
 import jkit.java.io.JavaFile;
 import jkit.java.tree.Decl;
 import jkit.java.tree.Expr;

@@ -23,13 +23,13 @@ package jkit.java.stages;
 
 import java.util.*;
 
-import jkit.compiler.FieldNotFoundException;
 import static jkit.compiler.SyntaxError.*;
 import static jkit.jil.util.Exprs.*;
 import static jkit.jil.util.Types.*;
 import jkit.compiler.ClassLoader;
 import jkit.compiler.Clazz;
 import jkit.compiler.SyntacticAttribute;
+import jkit.error.FieldNotFoundException;
 import jkit.java.io.JavaFile;
 import jkit.java.tree.*;
 import jkit.jil.tree.*;

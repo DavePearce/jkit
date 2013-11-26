@@ -1,23 +1,23 @@
 // This file is part of the Java Compiler Kit (JKit)
 //
-// The Java Compiler Kit is free software; you can 
-// redistribute it and/or modify it under the terms of the 
-// GNU General Public License as published by the Free Software 
-// Foundation; either version 2 of the License, or (at your 
+// The Java Compiler Kit is free software; you can
+// redistribute it and/or modify it under the terms of the
+// GNU General Public License as published by the Free Software
+// Foundation; either version 2 of the License, or (at your
 // option) any later version.
 //
 // The Java Compiler Kit is distributed in the hope
-// that it will be useful, but WITHOUT ANY WARRANTY; without 
-// even the implied warranty of MERCHANTABILITY or FITNESS FOR 
-// A PARTICULAR PURPOSE.  See the GNU General Public License 
+// that it will be useful, but WITHOUT ANY WARRANTY; without
+// even the implied warranty of MERCHANTABILITY or FITNESS FOR
+// A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
 //
-// You should have received a copy of the GNU General Public 
-// License along with the Java Compiler Kit; if not, 
-// write to the Free Software Foundation, Inc., 59 Temple Place, 
+// You should have received a copy of the GNU General Public
+// License along with the Java Compiler Kit; if not,
+// write to the Free Software Foundation, Inc., 59 Temple Place,
 // Suite 330, Boston, MA  02111-1307  USA
 //
-// (C) David James Pearce, 2009. 
+// (C) David James Pearce, 2009.
 
 package jkit.jil.stages;
 
@@ -28,8 +28,9 @@ import jkit.bytecode.Bytecode.*;
 import jkit.bytecode.attributes.*;
 import jkit.compiler.Clazz;
 import jkit.compiler.ClassLoader;
-import jkit.compiler.FieldNotFoundException;
-import jkit.compiler.MethodNotFoundException;
+import jkit.compiler.SyntaxError;
+import jkit.error.FieldNotFoundException;
+import jkit.error.MethodNotFoundException;
 import jkit.jil.util.Types;
 import jkit.jil.tree.*;
 import jkit.jil.util.Exprs;
@@ -40,43 +41,43 @@ import static jkit.compiler.SyntaxError.*;
 public final class ClassFileBuilder {
 	protected final ClassLoader loader;
 	protected final int version;
-	
+
 	public ClassFileBuilder(ClassLoader loader, int version) {
 		this.loader = loader;
 		this.version = version;
 	}
-	
-	public ClassFile build(jkit.jil.tree.JilClass clazz) {				
+
+	public ClassFile build(jkit.jil.tree.JilClass clazz) {
 		ClassFile cfile = new ClassFile(version, clazz.type(), clazz
 				.superClass(), clazz.interfaces(), filterModifiers(clazz.modifiers()), clazz
-				.attributes(BytecodeAttribute.class));				
-		
+				.attributes(BytecodeAttribute.class));
+
 		if (needClassSignature(clazz)) {
 			cfile.attributes().add(
 					new ClassSignature(clazz.type(), clazz.superClass(), clazz
 							.interfaces()));
 		}
-		
+
 		List<Modifier.Annotation> annotations = filterAnnotations(clazz.modifiers());
-		if(annotations.size() > 0) {				
+		if(annotations.size() > 0) {
 			cfile.attributes().add(new RuntimeVisibleAnnotations(annotations));
 		}
-		
+
 		buildInnerClasses(clazz,cfile);
 		buildFields(clazz,cfile);
-		buildMethods(clazz,cfile);		
-		
+		buildMethods(clazz,cfile);
+
 		return cfile;
 	}
-	
+
 	protected void buildInnerClasses(JilClass clazz, ClassFile cfile) {
-		if(clazz.isInnerClass() || !clazz.inners().isEmpty()) {			
+		if(clazz.isInnerClass() || !clazz.inners().isEmpty()) {
 			// this is basically about building the inner classes attribute
-			ArrayList<Triple<Type.Clazz,Type.Clazz,List<Modifier>>> inners = new ArrayList();			
+			ArrayList<Triple<Type.Clazz,Type.Clazz,List<Modifier>>> inners = new ArrayList();
 
 			Type.Clazz inner = clazz.type();
 			List<Pair<String,List<Type.Reference>>> components = inner.components();
-			
+
 			for(int i=components.size()-1;i>=0;--i) {
 				List<Pair<String,List<Type.Reference>>> ncomponents = components.subList(0,i);
 				Type.Clazz ref = new Type.Clazz(inner.pkg(),ncomponents);
@@ -86,8 +87,8 @@ public final class ClassFileBuilder {
 				} catch(ClassNotFoundException e) {
 					// this is a problem, but for now we'll just ignore it
 				}
-			}			
-			
+			}
+
 			for(Type.Clazz tc : clazz.inners()) {
 				try {
 					Clazz ic = loader.loadClass(tc);
@@ -96,29 +97,29 @@ public final class ClassFileBuilder {
 					// this is a problem, but for now we'll just ignore it
 				}
 			}
-			
+
 			cfile.attributes().add(new InnerClasses(clazz.type(),inners));
 		}
-	}		
-	
+	}
+
 	protected void buildFields(JilClass clazz, ClassFile cfile) {
 		for (JilField f : clazz.fields()) {
-			ClassFile.Field cf = new ClassFile.Field(f.name(), f.type(), filterModifiers(f.modifiers())); 
+			ClassFile.Field cf = new ClassFile.Field(f.name(), f.type(), filterModifiers(f.modifiers()));
 			cfile.fields().add(cf);
 			if(Types.isGeneric(f.type())) {
 				cf.attributes().add(new FieldSignature(f.type()));
-			} 
+			}
 			if(f instanceof JilConstant) {
 				JilConstant c = (JilConstant) f;
 				cf.attributes().add(new ConstantValue(c.constant()));
 			}
 			List<Modifier.Annotation> annotations = filterAnnotations(f.modifiers());
-			if(annotations.size() > 0) {				
+			if(annotations.size() > 0) {
 				cf.attributes().add(new RuntimeVisibleAnnotations(annotations));
 			}
 		}
 	}
-	
+
 	protected void buildMethods(JilClass clazz, ClassFile cfile) {
 		for (JilMethod m : clazz.methods()) {
 			String m_name = m.name();
@@ -129,54 +130,59 @@ public final class ClassFileBuilder {
 			}
 			ClassFile.Method cfm = new ClassFile.Method(m_name, m.type(), filterModifiers(m
 					.modifiers()));
-			
+
 			if (clazz.isInterface() && !cfm.isPublic()) {
 				// interfaces cannot have non-public methods in the bytecode.
 				cfm.modifiers().add(
-						Modifier.ACC_PUBLIC);				
+						Modifier.ACC_PUBLIC);
 			}
-			
+
 			if (clazz.isInterface() && !cfm.isAbstract()) {
 				// interfaces cannot have non-abstract methods in the bytecode.
 				cfm.modifiers().add(
-						Modifier.ACC_ABSTRACT);				
+						Modifier.ACC_ABSTRACT);
 			}
-			
+
+			if (m_name.equals("<init>") && (cfm.isStatic() || cfm.isAbstract() || cfm.isFinal())) {
+				//Constructors are not permitted to be anything but private, protected or public
+				syntax_error("Invalid constructor modifier. Constructors can only be public, protected or private", m);
+			}
+
 			if(!m.exceptions().isEmpty()) {
 				cfm.attributes().add(new Exceptions(m.exceptions()));
 			}
-			
+
 			if(!m.isAbstract() && !clazz.isInterface()) {
 				ArrayList<Bytecode> bytecodes = new ArrayList<Bytecode>();
-				ArrayList<Code.Handler> handlers = new ArrayList<Code.Handler>();				
+				ArrayList<Code.Handler> handlers = new ArrayList<Code.Handler>();
 				ArrayList<LineNumberTable.Entry> lines = new ArrayList<LineNumberTable.Entry>();
-				
+
 				translateCode(clazz, m, bytecodes, handlers, lines);
 				Code code = new Code(bytecodes,handlers,cfm);
 				if(!lines.isEmpty()) {
 					code.attributes().add(new LineNumberTable(lines));
 				}
-				cfm.attributes().add(code);									
+				cfm.attributes().add(code);
 			}
-						
-			if (Types.isGeneric(m.type())) {				
+
+			if (Types.isGeneric(m.type())) {
 				cfm.attributes().add(new MethodSignature(m.type()));
-			}			
-			
+			}
+
 			List<Modifier.Annotation> annotations = filterAnnotations(m.modifiers());
-			if(annotations.size() > 0) {				
+			if(annotations.size() > 0) {
 				cfm.attributes().add(new RuntimeVisibleAnnotations(annotations));
 			}
-			
+
 			cfile.methods().add(cfm);
 		}
 	}
-	
+
 	/**
 	 * This method translates a method's control-flow graph into a sequence of
 	 * bytecodes. Any missing constant pool items are added to the constant
 	 * pool.
-	 * 
+	 *
 	 * @param clazz
 	 *            Enclosing class
 	 * @param method
@@ -196,15 +202,15 @@ public final class ClassFileBuilder {
 		// === CREATE TYPE ENVIRONMENT ===
 
 		// create the local variable slot mapping
-		HashMap<String, Integer> localVarMap = new HashMap<String, Integer>();		
+		HashMap<String, Integer> localVarMap = new HashMap<String, Integer>();
 
 		int maxLocals = 0;
 
-		if (!method.isStatic()) {			
+		if (!method.isStatic()) {
 			// observe that "super" and "this" are actually aliases from a
 			// bytecode generation point of view.
 			localVarMap.put("this", maxLocals);
-			localVarMap.put("super", maxLocals++);			
+			localVarMap.put("super", maxLocals++);
 		}
 
 		// determine slot allocations for parameters
@@ -214,8 +220,8 @@ public final class ClassFileBuilder {
 			localVarMap.put(pp.name(), maxLocals);
 			maxLocals += ClassFile.slotSize(paramTypes.get(idx++));
 		}
-		
-		// determine slot allocations for local variables. 		
+
+		// determine slot allocations for local variables.
 		for (Pair<String,Boolean> p : method.localVariables()) {
 			localVarMap.put(p.first(), maxLocals);
 			maxLocals ++;
@@ -228,11 +234,11 @@ public final class ClassFileBuilder {
 			}
 		}
 
-		// === TRANSLATE BYTECODES ===		
+		// === TRANSLATE BYTECODES ===
 		for(JilStmt s : method.body()) {
 			SourceLocation loc = s.attribute(SourceLocation.class);
 			int start = bytecodes.size();
-			if(loc != null) {				
+			if(loc != null) {
 				lines.add(new LineNumberTable.Entry(start,loc.line()));
 			}
 			translateStatement(s,localVarMap,bytecodes);
@@ -243,7 +249,7 @@ public final class ClassFileBuilder {
 				handlers.add(handler);
 			}
 		}
-		
+
 		// At this point, add a return statement (if there is none, and we're
 		// returning void)
 		if (method.type().returnType() instanceof Type.Void
@@ -251,16 +257,16 @@ public final class ClassFileBuilder {
 						.get(bytecodes.size() - 1) instanceof Bytecode.Return))) {
 			bytecodes.add(new Bytecode.Return(null));
 		}
-		
+
 		// Now make sure the exception handlers are compacted and
 		// also arranged in the correct order.
 		// sortAndCompactExceptionHandlers(handlers);
 	}
-	
+
 	/**
 	 * This method aims to sort compact handlers that are next to each other
 	 * together. For example, if we have the following handlers:
-	 * 
+	 *
 	 * <p>
 	 * <table border=1>
 	 * <tr>
@@ -291,10 +297,10 @@ public final class ClassFileBuilder {
 	 * </table>
 	 * </p>
 	 * <br>
-	 * 
+	 *
 	 * Then we need to compact the four handlers into two and reorder them as
 	 * follows:
-	 * 
+	 *
 	 * <p>
 	 * <table border=1>
 	 * <tr>
@@ -315,13 +321,13 @@ public final class ClassFileBuilder {
 	 * </table>
 	 * </p>
 	 * <br>
-	 * 
+	 *
 	 * Observe here that the order of exceptions matters in the classfile. If
 	 * the RuntimeException were to come first, then it would prevent the
 	 * ArrayIndexOutOfBoundsException from ever being called. Note that, had the
 	 * user actually specified this to happen in the source code then we
 	 * wouldn't even see the ArrayIndexOutOfBoundsException handler here.
-	 * 
+	 *
 	 * @param handlers.
 	 */
 	protected void sortAndCompactExceptionHandlers(
@@ -329,11 +335,11 @@ public final class ClassFileBuilder {
 
 		// NOTE: this code does not work correctly because the sorting function
 		// disturbs the correct order of exceptions.
-		
+
 		// firstly, sort them into the correct order
 		Collections.sort(handlers, new Comparator<Code.Handler>() {
 			public int compare(Code.Handler e1, Code.Handler e2) {
-				int ct = e1.exception.compareTo(e2.exception); 
+				int ct = e1.exception.compareTo(e2.exception);
 				if (ct == 0) {
 					if (e1.start < e2.start) {
 						return -1;
@@ -370,11 +376,11 @@ public final class ClassFileBuilder {
 			handlers.add(tmp);
 		}
 	}
-	
+
 	/**
 	 * This method is responsible for translating a statement from the
 	 * intermediate language into Java Bytecode(s).
-	 * 
+	 *
 	 * @param stmt
 	 *            the statement to be translated
 	 * @param bytecodes
@@ -432,7 +438,7 @@ public final class ClassFileBuilder {
 	/**
 	 * This method is responsible for translating a conditional expression, such
 	 * as if(x < 0) etc.
-	 * 
+	 *
 	 * @param condition
 	 *            the condition being tested
 	 * @param trueLabel
@@ -445,7 +451,7 @@ public final class ClassFileBuilder {
 	protected static int condLabelCount = 0;
 	protected void translateConditionalBranch(JilExpr condition, String trueLabel,
 			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes) throws ClassNotFoundException, MethodNotFoundException {
-		
+
 		if (condition instanceof JilExpr.BinOp) {
 			JilExpr.BinOp bop = (JilExpr.BinOp) condition;
 
@@ -473,10 +479,10 @@ public final class ClassFileBuilder {
 			// here. For example, using ifnull and ifnotnull bytecodes. Also,
 			// using ifeq when comparing directly against zero.
 
-			translateExpression(bop.lhs(), varmap, 
+			translateExpression(bop.lhs(), varmap,
 					bytecodes);
 
-			translateExpression(bop.rhs(), varmap, 
+			translateExpression(bop.rhs(), varmap,
 					bytecodes);
 
 			Type cmpT = bop.lhs().type();
@@ -521,7 +527,7 @@ public final class ClassFileBuilder {
 						translateExpression(uop.expr(), varmap,
 								bytecodes);
 						bytecodes
-								.add(new Bytecode.If(Bytecode.If.EQ, trueLabel));						
+								.add(new Bytecode.If(Bytecode.If.EQ, trueLabel));
 					}
 				} else {
 					// not elimination was successful ...
@@ -534,20 +540,20 @@ public final class ClassFileBuilder {
 						+ condition + ")");
 			}
 		} else if (condition instanceof JilExpr.Invoke) {
-			translateInvoke((JilExpr.Invoke) condition, varmap, 
+			translateInvoke((JilExpr.Invoke) condition, varmap,
 					bytecodes, true);
-			bytecodes.add(new Bytecode.If(Bytecode.If.NE, trueLabel));			
+			bytecodes.add(new Bytecode.If(Bytecode.If.NE, trueLabel));
 		} else if (condition instanceof JilExpr.InstanceOf) {
-			translateExpression(condition, varmap, 
+			translateExpression(condition, varmap,
 					bytecodes);
-			bytecodes.add(new Bytecode.If(Bytecode.If.NE, trueLabel));			
-		} else if (condition instanceof JilExpr.Bool 
+			bytecodes.add(new Bytecode.If(Bytecode.If.NE, trueLabel));
+		} else if (condition instanceof JilExpr.Bool
 					|| condition instanceof JilExpr.ArrayIndex
 					|| condition instanceof JilExpr.Variable
 					|| condition instanceof JilExpr.Deref) {
 			translateExpression(condition, varmap,
 					bytecodes);
-			bytecodes.add(new Bytecode.If(Bytecode.If.NE, trueLabel));			
+			bytecodes.add(new Bytecode.If(Bytecode.If.NE, trueLabel));
 		} else {
 			throw new RuntimeException("Unknown conditional expression ("
 				+ condition + ")");
@@ -557,7 +563,7 @@ public final class ClassFileBuilder {
 	/**
 	 * This method is responsible for translating a multi-conditional branching
 	 * instruction (i.e. a switch).
-	 * 
+	 *
 	 * @param conditions
 	 *            The list of conditional expressions to translate
 	 * @param labels
@@ -581,7 +587,7 @@ public final class ClassFileBuilder {
 		}
 
 		translateExpression(expr, varmap, bytecodes);
-		
+
 		String def = null;
 		List<Pair<Integer, String>> cases = new ArrayList<Pair<Integer, String>>();
 		for (int i = 0; i < conditions.length; i++) {
@@ -608,10 +614,10 @@ public final class ClassFileBuilder {
 	protected void translateInvoke(JilExpr.Invoke stmt,
 			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes,
 			boolean needReturnValue) throws ClassNotFoundException, MethodNotFoundException {
-		
+
 		Type.Reference targetT = (Type.Reference) stmt.target().type();
 
-		if (stmt.name().equals("super") || stmt.name().equals("this")) {			
+		if (stmt.name().equals("super") || stmt.name().equals("this")) {
 			// catch explicit super constructor call.
 			translateExpression(stmt.target(), varmap, bytecodes);
 			for (JilExpr p : stmt.parameters()) {
@@ -620,15 +626,15 @@ public final class ClassFileBuilder {
 			bytecodes.add(new Bytecode.Invoke((Type.Clazz) targetT, "<init>",
 					stmt.funType(), Bytecode.SPECIAL));
 			return;
-		} 								
+		}
 
-		
+
 		Pair<Clazz,Clazz.Method> cm = loader.determineMethod(targetT, stmt.name(), stmt
 				.funType());
-				
+
 		Clazz c = cm.first();
 		Clazz.Method m = cm.second();
-				
+
 		if (!m.isStatic()) {
 			// must be non-static invocation
 			translateExpression(stmt.target(), varmap, bytecodes);
@@ -652,7 +658,7 @@ public final class ClassFileBuilder {
 			}
 
 			Type.Array arrType = (Type.Array) paramTypes.get(paramTypes
-					.size() - 1);								
+					.size() - 1);
 
 			// At this point, we need to deal with the case where the
 			// element type of the array is actually a generic type.
@@ -667,7 +673,7 @@ public final class ClassFileBuilder {
 			}
 
 			if ((arg + 1) == arguments.size()
-					&& arguments.get(arg).type().equals(arrType)) {				
+					&& arguments.get(arg).type().equals(arrType)) {
 				// this is the special case when an appropriate array is
 				// supplied directly to the variable argument list.
 				translateExpression(arguments.get(arg), varmap, bytecodes);
@@ -679,7 +685,7 @@ public final class ClassFileBuilder {
 					bytecodes.add(new LoadConst(i));
 					translateExpression(arguments.get(arg), varmap, bytecodes);
 					bytecodes.add(new Bytecode.ArrayStore(arrType));
-				}	
+				}
 			}
 		}
 
@@ -699,7 +705,7 @@ public final class ClassFileBuilder {
 		}
 
 		Type retT = m.type().returnType();
-		
+
 		if (!(retT instanceof Type.Void)) {
 			// Need to account for space occupied by return type!
 			if (!needReturnValue) {
@@ -711,7 +717,7 @@ public final class ClassFileBuilder {
 					|| retT instanceof Type.Wildcard || Types
 					.isGenericArray(retT))
 					&& !stmt.type().equals(Types.JAVA_LANG_OBJECT)) {
-				
+
 				// Here, the actual return type is a (generic) type
 				// variable (e.g. T or T[]), and we're expecting it to
 				// return a real value (e.g. String, substituted for T).
@@ -720,17 +726,17 @@ public final class ClassFileBuilder {
 				// Object and we need to cast it to whatever it needs to be
 				// (e.g. String). Note, if the value substituted for T is
 				// actually Object, then we just do nothing!
-				
+
 				HashSet<Type.Reference> ctypes = new HashSet<Type.Reference>();
 				Stack<Type.Reference> stack = new Stack<Type.Reference>();
 
 				stack.push((Type.Reference) stmt.type());
-				
+
 				// The following strategy is suboptimal. It will introduce casts
                 // that aren't actually necessary. To resolve this, I think we
                 // need some kind of inference further up stream to eliminate
                 // intersection types.
-				
+
 				while(!stack.isEmpty()) {
 					Type.Reference r = stack.pop();
 					if(r instanceof Type.Clazz || r instanceof Type.Array) {
@@ -754,17 +760,17 @@ public final class ClassFileBuilder {
 						stack.addAll(ti.bounds());
 					}
 				}
-				
-				for(Type.Reference t : ctypes) {				
+
+				for(Type.Reference t : ctypes) {
 					bytecodes.add(new Bytecode.CheckCast(t));
 				}
 			}
-		}	
+		}
 	}
-		
+
 	/**
 	 * Translate a Return statement.
-	 * 
+	 *
 	 * @param ret
 	 * @param varmap
 	 * @param bytecodes
@@ -791,10 +797,10 @@ public final class ClassFileBuilder {
 			translateExpression(stmt.rhs(), varmap, bytecodes);
 			bytecodes.add(new Bytecode.Store(slot, stmt.lhs().type()));
 		} else if (stmt.lhs() instanceof JilExpr.Deref) {
-			JilExpr.Deref der = (JilExpr.Deref) stmt.lhs();			
+			JilExpr.Deref der = (JilExpr.Deref) stmt.lhs();
 			// figure out the type of the field involved
 			Type.Clazz lhs_t = (Type.Clazz) der.target().type();
-			
+
 			if (der.isStatic()) {
 				translateExpression(stmt.rhs(), varmap, bytecodes);
 				bytecodes.add(new Bytecode.PutField(lhs_t, der.name(), der
@@ -811,7 +817,7 @@ public final class ClassFileBuilder {
 			translateExpression(ai.index(), varmap, bytecodes);
 			translateExpression(stmt.rhs(), varmap, bytecodes);
 			bytecodes.add(new Bytecode.ArrayStore((Type.Array) ai.target()
-					.type()));			
+					.type()));
 		} else {
 			throw new RuntimeException("Unknown lval encountered (" + stmt.lhs().getClass().getName() + ")");
 		}
@@ -839,28 +845,28 @@ public final class ClassFileBuilder {
 			ArrayList<Bytecode> bytecodes) {
 		bytecodes.add(new Bytecode.Label(label.label()));
 	}
-	
+
 	protected void translateGoto(JilStmt.Goto stmt, HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes) {
 		bytecodes.add(new Bytecode.Goto(stmt.label()));
 	}
-	
+
 	protected void translateSwitch(JilStmt.Switch stmt,
 			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes) {
 		translateExpression(stmt.condition(), varmap, bytecodes);
 		List<Pair<Integer,String>> cases = new ArrayList();
-		
+
 		for(Pair<JilExpr.Number,String> c : stmt.cases()) {
 			cases.add(new Pair<Integer,String>(c.first().intValue(), c.second()));
 		}
-		
+
 		bytecodes.add(new Bytecode.Switch(stmt.defaultLabel(),cases));
 	}
-	
+
 	/**
 	 * This method flatterns an expression into bytecodes, such that the result
 	 * is left on top of the stack.
-	 * 
+	 *
 	 * @param expr
 	 * @param varmap
 	 *            Map from local variables to local array slot numbers
@@ -872,7 +878,7 @@ public final class ClassFileBuilder {
 			HashMap<String, Integer> varmap, ArrayList<Bytecode> bytecodes) {
 
 		try {
-			if (expr instanceof JilExpr.Bool) {			
+			if (expr instanceof JilExpr.Bool) {
 				bytecodes.add(new Bytecode.LoadConst(((JilExpr.Bool) expr).value()));
 			} else if (expr instanceof JilExpr.Byte) {
 				bytecodes.add(new Bytecode.LoadConst(((JilExpr.Byte) expr).value()));
@@ -899,8 +905,8 @@ public final class ClassFileBuilder {
 			} else if (expr instanceof JilExpr.Variable) {
 				JilExpr.Variable lv = (JilExpr.Variable) expr;
 
-				if (varmap.containsKey(lv.value())) {				
-					bytecodes.add(new Bytecode.Load(varmap.get(lv.value()), lv.type()));				
+				if (varmap.containsKey(lv.value())) {
+					bytecodes.add(new Bytecode.Load(varmap.get(lv.value()), lv.type()));
 				} else if(lv.value().equals("$")) {
 					// this is the special variable used to get an Exception object
 					// off the stack in an exception handler.
@@ -919,7 +925,7 @@ public final class ClassFileBuilder {
 				translateExpression(ai.target(), varmap, bytecodes);
 				translateExpression(ai.index(), varmap, bytecodes);
 				Type arr_t = ai.target().type();
-				bytecodes.add(new Bytecode.ArrayLoad((Type.Array) arr_t));			
+				bytecodes.add(new Bytecode.ArrayLoad((Type.Array) arr_t));
 			} else if (expr instanceof JilExpr.Invoke) {
 				translateInvoke((JilExpr.Invoke) expr, varmap, bytecodes, true);
 			} else if (expr instanceof JilExpr.UnOp) {
@@ -949,7 +955,7 @@ public final class ClassFileBuilder {
 			ArrayList<Bytecode> bytecodes) {
 		// do nothing here.
 	}
-	
+
 	public void translateClassVal(JilExpr.Class cval,  HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes) {
 		if (cval.classType() instanceof Type.Primitive) {
@@ -960,7 +966,7 @@ public final class ClassFileBuilder {
 			bytecodes.add(new Bytecode.LoadConst(cval.classType()));
 		}
 	}
-	
+
 	public void translateDeref(JilExpr.Deref def, HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes) throws ClassNotFoundException, FieldNotFoundException {
 		Type tmp_t = def.target().type();
@@ -970,7 +976,7 @@ public final class ClassFileBuilder {
 
 
 			Type actualFieldType = loader.determineField(lhs_t,def.name()).second().type();
-			Type bytecodeType = actualFieldType;				
+			Type bytecodeType = actualFieldType;
 
 			if(actualFieldType instanceof Type.Variable) {
 				Type.Variable tv = (Type.Variable) actualFieldType;
@@ -981,16 +987,16 @@ public final class ClassFileBuilder {
 				}
 			}
 
-			if (def.isStatic()) {					
-				// This is a static field load					
+			if (def.isStatic()) {
+				// This is a static field load
 				bytecodes.add(new Bytecode.GetField(lhs_t, def.name(),
-						bytecodeType, Bytecode.STATIC));				
+						bytecodeType, Bytecode.STATIC));
 			} else {
 				// Non-static field load
 				translateExpression(def.target(), varmap, bytecodes);
 
 				bytecodes.add(new Bytecode.GetField(lhs_t, def.name(),
-						bytecodeType, Bytecode.NONSTATIC));		
+						bytecodeType, Bytecode.NONSTATIC));
 
 				if (actualFieldType instanceof Type.Variable
 						&& !(def.type() instanceof Type.Variable)
@@ -998,9 +1004,9 @@ public final class ClassFileBuilder {
 						"Object"))) {
 					// Ok, actual type is a (generic) type variable. Need to
 					// cast to the desired type!
-					bytecodes.add(new Bytecode.CheckCast(def.type()));					
-				}		
-			}					
+					bytecodes.add(new Bytecode.CheckCast(def.type()));
+				}
+			}
 		} else if (tmp_t instanceof Type.Array && def.name().equals("length")) {
 			translateExpression(def.target(), varmap, bytecodes);
 			bytecodes.add(new Bytecode.ArrayLength());
@@ -1012,19 +1018,19 @@ public final class ClassFileBuilder {
 	}
 
 	public void translateArrayVal(JilExpr.Array av, HashMap<String, Integer> varmap,
-			ArrayList<Bytecode> bytecodes) throws ClassNotFoundException, MethodNotFoundException {						
+			ArrayList<Bytecode> bytecodes) throws ClassNotFoundException, MethodNotFoundException {
 		List<JilExpr> params = new ArrayList<JilExpr>();
 		params.add(new JilExpr.Int(av.values().size()));
 		translateNew(new JilExpr.New(av.type(), params, new Type.Function(Types.T_VOID)), varmap, bytecodes,
 				true);
 
 		int index = 0;
-		
+
 		for (JilExpr e : av.values()) {
 			bytecodes.add(new Bytecode.Dup(av.type()));
 			bytecodes.add(new Bytecode.LoadConst(index++));
 			translateExpression(e, varmap, bytecodes);
-			bytecodes.add(new Bytecode.ArrayStore((Type.Array) av.type()));			
+			bytecodes.add(new Bytecode.ArrayStore((Type.Array) av.type()));
 		}
 	}
 
@@ -1033,8 +1039,8 @@ public final class ClassFileBuilder {
 			throws ClassNotFoundException, MethodNotFoundException {
 
 		if (news.type() instanceof Type.Clazz) {
-			Type.Clazz type = (Type.Clazz) news.type();								
-			
+			Type.Clazz type = (Type.Clazz) news.type();
+
 			bytecodes.add(new Bytecode.New(news.type()));
 			bytecodes.add(new Bytecode.Dup(news.type()));
 
@@ -1046,7 +1052,7 @@ public final class ClassFileBuilder {
 					Bytecode.SPECIAL));
 		} else if (news.type() instanceof Type.Array) {
 			for (JilExpr p : news.parameters()) {
-				translateExpression(p, varmap, bytecodes);				
+				translateExpression(p, varmap, bytecodes);
 			}
 
 			bytecodes.add(new Bytecode.New(news.type(), news.parameters()
@@ -1067,12 +1073,12 @@ public final class ClassFileBuilder {
 		// To do this, will probably need to combine JilExpr.New and
 		// JilExpr.Invoke via
 		// inheritance somehow.
-		
+
 		String name = targetT.lastComponent().first();
-						
+
 		Pair<Clazz, Clazz.Method> cm = loader.determineMethod(targetT, name, stmt
-				.funType());			
-		Clazz.Method m = cm.second();		
+				.funType());
+		Clazz.Method m = cm.second();
 
 		if(!m.isVariableArity()) {
 			for(JilExpr e : stmt.parameters()) {
@@ -1092,7 +1098,7 @@ public final class ClassFileBuilder {
 			}
 
 			Type.Array arrType = (Type.Array) paramTypes.get(paramTypes
-					.size() - 1);								
+					.size() - 1);
 
 			// At this point, we need to deal with the case where the
 			// element type of the array is actually a generic type.
@@ -1107,7 +1113,7 @@ public final class ClassFileBuilder {
 			}
 
 			if ((arg + 1) == arguments.size()
-					&& arguments.get(arg).type().equals(arrType)) {				
+					&& arguments.get(arg).type().equals(arrType)) {
 				// this is the special case when an appropriate array is
 				// supplied directly to the variable argument list.
 				translateExpression(arguments.get(arg), varmap, bytecodes);
@@ -1119,11 +1125,11 @@ public final class ClassFileBuilder {
 					bytecodes.add(new LoadConst(i));
 					translateExpression(arguments.get(arg), varmap, bytecodes);
 					bytecodes.add(new Bytecode.ArrayStore(arrType));
-				}	
+				}
 			}
 		}
 	}
-	
+
 	protected void translateBinaryOp(JilExpr.BinOp bop, HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes) throws ClassNotFoundException, MethodNotFoundException {
 
@@ -1152,7 +1158,7 @@ public final class ClassFileBuilder {
 		// must be a standard arithmetic operation.
 		translateExpression(bop.lhs(), varmap, bytecodes);
 		translateExpression(bop.rhs(), varmap, bytecodes);
-		bytecodes.add(new Bytecode.BinOp(bop.op(), bop.type()));		
+		bytecodes.add(new Bytecode.BinOp(bop.op(), bop.type()));
 	}
 
 	protected void translateUnaryOp(JilExpr.UnOp uop, HashMap<String, Integer> varmap,
@@ -1168,7 +1174,7 @@ public final class ClassFileBuilder {
 			bytecodes.add(new Bytecode.Goto(exitLabel));
 			bytecodes.add(new Bytecode.Label(trueLabel));
 			bytecodes.add(new Bytecode.LoadConst(1));
-			bytecodes.add(new Bytecode.Label(exitLabel));	
+			bytecodes.add(new Bytecode.Label(exitLabel));
 			return;
 		}
 
@@ -1179,7 +1185,7 @@ public final class ClassFileBuilder {
 		case JilExpr.UnOp.INV:
 			bytecodes.add(new Bytecode.LoadConst(new Integer(-1)));
 			bytecodes
-					.add(new Bytecode.BinOp(Bytecode.BinOp.XOR, new Type.Int()));			
+					.add(new Bytecode.BinOp(Bytecode.BinOp.XOR, new Type.Int()));
 			break;
 		case JilExpr.UnOp.NEG:
 			bytecodes.add(new Bytecode.Neg(uop.type()));
@@ -1192,18 +1198,18 @@ public final class ClassFileBuilder {
 
 	protected void translateCast(JilExpr.Cast cast, HashMap<String, Integer> varmap,
 			ArrayList<Bytecode> bytecodes) {
-		
+
 		translateExpression(cast.expr(), varmap, bytecodes);
 
 		Type type = cast.type();
 		Type srcType = cast.expr().type();
 		// Now, do implicit conversions
 		if (type instanceof Type.Primitive
-				&& srcType instanceof Type.Primitive) {			
+				&& srcType instanceof Type.Primitive) {
 			if(!type.equals(srcType)) {
 				bytecodes.add(new Bytecode.Conversion((Type.Primitive) srcType,
 					(Type.Primitive) cast.type()));
-			}			
+			}
 		} else if (type instanceof Type.Array || type instanceof Type.Clazz) {
 			bytecodes.add(new Bytecode.CheckCast(cast.type()));
 		} else if (type instanceof Type.Variable) {
@@ -1224,42 +1230,42 @@ public final class ClassFileBuilder {
 		Type from = cast.expr().type();
 		// Now, do implicit conversions
 		if((from instanceof Type.Int || from instanceof Type.Short
-				|| from instanceof Type.Byte || from instanceof Type.Char) && 
-				(to instanceof Type.Long 
-						|| to instanceof Type.Float 
-						|| to instanceof Type.Double 
-						|| (to instanceof Type.Char && !(from instanceof Type.Char)) 
+				|| from instanceof Type.Byte || from instanceof Type.Char) &&
+				(to instanceof Type.Long
+						|| to instanceof Type.Float
+						|| to instanceof Type.Double
+						|| (to instanceof Type.Char && !(from instanceof Type.Char))
 						|| (to instanceof Type.Short && !(from instanceof Type.Short))
 						|| (to instanceof Type.Byte && !(from instanceof Type.Byte)))) {
-			
+
 			bytecodes.add(new Bytecode.Conversion((Type.Primitive) from,
-					(Type.Primitive) to));	
-		} else if(from instanceof Type.Long && 
-				(to instanceof Type.Char 
-						|| to instanceof Type.Byte 
-						|| to instanceof Type.Short 
-						|| to instanceof Type.Int 
-						|| to instanceof Type.Float 
+					(Type.Primitive) to));
+		} else if(from instanceof Type.Long &&
+				(to instanceof Type.Char
+						|| to instanceof Type.Byte
+						|| to instanceof Type.Short
+						|| to instanceof Type.Int
+						|| to instanceof Type.Float
 						|| to instanceof Type.Double)) {
 			bytecodes.add(new Bytecode.Conversion((Type.Primitive) from,
-					(Type.Primitive) to));	
+					(Type.Primitive) to));
 		} else if (from instanceof Type.Float
 				&& (to instanceof Type.Char || to instanceof Type.Byte
 						|| to instanceof Type.Short || to instanceof Type.Int
 						|| to instanceof Type.Long || to instanceof Type.Double)) {
 			bytecodes.add(new Bytecode.Conversion((Type.Primitive) from,
-					(Type.Primitive) to));	
+					(Type.Primitive) to));
 		} else if (from instanceof Type.Double
 				&& (to instanceof Type.Char || to instanceof Type.Byte
 						|| to instanceof Type.Short || to instanceof Type.Int
 						|| to instanceof Type.Long || to instanceof Type.Float)) {
 			bytecodes.add(new Bytecode.Conversion((Type.Primitive) from,
-					(Type.Primitive) to));	
-		} 
-	}		
-			
-	
-	
+					(Type.Primitive) to));
+		}
+	}
+
+
+
 	protected boolean needClassSignature(JilClass c) {
 		if (Types.isGeneric(c.type())
 				|| (c.superClass() != null && Types.isGeneric(c.superClass()))) {
@@ -1271,9 +1277,9 @@ public final class ClassFileBuilder {
 			}
 		}
 		return false;
-	}		
-	
-	protected ArrayList<Modifier> filterModifiers(List<Modifier> modifiers) { 
+	}
+
+	protected ArrayList<Modifier> filterModifiers(List<Modifier> modifiers) {
 		ArrayList<Modifier> r = new ArrayList();
 		for(Modifier m : modifiers) {
 			if(!(m instanceof Modifier.Annotation)) {
@@ -1282,8 +1288,8 @@ public final class ClassFileBuilder {
 		}
 		return r;
 	}
-	
-	protected ArrayList<Modifier.Annotation> filterAnnotations(List<Modifier> modifiers) { 
+
+	protected ArrayList<Modifier.Annotation> filterAnnotations(List<Modifier> modifiers) {
 		ArrayList<Modifier.Annotation> r = new ArrayList();
 		for(Modifier m : modifiers) {
 			if(m instanceof Modifier.Annotation) {

@@ -28,7 +28,7 @@ import jkit.jil.tree.*;
 import jkit.jil.util.*;
 import jkit.compiler.Clazz;
 import jkit.compiler.ClassLoader;
-import jkit.compiler.MethodNotFoundException;
+import jkit.error.MethodNotFoundException;
 import jkit.util.*;
 
 /**

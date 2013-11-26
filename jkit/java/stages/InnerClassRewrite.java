@@ -27,7 +27,7 @@ import java.util.*;
 
 import jkit.compiler.ClassLoader;
 import jkit.compiler.Clazz;
-import jkit.compiler.FieldNotFoundException;
+import jkit.error.FieldNotFoundException;
 import jkit.java.io.JavaFile;
 import jkit.java.tree.*;
 import jkit.java.tree.Decl.*;
