@@ -1,23 +1,23 @@
 // This file is part of the Java Compiler Kit (JKit)
 //
-// The Java Compiler Kit is free software; you can 
-// redistribute it and/or modify it under the terms of the 
-// GNU General Public License as published by the Free Software 
-// Foundation; either version 2 of the License, or (at your 
+// The Java Compiler Kit is free software; you can
+// redistribute it and/or modify it under the terms of the
+// GNU General Public License as published by the Free Software
+// Foundation; either version 2 of the License, or (at your
 // option) any later version.
 //
 // The Java Compiler Kit is distributed in the hope
-// that it will be useful, but WITHOUT ANY WARRANTY; without 
-// even the implied warranty of MERCHANTABILITY or FITNESS FOR 
-// A PARTICULAR PURPOSE.  See the GNU General Public License 
+// that it will be useful, but WITHOUT ANY WARRANTY; without
+// even the implied warranty of MERCHANTABILITY or FITNESS FOR
+// A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
 //
-// You should have received a copy of the GNU General Public 
-// License along with the Java Compiler Kit; if not, 
-// write to the Free Software Foundation, Inc., 59 Temple Place, 
+// You should have received a copy of the GNU General Public
+// License along with the Java Compiler Kit; if not,
+// write to the Free Software Foundation, Inc., 59 Temple Place,
 // Suite 330, Boston, MA  02111-1307  USA
 //
-// (C) David James Pearce, 2009. 
+// (C) David James Pearce, 2009.
 
 package jkit.java.tree;
 
@@ -28,34 +28,34 @@ import jkit.compiler.SyntacticElementImpl;
 import jkit.jil.*;
 
 public interface Value extends Expr {
-	
+
 	/**
 	 * Represents a numerical constant
-	 * 
+	 *
 	 * @author djp
 	 *
 	 */
 	public static class Number extends SyntacticElementImpl implements Value {
 		protected int value;
-		
+
 		public Number(int value, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.value = value;
 		}
-		
+
 		public Number(int value, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.value = value;
 		}
-		
+
 		public int intValue() {
 			return value;
 		}
 	}
-	
+
 	/**
 	 * A boolean constant.
-	 * 
+	 *
 	 * @author djp
 	 *
 	 */
@@ -70,10 +70,10 @@ public interface Value extends Expr {
 			return value==1;
 		}
 	}
-	
+
 	/**
 	 * Represents a character constant.
-	 * 
+	 *
 	 * @author djp
 	 *
 	 */
@@ -88,10 +88,10 @@ public interface Value extends Expr {
 			return (char)value;
 		}
 	}
-	
+
 	/**
 	 * Represents a byte constant.
-	 * 
+	 *
 	 * @author djp
 	 *
 	 */
@@ -102,12 +102,12 @@ public interface Value extends Expr {
 		public Byte(byte value, List<SyntacticAttribute> attributes) {
 			super(value,attributes);
 		}
-		
+
 		public byte value() {
 			return (byte)value;
 		}
 	}
-	
+
 	/**
 	 * Represents a short constant.
 	 * @author djp
@@ -120,7 +120,7 @@ public interface Value extends Expr {
 		public Short(short value, List<SyntacticAttribute> attributes) {
 			super(value,attributes);
 		}
-		
+
 		public short value() {
 			return (short)value;
 		}
@@ -128,18 +128,18 @@ public interface Value extends Expr {
 
 	/**
      * Represents an int constant.
-     * 
+     *
      * @author djp
-     * 
-     */	
+     *
+     */
 	public static class Int extends Number {
 		public Int(int value, SyntacticAttribute... attributes) {
 			super(value,attributes);
-		}		
+		}
 		public Int(int value, List<SyntacticAttribute> attributes) {
 			super(value,attributes);
 		}
-		
+
 		public int value() {
 			return value;
 		}
@@ -147,47 +147,47 @@ public interface Value extends Expr {
 
 	/**
      * Represents a long Constant.
-     * 
+     *
      * @author djp
-     * 
+     *
      */
 	public static class Long extends SyntacticElementImpl implements Value {
 		private long value;
-		
+
 		public Long(long value, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.value=value;
 		}
-		
+
 		public Long(long value, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.value=value;
 		}
-		
+
 		public long value() {
 			return value;
 		}
 	}
-	
+
 	/**
      * A Float Constant.
-     * 
+     *
      * @author djp
-     * 
+     *
      */
 	public static class Float extends SyntacticElementImpl implements Value {
 		private float value;
-		
+
 		public Float(float value, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.value=value;
 		}
-		
+
 		public Float(float value, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.value=value;
 		}
-		
+
 		public float value() {
 			return value;
 		}
@@ -195,37 +195,37 @@ public interface Value extends Expr {
 
 	/**
      * A Double Constant.
-     * 
+     *
      * @author djp
-     * 
+     *
      */
 	public static class Double extends SyntacticElementImpl implements Value {
 		private double value;
-		
+
 		public Double(double value, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.value=value;
 		}
-		
+
 		public Double(double value, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.value=value;
 		}
-		
+
 		public double value() {
 			return value;
 		}
 	}
-	
+
 	/**
      * A String Constant.
-     * 
+     *
      * @author djp
-     * 
+     *
      */
 	public static class String extends SyntacticElementImpl implements Value {
 		private java.lang.String value;
-		
+
 		public String(java.lang.String value, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.value=value;
@@ -234,17 +234,17 @@ public interface Value extends Expr {
 			super(attributes);
 			this.value=value;
 		}
-		
+
 		public java.lang.String value() {
 			return value;
 		}
-	}		
-	
+	}
+
 	/**
      * The null Constant.
-     * 
+     *
      * @author djp
-     * 
+     *
      */
 	public static class Null extends SyntacticElementImpl implements Value {
 		public Null(SyntacticAttribute... attributes) {
@@ -254,35 +254,35 @@ public interface Value extends Expr {
 			super(attributes);
 		}
 	}
-			
+
 	/**
      * An array constant (used for array initialisers only).
-     * 
+     *
      * @author djp
-     * 
+     *
      */
 	public static class Array extends SyntacticElementImpl implements Value {
 		private List<Expr> values;
-		
+
 		public Array(List<Expr> values, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.values = values;
 		}
-		
+
 		public List<Expr> values() {
 			return values;
 		}
 	}
-	
+
 	/**
 	 * A typed array constant (used for array initialisers only). This is
 	 * similar to a normal array constant, except that the target type is also
 	 * specified. For example:
-	 * 
+	 *
 	 * <pre>
      * Object[] test = new Object[]{&quot;abc&quot;, new Integer(2)};
      * </pre>
-     * 
+     *
 	 * @author djp
 	 */
 	public static class TypedArray extends Array {
@@ -297,11 +297,11 @@ public interface Value extends Expr {
 		public Type type() {
 			return type;
 		}
-	}	
-	
+	}
+
 	/**
 	 * Represents a Class Constant
-	 * 
+	 *
 	 */
 	public static class Class extends SyntacticElementImpl implements Value {
 		private Type type;

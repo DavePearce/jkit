@@ -1,23 +1,23 @@
 // This file is part of the Java Compiler Kit (JKit)
 //
-// The Java Compiler Kit is free software; you can 
-// redistribute it and/or modify it under the terms of the 
-// GNU General Public License as published by the Free Software 
-// Foundation; either version 2 of the License, or (at your 
+// The Java Compiler Kit is free software; you can
+// redistribute it and/or modify it under the terms of the
+// GNU General Public License as published by the Free Software
+// Foundation; either version 2 of the License, or (at your
 // option) any later version.
 //
 // The Java Compiler Kit is distributed in the hope
-// that it will be useful, but WITHOUT ANY WARRANTY; without 
-// even the implied warranty of MERCHANTABILITY or FITNESS FOR 
-// A PARTICULAR PURPOSE.  See the GNU General Public License 
+// that it will be useful, but WITHOUT ANY WARRANTY; without
+// even the implied warranty of MERCHANTABILITY or FITNESS FOR
+// A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
 //
-// You should have received a copy of the GNU General Public 
-// License along with the Java Compiler Kit; if not, 
-// write to the Free Software Foundation, Inc., 59 Temple Place, 
+// You should have received a copy of the GNU General Public
+// License along with the Java Compiler Kit; if not,
+// write to the Free Software Foundation, Inc., 59 Temple Place,
 // Suite 330, Boston, MA  02111-1307  USA
 //
-// (C) David James Pearce, 2009. 
+// (C) David James Pearce, 2009.
 
 package jkit.java.tree;
 
@@ -36,9 +36,9 @@ public interface Expr extends SyntacticElement {
 	 * Thus, all variable accesses are resolved during scope resolution to
 	 * determine in more detail what they are. Once scope resolution is
 	 * complete, there should be no UnresolvedVariable instances remaining.
-	 * 
+	 *
 	 * @author djp
-	 * 
+	 *
 	 */
 	public static class UnresolvedVariable extends SyntacticElementImpl implements Expr {
 		private String value;
@@ -47,13 +47,17 @@ public interface Expr extends SyntacticElement {
 			super(attributes);
 			this.value = value;
 		}
-		
+
 		public UnresolvedVariable(String value, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.value = value;
 		}
 
 		public String value() {
+			return value;
+		}
+
+		public String toString() {
 			return value;
 		}
 	}
@@ -63,9 +67,9 @@ public interface Expr extends SyntacticElement {
 	 * access is considered local if the variable is declared within the current
 	 * method. Non-local variable accesses correspond to variables which are
 	 * declared outside the current method.
-	 * 
+	 *
 	 * @author djp
-	 * 
+	 *
 	 */
 	public static class LocalVariable extends SyntacticElementImpl implements Expr {
 		private String value;
@@ -74,7 +78,7 @@ public interface Expr extends SyntacticElement {
 			super(attributes);
 			this.value = value;
 		}
-		
+
 		public LocalVariable(String value, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.value = value;
@@ -83,17 +87,21 @@ public interface Expr extends SyntacticElement {
 		public String value() {
 			return value;
 		}
+
+		public String toString() {
+			return value;
+		}
 	}
-	
+
 	/**
 	 * A NonLocalVariable object represents a non-local variable access. This
 	 * typically occurs in the definition of anonymous inner classes. For
 	 * example:
-	 * 
+	 *
 	 * <pre>
 	 * public abstract class Test {
 	 * 	public abstract void f();
-	 * 
+	 *
 	 * 	public static void main(final String[] args) {
 	 *    Test x = new Test() {
 	 * 	    public void f() {
@@ -103,9 +111,9 @@ public interface Expr extends SyntacticElement {
 	 *    x.f();
 	 * }}
 	 * </pre>
-	 * 
-	 * Here, the access "args[0]" is a non-local variable access.   
-	 * 
+	 *
+	 * Here, the access "args[0]" is a non-local variable access.
+	 *
 	 * @author djp
 	 */
 	public static class NonLocalVariable extends SyntacticElementImpl implements Expr {
@@ -115,7 +123,7 @@ public interface Expr extends SyntacticElement {
 			super(attributes);
 			this.value = value;
 		}
-		
+
 		public NonLocalVariable(String value, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.value = value;
@@ -124,13 +132,17 @@ public interface Expr extends SyntacticElement {
 		public String value() {
 			return value;
 		}
+
+		public String toString() {
+			return value;
+		}
 	}
-	
+
 	/**
 	 * An static Class Access
-	 * 
+	 *
 	 * @author djp
-	 * 
+	 *
 	 */
 	public static class ClassVariable extends SyntacticElementImpl implements Expr {
 		private String type;
@@ -139,7 +151,7 @@ public interface Expr extends SyntacticElement {
 			super(attributes);
 			this.type = type;
 		}
-		
+
 		public ClassVariable(String type, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.type = type;
@@ -148,12 +160,16 @@ public interface Expr extends SyntacticElement {
 		public String type() {
 			return type;
 		}
+
+		public String toString() {
+			return type;
+		}
 	}
 
-	
+
 	/**
 	 * Represents an explicit cast.
-	 * 
+	 *
 	 * @author djp
 	 *
 	 */
@@ -172,7 +188,7 @@ public interface Expr extends SyntacticElement {
 			this.expr = expr;
 			this.type = type;
 		}
-		
+
 		public Expr expr() {
 			return expr;
 		}
@@ -180,19 +196,23 @@ public interface Expr extends SyntacticElement {
 		public void setExpr(Expr e) {
 			expr = e;
 		}
-		
+
 		public Type type() {
 			return type;
 		}
-		
+
 		public void setType(Type t) {
 			type = t;
+		}
+
+		public String toString() {
+			return String.format("(%s) %s", type, expr);
 		}
 	}
 
 	/**
 	 * Represents an implicit type conversion between primitive types.
-	 * 
+	 *
 	 * @author djp
 	 *
 	 */
@@ -213,21 +233,27 @@ public interface Expr extends SyntacticElement {
 		public void setExpr(Expr expr) {
 			this.expr = expr;
 		}
-		
+
 		public Type type() {
 			return type;
 		}
-		
+
 		public void setType(Type.Primitive type) {
 			this.type = type;
 		}
+
+		public String toString() {
+			//This is just a guess as to what this is meant to look like
+			return expr.toString();
+		}
+
 	}
-	
+
 	/**
 	 * Represents an InstanceOf binary operation.
-	 * 
+	 *
 	 * @author djp
-	 * 
+	 *
 	 */
 	public static class InstanceOf extends SyntacticElementImpl implements Expr {
 		protected Expr lhs;
@@ -244,7 +270,7 @@ public interface Expr extends SyntacticElement {
 			this.lhs = lhs;
 			this.rhs = rhs;
 		}
-		
+
 		public Expr lhs() {
 			return lhs;
 		}
@@ -252,21 +278,25 @@ public interface Expr extends SyntacticElement {
 		public void setLhs(Expr e) {
 			lhs = e;
 		}
-		
+
 		public Type rhs() {
 			return rhs;
 		}
-		
+
 		public void setRhs(Type e) {
 			rhs = e;
+		}
+
+		public String toString() {
+			return String.format("%s instanceof %s", lhs, rhs);
 		}
 	}
 
 	/**
 	 * Represents Unary Arithmetic Operators
-	 * 
+	 *
 	 * @author djp
-	 * 
+	 *
 	 */
 	public static class UnOp extends SyntacticElementImpl implements Expr {
 		public static final int NOT = 0;
@@ -291,7 +321,7 @@ public interface Expr extends SyntacticElement {
 			this.expr = expr;
 			this.op = op;
 		}
-		
+
 		public int op() {
 			return op;
 		}
@@ -299,21 +329,50 @@ public interface Expr extends SyntacticElement {
 		public void setOp(int op) {
 			this.op = op;
 		}
-		
+
 		public Expr expr() {
 			return expr;
 		}
-		
+
 		public void setExpr(Expr expr) {
 			this.expr = expr;
 		}
+
+		public String toString() {
+			switch(op) {
+
+			case NOT:
+				return "!" + expr.toString();
+
+			case INV:
+				return expr.toString() + ".";
+
+			case NEG:
+				return "-" + expr.toString();
+
+			case PREINC:
+				return "++" + expr.toString();
+
+			case PREDEC:
+				return "--" + expr.toString();
+
+			case POSTINC:
+				return expr.toString() + "++";
+
+			case POSTDEC:
+				return expr.toString() + "--";
+
+			default:
+				return String.valueOf(op) + expr.toString();
+			}
+		}
 	}
-	
+
 	/**
 	 * A Binary Operator.  E.g. +.-,*,/,<,<=,>,?=,==,!=, etc.
-	 * 
+	 *
 	 * @author djp
-	 * 
+	 *
 	 */
 	public static class BinOp extends SyntacticElementImpl implements Expr {
 		// BinOp Constants
@@ -357,7 +416,7 @@ public interface Expr extends SyntacticElement {
 			this.rhs = rhs;
 			this.op = op;
 		}
-		
+
 		public int op() {
 			return op;
 		}
@@ -365,7 +424,7 @@ public interface Expr extends SyntacticElement {
 		public void setOp(int op) {
 			this.op = op;
 		}
-		
+
 		public Expr lhs() {
 			return lhs;
 		}
@@ -373,13 +432,81 @@ public interface Expr extends SyntacticElement {
 		public void setLhs(Expr lhs) {
 			this.lhs = lhs;
 		}
-		
+
 		public Expr rhs() {
 			return rhs;
 		}
-		
+
 		public void setRhs(Expr rhs) {
 			this.rhs = rhs;
+		}
+
+		public String toString() {
+			switch (op) {
+
+			case (ADD):
+				return lhs.toString() + " + " + rhs.toString();
+
+			case (SUB):
+				return lhs.toString() + " - " + rhs.toString();
+
+			case (MUL):
+				return lhs.toString() + " * " + rhs.toString();
+
+			case (DIV):
+				return lhs.toString() + " / " + rhs.toString();
+
+			case (MOD):
+				return lhs.toString() + " % " + rhs.toString();
+
+			case (SHL):
+				return lhs.toString() + " << " + rhs.toString();
+
+			case (SHR):
+				return lhs.toString() + " >> " + rhs.toString();
+
+			case (USHR):
+				return lhs.toString() + " >>> " + rhs.toString();
+
+			case (AND):
+				return lhs.toString() + " & " + rhs.toString();
+
+			case (OR):
+				return lhs.toString() + " | " + rhs.toString();
+
+			case (XOR):
+				return lhs.toString() + " ^ " + rhs.toString();
+
+			case (LT):
+				return lhs.toString() + " < " + rhs.toString();
+
+			case (LTEQ):
+				return lhs.toString() + " <= " + rhs.toString();
+
+			case (GT):
+				return lhs.toString() + " > " + rhs.toString();
+
+			case (GTEQ):
+				return lhs.toString() + " >= " + rhs.toString();
+
+			case (EQ):
+				return lhs.toString() + " == " + rhs.toString();
+
+			case (NEQ):
+				return lhs.toString() + " != " + rhs.toString();
+
+			case (LAND):
+				return lhs.toString() + " && " + rhs.toString();
+
+			case (LOR):
+				return lhs.toString() + " || " + rhs.toString();
+
+			case (CONCAT):
+				return lhs.toString() + " + " + rhs.toString();
+
+			default:
+				return lhs.toString() + String.valueOf(op) + rhs.toString();
+			}
 		}
 	}
 
@@ -404,7 +531,7 @@ public interface Expr extends SyntacticElement {
 			toption = tOption;
 			foption = fOption;
 		}
-		
+
 		public Expr trueBranch() {
 			return toption;
 		}
@@ -412,11 +539,11 @@ public interface Expr extends SyntacticElement {
 		public void setTrueBranch(Expr toption) {
 			this.toption = toption;
 		}
-		
+
 		public Expr falseBranch() {
 			return foption;
 		}
-		
+
 		public void setFalseBranch(Expr foption) {
 			this.foption = foption;
 		}
@@ -424,9 +551,13 @@ public interface Expr extends SyntacticElement {
 		public Expr condition() {
 			return cond;
 		}
-		
+
 		public void setCondition(Expr condition) {
 			this.cond = condition;
+		}
+
+		public String toString() {
+			return String.format("(%s) ? %s : %s", cond, toption, foption);
 		}
 	}
 
@@ -435,9 +566,9 @@ public interface Expr extends SyntacticElement {
 	 * "non-polymorphic". The former means the method will be called on the
 	 * dynamic type of the received, whilst the latter means that the method
 	 * will be called directly on the static type of the receiver.
-	 * 
+	 *
 	 * @author djp
-	 * 
+	 *
 	 */
 	public static class Invoke extends SyntacticElementImpl implements Expr,
 			Stmt.Simple {
@@ -448,7 +579,7 @@ public interface Expr extends SyntacticElement {
 
 		/**
 		 * Construct a method which may, or may not be polymorphic.
-		 * 
+		 *
 		 * @param target
 		 *            The expression from which the receiver is determined
 		 * @param name
@@ -467,7 +598,7 @@ public interface Expr extends SyntacticElement {
 
 		/**
 		 * Construct a method which may, or may not be polymorphic.
-		 * 
+		 *
 		 * @param target
 		 *            The expression from which the receiver is determined
 		 * @param name
@@ -483,7 +614,7 @@ public interface Expr extends SyntacticElement {
 			this.parameters = parameters;
 			this.typeParameters = typeParameters;
 		}
-		
+
 		public Expr target() {
 			return target;
 		}
@@ -491,7 +622,7 @@ public interface Expr extends SyntacticElement {
 		public void setTarget(Expr target) {
 			this.target = target;
 		}
-		
+
 		public String name() {
 			return name;
 		}
@@ -499,13 +630,28 @@ public interface Expr extends SyntacticElement {
 		public void setName(String name) {
 			this.name = name;
 		}
-		
+
 		public List<Expr> parameters() {
 			return parameters;
 		}
 
 		public List<Type> typeParameters() {
 			return typeParameters;
+		}
+
+		public String toString() {
+			String params = "(";
+			boolean first = true;
+
+			for (Expr e : parameters) {
+				if (!first)
+					params += ", ";
+				params += e.toString();
+				first = false;
+			}
+			params += ")";
+
+			return String.format("%s.%s%s", target, name, params);
 		}
 	}
 
@@ -514,9 +660,9 @@ public interface Expr extends SyntacticElement {
 	 * that object's constructor, or are used to determine the necessary array
 	 * dimensions (e.g. in new array[x+1]). Observe that, if this new operator
 	 * declares an anonymous class, then this can include various declarations.
-	 * 
+	 *
 	 * @author djp
-	 * 
+	 *
 	 */
 	public static class New extends SyntacticElementImpl implements Expr,
 			Stmt.Simple {
@@ -527,7 +673,7 @@ public interface Expr extends SyntacticElement {
 
 		/**
 		 * Create an AST node represent a new statement or expression.
-		 * 
+		 *
 		 * @param type -
 		 *            the type being constructed e.g. java.lang.String or
 		 *            Integer[]
@@ -556,7 +702,7 @@ public interface Expr extends SyntacticElement {
 
 		/**
 		 * Create an AST node represent a new statement or expression.
-		 * 
+		 *
 		 * @param type -
 		 *            the type being constructed e.g. java.lang.String or
 		 *            Integer[]
@@ -582,7 +728,7 @@ public interface Expr extends SyntacticElement {
 			this.parameters = parameters;
 			this.declarations = declarations;
 		}
-		
+
 		public Type type() {
 			return type;
 		}
@@ -614,13 +760,40 @@ public interface Expr extends SyntacticElement {
 		public void setContext(Expr context) {
 			this.context = context;
 		}
+
+		public String toString() {
+			String ctxt = "";
+				if (context != null)
+					ctxt += context.toString() + ".";
+
+			String params = "(";
+			boolean first = true;
+
+			for (Expr e : parameters) {
+				if (!first)
+					params += ", ";
+				params += e.toString();
+				first = false;
+			}
+			params += ")";
+
+			String decl = "";
+			if (!declarations.isEmpty()) {
+				//If it comes up, I'll write toString for declarations as well
+				decl = " {\n\t...\n}";
+			}
+			String t = (type instanceof Type.Clazz) ?
+					jkit.compiler.ClassLoader.pathChild(type.toString()) :
+						type.toString();
+			return String.format("new %s%s%s%s", ctxt, t, params, decl);
+		}
 	}
 
 	/**
 	 * Represents the act of derefencing a field.
-	 * 
+	 *
 	 * @author djp
-	 * 
+	 *
 	 */
 	public static class Deref extends SyntacticElementImpl implements Expr {
 		private Expr target;
@@ -637,7 +810,7 @@ public interface Expr extends SyntacticElement {
 			this.target = lhs;
 			this.name = rhs;
 		}
-		
+
 		public Expr target() {
 			return target;
 		}
@@ -645,21 +818,25 @@ public interface Expr extends SyntacticElement {
 		public void setTarget(Expr target) {
 			this.target = target;
 		}
-		
+
 		public String name() {
 			return name;
 		}
-		
+
 		public void setName(String name) {
 			this.name = name;
+		}
+
+		public String toString() {
+			return String.format("%s.%s", target, name);
 		}
 	}
 
 	/**
 	 * Represents an index into an array. E.g. A[i] is an index into array A.
-	 * 
+	 *
 	 * @author djp
-	 * 
+	 *
 	 */
 	public static class ArrayIndex extends SyntacticElementImpl implements Expr {
 		private Expr array;
@@ -676,7 +853,7 @@ public interface Expr extends SyntacticElement {
 			this.array = array;
 			this.idx = idx;
 		}
-		
+
 		public Expr target() {
 			return array;
 		}
@@ -684,13 +861,17 @@ public interface Expr extends SyntacticElement {
 		public Expr index() {
 			return idx;
 		}
-		
+
 		public void setIndex(Expr e) {
 			idx = e;
 		}
-		
+
 		public void setTarget(Expr e) {
 			array = e;
+		}
+
+		public String toString() {
+			return String.format("%s[%s]", array, idx);
 		}
 	}
 }

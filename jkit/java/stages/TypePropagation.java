@@ -29,8 +29,10 @@ import jkit.compiler.SyntacticAttribute;
 import jkit.compiler.SyntacticElement;
 import jkit.compiler.Clazz.Method;
 import jkit.compiler.SyntaxError;
+import jkit.error.ErrorHandler;
 import jkit.error.FieldNotFoundException;
 import jkit.error.MethodNotFoundException;
+import jkit.error.TypeMismatchException;
 import static jkit.compiler.SyntaxError.*;
 import static jkit.jil.util.Types.*;
 import static jkit.java.tree.Type.fromJilType;
@@ -488,7 +490,7 @@ public class TypePropagation {
 				// most common case.
 				e.attributes().add(T_INT);
 			} else {
-				syntax_error("field not found: " + tmp + "." + e.name(),e);
+				throw new FieldNotFoundException(e.name(), (Type.Reference) tmp, loader);
 			}
 		} else {
 
@@ -523,8 +525,12 @@ public class TypePropagation {
 			Type.Array at = (Type.Array) target_t;
 			e.attributes().add(at.element());
 		} else {
-			// this is really a syntax error
-			syntax_error("array required, but " + target_t + " found", e);
+			// this is really an error - as any array will do, we'll just assume an
+			//array of type wildcard
+			ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+					new TypeMismatchException(e.target(),
+							new Type.Array(new Type.Wildcard(JAVA_LANG_OBJECT, null)), loader, types),
+							e.target().attribute(SourceLocation.class));
 		}
 	}
 
@@ -673,7 +679,8 @@ public class TypePropagation {
 		}
 
 		//If receiver is still null then the receiver wasn't a reference type at all
-		if (receiver == null) throw new SyntaxError("Can't call a method on a primitive type", -1, -1);
+		if (receiver == null) SyntaxError.syntax_error("Can't call a method on a primitive type",
+				e.attribute(SourceLocation.class));
 		Triple<Clazz, Clazz.Method, Type.Function> r = types
 		.resolveMethod(receiver, e_name, parameterTypes, loader);
 
@@ -766,8 +773,14 @@ public class TypePropagation {
 	protected void doTypedArrayVal(Value.TypedArray e) {
 		Type _type = e.type().attribute(Type.class);
 		if(!(_type instanceof Type.Array)) {
-			syntax_error("cannot assign array value to type " + _type,e);
+
+			//We will use the most generic array type possible - array of Wildcard
+			ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+					new TypeMismatchException(e,
+							new Type.Array(new Type.Wildcard(JAVA_LANG_OBJECT,null)), loader, types),
+							e.attribute(SourceLocation.class));
 		}
+
 		Type.Array type = (Type.Array) _type;
 
 		for(int i=0;i!=e.values().size();++i) {
@@ -813,9 +826,15 @@ public class TypePropagation {
 	 * @return
 	 */
 	protected void doArrayVal(Type _lhs, Value.Array e) {
+
 		if (!(_lhs instanceof Type.Array)) {
-			syntax_error("cannot assign array value to type " + _lhs,e);
+
+			ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+					new TypeMismatchException(e, new Type.Array(new Type.Wildcard(JAVA_LANG_OBJECT,
+							null)), loader, types),
+					e.attribute(SourceLocation.class));
 		}
+
 		Type.Array lhs = (Type.Array)_lhs;
 		for(int i=0;i!=e.values().size();++i) {
 			Expr v = e.values().get(i);
@@ -893,6 +912,7 @@ public class TypePropagation {
 		e.attributes().add(expr_t);
 	}
 
+	//TODO: Handle binary operation syntax errors
 	protected void doBinOp(Expr.BinOp e) {
 		doExpression(e.lhs());
 		doExpression(e.rhs());
@@ -1180,7 +1200,7 @@ public class TypePropagation {
 	 * @param t - the required type of the expression.
 	 * @return
 	 */
-	public static Expr implicitCast(Expr e, Type t) {
+	public Expr implicitCast(Expr e, Type t) {
 		if(e == null) { return null; }
 		Type e_t = e.attribute(Type.class);
 		// insert implicit casts for primitive types.
@@ -1240,7 +1260,8 @@ public class TypePropagation {
 							new ArrayList<Expr>(), new ArrayList(),
 							T_BOOL, mi), t);
 				} else {
-					syntax_error("found type " + e_t + ", required " + t,e);
+					ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+							new TypeMismatchException(e, t, loader, types), e.attribute(SourceLocation.class));
 				}
 			}
 		} else if(e_t instanceof Type.Primitive && t instanceof Type.Clazz) {

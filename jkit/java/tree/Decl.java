@@ -1,23 +1,23 @@
 // This file is part of the Java Compiler Kit (JKit)
 //
-// The Java Compiler Kit is free software; you can 
-// redistribute it and/or modify it under the terms of the 
-// GNU General Public License as published by the Free Software 
-// Foundation; either version 2 of the License, or (at your 
+// The Java Compiler Kit is free software; you can
+// redistribute it and/or modify it under the terms of the
+// GNU General Public License as published by the Free Software
+// Foundation; either version 2 of the License, or (at your
 // option) any later version.
 //
 // The Java Compiler Kit is distributed in the hope
-// that it will be useful, but WITHOUT ANY WARRANTY; without 
-// even the implied warranty of MERCHANTABILITY or FITNESS FOR 
-// A PARTICULAR PURPOSE.  See the GNU General Public License 
+// that it will be useful, but WITHOUT ANY WARRANTY; without
+// even the implied warranty of MERCHANTABILITY or FITNESS FOR
+// A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
 //
-// You should have received a copy of the GNU General Public 
-// License along with the Java Compiler Kit; if not, 
-// write to the Free Software Foundation, Inc., 59 Temple Place, 
+// You should have received a copy of the GNU General Public
+// License along with the Java Compiler Kit; if not,
+// write to the Free Software Foundation, Inc., 59 Temple Place,
 // Suite 330, Boston, MA  02111-1307  USA
 //
-// (C) David James Pearce, 2009. 
+// (C) David James Pearce, 2009.
 
 package jkit.java.tree;
 
@@ -40,7 +40,7 @@ public interface Decl extends SyntacticElement {
 		private List<Type.Variable> typeParameters;
 		private Type.Clazz superclass;
 		private List<Type.Clazz> interfaces;
-		private List<Decl> declarations;		
+		private List<Decl> declarations;
 
 		public JavaClass(List<Modifier> modifiers, String name,
 				List<Type.Variable> typeParameters, Type.Clazz superclass,
@@ -52,7 +52,7 @@ public interface Decl extends SyntacticElement {
 			this.typeParameters = typeParameters;
 			this.superclass = superclass;
 			this.interfaces = interfaces;
-			this.declarations = declarations;			
+			this.declarations = declarations;
 		}
 
 		public List<Modifier> modifiers() {
@@ -75,14 +75,14 @@ public interface Decl extends SyntacticElement {
 			return interfaces;
 		}
 
-		public List<Decl> declarations() { 
+		public List<Decl> declarations() {
 			return declarations;
 		}
-		
+
 		/**
 	     * Check whether this method has one of the "base" modifiers (e.g. static,
 	     * public, private, etc). These are found in java.lang.reflect.Modifier.
-	     * 
+	     *
 	     * @param modifier
 	     * @return true if it does!
 	     */
@@ -90,14 +90,14 @@ public interface Decl extends SyntacticElement {
 			for(Modifier m : modifiers) {
 				if(m.getClass().equals(modClass)) {
 					return true;
-				}			
+				}
 			}
 			return false;
 		}
-		
-		
+
+
 		/**
-		 * Check whether this method is abstract
+		 * Check whether this method is an interface
 		 */
 		public boolean isInterface() {
 			for (Modifier m : modifiers) {
@@ -107,7 +107,7 @@ public interface Decl extends SyntacticElement {
 			}
 			return false;
 		}
-		
+
 		/**
 		 * Check whether this method is abstract
 		 */
@@ -198,7 +198,7 @@ public interface Decl extends SyntacticElement {
 				}
 			}
 			return false;
-		}				
+		}
 	}
 
 	public static class JavaInterface extends JavaClass {
@@ -257,7 +257,7 @@ public interface Decl extends SyntacticElement {
 	public static class AnnotationInterface extends SyntacticElementImpl  implements Decl {
 		private List<Modifier> modifiers;
 		private String name;
-		private List<Triple<Type, String, Value>> methods; 
+		private List<Triple<Type, String, Value>> methods;
 
 		public AnnotationInterface(List<Modifier> modifiers, String name,
 				List<Triple<Type, String, Value>> methods,
@@ -283,41 +283,41 @@ public interface Decl extends SyntacticElement {
 		private String name;
 		private List<Modifier> modifiers;
 		private Type type;
-		
+
 		public JavaParameter(String name, List<Modifier> modifiers, Type type, SyntacticAttribute... attributes) {
 			super(attributes);
 			this.name = name;
 			this.modifiers = modifiers;
 			this.type = type;
 		}
-		
+
 		public JavaParameter(String name, List<Modifier> modifiers, Type type, List<SyntacticAttribute> attributes) {
 			super(attributes);
 			this.name = name;
 			this.modifiers = modifiers;
 			this.type = type;
 		}
-		
+
 		public String name() {
 			return name;
 		}
-		
+
 		public List<Modifier> modifiers() {
 			return modifiers;
 		}
-		
+
 		public Type type() {
 			return type;
 		}
 	}
-	
+
 	/**
 	 * This class stores all known information about a method, including it's
 	 * full (possibly generic) type, its name, its modifiers (e.g. public/private
 	 * etc), as well as the methods code.
-	 * 
+	 *
 	 * @author djp
-	 * 
+	 *
 	 */
 	public static class JavaMethod extends SyntacticElementImpl  implements Decl {
 		private List<Modifier> modifiers;
@@ -340,7 +340,7 @@ public interface Decl extends SyntacticElement {
 			this.parameters = parameters;
 			if(varargs) {
 				modifiers.add(new Modifier.VarArgs());
-			}			
+			}
 			this.typeParameters = typeParameters;
 			this.exceptions = exceptions;
 			this.block = block;
@@ -361,7 +361,7 @@ public interface Decl extends SyntacticElement {
 		/**
 		 * List of triples (n,m,t), where n is the parameter name, m are the
 		 * modifiers and t is the type.
-		 * 
+		 *
 		 * @return
 		 */
 		public List<JavaParameter> parameters() {
@@ -379,11 +379,11 @@ public interface Decl extends SyntacticElement {
 		public Stmt.Block body() {
 			return block;
 		}
-		
+
 		/**
 	     * Check whether this method has one of the "base" modifiers (e.g. static,
 	     * public, private, etc). These are found in Modifier.ACC_
-	     * 
+	     *
 	     * @param modifier
 	     * @return true if it does!
 	     */
@@ -391,21 +391,21 @@ public interface Decl extends SyntacticElement {
 			for(Modifier m : modifiers) {
 				if(m.getClass().equals(modClass)) {
 					return true;
-				}			
+				}
 			}
 			return false;
 		}
-		
+
 		/**
 		 * Check whether this method is abstract
 		 */
 		public boolean isAbstract() {
-			for(Modifier m : modifiers) { 
+			for(Modifier m : modifiers) {
 				if(m instanceof Modifier.Abstract) {
 					return true;
 				}
 			}
-			return false;		
+			return false;
 		}
 
 		/**
@@ -440,7 +440,7 @@ public interface Decl extends SyntacticElement {
 				if (m instanceof Modifier.Public) {
 					return true;
 				}
-			}		
+			}
 			return false;
 		}
 
@@ -487,7 +487,7 @@ public interface Decl extends SyntacticElement {
 			}
 			return false;
 		}
-		
+
 		/**
 		 * Check whether this method has varargs
 		 */
@@ -503,16 +503,16 @@ public interface Decl extends SyntacticElement {
 
 	/**
 	 * A constructor is a special kind of method.
-	 * 
+	 *
 	 * @author djp
-	 * 
+	 *
 	 */
 	public static class JavaConstructor extends JavaMethod {
 		public JavaConstructor(List<Modifier> modifiers, String name,
 				List<JavaParameter> parameters, boolean varargs,
 				List<Type.Variable> typeParameters,
 				List<Type.Clazz> exceptions,
-				Stmt.Block block, SyntacticAttribute... attributes) {			
+				Stmt.Block block, SyntacticAttribute... attributes) {
 			super(modifiers, name, null, parameters, varargs, typeParameters,
 					exceptions, block,attributes);
 		}
@@ -540,7 +540,7 @@ public interface Decl extends SyntacticElement {
 		public String name() {
 			return name;
 		}
-		
+
 		public void setName(String name) {
 			this.name = name;
 		}
@@ -550,29 +550,29 @@ public interface Decl extends SyntacticElement {
 		}
 
 		public void setType(Type t) {
-			this.type = t;			
+			this.type = t;
 		}
 
 		public Expr initialiser() {
 			return initialiser;
-		}		
-		
+		}
+
 		public void setInitialiser(Expr init) {
 			this.initialiser = init;
 		}
-		
+
 		/**
 		 * Check whether this field represents a constant or not.
-		 * 
+		 *
 		 * @return
 		 */
-		public boolean isConstant() {			
+		public boolean isConstant() {
 			return initialiser != null && initialiser instanceof Value
 					&& !(initialiser instanceof Value.Null)
 					&& !(initialiser instanceof Value.Array)
 					&& isStatic() && isFinal();
 		}
-		
+
 		public Object constant() {
 			if(initialiser instanceof Value.Bool) {
 				Value.Bool i = (Value.Bool) initialiser;
@@ -605,11 +605,11 @@ public interface Decl extends SyntacticElement {
 				return i.value();
 			}
 		}
-		
+
 		/**
 	     * Check whether this field has one of the "base" modifiers (e.g. static,
 	     * public, private, etc). These are found in Modifier.ACC_
-	     * 
+	     *
 	     * @param modifier
 	     * @return true if it does!
 	     */
@@ -617,7 +617,7 @@ public interface Decl extends SyntacticElement {
 			for(Modifier m : modifiers) {
 				if(m.getClass().equals(modClass)) {
 					return true;
-				}			
+				}
 			}
 			return false;
 		}
@@ -637,7 +637,7 @@ public interface Decl extends SyntacticElement {
 		/**
 		 * Check whether this field is final
 		 */
-		public boolean isFinal() {		
+		public boolean isFinal() {
 			for(Modifier m : modifiers) {
 				if(m instanceof Modifier.Final) {
 					return true;
@@ -649,7 +649,7 @@ public interface Decl extends SyntacticElement {
 		/**
 		 * Check whether this field is static
 		 */
-		public boolean isStatic() {		
+		public boolean isStatic() {
 			for(Modifier m : modifiers) {
 				if(m instanceof Modifier.Static) {
 					return true;
@@ -685,7 +685,7 @@ public interface Decl extends SyntacticElement {
 		/**
 		 * Check whether this field is private
 		 */
-		public boolean isPrivate() {		
+		public boolean isPrivate() {
 			for(Modifier m : modifiers) {
 				if(m instanceof Modifier.Private) {
 					return true;
@@ -706,7 +706,7 @@ public interface Decl extends SyntacticElement {
 		}
 	}
 
-	
-	
-	
-}	
+
+
+
+}

@@ -38,7 +38,7 @@ import jkit.util.Pair;
 import jkit.util.Triple;
 
 /**
- * This method contains a variety of useful algorithms for deal with Java's type
+ * This class contains a variety of useful algorithms for dealing with Java's type
  * system.
  *
  * @author djp

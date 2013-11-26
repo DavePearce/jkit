@@ -33,7 +33,10 @@ import java.util.Set;
 import java.util.Stack;
 
 import jkit.compiler.ClassLoader;
+import jkit.compiler.SyntacticAttribute;
 import jkit.compiler.SyntaxError;
+import jkit.java.tree.Expr;
+import jkit.java.tree.Stmt;
 import jkit.jil.tree.SourceLocation;
 import jkit.jil.tree.Type;
 import jkit.util.Pair;
@@ -50,7 +53,7 @@ import jkit.compiler.Clazz;
 public class ErrorHandler {
 
 	public enum ErrorType
-	{ METHOD_NOT_FOUND, PACKAGE_NOT_FOUND, FIELD_NOT_FOUND }
+	{ METHOD_NOT_FOUND, PACKAGE_NOT_FOUND, FIELD_NOT_FOUND, TYPE_MISMATCH }
 
 	//The maximum difference between a target and a candidate to be considered for substitution
 	public final static int MAX_DIFFERENCE = 3;
@@ -77,15 +80,71 @@ public class ErrorHandler {
 		case FIELD_NOT_FOUND:
 			handleFieldNotFound((FieldNotFoundException)ex, loc);
 
+		case TYPE_MISMATCH:
+			handleTypeMismatch((TypeMismatchException)ex, loc);
+			break;
+
 		default:
 			throw new SyntaxError("Undefined error for error handler: " +ex.getMessage(), -1, -1);
 		}
 	}
 
 	/**
-	 * A simpler version for handling methods not found, must search up
+	 * This method handles the broad case where JKit was expecting one type and found another.
+	 * It analyzes the types found and expected, and then employs a mix of heuristics (such
+	 * as the fact that if there's an assignment where a boolean is expected == could be used)
+	 * and suggestions to improve the error message given.
+	 *
+	 * @param e - The TypeMismatchException containing the necessary data
+	 * @param loc - The location of the error
+	 */
+	private static void handleTypeMismatch(TypeMismatchException e, SourceLocation loc) {
+		Expr found = e.found();
+		Type foundType = found.attribute(Type.class);
+		Type expected = e.expected();
+
+		if (expected instanceof Type.Bool) {
+			//Special case for = instead of ==
+			if (found instanceof Stmt.Assignment) {
+				Stmt.Assignment assign = (Stmt.Assignment) found;
+				String msg = String.format("Error: Expected boolean, found %s.\nA possible substitute is %s == %s",
+						foundType, assign.lhs(), assign.rhs());
+				SyntaxError.syntax_error(msg, loc);
+			}
+		}
+
+		//Failed type conversion from a primitive to a primitive.
+		//Can't do much here except tell them what went wrong
+		if (expected instanceof Type.Primitive &&
+				foundType instanceof Type.Primitive) {
+			String msg = String.format("Error: Expected %s, found %s", expected, foundType);
+			SyntaxError.syntax_error(msg,  loc);
+		}
+
+		//Found was a primitive type. So we check if found was a method call or field,
+		//and if it was, we check for alternative methods/fields
+		if (foundType instanceof Type.Primitive) {
+
+			if (found instanceof Expr.Deref) {
+				//Look for alternative fields
+				Expr.Deref deref = (Expr.Deref)found;
+			}
+			if (found instanceof Expr.Invoke) {
+				//Look for alternative methods
+				Expr.Invoke inv = (Expr.Invoke)found;
+			}
+
+			//Can't do much here except tell them what went wrong
+			String msg = String.format("Error: Expected %s, found %s", expected, foundType);
+			SyntaxError.syntax_error(msg, loc);
+		}
+		SyntaxError.syntax_error("Syntax error", loc);
+	}
+
+	/**
+	 * A simpler version of the method for handling methods not found, must search up
 	 * the class hierarchy looking for any possible fields that match.
-	 * Also checks for methods of the correct return type that take no parameters,
+	 * Also checks for similarly named methods that take no parameters,
 	 * as it is possible that is what the user intended.
 	 *
 	 * @param ex - The FieldNotFound exception encountered
@@ -109,7 +168,7 @@ public class ErrorHandler {
 
 		//Now we check for methods with no parameters
 		//If we find a candidate, it is given a weighting based on edit distance, with an extra weighting
-		//for being a method (unfortunately, we can't check the type of the method matches)
+		//for being a method (unfortunately, we can't check if the type of the method matches)
 		List<Pair<Clazz.Method, Integer>> methods = new ArrayList<Pair<Clazz.Method, Integer>>();
 
 		for (Clazz c : classes) {
@@ -160,8 +219,8 @@ public class ErrorHandler {
 	private static void handlePackageNotFound(PackageNotFoundException ex) {
 		Clazz jilClass = ex.jilClass();
 		String pkg = jilClass.type().pkg().replace('.', File.pathSeparatorChar);
-		List<String> sourcepath = ex.sourcepath;
-		List<String> classpath = ex.classpath;
+		List<String> sourcepath = ex.sourcepath();
+		List<String> classpath = ex.classpath();
 		String result = null;
 
 		//A pairing of directory to classpath parent directory (used to find relative path)
@@ -466,30 +525,6 @@ public class ErrorHandler {
 
 		public int compare(E o1, E o2) {
 			return o1.second().compareTo(o2.second());
-		}
-	}
-
-	/**
-	 * Exception for the case where a package isn't found during compilation.
-	 *
-	 * @author Daniel Campbell
-	 *
-	 */
-	public static class PackageNotFoundException extends JKitException {
-
-		private static final long serialVersionUID = 1L;
-		private final List<String> classpath;
-		private final List<String> sourcepath;
-		private final Clazz jilClass;
-
-		public PackageNotFoundException(Clazz jc, List<String> cp, List<String> sp) {
-			jilClass = jc;
-			classpath = cp;
-			sourcepath = sp;
-		}
-
-		public Clazz jilClass() {
-			return jilClass;
 		}
 	}
 }
