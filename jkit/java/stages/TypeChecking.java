@@ -128,7 +128,7 @@ public class TypeChecking {
 
 					ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
 							new TypeMismatchException(d.initialiser(), lhs_t, loader, types),
-							d.attribute(SourceLocation.class));
+							d.initialiser().attribute(SourceLocation.class));
 				}
 			} catch (ClassNotFoundException ex) {
 				syntax_error(ex.getMessage(), d);
@@ -209,7 +209,7 @@ public class TypeChecking {
 					new TypeMismatchException(block.expr(),
 							new Type.Wildcard(JAVA_LANG_OBJECT, null),
 							loader, types),
-						block.attribute(SourceLocation.class));
+						block.expr().attribute(SourceLocation.class));
 
 		}
 	}
@@ -578,7 +578,7 @@ public class TypeChecking {
 			ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
 					new TypeMismatchException(e.lhs(),
 							rhs_t, loader, types),
-						e.attribute(SourceLocation.class));
+						e.lhs().attribute(SourceLocation.class));
 		}
 	}
 
@@ -635,7 +635,7 @@ public class TypeChecking {
 			if(!types.subtype(c_t,rhs_t, loader)) {
 				ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
 						new TypeMismatchException(e.expr(), c_t, loader, types),
-						e.attribute(SourceLocation.class));
+						e.expr().attribute(SourceLocation.class));
 			}
 		} catch(ClassNotFoundException ex) {
 			syntax_error (ex.getMessage(),e);
