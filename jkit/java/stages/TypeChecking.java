@@ -713,7 +713,6 @@ public class TypeChecking {
 		// do nothing!
 	}
 
-	//TODO: Handle operation type checking
 
 	protected void checkUnOp(Expr.UnOp uop) {
 		checkExpression(uop.expr());
@@ -729,7 +728,7 @@ public class TypeChecking {
 						|| e_t instanceof Type.Long
 						|| e_t instanceof Type.Float
 						|| e_t instanceof Type.Double)) {
-					ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+					ErrorHandler.handleError(ErrorHandler.ErrorType.OPERATOR_TYPE_MISMATCH,
 							new OperatorTypeMismatchException(uop.expr(), T_INT, loader, types, uop.operator(),
 									AllowedType.PRIMITIVE),
 							uop.expr().attribute(SourceLocation.class));
@@ -737,7 +736,7 @@ public class TypeChecking {
 				break;
 			case UnOp.NOT:
 				if (!(e_t instanceof Type.Bool)) {
-					ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+					ErrorHandler.handleError(ErrorHandler.ErrorType.OPERATOR_TYPE_MISMATCH,
 							new OperatorTypeMismatchException(uop.expr(), T_BOOL, loader, types, uop.operator(),
 									AllowedType.BOOL),
 							uop.expr().attribute(SourceLocation.class));
@@ -749,7 +748,7 @@ public class TypeChecking {
 						|| e_t instanceof Type.Short
 						|| e_t instanceof Type.Int
 						|| e_t instanceof Type.Long)) {
-					ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+					ErrorHandler.handleError(ErrorHandler.ErrorType.OPERATOR_TYPE_MISMATCH,
 							new OperatorTypeMismatchException(uop.expr(), T_INT, loader, types, uop.operator(),
 									AllowedType.NUMBER),
 							uop.expr().attribute(SourceLocation.class));
@@ -820,12 +819,12 @@ public class TypeChecking {
                     // make sure we have an int type
 					if (lhs_t instanceof Type.Float
 							|| lhs_t instanceof Type.Double) {
-						ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+						ErrorHandler.handleError(ErrorHandler.ErrorType.OPERATOR_TYPE_MISMATCH,
 								new OperatorTypeMismatchException(e.lhs(), T_INT, loader, types, e.operator(),
 										AllowedType.INTEGER),
 								e.lhs().attribute(SourceLocation.class));
 					} else if (!(rhs_t instanceof Type.Int)) {
-						ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+						ErrorHandler.handleError(ErrorHandler.ErrorType.OPERATOR_TYPE_MISMATCH,
 								new OperatorTypeMismatchException(e.rhs(), T_INT, loader, types, e.operator(),
 										AllowedType.INT),
 								e.rhs().attribute(SourceLocation.class));
@@ -837,7 +836,7 @@ public class TypeChecking {
 				case BinOp.XOR:
 				{
 					if (rhs_t instanceof Type.Float || rhs_t instanceof Type.Double) {
-						ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+						ErrorHandler.handleError(ErrorHandler.ErrorType.OPERATOR_TYPE_MISMATCH,
 								new OperatorTypeMismatchException(e.rhs(), T_INT, loader, types, e.operator(),
 										AllowedType.INTEGER),
 								e.rhs().attribute(SourceLocation.class));

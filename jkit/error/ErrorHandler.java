@@ -134,7 +134,7 @@ public class ErrorHandler {
 
 		String suggestion = (suggestions.isEmpty()) ? "" : suggestions.get(0).first();
 
-		String msg = String.format("Syntax Error: Type %s invalid for operator %s; %s required.%s",
+		String msg = String.format("Syntax Error: Type %s invalid for operator %s, %s required.%s",
 				foundType, e.operator(), e.allowed(), suggestion);
 
 		SyntaxError.syntax_error(msg, loc);

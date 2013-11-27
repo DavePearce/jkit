@@ -940,13 +940,13 @@ public class TypePropagation {
 				} else {
 					//For simplicity's sake, assume that an int is required
 					if (lhs_t instanceof Type.Primitive || isBoxedType(lhs_t))
-						ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+						ErrorHandler.handleError(ErrorHandler.ErrorType.OPERATOR_TYPE_MISMATCH,
 								new OperatorTypeMismatchException(e.rhs(), T_INT, loader, types, e.operator(),
 										AllowedType.PRIMITIVE),
 								e.rhs().attribute(SourceLocation.class));
 
 
-					ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+					ErrorHandler.handleError(ErrorHandler.ErrorType.OPERATOR_TYPE_MISMATCH,
 							new OperatorTypeMismatchException(e.lhs(), T_INT, loader, types, e.operator(),
 									AllowedType.PRIMITIVE),
 							e.lhs().attribute(SourceLocation.class));
@@ -972,13 +972,13 @@ public class TypePropagation {
 				} else {
 					//For simplicity's sake, assume that an int is required
 					if (lhs_t instanceof Type.Primitive || isBoxedType(lhs_t))
-						ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+						ErrorHandler.handleError(ErrorHandler.ErrorType.OPERATOR_TYPE_MISMATCH,
 								new OperatorTypeMismatchException(e.rhs(), T_INT, loader, types, e.operator(),
 										AllowedType.PRIMITIVE),
 								e.rhs().attribute(SourceLocation.class));
 
 
-					ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+					ErrorHandler.handleError(ErrorHandler.ErrorType.OPERATOR_TYPE_MISMATCH,
 							new OperatorTypeMismatchException(e.lhs(), T_INT, loader, types, e.operator(),
 									AllowedType.PRIMITIVE),
 							e.lhs().attribute(SourceLocation.class));
@@ -1011,13 +1011,13 @@ public class TypePropagation {
 				} else {
 					//For simplicity's sake, assume that an int is required
 					if (lhs_t instanceof Type.Primitive || isBoxedType(lhs_t))
-						ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+						ErrorHandler.handleError(ErrorHandler.ErrorType.OPERATOR_TYPE_MISMATCH,
 								new OperatorTypeMismatchException(e.rhs(), T_INT, loader, types, e.operator(),
 										AllowedType.PRIMITIVE),
 								e.rhs().attribute(SourceLocation.class));
 
 
-					ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+					ErrorHandler.handleError(ErrorHandler.ErrorType.OPERATOR_TYPE_MISMATCH,
 							new OperatorTypeMismatchException(e.lhs(), T_INT, loader, types, e.operator(),
 									AllowedType.PRIMITIVE),
 							e.lhs().attribute(SourceLocation.class));
@@ -1045,13 +1045,13 @@ public class TypePropagation {
 				} else {
 					//For simplicity's sake, assume that an int is required
 					if (lhs_t instanceof Type.Primitive || isBoxedType(lhs_t))
-						ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+						ErrorHandler.handleError(ErrorHandler.ErrorType.OPERATOR_TYPE_MISMATCH,
 								new OperatorTypeMismatchException(e.rhs(), T_INT, loader, types, e.operator(),
 										AllowedType.PRIMITIVE),
 								e.rhs().attribute(SourceLocation.class));
 
 
-					ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+					ErrorHandler.handleError(ErrorHandler.ErrorType.OPERATOR_TYPE_MISMATCH,
 							new OperatorTypeMismatchException(e.lhs(), T_INT, loader, types, e.operator(),
 									AllowedType.PRIMITIVE),
 							e.lhs().attribute(SourceLocation.class));
@@ -1178,10 +1178,11 @@ public class TypePropagation {
      * @param var
      * @return
      */
-	public Type.Primitive unaryNumericPromotion(Type lhs, SyntacticElement e) {
+	public Type unaryNumericPromotion(Type lhs, SyntacticElement e) {
 		// First, we must unbox either operand if they are boxed.
 		if(lhs instanceof Type.Clazz) {
-			lhs = unboxedType((Type.Clazz) lhs,e);
+			if (((Type.Clazz)lhs).pkg().equals("java.lang") && !lhs.equals(JAVA_LANG_STRING))
+				lhs = unboxedType((Type.Clazz) lhs,e);
 		}
 
 		if (lhs instanceof Type.Char || lhs instanceof Type.Short
@@ -1189,7 +1190,7 @@ public class TypePropagation {
 			return T_INT;
 		}
 
-		return (Type.Primitive) lhs;
+		return lhs;
 	}
 
 	/**
