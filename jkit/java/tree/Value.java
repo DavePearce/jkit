@@ -51,6 +51,10 @@ public interface Value extends Expr {
 		public int intValue() {
 			return value;
 		}
+
+		public java.lang.String toString() {
+			return java.lang.String.valueOf(value);
+		}
 	}
 
 	/**
@@ -68,6 +72,10 @@ public interface Value extends Expr {
 		}
 		public boolean value() {
 			return value==1;
+		}
+
+		public java.lang.String toString() {
+			return (value == 1) ? "true" : "false";
 		}
 	}
 
@@ -87,6 +95,10 @@ public interface Value extends Expr {
 		public char value() {
 			return (char)value;
 		}
+
+		public java.lang.String toString() {
+			return java.lang.String.format("%c", value());
+		}
 	}
 
 	/**
@@ -105,6 +117,10 @@ public interface Value extends Expr {
 
 		public byte value() {
 			return (byte)value;
+		}
+
+		public java.lang.String toString() {
+			return java.lang.String.valueOf(value());
 		}
 	}
 
@@ -167,6 +183,10 @@ public interface Value extends Expr {
 		public long value() {
 			return value;
 		}
+
+		public java.lang.String toString() {
+			return java.lang.String.valueOf(value) + "l";
+		}
 	}
 
 	/**
@@ -190,6 +210,10 @@ public interface Value extends Expr {
 
 		public float value() {
 			return value;
+		}
+
+		public java.lang.String toString() {
+			return java.lang.String.valueOf(value) + "f";
 		}
 	}
 
@@ -215,6 +239,10 @@ public interface Value extends Expr {
 		public double value() {
 			return value;
 		}
+
+		public java.lang.String toString() {
+			return java.lang.String.valueOf(value);
+		}
 	}
 
 	/**
@@ -238,6 +266,10 @@ public interface Value extends Expr {
 		public java.lang.String value() {
 			return value;
 		}
+
+		public java.lang.String toString() {
+			return (value);
+		}
 	}
 
 	/**
@@ -253,6 +285,10 @@ public interface Value extends Expr {
 		public Null(List<SyntacticAttribute> attributes) {
 			super(attributes);
 		}
+
+		public java.lang.String toString() {
+			return "null";
+		}
 	}
 
 	/**
@@ -262,7 +298,7 @@ public interface Value extends Expr {
      *
      */
 	public static class Array extends SyntacticElementImpl implements Value {
-		private List<Expr> values;
+		protected List<Expr> values;
 
 		public Array(List<Expr> values, SyntacticAttribute... attributes) {
 			super(attributes);
@@ -271,6 +307,21 @@ public interface Value extends Expr {
 
 		public List<Expr> values() {
 			return values;
+		}
+
+		public java.lang.String toString() {
+			StringBuilder sb = new StringBuilder("{");
+			boolean first = true;
+
+			for (Expr e : values) {
+				if (!first)
+					sb.append(", ");
+				sb.append(e.toString());
+				first = false;
+			}
+
+			sb.append("}");
+			return sb.toString();
 		}
 	}
 
@@ -297,6 +348,22 @@ public interface Value extends Expr {
 		public Type type() {
 			return type;
 		}
+
+		public java.lang.String toString() {
+
+			StringBuilder sb = new StringBuilder(java.lang.String.format("%s[] {", type));
+			boolean first = true;
+
+			for (Expr e : values) {
+				if (!first)
+					sb.append(", ");
+				sb.append(e.toString());
+				first = false;
+			}
+
+			sb.append("}");
+			return sb.toString();
+		}
 	}
 
 	/**
@@ -313,6 +380,10 @@ public interface Value extends Expr {
 
 		public Type value() {
 			return type;
+		}
+
+		public java.lang.String toString() {
+			return type.toString();
 		}
 	}
 

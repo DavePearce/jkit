@@ -1782,7 +1782,16 @@ public class JavaFileReader {
 
 					for (int j = 0; j != child.getChildCount(); ++j) {
 						Tree childchild = child.getChild(j);
-						genArgs.add((Type.Reference) parseType(childchild, genericVariables));
+						try {
+							genArgs.add((Type.Reference) parseType(childchild, genericVariables));
+						}
+						//Occurs when try to make a generic with a primitive type
+						catch (ClassCastException e) {
+							SyntaxError.syntax_error(String.format
+									("Syntax Error: Cannot use primitive type %s as a generic argument",
+											parseType(childchild, genericVariables)),
+									new SourceLocation(childchild.getLine(), childchild.getCharPositionInLine()));
+						}
 					}
 
 					components.add(new Pair<String, List<Type.Reference>>(text,

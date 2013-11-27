@@ -35,17 +35,19 @@ import java.util.Stack;
 import jkit.compiler.ClassLoader;
 import jkit.compiler.SyntacticAttribute;
 import jkit.compiler.SyntaxError;
+import jkit.java.stages.TypeSystem;
 import jkit.java.tree.Expr;
 import jkit.java.tree.Stmt;
 import jkit.jil.tree.SourceLocation;
 import jkit.jil.tree.Type;
+import jkit.jil.util.Types;
 import jkit.util.Pair;
 import jkit.compiler.Clazz;
 
 /**
  * This class contains a collection of helper methods to increase
  * the usefulness of JKit's error messages by offering suggestions for
- * substitute code. Currently a WIP
+ * substitute code.
  *
  * @author Daniel Campbell
  *
@@ -70,7 +72,11 @@ public class ErrorHandler {
 		switch(type) {
 
 		case METHOD_NOT_FOUND:
-			handleMethodNotFound((MethodNotFoundException)ex, loc);
+			try {
+				handleMethodNotFound((MethodNotFoundException)ex, loc);
+			} catch (ClassNotFoundException e) {
+				SyntaxError.syntax_error(e.getMessage(), loc);
+			}
 			break;
 
 		case PACKAGE_NOT_FOUND:
@@ -78,10 +84,19 @@ public class ErrorHandler {
 			break;
 
 		case FIELD_NOT_FOUND:
-			handleFieldNotFound((FieldNotFoundException)ex, loc);
+			try {
+				handleFieldNotFound((FieldNotFoundException)ex, loc);
+			} catch (ClassNotFoundException e) {
+				SyntaxError.syntax_error(e.getMessage(), loc);
+			}
 
 		case TYPE_MISMATCH:
-			handleTypeMismatch((TypeMismatchException)ex, loc);
+			try {
+				handleTypeMismatch((TypeMismatchException)ex, loc);
+			}
+			catch (ClassNotFoundException e) {
+				SyntaxError.syntax_error(e.getMessage(), loc);
+			}
 			break;
 
 		default:
@@ -97,11 +112,14 @@ public class ErrorHandler {
 	 *
 	 * @param e - The TypeMismatchException containing the necessary data
 	 * @param loc - The location of the error
+	 * @throws ClassNotFoundException
 	 */
-	private static void handleTypeMismatch(TypeMismatchException e, SourceLocation loc) {
+	private static void handleTypeMismatch(TypeMismatchException e, SourceLocation loc) throws ClassNotFoundException {
 		Expr found = e.found();
 		Type foundType = found.attribute(Type.class);
 		Type expected = e.expected();
+		ClassLoader loader = e.loader();
+		TypeSystem types = e.types();
 
 		if (expected instanceof Type.Bool) {
 			//Special case for = instead of ==
@@ -113,32 +131,168 @@ public class ErrorHandler {
 			}
 		}
 
-		//Failed type conversion from a primitive to a primitive.
-		//Can't do much here except tell them what went wrong
+		/* Failed type conversion from a primitive to a primitive.
+		 * We can suggest an explicit cast if neither of the types was boolean
+		 * (up to the user to decide if that's safe)
+		 */
 		if (expected instanceof Type.Primitive &&
 				foundType instanceof Type.Primitive) {
-			String msg = String.format("Error: Expected %s, found %s", expected, foundType);
+			String suggestion = "";
+			if (!(expected instanceof Type.Bool) && ! (found instanceof Type.Bool)) {
+				suggestion = String.format("\nExplicit cast possible: (%s) (%s)", expected, found);
+			}
+			String msg = String.format("Error: Expected %s, found %s%s", expected, foundType, suggestion);
 			SyntaxError.syntax_error(msg,  loc);
 		}
 
-		//Found was a primitive type. So we check if found was a method call or field,
-		//and if it was, we check for alternative methods/fields
+		/* We check if found was a method call or field,
+		 * and if it was, we check for alternative methods/fields. We also check if the boxed
+		 * type of found has methods or fields that match the expected type.
+		 */
+
+		List<Pair<String, Integer>> suggestions = new ArrayList<Pair<String, Integer>>();
+
+		//Boxed methods are weighted on number of parameters (since name edit distance doesn't apply)
 		if (foundType instanceof Type.Primitive) {
+			Clazz boxed = loader.loadClass(Types.boxedType((Type.Primitive)foundType));
+			for (Clazz.Method m : boxed.methods()) {
+				if (m.type().returnType() instanceof Type.Void || !m.type().returnType().equals(expected))
+					continue;
 
-			if (found instanceof Expr.Deref) {
-				//Look for alternative fields
-				Expr.Deref deref = (Expr.Deref)found;
-			}
-			if (found instanceof Expr.Invoke) {
-				//Look for alternative methods
-				Expr.Invoke inv = (Expr.Invoke)found;
-			}
+				int weight = (m.isVariableArity()) ? m.parameters().size()-1 : m.parameters().size();
+				String suggestion = String.format("\nA possible substitute is: ((%s)(%s)).%s(",
+						Types.boxedType((Type.Primitive) foundType), found, m.name());
 
-			//Can't do much here except tell them what went wrong
-			String msg = String.format("Error: Expected %s, found %s", expected, foundType);
-			SyntaxError.syntax_error(msg, loc);
+				boolean first = true;
+				for (Type t : m.type().parameterTypes()) {
+					if (!first)
+						suggestion += (", ");
+					suggestion += t.toString();
+					first = false;
+				}
+				if (m.isVariableArity())
+					suggestion += "...";
+				suggestion += ")";
+				suggestions.add(new Pair<String, Integer>(suggestion, weight));
+			}
 		}
-		SyntaxError.syntax_error("Syntax error", loc);
+
+		if (found instanceof Expr.Deref) {
+
+			//Look for alternative fields
+			Expr.Deref deref = (Expr.Deref)found;
+			String field = deref.name();
+
+			//If owner is null, something is very wrong
+			Type.Reference owner = deref.target().attribute(Type.Reference.class);
+			Set<Clazz> classes = getClasses(loader, owner);
+			classes = getSuperClasses(loader, classes);
+
+			Pair<List<Pair<Clazz.Field, Integer>>,
+			     List<Pair<Clazz.Method, Integer>>> subs = findFieldSuggestions(classes, field, expected, loader, types);
+
+			List<Pair<Clazz.Field, Integer>> fields = subs.first();
+			List<Pair<Clazz.Method, Integer>> methods = subs.second();
+
+			String suggestion;
+
+			if (fields.isEmpty()) {
+				if (methods.isEmpty()) {
+					suggestion = "";
+				}
+				else suggestion = String.format("\nA possible substitute is method %s.%s()", ClassLoader.pathChild(owner.toString()),
+						methods.get(0).first().name());
+			}
+			else if (methods.isEmpty()) {
+				suggestion = String.format("\nA possible substitute is field %s.%s", ClassLoader.pathChild(owner.toString()),
+						fields.get(0).first().name());
+			}
+			else {
+				suggestion = (fields.get(0).second() > methods.get(0).second()) ?
+						String.format("\nA possible substitute is method %s.%s()", ClassLoader.pathChild(owner.toString()),
+								methods.get(0).first().name()) :
+						String.format("\nA possible substitute is field %s.%s", ClassLoader.pathChild(owner.toString()),
+										fields.get(0).first().name());
+			}
+			int weight = (fields.get(0).second() > methods.get(0).second()) ?
+					methods.get(0).second() : fields.get(0).second();
+
+			suggestions.add(new Pair<String, Integer>(suggestion, weight));
+		}
+
+		if (found instanceof Expr.Invoke) {
+
+			//Look for alternative methods
+			Expr.Invoke inv = (Expr.Invoke)found;
+
+			Type.Reference owner = inv.target().attribute(Type.Reference.class);
+
+			Set<Clazz> classes = getClasses(loader, owner);
+			classes = getSuperClasses(loader, classes);
+
+			//Need to get the concrete parameters
+			List<Type> params = classes.iterator().next().methods(inv.name()).get(0).type().parameterTypes();
+			List<Pair<Clazz.Method, Integer>> subs =
+					findMethodSuggestions(classes, inv.name(), params, expected, loader, types);
+
+			if (subs.isEmpty()) {}
+
+			else {
+				Clazz.Method suggestion = subs.get(0).first();
+				StringBuilder msg = new StringBuilder();
+				msg.append(String.format("\nA possible substitute is %s.%s(",
+					ClassLoader.pathChild(owner.toString()), suggestion.name()));
+
+				boolean firstTime = true;
+				for (Type t : suggestion.type().parameterTypes()) {
+					if (!firstTime)
+						msg.append(", ");
+					msg.append(t.toString());
+					firstTime = false;
+				}
+				if (suggestion.isVariableArity())
+					msg.append("...");
+
+				msg.append(")");
+
+				suggestions.add(new Pair<String, Integer>(msg.toString(),suggestions.get(0).second()));
+			}
+
+		}
+
+		//A general catch all - if the expression is tied to some class, we will hunt through
+		//that class's methods looking for substitutions
+		if (found.attribute(Type.Clazz.class) != null) {
+			Clazz foundClass = loader.loadClass(found.attribute(Type.Clazz.class));
+
+			for (Clazz.Method m : foundClass.methods()) {
+				if (m.type().returnType() instanceof Type.Void || !m.type().returnType().equals(expected))
+					continue;
+
+				int weight = (m.isVariableArity()) ? m.parameters().size()-1 : m.parameters().size();
+				String suggestion = String.format("\nA possible substitute is: (%s).%s(",
+						found, m.name());
+
+				boolean first = true;
+				for (Type t : m.type().parameterTypes()) {
+					if (!first)
+						suggestion += (", ");
+					suggestion += t.toString();
+					first = false;
+				}
+				if (m.isVariableArity())
+					suggestion += "...";
+				suggestion += ")";
+				suggestions.add(new Pair<String, Integer>(suggestion, weight));
+			}
+		}
+
+		Collections.sort(suggestions, new WeightComparator<Pair<String, Integer>>());
+
+		String msg = String.format("Syntax Error: Expected %s, found %s%s", expected, foundType,
+				(suggestions.isEmpty()) ? "" : suggestions.get(0).first());
+
+		SyntaxError.syntax_error(msg, loc);
 	}
 
 	/**
@@ -148,44 +302,21 @@ public class ErrorHandler {
 	 * as it is possible that is what the user intended.
 	 *
 	 * @param ex - The FieldNotFound exception encountered
+	 * @throws ClassNotFoundException
 	 */
-	private static void handleFieldNotFound(FieldNotFoundException ex, SourceLocation loc) {
+	private static void handleFieldNotFound(FieldNotFoundException ex, SourceLocation loc) throws ClassNotFoundException {
 
 		Set<Clazz> classes = getClasses(ex.loader(), ex.owner());
 		classes = getSuperClasses(ex.loader(), classes);
 
-		//Next, we should look for misspelled field names (ignoring possible methods for now)
-		//If we find a candidate, we give it a weighting based on its edit distance
-		List<Pair<Clazz.Field, Integer>> fields = new ArrayList<Pair<Clazz.Field, Integer>>();
+		Pair<List<Pair<Clazz.Field, Integer>>,
+		 List<Pair<Clazz.Method, Integer>>> suggestions = findFieldSuggestions(classes, ex.field(), null, ex.loader(), new TypeSystem());
 
-		for (Clazz c : classes) {
-			for (Clazz.Field f : c.fields()) {
-				int dist = distance(ex.field(), f.name());
-				if (dist <= MAX_DIFFERENCE)
-					fields.add(new Pair<Clazz.Field, Integer>(f, dist));
-			}
-		}
+		List<Pair<Clazz.Field, Integer>> fields = suggestions.first();
+		List<Pair<Clazz.Method, Integer>> methods = suggestions.second();
 
-		//Now we check for methods with no parameters
-		//If we find a candidate, it is given a weighting based on edit distance, with an extra weighting
-		//for being a method (unfortunately, we can't check if the type of the method matches)
-		List<Pair<Clazz.Method, Integer>> methods = new ArrayList<Pair<Clazz.Method, Integer>>();
+		//Throw a Syntax Error with the appropriate error message
 
-		for (Clazz c : classes) {
-
-			for (Clazz.Method m : c.methods()) {
-				if (m.type().returnType() instanceof Type.Void || !m.parameters().isEmpty())
-					continue;
-
-				int dist = distance(ex.field(), m.name()) + 2;
-				if (dist <= MAX_DIFFERENCE)
-					methods.add(new Pair<Clazz.Method, Integer>(m, dist));
-			}
-		}
-		//Now sort the two lists to find the one with the least weighting,
-		//And throw a Syntax Error with the appropriate error message
-		Collections.sort(fields, new WeightComparator<Pair<Clazz.Field, Integer>>());
-		Collections.sort(methods, new WeightComparator<Pair<Clazz.Method, Integer>>());
 		String suggestion;
 
 		if (fields.isEmpty()) {
@@ -207,9 +338,62 @@ public class ErrorHandler {
 							methods.get(0).first().name());
 		}
 
-		ex.loader();
 		throw new SyntaxError(String.format("Field %s.%s not found%s", ClassLoader.pathChild(ex.owner().toString()),
 				ex.field(), suggestion), loc.line(), loc.column());
+	}
+
+	/**
+	 * Helper method that returns a set of suggested fields and methods to replace a given field.
+	 *
+	 * @param classes	- The list of all classes to check
+	 * @param field 	- The field we are substituting for
+	 * @param expected	- the expected return type of the field (or null if unknown)
+	 * @return
+	 * @throws ClassNotFoundException
+	 */
+	private static Pair<List<Pair<Clazz.Field, Integer>>,
+				 List<Pair<Clazz.Method, Integer>>> findFieldSuggestions
+				 (Set<Clazz> classes, String field, Type expected,
+						 ClassLoader loader, TypeSystem types) throws ClassNotFoundException {
+
+		List<Pair<Clazz.Field, Integer>> fields = new ArrayList<Pair<Clazz.Field, Integer>>();
+		List<Pair<Clazz.Method, Integer>> methods = new ArrayList<Pair<Clazz.Method, Integer>>();
+
+		//First, we look for misspelled field names (ignoring possible methods for now)
+		//If we find a candidate, we give it a weighting based on its edit distance
+		for (Clazz c : classes) {
+			for (Clazz.Field f : c.fields()) {
+				if (expected != null && !types.boxSubtype(expected, f.type(), loader))
+					continue;
+				int dist = distance(field, f.name());
+				if (dist <= MAX_DIFFERENCE)
+					fields.add(new Pair<Clazz.Field, Integer>(f, dist));
+			}
+		}
+
+		//Now we check for methods with no parameters
+		//If we find a candidate, it is given a weighting based on edit distance, with an extra weighting
+		//for being a method (unfortunately, we can't check if the type of the method matches)
+		for (Clazz c : classes) {
+
+			for (Clazz.Method m : c.methods()) {
+				if (m.type().returnType() instanceof Type.Void || !m.parameters().isEmpty())
+					continue;
+				if (expected != null && !m.type().returnType().equals(expected))
+					continue;
+
+				int dist = distance(field, m.name()) + 2;
+				if (dist <= MAX_DIFFERENCE)
+					methods.add(new Pair<Clazz.Method, Integer>(m, dist));
+			}
+		}
+
+		//Finally, we sort the two lists and return them
+		Collections.sort(fields, new WeightComparator<Pair<Clazz.Field, Integer>>());
+		Collections.sort(methods, new WeightComparator<Pair<Clazz.Method, Integer>>());
+
+		return new Pair<List<Pair<Clazz.Field, Integer>>,
+				 List<Pair<Clazz.Method, Integer>>>(fields, methods);
 	}
 
 	/**
@@ -272,14 +456,67 @@ public class ErrorHandler {
 	 * names, types of parameters and number of parameters. Only the most suitable candidate is considered,
 	 * and only those close enough to the target (within three cumulative edits/substitutions) are
 	 * actually suggested.
+	 * @throws ClassNotFoundException
 	 *
 	 */
-	private static void handleMethodNotFound(MethodNotFoundException ex, SourceLocation loc) {
+	private static void handleMethodNotFound(MethodNotFoundException ex, SourceLocation loc) throws ClassNotFoundException {
 
 		Set<Clazz> classes = getClasses(ex.loader(), ex.owner());
 		classes = getSuperClasses(ex.loader(), classes);
 
+		List<Pair<Clazz.Method, Integer>> suggestions = findMethodSuggestions(classes, ex.method(),
+				ex.parameters(), null, ex.loader(), new TypeSystem());
+
+		//For now, we will only suggest the top level suggestion - that could change
+		Clazz.Method suggestion = (suggestions.isEmpty()) ? null : suggestions.get(0).first();
+
+		StringBuilder msg = new StringBuilder(100);
+		msg.append(String.format("Method \"%s.%s(", ClassLoader.pathChild(ex.owner().toString()), ex.method()));
+		boolean firstTime = true;
+		for (Type t : ex.parameters()) {
+			if (!firstTime)
+				msg.append(", ");
+			msg.append(t.toString());
+		}
+		msg.append(")\" not found.");
+		if (suggestion == null)
+			throw new SyntaxError(msg.toString(), loc.line(), loc.column());
+
+		msg.append(String.format("\nA possible substitute is \"%s.%s(",
+				ClassLoader.pathChild(ex.owner().toString()), suggestion.name()));
+
+		firstTime = true;
+		for (Type t : suggestion.type().parameterTypes()) {
+			if (!firstTime)
+				msg.append(", ");
+			msg.append(t.toString());
+			firstTime = false;
+		}
+		if (suggestion.isVariableArity())
+			msg.append("...");
+		throw new SyntaxError(msg.toString()+")\"", loc.line(), loc.column());
+	}
+
+	/**
+	 * Helper method that returns a list of the possible substitutes/suggestions for a method
+	 *
+	 * @param classes		- The set of all classes to search
+	 * @param method		- The name of the method you are looking for
+	 * @param parameters	- The list of parameters of the method you are looking for
+	 * @param expected		- The expected return type of the method (or null if unknown)
+	 * @param loader		- The classloader (needed to check subtyping)
+	 * @param types			- The TypeSystem (needed to check subtyping)
+	 * @return
+	 * @throws ClassNotFoundException
+	 */
+	private static List<Pair<Clazz.Method, Integer>> findMethodSuggestions
+		(Set<Clazz> classes, String method, List<Type> parameters, Type expected,
+				ClassLoader loader, TypeSystem types) throws ClassNotFoundException {
+
+		List<Pair<Clazz.Method, Integer>> suggestions = new ArrayList<Pair<Clazz.Method, Integer>>();
+
 		//First, we should look for misspelled method names (ignoring parameters for now)
+		//Note if a method has an invalid return type, we ignore it
 		//If we find a candidate, we give it a weighting based on its Levenshtein distance
 		Set<Pair<String, Integer>> names = new HashSet<Pair<String, Integer>>();
 		for (Clazz c : classes) {
@@ -287,8 +524,10 @@ public class ErrorHandler {
 				//We want to ignore superclass constructors
 				if (m.name().equals(c.name()) && classes.contains(new Pair<Clazz, Integer>(c, 1)))
 					continue;
+				if (expected != null && !types.boxSubtype(expected, m.type().returnType(), loader))
+					continue;
 
-				int dist = distance(ex.method(), m.name());
+				int dist = distance(method, m.name());
 				if (dist <= MAX_DIFFERENCE)
 					names.add(new Pair<String, Integer>(m.name(), dist));
 			}
@@ -305,11 +544,11 @@ public class ErrorHandler {
 
 					//The number of different parameters is different for methods with variable arity
 					if (!m.isVariableArity())
-						diff = Math.abs(m.parameters().size() - ex.parameters().size());
+						diff = Math.abs(m.parameters().size() - parameters.size());
 
 					else
-						diff = (m.parameters().size() <= (ex.parameters().size()+1))
-								? 0 : m.parameters().size() - (ex.parameters().size()+1);
+						diff = (m.parameters().size() <= (parameters.size()+1))
+								? 0 : m.parameters().size() - (parameters.size()+1);
 
 					if (diff + p.second() <= MAX_DIFFERENCE) methods.add(new Pair<Clazz.Method, Integer>(m, diff + p.second()));
 				}
@@ -318,12 +557,10 @@ public class ErrorHandler {
 
 		//Next, check for different types of parameters
 		//Again, a weighting is given based on the number of parameters changed
-		List<Pair<Clazz.Method, Integer>> suggestions = new ArrayList<Pair<Clazz.Method, Integer>>();
-
 		for (Pair<Clazz.Method, Integer> p : methods) {
 
 			List<Type> subParams = p.first().type().parameterTypes();
-			List<Type> targetParams = ex.parameters();
+			List<Type> targetParams = parameters;
 
 			int min = Math.min(targetParams.size(), subParams.size());
 			int weight = p.second();
@@ -338,37 +575,8 @@ public class ErrorHandler {
 				suggestions.add(new Pair<Clazz.Method, Integer>(p.first(), weight));
 		}
 
-		//Now sort the suggestions by weight
-		Collections.sort(suggestions, new WeightComparator<Pair<Clazz.Method, Integer>>());
-
-		//For now, we will only throw the top level suggestion - that could change
-		Clazz.Method suggestion = (suggestions.isEmpty()) ? null : suggestions.get(0).first();
-
-		StringBuilder msg = new StringBuilder(100);
-		ex.loader();
-		msg.append(String.format("Method \"%s.%s(", ClassLoader.pathChild(ex.owner().toString()), ex.method()));
-		boolean firstTime = true;
-		for (Type t : ex.parameters()) {
-			if (!firstTime)
-				msg.append(", ");
-			msg.append(t.toString());
-		}
-		msg.append(")\" not found.");
-		if (suggestion == null)
-			throw new SyntaxError(msg.toString(), loc.line(), loc.column());
-
-		ex.loader();
-		msg.append(String.format("\nA possible substitute is \"%s.%s(",
-				ClassLoader.pathChild(ex.owner().toString()), suggestion.name()));
-
-		firstTime = true;
-		for (Type t : suggestion.type().parameterTypes()) {
-			if (!firstTime)
-				msg.append(", ");
-			msg.append(t.toString());
-			firstTime = false;
-		}
-		throw new SyntaxError(msg.toString()+")\"", loc.line(), loc.column());
+		Collections.sort(suggestions, new WeightComparator<Pair<Clazz.Method,Integer>>());
+		return suggestions;
 	}
 
 	/**

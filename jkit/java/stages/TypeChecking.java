@@ -49,7 +49,7 @@ import jkit.util.Triple;
  * Typing stage) is separated from the process of checking those types. This is
  * for two reasons: firstly, it divides the problem into two (simpler)
  * subproblems; secondly, it provides for different ways of propagating type
- * information (e.e.g type inference).
+ * information (e.g type inference).
  *
  * @author djp
  *
@@ -256,7 +256,7 @@ public class TypeChecking {
 						ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
 								new TypeMismatchException(d.third(),
 										nt, loader, types),
-									def.attribute(SourceLocation.class));
+									d.third().attribute(SourceLocation.class));
 					}
 				} catch (ClassNotFoundException ex) {
 					syntax_error(ex.getMessage(), def);
@@ -277,7 +277,7 @@ public class TypeChecking {
 				ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
 						new TypeMismatchException(def.rhs(),
 								lhs_t, loader, types),
-							def.attribute(SourceLocation.class));
+							def.rhs().attribute(SourceLocation.class));
 			}
 		} catch (ClassNotFoundException ex) {
 			syntax_error(ex.getMessage(), def);

@@ -267,12 +267,6 @@ public class Type extends SyntacticElementImpl {
 		}
 
 		public String toString() {
-
-			//Modified - giving the full package declaration looked messy,
-			//for the default types, so if package starts with java, skip it
-			if (components.get(0).first().equals("java"))
-				return components.get(components.size()-1).first();
-
 			String r = "";
 			boolean firstTime = true;
 			for(Pair<String,List<Type.Reference>> c : components) {

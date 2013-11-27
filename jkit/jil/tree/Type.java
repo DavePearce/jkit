@@ -1,23 +1,23 @@
 // This file is part of the Java Compiler Kit (JKit)
 //
-// The Java Compiler Kit is free software; you can 
-// redistribute it and/or modify it under the terms of the 
-// GNU General Public License as published by the Free Software 
-// Foundation; either version 2 of the License, or (at your 
+// The Java Compiler Kit is free software; you can
+// redistribute it and/or modify it under the terms of the
+// GNU General Public License as published by the Free Software
+// Foundation; either version 2 of the License, or (at your
 // option) any later version.
 //
 // The Java Compiler Kit is distributed in the hope
-// that it will be useful, but WITHOUT ANY WARRANTY; without 
-// even the implied warranty of MERCHANTABILITY or FITNESS FOR 
-// A PARTICULAR PURPOSE.  See the GNU General Public License 
+// that it will be useful, but WITHOUT ANY WARRANTY; without
+// even the implied warranty of MERCHANTABILITY or FITNESS FOR
+// A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
 //
-// You should have received a copy of the GNU General Public 
-// License along with the Java Compiler Kit; if not, 
-// write to the Free Software Foundation, Inc., 59 Temple Place, 
+// You should have received a copy of the GNU General Public
+// License along with the Java Compiler Kit; if not,
+// write to the Free Software Foundation, Inc., 59 Temple Place,
 // Suite 330, Boston, MA  02111-1307  USA
 //
-// (C) David James Pearce, 2009. 
+// (C) David James Pearce, 2009.
 
 package jkit.jil.tree;
 
@@ -38,53 +38,53 @@ import jkit.util.Pair;
  * <code>java.lang.String</code>.
  */
 public interface Type extends SyntacticAttribute, Comparable<Type> {
-	
+
 	/**
 	 * <p>
 	 * This method returns the list of generic variables used in this type. So,
 	 * for example, suppose we have:
 	 * </p>
-	 * 
+	 *
 	 * <pre>
 	 * T = java.lang.ArrayList&lt;? extends S&gt;
 	 * </pre>
-	 * 
+	 *
 	 * <p>
 	 * Then, <code>T.usedVariables()=[S]</code>.
 	 * </p>
-	 * 
+	 *
 	 * @return
 	 */
 	public List<Type.Variable> usedVariables();
-	
+
 	/**
      * The Primitive type abstracts all the primitive types.
      */
 	public interface Primitive extends Type {}
-	
+
 	/**
      * The Reference type abstracts all the reference types, including class
      * types, array types, variable and wildcard types.
      */
 	public interface Reference extends Type {}
-	
+
 	/**
      * The Null type is a special type given to the null value. We require that
      * Null is a subtype of any Reference.
      */
-	public static class Null implements Reference {		
+	public static class Null implements Reference {
 		public String toString() {
 			return "null";
 		}
-		
+
 		public boolean equals(Object o) {
 			return o instanceof Type.Null;
 		}
-		
+
 		public int hashCode() {
 			return 0;
 		}
-		
+
 		public int compareTo(Type t) {
 			if(t instanceof Type.Null) {
 				return 0;
@@ -92,32 +92,32 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 				return -1;
 			}
 		}
-		
+
 		public List<Type.Variable> usedVariables() {
 			return new ArrayList<Type.Variable>();
 		}
-	}	 
-	
+	}
+
 	/**
      * The Void type is used to represent "void" types, found in method
      * declarations.
-     * 
+     *
      * @author djp
-     * 
+     *
      */
-	public static class Void implements Primitive {		
+	public static class Void implements Primitive {
 		public String toString() {
 			return "void";
 		}
-		
+
 		public boolean equals(Object o) {
 			return o instanceof Type.Void;
 		}
-		
+
 		public int hashCode() {
 			return 1;
 		}
-		
+
 		public int compareTo(Type t) {
 			if (t instanceof Type.Null) {
 				return 1;
@@ -127,7 +127,7 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 				return -1;
 			}
 		}
-		
+
 		public List<Type.Variable> usedVariables() {
 			return new ArrayList<Type.Variable>();
 		}
@@ -137,19 +137,19 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 	 * @author djp
 	 *
 	 */
-	public static class Bool implements Primitive {		
+	public static class Bool implements Primitive {
 		public String toString() {
 			return "boolean";
 		}
-		
+
 		public boolean equals(Object o) {
 			return o instanceof Type.Bool;
 		}
-		
+
 		public int hashCode() {
 			return 2;
 		}
-		
+
 		public int compareTo(Type t) {
 			if (t instanceof Type.Null || t instanceof Type.Void) {
 				return 1;
@@ -159,12 +159,12 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 				return -1;
 			}
 		}
-		
+
 		public List<Type.Variable> usedVariables() {
 			return new ArrayList<Type.Variable>();
 		}
 	}
-	
+
 
 	/**
 	 * Represents the Java type "byte"
@@ -175,15 +175,15 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 		public String toString() {
 			return "byte";
 		}
-		
+
 		public boolean equals(Object o) {
 			return o instanceof Type.Byte;
 		}
-		
+
 		public int hashCode() {
 			return 3;
 		}
-		
+
 		public int compareTo(Type t) {
 			if (t instanceof Type.Null || t instanceof Type.Void
 					|| t instanceof Type.Bool) {
@@ -194,12 +194,12 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 				return -1;
 			}
 		}
-		
+
 		public List<Type.Variable> usedVariables() {
 			return new ArrayList<Type.Variable>();
 		}
 	}
-	
+
 	/**
 	 * Represents the Java type "char"
 	 * @author djp
@@ -209,15 +209,15 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 		public String toString() {
 			return "char";
 		}
-		
+
 		public boolean equals(Object o) {
 			return o instanceof Type.Char;
 		}
-		
+
 		public int hashCode() {
 			return 4;
 		}
-		
+
 		public int compareTo(Type t) {
 			if (t instanceof Type.Char) {
 				return 0;
@@ -228,12 +228,12 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 				return -1;
 			}
 		}
-		
+
 		public List<Type.Variable> usedVariables() {
 			return new ArrayList<Type.Variable>();
 		}
 	}
-	
+
 	/**
 	 * Represents the Java type "short"
 	 * @author djp
@@ -243,15 +243,15 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 		public String toString() {
 			return "short";
 		}
-		
+
 		public boolean equals(Object o) {
 			return o instanceof Type.Short;
 		}
-		
+
 		public int hashCode() {
 			return 5;
 		}
-		
+
 		public int compareTo(Type t) {
 			if (t instanceof Type.Short) {
 				return 0;
@@ -263,7 +263,7 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 				return -1;
 			}
 		}
-		
+
 		public List<Type.Variable> usedVariables() {
 			return new ArrayList<Type.Variable>();
 		}
@@ -278,15 +278,15 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 		public String toString() {
 			return "int";
 		}
-		
+
 		public boolean equals(Object o) {
 			return o instanceof Type.Int;
 		}
-		
+
 		public int hashCode() {
 			return 6;
 		}
-		
+
 		public int compareTo(Type t) {
 			if (t instanceof Type.Int) {
 				return 0;
@@ -298,12 +298,12 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 				return -1;
 			}
 		}
-		
+
 		public List<Type.Variable> usedVariables() {
 			return new ArrayList<Type.Variable>();
 		}
 	}
-	
+
 	/**
 	 * Represents the Java type "long"
 	 * @author djp
@@ -313,15 +313,15 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 		public String toString() {
 			return "long";
 		}
-		
+
 		public boolean equals(Object o) {
 			return o instanceof Type.Long;
 		}
-		
+
 		public int hashCode() {
 			return 7;
 		}
-		
+
 		public int compareTo(Type t) {
 			if (t instanceof Type.Long) {
 				return 0;
@@ -333,12 +333,12 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 				return -1;
 			}
 		}
-		
+
 		public List<Type.Variable> usedVariables() {
 			return new ArrayList<Type.Variable>();
 		}
 	}
-	
+
 	/**
 	 * Represents the Java type "float"
 	 * @author djp
@@ -348,15 +348,15 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 		public String toString() {
 			return "float";
 		}
-		
+
 		public boolean equals(Object o) {
 			return o instanceof Type.Float;
 		}
-		
+
 		public int hashCode() {
 			return 8;
 		}
-		
+
 		public int compareTo(Type t) {
 			if (t instanceof Type.Float) {
 				return 0;
@@ -369,12 +369,12 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 				return -1;
 			}
 		}
-		
+
 		public List<Type.Variable> usedVariables() {
 			return new ArrayList<Type.Variable>();
 		}
 	}
-	
+
 	/**
 	 * Represents the Java type "double"
 	 * @author djp
@@ -384,15 +384,15 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 		public String toString() {
 			return "double";
 		}
-		
+
 		public boolean equals(Object o) {
 			return o instanceof Type.Double;
 		}
-		
+
 		public int hashCode() {
 			return 9;
 		}
-		
+
 		public int compareTo(Type t) {
 			if (t instanceof Type.Double) {
 				return 0;
@@ -405,37 +405,37 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 				return -1;
 			}
 		}
-		
+
 		public List<Type.Variable> usedVariables() {
 			return new ArrayList<Type.Variable>();
 		}
 	}
-	
+
 	/**
      * The Array type captures array types! The elementType gives the types of
      * the elements held in the array. For example, in "int[]", the element type
      * is int.
-     * 
+     *
      * @author djp
      */
-	public static class Array implements Reference {		
+	public static class Array implements Reference {
 		private final Type element;
-		
+
 		public Array(Type element) {
 			if (element == null) {
 				throw new IllegalArgumentException(
 						"Supplied element type cannot be null.");
 			}
-			this.element = element;			
+			this.element = element;
 		}
-		
+
 		public Type element() {
 			return element;
 		}
 		public String toString() {
 			return element + "[]";
 		}
-		
+
 		public boolean equals(Object o) {
 			if(o instanceof Type.Array) {
 				Type.Array a = (Type.Array) o;
@@ -443,11 +443,11 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 			}
 			return false;
 		}
-		
+
 		public int hashCode() {
 			return 1 + element.hashCode();
 		}
-		
+
 		public int compareTo(Type t) {
 			if (t instanceof Type.Array) {
 				return element.compareTo(((Type.Array) t).element());
@@ -457,22 +457,22 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 				return -1;
 			}
 		}
-		
+
 		public List<Type.Variable> usedVariables() {
 			return element.usedVariables();
 		}
 	}
-	
+
 	/**
      * This represents a reference to a class. E.g. java.lang.String
-     * 
+     *
      * @author djp
-     * 
+     *
      */
-	public static class Clazz implements Reference {		
+	public static class Clazz implements Reference {
 		private final String pkg;
 		private final List<Pair<String, List<Type.Reference>>> components;
-		
+
 		public Clazz(String pkg, List<Pair<String, List<Type.Reference>>> components) {
 			if (components == null) {
 				throw new IllegalArgumentException(
@@ -480,34 +480,40 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 			}
 			this.pkg = pkg;
 			this.components = components;
-		}		
-		
+		}
+
 		public Clazz(String pkg, String clazz) {
 			this.pkg = pkg;
 			components = new ArrayList<Pair<String,List<Type.Reference>>>();
 			components.add(new Pair(clazz,new ArrayList<Type.Reference>()));
 		}
-		
+
 		public List<Pair<String, List<Type.Reference>>> components() {
 			return components;
 		}
-		
+
 		public Pair<String, List<Type.Reference>> lastComponent() {
 			return components.get(components.size()-1);
 		}
-		
+
 		/**
          * Return the package. If no package, then the value is simply "",
          * rather than null.
-         * 
+         *
          * @return
          */
 		public String pkg() {
 			return pkg;
 		}
-		
+
 		public String toString() {
-			String r = pkg;			
+
+			//Modified - giving the full package declaration looked messy,
+			//for the default types, so if package starts with java, skip it
+			if (pkg.equals("java.lang"))
+				return components.get(components.size()-1).first();
+
+			String r = pkg;
 			boolean firstTime = pkg.length() == 0;
 			for (Pair<String, List<Type.Reference>> n : components) {
 				if (!firstTime) {
@@ -531,17 +537,17 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 			}
 			return r;
 		}
-		
+
 		public boolean equals(Object o) {
 			if(o instanceof Type.Clazz) {
 				Type.Clazz c = (Type.Clazz) o;
-				
+
 				return pkg.equals(c.pkg) &&
 					components.equals(c.components);
 			}
 			return false;
 		}
-		
+
 		public int hashCode() {
 			int hc = 0;
 			for (Pair<String, List<Type.Reference>> n : components) {
@@ -549,7 +555,7 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 			}
 			return hc;
 		}
-		
+
 		public int compareTo(Type t) {
 			if (t instanceof Type.Clazz) {
 				Type.Clazz tc = (Type.Clazz) t;
@@ -584,7 +590,7 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 				return -1;
 			}
 		}
-		
+
 		public List<Type.Variable> usedVariables() {
 			ArrayList<Type.Variable> ls = new ArrayList();
 			for(Pair<String,List<Type.Reference>> p : components) {
@@ -595,21 +601,21 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 			return ls;
 		}
 	}
-	
+
 	/**
      * This represents the special "?" type. As used, for example, in the
      * following method declaration:
-     * 
+     *
      *  void printAll(Collection<? extends MyClass> { ... }
-     * 
+     *
      * @author djp
-     * 
+     *
      */
 	public static class Wildcard implements Reference {
 		private final Type.Reference lowerBound;
 		private final Type.Reference upperBound;
 
-		public Wildcard(Type.Reference lowerBound, Type.Reference upperBound) {			
+		public Wildcard(Type.Reference lowerBound, Type.Reference upperBound) {
 			this.lowerBound = lowerBound;
 			this.upperBound = upperBound;
 		}
@@ -617,7 +623,7 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 		/**
          * Return the upper bound of this wildcard. This will be null if there
          * is none.
-         * 
+         *
          * @return
          */
 		public Type.Reference upperBound() {
@@ -627,13 +633,13 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 		/**
          * Return the lower bound of this wildcard. This will be null if there
          * is none.
-         * 
+         *
          * @return
          */
 		public Type.Reference lowerBound() {
 			return lowerBound;
 		}
-		
+
 		public boolean equals(Object o) {
 			if (o instanceof Wildcard) {
 				Wildcard w = (Wildcard) o;
@@ -649,23 +655,23 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 				} else {
 					ub = upperBound.equals(w.upperBound);
 				}
-				
+
 				return lb && ub;
 			}
 			return false;
 		}
-		
+
 		public String toString() {
 			String r = "?";
 			if(lowerBound != null) {
-				r += " extends " + lowerBound;							
+				r += " extends " + lowerBound;
 			}
 			if(upperBound != null) {
-				r += " super " + upperBound;							
+				r += " super " + upperBound;
 			}
 			return r;
 		}
-		
+
 		public int hashCode() {
 			int hc = 0;
 			if(lowerBound != null) {
@@ -676,7 +682,7 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 			}
 			return hc;
 		}
-		
+
 		public int compareTo(Type t) {
 			if (t instanceof Type.Wildcard) {
 				Type.Wildcard tw = (Type.Wildcard) t;
@@ -689,7 +695,7 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 					return -1;
 				} else if(upperBound != null && tw.upperBound == null) {
 					return 1;
-				} 
+				}
 				if(lowerBound != null) {
 					int lbct = lowerBound.compareTo(tw.lowerBound);
 					if(lbct != 0) { return lbct; }
@@ -706,7 +712,7 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 				return -1;
 			}
 		}
-		
+
 		public List<Type.Variable> usedVariables() {
 			ArrayList<Type.Variable> ls = new ArrayList();
 			if(lowerBound != null) {
@@ -718,13 +724,13 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 			return ls;
 		}
 	}
-	
+
 	/**
      * Represents a Generic type variable. For example, the T in class ArrayList<T> {
      * ... }
-     * 
+     *
      * @author djp
-     * 
+     *
      */
 	public static class Variable extends SyntacticElementImpl implements Reference {
 		private final String variable;
@@ -746,29 +752,29 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 
 		public Type.Reference lowerBound() {
 			return lowerBound;
-		}		
-		
-		public boolean equals(Object o) {			
+		}
+
+		public boolean equals(Object o) {
 			if (o instanceof Variable) {
 				Variable v = (Variable) o;
-				return variable.equals(v.variable)						
+				return variable.equals(v.variable)
 						&& lowerBound.equals(v.lowerBound);
 			}
 			return false;
 		}
-		
+
 		public String toString() {
 			if(lowerBound == null) {
 				return variable;
-			} else {					
-				return variable + " extends " + lowerBound;				
+			} else {
+				return variable + " extends " + lowerBound;
 			}
 		}
-		
+
 		public int hashCode() {
 			return variable.hashCode();
 		}
-		
+
 		public int compareTo(Type t) {
 			if (t instanceof Type.Variable) {
 				Type.Variable tv = (Type.Variable) t;
@@ -781,7 +787,7 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 				} else if (lowerBound != null) {
 					return lowerBound.compareTo(tv.lowerBound);
 				}
-				
+
 				return 0;
 			} else if (t instanceof Type.Primitive || t instanceof Type.Array
 					|| t instanceof Type.Clazz || t instanceof Type.Wildcard) {
@@ -790,29 +796,29 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 				return -1;
 			}
 		}
-		
+
 		public List<Type.Variable> usedVariables() {
 			ArrayList<Type.Variable> ls = new ArrayList();
 			ls.add(this);
 			if(lowerBound != null) {
 				ls.addAll(lowerBound.usedVariables());
-			}			
+			}
 			return ls;
 		}
 	}
-	
+
 	/**
 	 * An intersection type represents a (unknown) type which known to be a
 	 * subtype of several types. For example, given types T1 and T2, then their
 	 * intersection type is T1 & T2. The intersection type represents an object
 	 * which is *both* an instance of T1 and an instance of T2. Thus, we always
 	 * have that T1 :> T1 & T2 and T2 :> T1 & T2.
-	 * 
+	 *
 	 * @author djp
 	 */
 	public static class Intersection extends SyntacticElementImpl implements Reference {
 		private final ArrayList<Type.Reference> bounds;
-		
+
 		public Intersection(List<Type.Reference> bounds,
 				SyntacticAttribute... attributes) {
 			super(attributes);
@@ -825,11 +831,11 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 			}
 			this.bounds = new ArrayList<Type.Reference>(bounds);
 		}
-		
+
 		public List<Type.Reference> bounds() {
 			return bounds;
 		}
-		
+
 		public String toString() {
 			String r = "";
 			if(bounds.size() > 1) { r += "("; }
@@ -842,7 +848,7 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 			if(bounds.size() > 1) { r += ")"; }
 			return r;
 		}
-		
+
 		public boolean equals(Object o) {
 			if(o instanceof Intersection) {
 				Intersection t = (Intersection) o;
@@ -857,7 +863,7 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 			}
 			return false;
 		}
-		
+
 		public int hashCode() {
 			int hc = 0;
 			for(Type.Reference r : bounds) {
@@ -865,15 +871,15 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 			}
 			return hc;
 		}
-		
+
 		public int compareTo(Type t) {
 			if (t instanceof Type.Intersection) {
 				Type.Intersection tv = (Type.Intersection) t;
-				if(bounds.size() < tv.bounds.size()) { 
+				if(bounds.size() < tv.bounds.size()) {
 					return -1;
 				} else if(bounds.size() > tv.bounds.size()) {
 					return 1;
-				} 
+				}
 				for(int i=0;i!=bounds.size();++i) {
 					Type.Reference r1 = bounds.get(i);
 					Type.Reference r2 = tv.bounds.get(i);
@@ -887,7 +893,7 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 				return -1;
 			}
 		}
-		
+
 		public List<Type.Variable> usedVariables() {
 			ArrayList<Type.Variable> ls = new ArrayList();
 			for(Type.Reference r : bounds) {
@@ -896,11 +902,11 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 			return ls;
 		}
 	}
-	
+
 	/**
 	 * Represents the type of a method.  For example, the following method
-	 * 
-	 * void m(int x) { ... } has type "void(int)" 
+	 *
+	 * void m(int x) { ... } has type "void(int)"
 	 * @author djp
 	 *
 	 */
@@ -908,7 +914,7 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 		private final List<Type> parameters;
 		private final Type returnType;
 		private final List<Type.Variable> typeArgs;
-		
+
 		public Function(Type returnType, Type... parameters) {
 			if (returnType == null) {
 				throw new IllegalArgumentException(
@@ -921,7 +927,7 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 				this.parameters.add(t);
 			}
 		}
-		
+
 		public Function(Type returnType, List<Type> parameters) {
 			if (returnType == null) {
 				throw new IllegalArgumentException(
@@ -931,7 +937,7 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 			this.parameters = parameters;
 			this.typeArgs = new ArrayList();
 		}
-		
+
 		public Function(Type returnType, List<Type> parameters, List<Type.Variable> typeArgs) {
 			if (returnType == null) {
 				throw new IllegalArgumentException(
@@ -941,19 +947,19 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 			this.parameters = parameters;
 			this.typeArgs = typeArgs;
 		}
-		
-		public Type returnType() { 
+
+		public Type returnType() {
 			return returnType;
 		}
-		
+
 		public List<Type> parameterTypes() {
 			return parameters;
 		}
-		
+
 		public List<Type.Variable> typeArguments() {
 			return typeArgs;
 		}
-		
+
 		public boolean equals(Object o) {
 			if (o instanceof Function) {
 				Function f = (Function) o;
@@ -963,7 +969,7 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 			}
 			return false;
 		}
-		
+
 		public String toString() {
 			String r="";
 			boolean firstTime;
@@ -972,7 +978,7 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 				firstTime=true;
 				for(Type.Variable v : typeArgs) {
 					if(!firstTime) {
-						r += ", ";						
+						r += ", ";
 					}
 					firstTime=false;
 					r += v;
@@ -980,12 +986,12 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 				r += "> ";
 			}
 			r += returnType;
-			r += " ("; 
-			
+			r += " (";
+
 			firstTime=true;
 			for(Type t : parameters) {
 				if(!firstTime) {
-					r += ", ";						
+					r += ", ";
 				}
 				firstTime=false;
 				r += t;
@@ -993,7 +999,7 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 			r+= ")";
 			return r;
 		}
-		
+
 		public int hashCode() {
 			int hc = 0;
 			for(Type t : parameters) {
@@ -1001,15 +1007,15 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 			}
 			return hc;
 		}
-		
+
 		public int compareTo(Type t) {
 			if (t instanceof Type.Function) {
 				Type.Function tf = (Type.Function) t;
 				if(parameters.size() < tf.parameters.size()) {
-					return -1; 
+					return -1;
 				} else if(parameters.size() > tf.parameters.size()) {
-					return 1; 
-				} 
+					return 1;
+				}
 				for(int i=0;i!=parameters.size();++i) {
 					Type p1 = parameters.get(i);
 					Type p2 = tf.parameters.get(i);
@@ -1023,7 +1029,7 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 				return -1;
 			}
 		}
-		
+
 		public List<Type.Variable> usedVariables() {
 			ArrayList<Type.Variable> ls = new ArrayList();
 			ls.addAll(returnType.usedVariables());
@@ -1033,5 +1039,5 @@ public interface Type extends SyntacticAttribute, Comparable<Type> {
 			ls.addAll(typeArgs);
 			return ls;
 		}
-	}	
+	}
 }
