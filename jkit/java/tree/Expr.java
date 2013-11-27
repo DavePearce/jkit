@@ -26,6 +26,7 @@ import java.util.List;
 import jkit.compiler.SyntacticAttribute;
 import jkit.compiler.SyntacticElement;
 import jkit.compiler.SyntacticElementImpl;
+import jkit.error.OperatorTypeMismatchException.AllowedType;
 
 public interface Expr extends SyntacticElement {
 	/**
@@ -339,31 +340,36 @@ public interface Expr extends SyntacticElement {
 		}
 
 		public String toString() {
+			return (op == POSTINC || op == POSTDEC) ?
+					expr.toString() + operator() : operator() + expr.toString();
+		}
+
+		public String operator() {
 			switch(op) {
 
 			case NOT:
-				return "!" + expr.toString();
+				return "!";
 
 			case INV:
-				return expr.toString() + ".";
+				return "~";
 
 			case NEG:
-				return "-" + expr.toString();
+				return "-";
 
 			case PREINC:
-				return "++" + expr.toString();
+				return "++";
 
 			case PREDEC:
-				return "--" + expr.toString();
+				return "--";
 
 			case POSTINC:
-				return expr.toString() + "++";
+				return "++";
 
 			case POSTDEC:
-				return expr.toString() + "--";
+				return "--";
 
 			default:
-				return String.valueOf(op) + expr.toString();
+				return String.valueOf(op);
 			}
 		}
 	}
@@ -442,71 +448,127 @@ public interface Expr extends SyntacticElement {
 		}
 
 		public String toString() {
+			return String.format("%s %s %s", lhs.toString(), operator(), rhs.toString());
+		}
+
+		public String operator() {
 			switch (op) {
 
 			case (ADD):
-				return lhs.toString() + " + " + rhs.toString();
+				return "+";
 
 			case (SUB):
-				return lhs.toString() + " - " + rhs.toString();
+				return "-";
 
 			case (MUL):
-				return lhs.toString() + " * " + rhs.toString();
+				return "*";
 
 			case (DIV):
-				return lhs.toString() + " / " + rhs.toString();
+				return "/";
 
 			case (MOD):
-				return lhs.toString() + " % " + rhs.toString();
+				return "%";
 
 			case (SHL):
-				return lhs.toString() + " << " + rhs.toString();
+				return "<<";
 
 			case (SHR):
-				return lhs.toString() + " >> " + rhs.toString();
+				return ">>";
 
 			case (USHR):
-				return lhs.toString() + " >>> " + rhs.toString();
+				return ">>>";
 
 			case (AND):
-				return lhs.toString() + " & " + rhs.toString();
+				return "&";
 
 			case (OR):
-				return lhs.toString() + " | " + rhs.toString();
+				return "|";
 
 			case (XOR):
-				return lhs.toString() + " ^ " + rhs.toString();
+				return "^";
 
 			case (LT):
-				return lhs.toString() + " < " + rhs.toString();
+				return "<";
 
 			case (LTEQ):
-				return lhs.toString() + " <= " + rhs.toString();
+				return "<=";
 
 			case (GT):
-				return lhs.toString() + " > " + rhs.toString();
+				return ">";
 
 			case (GTEQ):
-				return lhs.toString() + " >= " + rhs.toString();
+				return ">=";
 
 			case (EQ):
-				return lhs.toString() + " == " + rhs.toString();
+				return "==";
 
 			case (NEQ):
-				return lhs.toString() + " != " + rhs.toString();
+				return "!=";
 
 			case (LAND):
-				return lhs.toString() + " && " + rhs.toString();
+				return "&&";
 
 			case (LOR):
-				return lhs.toString() + " || " + rhs.toString();
+				return "||";
 
 			case (CONCAT):
-				return lhs.toString() + " + " + rhs.toString();
+				return "+";
 
 			default:
-				return lhs.toString() + String.valueOf(op) + rhs.toString();
+				return String.valueOf(op);
 			}
+		}
+
+		/**
+		 * Utility method - tells what types are allowed for a given operator
+		 *
+		 * @param left	- Whether we are considering the right or left side of the operator
+		 * @return
+		 */
+		public AllowedType getAllowed(boolean left) {
+			AllowedType type = null;
+			switch (op) {
+
+			case (ADD):
+			case (SUB):
+			case (MUL):
+			case (DIV):
+			case (MOD):
+				type = AllowedType.PRIMITIVE;
+				break;
+
+			case (SHL):
+			case (SHR):
+			case (USHR):
+				type = (left) ? AllowedType.INTEGER : AllowedType.INT;
+				break;
+
+			case (AND):
+			case (OR):
+			case (XOR):
+			case (LT):
+			case (LTEQ):
+			case (GT):
+			case (GTEQ):
+				type = AllowedType.INTEGER;
+				break;
+
+			case (EQ):
+			case (NEQ):
+				type = AllowedType.ANY;
+				break;
+
+			case (LAND):
+			case (LOR):
+				type = AllowedType.BOOL;
+				break;
+
+			case (CONCAT):
+				type = AllowedType.ANY;
+				break;
+
+			}
+			return type;
 		}
 	}
 

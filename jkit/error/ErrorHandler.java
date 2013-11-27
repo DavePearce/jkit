@@ -33,7 +33,6 @@ import java.util.Set;
 import java.util.Stack;
 
 import jkit.compiler.ClassLoader;
-import jkit.compiler.SyntacticAttribute;
 import jkit.compiler.SyntaxError;
 import jkit.java.stages.TypeSystem;
 import jkit.java.tree.Expr;
@@ -55,7 +54,7 @@ import jkit.compiler.Clazz;
 public class ErrorHandler {
 
 	public enum ErrorType
-	{ METHOD_NOT_FOUND, PACKAGE_NOT_FOUND, FIELD_NOT_FOUND, TYPE_MISMATCH }
+	{ METHOD_NOT_FOUND, PACKAGE_NOT_FOUND, FIELD_NOT_FOUND, TYPE_MISMATCH, OPERATOR_TYPE_MISMATCH }
 
 	//The maximum difference between a target and a candidate to be considered for substitution
 	public final static int MAX_DIFFERENCE = 3;
@@ -99,9 +98,46 @@ public class ErrorHandler {
 			}
 			break;
 
+		case OPERATOR_TYPE_MISMATCH:
+			try {
+				handleOperatorTypeMismatch((OperatorTypeMismatchException)ex, loc);
+			}
+			catch (ClassNotFoundException e) {
+				SyntaxError.syntax_error(e.getMessage(), loc);
+			}
+			break;
+
 		default:
 			throw new SyntaxError("Undefined error for error handler: " +ex.getMessage(), -1, -1);
 		}
+	}
+
+	/**
+	 * Handles errors where an operator was used in an expression where the lhs or rhs
+	 * were not valid types for the operator. Uses the same code as for the more general type
+	 * mismatch exceptions to generate suggestions, but the error message contains more context information.
+	 *
+	 * @param ex	- The exception being handled
+	 * @param loc	- The location of the exception in the source code
+	 * @throws ClassNotFoundException
+	 */
+	private static void handleOperatorTypeMismatch(OperatorTypeMismatchException e,
+			SourceLocation loc) throws ClassNotFoundException {
+
+		Expr found = e.found();
+		Type foundType = found.attribute(Type.class);
+		Type expected = e.expected();
+		ClassLoader loader = e.loader();
+		TypeSystem types = e.types();
+
+		List<Pair<String, Integer>> suggestions = findTypeSuggestions(found, expected, loader, types);
+
+		String suggestion = (suggestions.isEmpty()) ? "" : suggestions.get(0).first();
+
+		String msg = String.format("Syntax Error: Type %s invalid for operator %s; %s required.%s",
+				foundType, e.operator(), e.allowed(), suggestion);
+
+		SyntaxError.syntax_error(msg, loc);
 	}
 
 	/**
@@ -121,13 +157,40 @@ public class ErrorHandler {
 		ClassLoader loader = e.loader();
 		TypeSystem types = e.types();
 
+		List<Pair<String, Integer>> suggestions = findTypeSuggestions(found, expected, loader, types);
+
+		String msg = String.format("Syntax Error: Expected %s, found %s%s", expected, foundType,
+				(suggestions.isEmpty()) ? "" : suggestions.get(0).first());
+
+		SyntaxError.syntax_error(msg, loc);
+	}
+
+	/**
+	 * This work does the heavy lifting for the handleTypeMismatch and handleOperatorTypeMismatch
+	 * methods - it generates a list of possible suggestions for the given type mismatch, with
+	 * a weighting attached to each suggestion.
+	 *
+	 * @param found
+	 * @param expected
+	 * @param loader
+	 * @param types
+	 * @return
+	 * @throws ClassNotFoundException
+	 */
+	private static List<Pair<String, Integer>> findTypeSuggestions(
+			Expr found, Type expected, ClassLoader loader,
+			TypeSystem types) throws ClassNotFoundException {
+
+
+		Type foundType = found.attribute(Type.class);
+		List<Pair<String, Integer>> suggestions = new ArrayList<Pair<String, Integer>>();
+
 		if (expected instanceof Type.Bool) {
 			//Special case for = instead of ==
 			if (found instanceof Stmt.Assignment) {
 				Stmt.Assignment assign = (Stmt.Assignment) found;
-				String msg = String.format("Error: Expected boolean, found %s.\nA possible substitute is %s == %s",
-						foundType, assign.lhs(), assign.rhs());
-				SyntaxError.syntax_error(msg, loc);
+				suggestions.add(new Pair<String, Integer>
+					(String.format("\nA possible substitute is %s == %s", assign.lhs(), assign.rhs()), 0));
 			}
 		}
 
@@ -140,20 +203,13 @@ public class ErrorHandler {
 			String suggestion = "";
 			if (!(expected instanceof Type.Bool) && ! (found instanceof Type.Bool)) {
 				suggestion = String.format("\nExplicit cast possible: (%s) (%s)", expected, found);
+				suggestions.add(new Pair<String, Integer>(suggestion, 0));
 			}
-			String msg = String.format("Error: Expected %s, found %s%s", expected, foundType, suggestion);
-			SyntaxError.syntax_error(msg,  loc);
 		}
 
-		/* We check if found was a method call or field,
-		 * and if it was, we check for alternative methods/fields. We also check if the boxed
-		 * type of found has methods or fields that match the expected type.
-		 */
-
-		List<Pair<String, Integer>> suggestions = new ArrayList<Pair<String, Integer>>();
-
+		//Check if the boxed type has a method that fits
 		//Boxed methods are weighted on number of parameters (since name edit distance doesn't apply)
-		if (foundType instanceof Type.Primitive) {
+		else if (foundType instanceof Type.Primitive) {
 			Clazz boxed = loader.loadClass(Types.boxedType((Type.Primitive)foundType));
 			for (Clazz.Method m : boxed.methods()) {
 				if (m.type().returnType() instanceof Type.Void || !m.type().returnType().equals(expected))
@@ -177,6 +233,9 @@ public class ErrorHandler {
 			}
 		}
 
+		/* We check if found was a method call or field,
+		 * and if it was, we check for alternative methods/fields.
+		 */
 		if (found instanceof Expr.Deref) {
 
 			//Look for alternative fields
@@ -288,11 +347,8 @@ public class ErrorHandler {
 		}
 
 		Collections.sort(suggestions, new WeightComparator<Pair<String, Integer>>());
+		return suggestions;
 
-		String msg = String.format("Syntax Error: Expected %s, found %s%s", expected, foundType,
-				(suggestions.isEmpty()) ? "" : suggestions.get(0).first());
-
-		SyntaxError.syntax_error(msg, loc);
 	}
 
 	/**

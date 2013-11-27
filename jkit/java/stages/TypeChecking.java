@@ -29,7 +29,10 @@ import jkit.compiler.ClassLoader;
 import jkit.compiler.Clazz;
 import jkit.compiler.SyntacticAttribute;
 import jkit.error.ErrorHandler;
+import jkit.error.OperatorTypeMismatchException;
 import jkit.error.TypeMismatchException;
+import jkit.error.OperatorTypeMismatchException.AllowedType;
+import static jkit.error.OperatorTypeMismatchException.checkTypeAllowed;
 import jkit.java.io.JavaFile;
 import jkit.java.tree.Decl;
 import jkit.java.tree.Expr;
@@ -726,12 +729,18 @@ public class TypeChecking {
 						|| e_t instanceof Type.Long
 						|| e_t instanceof Type.Float
 						|| e_t instanceof Type.Double)) {
-					syntax_error("cannot negate type " + e_t, uop);
+					ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+							new OperatorTypeMismatchException(uop.expr(), T_INT, loader, types, uop.operator(),
+									AllowedType.PRIMITIVE),
+							uop.expr().attribute(SourceLocation.class));
 				}
 				break;
 			case UnOp.NOT:
 				if (!(e_t instanceof Type.Bool)) {
-					syntax_error("required type boolean, found " + e_t, uop);
+					ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+							new OperatorTypeMismatchException(uop.expr(), T_BOOL, loader, types, uop.operator(),
+									AllowedType.BOOL),
+							uop.expr().attribute(SourceLocation.class));
 				}
 				break;
 			case UnOp.INV:
@@ -740,7 +749,10 @@ public class TypeChecking {
 						|| e_t instanceof Type.Short
 						|| e_t instanceof Type.Int
 						|| e_t instanceof Type.Long)) {
-					syntax_error("cannot invert type " + e_t, uop);
+					ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+							new OperatorTypeMismatchException(uop.expr(), T_INT, loader, types, uop.operator(),
+									AllowedType.NUMBER),
+							uop.expr().attribute(SourceLocation.class));
 				}
 				break;
 			}
@@ -786,8 +798,9 @@ public class TypeChecking {
 				case BinOp.GTEQ:
 					// need more checks here
 					if(!(e_t instanceof Type.Bool)) {
-						syntax_error("required type boolean, found "
-								+ rhs_t,e);
+						ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+								new TypeMismatchException(e, T_BOOL, loader, types),
+								e.attribute(SourceLocation.class));
 					}
 					return;
 				case BinOp.ADD:
@@ -807,11 +820,15 @@ public class TypeChecking {
                     // make sure we have an int type
 					if (lhs_t instanceof Type.Float
 							|| lhs_t instanceof Type.Double) {
-						syntax_error("Invalid operation on type "
-								+ lhs_t, e);
+						ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+								new OperatorTypeMismatchException(e.lhs(), T_INT, loader, types, e.operator(),
+										AllowedType.INTEGER),
+								e.lhs().attribute(SourceLocation.class));
 					} else if (!(rhs_t instanceof Type.Int)) {
-						syntax_error("Invalid operation on type "
-								+ rhs_t, e);
+						ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+								new OperatorTypeMismatchException(e.rhs(), T_INT, loader, types, e.operator(),
+										AllowedType.INT),
+								e.rhs().attribute(SourceLocation.class));
 					}
 					return;
 				}
@@ -820,7 +837,10 @@ public class TypeChecking {
 				case BinOp.XOR:
 				{
 					if (rhs_t instanceof Type.Float || rhs_t instanceof Type.Double) {
-						syntax_error("Invalid operation on type " + rhs_t, e);
+						ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+								new OperatorTypeMismatchException(e.rhs(), T_INT, loader, types, e.operator(),
+										AllowedType.INTEGER),
+								e.rhs().attribute(SourceLocation.class));
 					}
 					return;
 				}
@@ -844,7 +864,20 @@ public class TypeChecking {
 			return;
 		}
 
-		syntax_error("operand types do not go together: " + lhs_t + ", " + rhs_t,e);
+		if (checkTypeAllowed(lhs_t, e.getAllowed(true)))
+			ErrorHandler.handleError(ErrorHandler.ErrorType.OPERATOR_TYPE_MISMATCH,
+				new OperatorTypeMismatchException(e.rhs(),
+						(checkTypeAllowed(T_INT, e.getAllowed(false))) ? T_INT : T_BOOL,
+						loader, types, e.operator(),
+						e.getAllowed(false)),
+				e.rhs().attribute(SourceLocation.class));
+
+		ErrorHandler.handleError(ErrorHandler.ErrorType.OPERATOR_TYPE_MISMATCH,
+				new OperatorTypeMismatchException(e.lhs(),
+						(checkTypeAllowed(T_INT, e.getAllowed(true))) ? T_INT : T_BOOL,
+						loader, types, e.operator(),
+						e.getAllowed(true)),
+				e.lhs().attribute(SourceLocation.class));
 	}
 
 	protected void checkTernOp(Expr.TernOp e) {

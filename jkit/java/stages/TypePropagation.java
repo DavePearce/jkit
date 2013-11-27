@@ -32,6 +32,8 @@ import jkit.compiler.SyntaxError;
 import jkit.error.ErrorHandler;
 import jkit.error.FieldNotFoundException;
 import jkit.error.MethodNotFoundException;
+import jkit.error.OperatorTypeMismatchException;
+import jkit.error.OperatorTypeMismatchException.AllowedType;
 import jkit.error.TypeMismatchException;
 import static jkit.compiler.SyntaxError.*;
 import static jkit.jil.util.Types.*;
@@ -912,7 +914,6 @@ public class TypePropagation {
 		e.attributes().add(expr_t);
 	}
 
-	//TODO: Handle binary operation syntax errors
 	protected void doBinOp(Expr.BinOp e) {
 		doExpression(e.lhs());
 		doExpression(e.rhs());
@@ -937,8 +938,18 @@ public class TypePropagation {
 				} else if (e.op() == Expr.BinOp.EQ || e.op() == Expr.BinOp.NEQ) {
 					e.attributes().add(T_BOOL);
 				} else {
-					syntax_error("operands have invalid types " + lhs_t + " and "
-						+ rhs_t, e);
+					//For simplicity's sake, assume that an int is required
+					if (lhs_t instanceof Type.Primitive || isBoxedType(lhs_t))
+						ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+								new OperatorTypeMismatchException(e.rhs(), T_INT, loader, types, e.operator(),
+										AllowedType.PRIMITIVE),
+								e.rhs().attribute(SourceLocation.class));
+
+
+					ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+							new OperatorTypeMismatchException(e.lhs(), T_INT, loader, types, e.operator(),
+									AllowedType.PRIMITIVE),
+							e.lhs().attribute(SourceLocation.class));
 				}
 				break;
 			}
@@ -959,8 +970,18 @@ public class TypePropagation {
 					e.attributes().add(JAVA_LANG_STRING);
 					e.setOp(Expr.BinOp.CONCAT);
 				} else {
-					syntax_error("operands have invalid types " + lhs_t + " and "
-						+ rhs_t, e);
+					//For simplicity's sake, assume that an int is required
+					if (lhs_t instanceof Type.Primitive || isBoxedType(lhs_t))
+						ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+								new OperatorTypeMismatchException(e.rhs(), T_INT, loader, types, e.operator(),
+										AllowedType.PRIMITIVE),
+								e.rhs().attribute(SourceLocation.class));
+
+
+					ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+							new OperatorTypeMismatchException(e.lhs(), T_INT, loader, types, e.operator(),
+									AllowedType.PRIMITIVE),
+							e.lhs().attribute(SourceLocation.class));
 				}
 				break;
 			}
@@ -988,7 +1009,18 @@ public class TypePropagation {
 					}
 					e.attributes().add(rt_left);
 				} else {
-					syntax_error("operands have invalid types " + lhs_t + " and " + rhs_t,e);
+					//For simplicity's sake, assume that an int is required
+					if (lhs_t instanceof Type.Primitive || isBoxedType(lhs_t))
+						ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+								new OperatorTypeMismatchException(e.rhs(), T_INT, loader, types, e.operator(),
+										AllowedType.PRIMITIVE),
+								e.rhs().attribute(SourceLocation.class));
+
+
+					ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+							new OperatorTypeMismatchException(e.lhs(), T_INT, loader, types, e.operator(),
+									AllowedType.PRIMITIVE),
+							e.lhs().attribute(SourceLocation.class));
 				}
 				break;
 			}
@@ -1011,8 +1043,18 @@ public class TypePropagation {
 					e.setRhs(implicitCast(e.rhs(),rt));
 					e.attributes().add(rt);
 				} else {
-					syntax_error("operands have invalid types " + lhs_t + " and "
-						+ rhs_t, e);
+					//For simplicity's sake, assume that an int is required
+					if (lhs_t instanceof Type.Primitive || isBoxedType(lhs_t))
+						ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+								new OperatorTypeMismatchException(e.rhs(), T_INT, loader, types, e.operator(),
+										AllowedType.PRIMITIVE),
+								e.rhs().attribute(SourceLocation.class));
+
+
+					ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+							new OperatorTypeMismatchException(e.lhs(), T_INT, loader, types, e.operator(),
+									AllowedType.PRIMITIVE),
+							e.lhs().attribute(SourceLocation.class));
 				}
 				break;
 			}
