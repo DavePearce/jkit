@@ -32,6 +32,7 @@ import jkit.error.ErrorHandler;
 import jkit.error.FieldNotFoundException;
 import jkit.error.JKitException;
 import jkit.error.MethodNotFoundException;
+import jkit.error.PackageNotFoundException;
 import jkit.jil.tree.Type;
 import jkit.jil.tree.JilClass;
 import jkit.jil.util.Types;
@@ -458,9 +459,9 @@ public final class ClassLoader {
 		// class loading.
 
 		if (pkgInfo == null) {
-			ErrorHandler.handleError(ErrorHandler.ErrorType.PACKAGE_NOT_FOUND,
-					new ErrorHandler.PackageNotFoundException(jilClass,
-							Collections.unmodifiableList(classpath), Collections.unmodifiableList(sourcepath)), null);
+			ErrorHandler.handlePackageNotFound(new PackageNotFoundException(jilClass,
+							Collections.unmodifiableList(classpath),
+							Collections.unmodifiableList(sourcepath)));
 		}
 		pkgInfo.classes.add(pc);
 		pkgInfo.compiledClasses.add(pc);
