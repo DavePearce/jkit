@@ -53,64 +53,8 @@ import jkit.compiler.Clazz;
  */
 public class ErrorHandler {
 
-	public enum ErrorType
-	{ METHOD_NOT_FOUND, PACKAGE_NOT_FOUND, FIELD_NOT_FOUND, TYPE_MISMATCH, OPERATOR_TYPE_MISMATCH }
-
 	//The maximum difference between a target and a candidate to be considered for substitution
 	public final static int MAX_DIFFERENCE = 3;
-
-	/**
-	 * Main method called by outside classes - given a type of error
-	 * and an exception with relevant data, calls the appropriate helper method
-	 *
-	 * @param type - The type of error encountered
-	 * @param ex   - The exception to be improved
-	 */
-	public static void handleError(ErrorType type, Exception ex, SourceLocation loc) {
-
-		switch(type) {
-
-		case METHOD_NOT_FOUND:
-			try {
-				handleMethodNotFound((MethodNotFoundException)ex, loc);
-			} catch (ClassNotFoundException e) {
-				SyntaxError.syntax_error(e.getMessage(), loc);
-			}
-			break;
-
-		case PACKAGE_NOT_FOUND:
-			handlePackageNotFound((PackageNotFoundException)ex);
-			break;
-
-		case FIELD_NOT_FOUND:
-			try {
-				handleFieldNotFound((FieldNotFoundException)ex, loc);
-			} catch (ClassNotFoundException e) {
-				SyntaxError.syntax_error(e.getMessage(), loc);
-			}
-
-		case TYPE_MISMATCH:
-			try {
-				handleTypeMismatch((TypeMismatchException)ex, loc);
-			}
-			catch (ClassNotFoundException e) {
-				SyntaxError.syntax_error(e.getMessage(), loc);
-			}
-			break;
-
-		case OPERATOR_TYPE_MISMATCH:
-			try {
-				handleOperatorTypeMismatch((OperatorTypeMismatchException)ex, loc);
-			}
-			catch (ClassNotFoundException e) {
-				SyntaxError.syntax_error(e.getMessage(), loc);
-			}
-			break;
-
-		default:
-			throw new SyntaxError("Undefined error for error handler: " +ex.getMessage(), -1, -1);
-		}
-	}
 
 	/**
 	 * Handles errors where an operator was used in an expression where the lhs or rhs
@@ -121,8 +65,8 @@ public class ErrorHandler {
 	 * @param loc	- The location of the exception in the source code
 	 * @throws ClassNotFoundException
 	 */
-	private static void handleOperatorTypeMismatch(OperatorTypeMismatchException e,
-			SourceLocation loc) throws ClassNotFoundException {
+	public static void handleOperatorTypeMismatch(OperatorTypeMismatchException e,
+			SourceLocation loc) {
 
 		Expr found = e.found();
 		Type foundType = found.attribute(Type.class);
@@ -150,7 +94,7 @@ public class ErrorHandler {
 	 * @param loc - The location of the error
 	 * @throws ClassNotFoundException
 	 */
-	private static void handleTypeMismatch(TypeMismatchException e, SourceLocation loc) throws ClassNotFoundException {
+	public static void handleTypeMismatch(TypeMismatchException e, SourceLocation loc) {
 		Expr found = e.found();
 		Type foundType = found.attribute(Type.class);
 		Type expected = e.expected();
@@ -179,7 +123,7 @@ public class ErrorHandler {
 	 */
 	private static List<Pair<String, Integer>> findTypeSuggestions(
 			Expr found, Type expected, ClassLoader loader,
-			TypeSystem types) throws ClassNotFoundException {
+			TypeSystem types) {
 
 
 		Type foundType = found.attribute(Type.class);
@@ -210,26 +154,31 @@ public class ErrorHandler {
 		//Check if the boxed type has a method that fits
 		//Boxed methods are weighted on number of parameters (since name edit distance doesn't apply)
 		else if (foundType instanceof Type.Primitive) {
-			Clazz boxed = loader.loadClass(Types.boxedType((Type.Primitive)foundType));
-			for (Clazz.Method m : boxed.methods()) {
-				if (m.type().returnType() instanceof Type.Void || !m.type().returnType().equals(expected))
-					continue;
+			try {
+				Clazz boxed = loader.loadClass(Types.boxedType((Type.Primitive)foundType));
+				for (Clazz.Method m : boxed.methods()) {
+					if (m.type().returnType() instanceof Type.Void || !m.type().returnType().equals(expected))
+						continue;
 
-				int weight = (m.isVariableArity()) ? m.parameters().size()-1 : m.parameters().size();
-				String suggestion = String.format("\nA possible substitute is: ((%s)(%s)).%s(",
-						Types.boxedType((Type.Primitive) foundType), found, m.name());
+					int weight = (m.isVariableArity()) ? m.parameters().size()-1 : m.parameters().size();
+					String suggestion = String.format("\nA possible substitute is: ((%s)(%s)).%s(",
+							Types.boxedType((Type.Primitive) foundType), found, m.name());
 
-				boolean first = true;
-				for (Type t : m.type().parameterTypes()) {
-					if (!first)
-						suggestion += (", ");
-					suggestion += t.toString();
-					first = false;
+					boolean first = true;
+					for (Type t : m.type().parameterTypes()) {
+						if (!first)
+							suggestion += (", ");
+						suggestion += t.toString();
+						first = false;
+					}
+					if (m.isVariableArity())
+						suggestion += "...";
+					suggestion += ")";
+					suggestions.add(new Pair<String, Integer>(suggestion, weight));
 				}
-				if (m.isVariableArity())
-					suggestion += "...";
-				suggestion += ")";
-				suggestions.add(new Pair<String, Integer>(suggestion, weight));
+			}
+			catch (ClassNotFoundException e) {
+				//Should never happen. We just skip this step if it does
 			}
 		}
 
@@ -322,27 +271,32 @@ public class ErrorHandler {
 		//A general catch all - if the expression is tied to some class, we will hunt through
 		//that class's methods looking for substitutions
 		if (found.attribute(Type.Clazz.class) != null) {
-			Clazz foundClass = loader.loadClass(found.attribute(Type.Clazz.class));
+			try {
+				Clazz foundClass = loader.loadClass(found.attribute(Type.Clazz.class));
 
-			for (Clazz.Method m : foundClass.methods()) {
-				if (m.type().returnType() instanceof Type.Void || !m.type().returnType().equals(expected))
-					continue;
+				for (Clazz.Method m : foundClass.methods()) {
+					if (m.type().returnType() instanceof Type.Void || !m.type().returnType().equals(expected))
+						continue;
 
-				int weight = (m.isVariableArity()) ? m.parameters().size()-1 : m.parameters().size();
-				String suggestion = String.format("\nA possible substitute is: (%s).%s(",
-						found, m.name());
+					int weight = (m.isVariableArity()) ? m.parameters().size()-1 : m.parameters().size();
+					String suggestion = String.format("\nA possible substitute is: (%s).%s(",
+							found, m.name());
 
-				boolean first = true;
-				for (Type t : m.type().parameterTypes()) {
-					if (!first)
-						suggestion += (", ");
-					suggestion += t.toString();
-					first = false;
+					boolean first = true;
+					for (Type t : m.type().parameterTypes()) {
+						if (!first)
+							suggestion += (", ");
+						suggestion += t.toString();
+						first = false;
+					}
+					if (m.isVariableArity())
+						suggestion += "...";
+					suggestion += ")";
+					suggestions.add(new Pair<String, Integer>(suggestion, weight));
 				}
-				if (m.isVariableArity())
-					suggestion += "...";
-				suggestion += ")";
-				suggestions.add(new Pair<String, Integer>(suggestion, weight));
+			}
+			catch(ClassNotFoundException e) {
+				//Should never happen, if it does we just skip this step
 			}
 		}
 
@@ -358,9 +312,8 @@ public class ErrorHandler {
 	 * as it is possible that is what the user intended.
 	 *
 	 * @param ex - The FieldNotFound exception encountered
-	 * @throws ClassNotFoundException
 	 */
-	private static void handleFieldNotFound(FieldNotFoundException ex, SourceLocation loc) throws ClassNotFoundException {
+	public static void handleFieldNotFound(FieldNotFoundException ex, SourceLocation loc) {
 
 		Set<Clazz> classes = getClasses(ex.loader(), ex.owner());
 		classes = getSuperClasses(ex.loader(), classes);
@@ -405,12 +358,11 @@ public class ErrorHandler {
 	 * @param field 	- The field we are substituting for
 	 * @param expected	- the expected return type of the field (or null if unknown)
 	 * @return
-	 * @throws ClassNotFoundException
 	 */
 	private static Pair<List<Pair<Clazz.Field, Integer>>,
 				 List<Pair<Clazz.Method, Integer>>> findFieldSuggestions
 				 (Set<Clazz> classes, String field, Type expected,
-						 ClassLoader loader, TypeSystem types) throws ClassNotFoundException {
+						 ClassLoader loader, TypeSystem types) {
 
 		List<Pair<Clazz.Field, Integer>> fields = new ArrayList<Pair<Clazz.Field, Integer>>();
 		List<Pair<Clazz.Method, Integer>> methods = new ArrayList<Pair<Clazz.Method, Integer>>();
@@ -419,28 +371,38 @@ public class ErrorHandler {
 		//If we find a candidate, we give it a weighting based on its edit distance
 		for (Clazz c : classes) {
 			for (Clazz.Field f : c.fields()) {
-				if (expected != null && !types.boxSubtype(expected, f.type(), loader))
-					continue;
-				int dist = distance(field, f.name());
-				if (dist <= MAX_DIFFERENCE)
-					fields.add(new Pair<Clazz.Field, Integer>(f, dist));
+				try {
+					if (expected != null && !types.boxSubtype(expected, f.type(), loader))
+						continue;
+					int dist = distance(field, f.name());
+					if (dist <= MAX_DIFFERENCE)
+						fields.add(new Pair<Clazz.Field, Integer>(f, dist));
+				}
+				catch (ClassNotFoundException e) {
+					//Shouldn't happen. We continue without adding to suggestions
+				}
 			}
 		}
 
 		//Now we check for methods with no parameters
 		//If we find a candidate, it is given a weighting based on edit distance, with an extra weighting
-		//for being a method (unfortunately, we can't check if the type of the method matches)
+		//for being a method
 		for (Clazz c : classes) {
 
 			for (Clazz.Method m : c.methods()) {
-				if (m.type().returnType() instanceof Type.Void || !m.parameters().isEmpty())
-					continue;
-				if (expected != null && !m.type().returnType().equals(expected))
-					continue;
+				try {
+					if (m.type().returnType() instanceof Type.Void || !m.parameters().isEmpty())
+						continue;
+					if (expected != null && !types.boxSubtype(expected, m.type().returnType(), loader))
+						continue;
 
-				int dist = distance(field, m.name()) + 2;
-				if (dist <= MAX_DIFFERENCE)
-					methods.add(new Pair<Clazz.Method, Integer>(m, dist));
+					int dist = distance(field, m.name()) + 2;
+					if (dist <= MAX_DIFFERENCE)
+						methods.add(new Pair<Clazz.Method, Integer>(m, dist));
+				}
+				catch (ClassNotFoundException e) {
+					//Shouldn't happen. We continue without adding to suggestions
+				}
 			}
 		}
 
@@ -456,7 +418,7 @@ public class ErrorHandler {
 	 * Finds the directory containing the class with the bad package declaration,
 	 * to suggest that directory as an alternative package
 	 */
-	private static void handlePackageNotFound(PackageNotFoundException ex) {
+	public static void handlePackageNotFound(PackageNotFoundException ex) {
 		Clazz jilClass = ex.jilClass();
 		String pkg = jilClass.type().pkg().replace('.', File.pathSeparatorChar);
 		List<String> sourcepath = ex.sourcepath();
@@ -515,7 +477,7 @@ public class ErrorHandler {
 	 * @throws ClassNotFoundException
 	 *
 	 */
-	private static void handleMethodNotFound(MethodNotFoundException ex, SourceLocation loc) throws ClassNotFoundException {
+	public static void handleMethodNotFound(MethodNotFoundException ex, SourceLocation loc) {
 
 		Set<Clazz> classes = getClasses(ex.loader(), ex.owner());
 		classes = getSuperClasses(ex.loader(), classes);
@@ -567,7 +529,7 @@ public class ErrorHandler {
 	 */
 	private static List<Pair<Clazz.Method, Integer>> findMethodSuggestions
 		(Set<Clazz> classes, String method, List<Type> parameters, Type expected,
-				ClassLoader loader, TypeSystem types) throws ClassNotFoundException {
+				ClassLoader loader, TypeSystem types) {
 
 		List<Pair<Clazz.Method, Integer>> suggestions = new ArrayList<Pair<Clazz.Method, Integer>>();
 
@@ -577,15 +539,20 @@ public class ErrorHandler {
 		Set<Pair<String, Integer>> names = new HashSet<Pair<String, Integer>>();
 		for (Clazz c : classes) {
 			for (Clazz.Method m : c.methods()) {
-				//We want to ignore superclass constructors
-				if (m.name().equals(c.name()) && classes.contains(new Pair<Clazz, Integer>(c, 1)))
-					continue;
-				if (expected != null && !types.boxSubtype(expected, m.type().returnType(), loader))
-					continue;
+				try {
+					//We want to ignore superclass constructors
+					if (m.name().equals(c.name()) && classes.contains(new Pair<Clazz, Integer>(c, 1)))
+						continue;
+					if (expected != null && !types.boxSubtype(expected, m.type().returnType(), loader))
+						continue;
 
-				int dist = distance(method, m.name());
-				if (dist <= MAX_DIFFERENCE)
-					names.add(new Pair<String, Integer>(m.name(), dist));
+					int dist = distance(method, m.name());
+					if (dist <= MAX_DIFFERENCE)
+						names.add(new Pair<String, Integer>(m.name(), dist));
+				}
+				catch (ClassNotFoundException e) {
+					//Shouldn't happen. Continue without considering this method
+				}
 			}
 		}
 
@@ -614,21 +581,25 @@ public class ErrorHandler {
 		//Next, check for different types of parameters
 		//Again, a weighting is given based on the number of parameters changed
 		for (Pair<Clazz.Method, Integer> p : methods) {
+			try {
+				List<Type> subParams = p.first().type().parameterTypes();
+				List<Type> targetParams = parameters;
 
-			List<Type> subParams = p.first().type().parameterTypes();
-			List<Type> targetParams = parameters;
-
-			int min = Math.min(targetParams.size(), subParams.size());
-			int weight = p.second();
+				int min = Math.min(targetParams.size(), subParams.size());
+				int weight = p.second();
 
 
-			for (int i = 0; i < min; i++) {
-				if (!subParams.get(i).equals(targetParams.get(i)))
+				for (int i = 0; i < min; i++) {
+					if (!types.boxSubtype(targetParams.get(i), subParams.get(i), loader))
 					weight++;
-			}
+				}
 
-			if (weight <= MAX_DIFFERENCE)
-				suggestions.add(new Pair<Clazz.Method, Integer>(p.first(), weight));
+				if (weight <= MAX_DIFFERENCE)
+					suggestions.add(new Pair<Clazz.Method, Integer>(p.first(), weight));
+			}
+			catch (ClassNotFoundException e) {
+				//Shouldn't happen, but if it does we simply skip over the method
+			}
 		}
 
 		Collections.sort(suggestions, new WeightComparator<Pair<Clazz.Method,Integer>>());

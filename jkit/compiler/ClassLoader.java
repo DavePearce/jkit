@@ -459,9 +459,9 @@ public final class ClassLoader {
 		// class loading.
 
 		if (pkgInfo == null) {
-			ErrorHandler.handleError(ErrorHandler.ErrorType.PACKAGE_NOT_FOUND,
-					new PackageNotFoundException(jilClass,
-							Collections.unmodifiableList(classpath), Collections.unmodifiableList(sourcepath)), null);
+			ErrorHandler.handlePackageNotFound(new PackageNotFoundException(jilClass,
+							Collections.unmodifiableList(classpath),
+							Collections.unmodifiableList(sourcepath)));
 		}
 		pkgInfo.classes.add(pc);
 		pkgInfo.compiledClasses.add(pc);

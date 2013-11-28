@@ -129,8 +129,7 @@ public class TypeChecking {
 			try {
 				if (!types.subtype(lhs_t, rhs_t, loader)) {
 
-					ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
-							new TypeMismatchException(d.initialiser(), lhs_t, loader, types),
+					ErrorHandler.handleTypeMismatch(new TypeMismatchException(d.initialiser(), lhs_t, loader, types),
 							d.initialiser().attribute(SourceLocation.class));
 				}
 			} catch (ClassNotFoundException ex) {
@@ -208,11 +207,9 @@ public class TypeChecking {
 
 		if (!(e_t instanceof Type.Reference)) {
 			//The most generic reference type possible - use Object as lower bound to help get the point across
-			ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
-					new TypeMismatchException(block.expr(),
+			ErrorHandler.handleTypeMismatch(new TypeMismatchException(block.expr(),
 							new Type.Wildcard(JAVA_LANG_OBJECT, null),
-							loader, types),
-						block.expr().attribute(SourceLocation.class));
+							loader, types), block.expr().attribute(SourceLocation.class));
 
 		}
 	}
@@ -256,10 +253,8 @@ public class TypeChecking {
 				Type i_t = d.third().attribute(Type.class);
 				try {
 					if (!types.subtype(nt, i_t, loader)) {
-						ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
-								new TypeMismatchException(d.third(),
-										nt, loader, types),
-									d.third().attribute(SourceLocation.class));
+						ErrorHandler.handleTypeMismatch(new TypeMismatchException(d.third(),
+										nt, loader, types), d.third().attribute(SourceLocation.class));
 					}
 				} catch (ClassNotFoundException ex) {
 					syntax_error(ex.getMessage(), def);
@@ -277,10 +272,8 @@ public class TypeChecking {
 
 		try {
 			if (!types.subtype(lhs_t, rhs_t, loader)) {
-				ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
-						new TypeMismatchException(def.rhs(),
-								lhs_t, loader, types),
-							def.rhs().attribute(SourceLocation.class));
+				ErrorHandler.handleTypeMismatch(new TypeMismatchException(def.rhs(),
+								lhs_t, loader, types), def.rhs().attribute(SourceLocation.class));
 			}
 		} catch (ClassNotFoundException ex) {
 			syntax_error(ex.getMessage(), def);
@@ -347,10 +340,8 @@ public class TypeChecking {
 			Type c_t = stmt.condition().attribute(Type.class);
 
 			if(!(c_t instanceof Type.Bool)) {
-				ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
-						new TypeMismatchException(stmt.condition(),
-								T_BOOL, loader, types),
-							stmt.condition().attribute(SourceLocation.class));
+				ErrorHandler.handleTypeMismatch(new TypeMismatchException(stmt.condition(),
+								T_BOOL, loader, types), stmt.condition().attribute(SourceLocation.class));
 			}
 		}
 	}
@@ -363,10 +354,8 @@ public class TypeChecking {
 			Type c_t = stmt.condition().attribute(Type.class);
 
 			if (!(c_t instanceof Type.Bool)) {
-				ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
-						new TypeMismatchException(stmt.condition(),
-								T_BOOL, loader, types),
-							stmt.condition().attribute(SourceLocation.class));
+				ErrorHandler.handleTypeMismatch(new TypeMismatchException(stmt.condition(),
+								T_BOOL, loader, types), stmt.condition().attribute(SourceLocation.class));
 			}
 		}
 	}
@@ -379,10 +368,8 @@ public class TypeChecking {
 			Type c_t = stmt.condition().attribute(Type.class);
 
 			if (!(c_t instanceof Type.Bool)) {
-				ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
-						new TypeMismatchException(stmt.condition(),
-								T_BOOL, loader, types),
-							stmt.condition().attribute(SourceLocation.class));
+				ErrorHandler.handleTypeMismatch(new TypeMismatchException(stmt.condition(),
+								T_BOOL, loader, types), stmt.condition().attribute(SourceLocation.class));
 			}
 		}
 	}
@@ -397,10 +384,8 @@ public class TypeChecking {
 			Type c_t = stmt.condition().attribute(Type.class);
 
 			if (!(c_t instanceof Type.Bool)) {
-				ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
-						new TypeMismatchException(stmt.condition(),
-								T_BOOL, loader, types),
-							stmt.condition().attribute(SourceLocation.class));
+				ErrorHandler.handleTypeMismatch(new TypeMismatchException(stmt.condition(),
+						T_BOOL, loader, types), stmt.condition().attribute(SourceLocation.class));
 			}
 		}
 	}
@@ -417,11 +402,9 @@ public class TypeChecking {
 					&& !types.subtype(new Type.Clazz("java.lang", "Iterable"),
 							s_t, loader)) {
 
-				ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
-						new TypeMismatchException(stmt.source(),
+				ErrorHandler.handleTypeMismatch(new TypeMismatchException(stmt.source(),
 								new Type.Wildcard(new Type.Clazz("java.lang", "Iterable"), null),
 								loader, types), stmt.source().attribute(SourceLocation.class));
-
 			}
 		} catch (ClassNotFoundException ex) {
 			syntax_error(ex.getMessage(), stmt);
@@ -434,10 +417,8 @@ public class TypeChecking {
 		Type condT = sw.condition().attribute(Type.class);
 
 		if(!(condT instanceof Type.Int)) {
-			ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
-					new TypeMismatchException(sw.condition(),
-							T_INT, loader, types),
-						sw.condition().attribute(SourceLocation.class));
+			ErrorHandler.handleTypeMismatch(new TypeMismatchException(sw.condition(),
+							T_INT, loader, types), sw.condition().attribute(SourceLocation.class));
 		}
 
 		for(Case c : sw.cases()) {
@@ -526,17 +507,14 @@ public class TypeChecking {
 		Type i_t = e.index().attribute(Type.class);
 
 		if(!(i_t instanceof Type.Int)) {
-			ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
-					new TypeMismatchException(e.index(),
-							 T_INT, loader, types),
-						e.index().attribute(SourceLocation.class));
+			ErrorHandler.handleTypeMismatch(new TypeMismatchException(e.index(),
+							 T_INT, loader, types), e.index().attribute(SourceLocation.class));
 		}
 
 		Type t_t = e.target().attribute(Type.class);
 		if(!(t_t instanceof Type.Array)) {
 
-			ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
-					new TypeMismatchException(e.target(),
+			ErrorHandler.handleTypeMismatch(new TypeMismatchException(e.target(),
 							new Type.Array(new Type.Wildcard(JAVA_LANG_OBJECT, null)),
 							loader, types), e.attribute(SourceLocation.class));
 		}
@@ -564,8 +542,7 @@ public class TypeChecking {
 
 		if(lhs_t instanceof Type.Primitive) {
 
-			ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
-					new TypeMismatchException(e.lhs(),
+			ErrorHandler.handleTypeMismatch(new TypeMismatchException(e.lhs(),
 							new Type.Wildcard(JAVA_LANG_OBJECT, null), loader, types),
 						e.lhs().attribute(SourceLocation.class));
 
@@ -578,10 +555,8 @@ public class TypeChecking {
 
 		} else if((lhs_t instanceof Type.Array || rhs_t instanceof Type.Array)
 				&& !(types.subtype(lhs_t,rhs_t,loader))) {
-			ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
-					new TypeMismatchException(e.lhs(),
-							rhs_t, loader, types),
-						e.lhs().attribute(SourceLocation.class));
+			ErrorHandler.handleTypeMismatch(new TypeMismatchException(e.lhs(),
+							rhs_t, loader, types), e.lhs().attribute(SourceLocation.class));
 		}
 	}
 
@@ -622,10 +597,8 @@ public class TypeChecking {
 				}
 			}
 
-			ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
-					new TypeMismatchException(e.expr(),
-							c_t, loader, types),
-						e.attribute(SourceLocation.class));
+			ErrorHandler.handleTypeMismatch(new TypeMismatchException(e.expr(),
+					c_t, loader, types), e.attribute(SourceLocation.class));
 		} catch(ClassNotFoundException ex) {
 			syntax_error (ex.getMessage(),e);
 		}
@@ -636,9 +609,8 @@ public class TypeChecking {
 		Type c_t = (Type) e.type().attribute(Type.class);
 		try {
 			if(!types.subtype(c_t,rhs_t, loader)) {
-				ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
-						new TypeMismatchException(e.expr(), c_t, loader, types),
-						e.expr().attribute(SourceLocation.class));
+				ErrorHandler.handleTypeMismatch(new TypeMismatchException(e.expr(),
+						c_t, loader, types), e.expr().attribute(SourceLocation.class));
 			}
 		} catch(ClassNotFoundException ex) {
 			syntax_error (ex.getMessage(),e);
@@ -728,17 +700,15 @@ public class TypeChecking {
 						|| e_t instanceof Type.Long
 						|| e_t instanceof Type.Float
 						|| e_t instanceof Type.Double)) {
-					ErrorHandler.handleError(ErrorHandler.ErrorType.OPERATOR_TYPE_MISMATCH,
-							new OperatorTypeMismatchException(uop.expr(), T_INT, loader, types, uop.operator(),
-									AllowedType.PRIMITIVE),
+					ErrorHandler.handleOperatorTypeMismatch(new OperatorTypeMismatchException(
+							uop.expr(), T_INT, loader, types, uop.operator(), AllowedType.PRIMITIVE),
 							uop.expr().attribute(SourceLocation.class));
 				}
 				break;
 			case UnOp.NOT:
 				if (!(e_t instanceof Type.Bool)) {
-					ErrorHandler.handleError(ErrorHandler.ErrorType.OPERATOR_TYPE_MISMATCH,
-							new OperatorTypeMismatchException(uop.expr(), T_BOOL, loader, types, uop.operator(),
-									AllowedType.BOOL),
+					ErrorHandler.handleOperatorTypeMismatch(new OperatorTypeMismatchException(
+							uop.expr(), T_BOOL, loader, types, uop.operator(), AllowedType.BOOL),
 							uop.expr().attribute(SourceLocation.class));
 				}
 				break;
@@ -748,9 +718,8 @@ public class TypeChecking {
 						|| e_t instanceof Type.Short
 						|| e_t instanceof Type.Int
 						|| e_t instanceof Type.Long)) {
-					ErrorHandler.handleError(ErrorHandler.ErrorType.OPERATOR_TYPE_MISMATCH,
-							new OperatorTypeMismatchException(uop.expr(), T_INT, loader, types, uop.operator(),
-									AllowedType.NUMBER),
+					ErrorHandler.handleOperatorTypeMismatch(new OperatorTypeMismatchException(
+							uop.expr(), T_INT, loader, types, uop.operator(), AllowedType.NUMBER),
 							uop.expr().attribute(SourceLocation.class));
 				}
 				break;
@@ -797,9 +766,8 @@ public class TypeChecking {
 				case BinOp.GTEQ:
 					// need more checks here
 					if(!(e_t instanceof Type.Bool)) {
-						ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
-								new TypeMismatchException(e, T_BOOL, loader, types),
-								e.attribute(SourceLocation.class));
+						ErrorHandler.handleTypeMismatch(new TypeMismatchException(
+								e, T_BOOL, loader, types), e.attribute(SourceLocation.class));
 					}
 					return;
 				case BinOp.ADD:
@@ -819,14 +787,14 @@ public class TypeChecking {
                     // make sure we have an int type
 					if (lhs_t instanceof Type.Float
 							|| lhs_t instanceof Type.Double) {
-						ErrorHandler.handleError(ErrorHandler.ErrorType.OPERATOR_TYPE_MISMATCH,
-								new OperatorTypeMismatchException(e.lhs(), T_INT, loader, types, e.operator(),
-										AllowedType.INTEGER),
+
+						ErrorHandler.handleOperatorTypeMismatch(new OperatorTypeMismatchException(
+								e.lhs(), T_INT, loader, types, e.operator(), AllowedType.INTEGER),
 								e.lhs().attribute(SourceLocation.class));
+
 					} else if (!(rhs_t instanceof Type.Int)) {
-						ErrorHandler.handleError(ErrorHandler.ErrorType.OPERATOR_TYPE_MISMATCH,
-								new OperatorTypeMismatchException(e.rhs(), T_INT, loader, types, e.operator(),
-										AllowedType.INT),
+						ErrorHandler.handleOperatorTypeMismatch(new OperatorTypeMismatchException(
+								e.rhs(), T_INT, loader, types, e.operator(), AllowedType.INT),
 								e.rhs().attribute(SourceLocation.class));
 					}
 					return;
@@ -836,9 +804,8 @@ public class TypeChecking {
 				case BinOp.XOR:
 				{
 					if (rhs_t instanceof Type.Float || rhs_t instanceof Type.Double) {
-						ErrorHandler.handleError(ErrorHandler.ErrorType.OPERATOR_TYPE_MISMATCH,
-								new OperatorTypeMismatchException(e.rhs(), T_INT, loader, types, e.operator(),
-										AllowedType.INTEGER),
+						ErrorHandler.handleOperatorTypeMismatch(new OperatorTypeMismatchException(
+								e.rhs(), T_INT, loader, types, e.operator(), AllowedType.INTEGER),
 								e.rhs().attribute(SourceLocation.class));
 					}
 					return;
@@ -864,19 +831,13 @@ public class TypeChecking {
 		}
 
 		if (checkTypeAllowed(lhs_t, e.getAllowed(true)))
-			ErrorHandler.handleError(ErrorHandler.ErrorType.OPERATOR_TYPE_MISMATCH,
-				new OperatorTypeMismatchException(e.rhs(),
+			ErrorHandler.handleOperatorTypeMismatch(new OperatorTypeMismatchException(e.rhs(),
 						(checkTypeAllowed(T_INT, e.getAllowed(false))) ? T_INT : T_BOOL,
-						loader, types, e.operator(),
-						e.getAllowed(false)),
-				e.rhs().attribute(SourceLocation.class));
+						loader, types, e.operator(), e.getAllowed(false)), e.rhs().attribute(SourceLocation.class));
 
-		ErrorHandler.handleError(ErrorHandler.ErrorType.OPERATOR_TYPE_MISMATCH,
-				new OperatorTypeMismatchException(e.lhs(),
+		ErrorHandler.handleOperatorTypeMismatch(new OperatorTypeMismatchException(e.lhs(),
 						(checkTypeAllowed(T_INT, e.getAllowed(true))) ? T_INT : T_BOOL,
-						loader, types, e.operator(),
-						e.getAllowed(true)),
-				e.lhs().attribute(SourceLocation.class));
+						loader, types, e.operator(), e.getAllowed(true)), e.lhs().attribute(SourceLocation.class));
 	}
 
 	protected void checkTernOp(Expr.TernOp e) {
@@ -887,10 +848,8 @@ public class TypeChecking {
 		Type c_t = e.condition().attribute(Type.class);
 
 		if (!(c_t instanceof Type.Bool)) {
-			ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
-					new TypeMismatchException(e.condition(),
-							T_BOOL, loader, types),
-						e.condition().attribute(SourceLocation.class));
+			ErrorHandler.handleTypeMismatch(new TypeMismatchException(e.condition(),
+					T_BOOL, loader, types), e.condition().attribute(SourceLocation.class));
 		}
 	}
 

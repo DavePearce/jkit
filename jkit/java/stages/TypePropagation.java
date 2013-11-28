@@ -529,7 +529,7 @@ public class TypePropagation {
 		} else {
 			// this is really an error - as any array will do, we'll just assume an
 			//array of type wildcard
-			ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+			ErrorHandler.handleTypeMismatch(
 					new TypeMismatchException(e.target(),
 							new Type.Array(new Type.Wildcard(JAVA_LANG_OBJECT, null)), loader, types),
 							e.target().attribute(SourceLocation.class));
@@ -777,8 +777,7 @@ public class TypePropagation {
 		if(!(_type instanceof Type.Array)) {
 
 			//We will use the most generic array type possible - array of Wildcard
-			ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
-					new TypeMismatchException(e,
+			ErrorHandler.handleTypeMismatch(new TypeMismatchException(e,
 							new Type.Array(new Type.Wildcard(JAVA_LANG_OBJECT,null)), loader, types),
 							e.attribute(SourceLocation.class));
 		}
@@ -831,7 +830,7 @@ public class TypePropagation {
 
 		if (!(_lhs instanceof Type.Array)) {
 
-			ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
+			ErrorHandler.handleTypeMismatch(
 					new TypeMismatchException(e, new Type.Array(new Type.Wildcard(JAVA_LANG_OBJECT,
 							null)), loader, types),
 					e.attribute(SourceLocation.class));
@@ -940,15 +939,13 @@ public class TypePropagation {
 				} else {
 					//For simplicity's sake, assume that an int is required
 					if (lhs_t instanceof Type.Primitive || isBoxedType(lhs_t))
-						ErrorHandler.handleError(ErrorHandler.ErrorType.OPERATOR_TYPE_MISMATCH,
-								new OperatorTypeMismatchException(e.rhs(), T_INT, loader, types, e.operator(),
-										AllowedType.PRIMITIVE),
+						ErrorHandler.handleOperatorTypeMismatch(new OperatorTypeMismatchException(
+								e.rhs(), T_INT, loader, types, e.operator(), AllowedType.PRIMITIVE),
 								e.rhs().attribute(SourceLocation.class));
 
 
-					ErrorHandler.handleError(ErrorHandler.ErrorType.OPERATOR_TYPE_MISMATCH,
-							new OperatorTypeMismatchException(e.lhs(), T_INT, loader, types, e.operator(),
-									AllowedType.PRIMITIVE),
+					ErrorHandler.handleOperatorTypeMismatch(new OperatorTypeMismatchException(
+							e.lhs(), T_INT, loader, types, e.operator(),AllowedType.PRIMITIVE),
 							e.lhs().attribute(SourceLocation.class));
 				}
 				break;
@@ -972,16 +969,14 @@ public class TypePropagation {
 				} else {
 					//For simplicity's sake, assume that an int is required
 					if (lhs_t instanceof Type.Primitive || isBoxedType(lhs_t))
-						ErrorHandler.handleError(ErrorHandler.ErrorType.OPERATOR_TYPE_MISMATCH,
-								new OperatorTypeMismatchException(e.rhs(), T_INT, loader, types, e.operator(),
-										AllowedType.PRIMITIVE),
+						ErrorHandler.handleOperatorTypeMismatch(new OperatorTypeMismatchException(
+								e.rhs(), T_INT, loader, types, e.operator(), AllowedType.PRIMITIVE),
 								e.rhs().attribute(SourceLocation.class));
 
 
-					ErrorHandler.handleError(ErrorHandler.ErrorType.OPERATOR_TYPE_MISMATCH,
-							new OperatorTypeMismatchException(e.lhs(), T_INT, loader, types, e.operator(),
-									AllowedType.PRIMITIVE),
-							e.lhs().attribute(SourceLocation.class));
+					ErrorHandler.handleOperatorTypeMismatch(new OperatorTypeMismatchException(
+									e.lhs(), T_INT, loader, types, e.operator(), AllowedType.PRIMITIVE),
+									e.lhs().attribute(SourceLocation.class));
 				}
 				break;
 			}
@@ -1011,15 +1006,13 @@ public class TypePropagation {
 				} else {
 					//For simplicity's sake, assume that an int is required
 					if (lhs_t instanceof Type.Primitive || isBoxedType(lhs_t))
-						ErrorHandler.handleError(ErrorHandler.ErrorType.OPERATOR_TYPE_MISMATCH,
-								new OperatorTypeMismatchException(e.rhs(), T_INT, loader, types, e.operator(),
-										AllowedType.PRIMITIVE),
+						ErrorHandler.handleOperatorTypeMismatch(new OperatorTypeMismatchException(
+								e.rhs(), T_INT, loader, types, e.operator(),AllowedType.PRIMITIVE),
 								e.rhs().attribute(SourceLocation.class));
 
 
-					ErrorHandler.handleError(ErrorHandler.ErrorType.OPERATOR_TYPE_MISMATCH,
-							new OperatorTypeMismatchException(e.lhs(), T_INT, loader, types, e.operator(),
-									AllowedType.PRIMITIVE),
+					ErrorHandler.handleOperatorTypeMismatch(new OperatorTypeMismatchException(
+							e.lhs(), T_INT, loader, types, e.operator(), AllowedType.PRIMITIVE),
 							e.lhs().attribute(SourceLocation.class));
 				}
 				break;
@@ -1045,15 +1038,13 @@ public class TypePropagation {
 				} else {
 					//For simplicity's sake, assume that an int is required
 					if (lhs_t instanceof Type.Primitive || isBoxedType(lhs_t))
-						ErrorHandler.handleError(ErrorHandler.ErrorType.OPERATOR_TYPE_MISMATCH,
-								new OperatorTypeMismatchException(e.rhs(), T_INT, loader, types, e.operator(),
-										AllowedType.PRIMITIVE),
+						ErrorHandler.handleOperatorTypeMismatch(new OperatorTypeMismatchException(
+								e.rhs(), T_INT, loader, types, e.operator(), AllowedType.PRIMITIVE),
 								e.rhs().attribute(SourceLocation.class));
 
 
-					ErrorHandler.handleError(ErrorHandler.ErrorType.OPERATOR_TYPE_MISMATCH,
-							new OperatorTypeMismatchException(e.lhs(), T_INT, loader, types, e.operator(),
-									AllowedType.PRIMITIVE),
+					ErrorHandler.handleOperatorTypeMismatch(new OperatorTypeMismatchException(
+							e.lhs(), T_INT, loader, types, e.operator(), AllowedType.PRIMITIVE),
 							e.lhs().attribute(SourceLocation.class));
 				}
 				break;
@@ -1303,8 +1294,8 @@ public class TypePropagation {
 							new ArrayList<Expr>(), new ArrayList(),
 							T_BOOL, mi), t);
 				} else {
-					ErrorHandler.handleError(ErrorHandler.ErrorType.TYPE_MISMATCH,
-							new TypeMismatchException(e, t, loader, types), e.attribute(SourceLocation.class));
+					ErrorHandler.handleTypeMismatch(new TypeMismatchException(
+							e, t, loader, types), e.attribute(SourceLocation.class));
 				}
 			}
 		} else if(e_t instanceof Type.Primitive && t instanceof Type.Clazz) {
