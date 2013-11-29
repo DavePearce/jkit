@@ -10,13 +10,13 @@ import jkit.compiler.Clazz;
  * @author Daniel Campbell
  *
  */
-public class PackageNotFoundException extends JKitException {
+public class PackageNotFoundException extends Exception {
 
 	private static final long serialVersionUID = 1L;
 
-	private final List<String> classpath;
-	private final List<String> sourcepath;
-	private final Clazz jilClass;
+	private final List<String> classpath;	//The current classpath
+	private final List<String> sourcepath;	//The current sourcepath
+	private final Clazz jilClass;			//The class with the bad package declaration
 
 	public PackageNotFoundException(Clazz jc, List<String> cp, List<String> sp) {
 		jilClass = jc;
