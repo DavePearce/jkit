@@ -30,7 +30,6 @@ import jkit.bytecode.ClassFile;
 import jkit.bytecode.ClassFileReader;
 import jkit.error.ErrorHandler;
 import jkit.error.FieldNotFoundException;
-import jkit.error.JKitException;
 import jkit.error.MethodNotFoundException;
 import jkit.error.PackageNotFoundException;
 import jkit.jil.tree.Type;

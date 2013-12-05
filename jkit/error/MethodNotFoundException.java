@@ -34,7 +34,7 @@ import jkit.jil.tree.Type;
  * @author djp
  *
  */
-public final class MethodNotFoundException extends JKitException {
+public final class MethodNotFoundException extends Exception {
 
 
 	private final Type.Reference owner;   //The receiver/owner of the method that was not found

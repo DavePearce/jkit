@@ -32,7 +32,7 @@ import jkit.jil.tree.Type;
  * @author djp
  *
  */
-public final class FieldNotFoundException extends JKitException {
+public final class FieldNotFoundException extends Exception {
 
 	private final ClassLoader loader;		//Needed to turn class types into actual classes
 	private final String field;				//Name of field not found

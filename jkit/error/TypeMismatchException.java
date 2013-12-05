@@ -5,12 +5,11 @@ import jkit.java.tree.Expr;
 import jkit.jil.tree.Type;
 import jkit.compiler.ClassLoader;
 
-public class TypeMismatchException extends JKitException {
+public class TypeMismatchException extends Exception {
 
-	private final Expr found;
-	private final Type expected;
-	private final ClassLoader loader;
-	private final TypeSystem types;
+	private final Expr found;			//The found expression
+	private final Type expected;		//The required/expected expression type
+	private final ClassLoader loader;	//The classloader
 
 	public Expr found() {
 		return found;
@@ -24,15 +23,10 @@ public class TypeMismatchException extends JKitException {
 		return loader;
 	}
 
-	public TypeSystem types() {
-		return types;
-	}
-
 	public TypeMismatchException(Expr f, Type e, ClassLoader l, TypeSystem t) {
 		found = f;
 		expected = e;
 		loader = l;
-		types = t;
 	}
 
 	private static final long serialVersionUID = 1L;
