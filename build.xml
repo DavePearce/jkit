@@ -1,6 +1,16 @@
 <project name="JKit" default="build">
+  
+  <classpath id="lib">
+    <pathelement path="${classpath}"/>
+    <fileset dir="lib">
+      <include name="**/*.jar"/>
+    </fileset>
+  </classpath>
+    
   <target name="compile">
-    <javac debug="true" srcdir="." includes="jkit/**" excludes="jkit/testing/**"/> 
+    <javac debug="true" srcdir="." includes="jkit/**" excludes="jkit/testing/**">
+      <classpath refid="lib" />
+    </javac>
   </target>
 
   <target name="build" depends="compile">
